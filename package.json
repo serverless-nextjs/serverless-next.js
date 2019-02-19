@@ -1,0 +1,14 @@
+{
+  "name": "serverless-nextjs-plugin",
+  "version": "1.0.0",
+  "description": "A serverless plugin for nextjs 8 lambda support",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "devDependencies": {
+    "jest": "^24.1.0"
+  }
+}
