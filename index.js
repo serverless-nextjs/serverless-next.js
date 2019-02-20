@@ -21,14 +21,15 @@ class ServerlessPlugin {
 
     const jsHandlerPaths = Object.keys(functions)
       .filter(f => functions[f].handler.includes(".next/serverless/pages"))
-      .map(f => {
+      .reduce((acc, f) => {
         const handlerPath = functions[f].handler;
 
         const dirname = path.dirname(handlerPath);
         const handlerFileName = path.basename(handlerPath, ".render");
 
-        return `${path.join(dirname, handlerFileName)}.js`;
-      });
+        acc[f] = `${path.join(dirname, handlerFileName)}.js`;
+        return acc;
+      }, {});
 
     return injectHttpServerLambdaCompatLayer(jsHandlerPaths);
   }

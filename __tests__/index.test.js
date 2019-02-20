@@ -29,10 +29,10 @@ describe("ServerlessNextJsPlugin", () => {
 
       plugin.beforeCreateDeploymentArtifacts();
 
-      expect(injectHttpServerLambdaCompatLayer).toBeCalledWith([
-        ".next/serverless/pages/home.js",
-        ".next/serverless/pages/about.js"
-      ]);
+      expect(injectHttpServerLambdaCompatLayer).toBeCalledWith({
+        "home-page": ".next/serverless/pages/home.js",
+        "about-page": ".next/serverless/pages/about.js"
+      });
     });
 
     it("should call injectHttpServerLambdaCompatLayer without non nextjs page handlers", () => {
@@ -47,7 +47,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       plugin.beforeCreateDeploymentArtifacts();
 
-      expect(injectHttpServerLambdaCompatLayer).toBeCalledWith([]);
+      expect(injectHttpServerLambdaCompatLayer).toBeCalledWith({});
     });
 
     it("should return with injectHttpServerLambdaCompatLayer return value", () => {
