@@ -10,5 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "jest": "^24.1.0"
+  },
+  "dependencies": {
+    "aws-lambda-create-request-response": "^0.1.13"
   }
 }
