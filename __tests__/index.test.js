@@ -1,7 +1,7 @@
 const ServerlessNextJsPlugin = require("../index");
-const injectHttpServerLambdaCompatLayer = require("../lib/injectHttpServerLambdaCompatLayer");
+const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 
-jest.mock("../lib/injectHttpServerLambdaCompatLayer");
+jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
 describe("ServerlessNextJsPlugin", () => {
   describe("#constructor", () => {
@@ -17,8 +17,8 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#beforeCreateDeploymentArtifacts", () => {
-    it("should call injectHttpServerLambdaCompatLayer with nextjs page handlers", () => {
-      injectHttpServerLambdaCompatLayer.mockResolvedValueOnce([
+    it("should call createHttpServerLambdaCompatHandlers with nextjs page handlers", () => {
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([
         ".next/serverless/pages/home.compat.render",
         ".next/serverless/pages/home.about.render"
       ]);
@@ -34,14 +34,14 @@ describe("ServerlessNextJsPlugin", () => {
 
       plugin.beforeCreateDeploymentArtifacts();
 
-      expect(injectHttpServerLambdaCompatLayer).toBeCalledWith({
+      expect(createHttpServerLambdaCompatHandlers).toBeCalledWith({
         "home-page": ".next/serverless/pages/home.js",
         "about-page": ".next/serverless/pages/about.js"
       });
     });
 
-    it("should call injectHttpServerLambdaCompatLayer without non nextjs page handlers", () => {
-      injectHttpServerLambdaCompatLayer.mockResolvedValueOnce([]);
+    it("should call createHttpServerLambdaCompatHandlers without non nextjs page handlers", () => {
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
       const plugin = new ServerlessNextJsPlugin({
         service: {
@@ -54,11 +54,11 @@ describe("ServerlessNextJsPlugin", () => {
 
       plugin.beforeCreateDeploymentArtifacts();
 
-      expect(injectHttpServerLambdaCompatLayer).toBeCalledWith({});
+      expect(createHttpServerLambdaCompatHandlers).toBeCalledWith({});
     });
 
-    it("should return with injectHttpServerLambdaCompatLayer return value", () => {
-      injectHttpServerLambdaCompatLayer.mockResolvedValueOnce(
+    it("should return with createHttpServerLambdaCompatHandlers return value", () => {
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce(
         Promise.resolve([])
       );
 

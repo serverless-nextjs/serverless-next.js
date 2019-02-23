@@ -1,7 +1,7 @@
 "use strict";
 
 const path = require("path");
-const injectHttpServerLambdaCompatLayer = require("./lib/injectHttpServerLambdaCompatLayer");
+const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 
 class ServerlessPlugin {
   constructor(serverless, options) {
@@ -35,7 +35,7 @@ class ServerlessPlugin {
         return acc;
       }, {});
 
-    return injectHttpServerLambdaCompatLayer(jsHandlerPaths);
+    return createHttpServerLambdaCompatHandlers(jsHandlerPaths);
   }
 }
 
