@@ -18,6 +18,11 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#beforeCreateDeploymentArtifacts", () => {
     it("should call injectHttpServerLambdaCompatLayer with nextjs page handlers", () => {
+      injectHttpServerLambdaCompatLayer.mockResolvedValueOnce([
+        ".next/serverless/pages/home.compat.render",
+        ".next/serverless/pages/home.about.render"
+      ]);
+
       const plugin = new ServerlessNextJsPlugin({
         service: {
           functions: {
@@ -36,6 +41,8 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it("should call injectHttpServerLambdaCompatLayer without non nextjs page handlers", () => {
+      injectHttpServerLambdaCompatLayer.mockResolvedValueOnce([]);
+
       const plugin = new ServerlessNextJsPlugin({
         service: {
           functions: {
@@ -52,7 +59,7 @@ describe("ServerlessNextJsPlugin", () => {
 
     it("should return with injectHttpServerLambdaCompatLayer return value", () => {
       injectHttpServerLambdaCompatLayer.mockResolvedValueOnce(
-        Promise.resolve("OK")
+        Promise.resolve([])
       );
 
       const plugin = new ServerlessNextJsPlugin({
@@ -65,7 +72,7 @@ describe("ServerlessNextJsPlugin", () => {
       });
 
       return plugin.beforeCreateDeploymentArtifacts().then(result => {
-        expect(result).toEqual("OK");
+        expect(result).toEqual([]);
       });
     });
   });

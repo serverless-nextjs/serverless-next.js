@@ -10,6 +10,10 @@ class ServerlessPlugin {
 
     this.commands = {};
 
+    this.beforeCreateDeploymentArtifacts = this.beforeCreateDeploymentArtifacts.bind(
+      this
+    );
+
     this.hooks = {
       "before:package:createDeploymentArtifacts": this
         .beforeCreateDeploymentArtifacts
