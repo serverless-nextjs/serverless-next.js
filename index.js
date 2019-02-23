@@ -1,6 +1,7 @@
 "use strict";
 
 const path = require("path");
+const walkDir = require("klaw");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 
@@ -15,9 +16,14 @@ class ServerlessNextJsPlugin {
       this
     );
 
+    this.afterAwsDeployUploadArtifacts = this.afterAwsDeployUploadArtifacts.bind(
+      this
+    );
+
     this.hooks = {
       "before:package:createDeploymentArtifacts": this
-        .beforeCreateDeploymentArtifacts
+        .beforeCreateDeploymentArtifacts,
+      "after:aws:deploy:uploadArtifacts": this.afterAwsDeployUploadArtifacts
     };
   }
 
@@ -59,6 +65,7 @@ class ServerlessNextJsPlugin {
 
   beforeCreateDeploymentArtifacts() {
     const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
+
     return createHttpServerLambdaCompatHandlers(functionHandlerPathMap).then(
       compatHandlerPathMap => {
         return swapOriginalAndCompatHandlers(
@@ -67,6 +74,11 @@ class ServerlessNextJsPlugin {
         );
       }
     );
+  }
+
+  afterAwsDeployUploadArtifacts() {
+    walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"));
+    return Promise.resolve("OK");
   }
 }
 

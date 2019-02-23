@@ -12,6 +12,7 @@
     "jest": "^24.1.0"
   },
   "dependencies": {
-    "aws-lambda-create-request-response": "^0.1.13"
+    "aws-lambda-create-request-response": "^0.1.13",
+    "klaw": "^3.0.0"
   }
 }

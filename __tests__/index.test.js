@@ -1,7 +1,9 @@
+const walkDir = require("klaw");
 const ServerlessNextJsPlugin = require("../index");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
 
+jest.mock("klaw");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
@@ -17,6 +19,16 @@ describe("ServerlessNextJsPlugin", () => {
         expect.objectContaining({
           "before:package:createDeploymentArtifacts":
             plugin.beforeCreateDeploymentArtifacts
+        })
+      );
+    });
+
+    it("should hook to before:package:createDeploymentArtifacts", () => {
+      const plugin = new ServerlessNextJsPlugin({}, {});
+      expect(plugin.hooks).toEqual(
+        expect.objectContaining({
+          "after:aws:deploy:uploadArtifacts":
+            plugin.afterAwsDeployUploadArtifacts
         })
       );
     });
@@ -162,6 +174,35 @@ describe("ServerlessNextJsPlugin", () => {
 
       return plugin.beforeCreateDeploymentArtifacts().then(result => {
         expect(result).toEqual("OK");
+      });
+    });
+  });
+
+  describe("#afterAwsDeployUploadArtifacts", () => {
+    it("should get a list of all static files to upload", () => {
+      const plugin = new ServerlessNextJsPlugin({}, {});
+
+      return plugin.afterAwsDeployUploadArtifacts().then(() => {
+        expect(walkDir).toBeCalledWith(".next/static");
+      });
+    });
+
+    it("should get a list of all static files to upload using the custom next build dir provided", () => {
+      const plugin = new ServerlessNextJsPlugin(
+        {
+          service: {
+            custom: {
+              "serverless-nextjs": {
+                nextBuildDir: "build"
+              }
+            }
+          }
+        },
+        {}
+      );
+
+      return plugin.afterAwsDeployUploadArtifacts().then(() => {
+        expect(walkDir).toBeCalledWith("build/static");
       });
     });
   });
