@@ -21,11 +21,29 @@ class ServerlessNextJsPlugin {
     };
   }
 
+  getConfigValue(param) {
+    const defaultPluginConfig = {
+      nextBuildDir: ".next"
+    };
+
+    try {
+      const val = this.serverless.service.custom["serverless-nextjs"][param];
+      console.log("YAY!, ", val);
+      return val !== undefined ? val : defaultPluginConfig[param];
+    } catch (err) {
+      return defaultPluginConfig[param];
+    }
+  }
+
   getNextFunctionHandlerPathsMap() {
     const functions = this.serverless.service.functions;
 
     const functionJsHandlerMap = Object.keys(functions)
-      .filter(f => functions[f].handler.includes(".next/serverless/pages"))
+      .filter(f =>
+        functions[f].handler.includes(
+          path.join(this.getConfigValue("nextBuildDir"), "serverless/pages")
+        )
+      )
       .reduce((acc, f) => {
         const handlerPath = functions[f].handler;
 

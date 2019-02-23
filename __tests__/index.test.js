@@ -73,6 +73,35 @@ describe("ServerlessNextJsPlugin", () => {
       });
     });
 
+    it("should call createHttpServerLambdaCompatHandlers with non nextjs page handlers using the next custom build dir provided", () => {
+      expect.assertions(1);
+
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+
+      const plugin = new ServerlessNextJsPlugin({
+        pluginManager: {
+          run: () => {}
+        },
+        service: {
+          custom: {
+            "serverless-nextjs": {
+              nextBuildDir: "build"
+            }
+          },
+          functions: {
+            foo: { handler: "build/serverless/pages/foo.render" },
+            baz: { handler: "path/to/baz.render" }
+          }
+        }
+      });
+
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        expect(createHttpServerLambdaCompatHandlers).toBeCalledWith({
+          foo: "build/serverless/pages/foo.js"
+        });
+      });
+    });
+
     it("should call swapOriginalAndCompatHandlers", () => {
       expect.assertions(1);
 

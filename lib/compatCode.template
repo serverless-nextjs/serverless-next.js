@@ -1,7 +1,7 @@
 const reqResMapper = require('aws-lambda-create-request-response')
+const page = require("/*path_placeholder*/");
 
 module.exports.render = (event, context, callback) => {
-  const page = require("/*path_placeholder*/");
   const { req, res } = reqResMapper(event, callback);
   page.render(req, res);
 };
