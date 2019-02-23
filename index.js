@@ -1,11 +1,8 @@
 "use strict";
 
 const path = require("path");
-const { rename } = require("fs");
-const { promisify } = require("util");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
-
-const renameAsync = promisify(rename);
+const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -17,8 +14,6 @@ class ServerlessNextJsPlugin {
     this.beforeCreateDeploymentArtifacts = this.beforeCreateDeploymentArtifacts.bind(
       this
     );
-
-    this.swapHandlers = this.swapHandlers.bind(this);
 
     this.hooks = {
       "before:package:createDeploymentArtifacts": this
@@ -46,28 +41,14 @@ class ServerlessNextJsPlugin {
 
   beforeCreateDeploymentArtifacts() {
     const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
-    return createHttpServerLambdaCompatHandlers(functionHandlerPathMap);
-  }
-
-  swapHandlers(compatHandlerPathMap) {
-    const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
-
-    const promises = Object.entries(compatHandlerPathMap).map(
-      ([f, compatHandlerPath]) => {
-        const originalHandlerPath = functionHandlerPathMap[f];
-        const dirname = path.dirname(originalHandlerPath);
-        const basename = path.basename(originalHandlerPath, ".js");
-        const originalRenamed = path.join(dirname, `${basename}.original.js`);
-
-        // .next/serverless/page.js -> .next/serverless/page.original.js
-        return renameAsync(originalHandlerPath, originalRenamed).then(() => {
-          // .next/serverless/page.compat.js -> .next/serverless/page.js
-          return renameAsync(compatHandlerPath, originalHandlerPath);
-        });
+    return createHttpServerLambdaCompatHandlers(functionHandlerPathMap).then(
+      compatHandlerPathMap => {
+        return swapOriginalAndCompatHandlers(
+          functionHandlerPathMap,
+          compatHandlerPathMap
+        );
       }
     );
-
-    return Promise.all(promises);
   }
 }
 

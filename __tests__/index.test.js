@@ -1,8 +1,8 @@
-const fs = require("fs");
 const ServerlessNextJsPlugin = require("../index");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
+const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
 
-jest.mock("fs");
+jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
 describe("ServerlessNextJsPlugin", () => {
@@ -73,16 +73,17 @@ describe("ServerlessNextJsPlugin", () => {
       });
     });
 
-    it("should return the result of createHttpServerLambdaCompatHandlers", () => {
+    it("should call swapOriginalAndCompatHandlers", () => {
       expect.assertions(1);
 
       const pluginManagerRunMock = jest.fn();
 
+      const compatHandlerPathMap = {
+        "home-page": ".next/serverless/pages/home.compat.js",
+        "about-page": ".next/serverless/pages/about.compat.js"
+      };
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce(
-        Promise.resolve([
-          "next/serverless/pages/home.compat.js",
-          "next/serverless/pages/about.compat.js"
-        ])
+        Promise.resolve(compatHandlerPathMap)
       );
 
       const plugin = new ServerlessNextJsPlugin({
@@ -98,18 +99,30 @@ describe("ServerlessNextJsPlugin", () => {
       });
 
       return plugin.beforeCreateDeploymentArtifacts().then(result => {
-        expect(result).toEqual([
-          "next/serverless/pages/home.compat.js",
-          "next/serverless/pages/about.compat.js"
-        ]);
+        expect(swapOriginalAndCompatHandlers).toBeCalledWith(
+          {
+            "home-page": ".next/serverless/pages/home.js",
+            "about-page": ".next/serverless/pages/about.js"
+          },
+          compatHandlerPathMap
+        );
       });
     });
-  });
 
-  describe("#swapHandlers", () => {
-    it("should rename next handler files and append .original to them", () => {
-      fs.rename.mockImplementation((fileName, newFileName, cb) => cb(null, ""));
+    it("should return the result of swapOriginalAndCompatHandlers", () => {
+      expect.assertions(1);
+
+      const pluginManagerRunMock = jest.fn();
+
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+      swapOriginalAndCompatHandlers.mockResolvedValueOnce(
+        Promise.resolve("OK")
+      );
+
       const plugin = new ServerlessNextJsPlugin({
+        pluginManager: {
+          run: pluginManagerRunMock
+        },
         service: {
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
@@ -118,55 +131,9 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin
-        .swapHandlers({
-          "home-page": ".next/serverless/pages/home.compat.js",
-          "about-page": ".next/serverless/pages/about.compat.js"
-        })
-        .then(() => {
-          expect(fs.rename).toBeCalledWith(
-            ".next/serverless/pages/home.js",
-            ".next/serverless/pages/home.original.js",
-            expect.any(Function)
-          );
-          expect(fs.rename).toBeCalledWith(
-            ".next/serverless/pages/about.js",
-            ".next/serverless/pages/about.original.js",
-            expect.any(Function)
-          );
-        });
-    });
-
-    it("should set compat handler files as the main handlers", () => {
-      expect.assertions(2);
-
-      fs.rename.mockImplementation((fileName, newFileName, cb) => cb(null, ""));
-      const plugin = new ServerlessNextJsPlugin({
-        service: {
-          functions: {
-            "home-page": { handler: ".next/serverless/pages/home.render" },
-            "about-page": { handler: ".next/serverless/pages/about.render" }
-          }
-        }
+      return plugin.beforeCreateDeploymentArtifacts().then(result => {
+        expect(result).toEqual("OK");
       });
-
-      return plugin
-        .swapHandlers({
-          "home-page": ".next/serverless/pages/home.compat.js",
-          "about-page": ".next/serverless/pages/about.compat.js"
-        })
-        .then(() => {
-          expect(fs.rename).toBeCalledWith(
-            ".next/serverless/pages/home.compat.js",
-            ".next/serverless/pages/home.js",
-            expect.any(Function)
-          );
-          expect(fs.rename).toBeCalledWith(
-            ".next/serverless/pages/about.compat.js",
-            ".next/serverless/pages/about.js",
-            expect.any(Function)
-          );
-        });
     });
   });
 });
