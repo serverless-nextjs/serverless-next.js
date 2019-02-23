@@ -1,9 +1,16 @@
 "use strict";
 
+const fs = require("fs");
 const path = require("path");
+const { promisify } = require("util");
 const walkDir = require("klaw");
+const merge = require("lodash.merge");
+const yaml = require("js-yaml");
+const cfSchema = require("./lib/cfSchema");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
+
+const readFileAsync = promisify(fs.readFile);
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -34,7 +41,6 @@ class ServerlessNextJsPlugin {
 
     try {
       const val = this.serverless.service.custom["serverless-nextjs"][param];
-      console.log("YAY!, ", val);
       return val !== undefined ? val : defaultPluginConfig[param];
     } catch (err) {
       return defaultPluginConfig[param];
@@ -64,16 +70,29 @@ class ServerlessNextJsPlugin {
   }
 
   beforeCreateDeploymentArtifacts() {
-    const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
+    const filename = path.resolve(__dirname, "resources.yml");
+    return readFileAsync(filename, "utf-8").then(resourcesContent => {
+      const resources = yaml.safeLoad(resourcesContent, {
+        filename,
+        schema: cfSchema
+      });
 
-    return createHttpServerLambdaCompatHandlers(functionHandlerPathMap).then(
-      compatHandlerPathMap => {
-        return swapOriginalAndCompatHandlers(
-          functionHandlerPathMap,
-          compatHandlerPathMap
-        );
-      }
-    );
+      merge(
+        this.serverless.service.provider.compiledCloudFormationTemplate,
+        resources
+      );
+
+      const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
+
+      return createHttpServerLambdaCompatHandlers(functionHandlerPathMap).then(
+        compatHandlerPathMap => {
+          return swapOriginalAndCompatHandlers(
+            functionHandlerPathMap,
+            compatHandlerPathMap
+          );
+        }
+      );
+    });
   }
 
   afterAwsDeployUploadArtifacts() {

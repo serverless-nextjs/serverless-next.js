@@ -1,8 +1,12 @@
+const fs = require("fs");
 const walkDir = require("klaw");
+const yaml = require("js-yaml");
 const ServerlessNextJsPlugin = require("../index");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
 
+jest.mock("fs");
+jest.mock("js-yaml");
 jest.mock("klaw");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
@@ -35,6 +39,47 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#beforeCreateDeploymentArtifacts", () => {
+    it("should merge S3 bucket resources for next static assets", () => {
+      expect.assertions(4);
+
+      fs.readFile.mockImplementation((path, encoding, cb) =>
+        cb(null, "Resources:...")
+      );
+      yaml.safeLoad.mockReturnValueOnce({ Resources: { foo: "bar" } });
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+
+      const plugin = new ServerlessNextJsPlugin({
+        pluginManager: {
+          run: () => {}
+        },
+        service: {
+          provider: {
+            compiledCloudFormationTemplate: {
+              Resources: {}
+            }
+          },
+          functions: {}
+        }
+      });
+
+      const cf =
+        plugin.serverless.service.provider.compiledCloudFormationTemplate;
+
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        expect(fs.readFile).toBeCalledWith(
+          expect.stringContaining("resources.yml"),
+          "utf-8",
+          expect.any(Function)
+        );
+
+        expect(yaml.safeLoad).toBeCalledWith("Resources:...", {
+          filename: expect.stringContaining("resources.yml")
+        });
+        expect(cf.Resources).toHaveProperty("foo");
+        expect(cf.Resources.foo).toEqual("bar");
+      });
+    });
+
     it("should call createHttpServerLambdaCompatHandlers with nextjs page handlers", () => {
       expect.assertions(1);
 
@@ -48,6 +93,11 @@ describe("ServerlessNextJsPlugin", () => {
           run: () => {}
         },
         service: {
+          provider: {
+            compiledCloudFormationTemplate: {
+              Resources: {}
+            }
+          },
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
             "about-page": { handler: ".next/serverless/pages/about.render" }
@@ -73,6 +123,11 @@ describe("ServerlessNextJsPlugin", () => {
           run: () => {}
         },
         service: {
+          provider: {
+            compiledCloudFormationTemplate: {
+              Resources: {}
+            }
+          },
           functions: {
             foo: { handler: "path/to/foo.bar" },
             baz: { handler: "path/to/baz.bar" }
@@ -95,6 +150,11 @@ describe("ServerlessNextJsPlugin", () => {
           run: () => {}
         },
         service: {
+          provider: {
+            compiledCloudFormationTemplate: {
+              Resources: {}
+            }
+          },
           custom: {
             "serverless-nextjs": {
               nextBuildDir: "build"
@@ -132,6 +192,11 @@ describe("ServerlessNextJsPlugin", () => {
           run: pluginManagerRunMock
         },
         service: {
+          provider: {
+            compiledCloudFormationTemplate: {
+              Resources: {}
+            }
+          },
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
             "about-page": { handler: ".next/serverless/pages/about.render" }
@@ -165,6 +230,11 @@ describe("ServerlessNextJsPlugin", () => {
           run: pluginManagerRunMock
         },
         service: {
+          provider: {
+            compiledCloudFormationTemplate: {
+              Resources: {}
+            }
+          },
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
             "about-page": { handler: ".next/serverless/pages/about.render" }
@@ -191,6 +261,11 @@ describe("ServerlessNextJsPlugin", () => {
       const plugin = new ServerlessNextJsPlugin(
         {
           service: {
+            provider: {
+              compiledCloudFormationTemplate: {
+                Resources: {}
+              }
+            },
             custom: {
               "serverless-nextjs": {
                 nextBuildDir: "build"
