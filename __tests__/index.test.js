@@ -15,13 +15,15 @@ jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
 const serverlessPluginFactory = (options = {}) => {
   const ctorOptions = {
+    getProvider: () => {
+      return { request: () => {} };
+    },
     pluginManager: {
       run: () => {}
     },
     service: {
       functions: {},
       provider: {
-        request: () => {},
         compiledCloudFormationTemplate: {}
       },
       custom: {
@@ -57,8 +59,7 @@ describe("ServerlessNextJsPlugin", () => {
       const plugin = serverlessPluginFactory();
       expect(plugin.hooks).toEqual(
         expect.objectContaining({
-          "after:aws:deploy:uploadArtifacts":
-            plugin.afterAwsDeployUploadArtifacts
+          "after:deploy:deploy": plugin.afterDeploy
         })
       );
     });
@@ -222,12 +223,14 @@ describe("ServerlessNextJsPlugin", () => {
     });
   });
 
-  describe("#afterAwsDeployUploadArtifacts", () => {
+  describe("#afterDeploy", () => {
+    let walkDirStreamMock;
+
     beforeEach(() => {
-      const walkDirStreamMock = {
+      walkDirStreamMock = {
         on: (event, cb) => {
           if (event === "data") {
-            cb({ path: ".next/static/chunks/foo.js" });
+            cb({ path: "/users/foo/prj/.next/static/chunks/foo.js" });
           } else if (event === "end") {
             cb();
           }
@@ -236,18 +239,23 @@ describe("ServerlessNextJsPlugin", () => {
         }
       };
 
-      walkDir.mockImplementationOnce(() => walkDirStreamMock);
+      fs.lstatSync.mockReturnValue({ isDirectory: () => false });
+      walkDir.mockImplementation(() => walkDirStreamMock);
     });
 
     it("should get a list of all static files to upload", () => {
+      expect.assertions(1);
+
       const plugin = serverlessPluginFactory();
 
-      return plugin.afterAwsDeployUploadArtifacts().then(() => {
+      return plugin.afterDeploy().then(() => {
         expect(walkDir).toBeCalledWith(".next/static");
       });
     });
 
     it("should get a list of all static files to upload using the custom next build dir provided", () => {
+      expect.assertions(1);
+
       const plugin = serverlessPluginFactory({
         service: {
           custom: {
@@ -258,30 +266,62 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.afterAwsDeployUploadArtifacts().then(() => {
+      return plugin.afterDeploy().then(() => {
         expect(walkDir).toBeCalledWith("build/static");
       });
     });
 
     it("should upload to S3 the next static assets", () => {
+      expect.assertions(1);
+
       fs.createReadStream.mockReturnValueOnce("FakeStream");
       walkDir.mockImplementationOnce(() => walkDirStreamMock);
 
       const providerRequest = jest.fn();
       const plugin = serverlessPluginFactory({
-        service: {
-          provider: {
-            request: providerRequest
-          }
+        getProvider: () => {
+          return { request: providerRequest };
         }
       });
 
-      return plugin.afterAwsDeployUploadArtifacts().then(() => {
+      return plugin.afterDeploy().then(() => {
         expect(providerRequest).toBeCalledWith("S3", "upload", {
+          ACL: "public-read",
           Bucket: "sls-next-app-bucket",
-          Key: "static/chunks/foo.js",
+          Key: "_next/static/chunks/foo.js",
           Body: "FakeStream"
         });
+      });
+    });
+
+    it("should not try to upload directories to S3 bucket", () => {
+      expect.assertions(1);
+
+      const walkDirStreamMock = {
+        on: (event, cb) => {
+          if (event === "data") {
+            cb({ path: "/users/foo/prj/.next/static/chunks" });
+          } else if (event === "end") {
+            cb();
+          }
+
+          return walkDirStreamMock;
+        }
+      };
+
+      walkDir.mockClear();
+      fs.lstatSync.mockReturnValue({ isDirectory: () => true });
+      walkDir.mockImplementation(() => walkDirStreamMock);
+
+      const providerRequest = jest.fn();
+      const plugin = serverlessPluginFactory({
+        getProvider: () => {
+          return { request: providerRequest };
+        }
+      });
+
+      return plugin.afterDeploy().then(() => {
+        expect(providerRequest).not.toBeCalled();
       });
     });
   });

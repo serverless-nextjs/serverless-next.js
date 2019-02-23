@@ -12,20 +12,20 @@ class ServerlessNextJsPlugin {
     this.serverless = serverless;
     this.options = options;
 
+    this.provider = this.serverless.getProvider("aws");
+
     this.commands = {};
 
     this.beforeCreateDeploymentArtifacts = this.beforeCreateDeploymentArtifacts.bind(
       this
     );
 
-    this.afterAwsDeployUploadArtifacts = this.afterAwsDeployUploadArtifacts.bind(
-      this
-    );
+    this.afterDeploy = this.afterDeploy.bind(this);
 
     this.hooks = {
       "before:package:createDeploymentArtifacts": this
         .beforeCreateDeploymentArtifacts,
-      "after:aws:deploy:uploadArtifacts": this.afterAwsDeployUploadArtifacts
+      "after:deploy:deploy": this.afterDeploy
     };
   }
 
@@ -83,21 +83,29 @@ class ServerlessNextJsPlugin {
     });
   }
 
-  afterAwsDeployUploadArtifacts() {
-    const filePaths = [];
+  afterDeploy() {
+    return new Promise(resolve => {
+      walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"))
+        .on("data", item => {
+          const itemPath = item.path;
+          const isFile = !fs.lstatSync(itemPath).isDirectory();
 
-    walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"))
-      .on("data", file => filePaths.push(file.path))
-      .on("end", () => {
-        filePaths.forEach(p => {
-          this.serverless.service.provider.request("S3", "upload", {
-            Bucket: "sls-next-app-bucket",
-            Key: p.replace(`${this.getConfigValue("nextBuildDir")}/`, ""),
-            Body: fs.createReadStream(p)
-          });
+          if (isFile) {
+            this.provider.request("S3", "upload", {
+              ACL: "public-read",
+              Bucket: "sls-next-app-bucket",
+              Key: path.join(
+                "_next",
+                itemPath.substring(itemPath.indexOf("/static"), itemPath.length)
+              ),
+              Body: fs.createReadStream(itemPath)
+            });
+          }
+        })
+        .on("end", () => {
+          resolve({});
         });
-      });
-    return Promise.resolve("OK");
+    });
   }
 }
 
