@@ -2,6 +2,7 @@
 
 const path = require("path");
 const walkDir = require("klaw");
+const fs = require("fs");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
@@ -83,7 +84,19 @@ class ServerlessNextJsPlugin {
   }
 
   afterAwsDeployUploadArtifacts() {
-    walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"));
+    const filePaths = [];
+
+    walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"))
+      .on("data", file => filePaths.push(file.path))
+      .on("end", () => {
+        filePaths.forEach(p => {
+          this.serverless.service.provider.request("S3", "upload", {
+            Bucket: "sls-next-app-bucket",
+            Key: p.replace(`${this.getConfigValue("nextBuildDir")}/`, ""),
+            Body: fs.createReadStream(p)
+          });
+        });
+      });
     return Promise.resolve("OK");
   }
 }

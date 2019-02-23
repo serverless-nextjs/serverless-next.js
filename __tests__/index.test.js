@@ -1,6 +1,6 @@
-const fs = require("fs");
 const walkDir = require("klaw");
-const yaml = require("js-yaml");
+const fs = require("fs");
+const merge = require("lodash.merge");
 const ServerlessNextJsPlugin = require("../index");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
@@ -13,6 +13,26 @@ jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
+const serverlessPluginFactory = (options = {}) => {
+  const ctorOptions = {
+    pluginManager: {
+      run: () => {}
+    },
+    service: {
+      functions: {},
+      provider: {
+        request: () => {},
+        compiledCloudFormationTemplate: {}
+      },
+      custom: {
+        "serverless-nextjs": {}
+      }
+    }
+  };
+  merge(ctorOptions, options);
+  return new ServerlessNextJsPlugin(ctorOptions, {});
+};
+
 describe("ServerlessNextJsPlugin", () => {
   beforeEach(() => {
     addS3BucketToResources.mockResolvedValue({});
@@ -24,7 +44,7 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#constructor", () => {
     it("should hook to before:package:createDeploymentArtifacts", () => {
-      const plugin = new ServerlessNextJsPlugin({}, {});
+      const plugin = serverlessPluginFactory();
       expect(plugin.hooks).toEqual(
         expect.objectContaining({
           "before:package:createDeploymentArtifacts":
@@ -34,7 +54,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it("should hook to before:package:createDeploymentArtifacts", () => {
-      const plugin = new ServerlessNextJsPlugin({}, {});
+      const plugin = serverlessPluginFactory();
       expect(plugin.hooks).toEqual(
         expect.objectContaining({
           "after:aws:deploy:uploadArtifacts":
@@ -53,17 +73,13 @@ describe("ServerlessNextJsPlugin", () => {
         Resources: { foo: "bar" }
       });
 
-      const plugin = new ServerlessNextJsPlugin({
-        pluginManager: {
-          run: () => {}
-        },
+      const plugin = serverlessPluginFactory({
         service: {
           provider: {
             compiledCloudFormationTemplate: {
               Resources: {}
             }
-          },
-          functions: {}
+          }
         }
       });
 
@@ -87,16 +103,8 @@ describe("ServerlessNextJsPlugin", () => {
         ".next/serverless/pages/home.about.render"
       ]);
 
-      const plugin = new ServerlessNextJsPlugin({
-        pluginManager: {
-          run: () => {}
-        },
+      const plugin = serverlessPluginFactory({
         service: {
-          provider: {
-            compiledCloudFormationTemplate: {
-              Resources: {}
-            }
-          },
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
             "about-page": { handler: ".next/serverless/pages/about.render" }
@@ -117,16 +125,8 @@ describe("ServerlessNextJsPlugin", () => {
 
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
-      const plugin = new ServerlessNextJsPlugin({
-        pluginManager: {
-          run: () => {}
-        },
+      const plugin = serverlessPluginFactory({
         service: {
-          provider: {
-            compiledCloudFormationTemplate: {
-              Resources: {}
-            }
-          },
           functions: {
             foo: { handler: "path/to/foo.bar" },
             baz: { handler: "path/to/baz.bar" }
@@ -144,16 +144,8 @@ describe("ServerlessNextJsPlugin", () => {
 
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
-      const plugin = new ServerlessNextJsPlugin({
-        pluginManager: {
-          run: () => {}
-        },
+      const plugin = serverlessPluginFactory({
         service: {
-          provider: {
-            compiledCloudFormationTemplate: {
-              Resources: {}
-            }
-          },
           custom: {
             "serverless-nextjs": {
               nextBuildDir: "build"
@@ -176,8 +168,6 @@ describe("ServerlessNextJsPlugin", () => {
     it("should call swapOriginalAndCompatHandlers", () => {
       expect.assertions(1);
 
-      const pluginManagerRunMock = jest.fn();
-
       const compatHandlerPathMap = {
         "home-page": ".next/serverless/pages/home.compat.js",
         "about-page": ".next/serverless/pages/about.compat.js"
@@ -186,15 +176,10 @@ describe("ServerlessNextJsPlugin", () => {
         Promise.resolve(compatHandlerPathMap)
       );
 
-      const plugin = new ServerlessNextJsPlugin({
-        pluginManager: {
-          run: pluginManagerRunMock
-        },
+      const plugin = serverlessPluginFactory({
         service: {
           provider: {
-            compiledCloudFormationTemplate: {
-              Resources: {}
-            }
+            compiledCloudFormationTemplate: {}
           },
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
@@ -203,7 +188,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.beforeCreateDeploymentArtifacts().then(result => {
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
         expect(swapOriginalAndCompatHandlers).toBeCalledWith(
           {
             "home-page": ".next/serverless/pages/home.js",
@@ -217,23 +202,13 @@ describe("ServerlessNextJsPlugin", () => {
     it("should return the result of swapOriginalAndCompatHandlers", () => {
       expect.assertions(1);
 
-      const pluginManagerRunMock = jest.fn();
-
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
       swapOriginalAndCompatHandlers.mockResolvedValueOnce(
         Promise.resolve("OK")
       );
 
-      const plugin = new ServerlessNextJsPlugin({
-        pluginManager: {
-          run: pluginManagerRunMock
-        },
+      const plugin = serverlessPluginFactory({
         service: {
-          provider: {
-            compiledCloudFormationTemplate: {
-              Resources: {}
-            }
-          },
           functions: {
             "home-page": { handler: ".next/serverless/pages/home.render" },
             "about-page": { handler: ".next/serverless/pages/about.render" }
@@ -248,8 +223,24 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#afterAwsDeployUploadArtifacts", () => {
+    beforeEach(() => {
+      const walkDirStreamMock = {
+        on: (event, cb) => {
+          if (event === "data") {
+            cb({ path: ".next/static/chunks/foo.js" });
+          } else if (event === "end") {
+            cb();
+          }
+
+          return walkDirStreamMock;
+        }
+      };
+
+      walkDir.mockImplementationOnce(() => walkDirStreamMock);
+    });
+
     it("should get a list of all static files to upload", () => {
-      const plugin = new ServerlessNextJsPlugin({}, {});
+      const plugin = serverlessPluginFactory();
 
       return plugin.afterAwsDeployUploadArtifacts().then(() => {
         expect(walkDir).toBeCalledWith(".next/static");
@@ -257,26 +248,40 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it("should get a list of all static files to upload using the custom next build dir provided", () => {
-      const plugin = new ServerlessNextJsPlugin(
-        {
-          service: {
-            provider: {
-              compiledCloudFormationTemplate: {
-                Resources: {}
-              }
-            },
-            custom: {
-              "serverless-nextjs": {
-                nextBuildDir: "build"
-              }
+      const plugin = serverlessPluginFactory({
+        service: {
+          custom: {
+            "serverless-nextjs": {
+              nextBuildDir: "build"
             }
           }
-        },
-        {}
-      );
+        }
+      });
 
       return plugin.afterAwsDeployUploadArtifacts().then(() => {
         expect(walkDir).toBeCalledWith("build/static");
+      });
+    });
+
+    it("should upload to S3 the next static assets", () => {
+      fs.createReadStream.mockReturnValueOnce("FakeStream");
+      walkDir.mockImplementationOnce(() => walkDirStreamMock);
+
+      const providerRequest = jest.fn();
+      const plugin = serverlessPluginFactory({
+        service: {
+          provider: {
+            request: providerRequest
+          }
+        }
+      });
+
+      return plugin.afterAwsDeployUploadArtifacts().then(() => {
+        expect(providerRequest).toBeCalledWith("S3", "upload", {
+          Bucket: "sls-next-app-bucket",
+          Key: "static/chunks/foo.js",
+          Body: "FakeStream"
+        });
       });
     });
   });
