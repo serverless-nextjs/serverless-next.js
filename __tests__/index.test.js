@@ -4,14 +4,20 @@ const yaml = require("js-yaml");
 const ServerlessNextJsPlugin = require("../index");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
+const addS3BucketToResources = require("../lib/addS3BucketToResources");
 
 jest.mock("fs");
 jest.mock("js-yaml");
 jest.mock("klaw");
+jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
 describe("ServerlessNextJsPlugin", () => {
+  beforeEach(() => {
+    addS3BucketToResources.mockResolvedValue({});
+  });
+
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -39,14 +45,13 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#beforeCreateDeploymentArtifacts", () => {
-    it("should merge S3 bucket resources for next static assets", () => {
-      expect.assertions(4);
+    it("should call addS3BucketToResources to get CloudFormation template with S3Bucket", () => {
+      expect.assertions(2);
 
-      fs.readFile.mockImplementation((path, encoding, cb) =>
-        cb(null, "Resources:...")
-      );
-      yaml.safeLoad.mockReturnValueOnce({ Resources: { foo: "bar" } });
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+      addS3BucketToResources.mockResolvedValueOnce({
+        Resources: { foo: "bar" }
+      });
 
       const plugin = new ServerlessNextJsPlugin({
         pluginManager: {
@@ -62,21 +67,15 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      const cf =
-        plugin.serverless.service.provider.compiledCloudFormationTemplate;
-
       return plugin.beforeCreateDeploymentArtifacts().then(() => {
-        expect(fs.readFile).toBeCalledWith(
-          expect.stringContaining("resources.yml"),
-          "utf-8",
-          expect.any(Function)
-        );
-
-        expect(yaml.safeLoad).toBeCalledWith("Resources:...", {
-          filename: expect.stringContaining("resources.yml")
+        expect(addS3BucketToResources).toBeCalledWith({ Resources: {} });
+        expect(
+          plugin.serverless.service.provider.compiledCloudFormationTemplate
+        ).toEqual({
+          Resources: {
+            foo: "bar"
+          }
         });
-        expect(cf.Resources).toHaveProperty("foo");
-        expect(cf.Resources.foo).toEqual("bar");
       });
     });
 

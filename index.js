@@ -1,16 +1,10 @@
 "use strict";
 
-const fs = require("fs");
 const path = require("path");
-const { promisify } = require("util");
 const walkDir = require("klaw");
-const merge = require("lodash.merge");
-const yaml = require("js-yaml");
-const cfSchema = require("./lib/cfSchema");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
-
-const readFileAsync = promisify(fs.readFile);
+const addS3BucketToResources = require("./lib/addS3BucketToResources");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -70,17 +64,10 @@ class ServerlessNextJsPlugin {
   }
 
   beforeCreateDeploymentArtifacts() {
-    const filename = path.resolve(__dirname, "resources.yml");
-    return readFileAsync(filename, "utf-8").then(resourcesContent => {
-      const resources = yaml.safeLoad(resourcesContent, {
-        filename,
-        schema: cfSchema
-      });
-
-      merge(
-        this.serverless.service.provider.compiledCloudFormationTemplate,
-        resources
-      );
+    return addS3BucketToResources(
+      this.serverless.service.provider.compiledCloudFormationTemplate
+    ).then(cfWithBucket => {
+      this.serverless.service.provider.compiledCloudFormationTemplate = cfWithBucket;
 
       const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
 
