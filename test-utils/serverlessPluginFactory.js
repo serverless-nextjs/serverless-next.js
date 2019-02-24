@@ -3,6 +3,9 @@ const ServerlessNextJsPlugin = require("./..");
 
 const serverlessPluginFactory = (options = {}) => {
   const ctorOptions = {
+    cli: {
+      consoleLog: () => {}
+    },
     getPlugins: () => {},
     getProvider: () => {
       return { request: () => {} };

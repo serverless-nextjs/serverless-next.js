@@ -13,6 +13,8 @@ class ServerlessNextJsPlugin {
     this.options = options;
 
     this.provider = this.serverless.getProvider("aws");
+    this.consoleLog = this.serverless.cli.consoleLog.bind(this.serverless.cli);
+    this.providerRequest = this.provider.request.bind(this.provider);
 
     this.commands = {};
 
@@ -105,7 +107,7 @@ class ServerlessNextJsPlugin {
         this.getConfigValue("nextBuildDir"),
         "static"
       ),
-      providerRequest: this.provider.request.bind(this.provider),
+      providerRequest: this.providerRequest,
       bucketName: this.getConfigValue("staticAssetsBucket")
     });
   }
@@ -117,7 +119,7 @@ class ServerlessNextJsPlugin {
 
     return displayStackOutput({
       awsInfo,
-      consoleLog: this.serverless.cli.consoleLog.bind(this.serverless.cli)
+      consoleLog: this.consoleLog
     });
   }
 }

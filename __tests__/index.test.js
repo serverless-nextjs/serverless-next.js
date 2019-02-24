@@ -282,7 +282,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       expect(displayStackOutput).toBeCalledWith({
         awsInfo,
-        consoleLog
+        consoleLog: expect.any(Function)
       });
     });
   });
