@@ -108,7 +108,8 @@ class ServerlessNextJsPlugin {
         "static"
       ),
       providerRequest: this.providerRequest,
-      bucketName: this.getConfigValue("staticAssetsBucket")
+      bucketName: this.getConfigValue("staticAssetsBucket"),
+      consoleLog: this.consoleLog
     });
   }
 

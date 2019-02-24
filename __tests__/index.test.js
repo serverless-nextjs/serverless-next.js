@@ -253,7 +253,8 @@ describe("ServerlessNextJsPlugin", () => {
         expect(uploadStaticAssetsToS3).toBeCalledWith({
           staticAssetsPath: "build/static",
           bucketName: "my-bucket",
-          providerRequest: expect.any(Function)
+          providerRequest: expect.any(Function),
+          consoleLog: expect.any(Function)
         });
       });
     });
