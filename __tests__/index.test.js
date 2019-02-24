@@ -278,19 +278,28 @@ describe("ServerlessNextJsPlugin", () => {
       walkDir.mockImplementationOnce(() => walkDirStreamMock);
 
       const providerRequest = jest.fn();
+      const bucketName = "my-bucket";
       const plugin = serverlessPluginFactory({
+        service: {
+          custom: {
+            "serverless-nextjs": {
+              staticAssetsBucket: bucketName
+            }
+          }
+        },
         getProvider: () => {
           return { request: providerRequest };
         }
       });
 
       return plugin.afterDeploy().then(() => {
-        expect(providerRequest).toBeCalledWith("S3", "upload", {
-          ACL: "public-read",
-          Bucket: "sls-next-app-bucket",
-          Key: "_next/static/chunks/foo.js",
-          Body: "FakeStream"
-        });
+        expect(providerRequest).toBeCalledWith(
+          "S3",
+          "upload",
+          expect.objectContaining({
+            Bucket: bucketName
+          })
+        );
       });
     });
 

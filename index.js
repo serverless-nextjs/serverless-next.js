@@ -93,7 +93,7 @@ class ServerlessNextJsPlugin {
           if (isFile) {
             this.provider.request("S3", "upload", {
               ACL: "public-read",
-              Bucket: "sls-next-app-bucket",
+              Bucket: this.getConfigValue("staticAssetsBucket"),
               Key: path.join(
                 "_next",
                 itemPath.substring(itemPath.indexOf("/static"), itemPath.length)
