@@ -55,24 +55,27 @@ describe("ServerlessNextJsPlugin", () => {
       );
     });
 
-    it("should hook to before:package:createDeploymentArtifacts", () => {
+    it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
       const plugin = serverlessPluginFactory();
       expect(plugin.hooks).toEqual(
         expect.objectContaining({
-          "after:deploy:deploy": plugin.afterDeploy
+          "after:aws:deploy:deploy:uploadArtifacts": plugin.afterUploadArtifacts
         })
       );
     });
   });
 
   describe("#beforeCreateDeploymentArtifacts", () => {
-    it("should call addS3BucketToResources to get CloudFormation template with S3Bucket", () => {
-      expect.assertions(2);
+    it("should update coreCloudFormationTemplate and compiledCloudFormation template with static assets bucket", () => {
+      expect.assertions(5);
 
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
-      addS3BucketToResources.mockResolvedValueOnce({
-        Resources: { foo: "bar" }
-      });
+      const cfWithBucket = {
+        Resources: {
+          NextStaticAssetsBucket: {}
+        }
+      };
+      addS3BucketToResources.mockResolvedValue(cfWithBucket);
 
       const bucketName = "My-Bucket";
       const plugin = serverlessPluginFactory({
@@ -84,23 +87,34 @@ describe("ServerlessNextJsPlugin", () => {
           },
           provider: {
             compiledCloudFormationTemplate: {
-              Resources: {}
+              Resources: { foo: "bar" }
+            },
+            coreCloudFormationTemplate: {
+              Resources: { bar: "baz" }
             }
           }
         }
       });
 
       return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        const {
+          compiledCloudFormationTemplate,
+          coreCloudFormationTemplate
+        } = plugin.serverless.service.provider;
+
+        expect(addS3BucketToResources).toBeCalledTimes(2);
         expect(addS3BucketToResources).toBeCalledWith(bucketName, {
-          Resources: {}
-        });
-        expect(
-          plugin.serverless.service.provider.compiledCloudFormationTemplate
-        ).toEqual({
           Resources: {
             foo: "bar"
           }
         });
+        expect(addS3BucketToResources).toBeCalledWith(bucketName, {
+          Resources: {
+            bar: "baz"
+          }
+        });
+        expect(compiledCloudFormationTemplate).toEqual(cfWithBucket);
+        expect(coreCloudFormationTemplate).toEqual(cfWithBucket);
       });
     });
 
@@ -231,7 +245,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
   });
 
-  describe("#afterDeploy", () => {
+  describe("#afterUploadArtifacts", () => {
     let walkDirStreamMock;
 
     beforeEach(() => {
@@ -256,7 +270,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       const plugin = serverlessPluginFactory();
 
-      return plugin.afterDeploy().then(() => {
+      return plugin.afterUploadArtifacts().then(() => {
         expect(walkDir).toBeCalledWith(".next/static");
       });
     });
@@ -274,7 +288,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.afterDeploy().then(() => {
+      return plugin.afterUploadArtifacts().then(() => {
         expect(walkDir).toBeCalledWith("build/static");
       });
     });
@@ -300,7 +314,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.afterDeploy().then(() => {
+      return plugin.afterUploadArtifacts().then(() => {
         expect(providerRequest).toBeCalledWith(
           "S3",
           "upload",
@@ -337,7 +351,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.afterDeploy().then(() => {
+      return plugin.afterUploadArtifacts().then(() => {
         expect(providerRequest).not.toBeCalled();
       });
     });

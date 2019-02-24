@@ -20,12 +20,12 @@ class ServerlessNextJsPlugin {
       this
     );
 
-    this.afterDeploy = this.afterDeploy.bind(this);
+    this.afterUploadArtifacts = this.afterUploadArtifacts.bind(this);
 
     this.hooks = {
       "before:package:createDeploymentArtifacts": this
         .beforeCreateDeploymentArtifacts,
-      "after:deploy:deploy": this.afterDeploy
+      "after:aws:deploy:deploy:uploadArtifacts": this.afterUploadArtifacts
     };
   }
 
@@ -65,26 +65,39 @@ class ServerlessNextJsPlugin {
   }
 
   beforeCreateDeploymentArtifacts() {
-    return addS3BucketToResources(
-      this.getConfigValue("staticAssetsBucket"),
-      this.serverless.service.provider.compiledCloudFormationTemplate
-    ).then(cfWithBucket => {
-      this.serverless.service.provider.compiledCloudFormationTemplate = cfWithBucket;
+    const bucketName = this.getConfigValue("staticAssetsBucket");
 
-      const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
+    const addBucketToCloudFormation = [
+      addS3BucketToResources(
+        bucketName,
+        this.serverless.service.provider.compiledCloudFormationTemplate
+      ),
+      addS3BucketToResources(
+        bucketName,
+        this.serverless.service.provider.coreCloudFormationTemplate
+      )
+    ];
 
-      return createHttpServerLambdaCompatHandlers(functionHandlerPathMap).then(
-        compatHandlerPathMap => {
+    return Promise.all(addBucketToCloudFormation).then(
+      ([compiledCfWithBucket, coreCfWithBucket]) => {
+        this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
+        this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
+
+        const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
+
+        return createHttpServerLambdaCompatHandlers(
+          functionHandlerPathMap
+        ).then(compatHandlerPathMap => {
           return swapOriginalAndCompatHandlers(
             functionHandlerPathMap,
             compatHandlerPathMap
           );
-        }
-      );
-    });
+        });
+      }
+    );
   }
 
-  afterDeploy() {
+  afterUploadArtifacts() {
     return new Promise(resolve => {
       walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"))
         .on("data", item => {
