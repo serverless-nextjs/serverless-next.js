@@ -1,7 +1,6 @@
 "use strict";
 
 const path = require("path");
-const chalk = require("chalk");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
