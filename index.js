@@ -66,6 +66,7 @@ class ServerlessNextJsPlugin {
 
   beforeCreateDeploymentArtifacts() {
     return addS3BucketToResources(
+      this.getConfigValue("staticAssetsBucket"),
       this.serverless.service.provider.compiledCloudFormationTemplate
     ).then(cfWithBucket => {
       this.serverless.service.provider.compiledCloudFormationTemplate = cfWithBucket;

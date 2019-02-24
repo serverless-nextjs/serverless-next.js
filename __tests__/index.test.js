@@ -74,8 +74,14 @@ describe("ServerlessNextJsPlugin", () => {
         Resources: { foo: "bar" }
       });
 
+      const bucketName = "My-Bucket";
       const plugin = serverlessPluginFactory({
         service: {
+          custom: {
+            "serverless-nextjs": {
+              staticAssetsBucket: bucketName
+            }
+          },
           provider: {
             compiledCloudFormationTemplate: {
               Resources: {}
@@ -85,7 +91,9 @@ describe("ServerlessNextJsPlugin", () => {
       });
 
       return plugin.beforeCreateDeploymentArtifacts().then(() => {
-        expect(addS3BucketToResources).toBeCalledWith({ Resources: {} });
+        expect(addS3BucketToResources).toBeCalledWith(bucketName, {
+          Resources: {}
+        });
         expect(
           plugin.serverless.service.provider.compiledCloudFormationTemplate
         ).toEqual({

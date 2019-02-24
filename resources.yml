@@ -12,7 +12,7 @@ Resources:
             ExposedHeaders: [Date]
             Id: NextStaticAssetsS3BucketId1
             MaxAge: "3600"
-      BucketName: sls-next-app-bucket
+      BucketName: TO_BE_REPLACED
       WebsiteConfiguration:
         IndexDocument: index.html
         ErrorDocument: error.html
