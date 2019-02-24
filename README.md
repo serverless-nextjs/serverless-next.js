@@ -64,5 +64,5 @@ module.exports = {
 
 ## TODO
 
-- [ ] Display progress when uploading assets to S3
-- [ ] Add working example
+- [ ] Add full working example
+- [ ] Maybe add support to pick configuration from next.config.js directly
