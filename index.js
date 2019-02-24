@@ -1,12 +1,11 @@
 "use strict";
 
 const path = require("path");
-const walkDir = require("klaw");
-const fs = require("fs");
 const chalk = require("chalk");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
+const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -101,27 +100,13 @@ class ServerlessNextJsPlugin {
   }
 
   afterUploadArtifacts() {
-    return new Promise(resolve => {
-      walkDir(path.join(this.getConfigValue("nextBuildDir"), "static"))
-        .on("data", item => {
-          const itemPath = item.path;
-          const isFile = !fs.lstatSync(itemPath).isDirectory();
-
-          if (isFile) {
-            this.provider.request("S3", "upload", {
-              ACL: "public-read",
-              Bucket: this.getConfigValue("staticAssetsBucket"),
-              Key: path.join(
-                "_next",
-                itemPath.substring(itemPath.indexOf("/static"), itemPath.length)
-              ),
-              Body: fs.createReadStream(itemPath)
-            });
-          }
-        })
-        .on("end", () => {
-          resolve({});
-        });
+    return uploadStaticAssetsToS3({
+      staticAssetsPath: path.join(
+        this.getConfigValue("nextBuildDir"),
+        "static"
+      ),
+      providerRequest: this.provider.request,
+      bucketName: this.getConfigValue("staticAssetsBucket")
     });
   }
 

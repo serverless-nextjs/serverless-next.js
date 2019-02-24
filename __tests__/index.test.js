@@ -1,40 +1,14 @@
-const walkDir = require("klaw");
-const fs = require("fs");
-const merge = require("lodash.merge");
-const ServerlessNextJsPlugin = require("../index");
+const serverlessPluginFactory = require("../test-utils/serverlessPluginFactory");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("../lib/addS3BucketToResources");
+const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 
-jest.mock("fs");
 jest.mock("js-yaml");
-jest.mock("klaw");
 jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
-
-const serverlessPluginFactory = (options = {}) => {
-  const ctorOptions = {
-    getPlugins: () => {},
-    getProvider: () => {
-      return { request: () => {} };
-    },
-    pluginManager: {
-      run: () => {}
-    },
-    service: {
-      functions: {},
-      provider: {
-        compiledCloudFormationTemplate: {}
-      },
-      custom: {
-        "serverless-nextjs": {}
-      }
-    }
-  };
-  merge(ctorOptions, options);
-  return new ServerlessNextJsPlugin(ctorOptions, {});
-};
+jest.mock("../lib/uploadStaticAssetsToS3");
 
 describe("ServerlessNextJsPlugin", () => {
   beforeEach(() => {
@@ -256,113 +230,29 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#afterUploadArtifacts", () => {
-    let walkDirStreamMock;
-
-    beforeEach(() => {
-      walkDirStreamMock = {
-        on: (event, cb) => {
-          if (event === "data") {
-            cb({ path: "/users/foo/prj/.next/static/chunks/foo.js" });
-          } else if (event === "end") {
-            cb();
-          }
-
-          return walkDirStreamMock;
-        }
-      };
-
-      fs.lstatSync.mockReturnValue({ isDirectory: () => false });
-      walkDir.mockImplementation(() => walkDirStreamMock);
-    });
-
-    it("should get a list of all static files to upload", () => {
-      expect.assertions(1);
-
-      const plugin = serverlessPluginFactory();
-
-      return plugin.afterUploadArtifacts().then(() => {
-        expect(walkDir).toBeCalledWith(".next/static");
-      });
-    });
-
-    it("should get a list of all static files to upload using the custom next build dir provided", () => {
-      expect.assertions(1);
+    it("should call uploadStaticAssetsToS3 with bucketName and next static dir", () => {
+      uploadStaticAssetsToS3.mockResolvedValueOnce("Assets Uploaded");
 
       const plugin = serverlessPluginFactory({
-        service: {
-          custom: {
-            "serverless-nextjs": {
-              nextBuildDir: "build"
-            }
-          }
-        }
-      });
-
-      return plugin.afterUploadArtifacts().then(() => {
-        expect(walkDir).toBeCalledWith("build/static");
-      });
-    });
-
-    it("should upload to S3 the next static assets", () => {
-      expect.assertions(1);
-
-      fs.createReadStream.mockReturnValueOnce("FakeStream");
-      walkDir.mockImplementationOnce(() => walkDirStreamMock);
-
-      const providerRequest = jest.fn();
-      const bucketName = "my-bucket";
-      const plugin = serverlessPluginFactory({
-        service: {
-          custom: {
-            "serverless-nextjs": {
-              staticAssetsBucket: bucketName
-            }
-          }
+        provider: {
+          request: () => {}
         },
-        getProvider: () => {
-          return { request: providerRequest };
-        }
-      });
-
-      return plugin.afterUploadArtifacts().then(() => {
-        expect(providerRequest).toBeCalledWith(
-          "S3",
-          "upload",
-          expect.objectContaining({
-            Bucket: bucketName
-          })
-        );
-      });
-    });
-
-    it("should not try to upload directories to S3 bucket", () => {
-      expect.assertions(1);
-
-      const walkDirStreamMock = {
-        on: (event, cb) => {
-          if (event === "data") {
-            cb({ path: "/users/foo/prj/.next/static/chunks" });
-          } else if (event === "end") {
-            cb();
+        service: {
+          custom: {
+            "serverless-nextjs": {
+              nextBuildDir: "build",
+              staticAssetsBucket: "my-bucket"
+            }
           }
-
-          return walkDirStreamMock;
-        }
-      };
-
-      walkDir.mockClear();
-      fs.lstatSync.mockReturnValue({ isDirectory: () => true });
-      walkDir.mockImplementation(() => walkDirStreamMock);
-
-      const providerRequest = jest.fn();
-      const plugin = serverlessPluginFactory({
-        getProvider: () => {
-          return { request: providerRequest };
         }
       });
 
       return plugin.afterUploadArtifacts().then(() => {
-        expect(providerRequest).not.toBeCalled();
+        expect(uploadStaticAssetsToS3).toBeCalledWith({
+          staticAssetsPath: "build/static",
+          bucketName: "my-bucket",
+          providerRequest: expect.any(Function)
+        });
       });
     });
   });
