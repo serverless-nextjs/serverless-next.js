@@ -6,6 +6,7 @@ const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLamb
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
+const displayStackOutput = require("./lib/displayStackOutput");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -115,32 +116,10 @@ class ServerlessNextJsPlugin {
       return plugin.constructor.name === "AwsInfo";
     });
 
-    const outputs = awsInfo.gatheredData.outputs;
-    const [
-      staticAssetsBucketSecureURL,
-      staticAssetsBucketWebsiteURL
-    ] = outputs.filter(output => {
-      return (
-        output.OutputKey === "NextStaticAssetsS3BucketSecureURL" ||
-        output.OutputKey === "NextStaticAssetsS3BucketWebsiteURL"
-      );
+    return displayStackOutput({
+      awsInfo,
+      consoleLog: this.serverless.cli.consoleLog
     });
-
-    this.serverless.cli.consoleLog(
-      chalk.yellow("Nextjs static assets bucket details:")
-    );
-
-    this.serverless.cli.consoleLog(
-      `${chalk.yellow("Bucket secure URL:")} ${
-        staticAssetsBucketSecureURL.OutputValue
-      }`
-    );
-
-    this.serverless.cli.consoleLog(
-      `${chalk.yellow("Bucket website URL:")} ${
-        staticAssetsBucketWebsiteURL.OutputValue
-      }`
-    );
   }
 }
 
