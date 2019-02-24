@@ -64,6 +64,5 @@ module.exports = {
 
 ## TODO
 
-- [ ] Add static assets S3 bucket URL to serverless cli output
 - [ ] Display progress when uploading assets to S3
 - [ ] Add working example

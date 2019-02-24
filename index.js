@@ -3,6 +3,7 @@
 const path = require("path");
 const walkDir = require("klaw");
 const fs = require("fs");
+const chalk = require("chalk");
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
@@ -21,11 +22,13 @@ class ServerlessNextJsPlugin {
     );
 
     this.afterUploadArtifacts = this.afterUploadArtifacts.bind(this);
+    this.afterDisplayStackOutputs = this.afterDisplayStackOutputs.bind(this);
 
     this.hooks = {
       "before:package:createDeploymentArtifacts": this
         .beforeCreateDeploymentArtifacts,
-      "after:aws:deploy:deploy:uploadArtifacts": this.afterUploadArtifacts
+      "after:aws:deploy:deploy:uploadArtifacts": this.afterUploadArtifacts,
+      "after:aws:info:displayStackOutputs": this.afterDisplayStackOutputs
     };
   }
 
@@ -120,6 +123,39 @@ class ServerlessNextJsPlugin {
           resolve({});
         });
     });
+  }
+
+  afterDisplayStackOutputs() {
+    const awsInfo = this.serverless.pluginManager.getPlugins().find(plugin => {
+      return plugin.constructor.name === "AwsInfo";
+    });
+
+    const outputs = awsInfo.gatheredData.outputs;
+    const [
+      staticAssetsBucketSecureURL,
+      staticAssetsBucketWebsiteURL
+    ] = outputs.filter(output => {
+      return (
+        output.OutputKey === "NextStaticAssetsS3BucketSecureURL" ||
+        output.OutputKey === "NextStaticAssetsS3BucketWebsiteURL"
+      );
+    });
+
+    this.serverless.cli.consoleLog(
+      chalk.yellow("Nextjs static assets bucket details:")
+    );
+
+    this.serverless.cli.consoleLog(
+      `${chalk.yellow("Bucket secure URL:")} ${
+        staticAssetsBucketSecureURL.OutputValue
+      }`
+    );
+
+    this.serverless.cli.consoleLog(
+      `${chalk.yellow("Bucket website URL:")} ${
+        staticAssetsBucketWebsiteURL.OutputValue
+      }`
+    );
   }
 }
 

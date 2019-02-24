@@ -15,6 +15,7 @@ jest.mock("../lib/createHttpServerLambdaCompatHandlers");
 
 const serverlessPluginFactory = (options = {}) => {
   const ctorOptions = {
+    getPlugins: () => {},
     getProvider: () => {
       return { request: () => {} };
     },
@@ -60,6 +61,15 @@ describe("ServerlessNextJsPlugin", () => {
       expect(plugin.hooks).toEqual(
         expect.objectContaining({
           "after:aws:deploy:deploy:uploadArtifacts": plugin.afterUploadArtifacts
+        })
+      );
+    });
+
+    it("should hook to after:aws:info:displayStackOutputs", () => {
+      const plugin = serverlessPluginFactory();
+      expect(plugin.hooks).toEqual(
+        expect.objectContaining({
+          "after:aws:info:displayStackOutputs": plugin.afterDisplayStackOutputs
         })
       );
     });
@@ -354,6 +364,58 @@ describe("ServerlessNextJsPlugin", () => {
       return plugin.afterUploadArtifacts().then(() => {
         expect(providerRequest).not.toBeCalled();
       });
+    });
+  });
+
+  describe("#afterDisplayStackOutputs", () => {
+    it("should print S3 Bucket Secure URL", () => {
+      const consoleLog = jest.fn();
+      const getPlugins = jest.fn().mockReturnValueOnce([
+        {
+          constructor: {
+            name: "AwsInfo"
+          },
+          gatheredData: {
+            outputs: [
+              {
+                OutputKey: "foo"
+              },
+              {
+                OutputKey: "NextStaticAssetsS3BucketSecureURL",
+                OutputValue: "https://my-bucket.s3.amazonaws.com"
+              },
+              {
+                OutputKey: "NextStaticAssetsS3BucketWebsiteURL",
+                OutputValue:
+                  "http://my-sls-next-app.s3-website-us-east-1.amazonaws.com"
+              }
+            ]
+          }
+        }
+      ]);
+
+      const plugin = serverlessPluginFactory({
+        cli: {
+          consoleLog
+        },
+        pluginManager: {
+          getPlugins
+        }
+      });
+
+      plugin.afterDisplayStackOutputs();
+
+      expect(consoleLog).toBeCalledWith(
+        expect.stringContaining("Nextjs static assets bucket details:")
+      );
+      expect(consoleLog).toBeCalledWith(
+        expect.stringContaining("https://my-bucket.s3.amazonaws.com")
+      );
+      expect(consoleLog).toBeCalledWith(
+        expect.stringContaining(
+          "http://my-sls-next-app.s3-website-us-east-1.amazonaws.com"
+        )
+      );
     });
   });
 });
