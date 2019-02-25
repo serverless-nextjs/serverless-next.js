@@ -1,7 +1,7 @@
 {
   "name": "serverless-nextjs-plugin",
   "version": "1.0.0",
-  "description": "A serverless plugin for nextjs 8 lambda support",
+  "description": "A serverless plugin for nextjs 8 serverless target",
   "main": "index.js",
   "scripts": {
     "test": "jest"
@@ -10,6 +10,10 @@
   "license": "ISC",
   "devDependencies": {
     "jest": "^24.1.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
   },
   "dependencies": {
     "aws-lambda-create-request-response": "^0.1.13",
