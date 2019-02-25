@@ -1,0 +1,34 @@
+{
+  "name": "next-serverless-app",
+  "version": "1.0.0",
+  "description": "Example nextjs serverless app using the serverless-nextjs-plugin",
+  "main": "index.js",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+  },
+  "keywords": [
+    "serverless",
+    "nextjs",
+    "lambda"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "dependencies": {
+    "@zeit/next-css": "^1.0.1",
+    "aws-lambda-create-request-response": "^0.1.13",
+    "cowsay-browser": "^1.1.8",
+    "next": "^8.0.3",
+    "react": "^16.8.3",
+    "react-dom": "^16.8.3"
+  }
+}
