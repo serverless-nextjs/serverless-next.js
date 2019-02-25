@@ -21,15 +21,19 @@
     "js-yaml": "^3.12.1",
     "klaw": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
-    "lodash.merge": "^4.6.1"
+    "lodash.merge": "^4.6.1",
+    "mime": "^2.4.0"
   },
   "jest": {
     "collectCoverage": true,
-    "coveragePathIgnorePatterns": [
-      "node_modules",
-      "data",
-      "test-utils"
+    "collectCoverageFrom": [
+      "index.js",
+      "lib/**/*.js"
     ],
-    "coverageDirectory": "<rootDir>/coverage/"
+    "coverageDirectory": "<rootDir>/coverage/",
+    "testPathIgnorePatterns": [
+      "<rootDir>/examples/",
+      "<rootDir>/node_modules/"
+    ]
   }
 }
