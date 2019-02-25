@@ -32,6 +32,14 @@ module.exports.render = (event, context, callback) => {
 In your `serverless.yml` configure the plugin:
 
 ```
+functions:
+  home-page:
+    handler: build/serverless/pages/index.js
+    events: ...
+  about-page:
+    handler: build/serverless/pages/about.js
+    events: ...
+
 custom:
   serverless-nextjs:
     nextBuildDir: build
