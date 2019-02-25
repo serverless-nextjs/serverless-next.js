@@ -1,5 +1,7 @@
 # Serverless Nextjs Plugin
 
+[![Build Status](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
+
 A serverless custom plugin to deploy nextjs serverless pages.
 
 The plugin targets Next-8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs
