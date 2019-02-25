@@ -72,7 +72,12 @@ module.exports = {
 };
 ```
 
-## TODO
+## Roadmap
 
-- [ ] Add full working example
-- [ ] Maybe add support to pick configuration from next.config.js directly
+- Better integration with nextjs:
+  - Potentially giving the plugin a path to the next app and let it figure out the rest, by looking at the next.config.js
+  - Page serverless functions created at build time for the user, so they don't have to be manually specified in the `serverless.yml`
+
+## Note
+
+This is still a WIP so is most likely there will be breaking changes. PRs are welcome!
