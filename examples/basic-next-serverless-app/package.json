@@ -25,7 +25,6 @@
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
-    "aws-lambda-create-request-response": "^0.1.13",
     "cowsay-browser": "^1.1.8",
     "next": "^8.0.3",
     "react": "^16.8.3",

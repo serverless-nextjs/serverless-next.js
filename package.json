@@ -16,7 +16,6 @@
     "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
   },
   "dependencies": {
-    "aws-lambda-create-request-response": "^0.1.13",
     "chalk": "^2.4.2",
     "js-yaml": "^3.12.1",
     "klaw": "^3.0.0",
