@@ -3,3 +3,4 @@ node_modules
 /coverage/
 examples/basic-next-serverless-app/build
 .serverless
+.next

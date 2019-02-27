@@ -14,18 +14,13 @@ plugins:
 
 custom:
   serverless-nextjs:
-    # NOTE: This has to match the `distDir` in the next.config.js
-    nextBuildDir: build
-    # NOTE: Bucket names are globally unique so replace with your own
-    # Also, in the next.config.js set `assetPrefix` to https://s3.amazonaws.com/{yourBucketName}
-    staticAssetsBucket: my-serverless-app-assets
+    nextConfigDir: ./
 
 package:
-  # exclude everything, except for the page bundles and aws-lambda-create-request-response
+  # exclude everything, except for the page bundles
   exclude:
     - ./**/*
   include:
-    - node_modules/aws-lambda-create-request-response/**
     # important to use {handler}.* as there will be 2 files per function handler
     - build/serverless/pages/home.*
     - build/serverless/pages/about.*

@@ -1,11 +1,13 @@
 "use strict";
 
 const path = require("path");
+const nextBuild = require("next/dist/build").default;
 const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
+const parseNextConfiguration = require("./lib/parseNextConfiguration");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -33,7 +35,7 @@ class ServerlessNextJsPlugin {
     };
   }
 
-  getConfigValue(param) {
+  getPluginConfigValue(param) {
     const defaultPluginConfig = {
       nextBuildDir: ".next"
     };
@@ -46,13 +48,17 @@ class ServerlessNextJsPlugin {
     }
   }
 
-  getNextFunctionHandlerPathsMap() {
+  getConfiguration() {
+    return parseNextConfiguration(this.getPluginConfigValue("nextConfigDir"));
+  }
+
+  getNextFunctionHandlerPathsMap(nextBuildDir) {
     const functions = this.serverless.service.functions;
 
     const functionJsHandlerMap = Object.keys(functions)
       .filter(f =>
         functions[f].handler.includes(
-          path.join(this.getConfigValue("nextBuildDir"), "serverless/pages")
+          path.join(nextBuildDir, "serverless/pages")
         )
       )
       .reduce((acc, f) => {
@@ -68,49 +74,59 @@ class ServerlessNextJsPlugin {
     return functionJsHandlerMap;
   }
 
-  beforeCreateDeploymentArtifacts() {
-    const bucketName = this.getConfigValue("staticAssetsBucket");
-
-    const addBucketToCloudFormation = [
+  getCFTemplatesWithBucket(staticAssetsBucket) {
+    return Promise.all([
       addS3BucketToResources(
-        bucketName,
+        staticAssetsBucket,
         this.serverless.service.provider.compiledCloudFormationTemplate
       ),
       addS3BucketToResources(
-        bucketName,
+        staticAssetsBucket,
         this.serverless.service.provider.coreCloudFormationTemplate
       )
-    ];
+    ]);
+  }
 
-    return Promise.all(addBucketToCloudFormation).then(
-      ([compiledCfWithBucket, coreCfWithBucket]) => {
-        this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
-        this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
+  beforeCreateDeploymentArtifacts() {
+    const nextConfigDir = this.getPluginConfigValue("nextConfigDir");
 
-        const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap();
+    return nextBuild(path.resolve(nextConfigDir)).then(() => {
+      return this.getConfiguration().then(
+        ({ staticAssetsBucket, nextBuildDir }) => {
+          return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
+            ([compiledCfWithBucket, coreCfWithBucket]) => {
+              this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
+              this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
 
-        return createHttpServerLambdaCompatHandlers(
-          functionHandlerPathMap
-        ).then(compatHandlerPathMap => {
-          return swapOriginalAndCompatHandlers(
-            functionHandlerPathMap,
-            compatHandlerPathMap
+              const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap(
+                nextBuildDir
+              );
+              return createHttpServerLambdaCompatHandlers(
+                functionHandlerPathMap
+              ).then(compatHandlerPathMap => {
+                return swapOriginalAndCompatHandlers(
+                  functionHandlerPathMap,
+                  compatHandlerPathMap
+                );
+              });
+            }
           );
-        });
-      }
-    );
+        }
+      );
+    });
   }
 
   afterUploadArtifacts() {
-    return uploadStaticAssetsToS3({
-      staticAssetsPath: path.join(
-        this.getConfigValue("nextBuildDir"),
-        "static"
-      ),
-      providerRequest: this.providerRequest,
-      bucketName: this.getConfigValue("staticAssetsBucket"),
-      consoleLog: this.consoleLog
-    });
+    return this.getConfiguration().then(
+      ({ nextBuildDir, staticAssetsBucket }) => {
+        return uploadStaticAssetsToS3({
+          staticAssetsPath: path.join(nextBuildDir, "static"),
+          providerRequest: this.providerRequest,
+          bucketName: staticAssetsBucket,
+          consoleLog: this.consoleLog
+        });
+      }
+    );
   }
 
   afterDisplayStackOutputs() {

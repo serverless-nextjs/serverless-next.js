@@ -1,11 +1,15 @@
+const nextBuild = require("next/dist/build").default;
 const serverlessPluginFactory = require("../test-utils/serverlessPluginFactory");
 const createHttpServerLambdaCompatHandlers = require("../lib/createHttpServerLambdaCompatHandlers");
 const swapOriginalAndCompatHandlers = require("../lib/swapOriginalAndCompatHandlers");
 const addS3BucketToResources = require("../lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("../lib/displayStackOutput");
+const parseNextConfiguration = require("../lib/parseNextConfiguration");
 
+jest.mock("next/dist/build");
 jest.mock("js-yaml");
+jest.mock("../lib/parseNextConfiguration");
 jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
 jest.mock("../lib/createHttpServerLambdaCompatHandlers");
@@ -14,6 +18,7 @@ jest.mock("../lib/displayStackOutput");
 
 describe("ServerlessNextJsPlugin", () => {
   beforeEach(() => {
+    nextBuild.mockResolvedValue({});
     addS3BucketToResources.mockResolvedValue({});
   });
 
@@ -52,6 +57,31 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#beforeCreateDeploymentArtifacts", () => {
+    beforeEach(() => {
+      parseNextConfiguration.mockResolvedValueOnce({
+        staticAssetsBucket: "my-bucket",
+        nextBuildDir: "build"
+      });
+    });
+
+    it("should call nextBuild using the dir passed via options", () => {
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+
+      const plugin = serverlessPluginFactory({
+        service: {
+          custom: {
+            "serverless-nextjs": {
+              nextConfigDir: "/path/to/next"
+            }
+          }
+        }
+      });
+
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        expect(nextBuild).toBeCalledWith("/path/to/next");
+      });
+    });
+
     it("should update coreCloudFormationTemplate and compiledCloudFormation template with static assets bucket", () => {
       expect.assertions(5);
 
@@ -61,16 +91,11 @@ describe("ServerlessNextJsPlugin", () => {
           NextStaticAssetsBucket: {}
         }
       };
+
       addS3BucketToResources.mockResolvedValue(cfWithBucket);
 
-      const bucketName = "My-Bucket";
       const plugin = serverlessPluginFactory({
         service: {
-          custom: {
-            "serverless-nextjs": {
-              staticAssetsBucket: bucketName
-            }
-          },
           provider: {
             compiledCloudFormationTemplate: {
               Resources: { foo: "bar" }
@@ -89,43 +114,18 @@ describe("ServerlessNextJsPlugin", () => {
         } = plugin.serverless.service.provider;
 
         expect(addS3BucketToResources).toBeCalledTimes(2);
-        expect(addS3BucketToResources).toBeCalledWith(bucketName, {
+        expect(addS3BucketToResources).toBeCalledWith("my-bucket", {
           Resources: {
             foo: "bar"
           }
         });
-        expect(addS3BucketToResources).toBeCalledWith(bucketName, {
+        expect(addS3BucketToResources).toBeCalledWith("my-bucket", {
           Resources: {
             bar: "baz"
           }
         });
         expect(compiledCloudFormationTemplate).toEqual(cfWithBucket);
         expect(coreCloudFormationTemplate).toEqual(cfWithBucket);
-      });
-    });
-
-    it("should call createHttpServerLambdaCompatHandlers with nextjs page handlers", () => {
-      expect.assertions(1);
-
-      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([
-        ".next/serverless/pages/home.compat.render",
-        ".next/serverless/pages/home.about.render"
-      ]);
-
-      const plugin = serverlessPluginFactory({
-        service: {
-          functions: {
-            "home-page": { handler: ".next/serverless/pages/home.render" },
-            "about-page": { handler: ".next/serverless/pages/about.render" }
-          }
-        }
-      });
-
-      return plugin.beforeCreateDeploymentArtifacts().then(() => {
-        expect(createHttpServerLambdaCompatHandlers).toBeCalledWith({
-          "home-page": ".next/serverless/pages/home.js",
-          "about-page": ".next/serverless/pages/about.js"
-        });
       });
     });
 
@@ -148,18 +148,13 @@ describe("ServerlessNextJsPlugin", () => {
       });
     });
 
-    it("should call createHttpServerLambdaCompatHandlers with non nextjs page handlers using the next custom build dir provided", () => {
+    it("should call createHttpServerLambdaCompatHandlers with page handlers using the next build dir from configuration", () => {
       expect.assertions(1);
 
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
       const plugin = serverlessPluginFactory({
         service: {
-          custom: {
-            "serverless-nextjs": {
-              nextBuildDir: "build"
-            }
-          },
           functions: {
             foo: { handler: "build/serverless/pages/foo.render" },
             baz: { handler: "path/to/baz.render" }
@@ -178,8 +173,8 @@ describe("ServerlessNextJsPlugin", () => {
       expect.assertions(1);
 
       const compatHandlerPathMap = {
-        "home-page": ".next/serverless/pages/home.compat.js",
-        "about-page": ".next/serverless/pages/about.compat.js"
+        "home-page": "build/serverless/pages/home.compat.js",
+        "about-page": "build/serverless/pages/about.compat.js"
       };
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce(
         Promise.resolve(compatHandlerPathMap)
@@ -191,8 +186,8 @@ describe("ServerlessNextJsPlugin", () => {
             compiledCloudFormationTemplate: {}
           },
           functions: {
-            "home-page": { handler: ".next/serverless/pages/home.render" },
-            "about-page": { handler: ".next/serverless/pages/about.render" }
+            "home-page": { handler: "build/serverless/pages/home.render" },
+            "about-page": { handler: "build/serverless/pages/about.render" }
           }
         }
       });
@@ -200,8 +195,8 @@ describe("ServerlessNextJsPlugin", () => {
       return plugin.beforeCreateDeploymentArtifacts().then(() => {
         expect(swapOriginalAndCompatHandlers).toBeCalledWith(
           {
-            "home-page": ".next/serverless/pages/home.js",
-            "about-page": ".next/serverless/pages/about.js"
+            "home-page": "build/serverless/pages/home.js",
+            "about-page": "build/serverless/pages/about.js"
           },
           compatHandlerPathMap
         );
@@ -219,8 +214,8 @@ describe("ServerlessNextJsPlugin", () => {
       const plugin = serverlessPluginFactory({
         service: {
           functions: {
-            "home-page": { handler: ".next/serverless/pages/home.render" },
-            "about-page": { handler: ".next/serverless/pages/about.render" }
+            "home-page": { handler: "build/serverless/pages/home.render" },
+            "about-page": { handler: "build/serverless/pages/about.render" }
           }
         }
       });
@@ -232,22 +227,17 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#afterUploadArtifacts", () => {
+    beforeEach(() => {
+      parseNextConfiguration.mockResolvedValueOnce({
+        nextBuildDir: "build",
+        staticAssetsBucket: "my-bucket"
+      });
+    });
+
     it("should call uploadStaticAssetsToS3 with bucketName and next static dir", () => {
       uploadStaticAssetsToS3.mockResolvedValueOnce("Assets Uploaded");
 
-      const plugin = serverlessPluginFactory({
-        provider: {
-          request: () => {}
-        },
-        service: {
-          custom: {
-            "serverless-nextjs": {
-              nextBuildDir: "build",
-              staticAssetsBucket: "my-bucket"
-            }
-          }
-        }
-      });
+      const plugin = serverlessPluginFactory();
 
       return plugin.afterUploadArtifacts().then(() => {
         expect(uploadStaticAssetsToS3).toBeCalledWith({

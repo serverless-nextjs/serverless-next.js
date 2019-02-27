@@ -10,20 +10,9 @@
 
 `npm install`
 
-#### Use your own bucket name for hosting the static assets:
-
-Replace `staticAssetsBucket` bucket name with your own:
-
-_serverless.yml_
-
-```
-custom:
-  serverless-nextjs:
-    ...
-    staticAssetsBucket: BUCKET_NAME
-```
-
 Configure nextjs to use a CDN to host the static assets in the bucket:
+
+Replace _BUCKET_NAME_ with your own name. Don't manually create the bucket, the plugin will do that for you.
 
 _next.config.js_
 
@@ -34,8 +23,8 @@ module.exports = {
 };
 ```
 
-#### It's good to deploy now, just build the next app and deploy!
+#### It's good to deploy now!
 
-`npm run build && sls deploy`
+`serverless deploy`
 
 After deployment is finished, go to the API GW provisioned by serverless and you should be able to hit `dev/home` and `dev/about` pages.

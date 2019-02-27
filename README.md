@@ -4,80 +4,120 @@
 
 A serverless custom plugin to deploy nextjs serverless pages.
 
-The plugin targets Next-8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs
+The plugin targets Next-8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs.
 
 ## Motivation
 
-Although next-8 [official support](https://nextjs.org/blog/next-8/#serverless-nextjs) for serverless is great, it doesn't work out of the box with AWS Lambdas, instead, next provides a low level API which should be enough to use to support different serverless platforms.
+Next 8 released [official support](https://nextjs.org/blog/next-8/#serverless-nextjs) for serverless! It doesn't work out of the box with AWS Lambdas, instead, next provides a low level API which this plugin uses to deploy the serverless pages.
 
 Nextjs serverless page handler signature:
 
-`export function render(req: http.IncomingMessage, res: http.ServerResponse) => void`
+`exports.render = function(req, res) => {...}`
 
 AWS Lambda handler:
 
-`exports.myHandler = function(event, context, callback) {...}`
+`exports.handler = function(event, context, callback) {...}`
 
-This plugin adds a compat layer between the nextjs page and aws lambda at build time:
+The plugin adds a compat layer between the nextjs page bundles and AWS Lambda at build time:
 
 ```
-const page = require(".next/serverless/pages/index.js");
+const page = require(".next/serverless/pages/somePage.js");
 
 module.exports.render = (event, context, callback) => {
-  const { req, res } = map(event, callback);
+  const { req, res } = compatLayer(event, callback);
   page.render(req, res);
 };
 ```
 
 ## Getting started
 
-In your `serverless.yml` configure the plugin:
+Let's first configure the `serverless.yml` file:
+
+_Plugin configuration_
+
+The plugin only needs to know where your next.config.js file is located. Note it expects the directory and not the actual file path. E.g. `./myApp` where inside myApp there is `next.config.js`.
+
+```
+custom:
+  serverless-nextjs:
+    nextConfigDir: '/dir/to/my/nextApp'
+```
+
+_Page functions_
+
+Configure the functions for the next serverless pages as you would do for any other serverless function.
 
 ```
 functions:
   home-page:
-    handler: build/serverless/pages/index.js
-    events: ...
+    handler: build/serverless/pages/home.render
+    events:
+      - http:
+          path: home
+          method: get
   about-page:
-    handler: build/serverless/pages/about.js
-    events: ...
+    handler: build/serverless/pages/about.render
+    events:
+      - http:
+          path: about
+          method: get
 
-custom:
-  serverless-nextjs:
-    nextBuildDir: build
-    staticAssetsBucket: my-bucket-name
+package:
+  # exclude everything, except for the page bundles
+  exclude:
+    - ./**/*
+  include:
+    # important to use {handler}.* as there will be 2 files per function handler
+    - build/serverless/pages/home.*
+    - build/serverless/pages/about.*
 ```
 
-- `nextBuildDir` maps to the `distDir` in your `next.config.js`. Is recommended to use a dir like build to avoid using dot directories (.next) in the Lambda as it may cause problems.
-- `staticAssetsBucket` bucket name to deploy the next application static assets. Maps to `assetPrefix` in your `next.config.js`.
-
-E.g.
-
-_serverless.yml_
-
-```
-custom:
-  serverless-nextjs:
-    nextBuildDir: build
-    staticAssetsBucket: my-bucket
-```
+Since the next page bundles are self contained, you can exclude everything. However, make sure when you are including the page bundles, to use the pattern _build/serverless/pages/{pageName}.\*_. This makes sure the compat files created by the plugin are also included in the deploy artifact.
 
 _next.config.js_
+
+In your `next.config.js` make sure the configuration is set like:
 
 ```
 module.exports = {
   target: "serverless",
   distDir: "build",
-  assetPrefix: "https://s3.amazonaws.com/my-bucket"
-};
+  assetPrefix: "https://s3.amazonaws.com/your-bucket-name"
+}
 ```
+
+`target: serverless`:
+
+This is a requirement for the plugin to work. When next has the target set to serverless, it will compile serverless page bundles.
+
+`distDir: build`
+
+_Make sure_ you don't use the default value `.next`, seems to break the Lambda deployment probably because is a dot directory. `build` is fine, but could be any other name.
+
+`assetPrefix: "https://s3.amazonaws.com/your-bucket-name"`
+
+Any valid bucket URL will work, e.g. "https://your-bucket-name-assets.s3.amazonaws.com/".
+
+The plugin will parse the bucket name from the `assetPrefix` provided and will create a new public S3 bucket using the parsed bucket name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already. Do _note that bucket names must be unique globally_. On deployment, the plugin will upload the next static assets to it.
+
+After you've configured the above, simply run:
+
+`serverless deploy`
+
+Visit the API GW endpoints and the next pages should be working.
+
+## Examples
+
+See the `examples/` directory.
 
 ## Roadmap
 
 - Better integration with nextjs:
-  - Potentially giving the plugin a path to the next app and let it figure out the rest, by looking at the next.config.js
-  - Page serverless functions created at build time for the user, so they don't have to be manually specified in the `serverless.yml`
+  - Page serverless functions created at build time for the user, so they don't have to be manually specified in the `serverless.yml`.
+  - Lambda cold starts.
 
 ## Note
 
-This is still a WIP so is most likely there will be breaking changes. PRs are welcome!
+This is still a WIP so is most likely there will be breaking changes.
+
+Any feedback is really appreciated. Also PRs are welcome :).

@@ -19,7 +19,9 @@ const serverlessPluginFactory = (options = {}) => {
         compiledCloudFormationTemplate: {}
       },
       custom: {
-        "serverless-nextjs": {}
+        "serverless-nextjs": {
+          nextConfigDir: "/path/to/next"
+        }
       }
     }
   };
