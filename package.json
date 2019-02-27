@@ -4,11 +4,13 @@
   "description": "A serverless plugin for nextjs 8 serverless target",
   "main": "index.js",
   "scripts": {
+    "coveralls": "jest --coverage --coverageReporters=text-lcov | coveralls",
     "test": "jest"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "coveralls": "^3.0.3",
     "jest": "^24.1.0"
   },
   "repository": {
