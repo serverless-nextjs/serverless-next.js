@@ -86,25 +86,25 @@ module.exports = {
 }
 ```
 
-`target: serverless`:
+`target: serverless`
 
 This is a requirement for the plugin to work. When next has the target set to serverless, it will compile serverless page bundles.
 
 `distDir: build`
 
-_Make sure_ you don't use the default value `.next`, seems to break the Lambda deployment probably because is a dot directory. `build` is fine, but could be any other name.
+Make sure you don't use the default value `.next` as it seems to break the Lambda deployment, probably because is a dot directory. `build` is fine, but could be any other name.
 
 `assetPrefix: "https://s3.amazonaws.com/your-bucket-name"`
 
-Any valid bucket URL will work, e.g. "https://your-bucket-name-assets.s3.amazonaws.com/".
+Any valid bucket URL will work, e.g. "https://your-bucket-name.s3.amazonaws.com/".
 
-The plugin will parse the bucket name from the `assetPrefix` provided and will create a new public S3 bucket using the parsed bucket name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already. Do _note that bucket names must be unique globally_. On deployment, the plugin will upload the next static assets to it.
+The plugin will parse the bucket name from the `assetPrefix` and will create a new public S3 bucket using the parsed bucket name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already. Do _note that bucket names must be unique globally_. On deployment, the plugin will upload the next static assets to the bucket.
 
 After you've configured the above, simply run:
 
 `serverless deploy`
 
-Visit the API GW endpoints and the next pages should be working.
+Visit the API GW endpoints and the next pages should be working 🎉
 
 ## Examples
 
@@ -113,11 +113,11 @@ See the `examples/` directory.
 ## Roadmap
 
 - Better integration with nextjs:
-  - Page serverless functions created at build time for the user, so they don't have to be manually specified in the `serverless.yml`.
+  - Serverless functions created at build time, so users don't have to manually specify them in the `serverless.yml`.
   - Lambda cold starts.
 
 ## Note
 
-This is still a WIP so is most likely there will be breaking changes.
+This is still a WIP so is quite likely there will be breaking changes.
 
-Any feedback is really appreciated. Also PRs are welcome :).
+Any feedback is really appreciated. Also PRs are welcome :)
