@@ -32,9 +32,16 @@ module.exports.render = (event, context, callback) => {
 
 ## Getting started
 
-Let's first configure the `serverless.yml` file:
+### Installing
 
-### Plugin configuration
+`npm install --save-dev serverless-nextjs-plugin`
+
+Edit the serverless.yml and add the plugin:
+
+```
+plugins:
+  - serverless-nextjs-plugin
+```
 
 The plugin only needs to know where your `next.config.js` file is located. Note it expects the directory and not the actual file path. E.g. `./nextApp` where inside nextApp there is `next.config.js`.
 
@@ -44,9 +51,7 @@ custom:
     nextConfigDir: '/dir/to/my/nextApp'
 ```
 
-### Page functions
-
-Configure the functions for the next serverless pages as you would do for any other [serverless function](https://serverless.com/framework/docs/providers/aws/guide/functions/).
+Configure the functions for the next serverless pages as you would do for any other [serverless function](https://serverless.com/framework/docs/providers/aws/guide/functions/). In the example below, is assumed next distDir is `build`.
 
 ```
 functions:
