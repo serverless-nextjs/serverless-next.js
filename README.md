@@ -1,11 +1,13 @@
 # Serverless Nextjs Plugin
 
+[![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![Build Status](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
+[![npm version](https://badge.fury.io/js/serverless-nextjs-plugin.svg)](https://badge.fury.io/js/serverless-nextjs-plugin)
 [![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-nextjs-plugin/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
 
 A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
-The plugin targets Next 8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs.
+The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serverless-nextjs)
 
 ## Motivation
 
@@ -38,22 +40,22 @@ module.exports.render = (event, context, callback) => {
 
 Edit the serverless.yml and add the plugin:
 
-```
+```yml
 plugins:
   - serverless-nextjs-plugin
 ```
 
 The plugin only needs to know where your `next.config.js` file is located. Note it expects the directory and not the actual file path. E.g. `./nextApp` where inside nextApp there is `next.config.js`.
 
-```
+```yml
 custom:
   serverless-nextjs:
-    nextConfigDir: '/dir/to/my/nextApp'
+    nextConfigDir: "/dir/to/my/nextApp"
 ```
 
 Configure the functions for the next serverless pages as you would do for any other [serverless function](https://serverless.com/framework/docs/providers/aws/guide/functions/). In the example below, is assumed next distDir is `build`.
 
-```
+```yml
 functions:
   home-page:
     handler: build/serverless/pages/home.render
@@ -84,12 +86,12 @@ Since the next page bundles are self contained, you can exclude everything. Howe
 
 In your `next.config.js` make sure the configuration is set like:
 
-```
+```js
 module.exports = {
   target: "serverless",
   distDir: "build",
   assetPrefix: "https://s3.amazonaws.com/your-bucket-name"
-}
+};
 ```
 
 `target: serverless`
@@ -108,7 +110,7 @@ The plugin will parse the bucket name from the `assetPrefix` and will create an 
 
 _Note that bucket names must be globally unique_
 
-#### If you've reached this far, simply run:
+If you've reached this far, simply run:
 
 `serverless deploy`
 

@@ -1,3 +1,4 @@
+import React from "react";
 import cowsay from "cowsay-browser";
 
 import "./styles/about.css";

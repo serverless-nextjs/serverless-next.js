@@ -29,5 +29,8 @@
     "next": "^8.0.3",
     "react": "^16.8.3",
     "react-dom": "^16.8.3"
+  },
+  "devDependencies": {
+    "eslint-plugin-react": "^7.12.4"
   }
 }

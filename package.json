@@ -12,13 +12,20 @@
   ],
   "scripts": {
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "lint": "eslint .",
     "test": "jest"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "babel-eslint": "^10.0.1",
     "coveralls": "^3.0.3",
-    "jest": "^24.1.0"
+    "eslint": "^5.14.1",
+    "eslint-config-prettier": "^4.1.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "eslint-plugin-react": "^7.12.4",
+    "jest": "^24.1.0",
+    "prettier": "^1.16.4"
   },
   "repository": {
     "type": "git",
