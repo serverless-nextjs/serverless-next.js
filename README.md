@@ -5,7 +5,7 @@
 
 A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
-The plugin targets Next-8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs.
+The plugin targets Next 8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs.
 
 ## Motivation
 
@@ -19,7 +19,7 @@ AWS Lambda handler:
 
 `exports.handler = function(event, context, callback) {...}`
 
-The plugin adds a compat layer between the nextjs page bundles and AWS Lambda at build time:
+A compat layer between the nextjs page bundles and AWS Lambda is added at build time:
 
 ```
 const page = require(".next/serverless/pages/somePage.js");
@@ -36,7 +36,7 @@ Let's first configure the `serverless.yml` file:
 
 ### Plugin configuration
 
-The plugin only needs to know where your next.config.js file is located. Note it expects the directory and not the actual file path. E.g. `./nextApp` where inside nextApp there is `next.config.js`.
+The plugin only needs to know where your `next.config.js` file is located. Note it expects the directory and not the actual file path. E.g. `./nextApp` where inside nextApp there is `next.config.js`.
 
 ```
 custom:
@@ -46,7 +46,7 @@ custom:
 
 ### Page functions
 
-Configure the functions for the next serverless pages as you would do for any other serverless function.
+Configure the functions for the next serverless pages as you would do for any other [serverless function](https://serverless.com/framework/docs/providers/aws/guide/functions/).
 
 ```
 functions:
@@ -73,7 +73,7 @@ package:
     - build/serverless/pages/about.*
 ```
 
-Since the next page bundles are self contained, you can exclude everything. However, make sure when you are including the page bundles, to use the pattern _build/serverless/pages/{pageName}.\*_. This makes sure the compat files created by the plugin are also included in the deploy artifact.
+Since the next page bundles are self contained, you can exclude everything. However, make sure when you are including the page bundles, to use the pattern `build/serverless/pages/{pageName}.*`. This makes sure the compat files created by the plugin are also included in the deployment artifact.
 
 ### Next configuration
 
@@ -93,15 +93,17 @@ This is a requirement for the plugin to work. When next has the target set to se
 
 `distDir: build`
 
-Make sure you don't use the default value `.next` as it seems to break the Lambda deployment, probably because is a dot directory. `build` is fine, but could be any other name.
+Specify a `distDir`. Otherwise next will use the default value `.next` which breaks the Lambda deployment, probably because is a dot directory. `build` is fine, but could be any other name.
 
 `assetPrefix: "https://s3.amazonaws.com/your-bucket-name"`
 
-Any valid bucket URL will work, e.g. "https://your-bucket-name.s3.amazonaws.com/".
+Other [valid bucket URLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) are also fine.
 
-The plugin will parse the bucket name from the `assetPrefix` and will create a new public S3 bucket using the parsed bucket name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already. Do _note that bucket names must be unique globally_. On deployment, the plugin will upload the next static assets to the bucket.
+The plugin will parse the bucket name from the `assetPrefix` and will create an S3 bucket using the parsed name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already, so make sure you don't have a bucket with that name already in your amazon account. On deployment, the plugin will upload the next static assets to your bucket.
 
-After you've configured the above, simply run:
+_Note that bucket names must be globally unique_
+
+If you've reached this far, simply run:
 
 `serverless deploy`
 
@@ -114,11 +116,11 @@ See the `examples/` directory.
 ## Roadmap
 
 - Serverless functions created at build time, so users don't have to manually specify them in the `serverless.yml`.
-- Look into mitigating cold starts, maybe just add an example using another plugin which solves this.
+- Mitigate cold starts, maybe just add an example using another plugin which solves this.
 - More examples.
 
 ## Note
 
-This is still a WIP so is quite likely there will be breaking changes.
+This is still a WIP so there may be breaking changes.
 
 Any feedback is really appreciated. Also PRs are welcome :)
