@@ -3,6 +3,13 @@
   "version": "1.0.0",
   "description": "A serverless plugin for nextjs 8 serverless target",
   "main": "index.js",
+  "keywords": [
+    "serverless",
+    "nextjs",
+    "lambda",
+    "next",
+    "api gateway"
+  ],
   "scripts": {
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "test": "jest"
