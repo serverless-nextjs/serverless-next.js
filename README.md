@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
 [![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-nextjs-plugin/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
 
-A serverless custom plugin to deploy nextjs serverless pages.
+A serverless custom plugin to deploy nextjs apps.
 
 The plugin targets Next-8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs.
 
@@ -34,9 +34,9 @@ module.exports.render = (event, context, callback) => {
 
 Let's first configure the `serverless.yml` file:
 
-_Plugin configuration_
+### Plugin configuration
 
-The plugin only needs to know where your next.config.js file is located. Note it expects the directory and not the actual file path. E.g. `./myApp` where inside myApp there is `next.config.js`.
+The plugin only needs to know where your next.config.js file is located. Note it expects the directory and not the actual file path. E.g. `./nextApp` where inside nextApp there is `next.config.js`.
 
 ```
 custom:
@@ -44,7 +44,7 @@ custom:
     nextConfigDir: '/dir/to/my/nextApp'
 ```
 
-_Page functions_
+### Page functions
 
 Configure the functions for the next serverless pages as you would do for any other serverless function.
 
@@ -75,7 +75,7 @@ package:
 
 Since the next page bundles are self contained, you can exclude everything. However, make sure when you are including the page bundles, to use the pattern _build/serverless/pages/{pageName}.\*_. This makes sure the compat files created by the plugin are also included in the deploy artifact.
 
-_next.config.js_
+### Next configuration
 
 In your `next.config.js` make sure the configuration is set like:
 
@@ -113,9 +113,9 @@ See the `examples/` directory.
 
 ## Roadmap
 
-- Better integration with nextjs:
-  - Serverless functions created at build time, so users don't have to manually specify them in the `serverless.yml`.
-  - Lambda cold starts.
+- Serverless functions created at build time, so users don't have to manually specify them in the `serverless.yml`.
+- Look into mitigating cold starts, maybe just add an example using another plugin which solves this.
+- More examples.
 
 ## Note
 
