@@ -103,7 +103,7 @@ The plugin will parse the bucket name from the `assetPrefix` and will create an 
 
 _Note that bucket names must be globally unique_
 
-If you've reached this far, simply run:
+#### If you've reached this far, simply run:
 
 `serverless deploy`
 
