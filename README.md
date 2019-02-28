@@ -3,7 +3,7 @@
 [![Build Status](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
 [![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-nextjs-plugin/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
 
-A serverless custom plugin to deploy nextjs apps.
+A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
 The plugin targets Next-8 serverless mode. See https://nextjs.org/blog/next-8/#serverless-nextjs.
 
