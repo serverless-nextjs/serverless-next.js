@@ -54,34 +54,7 @@ custom:
     nextConfigDir: "/dir/to/my/nextApp"
 ```
 
-Configure the functions for the next serverless pages as you would do for any other [serverless function](https://serverless.com/framework/docs/providers/aws/guide/functions/). In the example below, is assumed next distDir is `build`.
-
-```yml
-functions:
-  home-page:
-    handler: build/serverless/pages/home.render
-    events:
-      - http:
-          path: home
-          method: get
-  about-page:
-    handler: build/serverless/pages/about.render
-    events:
-      - http:
-          path: about
-          method: get
-
-package:
-  # exclude everything, except for the page bundles
-  exclude:
-    - ./**/*
-  include:
-    # important to use {handler}.* as there will be 2 files per function handler
-    - build/serverless/pages/home.*
-    - build/serverless/pages/about.*
-```
-
-Since the next page bundles are self contained, you can exclude everything. However, make sure when you are including the page bundles, to use the pattern `build/serverless/pages/{pageName}.*`. This makes sure the compat files created by the plugin are also included in the deployment artifact.
+### REPLACE_WITH_DOCS_FOR_NEW_APPROACH
 
 ### Next configuration
 
