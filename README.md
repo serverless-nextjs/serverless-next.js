@@ -23,7 +23,7 @@ AWS Lambda handler:
 
 A compat layer between the nextjs page bundles and AWS Lambda is added at build time:
 
-```
+```js
 const page = require(".next/serverless/pages/somePage.js");
 
 module.exports.render = (event, context, callback) => {
@@ -106,9 +106,7 @@ Specify a `distDir`. Otherwise next will use the default value `.next` which bre
 
 Other [valid bucket URLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) are also fine.
 
-The plugin will parse the bucket name from the `assetPrefix` and will create an S3 bucket using the parsed name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already, so make sure you don't have a bucket with that name already in your amazon account. On deployment, the plugin will upload the next static assets to your bucket.
-
-_Note that bucket names must be globally unique_
+The plugin will parse the bucket name from the `assetPrefix` and will create an S3 bucket using the parsed name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already, so make sure you don't have a bucket with that name already in your amazon account. On deployment, the plugin will upload the next static assets to your bucket. Note that bucket names must be globally unique.
 
 If you've reached this far, simply run:
 

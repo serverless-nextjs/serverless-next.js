@@ -1,12 +1,12 @@
 ## basic-next-serverless-app
 
-### Running the example:
+### Running the example
 
 `git clone https://github.com/danielcondemarin/serverless-nextjs-plugin`
 
 `cd examples/basic-next-serverless-app`
 
-#### Install dependencies:
+#### Install dependencies
 
 `npm install`
 
@@ -16,14 +16,14 @@ Replace _BUCKET_NAME_ with your own name. Don't manually create the bucket, the 
 
 _next.config.js_
 
-```
+```js
 module.exports = {
   ...
   assetPrefix: "https://s3.amazonaws.com/BUCKET_NAME"
 };
 ```
 
-#### It's good to deploy now!
+#### Deploy
 
 `serverless deploy`
 
