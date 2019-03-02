@@ -62,7 +62,7 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#beforeCreateDeploymentArtifacts", () => {
     beforeEach(() => {
-      parseNextConfiguration.mockResolvedValueOnce({
+      parseNextConfiguration.mockReturnValueOnce({
         staticAssetsBucket: "my-bucket",
         nextBuildDir: "build"
       });
@@ -319,7 +319,7 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#afterUploadArtifacts", () => {
     beforeEach(() => {
-      parseNextConfiguration.mockResolvedValueOnce({
+      parseNextConfiguration.mockReturnValueOnce({
         nextBuildDir: "build",
         staticAssetsBucket: "my-bucket"
       });

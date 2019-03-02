@@ -1,5 +1,5 @@
-const createPromiseError = message => {
-  return Promise.reject(new Error(`Serverless Nextjs: ${message}`));
+const createError = message => {
+  return new Error(`Serverless Nextjs: ${message}`);
 };
 
-module.exports = createPromiseError;
+module.exports = createError;

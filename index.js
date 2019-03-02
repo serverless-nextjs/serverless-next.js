@@ -50,7 +50,7 @@ class ServerlessNextJsPlugin {
     }
   }
 
-  getConfiguration() {
+  get configuration() {
     return parseNextConfiguration(this.getPluginConfigValue("nextConfigDir"));
   }
 
@@ -109,25 +109,22 @@ class ServerlessNextJsPlugin {
     const nextConfigDir = this.getPluginConfigValue("nextConfigDir");
 
     return nextBuild(path.resolve(nextConfigDir)).then(() => {
-      return this.getConfiguration().then(
-        ({ staticAssetsBucket, nextBuildDir }) => {
-          return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
-            ([compiledCfWithBucket, coreCfWithBucket]) => {
-              this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
-              this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
+      const { staticAssetsBucket, nextBuildDir } = this.configuration;
 
-              return this.getNextFunctionHandlerPathsMap(nextBuildDir).then(
-                functionHandlerPathMap =>
-                  createHttpServerLambdaCompatHandlers(
-                    functionHandlerPathMap
-                  ).then(compatHandlerPathMap =>
-                    swapOriginalAndCompatHandlers(
-                      functionHandlerPathMap,
-                      compatHandlerPathMap
-                    )
+      return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
+        ([compiledCfWithBucket, coreCfWithBucket]) => {
+          this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
+          this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
+
+          return this.getNextFunctionHandlerPathsMap(nextBuildDir).then(
+            functionHandlerPathMap =>
+              createHttpServerLambdaCompatHandlers(functionHandlerPathMap).then(
+                compatHandlerPathMap =>
+                  swapOriginalAndCompatHandlers(
+                    functionHandlerPathMap,
+                    compatHandlerPathMap
                   )
-              );
-            }
+              )
           );
         }
       );
@@ -135,16 +132,14 @@ class ServerlessNextJsPlugin {
   }
 
   afterUploadArtifacts() {
-    return this.getConfiguration().then(
-      ({ nextBuildDir, staticAssetsBucket }) => {
-        return uploadStaticAssetsToS3({
-          staticAssetsPath: path.join(nextBuildDir, "static"),
-          providerRequest: this.providerRequest,
-          bucketName: staticAssetsBucket,
-          consoleLog: this.consoleLog
-        });
-      }
-    );
+    const { nextBuildDir, staticAssetsBucket } = this.configuration;
+
+    return uploadStaticAssetsToS3({
+      staticAssetsPath: path.join(nextBuildDir, "static"),
+      providerRequest: this.providerRequest,
+      bucketName: staticAssetsBucket,
+      consoleLog: this.consoleLog
+    });
   }
 
   afterDisplayStackOutputs() {
