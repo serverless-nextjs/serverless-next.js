@@ -8,6 +8,8 @@ const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
+const getNextPagesFromBuildDir = require("./lib/getNextPagesFromBuildDir");
+const createNextPageFunction = require("./lib/createNextPageFunction");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -52,26 +54,42 @@ class ServerlessNextJsPlugin {
     return parseNextConfiguration(this.getPluginConfigValue("nextConfigDir"));
   }
 
+  filterNextPageFunctions(nextBuildDir, functions) {
+    return Object.keys(functions).filter(f =>
+      functions[f].handler.includes(path.join(nextBuildDir, "serverless/pages"))
+    );
+  }
+
+  convertHandlerToFilePath(handler) {
+    const dirname = path.dirname(handler);
+    const handlerFileName = path.basename(handler, ".render");
+
+    return `${path.join(dirname, handlerFileName)}.js`;
+  }
+
   getNextFunctionHandlerPathsMap(nextBuildDir) {
-    const functions = this.serverless.service.functions;
+    const service = this.serverless.service;
 
-    const functionJsHandlerMap = Object.keys(functions)
-      .filter(f =>
-        functions[f].handler.includes(
-          path.join(nextBuildDir, "serverless/pages")
-        )
-      )
-      .reduce((acc, f) => {
-        const handlerPath = functions[f].handler;
+    return getNextPagesFromBuildDir(nextBuildDir).then(nextPageAndPathMap => {
+      Object.entries(nextPageAndPathMap).map(([pageName, pagePath]) => {
+        const functionAlreadyDeclared = service.functions[pageName];
 
-        const dirname = path.dirname(handlerPath);
-        const handlerFileName = path.basename(handlerPath, ".render");
+        if (!functionAlreadyDeclared) {
+          service.functions[pageName] = createNextPageFunction(pagePath);
+        }
+      });
 
-        acc[f] = `${path.join(dirname, handlerFileName)}.js`;
+      const functions = service.functions;
+      const functionJsHandlerMap = this.filterNextPageFunctions(
+        nextBuildDir,
+        functions
+      ).reduce((acc, f) => {
+        acc[f] = this.convertHandlerToFilePath(functions[f].handler);
         return acc;
       }, {});
 
-    return functionJsHandlerMap;
+      return functionJsHandlerMap;
+    });
   }
 
   getCFTemplatesWithBucket(staticAssetsBucket) {
@@ -98,17 +116,17 @@ class ServerlessNextJsPlugin {
               this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
               this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
 
-              const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap(
-                nextBuildDir
+              return this.getNextFunctionHandlerPathsMap(nextBuildDir).then(
+                functionHandlerPathMap =>
+                  createHttpServerLambdaCompatHandlers(
+                    functionHandlerPathMap
+                  ).then(compatHandlerPathMap =>
+                    swapOriginalAndCompatHandlers(
+                      functionHandlerPathMap,
+                      compatHandlerPathMap
+                    )
+                  )
               );
-              return createHttpServerLambdaCompatHandlers(
-                functionHandlerPathMap
-              ).then(compatHandlerPathMap => {
-                return swapOriginalAndCompatHandlers(
-                  functionHandlerPathMap,
-                  compatHandlerPathMap
-                );
-              });
             }
           );
         }

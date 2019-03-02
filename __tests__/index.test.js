@@ -6,9 +6,13 @@ const addS3BucketToResources = require("../lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("../lib/displayStackOutput");
 const parseNextConfiguration = require("../lib/parseNextConfiguration");
+const createNextPageFunction = require("../lib/createNextPageFunction");
+const getNextPagesFromBuildDir = require("../lib/getNextPagesFromBuildDir");
 
 jest.mock("next/dist/build");
 jest.mock("js-yaml");
+jest.mock("../lib/createNextPageFunction");
+jest.mock("../lib/getNextPagesFromBuildDir");
 jest.mock("../lib/parseNextConfiguration");
 jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/swapOriginalAndCompatHandlers");
@@ -65,6 +69,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it("should call nextBuild using the dir passed via options", () => {
+      getNextPagesFromBuildDir.mockResolvedValueOnce({});
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
       const plugin = serverlessPluginFactory({
@@ -82,9 +87,91 @@ describe("ServerlessNextJsPlugin", () => {
       });
     });
 
+    it("should call getNextPagesFromBuildDir and pass the result to createNextPageFunction", () => {
+      expect.assertions(3);
+
+      const homePagePath = "/path/to/next/build/serverless/pages/home.js";
+      const aboutPagePath = "/path/to/next/build/serverless/pages/about.js";
+      const buildDir = "build";
+
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+      createNextPageFunction.mockReturnValue({
+        handler: "/foo/bar"
+      });
+      getNextPagesFromBuildDir.mockResolvedValueOnce({
+        homePage: homePagePath,
+        aboutPage: aboutPagePath
+      });
+
+      const plugin = serverlessPluginFactory();
+
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        expect(getNextPagesFromBuildDir).toBeCalledWith(buildDir);
+        expect(createNextPageFunction).toBeCalledWith(homePagePath);
+        expect(createNextPageFunction).toBeCalledWith(aboutPagePath);
+      });
+    });
+
+    it("should set the next functions in serverless", () => {
+      expect.assertions(1);
+
+      const homePagePath = "/path/to/next/build/serverless/pages/home.js";
+      const aboutPagePath = "/path/to/next/build/serverless/pages/about.js";
+
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+      createNextPageFunction.mockReturnValue({
+        handler: "/foo/bar"
+      });
+      getNextPagesFromBuildDir.mockResolvedValueOnce({
+        homePage: homePagePath,
+        aboutPage: aboutPagePath
+      });
+
+      const plugin = serverlessPluginFactory();
+
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        expect(Object.keys(plugin.serverless.service.functions)).toEqual([
+          "homePage",
+          "aboutPage"
+        ]);
+      });
+    });
+
+    it("should NOT set next functions already declared in serverless", () => {
+      expect.assertions(2);
+
+      const homePagePath = "/path/to/next/build/serverless/pages/home.js";
+
+      createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
+      createNextPageFunction.mockReturnValue({
+        handler: "/foo/bar"
+      });
+      getNextPagesFromBuildDir.mockResolvedValueOnce({
+        homePage: homePagePath
+      });
+
+      const plugin = serverlessPluginFactory({
+        service: {
+          functions: {
+            homePage: {
+              handler: "/path/to/next/build/serverless/pages/home.render"
+            }
+          }
+        }
+      });
+
+      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+        expect(Object.keys(plugin.serverless.service.functions)).toEqual([
+          "homePage"
+        ]);
+        expect(createNextPageFunction).not.toBeCalled();
+      });
+    });
+
     it("should update coreCloudFormationTemplate and compiledCloudFormation template with static assets bucket", () => {
       expect.assertions(5);
 
+      getNextPagesFromBuildDir.mockResolvedValueOnce({});
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
       const cfWithBucket = {
         Resources: {
@@ -132,6 +219,7 @@ describe("ServerlessNextJsPlugin", () => {
     it("should call createHttpServerLambdaCompatHandlers without non nextjs page handlers", () => {
       expect.assertions(1);
 
+      getNextPagesFromBuildDir.mockResolvedValueOnce({});
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
       const plugin = serverlessPluginFactory({
@@ -151,6 +239,7 @@ describe("ServerlessNextJsPlugin", () => {
     it("should call createHttpServerLambdaCompatHandlers with page handlers using the next build dir from configuration", () => {
       expect.assertions(1);
 
+      getNextPagesFromBuildDir.mockResolvedValueOnce({});
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
 
       const plugin = serverlessPluginFactory({
@@ -176,6 +265,7 @@ describe("ServerlessNextJsPlugin", () => {
         "home-page": "build/serverless/pages/home.compat.js",
         "about-page": "build/serverless/pages/about.compat.js"
       };
+      getNextPagesFromBuildDir.mockResolvedValueOnce({});
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce(
         Promise.resolve(compatHandlerPathMap)
       );
@@ -206,6 +296,7 @@ describe("ServerlessNextJsPlugin", () => {
     it("should return the result of swapOriginalAndCompatHandlers", () => {
       expect.assertions(1);
 
+      getNextPagesFromBuildDir.mockResolvedValueOnce({});
       createHttpServerLambdaCompatHandlers.mockResolvedValueOnce([]);
       swapOriginalAndCompatHandlers.mockResolvedValueOnce(
         Promise.resolve("OK")
