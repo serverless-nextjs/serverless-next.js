@@ -59,7 +59,13 @@ The plugin only needs to know where your `next.config.js` file is located. Note 
 custom:
   serverless-nextjs:
     nextConfigDir: "/dir/to/my/nextApp"
+
+package:
+  include:
+    - sls-next-build/*
 ```
+
+Make sure you include `sls-next-build/*` as this is where the compiled page handlers will be.
 
 ### Next configuration
 
