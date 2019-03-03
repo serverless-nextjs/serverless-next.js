@@ -1,5 +1,5 @@
 const nextBuild = require("next/dist/build").default;
-const serverlessPluginFactory = require("../test-utils/serverlessPluginFactory");
+const serverlessPluginFactory = require("../utils/test/serverlessPluginFactory");
 const copyNextPages = require("../lib/copyNextPages");
 const rewritePageHandlers = require("../lib/rewritePageHandlers");
 const addS3BucketToResources = require("../lib/addS3BucketToResources");

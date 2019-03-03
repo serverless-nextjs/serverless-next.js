@@ -53,6 +53,10 @@
       "classes/**/*.js"
     ],
     "coverageDirectory": "<rootDir>/coverage/",
+    "coveragePathIgnorePatterns": [
+      "lib/cfSchema.js",
+      "utils/test/serverlessPluginFactory.js"
+    ],
     "testPathIgnorePatterns": [
       "<rootDir>/examples/",
       "<rootDir>/node_modules/"

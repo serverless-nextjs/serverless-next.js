@@ -1,5 +1,5 @@
 const merge = require("lodash.merge");
-const ServerlessNextJsPlugin = require("./..");
+const ServerlessNextJsPlugin = require("../..");
 
 const serverlessPluginFactory = (options = {}) => {
   const ctorOptions = {
