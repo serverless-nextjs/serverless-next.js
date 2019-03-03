@@ -92,7 +92,7 @@ After doing the above, simply run:
 
 `serverless deploy`
 
-You should now have one API Gateway endpoint per next page 🎉
+You should now have one API Gateway GET/ endpoint per next page 🎉
 
 ## Examples
 
