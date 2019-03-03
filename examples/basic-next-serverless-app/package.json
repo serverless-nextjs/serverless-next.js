@@ -31,6 +31,7 @@
     "react-dom": "^16.8.3"
   },
   "devDependencies": {
-    "eslint-plugin-react": "^7.12.4"
+    "eslint-plugin-react": "^7.12.4",
+    "serverless-nextjs-plugin": "^1.1.0"
   }
 }

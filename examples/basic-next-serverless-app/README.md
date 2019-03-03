@@ -15,7 +15,7 @@ npm install
 
 Configure nextjs to use a CDN to host the static assets in the bucket:
 
-Replace _BUCKET_NAME_ with your own name. Don't manually create the bucket, the plugin will do that for you.
+Replace _BUCKET_NAME_ with your own bucket name. Don't manually create the bucket, the plugin will do that for you.
 
 _next.config.js_
 
