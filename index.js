@@ -2,12 +2,14 @@
 
 const path = require("path");
 const nextBuild = require("next/dist/build").default;
-const createHttpServerLambdaCompatHandlers = require("./lib/createHttpServerLambdaCompatHandlers");
-const swapOriginalAndCompatHandlers = require("./lib/swapOriginalAndCompatHandlers");
+const PluginBuildDir = require("./classes/PluginBuildDir");
+const rewritePageHandlers = require("./lib/rewritePageHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
+const getNextPagesFromBuildDir = require("./lib/getNextPagesFromBuildDir");
+const copyNextPages = require("./lib/copyNextPages");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -15,8 +17,8 @@ class ServerlessNextJsPlugin {
     this.options = options;
 
     this.provider = this.serverless.getProvider("aws");
-    this.consoleLog = this.serverless.cli.consoleLog.bind(this.serverless.cli);
     this.providerRequest = this.provider.request.bind(this.provider);
+    this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
 
     this.commands = {};
 
@@ -26,8 +28,10 @@ class ServerlessNextJsPlugin {
 
     this.afterUploadArtifacts = this.afterUploadArtifacts.bind(this);
     this.afterDisplayStackOutputs = this.afterDisplayStackOutputs.bind(this);
+    this.beforePackageInitialize = this.beforePackageInitialize.bind(this);
 
     this.hooks = {
+      "before:package:initialize": this.beforePackageInitialize,
       "before:package:createDeploymentArtifacts": this
         .beforeCreateDeploymentArtifacts,
       "after:aws:deploy:deploy:uploadArtifacts": this.afterUploadArtifacts,
@@ -35,43 +39,47 @@ class ServerlessNextJsPlugin {
     };
   }
 
+  get nextConfigDir() {
+    return this.getPluginConfigValue("nextConfigDir");
+  }
+
+  get configuration() {
+    return parseNextConfiguration(this.nextConfigDir);
+  }
+
   getPluginConfigValue(param) {
-    const defaultPluginConfig = {
-      nextBuildDir: ".next"
-    };
-
-    try {
-      const val = this.serverless.service.custom["serverless-nextjs"][param];
-      return val !== undefined ? val : defaultPluginConfig[param];
-    } catch (err) {
-      return defaultPluginConfig[param];
-    }
+    return this.serverless.service.custom["serverless-nextjs"][param];
   }
 
-  getConfiguration() {
-    return parseNextConfiguration(this.getPluginConfigValue("nextConfigDir"));
+  beforePackageInitialize() {
+    return nextBuild(path.resolve(this.nextConfigDir)).then(() =>
+      copyNextPages(
+        path.join(this.nextConfigDir, this.configuration.nextBuildDir),
+        this.pluginBuildDir
+      ).then(() => this.setNextPages())
+    );
   }
 
-  getNextFunctionHandlerPathsMap(nextBuildDir) {
-    const functions = this.serverless.service.functions;
+  setNextPages() {
+    const service = this.serverless.service;
 
-    const functionJsHandlerMap = Object.keys(functions)
-      .filter(f =>
-        functions[f].handler.includes(
-          path.join(nextBuildDir, "serverless/pages")
-        )
-      )
-      .reduce((acc, f) => {
-        const handlerPath = functions[f].handler;
+    return getNextPagesFromBuildDir(this.pluginBuildDir.buildDir).then(
+      nextPages => {
+        this.nextPages = nextPages;
 
-        const dirname = path.dirname(handlerPath);
-        const handlerFileName = path.basename(handlerPath, ".render");
+        nextPages.forEach(page => {
+          const functionName = page.functionName;
+          const functionAlreadyDeclared = service.functions[functionName];
 
-        acc[f] = `${path.join(dirname, handlerFileName)}.js`;
-        return acc;
-      }, {});
+          if (!functionAlreadyDeclared) {
+            service.functions[functionName] =
+              page.serverlessFunction[functionName];
+          }
+        });
 
-    return functionJsHandlerMap;
+        this.serverless.service.setFunctionNames();
+      }
+    );
   }
 
   getCFTemplatesWithBucket(staticAssetsBucket) {
@@ -88,45 +96,25 @@ class ServerlessNextJsPlugin {
   }
 
   beforeCreateDeploymentArtifacts() {
-    const nextConfigDir = this.getPluginConfigValue("nextConfigDir");
+    const { staticAssetsBucket } = this.configuration;
 
-    return nextBuild(path.resolve(nextConfigDir)).then(() => {
-      return this.getConfiguration().then(
-        ({ staticAssetsBucket, nextBuildDir }) => {
-          return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
-            ([compiledCfWithBucket, coreCfWithBucket]) => {
-              this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
-              this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
-
-              const functionHandlerPathMap = this.getNextFunctionHandlerPathsMap(
-                nextBuildDir
-              );
-              return createHttpServerLambdaCompatHandlers(
-                functionHandlerPathMap
-              ).then(compatHandlerPathMap => {
-                return swapOriginalAndCompatHandlers(
-                  functionHandlerPathMap,
-                  compatHandlerPathMap
-                );
-              });
-            }
-          );
-        }
-      );
-    });
+    return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
+      ([compiledCfWithBucket, coreCfWithBucket]) => {
+        this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
+        this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
+        return rewritePageHandlers(this.nextPages);
+      }
+    );
   }
 
   afterUploadArtifacts() {
-    return this.getConfiguration().then(
-      ({ nextBuildDir, staticAssetsBucket }) => {
-        return uploadStaticAssetsToS3({
-          staticAssetsPath: path.join(nextBuildDir, "static"),
-          providerRequest: this.providerRequest,
-          bucketName: staticAssetsBucket,
-          consoleLog: this.consoleLog
-        });
-      }
-    );
+    const { nextBuildDir, staticAssetsBucket } = this.configuration;
+
+    return uploadStaticAssetsToS3({
+      staticAssetsPath: path.join(nextBuildDir, "static"),
+      providerRequest: this.providerRequest,
+      bucketName: staticAssetsBucket
+    });
   }
 
   afterDisplayStackOutputs() {
@@ -134,10 +122,7 @@ class ServerlessNextJsPlugin {
       return plugin.constructor.name === "AwsInfo";
     });
 
-    return displayStackOutput({
-      awsInfo,
-      consoleLog: this.consoleLog
-    });
+    return displayStackOutput(awsInfo);
   }
 }
 

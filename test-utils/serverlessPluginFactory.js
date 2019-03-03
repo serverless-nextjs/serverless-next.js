@@ -14,6 +14,7 @@ const serverlessPluginFactory = (options = {}) => {
       run: () => {}
     },
     service: {
+      setFunctionNames: () => {},
       functions: {},
       provider: {
         compiledCloudFormationTemplate: {}
