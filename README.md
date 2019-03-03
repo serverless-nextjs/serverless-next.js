@@ -45,26 +45,36 @@ module.exports.render = (event, context, callback) => {
 
 `npm install --save-dev serverless-nextjs-plugin`
 
-Edit the serverless.yml and add the plugin:
+The plugin only needs to know where your `next.config.js` file is located. Note it expects the directory and not the actual file path.
+
+```
+nextApp
+│   next.config.js
+│   serverless.yml
+└───pages
+│   │   home.js
+│   │   about.js
+│   │   admin.js
+```
+
+Edit the serverless.yml and add:
 
 ```yml
 plugins:
   - serverless-nextjs-plugin
-```
 
-The plugin only needs to know where your `next.config.js` file is located. Note it expects the directory and not the actual file path. E.g. `./nextApp` where inside nextApp there is `next.config.js`.
-
-```yml
 custom:
   serverless-nextjs:
-    nextConfigDir: "/dir/to/my/nextApp"
+    nextConfigDir: "./"
 
 package:
+  exclude:
+    - ./**/*
   include:
     - sls-next-build/*
 ```
 
-Make sure you include `sls-next-build/*` as this is where the compiled page handlers will be.
+Include the pattern `sls-next-build/*` as this is where the plugin copies the compiled page handlers.
 
 ### Next configuration
 
