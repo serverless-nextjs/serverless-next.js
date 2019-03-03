@@ -2,13 +2,16 @@
 
 ### Running the example
 
-`git clone https://github.com/danielcondemarin/serverless-nextjs-plugin`
-
-`cd examples/basic-next-serverless-app`
+```shell
+git clone https://github.com/danielcondemarin/serverless-nextjs-plugin
+cd serverless-nextjs-plugin/examples/basic-next-serverless-app
+```
 
 #### Install dependencies
 
-`npm install`
+```shell
+npm install
+```
 
 Configure nextjs to use a CDN to host the static assets in the bucket:
 
