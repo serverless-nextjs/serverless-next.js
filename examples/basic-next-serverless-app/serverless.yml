@@ -21,20 +21,4 @@ package:
   exclude:
     - ./**/*
   include:
-    # important to use {handler}.* as there will be 2 files per function handler
-    - build/serverless/pages/home.*
-    - build/serverless/pages/about.*
-# TODO: Cleanup after dynamic builds feat is done as functions won't be needed
-# functions:
-#   home-page:
-#     handler: build/serverless/pages/home.render
-#     events:
-#       - http:
-#           path: home
-#           method: get
-#   about-page:
-#     handler: build/serverless/pages/about.render
-#     events:
-#       - http:
-#           path: about
-#           method: get
+    - sls-next-build/*

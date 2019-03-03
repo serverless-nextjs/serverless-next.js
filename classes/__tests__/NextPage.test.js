@@ -8,66 +8,62 @@ describe("NextPage", () => {
 
       expect(page.pagePath).toEqual(pagePath);
     });
-
-    it("should throw if pagePath is invalid", () => {
-      const pagePath = "/build/foo/bar/home.js";
-      expect(() => new NextPage(pagePath)).toThrow(
-        "Invalid next page directory"
-      );
-    });
   });
 
-  describe("#pageDir", () => {
-    it("should return pageDir", () => {
-      const pagesDir = "/build/serverless/pages";
-      const pagePath = `${pagesDir}/admin.js`;
-      const page = new NextPage(pagePath);
-
-      expect(page.pageDir).toEqual(pagesDir);
-    });
-  });
-
-  describe("#pageName", () => {
-    it("should return pageName", () => {
-      const pagePath = "/build/serverless/pages/admin.js";
-      const page = new NextPage(pagePath);
-
-      expect(page.pageName).toEqual("admin");
-    });
-  });
-
-  describe("#pageHandler", () => {
-    it("should return pageHandler", () => {
-      const pagePath = "/build/serverless/pages/admin.js";
-      const page = new NextPage(pagePath);
-
-      expect(page.pageHandler).toEqual("/build/serverless/pages/admin.render");
-    });
-  });
-
-  describe("#serverlessFunction", () => {
+  describe("When a new instance is created", () => {
     const pagesDir = "/build/serverless/pages";
+    const pagePath = `${pagesDir}/admin.js`;
     let page;
 
     beforeEach(() => {
-      const pagePath = `${pagesDir}/admin.js`;
       page = new NextPage(pagePath);
     });
 
-    it("should return function handler", () => {
-      const { handler } = page.serverlessFunction;
-      expect(handler).toEqual(`${pagesDir}/admin.render`);
+    it("should have pageCompatPath", () => {
+      expect(page.pageCompatPath).toEqual(`${pagesDir}/admin.compat.js`);
     });
 
-    it("should return function http event", () => {
-      const { events } = page.serverlessFunction;
+    it("should return pageOriginalPath", () => {
+      expect(page.pageOriginalPath).toEqual(`${pagesDir}/admin.original.js`);
+    });
 
-      expect(events).toHaveLength(1);
+    it("should return pageDir", () => {
+      expect(page.pageDir).toEqual(pagesDir);
+    });
 
-      const httpEvent = events[0].http;
+    it("should return pageName", () => {
+      expect(page.pageName).toEqual("admin");
+    });
 
-      expect(httpEvent.path).toEqual("admin");
-      expect(httpEvent.method).toEqual("get");
+    it("should return pageHandler", () => {
+      expect(page.pageHandler).toEqual("/build/serverless/pages/admin.render");
+    });
+
+    it("should return pageFunctionName", () => {
+      expect(page.functionName).toEqual("adminPage");
+    });
+
+    describe("#serverlessFunction", () => {
+      it("should return function name", () => {
+        const pageFunction = page.serverlessFunction;
+        expect(pageFunction.adminPage).toBeDefined();
+      });
+
+      it("should return function handler", () => {
+        const { handler } = page.serverlessFunction.adminPage;
+        expect(handler).toEqual(`${pagesDir}/admin.render`);
+      });
+
+      it("should return function http event", () => {
+        const { events } = page.serverlessFunction.adminPage;
+
+        expect(events).toHaveLength(1);
+
+        const httpEvent = events[0].http;
+
+        expect(httpEvent.path).toEqual("admin");
+        expect(httpEvent.method).toEqual("get");
+      });
     });
   });
 });

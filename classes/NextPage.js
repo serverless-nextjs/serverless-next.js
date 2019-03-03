@@ -3,10 +3,14 @@ const path = require("path");
 class NextPage {
   constructor(pagePath) {
     this.pagePath = pagePath;
+  }
 
-    if (!this.pageDir.endsWith("/serverless/pages")) {
-      throw new Error(`Invalid next page directory: ${pagePath}`);
-    }
+  get pageOriginalPath() {
+    return path.join(this.pageDir, `${this.pageName}.original.js`);
+  }
+
+  get pageCompatPath() {
+    return path.join(this.pageDir, `${this.pageName}.compat.js`);
   }
 
   get pageDir() {
@@ -22,17 +26,23 @@ class NextPage {
     return path.join(dir, this.pageName + ".render");
   }
 
+  get functionName() {
+    return this.pageName + "Page";
+  }
+
   get serverlessFunction() {
     return {
-      handler: this.pageHandler,
-      events: [
-        {
-          http: {
-            path: this.pageName,
-            method: "get"
+      [this.functionName]: {
+        handler: this.pageHandler,
+        events: [
+          {
+            http: {
+              path: this.pageName,
+              method: "get"
+            }
           }
-        }
-      ]
+        ]
+      }
     };
   }
 }
