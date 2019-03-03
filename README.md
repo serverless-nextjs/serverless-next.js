@@ -33,12 +33,11 @@ module.exports.render = (event, context, callback) => {
 };
 ```
 
-In a nutshell, the plugin does this:
+### Also benefit from
 
-- Automatic next build
-- Adds compatibility layer between next page and AWS Lambda.
+- Automatic next builds
 - Dynamic creation of serverless functions for each page.
-- Provisions S3 Bucket for the static assets. Relies on [assetPrefix](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
+- S3 Bucket provisioning for static assets. Relies on [assetPrefix](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
 
 ## Getting started
 
