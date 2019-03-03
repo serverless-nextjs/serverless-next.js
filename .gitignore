@@ -4,3 +4,4 @@ node_modules
 examples/basic-next-serverless-app/build
 .serverless
 .next
+sls-next-build
