@@ -1,7 +1,5 @@
 const serverlessPluginFactory = require("../utils/test/serverlessPluginFactory");
 const parsedNextConfigurationFactory = require("../utils/test/parsedNextConfigurationFactory");
-
-const rewritePageHandlers = require("../lib/rewritePageHandlers");
 const addS3BucketToResources = require("../lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("../lib/displayStackOutput");
@@ -13,7 +11,6 @@ jest.mock("js-yaml");
 jest.mock("../lib/build");
 jest.mock("../lib/parseNextConfiguration");
 jest.mock("../lib/addS3BucketToResources");
-jest.mock("../lib/rewritePageHandlers");
 jest.mock("../lib/uploadStaticAssetsToS3");
 jest.mock("../lib/displayStackOutput");
 
@@ -29,38 +26,29 @@ describe("ServerlessNextJsPlugin", () => {
   describe("#constructor", () => {
     it("should hook to before:package:initialize", () => {
       const plugin = serverlessPluginFactory();
-      expect(plugin.hooks).toEqual(
-        expect.objectContaining({
-          "before:package:initialize": plugin.beforePackageInitialize
-        })
+      expect(plugin.hooks["before:package:initialize"]).toEqual(
+        plugin.beforePackageInitialize
       );
     });
 
     it("should hook to before:package:createDeploymentArtifacts", () => {
       const plugin = serverlessPluginFactory();
-      expect(plugin.hooks).toEqual(
-        expect.objectContaining({
-          "before:package:createDeploymentArtifacts":
-            plugin.beforeCreateDeploymentArtifacts
-        })
+      expect(plugin.hooks["before:package:createDeploymentArtifacts"]).toEqual(
+        plugin.beforeCreateDeploymentArtifacts
       );
     });
 
     it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
       const plugin = serverlessPluginFactory();
-      expect(plugin.hooks).toEqual(
-        expect.objectContaining({
-          "after:aws:deploy:deploy:uploadArtifacts": plugin.afterUploadArtifacts
-        })
+      expect(plugin.hooks["after:aws:deploy:deploy:uploadArtifacts"]).toEqual(
+        plugin.afterUploadArtifacts
       );
     });
 
     it("should hook to after:aws:info:displayStackOutputs", () => {
       const plugin = serverlessPluginFactory();
-      expect(plugin.hooks).toEqual(
-        expect.objectContaining({
-          "after:aws:info:displayStackOutputs": plugin.afterDisplayStackOutputs
-        })
+      expect(plugin.hooks["after:aws:info:displayStackOutputs"]).toEqual(
+        plugin.afterDisplayStackOutputs
       );
     });
   });
@@ -208,24 +196,6 @@ describe("ServerlessNextJsPlugin", () => {
         });
         expect(compiledCloudFormationTemplate).toEqual(cfWithBucket);
         expect(coreCloudFormationTemplate).toEqual(cfWithBucket);
-      });
-    });
-
-    it("should call rewritePageHandlers with next pages", () => {
-      expect.assertions(1);
-
-      const pagesDir = "build/serverless/pages";
-      const nextPages = [
-        new NextPage(`${pagesDir}/foo.js`),
-        new NextPage(`${pagesDir}/baz.js`)
-      ];
-
-      const plugin = serverlessPluginFactory();
-
-      plugin.nextPages = nextPages;
-
-      return plugin.beforeCreateDeploymentArtifacts().then(() => {
-        expect(rewritePageHandlers).toBeCalledWith(nextPages);
       });
     });
   });

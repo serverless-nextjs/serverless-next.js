@@ -2,7 +2,6 @@
 
 const path = require("path");
 const PluginBuildDir = require("./classes/PluginBuildDir");
-const rewritePageHandlers = require("./lib/rewritePageHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
@@ -92,7 +91,6 @@ class ServerlessNextJsPlugin {
       ([compiledCfWithBucket, coreCfWithBucket]) => {
         this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
         this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
-        return rewritePageHandlers(this.nextPages);
       }
     );
   }
