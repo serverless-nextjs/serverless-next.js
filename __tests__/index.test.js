@@ -19,6 +19,16 @@ jest.mock("../lib/rewritePageHandlers");
 jest.mock("../lib/uploadStaticAssetsToS3");
 jest.mock("../lib/displayStackOutput");
 
+const parsedNextConfigurationFactory = (
+  staticAssetsBucket = "my-bucket",
+  distDir = ".next"
+) => ({
+  staticAssetsBucket,
+  nextConfiguration: {
+    distDir
+  }
+});
+
 describe("ServerlessNextJsPlugin", () => {
   beforeEach(() => {
     nextBuild.mockResolvedValue({});
@@ -74,9 +84,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       copyNextPages.mockResolvedValueOnce();
       getNextPagesFromBuildDir.mockResolvedValueOnce([]);
-      parseNextConfiguration.mockReturnValue({
-        nextBuildDir: ".next"
-      });
+      parseNextConfiguration.mockReturnValue(parsedNextConfigurationFactory());
 
       const plugin = serverlessPluginFactory({
         service: {
@@ -98,9 +106,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       copyNextPages.mockResolvedValueOnce();
       getNextPagesFromBuildDir.mockResolvedValueOnce([]);
-      parseNextConfiguration.mockReturnValue({
-        nextBuildDir: ".next"
-      });
+      parseNextConfiguration.mockReturnValue(parsedNextConfigurationFactory());
 
       const plugin = serverlessPluginFactory({
         service: {

@@ -54,7 +54,10 @@ class ServerlessNextJsPlugin {
   beforePackageInitialize() {
     return nextBuild(path.resolve(this.nextConfigDir)).then(() =>
       copyNextPages(
-        path.join(this.nextConfigDir, this.configuration.nextBuildDir),
+        path.join(
+          this.nextConfigDir,
+          this.configuration.nextConfiguration.distDir
+        ),
         this.pluginBuildDir
       ).then(() => this.setNextPages())
     );
