@@ -4,5 +4,10 @@
     "ecmaVersion": 2017,
     "sourceType": "module"
   },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
   "extends": ["plugin:prettier/recommended", "plugin:react/recommended"]
 }

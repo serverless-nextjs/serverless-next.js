@@ -2,10 +2,5 @@
   "parserOptions": {
     "ecmaVersion": 2018
   },
-  "settings": {
-    "react": {
-      "version": "detect"
-    }
-  },
   "extends": ["plugin:prettier/recommended"]
 }
