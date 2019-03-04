@@ -1,37 +1,24 @@
-const nextBuild = require("next/dist/build").default;
 const serverlessPluginFactory = require("../utils/test/serverlessPluginFactory");
-const copyNextPages = require("../lib/copyNextPages");
+const parsedNextConfigurationFactory = require("../utils/test/parsedNextConfigurationFactory");
+
 const rewritePageHandlers = require("../lib/rewritePageHandlers");
 const addS3BucketToResources = require("../lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("../lib/displayStackOutput");
 const parseNextConfiguration = require("../lib/parseNextConfiguration");
-const getNextPagesFromBuildDir = require("../lib/getNextPagesFromBuildDir");
+const build = require("../lib/build");
 const NextPage = require("../classes/NextPage");
 
-jest.mock("next/dist/build");
 jest.mock("js-yaml");
-jest.mock("../lib/copyNextPages");
-jest.mock("../lib/getNextPagesFromBuildDir");
+jest.mock("../lib/build");
 jest.mock("../lib/parseNextConfiguration");
 jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/rewritePageHandlers");
 jest.mock("../lib/uploadStaticAssetsToS3");
 jest.mock("../lib/displayStackOutput");
 
-const parsedNextConfigurationFactory = (
-  staticAssetsBucket = "my-bucket",
-  distDir = ".next"
-) => ({
-  staticAssetsBucket,
-  nextConfiguration: {
-    distDir
-  }
-});
-
 describe("ServerlessNextJsPlugin", () => {
   beforeEach(() => {
-    nextBuild.mockResolvedValue({});
     addS3BucketToResources.mockResolvedValue({});
   });
 
@@ -79,12 +66,10 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("beforePackageInitialize", () => {
-    it("should call nextBuild with nextConfigDir", () => {
+    it("should call build with nextConfigDir", () => {
       expect.assertions(1);
 
-      copyNextPages.mockResolvedValueOnce();
-      getNextPagesFromBuildDir.mockResolvedValueOnce([]);
-      parseNextConfiguration.mockReturnValue(parsedNextConfigurationFactory());
+      build.mockResolvedValueOnce([]);
 
       const plugin = serverlessPluginFactory({
         service: {
@@ -97,55 +82,7 @@ describe("ServerlessNextJsPlugin", () => {
       });
 
       return plugin.beforePackageInitialize().then(() => {
-        expect(nextBuild).toBeCalledWith("/path/to/next");
-      });
-    });
-
-    it("should call copyNextPages after next finished building", () => {
-      expect.assertions(1);
-
-      copyNextPages.mockResolvedValueOnce();
-      getNextPagesFromBuildDir.mockResolvedValueOnce([]);
-      parseNextConfiguration.mockReturnValue(parsedNextConfigurationFactory());
-
-      const plugin = serverlessPluginFactory({
-        service: {
-          custom: {
-            "serverless-nextjs": {
-              nextConfigDir: "/path/to/nextApp"
-            }
-          }
-        }
-      });
-
-      return plugin.beforePackageInitialize().then(() => {
-        expect(copyNextPages).toBeCalledWith(
-          "/path/to/nextApp/.next",
-          plugin.pluginBuildDir
-        );
-      });
-    });
-
-    it("should call getNextPagesFromBuildDir with plugin build directory", () => {
-      expect.assertions(1);
-
-      copyNextPages.mockResolvedValueOnce();
-      getNextPagesFromBuildDir.mockResolvedValueOnce([]);
-
-      const plugin = serverlessPluginFactory({
-        service: {
-          custom: {
-            "serverless-nextjs": {
-              nextConfigDir: "/path/to/next/build"
-            }
-          }
-        }
-      });
-
-      return plugin.beforePackageInitialize().then(() => {
-        expect(getNextPagesFromBuildDir).toBeCalledWith(
-          plugin.pluginBuildDir.buildDir
-        );
+        expect(build).toBeCalledWith("/path/to/next");
       });
     });
 
@@ -155,8 +92,7 @@ describe("ServerlessNextJsPlugin", () => {
       const homePagePath = "/path/to/next/build/serverless/pages/home.js";
       const aboutPagePath = "/path/to/next/build/serverless/pages/about.js";
 
-      copyNextPages.mockResolvedValueOnce();
-      getNextPagesFromBuildDir.mockResolvedValueOnce([
+      build.mockResolvedValueOnce([
         new NextPage(homePagePath),
         new NextPage(aboutPagePath)
       ]);
@@ -177,8 +113,7 @@ describe("ServerlessNextJsPlugin", () => {
       const homePagePath = "/path/to/next/build/serverless/pages/home.js";
       const aboutPagePath = "/path/to/next/build/serverless/pages/about.js";
 
-      copyNextPages.mockResolvedValueOnce();
-      getNextPagesFromBuildDir.mockResolvedValueOnce([
+      build.mockResolvedValueOnce([
         new NextPage(homePagePath),
         new NextPage(aboutPagePath)
       ]);
@@ -201,10 +136,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       const homePagePath = "/path/to/next/build/serverless/pages/home.js";
 
-      copyNextPages.mockResolvedValueOnce();
-      getNextPagesFromBuildDir.mockResolvedValueOnce([
-        new NextPage(homePagePath)
-      ]);
+      build.mockResolvedValueOnce([new NextPage(homePagePath)]);
 
       const plugin = serverlessPluginFactory({
         service: {
@@ -228,10 +160,9 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#beforeCreateDeploymentArtifacts", () => {
     beforeEach(() => {
-      parseNextConfiguration.mockReturnValueOnce({
-        staticAssetsBucket: "my-bucket",
-        nextBuildDir: "build"
-      });
+      parseNextConfiguration.mockReturnValueOnce(
+        parsedNextConfigurationFactory()
+      );
     });
 
     it("should update coreCloudFormationTemplate and compiledCloudFormation template with static assets bucket", () => {

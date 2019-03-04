@@ -1,15 +1,13 @@
 "use strict";
 
 const path = require("path");
-const nextBuild = require("next/dist/build").default;
 const PluginBuildDir = require("./classes/PluginBuildDir");
 const rewritePageHandlers = require("./lib/rewritePageHandlers");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
-const getNextPagesFromBuildDir = require("./lib/getNextPagesFromBuildDir");
-const copyNextPages = require("./lib/copyNextPages");
+const build = require("./lib/build");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -52,37 +50,26 @@ class ServerlessNextJsPlugin {
   }
 
   beforePackageInitialize() {
-    return nextBuild(path.resolve(this.nextConfigDir)).then(() =>
-      copyNextPages(
-        path.join(
-          this.nextConfigDir,
-          this.configuration.nextConfiguration.distDir
-        ),
-        this.pluginBuildDir
-      ).then(() => this.setNextPages())
+    return build(this.nextConfigDir).then(nextPages =>
+      this.setNextPages(nextPages)
     );
   }
 
-  setNextPages() {
+  setNextPages(nextPages) {
     const service = this.serverless.service;
 
-    return getNextPagesFromBuildDir(this.pluginBuildDir.buildDir).then(
-      nextPages => {
-        this.nextPages = nextPages;
+    this.nextPages = nextPages;
 
-        nextPages.forEach(page => {
-          const functionName = page.functionName;
-          const functionAlreadyDeclared = service.functions[functionName];
+    nextPages.forEach(page => {
+      const functionName = page.functionName;
+      const functionAlreadyDeclared = service.functions[functionName];
 
-          if (!functionAlreadyDeclared) {
-            service.functions[functionName] =
-              page.serverlessFunction[functionName];
-          }
-        });
-
-        this.serverless.service.setFunctionNames();
+      if (!functionAlreadyDeclared) {
+        service.functions[functionName] = page.serverlessFunction[functionName];
       }
-    );
+    });
+
+    this.serverless.service.setFunctionNames();
   }
 
   getCFTemplatesWithBucket(staticAssetsBucket) {
