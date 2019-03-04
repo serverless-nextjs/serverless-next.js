@@ -78,18 +78,13 @@ Include the pattern `sls-next-build/*` as this is where the plugin copies the co
 
 ### Next configuration
 
-In your `next.config.js` make sure the configuration is set like:
+Configure your `next.config.js` like this:
 
 ```js
 module.exports = {
-  target: "serverless",
   assetPrefix: "https://s3.amazonaws.com/your-bucket-name"
 };
 ```
-
-`target: serverless`
-
-This is a requirement for the plugin to work. When next has the target set to serverless, it will compile serverless page bundles.
 
 `assetPrefix: "https://s3.amazonaws.com/your-bucket-name"`
 

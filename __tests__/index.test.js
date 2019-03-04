@@ -202,10 +202,11 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#afterUploadArtifacts", () => {
     beforeEach(() => {
-      parseNextConfiguration.mockReturnValueOnce({
-        nextBuildDir: "build",
-        staticAssetsBucket: "my-bucket"
-      });
+      parseNextConfiguration.mockReturnValueOnce(
+        parsedNextConfigurationFactory({
+          distDir: "build"
+        })
+      );
     });
 
     it("should call uploadStaticAssetsToS3 with bucketName and next static dir", () => {
