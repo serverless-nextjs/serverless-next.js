@@ -84,9 +84,9 @@ module.exports = {
 };
 ```
 
-| Config Key               | Description                                                                                                                                                                                                                                      |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| assetPrefix _(Optional)_ | When using a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) the plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket. |
+| Config Key               | Description                                                                                                                                                                                                                                                  |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| assetPrefix _(Optional)_ | When using a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) the plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket provisioned. |
 
 ### Deploying
 
