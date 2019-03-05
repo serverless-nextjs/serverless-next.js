@@ -6,6 +6,7 @@ const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
+const logger = require("./utils/logger");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -78,19 +79,32 @@ class ServerlessNextJsPlugin {
     ]);
   }
 
-  addStaticAssetsBucket() {
+  async addStaticAssetsBucket() {
     const { staticAssetsBucket } = this.configuration;
 
-    return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
-      ([compiledCfWithBucket, coreCfWithBucket]) => {
-        this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
-        this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
-      }
+    if (!staticAssetsBucket) {
+      return;
+    }
+
+    logger.log(
+      `Found bucket "${staticAssetsBucket}" in assetPrefix! Will provision!"`
     );
+
+    const [
+      compiledCfWithBucket,
+      coreCfWithBucket
+    ] = await this.getCFTemplatesWithBucket(staticAssetsBucket);
+
+    this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
+    this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
   }
 
   uploadStaticAssets() {
     const { nextConfiguration, staticAssetsBucket } = this.configuration;
+
+    if (!staticAssetsBucket) {
+      return Promise.resolve();
+    }
 
     return uploadStaticAssetsToS3({
       staticAssetsPath: path.join(nextConfiguration.distDir, "static"),
