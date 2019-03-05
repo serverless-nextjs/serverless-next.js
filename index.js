@@ -1,7 +1,6 @@
 "use strict";
 
 const path = require("path");
-const PluginBuildDir = require("./classes/PluginBuildDir");
 const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
@@ -15,7 +14,6 @@ class ServerlessNextJsPlugin {
 
     this.provider = this.serverless.getProvider("aws");
     this.providerRequest = this.provider.request.bind(this.provider);
-    this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
 
     this.commands = {};
 
