@@ -26,6 +26,8 @@ module.exports = {
 };
 ```
 
+Alternatively, remove `assetPrefix` and the bucket won't be provisioned.
+
 #### Deploy
 
 `serverless deploy`

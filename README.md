@@ -78,21 +78,17 @@ Include the pattern `sls-next-build/*` as this is where the plugin copies the co
 
 ### Next configuration
 
-Configure your `next.config.js` like this:
-
 ```js
 module.exports = {
   assetPrefix: "https://s3.amazonaws.com/your-bucket-name"
 };
 ```
 
-`assetPrefix: "https://s3.amazonaws.com/your-bucket-name"`
+| Config Key               | Description                                                                                                                                                                                                                                      |
+| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| assetPrefix _(Optional)_ | When using a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) the plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket. |
 
-Other [valid bucket URLs](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) are also fine.
-
-The plugin will parse the bucket name from the `assetPrefix` and will create an S3 bucket using the parsed name. The first time the serverless stack is provisioned, it is assumed there isn't a bucket with this name already, so make sure you don't have a bucket with that name already in your amazon account. On deployment, the plugin will upload the next static assets to your bucket. Note that bucket names must be globally unique.
-
-After doing the above, simply run:
+### Deploying
 
 `serverless deploy`
 
@@ -102,8 +98,3 @@ You should now have one API Gateway GET/ endpoint per next page 🎉
 
 See the `examples/` directory.
 
-## Roadmap
-
-- More examples
-- CloudFront support
-- Mitigation of lambda cold starts
