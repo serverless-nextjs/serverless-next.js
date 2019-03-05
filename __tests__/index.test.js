@@ -27,33 +27,33 @@ describe("ServerlessNextJsPlugin", () => {
     it("should hook to before:package:initialize", () => {
       const plugin = serverlessPluginFactory();
       expect(plugin.hooks["before:package:initialize"]).toEqual(
-        plugin.beforePackageInitialize
+        plugin.buildNextPages
       );
     });
 
     it("should hook to before:package:createDeploymentArtifacts", () => {
       const plugin = serverlessPluginFactory();
       expect(plugin.hooks["before:package:createDeploymentArtifacts"]).toEqual(
-        plugin.beforeCreateDeploymentArtifacts
+        plugin.addStaticAssetsBucket
       );
     });
 
     it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
       const plugin = serverlessPluginFactory();
       expect(plugin.hooks["after:aws:deploy:deploy:uploadArtifacts"]).toEqual(
-        plugin.afterUploadArtifacts
+        plugin.uploadStaticAssets
       );
     });
 
     it("should hook to after:aws:info:displayStackOutputs", () => {
       const plugin = serverlessPluginFactory();
       expect(plugin.hooks["after:aws:info:displayStackOutputs"]).toEqual(
-        plugin.afterDisplayStackOutputs
+        plugin.printStackOutput
       );
     });
   });
 
-  describe("beforePackageInitialize", () => {
+  describe("buildNextPages", () => {
     it("should call build with nextConfigDir", () => {
       expect.assertions(1);
 
@@ -69,7 +69,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.beforePackageInitialize().then(() => {
+      return plugin.buildNextPages().then(() => {
         expect(build).toBeCalledWith("/path/to/next");
       });
     });
@@ -87,7 +87,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       const plugin = serverlessPluginFactory();
 
-      return plugin.beforePackageInitialize().then(() => {
+      return plugin.buildNextPages().then(() => {
         expect(Object.keys(plugin.serverless.service.functions)).toEqual([
           "homePage",
           "aboutPage"
@@ -114,7 +114,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.beforePackageInitialize().then(() => {
+      return plugin.buildNextPages().then(() => {
         expect(setFunctionNamesMock).toBeCalled();
       });
     });
@@ -137,7 +137,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.beforePackageInitialize().then(() => {
+      return plugin.buildNextPages().then(() => {
         const functions = plugin.serverless.service.functions;
         expect(Object.keys(functions)).toHaveLength(1);
         expect(functions.homePage).toBeDefined();
@@ -146,7 +146,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
   });
 
-  describe("#beforeCreateDeploymentArtifacts", () => {
+  describe("#addStaticAssetsBucket", () => {
     beforeEach(() => {
       parseNextConfiguration.mockReturnValueOnce(
         parsedNextConfigurationFactory()
@@ -177,7 +177,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      return plugin.beforeCreateDeploymentArtifacts().then(() => {
+      return plugin.addStaticAssetsBucket().then(() => {
         const {
           compiledCloudFormationTemplate,
           coreCloudFormationTemplate
@@ -200,7 +200,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
   });
 
-  describe("#afterUploadArtifacts", () => {
+  describe("#uploadStaticAssets", () => {
     beforeEach(() => {
       parseNextConfiguration.mockReturnValueOnce(
         parsedNextConfigurationFactory({
@@ -214,7 +214,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       const plugin = serverlessPluginFactory();
 
-      return plugin.afterUploadArtifacts().then(() => {
+      return plugin.uploadStaticAssets().then(() => {
         expect(uploadStaticAssetsToS3).toBeCalledWith({
           staticAssetsPath: "build/static",
           bucketName: "my-bucket",
@@ -224,7 +224,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
   });
 
-  describe("#afterDisplayStackOutputs", () => {
+  describe("#printStackOutput", () => {
     it("should call displayStackOutput with awsInfo", () => {
       const awsInfo = {
         constructor: {
@@ -239,7 +239,7 @@ describe("ServerlessNextJsPlugin", () => {
         }
       });
 
-      plugin.afterDisplayStackOutputs();
+      plugin.printStackOutput();
 
       expect(displayStackOutput).toBeCalledWith(awsInfo);
     });

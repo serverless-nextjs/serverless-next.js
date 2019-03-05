@@ -17,20 +17,16 @@ class ServerlessNextJsPlugin {
 
     this.commands = {};
 
-    this.beforeCreateDeploymentArtifacts = this.beforeCreateDeploymentArtifacts.bind(
-      this
-    );
-
-    this.afterUploadArtifacts = this.afterUploadArtifacts.bind(this);
-    this.afterDisplayStackOutputs = this.afterDisplayStackOutputs.bind(this);
-    this.beforePackageInitialize = this.beforePackageInitialize.bind(this);
+    this.addStaticAssetsBucket = this.addStaticAssetsBucket.bind(this);
+    this.uploadStaticAssets = this.uploadStaticAssets.bind(this);
+    this.printStackOutput = this.printStackOutput.bind(this);
+    this.buildNextPages = this.buildNextPages.bind(this);
 
     this.hooks = {
-      "before:package:initialize": this.beforePackageInitialize,
-      "before:package:createDeploymentArtifacts": this
-        .beforeCreateDeploymentArtifacts,
-      "after:aws:deploy:deploy:uploadArtifacts": this.afterUploadArtifacts,
-      "after:aws:info:displayStackOutputs": this.afterDisplayStackOutputs
+      "before:package:initialize": this.buildNextPages,
+      "before:package:createDeploymentArtifacts": this.addStaticAssetsBucket,
+      "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
+      "after:aws:info:displayStackOutputs": this.printStackOutput
     };
   }
 
@@ -46,7 +42,7 @@ class ServerlessNextJsPlugin {
     return this.serverless.service.custom["serverless-nextjs"][param];
   }
 
-  beforePackageInitialize() {
+  buildNextPages() {
     return build(this.nextConfigDir).then(nextPages =>
       this.setNextPages(nextPages)
     );
@@ -82,7 +78,7 @@ class ServerlessNextJsPlugin {
     ]);
   }
 
-  beforeCreateDeploymentArtifacts() {
+  addStaticAssetsBucket() {
     const { staticAssetsBucket } = this.configuration;
 
     return this.getCFTemplatesWithBucket(staticAssetsBucket).then(
@@ -93,7 +89,7 @@ class ServerlessNextJsPlugin {
     );
   }
 
-  afterUploadArtifacts() {
+  uploadStaticAssets() {
     const { nextConfiguration, staticAssetsBucket } = this.configuration;
 
     return uploadStaticAssetsToS3({
@@ -103,7 +99,7 @@ class ServerlessNextJsPlugin {
     });
   }
 
-  afterDisplayStackOutputs() {
+  printStackOutput() {
     const awsInfo = this.serverless.pluginManager.getPlugins().find(plugin => {
       return plugin.constructor.name === "AwsInfo";
     });
