@@ -10,6 +10,8 @@ A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
 The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serverless-nextjs)
 
+![Demo](./demo.gif)
+
 ## Motivation
 
 Next 8 released [official support](https://nextjs.org/blog/next-8/#serverless-nextjs) for serverless! It doesn't work out of the box with AWS Lambdas, instead, next provides a low level API which this plugin uses to deploy the serverless pages.
