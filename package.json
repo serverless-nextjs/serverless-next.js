@@ -61,5 +61,8 @@
       "<rootDir>/examples/",
       "<rootDir>/node_modules/"
     ]
+  },
+  "engines": {
+    "node": ">=8.5.0"
   }
 }
