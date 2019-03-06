@@ -7,6 +7,7 @@ const parseNextConfiguration = require("../lib/parseNextConfiguration");
 const build = require("../lib/build");
 const NextPage = require("../classes/NextPage");
 const logger = require("../utils/logger");
+const PluginBuildDir = require("../classes/PluginBuildDir");
 
 jest.mock("js-yaml");
 jest.mock("../lib/build");
@@ -56,23 +57,68 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("buildNextPages", () => {
-    it("should call build with nextConfigDir", () => {
+    describe("packaging plugin build directory", () => {
+      const nextConfigDir = "/path/to/next-app";
+      let plugin;
+
+      beforeEach(() => {
+        build.mockResolvedValueOnce([]);
+
+        plugin = serverlessPluginFactory({
+          service: {
+            package: {
+              include: []
+            },
+            custom: {
+              "serverless-nextjs": {
+                nextConfigDir
+              }
+            }
+          }
+        });
+      });
+
+      it("should include plugin build directory for packaging", () => {
+        expect.assertions(1);
+
+        return plugin.buildNextPages().then(() => {
+          expect(plugin.serverless.service.package.include).toContain(
+            `${nextConfigDir}/sls-next-build/*`
+          );
+        });
+      });
+
+      it("should include plugin build directory for packaging when package include isn't defined", () => {
+        expect.assertions(1);
+
+        plugin.serverless.service.package.include = undefined;
+
+        return plugin.buildNextPages().then(() => {
+          expect(plugin.serverless.service.package.include).toContain(
+            `${nextConfigDir}/sls-next-build/*`
+          );
+        });
+      });
+    });
+
+    it("should call build with pluginBuildDir", () => {
       expect.assertions(1);
 
       build.mockResolvedValueOnce([]);
+      const nextConfigDir = "/path/to/next";
 
       const plugin = serverlessPluginFactory({
         service: {
           custom: {
             "serverless-nextjs": {
-              nextConfigDir: "/path/to/next"
+              nextConfigDir: nextConfigDir
             }
           }
         }
       });
 
       return plugin.buildNextPages().then(() => {
-        expect(build).toBeCalledWith("/path/to/next");
+        expect(build).toBeCalledWith(new PluginBuildDir(nextConfigDir));
       });
     });
 

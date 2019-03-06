@@ -14,6 +14,9 @@ const serverlessPluginFactory = (options = {}) => {
       run: () => {}
     },
     service: {
+      package: {
+        include: []
+      },
       setFunctionNames: () => {},
       functions: {},
       provider: {

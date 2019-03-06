@@ -70,11 +70,9 @@ custom:
 package:
   exclude:
     - ./**/*
-  include:
-    - sls-next-build/*
 ```
 
-Include the pattern `sls-next-build/*` as this is where the plugin copies the compiled page handlers.
+You can exclude everything. The plugin makes sure the page handlers are included in the artifacts.
 
 ### Next configuration
 

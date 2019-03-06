@@ -7,6 +7,7 @@ const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
 const logger = require("./utils/logger");
+const PluginBuildDir = require("./classes/PluginBuildDir");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -44,7 +45,13 @@ class ServerlessNextJsPlugin {
   }
 
   buildNextPages() {
-    return build(this.nextConfigDir).then(nextPages =>
+    const pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
+    const servicePackage = this.serverless.service.package;
+
+    servicePackage.include = servicePackage.include || [];
+    servicePackage.include.push(path.join(pluginBuildDir.buildDir, "*"));
+
+    return build(pluginBuildDir).then(nextPages =>
       this.setNextPages(nextPages)
     );
   }
