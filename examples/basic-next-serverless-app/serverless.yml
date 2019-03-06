@@ -3,6 +3,7 @@ service: basic-next-serverless-app
 provider:
   name: aws
   runtime: nodejs8.10
+  memorySize: 512
 
 stage: dev
 region: eu-west-1
@@ -15,8 +16,7 @@ custom:
     nextConfigDir: ./
 
 package:
-  # exclude everything, except for the page bundles
+  # exclude everything
+  # page handlers are automatically included by the plugin
   exclude:
     - ./**/*
-  include:
-    - sls-next-build/*
