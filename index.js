@@ -87,7 +87,7 @@ class ServerlessNextJsPlugin {
     }
 
     logger.log(
-      `Found bucket "${staticAssetsBucket}" in assetPrefix! Will provision!"`
+      `Found bucket "${staticAssetsBucket}" in assetPrefix! Will provision!`
     );
 
     const [
