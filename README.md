@@ -10,6 +10,15 @@ A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
 The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serverless-nextjs)
 
+## Contents
+
+- [Motivation](#motivation)
+- [Getting Started](#getting-started)
+- [Next config](#next-configuration)
+- [Deploying](#deploying)
+- [Deploying a single page](#deploying-a-single-page)
+- [Examples](#examples)
+
 ## Motivation
 
 Next 8 released [official support](https://nextjs.org/blog/next-8/#serverless-nextjs) for serverless! It doesn't work out of the box with AWS Lambdas, instead, next provides a low level API which this plugin uses to deploy the serverless pages.
@@ -33,19 +42,15 @@ module.exports.render = (event, context, callback) => {
 };
 ```
 
-### Also benefit from
-
-- Automatic next builds
-- Dynamic creation of serverless functions for each page.
-- S3 Bucket provisioning for static assets. Relies on [assetPrefix](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
-
 ## Getting started
 
 ### Installing
 
 `npm install --save-dev serverless-nextjs-plugin`
 
-The plugin only needs to know where your `next.config.js` file is located. Note it expects the directory and not the actual file path.
+The plugin only needs to know where your `next.config.js` file is located. Using your next configuration it will automatically build the application and compile the pages using the target: `serverless`.
+
+Note it expects `nextConfigDir` to be a directory and not the actual file path.
 
 ```
 nextApp
@@ -74,7 +79,7 @@ package:
 
 You can exclude everything. The plugin makes sure the page handlers are included in the artifacts.
 
-### Next configuration
+## Next configuration
 
 ```js
 module.exports = {
@@ -86,13 +91,22 @@ module.exports = {
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | assetPrefix _(Optional)_ | When using a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) the plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket provisioned. |
 
-### Deploying
+## Deploying
 
 `serverless deploy`
 
 You should now have one API Gateway GET/ endpoint per next page 🎉
 
+## Deploying a single page
+
+If you need to deploy just one of your pages, simply run:
+
+`serverless deploy function --function pageFunctionName`
+
+where `pageFunctionName` will be the page file name + `"Page"`. For example, to deploy `pages/home.js`, you can run:
+
+`serverless deploy function --function homePage`
+
 ## Examples
 
 See the `examples/` directory.
-

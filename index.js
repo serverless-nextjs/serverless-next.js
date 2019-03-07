@@ -13,12 +13,11 @@ class ServerlessNextJsPlugin {
   constructor(serverless, options) {
     this.serverless = serverless;
     this.options = options;
+    this.commands = {};
 
     this.provider = this.serverless.getProvider("aws");
     this.providerRequest = this.provider.request.bind(this.provider);
     this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
-
-    this.commands = {};
 
     this.addStaticAssetsBucket = this.addStaticAssetsBucket.bind(this);
     this.uploadStaticAssets = this.uploadStaticAssets.bind(this);
@@ -30,6 +29,7 @@ class ServerlessNextJsPlugin {
       "before:package:initialize": this.buildNextPages,
       "before:package:createDeploymentArtifacts": this.addStaticAssetsBucket,
       "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
+      "before:deploy:function:initialize": this.buildNextPages,
       "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
       "after:aws:info:displayStackOutputs": this.printStackOutput
     };

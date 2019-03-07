@@ -30,8 +30,15 @@ describe("ServerlessNextJsPlugin", () => {
     it("should hook to before:package:initialize", () => {
       const plugin = serverlessPluginFactory();
 
-      expect(plugin.buildNextPages).toBeDefined();
       expect(plugin.hooks["before:package:initialize"]).toEqual(
+        plugin.buildNextPages
+      );
+    });
+
+    it("should hook to before:deploy:function:initialize", () => {
+      const plugin = serverlessPluginFactory();
+
+      expect(plugin.hooks["before:deploy:function:initialize"]).toEqual(
         plugin.buildNextPages
       );
     });
@@ -39,7 +46,6 @@ describe("ServerlessNextJsPlugin", () => {
     it("should hook to before:package:createDeploymentArtifacts", () => {
       const plugin = serverlessPluginFactory();
 
-      expect(plugin.addStaticAssetsBucket).toBeDefined();
       expect(plugin.hooks["before:package:createDeploymentArtifacts"]).toEqual(
         plugin.addStaticAssetsBucket
       );
@@ -48,7 +54,6 @@ describe("ServerlessNextJsPlugin", () => {
     it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
       const plugin = serverlessPluginFactory();
 
-      expect(plugin.uploadStaticAssets).toBeDefined();
       expect(plugin.hooks["after:aws:deploy:deploy:uploadArtifacts"]).toEqual(
         plugin.uploadStaticAssets
       );
@@ -57,7 +62,6 @@ describe("ServerlessNextJsPlugin", () => {
     it("should hook to after:aws:info:displayStackOutputs", () => {
       const plugin = serverlessPluginFactory();
 
-      expect(plugin.printStackOutput).toBeDefined();
       expect(plugin.hooks["after:aws:info:displayStackOutputs"]).toEqual(
         plugin.printStackOutput
       );
@@ -66,14 +70,13 @@ describe("ServerlessNextJsPlugin", () => {
     it("should hook to after:package:createDeploymentArtifacts", () => {
       const plugin = serverlessPluginFactory();
 
-      expect(plugin.removePluginBuildDir).toBeDefined();
       expect(plugin.hooks["after:package:createDeploymentArtifacts"]).toEqual(
         plugin.removePluginBuildDir
       );
     });
   });
 
-  describe("buildNextPages", () => {
+  describe("#buildNextPages", () => {
     describe("packaging plugin build directory", () => {
       const nextConfigDir = "/path/to/next-app";
       let plugin;
