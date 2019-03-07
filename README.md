@@ -95,7 +95,29 @@ module.exports = {
 
 `serverless deploy`
 
-You should now have one API Gateway GET/ endpoint per next page 🎉
+When running `serverless deploy` all your next pages will be automatically compiled, packaged and deployed.
+
+The Lambda functions created for each page have by default the following configuration:
+
+```yml
+handler: /path/to/page/handler.render
+events:
+  - http:
+      path: pageName # home, about, etc.
+      method: get
+```
+
+If you need to change the default configuration, such as `memorySize`, `timeout` etc. use the top level `provider` which will override the functions configuration. For example, to change the memorySize to 512MB:
+
+```yml
+provider:
+  name: aws
+  runtime: nodejs8.10
+  memorySize: 512
+  ...
+```
+
+See [this](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration) for more information.
 
 ## Deploying a single page
 
