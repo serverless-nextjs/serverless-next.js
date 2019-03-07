@@ -29,6 +29,8 @@ describe("ServerlessNextJsPlugin", () => {
   describe("#constructor", () => {
     it("should hook to before:package:initialize", () => {
       const plugin = serverlessPluginFactory();
+
+      expect(plugin.buildNextPages).toBeDefined();
       expect(plugin.hooks["before:package:initialize"]).toEqual(
         plugin.buildNextPages
       );
@@ -36,6 +38,8 @@ describe("ServerlessNextJsPlugin", () => {
 
     it("should hook to before:package:createDeploymentArtifacts", () => {
       const plugin = serverlessPluginFactory();
+
+      expect(plugin.addStaticAssetsBucket).toBeDefined();
       expect(plugin.hooks["before:package:createDeploymentArtifacts"]).toEqual(
         plugin.addStaticAssetsBucket
       );
@@ -43,6 +47,8 @@ describe("ServerlessNextJsPlugin", () => {
 
     it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
       const plugin = serverlessPluginFactory();
+
+      expect(plugin.uploadStaticAssets).toBeDefined();
       expect(plugin.hooks["after:aws:deploy:deploy:uploadArtifacts"]).toEqual(
         plugin.uploadStaticAssets
       );
@@ -50,8 +56,19 @@ describe("ServerlessNextJsPlugin", () => {
 
     it("should hook to after:aws:info:displayStackOutputs", () => {
       const plugin = serverlessPluginFactory();
+
+      expect(plugin.printStackOutput).toBeDefined();
       expect(plugin.hooks["after:aws:info:displayStackOutputs"]).toEqual(
         plugin.printStackOutput
+      );
+    });
+
+    it("should hook to after:package:createDeploymentArtifacts", () => {
+      const plugin = serverlessPluginFactory();
+
+      expect(plugin.removePluginBuildDir).toBeDefined();
+      expect(plugin.hooks["after:package:createDeploymentArtifacts"]).toEqual(
+        plugin.removePluginBuildDir
       );
     });
   });
@@ -349,6 +366,18 @@ describe("ServerlessNextJsPlugin", () => {
       plugin.printStackOutput();
 
       expect(displayStackOutput).toBeCalledWith(awsInfo);
+    });
+  });
+
+  describe("#removePluginBuildDir", () => {
+    it("should call pluginBuildDir.removeBuildDir", () => {
+      const plugin = serverlessPluginFactory();
+      const mockRemoveBuildDir = jest.fn().mockResolvedValueOnce();
+      plugin.pluginBuildDir.removeBuildDir = mockRemoveBuildDir;
+
+      return plugin.removePluginBuildDir().then(() => {
+        expect(mockRemoveBuildDir).toBeCalled();
+      });
     });
   });
 });

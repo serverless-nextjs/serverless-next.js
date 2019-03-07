@@ -1,5 +1,6 @@
 const path = require("path");
 const fs = require("fs-extra");
+const logger = require("../utils/logger");
 
 class PluginBuildDir {
   constructor(nextConfigDir) {
@@ -12,6 +13,11 @@ class PluginBuildDir {
 
   setupBuildDir() {
     return fs.emptyDir(this.buildDir);
+  }
+
+  removeBuildDir() {
+    logger.log("Cleaning up tmp build folder ...");
+    return fs.remove(this.buildDir);
   }
 }
 

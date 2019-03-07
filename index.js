@@ -16,6 +16,7 @@ class ServerlessNextJsPlugin {
 
     this.provider = this.serverless.getProvider("aws");
     this.providerRequest = this.provider.request.bind(this.provider);
+    this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
 
     this.commands = {};
 
@@ -23,10 +24,12 @@ class ServerlessNextJsPlugin {
     this.uploadStaticAssets = this.uploadStaticAssets.bind(this);
     this.printStackOutput = this.printStackOutput.bind(this);
     this.buildNextPages = this.buildNextPages.bind(this);
+    this.removePluginBuildDir = this.removePluginBuildDir.bind(this);
 
     this.hooks = {
       "before:package:initialize": this.buildNextPages,
       "before:package:createDeploymentArtifacts": this.addStaticAssetsBucket,
+      "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
       "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
       "after:aws:info:displayStackOutputs": this.printStackOutput
     };
@@ -45,7 +48,7 @@ class ServerlessNextJsPlugin {
   }
 
   buildNextPages() {
-    const pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
+    const pluginBuildDir = this.pluginBuildDir;
     const servicePackage = this.serverless.service.package;
 
     servicePackage.include = servicePackage.include || [];
@@ -124,6 +127,10 @@ class ServerlessNextJsPlugin {
     });
 
     return displayStackOutput(awsInfo);
+  }
+
+  removePluginBuildDir() {
+    return this.pluginBuildDir.removeBuildDir();
   }
 }
 
