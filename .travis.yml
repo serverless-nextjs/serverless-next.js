@@ -9,6 +9,7 @@ script:
   - npm run lint
   - npm test
   - npm run coveralls
+  - npm run integration
 cache:
   directories:
     - "node_modules"

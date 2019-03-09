@@ -13,6 +13,7 @@
   "scripts": {
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint .",
+    "integration": "jest -c jest.integration.config.json",
     "test": "jest"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
@@ -25,7 +26,8 @@
     "eslint-plugin-prettier": "^3.0.1",
     "eslint-plugin-react": "^7.12.4",
     "jest": "^24.1.0",
-    "prettier": "^1.16.4"
+    "prettier": "^1.16.4",
+    "serverless": "^1.38.0"
   },
   "repository": {
     "type": "git",
@@ -55,11 +57,11 @@
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
       "lib/cfSchema.js",
-      "utils/test/serverlessPluginFactory.js"
+      "<rootDir>/utils/test"
     ],
-    "testPathIgnorePatterns": [
+    "modulePathIgnorePatterns": [
       "<rootDir>/examples/",
-      "<rootDir>/node_modules/"
+      "<rootDir>/integration"
     ]
   },
   "engines": {
