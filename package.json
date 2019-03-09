@@ -19,6 +19,7 @@
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "adm-zip": "^0.4.13",
     "babel-eslint": "^10.0.1",
     "coveralls": "^3.0.3",
     "eslint": "^5.14.1",
