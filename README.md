@@ -10,6 +10,8 @@ A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
 The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serverless-nextjs)
 
+![demo](./demo.gif)
+
 ## Contents
 
 - [Motivation](#motivation)
