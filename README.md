@@ -103,7 +103,7 @@ The Lambda functions created for each page have by default the following configu
 handler: /path/to/page/handler.render
 events:
   - http:
-      path: pageName # home, about, etc.
+      path: pageName # home, about, etc. Unless is the index page which is served at /
       method: get
 ```
 
