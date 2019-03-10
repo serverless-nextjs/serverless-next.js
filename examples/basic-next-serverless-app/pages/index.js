@@ -1,7 +1,7 @@
 import React from "react";
 import "./styles/home.css";
 
-function Home() {
+function Index() {
   return (
     <div className="homePage">
       <div>Welcome to next.js serverless ⚡</div>
@@ -9,4 +9,4 @@ function Home() {
   );
 }
 
-export default Home;
+export default Index;

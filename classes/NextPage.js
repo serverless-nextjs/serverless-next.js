@@ -37,7 +37,7 @@ class NextPage {
         events: [
           {
             http: {
-              path: this.pageName,
+              path: this.pageName === "index" ? "/" : this.pageName,
               method: "get"
             }
           }

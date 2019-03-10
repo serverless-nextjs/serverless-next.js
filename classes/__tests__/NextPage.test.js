@@ -10,6 +10,27 @@ describe("NextPage", () => {
     });
   });
 
+  describe("When is the index page", () => {
+    const pagesDir = "/build/serverless/pages";
+    const pagePath = `${pagesDir}/index.js`;
+    let page;
+
+    beforeEach(() => {
+      page = new NextPage(pagePath);
+    });
+
+    describe("#serverlessFunction", () => {
+      it("should return function http event path /", () => {
+        const { events } = page.serverlessFunction.indexPage;
+
+        expect(events).toHaveLength(1);
+
+        const httpEvent = events[0].http;
+        expect(httpEvent.path).toEqual("/");
+      });
+    });
+  });
+
   describe("When a new instance is created", () => {
     const pagesDir = "/build/serverless/pages";
     const pagePath = `${pagesDir}/admin.js`;
