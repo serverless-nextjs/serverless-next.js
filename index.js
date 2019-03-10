@@ -26,10 +26,11 @@ class ServerlessNextJsPlugin {
     this.removePluginBuildDir = this.removePluginBuildDir.bind(this);
 
     this.hooks = {
+      "before:offline:start": this.buildNextPages,
       "before:package:initialize": this.buildNextPages,
+      "before:deploy:function:initialize": this.buildNextPages,
       "before:package:createDeploymentArtifacts": this.addStaticAssetsBucket,
       "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
-      "before:deploy:function:initialize": this.buildNextPages,
       "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
       "after:aws:info:displayStackOutputs": this.printStackOutput
     };

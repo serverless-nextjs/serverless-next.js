@@ -27,6 +27,14 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#constructor", () => {
+    it("should hook to before:offline:start for serverless-offline support", () => {
+      const plugin = serverlessPluginFactory();
+
+      expect(plugin.hooks["before:offline:start"]).toEqual(
+        plugin.buildNextPages
+      );
+    });
+
     it("should hook to before:package:initialize", () => {
       const plugin = serverlessPluginFactory();
 
