@@ -19,6 +19,8 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Next config](#next-configuration)
 - [Deploying](#deploying)
 - [Deploying a single page](#deploying-a-single-page)
+- [Overriding default page configuration](#overriding-default-page-configuration)
+- [Overriding configuration for a specific page](#overriding-specific-page-configuration)
 - [Examples](#examples)
 
 ## Motivation
@@ -130,6 +132,14 @@ If you need to deploy just one of your pages, simply run:
 where `pageFunctionName` will be the page file name + `"Page"`. For example, to deploy `pages/home.js`, you can run:
 
 `serverless deploy function --function homePage`
+
+## Overriding default page configuration
+
+// TODO:
+
+## Overriding specific page configuration
+
+// TODO:
 
 ## Examples
 
