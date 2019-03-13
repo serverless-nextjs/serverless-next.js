@@ -4,3 +4,6 @@ node_modules
 .serverless
 build
 sls-next-build
+examples
+integration/basic-app
+integration/app-with-serverless-offline
