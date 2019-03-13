@@ -10,17 +10,13 @@ module.exports = () => {
     serverlessOffline.stdout.on("data", data => {
       const stdoutStr = bufferToStr(data);
 
-      console.log(stdoutStr);
-
       if (stdoutStr.includes("Offline listening on")) {
         resolve(serverlessOffline);
       }
     });
 
-    serverlessOffline.stderr.on("err", data => {
+    serverlessOffline.stderr.on("data", data => {
       const err = bufferToStr(data);
-
-      console.log(err);
 
       reject(new Error(`serverless-offline failed, ${err}`));
     });

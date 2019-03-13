@@ -5,7 +5,8 @@ node_js:
   - "11.10"
 install:
   - npm install
-  - npm install --prefix integration/app-with-serverless-offline
+  - cd integration/app-with-serverless-offline
+  - npm install
 script:
   - npm run lint
   - npm test
