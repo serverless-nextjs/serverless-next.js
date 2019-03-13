@@ -1,7 +1,23 @@
-const spawnSync = require("child_process").spawnSync;
+const { spawn } = require("child_process");
 const serverlessExec = require("./getServerlessExec");
 
+const bufferToStr = buffer => Buffer.from(buffer).toString("utf8");
+
 module.exports = () => {
-  const options = { stdio: "inherit" };
-  return spawnSync(`${serverlessExec} offline`, options);
+  return new Promise((resolve, reject) => {
+    const serverlessOffline = spawn(serverlessExec, ["offline"]);
+
+    serverlessOffline.stdout.on("data", data => {
+      const stdoutStr = bufferToStr(data);
+
+      if (stdoutStr.includes("Offline listening on")) {
+        resolve(serverlessOffline);
+      }
+    });
+
+    serverlessOffline.stderr.on("err", data => {
+      const err = bufferToStr(data);
+      reject(new Error(`serverless-offline failed, ${err}`));
+    });
+  });
 };

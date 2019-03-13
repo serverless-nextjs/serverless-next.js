@@ -1,36 +1,40 @@
-const http = require("http");
-// const path = require("path");
-// const serverlessOfflineStart = require("../../utils/test/serverlessOfflineStart");
+const path = require("path");
+const serverlessOfflineStart = require("../../utils/test/serverlessOfflineStart");
+const httpGet = require("../../utils/test/httpGet");
 
 describe("Local Deployment Tests (via serverless-offline)", () => {
-  // let slsOffline;
+  let slsOffline;
 
-  // beforeAll(() => {
-  //   process.chdir(path.join(__dirname, "../app-with-serverless-offline"));
-  //   slsOffline = serverlessOfflineStart();
-  // });
+  beforeAll(() => {
+    process.chdir(path.join(__dirname, "../app-with-serverless-offline"));
 
-  // afterAll(() => {
-  //   slsOffline.kill();
-  // });
+    return serverlessOfflineStart().then(serverlessOffline => {
+      slsOffline = serverlessOffline;
+    });
+  });
 
-  it.skip("should return the about page content", done => {
-    http
-      .get("http://localhost:3000/about", res => {
-        const { statusCode } = res;
+  afterAll(() => {
+    slsOffline.stdin.pause();
+    slsOffline.kill();
+  });
+
+  it("should return the index page content", () => {
+    expect.assertions(2);
+
+    return httpGet("http://localhost:3000").then(({ response, statusCode }) => {
+      expect(statusCode).toBe(200);
+      expect(response).toContain("Index page");
+    });
+  });
+
+  it("should return the about page content", () => {
+    expect.assertions(2);
+
+    return httpGet("http://localhost:3000/about").then(
+      ({ response, statusCode }) => {
         expect(statusCode).toBe(200);
-
-        res.setEncoding("utf8");
-        let rawData = "";
-        res.on("data", chunk => {
-          rawData += chunk;
-        });
-
-        res.on("end", () => {
-          expect(rawData).toContain("About page");
-          done();
-        });
-      })
-      .on("err", e => done(e));
+        expect(response).toContain("About page");
+      }
+    );
   });
 });

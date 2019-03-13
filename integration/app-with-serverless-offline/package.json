@@ -10,7 +10,5 @@
     "serverless-offline": "^4.9.0",
     "serverless-nextjs-plugin": "file:../../"
   },
-  "dependencies": {
-    "serverless": "^1.38.0"
-  }
+  "dependencies": {}
 }
