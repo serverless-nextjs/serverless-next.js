@@ -20,5 +20,7 @@ module.exports = () => {
 
       reject(new Error(`serverless-offline failed, ${err}`));
     });
+
+    serverlessOffline.on("error", err => reject(err));
   });
 };

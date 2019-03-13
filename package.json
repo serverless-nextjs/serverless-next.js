@@ -13,7 +13,7 @@
   "scripts": {
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "lint": "eslint .",
-    "integration": "jest -c jest.integration.config.json",
+    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "test": "jest"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
