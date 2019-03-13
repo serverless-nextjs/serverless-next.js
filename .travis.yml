@@ -7,6 +7,7 @@ install:
   - npm install
   - cd integration/app-with-serverless-offline
   - npm install
+  - cd $TRAVIS_BUILD_DIR
 script:
   - npm run lint
   - npm test
