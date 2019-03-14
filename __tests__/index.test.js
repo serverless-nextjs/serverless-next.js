@@ -129,13 +129,13 @@ describe("ServerlessNextJsPlugin", () => {
       });
     });
 
-    it("should call build with pluginBuildDir and user provided pageConfigOverrides", () => {
+    it("should call build with pluginBuildDir and user provided pageConfig", () => {
       expect.assertions(1);
 
       build.mockResolvedValueOnce([]);
       const nextConfigDir = "/path/to/next";
 
-      const pageConfigOverrides = {
+      const pageConfig = {
         home: {
           memory: "512"
         }
@@ -146,7 +146,7 @@ describe("ServerlessNextJsPlugin", () => {
           custom: {
             "serverless-nextjs": {
               nextConfigDir: nextConfigDir,
-              pageConfigOverrides
+              pageConfig
             }
           }
         }
@@ -155,7 +155,7 @@ describe("ServerlessNextJsPlugin", () => {
       return plugin.buildNextPages().then(() => {
         expect(build).toBeCalledWith(
           new PluginBuildDir(nextConfigDir),
-          pageConfigOverrides
+          pageConfig
         );
       });
     });

@@ -86,7 +86,7 @@ describe("NextPage", () => {
         expect(httpEvent.method).toEqual("get");
       });
 
-      it("should override serverlessFunction with provided overrides", () => {
+      it("should override serverlessFunction with provided pageConfig", () => {
         const serverlessFunctionOverrides = { foo: "bar" };
 
         const pageWithCustomConfig = new NextPage(
@@ -99,7 +99,7 @@ describe("NextPage", () => {
         );
       });
 
-      it("should NOT change handler with provided override", () => {
+      it("should NOT change handler with provided pageConfig", () => {
         const serverlessFunctionOverrides = { handler: "invalid/handler" };
 
         const pageWithCustomConfig = new NextPage(
@@ -112,7 +112,7 @@ describe("NextPage", () => {
         );
       });
 
-      it("should NOT change runtime with provided override", () => {
+      it("should NOT change runtime with provided pageConfig", () => {
         const serverlessFunctionOverrides = { runtime: "python2.7" };
 
         const pageWithCustomConfig = new NextPage(
