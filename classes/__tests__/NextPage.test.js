@@ -85,6 +85,45 @@ describe("NextPage", () => {
         expect(httpEvent.path).toEqual("admin");
         expect(httpEvent.method).toEqual("get");
       });
+
+      it("should override serverlessFunction with provided overrides", () => {
+        const serverlessFunctionOverrides = { foo: "bar" };
+
+        const pageWithCustomConfig = new NextPage(
+          pagePath,
+          serverlessFunctionOverrides
+        );
+
+        expect(pageWithCustomConfig.serverlessFunction.adminPage.foo).toBe(
+          "bar"
+        );
+      });
+
+      it("should NOT change handler with provided override", () => {
+        const serverlessFunctionOverrides = { handler: "invalid/handler" };
+
+        const pageWithCustomConfig = new NextPage(
+          pagePath,
+          serverlessFunctionOverrides
+        );
+
+        expect(pageWithCustomConfig.serverlessFunction.adminPage.handler).toBe(
+          pageWithCustomConfig.pageHandler
+        );
+      });
+
+      it("should NOT change runtime with provided override", () => {
+        const serverlessFunctionOverrides = { runtime: "python2.7" };
+
+        const pageWithCustomConfig = new NextPage(
+          pagePath,
+          serverlessFunctionOverrides
+        );
+
+        expect(pageWithCustomConfig.serverlessFunction.adminPage.runtime).toBe(
+          undefined
+        );
+      });
     });
   });
 });
