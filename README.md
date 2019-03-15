@@ -152,7 +152,7 @@ custom:
 
 The example above will deploy the `about` page function with a smaller `memorySize` and the home page with a higher `timeout` than the default values.
 
-You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration). The values provided will be merged onto the defaults provided by the plugin.
+You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration). The values provided will be merged onto the plugin defaults.
 
 ## Examples
 
