@@ -49,7 +49,7 @@ class NextPage {
       delete this.serverlessFunctionOverrides.handler;
       delete this.serverlessFunctionOverrides.runtime;
 
-      merge(configuration, this.serverlessFunctionOverrides || {});
+      merge(configuration, this.serverlessFunctionOverrides);
     }
 
     return {
