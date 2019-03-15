@@ -19,7 +19,6 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Next config](#next-configuration)
 - [Deploying](#deploying)
 - [Deploying a single page](#deploying-a-single-page)
-- [Overriding default page configuration](#overriding-default-page-configuration)
 - [Overriding configuration for a specific page](#overriding-specific-page-configuration)
 - [Examples](#examples)
 
@@ -133,13 +132,27 @@ where `pageFunctionName` will be the page file name + `"Page"`. For example, to 
 
 `serverless deploy function --function homePage`
 
-## Overriding default page configuration
-
-// TODO:
-
 ## Overriding specific page configuration
 
-// TODO:
+You may want to have a different configuration for one or more of your page functions. This is possible by setting the `pageConfig` key in the plugin config:
+
+```yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./
+    pageConfig:
+      about:
+        memorySize: 512 # default is 1024
+      home:
+        timeout: 10 # default is 6
+```
+
+The example above will deploy the `about` page function with a smaller `memorySize` and the home page with a higher `timeout` than the default values.
+
+You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration). The values provided will be merged onto the defaults provided by the plugin.
 
 ## Examples
 
