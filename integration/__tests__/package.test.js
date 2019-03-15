@@ -60,10 +60,12 @@ describe("Package Tests", () => {
       describe("Page lambda functions", () => {
         let homePageLambdaFunction;
         let aboutPageLambdaFunction;
+        let postPageLambdaFunction;
 
         beforeAll(() => {
           homePageLambdaFunction = resources.HomePageLambdaFunction;
           aboutPageLambdaFunction = resources.AboutPageLambdaFunction;
+          postPageLambdaFunction = resources.PostPageLambdaFunction;
         });
 
         it("should create AWS Lambda resources for each page", () => {
@@ -72,6 +74,9 @@ describe("Package Tests", () => {
 
           expect(aboutPageLambdaFunction).toBeDefined();
           expect(aboutPageLambdaFunction.Type).toEqual("AWS::Lambda::Function");
+
+          expect(postPageLambdaFunction).toBeDefined();
+          expect(postPageLambdaFunction.Type).toEqual("AWS::Lambda::Function");
         });
 
         it("should have correct handlers", () => {
@@ -81,21 +86,31 @@ describe("Package Tests", () => {
           expect(aboutPageLambdaFunction.Properties.Handler).toEqual(
             "sls-next-build/about.render"
           );
+          expect(postPageLambdaFunction.Properties.Handler).toEqual(
+            "sls-next-build/post.render"
+          );
+        });
+
+        it("post page should have custom memorySize", () => {
+          expect(postPageLambdaFunction.Properties.MemorySize).toEqual(2048);
         });
       });
 
       describe("API gateway", () => {
         let apiGWHomePageResource;
         let apiGWAboutPageResource;
+        let apiGWPostPageResource;
 
         beforeAll(() => {
           apiGWHomePageResource = resources.ApiGatewayResourceHome;
           apiGWAboutPageResource = resources.ApiGatewayResourceAbout;
+          apiGWPostPageResource = resources.ApiGatewayResourcePosts;
         });
 
         it("should create api gateway resources", () => {
           expect(apiGWHomePageResource).toBeDefined();
           expect(apiGWAboutPageResource).toBeDefined();
+          expect(apiGWPostPageResource).toBeDefined();
 
           expect(apiGWHomePageResource.Type).toEqual(
             "AWS::ApiGateway::Resource"
@@ -103,11 +118,21 @@ describe("Package Tests", () => {
           expect(apiGWAboutPageResource.Type).toEqual(
             "AWS::ApiGateway::Resource"
           );
+          expect(apiGWPostPageResource.Type).toEqual(
+            "AWS::ApiGateway::Resource"
+          );
         });
 
         it("should have correct URI paths", () => {
           expect(apiGWHomePageResource.Properties.PathPart).toEqual("home");
           expect(apiGWAboutPageResource.Properties.PathPart).toEqual("about");
+        });
+
+        it("post page should have custom path and id parameter", () => {
+          expect(apiGWPostPageResource.Properties.PathPart).toEqual("posts");
+          expect(
+            resources.ApiGatewayResourcePostsIdVar.Properties.PathPart
+          ).toEqual("{id}");
         });
       });
     });
@@ -120,8 +145,10 @@ describe("Package Tests", () => {
 
         expect(entryNames).toContain("sls-next-build/home.js");
         expect(entryNames).toContain("sls-next-build/about.js");
+        expect(entryNames).toContain("sls-next-build/post.js");
         expect(entryNames).toContain("sls-next-build/home.original.js");
         expect(entryNames).toContain("sls-next-build/about.original.js");
+        expect(entryNames).toContain("sls-next-build/post.original.js");
       });
     });
   });

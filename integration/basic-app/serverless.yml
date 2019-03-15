@@ -12,6 +12,16 @@ plugins:
 custom:
   serverless-nextjs:
     nextConfigDir: ./
+    pageConfig:
+      post:
+        memorySize: 2048
+        events:
+          - http:
+              path: posts/{id}
+              request:
+                parameters:
+                  paths:
+                    id: true
 
 package:
   # exclude everything
