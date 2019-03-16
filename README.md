@@ -157,7 +157,7 @@ You can set any function property described [here](https://serverless.com/framew
 
 ## Custom page routing
 
-The default page route is `/{pageName}`. You may want to serve your page from a different path. This is possible by setting your own page http path in the `pageConfig`. For example for `pages/post.js`:
+The default page route is `/{pageName}`. You may want to serve your page from a different path. This is possible by setting your own http path in the `pageConfig`. For example for `pages/post.js`:
 
 ```js
 class Post extends React.Component {
