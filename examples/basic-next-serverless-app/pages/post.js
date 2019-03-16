@@ -1,5 +1,3 @@
-import React from "react";
-
 class Post extends React.Component {
   static async getInitialProps({ query }) {
     return {

@@ -14,6 +14,15 @@ plugins:
 custom:
   serverless-nextjs:
     nextConfigDir: ./
+    pageConfig:
+      post:
+        events:
+          - http:
+              path: post/{slug}
+              request:
+                parameters:
+                  paths:
+                    slug: true
 
 package:
   # exclude everything

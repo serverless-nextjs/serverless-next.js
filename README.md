@@ -20,6 +20,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Deploying](#deploying)
 - [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
+- [Custom page routing](#custom-page-routing)
 - [Examples](#examples)
 
 ## Motivation
@@ -153,6 +154,43 @@ custom:
 The example above will deploy the `about` page function with a smaller `memorySize` and the home page with a higher `timeout` than the default values.
 
 You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration). The values provided will be merged onto the plugin defaults.
+
+## Custom page routing
+
+The default page route is `/{pageName}`. You may want to serve your page from a different path. This is possible by setting your own page http path in the `pageConfig`. For example for `pages/post.js`:
+
+```js
+class Post extends React.Component {
+  static async getInitialProps({ query }) {
+    return {
+      slug: query.slug
+    };
+  }
+  render() {
+    return <h1>Post page: {this.props.slug}</h1>;
+  }
+}
+
+export default Post;
+```
+
+```yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./
+    pageConfig:
+      post:
+        events:
+          - http:
+              path: post/{slug}
+              request:
+                parameters:
+                  paths:
+                    slug: true
+```
 
 ## Examples
 

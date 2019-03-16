@@ -15,11 +15,11 @@ custom:
       post:
         events:
           - http:
-              path: posts/{id}
+              path: post/{slug}
               request:
                 parameters:
                   paths:
-                    id: true
+                    slug: true
 
 package:
   # exclude everything

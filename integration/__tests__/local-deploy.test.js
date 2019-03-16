@@ -36,13 +36,13 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
     );
   });
 
-  it("should return the post page content using custom route with id", () => {
+  it("should return the post page content using custom route with slug", () => {
     expect.assertions(2);
 
-    return httpGet("http://localhost:3000/posts/2").then(
+    return httpGet("http://localhost:3000/post/hello").then(
       ({ response, statusCode }) => {
         expect(statusCode).toBe(200);
-        expect(response).toContain("Post page");
+        expect(response).toContain("Post page: <!-- -->hello");
       }
     );
   });
