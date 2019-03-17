@@ -204,32 +204,6 @@ describe("ServerlessNextJsPlugin", () => {
         expect(setFunctionNamesMock).toBeCalled();
       });
     });
-
-    it("should NOT set next functions already declared in serverless", () => {
-      expect.assertions(3);
-
-      const homePagePath = "/path/to/next/build/serverless/pages/home.js";
-
-      build.mockResolvedValueOnce([new NextPage(homePagePath)]);
-
-      const plugin = serverlessPluginFactory({
-        service: {
-          functions: {
-            homePage: {
-              handler: "/path/to/next/build/serverless/pages/home.render",
-              foo: "bar"
-            }
-          }
-        }
-      });
-
-      return plugin.buildNextPages().then(() => {
-        const functions = plugin.serverless.service.functions;
-        expect(Object.keys(functions)).toHaveLength(1);
-        expect(functions.homePage).toBeDefined();
-        expect(functions.homePage.foo).toEqual("bar");
-      });
-    });
   });
 
   describe("#addStaticAssetsBucket", () => {

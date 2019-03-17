@@ -66,11 +66,7 @@ class ServerlessNextJsPlugin {
 
     nextPages.forEach(page => {
       const functionName = page.functionName;
-      const functionAlreadyDeclared = service.functions[functionName];
-
-      if (!functionAlreadyDeclared) {
-        service.functions[functionName] = page.serverlessFunction[functionName];
-      }
+      service.functions[functionName] = page.serverlessFunction[functionName];
     });
 
     this.serverless.service.setFunctionNames();
