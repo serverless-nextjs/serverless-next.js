@@ -5,8 +5,4 @@ const config = {
   assetPrefix: "https://s3.amazonaws.com/BUCKET_NAME"
 };
 
-if (process.env.NODE_ENV === "development") {
-  delete config.assetPrefix;
-}
-
 module.exports = withCSS(config);

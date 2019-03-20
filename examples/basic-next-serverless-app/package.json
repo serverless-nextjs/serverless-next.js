@@ -3,11 +3,6 @@
   "version": "1.0.0",
   "description": "Example nextjs serverless app using the serverless-nextjs-plugin",
   "main": "index.js",
-  "scripts": {
-    "dev": "next",
-    "build": "next build",
-    "start": "next start"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
