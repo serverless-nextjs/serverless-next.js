@@ -1,4 +1,4 @@
-const serverlessPluginFactory = require("../utils/test/serverlessPluginFactory");
+const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
 const parsedNextConfigurationFactory = require("../utils/test/parsedNextConfigurationFactory");
 const addS3BucketToResources = require("../lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
@@ -18,7 +18,10 @@ jest.mock("../lib/displayStackOutput");
 jest.mock("../utils/logger");
 
 describe("ServerlessNextJsPlugin", () => {
+  let pluginBuilder;
+
   beforeEach(() => {
+    pluginBuilder = new ServerlessPluginBuilder();
     addS3BucketToResources.mockResolvedValue({});
   });
 
@@ -27,57 +30,49 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#constructor", () => {
-    it("should hook to before:offline:start for serverless-offline support", () => {
-      const plugin = serverlessPluginFactory();
+    let plugin;
 
+    beforeAll(() => {
+      plugin = new ServerlessPluginBuilder().build();
+    });
+
+    it("should hook to before:offline:start for serverless-offline support", () => {
       expect(plugin.hooks["before:offline:start"]).toEqual(
         plugin.buildNextPages
       );
     });
 
     it("should hook to before:package:initialize", () => {
-      const plugin = serverlessPluginFactory();
-
       expect(plugin.hooks["before:package:initialize"]).toEqual(
         plugin.buildNextPages
       );
     });
 
     it("should hook to before:deploy:function:initialize", () => {
-      const plugin = serverlessPluginFactory();
-
       expect(plugin.hooks["before:deploy:function:initialize"]).toEqual(
         plugin.buildNextPages
       );
     });
 
     it("should hook to before:package:createDeploymentArtifacts", () => {
-      const plugin = serverlessPluginFactory();
-
       expect(plugin.hooks["before:package:createDeploymentArtifacts"]).toEqual(
         plugin.addStaticAssetsBucket
       );
     });
 
     it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
-      const plugin = serverlessPluginFactory();
-
       expect(plugin.hooks["after:aws:deploy:deploy:uploadArtifacts"]).toEqual(
         plugin.uploadStaticAssets
       );
     });
 
     it("should hook to after:aws:info:displayStackOutputs", () => {
-      const plugin = serverlessPluginFactory();
-
       expect(plugin.hooks["after:aws:info:displayStackOutputs"]).toEqual(
         plugin.printStackOutput
       );
     });
 
     it("should hook to after:package:createDeploymentArtifacts", () => {
-      const plugin = serverlessPluginFactory();
-
       expect(plugin.hooks["after:package:createDeploymentArtifacts"]).toEqual(
         plugin.removePluginBuildDir
       );
@@ -87,27 +82,17 @@ describe("ServerlessNextJsPlugin", () => {
   describe("#buildNextPages", () => {
     describe("packaging plugin build directory", () => {
       const nextConfigDir = "/path/to/next-app";
-      let plugin;
 
       beforeEach(() => {
         build.mockResolvedValueOnce([]);
-
-        plugin = serverlessPluginFactory({
-          service: {
-            package: {
-              include: []
-            },
-            custom: {
-              "serverless-nextjs": {
-                nextConfigDir
-              }
-            }
-          }
-        });
       });
 
       it("should include plugin build directory for packaging", () => {
         expect.assertions(1);
+
+        const plugin = pluginBuilder
+          .withNextCustomConfig({ nextConfigDir })
+          .build();
 
         return plugin.buildNextPages().then(() => {
           expect(plugin.serverless.service.package.include).toContain(
@@ -118,6 +103,10 @@ describe("ServerlessNextJsPlugin", () => {
 
       it("should include plugin build directory for packaging when package include isn't defined", () => {
         expect.assertions(1);
+
+        const plugin = pluginBuilder
+          .withNextCustomConfig({ nextConfigDir })
+          .build();
 
         plugin.serverless.service.package.include = undefined;
 
@@ -141,16 +130,12 @@ describe("ServerlessNextJsPlugin", () => {
         }
       };
 
-      const plugin = serverlessPluginFactory({
-        service: {
-          custom: {
-            "serverless-nextjs": {
-              nextConfigDir: nextConfigDir,
-              pageConfig
-            }
-          }
-        }
-      });
+      const plugin = new ServerlessPluginBuilder()
+        .withNextCustomConfig({
+          nextConfigDir: nextConfigDir,
+          pageConfig
+        })
+        .build();
 
       return plugin.buildNextPages().then(() => {
         expect(build).toBeCalledWith(
@@ -171,7 +156,7 @@ describe("ServerlessNextJsPlugin", () => {
         new NextPage(aboutPagePath)
       ]);
 
-      const plugin = serverlessPluginFactory();
+      const plugin = new ServerlessPluginBuilder().build();
 
       return plugin.buildNextPages().then(() => {
         expect(Object.keys(plugin.serverless.service.functions)).toEqual([
@@ -194,11 +179,11 @@ describe("ServerlessNextJsPlugin", () => {
 
       const setFunctionNamesMock = jest.fn();
 
-      const plugin = serverlessPluginFactory({
-        service: {
+      const plugin = new ServerlessPluginBuilder()
+        .withService({
           setFunctionNames: setFunctionNamesMock
-        }
-      });
+        })
+        .build();
 
       return plugin.buildNextPages().then(() => {
         expect(setFunctionNamesMock).toBeCalled();
@@ -222,21 +207,22 @@ describe("ServerlessNextJsPlugin", () => {
       parseNextConfiguration.mockReturnValueOnce(
         parsedNextConfigurationFactory({}, null)
       );
-      const plugin = serverlessPluginFactory();
+
+      const plugin = new ServerlessPluginBuilder().build();
 
       return plugin.addStaticAssetsBucket().then(() => {
         expect(addS3BucketToResources).not.toBeCalled();
       });
     });
 
-    it("should log when a bucket is going to be provisioned", () => {
+    it("should log when a bucket is going to be provisioned from parsed assetPrefix", () => {
       expect.assertions(1);
 
       parseNextConfiguration.mockReturnValueOnce(
         parsedNextConfigurationFactory()
       );
 
-      const plugin = serverlessPluginFactory();
+      const plugin = new ServerlessPluginBuilder().build();
 
       return plugin.addStaticAssetsBucket().then(() => {
         expect(logger.log).toBeCalledWith(
@@ -256,13 +242,13 @@ describe("ServerlessNextJsPlugin", () => {
         Resources: { bar: "baz" }
       };
 
-      const plugin = serverlessPluginFactory({
-        service: {
+      const plugin = new ServerlessPluginBuilder()
+        .withService({
           provider: {
             coreCloudFormationTemplate: initialCoreCF
           }
-        }
-      });
+        })
+        .build();
 
       return plugin.addStaticAssetsBucket().then(() => {
         const {
@@ -288,13 +274,13 @@ describe("ServerlessNextJsPlugin", () => {
         Resources: { foo: "bar" }
       };
 
-      const plugin = serverlessPluginFactory({
-        service: {
+      const plugin = new ServerlessPluginBuilder()
+        .withService({
           provider: {
             compiledCloudFormationTemplate: initialCompiledCF
           }
-        }
-      });
+        })
+        .build();
 
       return plugin.addStaticAssetsBucket().then(() => {
         const {
@@ -315,7 +301,7 @@ describe("ServerlessNextJsPlugin", () => {
         parsedNextConfigurationFactory({}, null)
       );
 
-      const plugin = serverlessPluginFactory();
+      const plugin = new ServerlessPluginBuilder().build();
 
       return plugin.uploadStaticAssets().then(() => {
         expect(uploadStaticAssetsToS3).not.toBeCalled();
@@ -331,7 +317,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       uploadStaticAssetsToS3.mockResolvedValueOnce("Assets Uploaded");
 
-      const plugin = serverlessPluginFactory();
+      const plugin = new ServerlessPluginBuilder().build();
 
       return plugin.uploadStaticAssets().then(() => {
         expect(uploadStaticAssetsToS3).toBeCalledWith({
@@ -352,11 +338,11 @@ describe("ServerlessNextJsPlugin", () => {
       };
       const getPlugins = jest.fn().mockReturnValueOnce([awsInfo]);
 
-      const plugin = serverlessPluginFactory({
-        pluginManager: {
+      const plugin = new ServerlessPluginBuilder()
+        .withPluginManager({
           getPlugins
-        }
-      });
+        })
+        .build();
 
       plugin.printStackOutput();
 
@@ -366,7 +352,7 @@ describe("ServerlessNextJsPlugin", () => {
 
   describe("#removePluginBuildDir", () => {
     it("should call pluginBuildDir.removeBuildDir", () => {
-      const plugin = serverlessPluginFactory();
+      const plugin = new ServerlessPluginBuilder().build();
       const mockRemoveBuildDir = jest.fn().mockResolvedValueOnce();
       plugin.pluginBuildDir.removeBuildDir = mockRemoveBuildDir;
 
