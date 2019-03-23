@@ -27,6 +27,8 @@
   },
   "devDependencies": {
     "eslint-plugin-react": "^7.12.4",
-    "serverless-nextjs-plugin": "^1.1.2"
+    "serverless": "^1.39.1",
+    "serverless-nextjs-plugin": "^1.2.0",
+    "serverless-offline": "^4.9.2"
   }
 }

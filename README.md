@@ -21,6 +21,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
 - [Custom page routing](#custom-page-routing)
+- [Custom 404 error page](#custom-404-error-page)
 - [Examples](#examples)
 
 ## Motivation
@@ -190,6 +191,22 @@ custom:
                 parameters:
                   paths:
                     slug: true
+```
+
+## Custom 404 error page
+
+By default, Amazon API Gateway returns 403 responses when a given route doesn't exist. Instead, the plugin renders the [\_error page](https://nextjs.org/docs/#custom-error-handling). That way you can customise how your 404 error page looks like.
+
+Simply add `pages/_error.js`:
+
+```js
+class Error extends React.Component {
+  render() {
+    return <p>404 page not found. (╯°□°)╯︵ ┻━┻</p>;
+  }
+}
+
+export default Error;
 ```
 
 ## Examples
