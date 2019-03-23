@@ -16,7 +16,7 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
     slsOffline.kill();
   });
 
-  it("should return the index page content", () => {
+  it("should render the index page", () => {
     expect.assertions(2);
 
     return httpGet("http://localhost:3000").then(({ response, statusCode }) => {
@@ -25,7 +25,7 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
     });
   });
 
-  it("should return the about page content", () => {
+  it("should render the about page", () => {
     expect.assertions(2);
 
     return httpGet("http://localhost:3000/about").then(
@@ -36,13 +36,24 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
     );
   });
 
-  it("should return the post page content using custom route with slug", () => {
+  it("should render post page when using custom route with slug", () => {
     expect.assertions(2);
 
     return httpGet("http://localhost:3000/post/hello").then(
       ({ response, statusCode }) => {
         expect(statusCode).toBe(200);
         expect(response).toContain("Post page: <!-- -->hello");
+      }
+    );
+  });
+
+  it("should render _error page when 404", () => {
+    expect.assertions(2);
+
+    return httpGet("http://localhost:3000/path/does/not/exist").then(
+      ({ response, statusCode }) => {
+        expect(statusCode).toBe(404);
+        expect(response).toContain("404 error page");
       }
     );
   });

@@ -31,6 +31,31 @@ describe("NextPage", () => {
     });
   });
 
+  describe("When is the _error page", () => {
+    const pagesDir = "/build/serverless/pages";
+    const pagePath = `${pagesDir}/_error.js`;
+    let page;
+
+    beforeEach(() => {
+      page = new NextPage(pagePath);
+    });
+
+    describe("#serverlessFunction", () => {
+      it("should name the function notFoundErrorPage", () => {
+        expect(page.serverlessFunction.notFoundErrorPage).toBeDefined();
+      });
+
+      it("should return function http event path /{proxy+}", () => {
+        const { events } = page.serverlessFunction.notFoundErrorPage;
+
+        expect(events).toHaveLength(1);
+
+        const httpEvent = events[0].http;
+        expect(httpEvent.path).toEqual("/{proxy+}");
+      });
+    });
+  });
+
   describe("When a new instance is created", () => {
     const pagesDir = "/build/serverless/pages";
     const pagePath = `${pagesDir}/admin.js`;

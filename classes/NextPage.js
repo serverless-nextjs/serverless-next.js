@@ -29,7 +29,22 @@ class NextPage {
   }
 
   get functionName() {
+    if (this.pageName === "_error") {
+      return "notFoundErrorPage";
+    }
+
     return this.pageName + "Page";
+  }
+
+  get pageRoute() {
+    switch (this.pageName) {
+      case "index":
+        return "/";
+      case "_error":
+        return "/{proxy+}";
+      default:
+        return this.pageName;
+    }
   }
 
   get serverlessFunction() {
@@ -38,7 +53,7 @@ class NextPage {
       events: [
         {
           http: {
-            path: this.pageName === "index" ? "/" : this.pageName,
+            path: this.pageRoute,
             method: "get"
           }
         }
