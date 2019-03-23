@@ -195,7 +195,7 @@ custom:
 
 ## Custom 404 error page
 
-By default, Amazon API Gateway returns 403 responses when a given route doesn't exist. Instead, the plugin renders the [\_error page](https://nextjs.org/docs/#custom-error-handling). That way you can customise how your 404 error page looks like.
+By default, Amazon API Gateway returns 403 responses when a given route doesn't exist. Instead, the plugin makes sure the [\_error page](https://nextjs.org/docs/#custom-error-handling) is rendered. That way you can customise how your 404 error page looks like.
 
 Simply add `pages/_error.js`:
 
