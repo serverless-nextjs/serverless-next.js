@@ -36,46 +36,17 @@ describe("ServerlessNextJsPlugin", () => {
       plugin = new ServerlessPluginBuilder().build();
     });
 
-    it("should hook to before:offline:start for serverless-offline support", () => {
-      expect(plugin.hooks["before:offline:start"]).toEqual(
-        plugin.buildNextPages
-      );
-    });
-
-    it("should hook to before:package:initialize", () => {
-      expect(plugin.hooks["before:package:initialize"]).toEqual(
-        plugin.buildNextPages
-      );
-    });
-
-    it("should hook to before:deploy:function:initialize", () => {
-      expect(plugin.hooks["before:deploy:function:initialize"]).toEqual(
-        plugin.buildNextPages
-      );
-    });
-
-    it("should hook to before:package:createDeploymentArtifacts", () => {
-      expect(plugin.hooks["before:package:createDeploymentArtifacts"]).toEqual(
-        plugin.addStaticAssetsBucket
-      );
-    });
-
-    it("should hook to after:aws:deploy:deploy:uploadArtifacts", () => {
-      expect(plugin.hooks["after:aws:deploy:deploy:uploadArtifacts"]).toEqual(
-        plugin.uploadStaticAssets
-      );
-    });
-
-    it("should hook to after:aws:info:displayStackOutputs", () => {
-      expect(plugin.hooks["after:aws:info:displayStackOutputs"]).toEqual(
-        plugin.printStackOutput
-      );
-    });
-
-    it("should hook to after:package:createDeploymentArtifacts", () => {
-      expect(plugin.hooks["after:package:createDeploymentArtifacts"]).toEqual(
-        plugin.removePluginBuildDir
-      );
+    it.each`
+      hook                                          | method
+      ${"before:offline:start"}                     | ${"buildNextPages"}
+      ${"before:package:initialize"}                | ${"buildNextPages"}
+      ${"before:deploy:function:initialize"}        | ${"buildNextPages"}
+      ${"before:package:createDeploymentArtifacts"} | ${"addStaticAssetsBucket"}
+      ${"after:aws:deploy:deploy:uploadArtifacts"}  | ${"uploadStaticAssets"}
+      ${"after:aws:info:displayStackOutputs"}       | ${"printStackOutput"}
+      ${"after:package:createDeploymentArtifacts"}  | ${"removePluginBuildDir"}
+    `("should hook to $hook with method $method", ({ hook, method }) => {
+      expect(plugin.hooks[hook]).toEqual(plugin[method]);
     });
   });
 
