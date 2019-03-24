@@ -1,12 +1,10 @@
 "use strict";
 
 const path = require("path");
-const addS3BucketToResources = require("./lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
-const logger = require("./utils/logger");
 const PluginBuildDir = require("./classes/PluginBuildDir");
 const addAssetsBucketForDeployment = require("./lib/addAssetsBucketForDeployment");
 

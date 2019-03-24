@@ -1,18 +1,15 @@
 const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
 const parsedNextConfigurationFactory = require("../utils/test/parsedNextConfigurationFactory");
-const addS3BucketToResources = require("../lib/addS3BucketToResources");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("../lib/displayStackOutput");
 const parseNextConfiguration = require("../lib/parseNextConfiguration");
 const build = require("../lib/build");
 const NextPage = require("../classes/NextPage");
-const logger = require("../utils/logger");
 const PluginBuildDir = require("../classes/PluginBuildDir");
 
 jest.mock("js-yaml");
 jest.mock("../lib/build");
 jest.mock("../lib/parseNextConfiguration");
-jest.mock("../lib/addS3BucketToResources");
 jest.mock("../lib/uploadStaticAssetsToS3");
 jest.mock("../lib/displayStackOutput");
 jest.mock("../utils/logger");
@@ -22,7 +19,6 @@ describe("ServerlessNextJsPlugin", () => {
 
   beforeEach(() => {
     pluginBuilder = new ServerlessPluginBuilder();
-    addS3BucketToResources.mockResolvedValue({});
   });
 
   afterEach(() => {
