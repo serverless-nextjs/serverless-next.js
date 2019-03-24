@@ -16,7 +16,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 
 - [Motivation](#motivation)
 - [Getting Started](#getting-started)
-- [Next config](#next-configuration)
+- [Hosting static assets](#hosting-static-assets)
 - [Deploying](#deploying)
 - [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
@@ -84,17 +84,35 @@ package:
 
 You can exclude everything. The plugin makes sure the page handlers are included in the artifacts.
 
-## Next configuration
+## Hosting static assets
+
+If you don't want to manage uploading the next static assets yourself, like uploading them to a CDN, the plugin can do this for you by hosting the asset files on S3.
+
+The easiest way is to use a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) in the `assetPrefix` field of your next configuration:
 
 ```js
+// next.config.js
 module.exports = {
   assetPrefix: "https://s3.amazonaws.com/your-bucket-name"
 };
 ```
 
-| Config Key               | Description                                                                                                                                                                                                                                                  |
-| ------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| assetPrefix _(Optional)_ | When using a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) the plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket provisioned. |
+The plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket provisioned.
+
+Alternatively, if you just want the assets to get uploaded to S3, you can provide the bucket name via the plugin config:
+
+```yml
+# serverless.yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: "./"
+    assetsBucketName: "your-bucket-name"
+```
+
+With this approach you could have a CloudFront distribution in front of the bucket and use a custom domain in the assetPrefix.
 
 ## Deploying
 
