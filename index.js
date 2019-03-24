@@ -8,6 +8,7 @@ const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
 const logger = require("./utils/logger");
 const PluginBuildDir = require("./classes/PluginBuildDir");
+const addAssetsBucketForDeployment = require("./lib/addAssetsBucketForDeployment");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -19,7 +20,7 @@ class ServerlessNextJsPlugin {
     this.providerRequest = this.provider.request.bind(this.provider);
     this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
 
-    this.addStaticAssetsBucket = this.addStaticAssetsBucket.bind(this);
+    this.addAssetsBucketForDeployment = addAssetsBucketForDeployment.bind(this);
     this.uploadStaticAssets = this.uploadStaticAssets.bind(this);
     this.printStackOutput = this.printStackOutput.bind(this);
     this.buildNextPages = this.buildNextPages.bind(this);
@@ -29,7 +30,8 @@ class ServerlessNextJsPlugin {
       "before:offline:start": this.buildNextPages,
       "before:package:initialize": this.buildNextPages,
       "before:deploy:function:initialize": this.buildNextPages,
-      "before:package:createDeploymentArtifacts": this.addStaticAssetsBucket,
+      "before:package:createDeploymentArtifacts": this
+        .addAssetsBucketForDeployment,
       "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
       "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
       "after:aws:info:displayStackOutputs": this.printStackOutput
@@ -70,37 +72,6 @@ class ServerlessNextJsPlugin {
     });
 
     this.serverless.service.setFunctionNames();
-  }
-
-  getCFTemplatesWithBucket(staticAssetsBucket) {
-    return Promise.all([
-      addS3BucketToResources(
-        staticAssetsBucket,
-        this.serverless.service.provider.compiledCloudFormationTemplate
-      ),
-      addS3BucketToResources(
-        staticAssetsBucket,
-        this.serverless.service.provider.coreCloudFormationTemplate
-      )
-    ]);
-  }
-
-  async addStaticAssetsBucket() {
-    const { staticAssetsBucket } = this.configuration;
-
-    if (!staticAssetsBucket) {
-      return;
-    }
-
-    logger.log(`Found bucket "${staticAssetsBucket}" in assetPrefix!`);
-
-    const [
-      compiledCfWithBucket,
-      coreCfWithBucket
-    ] = await this.getCFTemplatesWithBucket(staticAssetsBucket);
-
-    this.serverless.service.provider.compiledCloudFormationTemplate = compiledCfWithBucket;
-    this.serverless.service.provider.coreCloudFormationTemplate = coreCfWithBucket;
   }
 
   uploadStaticAssets() {
