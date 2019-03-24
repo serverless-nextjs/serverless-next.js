@@ -30,11 +30,15 @@ Next 8 released [official support](https://nextjs.org/blog/next-8/#serverless-ne
 
 Nextjs serverless page handler signature:
 
-`exports.render = function(req, res) => {...}`
+```js
+exports.render = function(req, res) => {...}
+```
 
 AWS Lambda handler:
 
-`exports.handler = function(event, context, callback) {...}`
+```js
+exports.handler = function(event, context, callback) {...}
+```
 
 A compat layer between the nextjs page bundles and AWS Lambda is added at build time:
 
