@@ -146,13 +146,13 @@ See [this](https://serverless.com/framework/docs/providers/aws/guide/functions#c
 
 If you need to deploy just one of your pages, simply run:
 
-```shell
+```console
 serverless deploy function --function pageFunctionName
 ```
 
 where `pageFunctionName` will be the page file name + `"Page"`. For example, to deploy `pages/home.js`, you can run:
 
-```shell
+```console
 serverless deploy function --function homePage
 ```
 
