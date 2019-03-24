@@ -86,7 +86,7 @@ You can exclude everything. The plugin makes sure the page handlers are included
 
 ## Hosting static assets
 
-If you don't want to manage uploading the next static assets yourself, like uploading them to a CDN, the plugin can do this for you by hosting the asset files on S3.
+If you don't want to manage uploading the next static assets yourself, like uploading them to a CDN, the plugin can do this for you by hosting the asset files on S3.
 
 The easiest way is to use a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) in the `assetPrefix` field of your next configuration:
 
