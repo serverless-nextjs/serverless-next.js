@@ -25,4 +25,4 @@ package:
   # exclude everything
   # page handlers are automatically included by the plugin
   exclude:
-    - ./**/*
+    - ./**

@@ -83,7 +83,7 @@ custom:
 
 package:
   exclude:
-    - ./**/*
+    - ./**
 ```
 
 You can exclude everything. The plugin makes sure the page handlers are included in the artifacts.
