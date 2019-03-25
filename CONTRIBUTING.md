@@ -1,13 +1,13 @@
 ## Contributing
 
-#### Getting started
+### Getting started
 
 1. First, [fork](https://help.github.com/en/articles/fork-a-repo) the repo to your own github account and clone it.
 2. Install dependencies: `npm install`
 
-#### Running the tests
+### Running the tests
 
-### Unit tests
+#### Unit tests
 
 ```bash
 npm test
@@ -19,7 +19,7 @@ or in watch mode:
 npm test -- --watch
 ```
 
-### Integration
+#### Integration
 
 ```bash
 npm run integration
