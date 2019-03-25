@@ -32,7 +32,7 @@ Configure the app's serverless.yml to use your fork of the plugin as documented 
 ```yml
 # serverless.yml
 plugins:
-  localPath: 'path/to/serverless-nextjs-plugin'
+  localPath: "path/to/serverless-nextjs-plugin"
   modules:
-	- index
+    - index
 ```
