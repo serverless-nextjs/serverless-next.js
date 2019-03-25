@@ -23,6 +23,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Custom page routing](#custom-page-routing)
 - [Custom 404 error page](#custom-404-error-page)
 - [Examples](#examples)
+- [Contributing](#contributing)
 
 ## Motivation
 
@@ -238,3 +239,7 @@ export default Error;
 ## Examples
 
 See the `examples/` directory.
+
+## Contributing
+
+Please see the [contributing](./CONTRIBUTING.md) guide.
