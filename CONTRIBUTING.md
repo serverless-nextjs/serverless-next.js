@@ -27,7 +27,7 @@ npm run integration
 
 #### Testing the plugin on a serverless application
 
-Configure the app's serverless.yml to use your fork of the plugin as documented [here](https://serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin).
+Configure the app's `serverless.yml` to use your fork of the plugin as documented [here](https://serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin).
 
 ```yml
 # serverless.yml
