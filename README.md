@@ -21,7 +21,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
 - [Custom page routing](#custom-page-routing)
-- [Custom 404 error page](#custom-404-error-page)
+- [Custom error page](#custom-error-page)
 - [Examples](#examples)
 - [Contributing](#contributing)
 
@@ -185,7 +185,18 @@ You can set any function property described [here](https://serverless.com/framew
 
 ## Custom page routing
 
-The default page route is `/{pageName}`. You may want to serve your page from a different path. This is possible by setting your own http path in the `pageConfig`. For example for `pages/post.js`:
+The default page routes follow the same convention as next `useFileSystemPublicRoutes` documented [here](https://nextjs.org/docs/#routing).
+
+E.g.
+
+| page                        | path                |
+| --------------------------- | ------------------- |
+| pages/index.js              | /                   |
+| pages/post.js               | /post               |
+| pages/blog/index.js         | /blog               |
+| pages/categories/uno/dos.js | /categories/uno/dos |
+
+You may want to serve your page from a different path. This is possible by setting your own http path in the `pageConfig`. For example for `pages/post.js`:
 
 ```js
 class Post extends React.Component {
@@ -220,16 +231,27 @@ custom:
                     slug: true
 ```
 
-## Custom 404 error page
+## Custom error page
 
-By default, Amazon API Gateway returns 403 responses when a given route doesn't exist. Instead, the plugin makes sure the [\_error page](https://nextjs.org/docs/#custom-error-handling) is rendered. That way you can customise how your 404 error page looks like.
+404 or 500 errors are handled both client and server side by a default component `error.js`, same as documented [here](https://github.com/zeit/next.js/#custom-error-handling).
 
 Simply add `pages/_error.js`:
 
 ```js
 class Error extends React.Component {
+  static getInitialProps({ res, err }) {
+    const statusCode = res ? res.statusCode : err ? err.statusCode : null;
+    return { statusCode };
+  }
+
   render() {
-    return <p>404 page not found. (╯°□°)╯︵ ┻━┻</p>;
+    return (
+      <p>
+        {this.props.statusCode
+          ? `An error ${this.props.statusCode} occurred on server (╯°□°)╯︵ ┻━┻`
+          : "An error occurred on client"}
+      </p>
+    );
   }
 }
 

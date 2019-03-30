@@ -47,6 +47,17 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
     );
   });
 
+  it("should render nested fridges page", () => {
+    expect.assertions(2);
+
+    return httpGet("http://localhost:3000/categories/fridge/fridges").then(
+      ({ response, statusCode }) => {
+        expect(statusCode).toBe(200);
+        expect(response).toContain("Fridges");
+      }
+    );
+  });
+
   it("should render _error page when 404", () => {
     expect.assertions(2);
 
