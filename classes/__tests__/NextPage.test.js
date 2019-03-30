@@ -3,7 +3,7 @@ const NextPage = require("../NextPage");
 describe("NextPage", () => {
   describe("#constructor", () => {
     it("should set a pagePath", () => {
-      const pagePath = "/build/serverless/pages/home.js";
+      const pagePath = "build/home.js";
       const page = new NextPage(pagePath);
 
       expect(page.pagePath).toEqual(pagePath);
@@ -11,8 +11,8 @@ describe("NextPage", () => {
   });
 
   describe("When is the index page", () => {
-    const pagesDir = "/build/serverless/pages";
-    const pagePath = `${pagesDir}/index.js`;
+    const buildDir = "build";
+    const pagePath = `${buildDir}/index.js`;
     let page;
 
     beforeEach(() => {
@@ -32,8 +32,8 @@ describe("NextPage", () => {
   });
 
   describe("When is the _error page", () => {
-    const pagesDir = "/build/serverless/pages";
-    const pagePath = `${pagesDir}/_error.js`;
+    const buildDir = "build";
+    const pagePath = `${buildDir}/_error.js`;
     let page;
 
     beforeEach(() => {
@@ -56,9 +56,32 @@ describe("NextPage", () => {
     });
   });
 
+  describe("When is a nested page", () => {
+    const buildDir = "build";
+    const pagePath = `${buildDir}/categories/fridge/fridges.js`;
+    let page;
+
+    beforeEach(() => {
+      page = new NextPage(pagePath);
+    });
+
+    describe("#serverlessFunction", () => {
+      it("should have URI path matching subdirectories", () => {
+        const { events } = page.serverlessFunction.fridgesPage;
+
+        expect(events).toHaveLength(1);
+
+        const httpEvent = events[0].http;
+
+        expect(httpEvent.path).toEqual("categories/fridge/fridges");
+        expect(httpEvent.method).toEqual("get");
+      });
+    });
+  });
+
   describe("When a new instance is created", () => {
-    const pagesDir = "/build/serverless/pages";
-    const pagePath = `${pagesDir}/admin.js`;
+    const buildDir = "build";
+    const pagePath = `${buildDir}/admin.js`;
     let page;
 
     beforeEach(() => {
@@ -66,15 +89,15 @@ describe("NextPage", () => {
     });
 
     it("should have pageCompatPath", () => {
-      expect(page.pageCompatPath).toEqual(`${pagesDir}/admin.compat.js`);
+      expect(page.pageCompatPath).toEqual(`${buildDir}/admin.compat.js`);
     });
 
     it("should return pageOriginalPath", () => {
-      expect(page.pageOriginalPath).toEqual(`${pagesDir}/admin.original.js`);
+      expect(page.pageOriginalPath).toEqual(`${buildDir}/admin.original.js`);
     });
 
     it("should return pageDir", () => {
-      expect(page.pageDir).toEqual(pagesDir);
+      expect(page.pageDir).toEqual(buildDir);
     });
 
     it("should return pageName", () => {
@@ -82,7 +105,7 @@ describe("NextPage", () => {
     });
 
     it("should return pageHandler", () => {
-      expect(page.pageHandler).toEqual("/build/serverless/pages/admin.render");
+      expect(page.pageHandler).toEqual("build/admin.render");
     });
 
     it("should return pageFunctionName", () => {
@@ -97,7 +120,7 @@ describe("NextPage", () => {
 
       it("should return function handler", () => {
         const { handler } = page.serverlessFunction.adminPage;
-        expect(handler).toEqual(`${pagesDir}/admin.render`);
+        expect(handler).toEqual(`${buildDir}/admin.render`);
       });
 
       it("should return function http event", () => {

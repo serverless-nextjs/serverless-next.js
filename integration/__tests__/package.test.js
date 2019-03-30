@@ -58,78 +58,100 @@ describe("Package Tests", () => {
       });
 
       describe("Page lambda functions", () => {
-        let homePageLambdaFunction;
-        let aboutPageLambdaFunction;
-        let postPageLambdaFunction;
+        let lambdaFunctions;
 
         beforeAll(() => {
-          homePageLambdaFunction = resources.HomePageLambdaFunction;
-          aboutPageLambdaFunction = resources.AboutPageLambdaFunction;
-          postPageLambdaFunction = resources.PostPageLambdaFunction;
+          lambdaFunctions = {
+            home: resources.HomePageLambdaFunction,
+            about: resources.AboutPageLambdaFunction,
+            post: resources.PostPageLambdaFunction,
+            blog: resources.BlogPageLambdaFunction,
+            fridges: resources.FridgesPageLambdaFunction
+          };
         });
 
-        it("should create AWS Lambda resources for each page", () => {
-          expect(homePageLambdaFunction).toBeDefined();
-          expect(homePageLambdaFunction.Type).toEqual("AWS::Lambda::Function");
+        it.each`
+          pageName
+          ${"home"}
+          ${"about"}
+          ${"blog"}
+          ${"fridges"}
+        `(
+          "should create AWS Lambda resource for page $pageName",
+          ({ pageName }) => {
+            expect(lambdaFunctions[pageName].Type).toBeDefined();
+            expect(lambdaFunctions[pageName].Type).toEqual(
+              "AWS::Lambda::Function"
+            );
+          }
+        );
 
-          expect(aboutPageLambdaFunction).toBeDefined();
-          expect(aboutPageLambdaFunction.Type).toEqual("AWS::Lambda::Function");
-
-          expect(postPageLambdaFunction).toBeDefined();
-          expect(postPageLambdaFunction.Type).toEqual("AWS::Lambda::Function");
-        });
-
-        it("should have correct handlers", () => {
-          expect(homePageLambdaFunction.Properties.Handler).toEqual(
-            "sls-next-build/home.render"
-          );
-          expect(aboutPageLambdaFunction.Properties.Handler).toEqual(
-            "sls-next-build/about.render"
-          );
-          expect(postPageLambdaFunction.Properties.Handler).toEqual(
-            "sls-next-build/post.render"
-          );
-        });
+        it.each`
+          pageName     | handler
+          ${"home"}    | ${"sls-next-build/home.render"}
+          ${"about"}   | ${"sls-next-build/about.render"}
+          ${"blog"}    | ${"sls-next-build/blog.render"}
+          ${"fridges"} | ${"sls-next-build/categories/fridge/fridges.render"}
+        `(
+          "page $pageName should have handler $handler",
+          ({ pageName, handler }) => {
+            expect(lambdaFunctions[pageName].Properties.Handler).toEqual(
+              handler
+            );
+          }
+        );
 
         it("post page should have custom memorySize", () => {
-          expect(postPageLambdaFunction.Properties.MemorySize).toEqual(2048);
+          expect(lambdaFunctions["post"].Properties.MemorySize).toEqual(2048);
         });
       });
 
       describe("API gateway", () => {
-        let apiGWHomePageResource;
-        let apiGWAboutPageResource;
-        let apiGWPostPageResource;
+        let apiGWPageResources;
 
         beforeAll(() => {
-          apiGWHomePageResource = resources.ApiGatewayResourceHome;
-          apiGWAboutPageResource = resources.ApiGatewayResourceAbout;
-          apiGWPostPageResource = resources.ApiGatewayResourcePosts;
+          apiGWPageResources = {
+            home: resources.ApiGatewayResourceHome,
+            about: resources.ApiGatewayResourceAbout,
+            post: resources.ApiGatewayResourcePosts,
+            blog: resources.ApiGatewayResourceBlog,
+            fridges: resources.ApiGatewayResourceCategoriesFridgeFridges
+          };
         });
 
-        it("should create api gateway resources", () => {
-          expect(apiGWHomePageResource).toBeDefined();
-          expect(apiGWAboutPageResource).toBeDefined();
-          expect(apiGWPostPageResource).toBeDefined();
+        it.each`
+          pageName
+          ${"home"}
+          ${"about"}
+          ${"blog"}
+          ${"fridges"}
+        `(
+          "should create api gateway resource for page $pageName",
+          ({ pageName }) => {
+            expect(apiGWPageResources[pageName]).toBeDefined();
 
-          expect(apiGWHomePageResource.Type).toEqual(
-            "AWS::ApiGateway::Resource"
-          );
-          expect(apiGWAboutPageResource.Type).toEqual(
-            "AWS::ApiGateway::Resource"
-          );
-          expect(apiGWPostPageResource.Type).toEqual(
-            "AWS::ApiGateway::Resource"
-          );
-        });
+            expect(apiGWPageResources[pageName].Type).toEqual(
+              "AWS::ApiGateway::Resource"
+            );
+          }
+        );
 
-        it("should have correct URI paths", () => {
-          expect(apiGWHomePageResource.Properties.PathPart).toEqual("home");
-          expect(apiGWAboutPageResource.Properties.PathPart).toEqual("about");
+        it.each`
+          pageName     | uri
+          ${"home"}    | ${"home"}
+          ${"about"}   | ${"about"}
+          ${"blog"}    | ${"blog"}
+          ${"fridges"} | ${"fridges"}
+        `("page $pageName should have URI /$uri", ({ pageName }) => {
+          expect(apiGWPageResources[pageName].Properties.PathPart).toEqual(
+            pageName
+          );
         });
 
         it("post page should have custom path and id parameter", () => {
-          expect(apiGWPostPageResource.Properties.PathPart).toEqual("posts");
+          expect(apiGWPageResources["post"].Properties.PathPart).toEqual(
+            "posts"
+          );
           expect(
             resources.ApiGatewayResourcePostsIdVar.Properties.PathPart
           ).toEqual("{id}");
@@ -138,18 +160,24 @@ describe("Package Tests", () => {
     });
 
     describe("Zip artifact", () => {
-      it("should have the compiled page files inside the artifact", () => {
-        const zip = new AdmZip(`${appServerlessDir}/basic-app.zip`);
-        const zipEntries = zip.getEntries();
-        const entryNames = zipEntries.map(ze => ze.entryName);
+      it.each`
+        compiledPage
+        ${"sls-next-build/home"}
+        ${"sls-next-build/about"}
+        ${"sls-next-build/post"}
+        ${"sls-next-build/blog"}
+        ${"sls-next-build/categories/fridge/fridges"}
+      `(
+        "should contain $compiledPage js and $compiledPage original.js",
+        ({ compiledPage }) => {
+          const zip = new AdmZip(`${appServerlessDir}/basic-app.zip`);
+          const zipEntries = zip.getEntries();
+          const entryNames = zipEntries.map(ze => ze.entryName);
 
-        expect(entryNames).toContain("sls-next-build/home.js");
-        expect(entryNames).toContain("sls-next-build/about.js");
-        expect(entryNames).toContain("sls-next-build/post.js");
-        expect(entryNames).toContain("sls-next-build/home.original.js");
-        expect(entryNames).toContain("sls-next-build/about.original.js");
-        expect(entryNames).toContain("sls-next-build/post.original.js");
-      });
+          expect(entryNames).toContain(`${compiledPage}.js`);
+          expect(entryNames).toContain(`${compiledPage}.original.js`);
+        }
+      );
     });
   });
 
