@@ -189,7 +189,7 @@ The default page routes follow the same convention as next `useFileSystemPublicR
 
 E.g.
 
-| page                        | uri                 |
+| page                        | path                |
 | --------------------------- | ------------------- |
 | pages/index.js              | /                   |
 | pages/post.js               | /post               |
