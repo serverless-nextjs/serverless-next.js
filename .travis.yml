@@ -1,4 +1,8 @@
 sudo: false
+os:
+  - windows
+  - linux
+  - osx
 language: node_js
 node_js:
   - "8"
