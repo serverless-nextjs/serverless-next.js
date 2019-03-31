@@ -13,7 +13,7 @@ install:
 script:
   - npm run lint
   - npm test
-  - npm run coveralls
+  - if [[ "$TRAVIS_OS_NAME" != "windows" ]]; then npm run coveralls; fi
   - npm run integration
 cache:
   directories:
