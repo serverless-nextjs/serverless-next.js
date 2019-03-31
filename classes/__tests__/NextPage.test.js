@@ -79,6 +79,20 @@ describe("NextPage", () => {
     });
   });
 
+  describe("When pagePath has win format", () => {
+    const buildDir = "build";
+    const pagePath = `${buildDir}\\admin.js`;
+    let page;
+
+    beforeEach(() => {
+      page = new NextPage(pagePath);
+    });
+
+    it("should return posix pageHandler", () => {
+      expect(page.pageHandler).toEqual("build/admin.render");
+    });
+  });
+
   describe("When a new instance is created", () => {
     const buildDir = "build";
     const pagePath = `${buildDir}/admin.js`;
