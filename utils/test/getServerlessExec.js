@@ -1,10 +1,16 @@
 const path = require("path");
 
-const serverlessExec = path.join(
+let serverlessExec = path.join(
   __dirname,
   "..",
   "..",
   "node_modules/.bin/serverless"
 );
 
-module.exports = serverlessExec;
+const isWin = process.platform === "win32";
+
+if (isWin) {
+  serverlessExec += '.cmd';
+}
+
+module.exports = path.resolve(serverlessExec);

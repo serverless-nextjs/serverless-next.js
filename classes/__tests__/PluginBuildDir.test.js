@@ -1,3 +1,4 @@
+const path = require('path');
 const fs = require("fs-extra");
 const PluginBuildDir = require("../PluginBuildDir");
 const logger = require("../../utils/logger");
@@ -17,14 +18,19 @@ describe("PluginBuildDir", () => {
 
   describe("When a new instance is created", () => {
     let pluginBuildDir;
+    let nextConfigDir;
 
     beforeEach(() => {
-      const nextConfigDir = "path/to/nextApp";
+      nextConfigDir = "path/to/nextApp";
       pluginBuildDir = new PluginBuildDir(nextConfigDir);
     });
 
-    it("should have buildDir one level above nextBuild", () => {
-      expect(pluginBuildDir.buildDir).toEqual("path/to/nextApp/sls-next-build");
+    it("should have buildDir at same level as next config.", () => {
+      expect(pluginBuildDir.buildDir).toEqual(path.join(nextConfigDir, 'sls-next-build'));
+    });
+
+    it("should have posixBuildDir regardless the platform", () => {
+      expect(pluginBuildDir.posixBuildDir).toEqual("path/to/nextApp/sls-next-build");
     });
   });
 

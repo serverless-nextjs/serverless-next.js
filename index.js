@@ -53,7 +53,7 @@ class ServerlessNextJsPlugin {
     const servicePackage = this.serverless.service.package;
 
     servicePackage.include = servicePackage.include || [];
-    servicePackage.include.push(path.join(pluginBuildDir.buildDir, "**"));
+    servicePackage.include.push(path.posix.join(pluginBuildDir.posixBuildDir, "**"));
     return build(pluginBuildDir, this.getPluginConfigValue("pageConfig")).then(
       nextPages => this.setNextPages(nextPages)
     );
