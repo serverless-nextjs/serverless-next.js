@@ -1,4 +1,4 @@
-const path = require('path');
+const path = require("path");
 const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
 const parsedNextConfigurationFactory = require("../utils/test/parsedNextConfigurationFactory");
 const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
@@ -173,7 +173,7 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it("should call uploadStaticAssetsToS3 with bucketName and next static dir", () => {
-      const distDir = 'build';
+      const distDir = "build";
       parseNextConfiguration.mockReturnValueOnce(
         parsedNextConfigurationFactory({
           distDir
@@ -186,7 +186,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       return plugin.uploadStaticAssets().then(() => {
         expect(uploadStaticAssetsToS3).toBeCalledWith({
-          staticAssetsPath: path.join(distDir, 'static'),
+          staticAssetsPath: path.join(distDir, "static"),
           bucketName: "my-bucket",
           providerRequest: expect.any(Function)
         });

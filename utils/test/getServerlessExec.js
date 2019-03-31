@@ -10,7 +10,7 @@ let serverlessExec = path.join(
 const isWin = process.platform === "win32";
 
 if (isWin) {
-  serverlessExec += '.cmd';
+  serverlessExec += ".cmd";
 }
 
 module.exports = path.resolve(serverlessExec);
