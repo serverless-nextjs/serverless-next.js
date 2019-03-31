@@ -1,3 +1,4 @@
+const path = require("path");
 const NextPage = require("../NextPage");
 
 describe("NextPage", () => {
@@ -12,7 +13,7 @@ describe("NextPage", () => {
 
   describe("When is the index page", () => {
     const buildDir = "build";
-    const pagePath = `${buildDir}/index.js`;
+    const pagePath = path.join(buildDir, "index.js");
     let page;
 
     beforeEach(() => {
@@ -33,7 +34,7 @@ describe("NextPage", () => {
 
   describe("When is the _error page", () => {
     const buildDir = "build";
-    const pagePath = `${buildDir}/_error.js`;
+    const pagePath = path.join(buildDir, "_error.js");
     let page;
 
     beforeEach(() => {
@@ -58,7 +59,7 @@ describe("NextPage", () => {
 
   describe("When is a nested page", () => {
     const buildDir = "build";
-    const pagePath = `${buildDir}/categories/fridge/fridges.js`;
+    const pagePath = path.join(buildDir, "categories/fridge/fridges.js");
     let page;
 
     beforeEach(() => {
@@ -79,6 +80,20 @@ describe("NextPage", () => {
     });
   });
 
+  describe("When pagePath has win format", () => {
+    const buildDir = "build";
+    const pagePath = `${buildDir}\\admin.js`;
+    let page;
+
+    beforeEach(() => {
+      page = new NextPage(pagePath);
+    });
+
+    it("should return posix pageHandler", () => {
+      expect(page.pageHandler).toEqual("build/admin.render");
+    });
+  });
+
   describe("When a new instance is created", () => {
     const buildDir = "build";
     const pagePath = `${buildDir}/admin.js`;
@@ -89,11 +104,15 @@ describe("NextPage", () => {
     });
 
     it("should have pageCompatPath", () => {
-      expect(page.pageCompatPath).toEqual(`${buildDir}/admin.compat.js`);
+      expect(page.pageCompatPath).toEqual(
+        path.join(buildDir, "admin.compat.js")
+      );
     });
 
     it("should return pageOriginalPath", () => {
-      expect(page.pageOriginalPath).toEqual(`${buildDir}/admin.original.js`);
+      expect(page.pageOriginalPath).toEqual(
+        path.join(buildDir, "admin.original.js")
+      );
     });
 
     it("should return pageDir", () => {

@@ -25,7 +25,9 @@ class NextPage {
 
   get pageHandler() {
     const dir = path.dirname(this.pagePath);
-    return path.join(dir, this.pageName + ".render");
+    const handler = path.join(dir, this.pageName + ".render");
+    const posixHandler = handler.replace(/\\/g, "/");
+    return posixHandler;
   }
 
   get functionName() {
