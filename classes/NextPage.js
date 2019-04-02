@@ -39,8 +39,6 @@ class NextPage {
   }
 
   get pageRoute() {
-    const pathSegments = this.pagePath.split(path.sep);
-
     switch (this.pageName) {
       case "index":
         return "/";
@@ -48,13 +46,18 @@ class NextPage {
         return "/{proxy+}";
       default:
         // handle pages at any subdir level
-        // e.g. build/post.js
-        //      build/categories/post.js
-        //      build/categories/fridge/index.js
-        return pathSegments
-          .slice(1, pathSegments.length - 1)
-          .concat([this.pageName])
-          .join("/");
+        // e.g. sls-next-build/post.js
+        //      sls-next-build/categories/post.js
+        //      sls-next-build/categories/fridge/index.js
+        //      app/sls-next-build/index.js
+        const pathSegments = this.pagePath.split(path.sep);
+        const buildDirIndex = pathSegments.indexOf("sls-next-build");
+
+        const routeSegments = pathSegments
+          .slice(buildDirIndex + 1, pathSegments.length - 1)
+          .concat([this.pageName]);
+
+        return routeSegments.join("/");
     }
   }
 
