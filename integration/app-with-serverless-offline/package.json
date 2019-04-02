@@ -7,8 +7,7 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "serverless-offline": "^4.9.0",
-    "serverless-nextjs-plugin": "file:../../"
+    "serverless-offline": "^4.9.0"
   },
   "dependencies": {}
 }

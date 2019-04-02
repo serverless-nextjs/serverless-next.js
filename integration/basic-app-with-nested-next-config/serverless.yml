@@ -1,0 +1,30 @@
+service: basic-app
+
+provider:
+  name: aws
+  runtime: nodejs8.10
+
+plugins:
+  localPath: "../../"
+  modules:
+    - index
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./app
+    pageConfig:
+      post:
+        memorySize: 2048
+        events:
+          - http:
+              path: posts/{id}
+              request:
+                parameters:
+                  paths:
+                    id: true
+
+package:
+  # exclude everything
+  # page handlers are automatically included by the plugin
+  exclude:
+    - ./**

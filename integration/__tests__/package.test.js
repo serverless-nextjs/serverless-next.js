@@ -3,28 +3,32 @@ const AdmZip = require("adm-zip");
 const fs = require("fs");
 const packageTestService = require("../../utils/test/packageTestService");
 
-const appServerlessDir = "../basic-app/.serverless";
-
 const readJsonFile = filePath => {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 };
 
-const readCloudFormationCreateTemplate = () => {
-  return readJsonFile(
-    `${appServerlessDir}/cloudformation-template-create-stack.json`
-  );
-};
+describe.each`
+  appDir                                    | appBuildDir
+  ${"../basic-app"}                         | ${"sls-next-build"}
+  ${"../basic-app-with-nested-next-config"} | ${"app/sls-next-build"}
+`("$appDir - package tests", ({ appDir, appBuildDir }) => {
+  const appServerlessDir = `${appDir}/.serverless`;
 
-const readCloudFormationUpdateTemplate = () => {
-  return readJsonFile(
-    `${appServerlessDir}/cloudformation-template-update-stack.json`
-  );
-};
+  const readCloudFormationCreateTemplate = () => {
+    return readJsonFile(
+      `${appServerlessDir}/cloudformation-template-create-stack.json`
+    );
+  };
 
-describe("Package Tests", () => {
+  const readCloudFormationUpdateTemplate = () => {
+    return readJsonFile(
+      `${appServerlessDir}/cloudformation-template-update-stack.json`
+    );
+  };
+
   describe("When no assetPrefix is configured in next.config", () => {
     beforeAll(() => {
-      process.chdir(path.join(__dirname, "../basic-app"));
+      process.chdir(path.join(__dirname, appDir));
       packageTestService();
     });
 
@@ -88,10 +92,10 @@ describe("Package Tests", () => {
 
         it.each`
           pageName     | handler
-          ${"home"}    | ${"sls-next-build/home.render"}
-          ${"about"}   | ${"sls-next-build/about.render"}
-          ${"blog"}    | ${"sls-next-build/blog.render"}
-          ${"fridges"} | ${"sls-next-build/categories/fridge/fridges.render"}
+          ${"home"}    | ${`${appBuildDir}/home.render`}
+          ${"about"}   | ${`${appBuildDir}/about.render`}
+          ${"blog"}    | ${`${appBuildDir}/blog.render`}
+          ${"fridges"} | ${`${appBuildDir}/categories/fridge/fridges.render`}
         `(
           "page $pageName should have handler $handler",
           ({ pageName, handler }) => {
@@ -162,11 +166,11 @@ describe("Package Tests", () => {
     describe("Zip artifact", () => {
       it.each`
         compiledPage
-        ${"sls-next-build/home"}
-        ${"sls-next-build/about"}
-        ${"sls-next-build/post"}
-        ${"sls-next-build/blog"}
-        ${"sls-next-build/categories/fridge/fridges"}
+        ${`${appBuildDir}/home`}
+        ${`${appBuildDir}/about`}
+        ${`${appBuildDir}/post`}
+        ${`${appBuildDir}/blog`}
+        ${`${appBuildDir}/categories/fridge/fridges`}
       `(
         "should contain $compiledPage js and $compiledPage original.js",
         ({ compiledPage }) => {
