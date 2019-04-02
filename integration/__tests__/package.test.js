@@ -7,11 +7,11 @@ const readJsonFile = filePath => {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
 };
 
-// TODO: add ${"../basic-app-with-nested-next-config"} | ${"app/sls-next-build"}
 describe.each`
-  appDir            | appBuildDir
-  ${"../basic-app"} | ${"sls-next-build"}
-`("%appDir - package tests", ({ appDir, appBuildDir }) => {
+  appDir                                    | appBuildDir
+  ${"../basic-app"}                         | ${"sls-next-build"}
+  ${"../basic-app-with-nested-next-config"} | ${"app/sls-next-build"}
+`("$appDir - package tests", ({ appDir, appBuildDir }) => {
   const appServerlessDir = `${appDir}/.serverless`;
 
   const readCloudFormationCreateTemplate = () => {
