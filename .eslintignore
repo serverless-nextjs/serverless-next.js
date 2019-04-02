@@ -6,4 +6,5 @@ build
 sls-next-build
 examples
 integration/basic-app
+integration/basic-app-with-nested-next-config
 integration/app-with-serverless-offline
