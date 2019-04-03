@@ -1,5 +1,6 @@
 const path = require("path");
 const merge = require("lodash.merge");
+const toPosix = require("../utils/pathToPosix");
 
 class NextPage {
   constructor(pagePath, serverlessFunctionOverrides) {
@@ -26,7 +27,7 @@ class NextPage {
   get pageHandler() {
     const dir = path.dirname(this.pagePath);
     const handler = path.join(dir, this.pageName + ".render");
-    const posixHandler = handler.replace(/\\/g, "/");
+    const posixHandler = toPosix(handler);
     return posixHandler;
   }
 
