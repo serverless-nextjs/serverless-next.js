@@ -186,7 +186,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       return plugin.uploadStaticAssets().then(() => {
         expect(uploadStaticAssetsToS3).toBeCalledWith({
-          staticAssetsPath: path.join(distDir, "static"),
+          staticAssetsPath: path.join("/path/to/next", distDir, "static"),
           bucketName: "my-bucket",
           providerRequest: expect.any(Function)
         });

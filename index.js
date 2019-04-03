@@ -82,7 +82,11 @@ class ServerlessNextJsPlugin {
     }
 
     return uploadStaticAssetsToS3({
-      staticAssetsPath: path.join(nextConfiguration.distDir, "static"),
+      staticAssetsPath: path.join(
+        this.nextConfigDir,
+        nextConfiguration.distDir,
+        "static"
+      ),
       providerRequest: this.providerRequest,
       bucketName: staticAssetsBucket
     });
