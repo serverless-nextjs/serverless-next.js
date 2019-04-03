@@ -2,6 +2,7 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const fs = require("fs");
 const packageTestService = require("../../utils/test/packageTestService");
+const PluginBuildDir = require("../../classes/PluginBuildDir");
 
 const readJsonFile = filePath => {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));
@@ -9,8 +10,8 @@ const readJsonFile = filePath => {
 
 describe.each`
   appDir                                    | appBuildDir
-  ${"../basic-app"}                         | ${"sls-next-build"}
-  ${"../basic-app-with-nested-next-config"} | ${"app/sls-next-build"}
+  ${"../basic-app"}                         | ${PluginBuildDir.BUILD_DIR_NAME}
+  ${"../basic-app-with-nested-next-config"} | ${`app/${PluginBuildDir.BUILD_DIR_NAME}`}
 `("$appDir - package tests", ({ appDir, appBuildDir }) => {
   const appServerlessDir = `${appDir}/.serverless`;
 

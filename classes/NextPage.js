@@ -1,6 +1,7 @@
 const path = require("path");
 const merge = require("lodash.merge");
 const toPosix = require("../utils/pathToPosix");
+const PluginBuildDir = require("./PluginBuildDir");
 
 class NextPage {
   constructor(pagePath, serverlessFunctionOverrides) {
@@ -52,7 +53,9 @@ class NextPage {
         //      sls-next-build/categories/fridge/index.js
         //      app/sls-next-build/index.js
         const pathSegments = this.pagePath.split(path.sep);
-        const buildDirIndex = pathSegments.indexOf("sls-next-build");
+        const buildDirIndex = pathSegments.indexOf(
+          PluginBuildDir.BUILD_DIR_NAME
+        );
 
         const routeSegments = pathSegments
           .slice(buildDirIndex + 1, pathSegments.length - 1)

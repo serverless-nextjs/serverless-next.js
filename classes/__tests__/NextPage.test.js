@@ -1,10 +1,11 @@
 const path = require("path");
 const NextPage = require("../NextPage");
+const PluginBuildDir = require("../PluginBuildDir");
 
 describe("NextPage", () => {
   describe("#constructor", () => {
     it("should set a pagePath", () => {
-      const pagePath = "sls-next-build/home.js";
+      const pagePath = `${PluginBuildDir.BUILD_DIR_NAME}/home.js`;
       const page = new NextPage(pagePath);
 
       expect(page.pagePath).toEqual(pagePath);
@@ -12,7 +13,7 @@ describe("NextPage", () => {
   });
 
   describe("When is the index page", () => {
-    const buildDir = "sls-next-build";
+    const buildDir = PluginBuildDir.BUILD_DIR_NAME;
     const pagePath = path.join(buildDir, "index.js");
     let page;
 
@@ -33,7 +34,7 @@ describe("NextPage", () => {
   });
 
   describe("When is the _error page", () => {
-    const buildDir = "sls-next-build";
+    const buildDir = PluginBuildDir.BUILD_DIR_NAME;
     const pagePath = path.join(buildDir, "_error.js");
     let page;
 
@@ -58,7 +59,7 @@ describe("NextPage", () => {
   });
 
   describe("When is a nested page", () => {
-    const buildDir = "sls-next-build";
+    const buildDir = PluginBuildDir.BUILD_DIR_NAME;
     const pagePath = path.join(buildDir, "categories/fridge/fridges.js");
     let page;
 
@@ -81,7 +82,7 @@ describe("NextPage", () => {
   });
 
   describe("When pagePath has win format", () => {
-    const buildDir = "sls-next-build";
+    const buildDir = PluginBuildDir.BUILD_DIR_NAME;
     const pagePath = `${buildDir}\\admin.js`;
     let page;
 
@@ -90,12 +91,14 @@ describe("NextPage", () => {
     });
 
     it("should return posix pageHandler", () => {
-      expect(page.pageHandler).toEqual("sls-next-build/admin.render");
+      expect(page.pageHandler).toEqual(
+        `${PluginBuildDir.BUILD_DIR_NAME}/admin.render`
+      );
     });
   });
 
   describe("When the build directory is a subdirectory", () => {
-    const buildDir = path.join("app", "sls-next-build");
+    const buildDir = path.join("app", PluginBuildDir.BUILD_DIR_NAME);
     const pagePath = path.join(buildDir, "admin.js");
     let page;
 
@@ -104,7 +107,9 @@ describe("NextPage", () => {
     });
 
     it("should return pageHandler", () => {
-      expect(page.pageHandler).toEqual("app/sls-next-build/admin.render");
+      expect(page.pageHandler).toEqual(
+        `app/${PluginBuildDir.BUILD_DIR_NAME}/admin.render`
+      );
     });
 
     it("should return pageRoute", () => {
@@ -113,7 +118,7 @@ describe("NextPage", () => {
   });
 
   describe("When a new instance is created", () => {
-    const buildDir = "sls-next-build";
+    const buildDir = PluginBuildDir.BUILD_DIR_NAME;
     const pagePath = `${buildDir}/admin.js`;
     let page;
 
@@ -142,7 +147,9 @@ describe("NextPage", () => {
     });
 
     it("should return pageHandler", () => {
-      expect(page.pageHandler).toEqual("sls-next-build/admin.render");
+      expect(page.pageHandler).toEqual(
+        `${PluginBuildDir.BUILD_DIR_NAME}/admin.render`
+      );
     });
 
     it("should return pageFunctionName", () => {

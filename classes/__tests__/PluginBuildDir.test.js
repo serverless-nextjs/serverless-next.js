@@ -27,13 +27,13 @@ describe("PluginBuildDir", () => {
 
     it("should have buildDir at same level as next config.", () => {
       expect(pluginBuildDir.buildDir).toEqual(
-        path.join(nextConfigDir, "sls-next-build")
+        path.join(nextConfigDir, PluginBuildDir.BUILD_DIR_NAME)
       );
     });
 
     it("should have posixBuildDir regardless the platform", () => {
       expect(pluginBuildDir.posixBuildDir).toEqual(
-        "path/to/nextApp/sls-next-build"
+        `path/to/nextApp/${PluginBuildDir.BUILD_DIR_NAME}`
       );
     });
   });

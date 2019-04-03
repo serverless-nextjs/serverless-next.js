@@ -64,7 +64,7 @@ describe("ServerlessNextJsPlugin", () => {
 
         return plugin.buildNextPages().then(() => {
           expect(plugin.serverless.service.package.include).toContain(
-            `${nextConfigDir}/sls-next-build/**`
+            `${nextConfigDir}/${PluginBuildDir.BUILD_DIR_NAME}/**`
           );
         });
       });
@@ -80,7 +80,7 @@ describe("ServerlessNextJsPlugin", () => {
 
         return plugin.buildNextPages().then(() => {
           expect(plugin.serverless.service.package.include).toContain(
-            `${nextConfigDir}/sls-next-build/**`
+            `${nextConfigDir}/${PluginBuildDir.BUILD_DIR_NAME}/**`
           );
         });
       });
