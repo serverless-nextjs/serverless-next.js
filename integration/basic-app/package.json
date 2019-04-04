@@ -1,5 +1,5 @@
 {
-  "name": "app-with-serverless-offline",
+  "name": "basic-app",
   "version": "1.0.0",
   "description": "App for integration tests which require serverless-offline",
   "main": "next.config.js",
@@ -7,7 +7,6 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "ISC",
   "devDependencies": {
-    "serverless-offline": "^4.9.0",
     "react": "^16.8.3",
     "react-dom": "^16.8.3"
   },
