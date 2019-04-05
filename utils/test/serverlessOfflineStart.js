@@ -19,10 +19,7 @@ module.exports = () => {
 
     serverlessOffline.stderr.on("data", data => {
       const err = bufferToStr(data);
-
       process.stdout.write(err);
-
-      reject(new Error(`serverless-offline failed, ${err}`));
     });
 
     serverlessOffline.on("error", err => reject(err));
