@@ -13,7 +13,11 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
   });
 
   afterAll(() => {
-    slsOffline.kill();
+    if (process.platform === "win32") {
+      spawn("taskkill", ["/pid", slsOffline.pid, "/f", "/t"]);
+    } else {
+      slsOffline.kill();
+    }
   });
 
   it("should render the index page", () => {
