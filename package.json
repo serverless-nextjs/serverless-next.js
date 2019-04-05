@@ -18,6 +18,11 @@
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
+  "peerDependencies": {
+    "next": "^8.0.0",
+    "react": "^16.6.0",
+    "react-dom": "^16.6.0"
+  },
   "devDependencies": {
     "adm-zip": "^0.4.13",
     "coveralls": "^3.0.3",
@@ -25,7 +30,10 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.1.0",
+    "next": "^8.0.4",
     "prettier": "^1.16.4",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
     "serverless": "^1.38.0"
   },
   "repository": {
@@ -40,10 +48,7 @@
     "klaw": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.1",
-    "mime": "^2.4.0",
-    "next": "^8.0.3",
-    "react": "^16.8.3",
-    "react-dom": "^16.8.3"
+    "mime": "^2.4.0"
   },
   "jest": {
     "collectCoverage": true,
