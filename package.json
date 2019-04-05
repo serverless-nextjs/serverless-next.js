@@ -19,9 +19,7 @@
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "peerDependencies": {
-    "next": "^8.0.0",
-    "react": "^16.6.0",
-    "react-dom": "^16.6.0"
+    "next": "^8.0.0"
   },
   "devDependencies": {
     "adm-zip": "^0.4.13",
