@@ -1,3 +1,4 @@
+const spawn = require("child_process").spawn;
 const path = require("path");
 const serverlessOfflineStart = require("../../utils/test/serverlessOfflineStart");
 const httpGet = require("../../utils/test/httpGet");
@@ -13,7 +14,11 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
   });
 
   afterAll(() => {
-    slsOffline.kill();
+    if (process.platform === "win32") {
+      spawn("taskkill", ["/pid", slsOffline.pid, "/f", "/t"]);
+    } else {
+      slsOffline.kill();
+    }
   });
 
   it("should render the index page", () => {
