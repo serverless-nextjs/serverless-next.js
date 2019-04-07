@@ -133,6 +133,9 @@ events:
   - http:
       path: pageName # home, about, etc. Unless is the index page which is served at /
       method: get
+  - http:
+      path: pageName # home, about, etc. Unless is the index page which is served at /
+      method: head
 ```
 
 If you need to change the default configuration, such as `memorySize`, `timeout` etc. use the top level `provider` which will override the functions configuration. For example, to change the memorySize to 512MB:

@@ -113,6 +113,8 @@ describe.each`
 
       describe("API gateway", () => {
         let apiGWPageResources;
+        let apiGWGETMethodResources;
+        let apiGWHEADMethodResources;
 
         beforeAll(() => {
           apiGWPageResources = {
@@ -121,6 +123,22 @@ describe.each`
             post: resources.ApiGatewayResourcePosts,
             blog: resources.ApiGatewayResourceBlog,
             fridges: resources.ApiGatewayResourceCategoriesFridgeFridges
+          };
+
+          apiGWGETMethodResources = {
+            home: resources.ApiGatewayMethodHomeGet,
+            about: resources.ApiGatewayMethodAboutGet,
+            post: resources.ApiGatewayMethodPostsIdVarGet,
+            blog: resources.ApiGatewayMethodBlogGet,
+            fridges: resources.ApiGatewayMethodCategoriesFridgeFridgesGet
+          };
+
+          apiGWHEADMethodResources = {
+            home: resources.ApiGatewayMethodHomeHead,
+            about: resources.ApiGatewayMethodAboutHead,
+            post: resources.ApiGatewayMethodPostsIdVarHead,
+            blog: resources.ApiGatewayMethodBlogHead,
+            fridges: resources.ApiGatewayMethodCategoriesFridgeFridgesHead
           };
         });
 
@@ -152,6 +170,36 @@ describe.each`
             pageName
           );
         });
+
+        it.each`
+          pageName     | uri
+          ${"home"}    | ${"home"}
+          ${"about"}   | ${"about"}
+          ${"blog"}    | ${"blog"}
+          ${"fridges"} | ${"fridges"}
+        `("page $pageName should have GET and HEAD methods", ({ pageName }) => {
+          expect(apiGWPageResources[pageName].Properties.PathPart).toEqual(
+            pageName
+          );
+        });
+
+        it.each`
+          pageName     | uri
+          ${"home"}    | ${"home"}
+          ${"about"}   | ${"about"}
+          ${"blog"}    | ${"blog"}
+          ${"fridges"} | ${"fridges"}
+        `(
+          "page $pageName should have a GET and HEAD methods",
+          ({ pageName }) => {
+            expect(
+              apiGWGETMethodResources[pageName].Properties.HttpMethod
+            ).toEqual("GET");
+            expect(
+              apiGWHEADMethodResources[pageName].Properties.HttpMethod
+            ).toEqual("HEAD");
+          }
+        );
 
         it("post page should have custom path and id parameter", () => {
           expect(apiGWPageResources["post"].Properties.PathPart).toEqual(
