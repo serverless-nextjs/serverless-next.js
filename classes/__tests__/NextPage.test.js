@@ -215,6 +215,43 @@ describe("NextPage", () => {
       });
 
       describe("When pageConfig override is provided", () => {
+        it("should create identical HEAD route for custom GET route", () => {
+          const serverlessFunctionOverrides = {
+            events: [
+              {
+                http: {
+                  path: "admin/{id}",
+                  request: {
+                    parameters: {
+                      id: true
+                    }
+                  }
+                }
+              }
+            ]
+          };
+
+          const pageWithCustomConfig = new NextPage(
+            pagePath,
+            serverlessFunctionOverrides
+          );
+
+          const { events } = pageWithCustomConfig.serverlessFunction.adminPage;
+          expect(events).toHaveLength(2);
+
+          const httpGet = events[0].http;
+          const httpHead = events[1].http;
+
+          expect(httpGet.method).toBe("get");
+          expect(httpHead.method).toBe("head");
+
+          expect(httpGet.path).toBe("admin/{id}");
+          expect(httpHead.path).toBe("admin/{id}");
+
+          expect(httpGet.request.parameters.id).toBe(true);
+          expect(httpHead.request.parameters.id).toBe(true);
+        });
+
         it("should override serverlessFunction with provided pageConfig", () => {
           const serverlessFunctionOverrides = { foo: "bar" };
 

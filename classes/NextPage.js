@@ -1,5 +1,6 @@
 const path = require("path");
 const merge = require("lodash.merge");
+const clone = require("lodash.clonedeep");
 const toPosix = require("../utils/pathToPosix");
 const PluginBuildDir = require("./PluginBuildDir");
 
@@ -74,12 +75,6 @@ class NextPage {
             path: this.pageRoute,
             method: "get"
           }
-        },
-        {
-          http: {
-            path: this.pageRoute,
-            method: "head"
-          }
         }
       ]
     };
@@ -91,9 +86,23 @@ class NextPage {
       merge(configuration, this.serverlessFunctionOverrides);
     }
 
+    const httpHeadEvents = this.getMatchingHttpHeadEvents(
+      configuration.events.filter(e => e.http.method === "get")
+    );
+
+    configuration.events = configuration.events.concat(httpHeadEvents);
+
     return {
       [this.functionName]: configuration
     };
+  }
+
+  getMatchingHttpHeadEvents(httpGetEvents) {
+    return httpGetEvents.map(e => {
+      const headEvent = clone(e);
+      headEvent.http.method = "head";
+      return headEvent;
+    });
   }
 }
 
