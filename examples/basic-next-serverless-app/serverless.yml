@@ -9,8 +9,12 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - serverless-nextjs-plugin
-  - serverless-offline
+  localPath: "../../"
+  modules:
+    - index
+# plugins:
+#   - serverless-nextjs-plugin
+#   - serverless-offline
 
 custom:
   serverless-nextjs:
