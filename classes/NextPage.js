@@ -74,6 +74,12 @@ class NextPage {
             path: this.pageRoute,
             method: "get"
           }
+        },
+        {
+          http: {
+            path: this.pageRoute,
+            method: "head"
+          }
         }
       ]
     };
