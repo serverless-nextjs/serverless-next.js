@@ -9,8 +9,4 @@ function Index() {
   );
 }
 
-Index.getInitialProps = () => {
-  throw new Error("Blew up");
-};
-
 export default Index;
