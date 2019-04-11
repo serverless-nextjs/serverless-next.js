@@ -192,6 +192,31 @@ describe("ServerlessNextJsPlugin", () => {
         });
       });
     });
+
+    it("should call uploadStaticAssetsToS3 with bucketName from plugin config", () => {
+      const distDir = "build";
+      parseNextConfiguration.mockReturnValueOnce(
+        parsedNextConfigurationFactory({
+          distDir
+        })
+      );
+
+      uploadStaticAssetsToS3.mockResolvedValueOnce("Assets Uploaded");
+
+      const plugin = new ServerlessPluginBuilder()
+        .withNextCustomConfig({
+          assetsBucketName: "custom-bucket"
+        })
+        .build();
+
+      return plugin.uploadStaticAssets().then(() => {
+        expect(uploadStaticAssetsToS3).toBeCalledWith({
+          staticAssetsPath: path.join("/path/to/next", distDir, "static"),
+          bucketName: "custom-bucket",
+          providerRequest: expect.any(Function)
+        });
+      });
+    });
   });
 
   describe("#printStackOutput", () => {
