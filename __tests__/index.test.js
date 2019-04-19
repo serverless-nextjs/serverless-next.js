@@ -7,7 +7,6 @@ const PluginBuildDir = require("../classes/PluginBuildDir");
 jest.mock("js-yaml");
 jest.mock("../lib/build");
 jest.mock("../lib/parseNextConfiguration");
-jest.mock("../lib/uploadStaticAssetsToS3");
 jest.mock("../lib/displayStackOutput");
 jest.mock("../utils/logger");
 
