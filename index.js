@@ -1,12 +1,12 @@
 "use strict";
 
 const path = require("path");
-const uploadStaticAssetsToS3 = require("./lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
 const PluginBuildDir = require("./classes/PluginBuildDir");
 const addAssetsBucketForDeployment = require("./lib/addAssetsBucketForDeployment");
+const uploadStaticAssets = require("./lib/uploadStaticAssets");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -19,7 +19,7 @@ class ServerlessNextJsPlugin {
     this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
 
     this.addAssetsBucketForDeployment = addAssetsBucketForDeployment.bind(this);
-    this.uploadStaticAssets = this.uploadStaticAssets.bind(this);
+    this.uploadStaticAssets = uploadStaticAssets.bind(this);
     this.printStackOutput = this.printStackOutput.bind(this);
     this.buildNextPages = this.buildNextPages.bind(this);
     this.removePluginBuildDir = this.removePluginBuildDir.bind(this);
@@ -72,30 +72,6 @@ class ServerlessNextJsPlugin {
     });
 
     this.serverless.service.setFunctionNames();
-  }
-
-  uploadStaticAssets() {
-    let { nextConfiguration, staticAssetsBucket } = this.configuration;
-
-    const bucketNameFromConfig = this.getPluginConfigValue("assetsBucketName");
-
-    if (bucketNameFromConfig) {
-      staticAssetsBucket = bucketNameFromConfig;
-    }
-
-    if (!staticAssetsBucket) {
-      return Promise.resolve();
-    }
-
-    return uploadStaticAssetsToS3({
-      staticAssetsPath: path.join(
-        this.nextConfigDir,
-        nextConfiguration.distDir,
-        "static"
-      ),
-      providerRequest: this.providerRequest,
-      bucketName: staticAssetsBucket
-    });
   }
 
   printStackOutput() {
