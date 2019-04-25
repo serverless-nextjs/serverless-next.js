@@ -19,7 +19,7 @@ const getObjectFromS3Factory = awsProvider =>
       listParams.ContinuationToken = nextContinuationToken;
     }
 
-    const { Contents, NextContinuationToken } = await awsProvider(
+    const { Contents, NextContinuationToken, IsTruncated } = await awsProvider(
       "S3",
       "listObjectsV2",
       listParams
@@ -29,7 +29,7 @@ const getObjectFromS3Factory = awsProvider =>
       cache[entry.Key] = entry;
     });
 
-    if (NextContinuationToken) {
+    if (IsTruncated) {
       await getObjectFromS3(key, bucket, NextContinuationToken);
     }
 

@@ -3,28 +3,22 @@ const walkDir = require("klaw");
 const fse = require("fs-extra");
 const path = require("path");
 const s3Upload = require("../upload");
+const getFactory = require("../get");
 
 jest.mock("fs-extra");
 jest.mock("klaw");
+jest.mock("../get");
 
 describe("s3Upload", () => {
   let upload;
   let walkStream;
   let awsProvider;
+  let get;
 
   beforeEach(() => {
-    awsProvider = jest.fn((s, method) => {
-      if (method === "listObjectsV2") {
-        return Promise.resolve({
-          Contents: [],
-          KeyCount: 1,
-          Name: "examplebucket"
-        });
-      }
-
-      return Promise.resolve();
-    });
-
+    get = jest.fn();
+    awsProvider = jest.fn();
+    getFactory.mockReturnValue(get);
     walkStream = new stream.Readable();
     walkStream._read = () => {};
     walkDir.mockReturnValueOnce(walkStream);
@@ -250,30 +244,19 @@ describe("s3Upload", () => {
     expect.assertions(2);
 
     const size = 100;
+    const key = "/path/to/happyface.jpg";
 
     fse.lstat.mockResolvedValueOnce({
       isDirectory: () => false,
       size
     });
 
-    awsProvider.mockImplementation((s, method) => {
-      if (method === "listObjectsV2") {
-        return Promise.resolve({
-          Contents: [
-            {
-              ETag: '"70ee1738b6b21e2c8a43f3a5ab0eee71"',
-              Key: "/path/to/happyface.jpg",
-              LastModified: "<Date Representation>",
-              Size: size,
-              StorageClass: "STANDARD"
-            }
-          ],
-          KeyCount: 1,
-          Name: "examplebucket"
-        });
-      }
-
-      return Promise.resolve();
+    get.mockResolvedValue({
+      ETag: '"70ee1738b6b21e2c8a43f3a5ab0eee71"',
+      Key: key,
+      LastModified: "<Date Representation>",
+      Size: size,
+      StorageClass: "STANDARD"
     });
 
     const bucket = "my-bucket";
@@ -281,10 +264,7 @@ describe("s3Upload", () => {
     const promise = upload("/path/to/dir", {
       bucket
     }).then(() => {
-      expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
-        Bucket: bucket,
-        Prefix: "/path/to"
-      });
+      expect(get).toBeCalledWith(key, bucket);
       expect(awsProvider).not.toBeCalledWith("S3", "upload", expect.anything());
     });
 
@@ -297,41 +277,23 @@ describe("s3Upload", () => {
     return promise;
   });
 
-  it("should not try to upload file that is already uploaded with same file size and in the second page when listObjects", () => {
-    expect.assertions(3);
+  it("should upload file that is already uploaded with with different file size", () => {
+    expect.assertions(2);
 
     const size = 100;
+    const key = "/path/to/happyface.jpg";
 
     fse.lstat.mockResolvedValueOnce({
       isDirectory: () => false,
       size
     });
 
-    let listObjectsCallCount = 0;
-
-    awsProvider.mockImplementation((s, method) => {
-      if (method === "listObjectsV2") {
-        listObjectsCallCount++;
-
-        if (listObjectsCallCount === 1) {
-          return Promise.resolve({
-            IsTruncated: true,
-            Contents: [{ Key: "123" }],
-            NextContinuationToken: "123"
-          });
-        }
-
-        return Promise.resolve({
-          Contents: [
-            {
-              Key: "/path/to/smiley.jpg",
-              Size: size
-            }
-          ]
-        });
-      }
-
-      return Promise.resolve();
+    get.mockResolvedValue({
+      ETag: '"70ee1738b6b21e2c8a43f3a5ab0eee71"',
+      Key: key,
+      LastModified: "<Date Representation>",
+      Size: size + 1,
+      StorageClass: "STANDARD"
     });
 
     const bucket = "my-bucket";
@@ -339,22 +301,12 @@ describe("s3Upload", () => {
     const promise = upload("/path/to/dir", {
       bucket
     }).then(() => {
-      expect(awsProvider).toBeCalledTimes(2);
-
-      expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
-        Bucket: bucket,
-        Prefix: "/path/to"
-      });
-
-      expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
-        Bucket: bucket,
-        Prefix: "/path/to",
-        ContinuationToken: "123"
-      });
+      expect(get).toBeCalledWith(key, bucket);
+      expect(awsProvider).toBeCalledWith("S3", "upload", expect.anything());
     });
 
     walkStream.emit("data", {
-      path: "/path/to/smiley.jpg"
+      path: "/path/to/happyface.jpg"
     });
 
     walkStream.emit("end");
