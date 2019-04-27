@@ -5,6 +5,7 @@ const path = require("path");
 const pathToPosix = require("../pathToPosix");
 const get = require("./get");
 const logger = require("../logger");
+const debug = require("debug")("sls-next:s3");
 
 const getUploadParameters = (bucket, filePath, prefix, rootPrefix) => {
   let key = pathToPosix(filePath);
@@ -53,10 +54,11 @@ module.exports = awsProvider => (
             const s3Object = await getObjectFromS3(uploadParams.Key, bucket);
 
             if (filesAreEqual(s3Object, stats)) {
-              console.log(`skipping ${uploadParams.Key}`);
+              debug(`no need to upload ${uploadParams.Key}`);
               return Promise.resolve();
             }
 
+            debug(`uploading to s3 - ${uploadParams.Key}`);
             return awsProvider("S3", "upload", uploadParams);
           }
         });

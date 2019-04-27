@@ -1,11 +1,12 @@
 const path = require("path");
+const debug = require("debug")("sls-next:s3");
 
 module.exports = awsProvider => {
   const cache = {};
 
-  const addPrefixToCache = (prefix, currentListPromise) => {
+  const addPrefixToCache = (prefix, listPromise) => {
     const updateCache = prefixCache =>
-      currentListPromise.then(({ Contents }) => {
+      listPromise.then(({ Contents }) => {
         Contents.forEach(x => (prefixCache[x.Key] = x));
         return prefixCache;
       });
@@ -27,7 +28,7 @@ module.exports = awsProvider => {
       const shouldReturnFromCache = cache[prefix] && !nextContinuationToken;
 
       if (shouldReturnFromCache) {
-        console.log(`CACHE HIT!`);
+        debug(`cache hit - ${key}`);
         const objects = await cache[prefix];
         return objects[key];
       }
@@ -41,7 +42,7 @@ module.exports = awsProvider => {
         listParams.ContinuationToken = nextContinuationToken;
       }
 
-      console.log(`listObjects - ${listParams.Prefix}`);
+      debug(`listObjects - ${listParams.Prefix}`);
 
       const listPromise = awsProvider("S3", "listObjectsV2", listParams);
 
