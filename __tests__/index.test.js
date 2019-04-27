@@ -1,9 +1,5 @@
-const path = require("path");
 const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
-const parsedNextConfigurationFactory = require("../utils/test/parsedNextConfigurationFactory");
-const uploadStaticAssetsToS3 = require("../lib/uploadStaticAssetsToS3");
 const displayStackOutput = require("../lib/displayStackOutput");
-const parseNextConfiguration = require("../lib/parseNextConfiguration");
 const build = require("../lib/build");
 const NextPage = require("../classes/NextPage");
 const PluginBuildDir = require("../classes/PluginBuildDir");
@@ -11,7 +7,6 @@ const PluginBuildDir = require("../classes/PluginBuildDir");
 jest.mock("js-yaml");
 jest.mock("../lib/build");
 jest.mock("../lib/parseNextConfiguration");
-jest.mock("../lib/uploadStaticAssetsToS3");
 jest.mock("../lib/displayStackOutput");
 jest.mock("../utils/logger");
 
@@ -155,66 +150,6 @@ describe("ServerlessNextJsPlugin", () => {
 
       return plugin.buildNextPages().then(() => {
         expect(setFunctionNamesMock).toBeCalled();
-      });
-    });
-  });
-
-  describe("#uploadStaticAssets", () => {
-    it("should NOT call uploadStaticAssetsToS3 when there isn't a bucket available", () => {
-      parseNextConfiguration.mockReturnValueOnce(
-        parsedNextConfigurationFactory({}, null)
-      );
-
-      const plugin = new ServerlessPluginBuilder().build();
-
-      return plugin.uploadStaticAssets().then(() => {
-        expect(uploadStaticAssetsToS3).not.toBeCalled();
-      });
-    });
-
-    it("should call uploadStaticAssetsToS3 with bucketName and next static dir", () => {
-      const distDir = "build";
-      parseNextConfiguration.mockReturnValueOnce(
-        parsedNextConfigurationFactory({
-          distDir
-        })
-      );
-
-      uploadStaticAssetsToS3.mockResolvedValueOnce("Assets Uploaded");
-
-      const plugin = new ServerlessPluginBuilder().build();
-
-      return plugin.uploadStaticAssets().then(() => {
-        expect(uploadStaticAssetsToS3).toBeCalledWith({
-          staticAssetsPath: path.join("/path/to/next", distDir, "static"),
-          bucketName: "my-bucket",
-          providerRequest: expect.any(Function)
-        });
-      });
-    });
-
-    it("should call uploadStaticAssetsToS3 with bucketName from plugin config", () => {
-      const distDir = "build";
-      parseNextConfiguration.mockReturnValueOnce(
-        parsedNextConfigurationFactory({
-          distDir
-        })
-      );
-
-      uploadStaticAssetsToS3.mockResolvedValueOnce("Assets Uploaded");
-
-      const plugin = new ServerlessPluginBuilder()
-        .withNextCustomConfig({
-          assetsBucketName: "custom-bucket"
-        })
-        .build();
-
-      return plugin.uploadStaticAssets().then(() => {
-        expect(uploadStaticAssetsToS3).toBeCalledWith({
-          staticAssetsPath: path.join("/path/to/next", distDir, "static"),
-          bucketName: "custom-bucket",
-          providerRequest: expect.any(Function)
-        });
       });
     });
   });

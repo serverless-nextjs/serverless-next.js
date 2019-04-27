@@ -119,6 +119,12 @@ custom:
 
 With this approach you could have a CloudFront distribution in front of the bucket and use a custom domain in the assetPrefix.
 
+| Plugin config key | Default Value | Description                                                                                                                                                                                                                      |
+| ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets                                                                                                                            |
+| staticDir         | \<empty\>     | Directory with static assets to be uploaded to S3, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
+| uploadBuildAssets | true          | In the unlikely event that you only want to upload the `staticDir`, set this to `false`                                                                                                                                          |
+
 ## Deploying
 
 `serverless deploy`
