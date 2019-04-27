@@ -4,6 +4,7 @@ const fse = require("fs-extra");
 const path = require("path");
 const pathToPosix = require("../pathToPosix");
 const get = require("./get");
+const logger = require("../logger");
 
 const getUploadParameters = (bucket, filePath, prefix, rootPrefix) => {
   let key = pathToPosix(filePath);
@@ -25,12 +26,17 @@ const getUploadParameters = (bucket, filePath, prefix, rootPrefix) => {
   };
 };
 
+const filesAreEqual = (s3Object, fStats) =>
+  s3Object && fStats.size === s3Object.Size;
+
 module.exports = awsProvider => (
   dir,
   { bucket, prefix = null, rootPrefix = null }
 ) => {
   const getObjectFromS3 = get(awsProvider);
   const promises = [];
+
+  logger.log(`Uploading ${dir} to ${bucket} ...`);
 
   return new Promise((resolve, reject) => {
     walkDir(dir)
@@ -46,8 +52,8 @@ module.exports = awsProvider => (
 
             const s3Object = await getObjectFromS3(uploadParams.Key, bucket);
 
-            if (s3Object && stats.size === s3Object.Size) {
-              // no need to upload, already on S3 and has same size
+            if (filesAreEqual(s3Object, stats)) {
+              console.log(`skipping ${uploadParams.Key}`);
               return Promise.resolve();
             }
 

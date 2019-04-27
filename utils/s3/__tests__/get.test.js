@@ -15,12 +15,22 @@ describe("s3 get", () => {
     jest.clearAllMocks();
   });
 
-  it("should call listObjects with bucket and prefix", () => {
-    expect.assertions(1);
+  it("should list objects using bucket and prefix", () => {
+    expect.assertions(2);
 
+    const key = "/path/to/smile.jpg";
     const bucket = "my-bucket";
 
-    return get("/path/to/smile.jpg", bucket).then(() => {
+    awsProvider.mockResolvedValueOnce({
+      Contents: [
+        {
+          Key: key
+        }
+      ]
+    });
+
+    return get(key, bucket).then(object => {
+      expect(object.Key).toEqual(key);
       expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
         Bucket: bucket,
         Prefix: "/path/to"
@@ -28,11 +38,11 @@ describe("s3 get", () => {
     });
   });
 
-  it("should not listObjects if key already in cache", () => {
-    expect.assertions(2);
+  it("should not list objects again if key already in cache", () => {
+    expect.assertions(3);
 
-    const bucket = "my-bucket";
     const key = "/path/to/ironman.jpg";
+    const bucket = "my-bucket";
 
     awsProvider.mockResolvedValueOnce({
       Contents: [
@@ -44,7 +54,8 @@ describe("s3 get", () => {
 
     return get(key, bucket)
       .then(() => get(key, bucket))
-      .then(() => {
+      .then(object => {
+        expect(object.Key).toEqual(key);
         expect(awsProvider).toBeCalledTimes(1);
         expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
           Bucket: bucket,
@@ -54,7 +65,7 @@ describe("s3 get", () => {
   });
 
   it("should handle paginated response", () => {
-    expect.assertions(3);
+    expect.assertions(4);
 
     const key = "/path/to/batman.jpg";
     const bucket = "my-bucket";
@@ -66,7 +77,8 @@ describe("s3 get", () => {
       NextContinuationToken: continuationToken
     });
 
-    return get(key, bucket).then(() => {
+    return get(key, bucket).then(object => {
+      expect(object).toEqual(undefined);
       expect(awsProvider).toBeCalledTimes(2);
       expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
         Bucket: bucket,
@@ -78,5 +90,34 @@ describe("s3 get", () => {
         ContinuationToken: continuationToken
       });
     });
+  });
+
+  it("should not list objects again if key already in cache after paginated response", () => {
+    expect.assertions(4);
+
+    const bucket = "my-bucket";
+    const key = "/path/to/ironman.jpg";
+
+    awsProvider.mockResolvedValueOnce({
+      IsTruncated: true,
+      Contents: [{ Key: key }],
+      NextContinuationToken: "123"
+    });
+
+    return get(key, bucket)
+      .then(() => get(key, bucket))
+      .then(object => {
+        expect(object.Key).toEqual(key);
+        expect(awsProvider).toBeCalledTimes(2);
+        expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
+          Bucket: bucket,
+          Prefix: "/path/to"
+        });
+        expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
+          Bucket: bucket,
+          Prefix: "/path/to",
+          ContinuationToken: "123"
+        });
+      });
   });
 });

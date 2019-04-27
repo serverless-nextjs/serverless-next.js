@@ -4,10 +4,12 @@ const fse = require("fs-extra");
 const path = require("path");
 const s3Upload = require("../upload");
 const getFactory = require("../get");
+const logger = require("../../logger");
 
 jest.mock("fs-extra");
 jest.mock("klaw");
 jest.mock("../get");
+jest.mock("../../logger");
 
 describe("s3Upload", () => {
   let upload;
@@ -47,13 +49,17 @@ describe("s3Upload", () => {
   });
 
   it("should upload files to S3 with correct parameters and resolve with file count", () => {
-    expect.assertions(4);
+    expect.assertions(5);
 
     const bucket = "my-bucket";
 
     const r = upload("/path/to/dir", {
       bucket
     }).then(result => {
+      expect(logger.log).toBeCalledWith(
+        `Uploading /path/to/dir to ${bucket} ...`
+      );
+
       expect(awsProvider).toBeCalledWith("S3", "upload", {
         ContentType: "application/javascript",
         ACL: "public-read",
