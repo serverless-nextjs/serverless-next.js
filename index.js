@@ -60,10 +60,8 @@ class ServerlessNextJsPlugin {
     return build(
       pluginBuildDir,
       this.getPluginConfigValue("pageConfig"),
-      this.getPluginConfigValue("customHandler"),
-    ).then(
-      nextPages => this.setNextPages(nextPages)
-    );
+      this.getPluginConfigValue("customHandler")
+    ).then(nextPages => this.setNextPages(nextPages));
   }
 
   setNextPages(nextPages) {
