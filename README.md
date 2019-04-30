@@ -285,13 +285,15 @@ custom:
 The custom handler needs to look something like this:
 
 ```js
-const compat = require('serverless-nextjs-plugin/aws-lambda-compat');
+const compat = require("serverless-nextjs-plugin/aws-lambda-compat");
 
-module.exports = (page) => {
+module.exports = page => {
   const handler = (event, context, callback) => {
     // do any stuff you like
-    // make sure the next page renders etc.
+
+    // this makes sure the next page renders
     compat(page)(event, context, callback);
+
     // do any other stuff you like
   };
   return handler;
