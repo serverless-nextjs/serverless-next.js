@@ -56,7 +56,12 @@ class ServerlessNextJsPlugin {
     servicePackage.include.push(
       path.posix.join(pluginBuildDir.posixBuildDir, "**")
     );
-    return build(pluginBuildDir, this.getPluginConfigValue("pageConfig")).then(
+
+    return build(
+      pluginBuildDir,
+      this.getPluginConfigValue("pageConfig"),
+      this.getPluginConfigValue("customHandler"),
+    ).then(
       nextPages => this.setNextPages(nextPages)
     );
   }
