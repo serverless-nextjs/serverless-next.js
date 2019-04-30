@@ -22,7 +22,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Overriding page configuration](#overriding-page-configuration)
 - [Custom page routing](#custom-page-routing)
 - [Custom error page](#custom-error-page)
-- [Custom handler](#custom-handler)
+- [Custom lambda handler](#custom-lambda-handler)
 - [Examples](#examples)
 - [Contributing](#contributing)
 
@@ -268,7 +268,7 @@ class Error extends React.Component {
 export default Error;
 ```
 
-### Custom handler
+### Custom lambda handler
 
 If you need to customize the lambda handler you can do so by providing a path to your own handler in the `customHandler` field. Note that it resolves the path to the custom handler relative to your `next.config.js`.
 
