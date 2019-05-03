@@ -22,6 +22,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Overriding page configuration](#overriding-page-configuration)
 - [Custom page routing](#custom-page-routing)
 - [Custom error page](#custom-error-page)
+- [Custom lambda handler](#custom-lambda-handler)
 - [Examples](#examples)
 - [Contributing](#contributing)
 
@@ -265,6 +266,38 @@ class Error extends React.Component {
 }
 
 export default Error;
+```
+
+### Custom lambda handler
+
+If you need to customize the lambda handler you can do so by providing a path to your own handler in the `customHandler` field. Note that it resolves the path to the custom handler relative to your `next.config.js`.
+
+```yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./
+    customHandler: ./handler.js
+```
+
+The custom handler needs to look something like this:
+
+```js
+const compat = require("serverless-nextjs-plugin/aws-lambda-compat");
+
+module.exports = page => {
+  const handler = (event, context, callback) => {
+    // do any stuff you like
+
+    // this makes sure the next page renders
+    compat(page)(event, context, callback);
+
+    // do any other stuff you like
+  };
+  return handler;
+};
 ```
 
 ## Examples

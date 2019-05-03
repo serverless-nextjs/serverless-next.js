@@ -103,7 +103,8 @@ describe("ServerlessNextJsPlugin", () => {
       return plugin.buildNextPages().then(() => {
         expect(build).toBeCalledWith(
           new PluginBuildDir(nextConfigDir),
-          pageConfig
+          pageConfig,
+          undefined
         );
       });
     });
