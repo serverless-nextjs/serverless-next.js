@@ -50,6 +50,7 @@
     "mime": "^2.4.0"
   },
   "jest": {
+    "clearMocks": true,
     "collectCoverage": true,
     "collectCoverageFrom": [
       "index.js",

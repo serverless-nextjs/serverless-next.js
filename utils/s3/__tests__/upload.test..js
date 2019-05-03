@@ -30,10 +30,6 @@ describe("s3Upload", () => {
     upload = s3Upload(awsProvider);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should read from the directory given", () => {
     expect.assertions(1);
 
