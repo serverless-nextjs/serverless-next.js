@@ -11,10 +11,6 @@ describe("s3 get", () => {
     get = getFactory(awsProvider);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   it("should list objects using bucket and prefix", () => {
     expect.assertions(2);
 

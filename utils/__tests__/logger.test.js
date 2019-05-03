@@ -7,10 +7,6 @@ describe("logger", () => {
     console.warn = jest.fn();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("log", () => {
     it("should call console.log with message", () => {
       const message = "foo";

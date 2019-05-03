@@ -17,10 +17,6 @@ describe("ServerlessNextJsPlugin", () => {
     pluginBuilder = new ServerlessPluginBuilder();
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
   describe("#constructor", () => {
     let plugin;
 
