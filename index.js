@@ -5,8 +5,8 @@ const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
 const PluginBuildDir = require("./classes/PluginBuildDir");
-const addAssetsBucketForDeployment = require("./lib/addAssetsBucketForDeployment");
 const uploadStaticAssets = require("./lib/uploadStaticAssets");
+const addCustomStackResources = require("./lib/addCustomStackResources");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -18,7 +18,7 @@ class ServerlessNextJsPlugin {
     this.providerRequest = this.provider.request.bind(this.provider);
     this.pluginBuildDir = new PluginBuildDir(this.nextConfigDir);
 
-    this.addAssetsBucketForDeployment = addAssetsBucketForDeployment.bind(this);
+    this.addCustomStackResources = addCustomStackResources.bind(this);
     this.uploadStaticAssets = uploadStaticAssets.bind(this);
     this.printStackOutput = this.printStackOutput.bind(this);
     this.buildNextPages = this.buildNextPages.bind(this);
@@ -28,8 +28,8 @@ class ServerlessNextJsPlugin {
       "before:offline:start": this.buildNextPages,
       "before:package:initialize": this.buildNextPages,
       "before:deploy:function:initialize": this.buildNextPages,
-      "before:package:createDeploymentArtifacts": this
-        .addAssetsBucketForDeployment,
+      "before:aws:package:finalize:mergeCustomProviderResources": this
+        .addCustomStackResources,
       "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
       "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
       "after:aws:info:displayStackOutputs": this.printStackOutput

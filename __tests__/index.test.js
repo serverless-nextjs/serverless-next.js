@@ -25,15 +25,16 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it.each`
-      hook                                          | method
-      ${"before:offline:start"}                     | ${"buildNextPages"}
-      ${"before:package:initialize"}                | ${"buildNextPages"}
-      ${"before:deploy:function:initialize"}        | ${"buildNextPages"}
-      ${"before:package:createDeploymentArtifacts"} | ${"addAssetsBucketForDeployment"}
-      ${"after:aws:deploy:deploy:uploadArtifacts"}  | ${"uploadStaticAssets"}
-      ${"after:aws:info:displayStackOutputs"}       | ${"printStackOutput"}
-      ${"after:package:createDeploymentArtifacts"}  | ${"removePluginBuildDir"}
+      hook                                                          | method
+      ${"before:offline:start"}                                     | ${"buildNextPages"}
+      ${"before:package:initialize"}                                | ${"buildNextPages"}
+      ${"before:deploy:function:initialize"}                        | ${"buildNextPages"}
+      ${"after:aws:deploy:deploy:uploadArtifacts"}                  | ${"uploadStaticAssets"}
+      ${"after:aws:info:displayStackOutputs"}                       | ${"printStackOutput"}
+      ${"after:package:createDeploymentArtifacts"}                  | ${"removePluginBuildDir"}
+      ${"before:aws:package:finalize:mergeCustomProviderResources"} | ${"addCustomStackResources"}
     `("should hook to $hook with method $method", ({ hook, method }) => {
+      expect(plugin[method]).toBeDefined();
       expect(plugin.hooks[hook]).toEqual(plugin[method]);
     });
   });
