@@ -184,4 +184,18 @@ describe("ServerlessNextJsPlugin", () => {
       });
     });
   });
+
+  describe("#getPluginConfigValue", () => {
+    it("uses default values when config key not provided", () => {
+      const plugin = pluginBuilder
+        .withNextCustomConfig({
+          routes: undefined,
+          uploadBuildAssets: undefined
+        })
+        .build();
+
+      expect(plugin.getPluginConfigValue("routes")).toEqual([]);
+      expect(plugin.getPluginConfigValue("uploadBuildAssets")).toEqual(true);
+    });
+  });
 });

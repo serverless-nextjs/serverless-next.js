@@ -25,7 +25,6 @@ class ServerlessPluginBuilder {
         },
         custom: {
           "serverless-nextjs": {
-            routes: [],
             nextConfigDir: "/path/to/next"
           }
         }

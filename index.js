@@ -45,7 +45,16 @@ class ServerlessNextJsPlugin {
   }
 
   getPluginConfigValue(param) {
-    return this.serverless.service.custom["serverless-nextjs"][param];
+    const defaults = {
+      routes: [],
+      uploadBuildAssets: true
+    };
+
+    const userConfig = this.serverless.service.custom["serverless-nextjs"][
+      param
+    ];
+
+    return userConfig === undefined ? defaults[param] : userConfig;
   }
 
   buildNextPages() {
