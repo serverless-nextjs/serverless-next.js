@@ -268,7 +268,7 @@ class Error extends React.Component {
 export default Error;
 ```
 
-### Custom lambda handler
+## Custom lambda handler
 
 If you need to customize the lambda handler you can do so by providing a path to your own handler in the `customHandler` field. Note that it resolves the path to the custom handler relative to your `next.config.js`.
 
