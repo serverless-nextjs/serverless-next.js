@@ -14,7 +14,7 @@ Resources:
     Properties:
       AuthorizationType: NONE
       ResourceId:
-        Ref: ProxyResource
+        Ref: TO_BE_REPLACED
       RestApiId:
         Ref: ApiGatewayRestApi
       HttpMethod: GET
