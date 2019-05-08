@@ -191,6 +191,23 @@ custom:
 
 The example above will deploy the `about` page function with a smaller `memorySize` and the home page with a higher `timeout` than the default values.
 
+You can also add configuration for all pages by adding an asterisk entry (`*`), this is especially useful if you want to add [layers](https://serverless.com/framework/docs/providers/aws/guide/layers/) to all your page handlers.
+
+```yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./
+    pageConfig:
+      '*':
+        layers:
+          - arn:aws:lambda:${self:provider.region}:553035198032:layer:nodejs12:1
+```
+
+The example above will deploy all page functions connected to a layer that includes the Node.js 12 binary.
+
 You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration). The values provided will be merged onto the plugin defaults.
 
 ## Custom page routing
