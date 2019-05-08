@@ -61,7 +61,7 @@
     ],
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "lib/cfSchema.js",
+      "<rootDir>/utils/yml/cfSchema.js",
       "<rootDir>/utils/test"
     ],
     "modulePathIgnorePatterns": [
