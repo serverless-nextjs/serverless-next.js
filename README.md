@@ -145,18 +145,6 @@ events:
       method: head
 ```
 
-If you need to change the default configuration, such as `memorySize`, `timeout` etc. use the top level `provider` which will override the functions configuration. For example, to change the memorySize to 512MB:
-
-```yml
-provider:
-  name: aws
-  runtime: nodejs8.10
-  memorySize: 512
-  ...
-```
-
-See [this](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration) for more information.
-
 ## Deploying a single page
 
 If you need to deploy just one of your pages, simply run:
@@ -189,9 +177,17 @@ custom:
         timeout: 10 # default is 6
 ```
 
-The example above will deploy the `about` page function with a smaller `memorySize` and the home page with a higher `timeout` than the default values.
+If you need to change the default configuration, such as `memorySize`, `timeout` etc. use the top level `provider` which will override all the functions configuration. For example, to change the memorySize to 512MB:
 
-You can also add configuration for all pages by adding an asterisk entry (`*`), this is especially useful if you want to add [layers](https://serverless.com/framework/docs/providers/aws/guide/layers/) to all your page handlers.
+```yml
+provider:
+  name: aws
+  runtime: nodejs8.10
+  memorySize: 512
+  ...
+```
+
+You can also add configuration for all page functions by adding an asterisk entry (`*`) to `pageConfig`. This is particularly useful when you have other functions in your service (i.e. an `api`) aside from the page functions and you only want to apply configuration changes to the latter,
 
 ```yml
 plugins:
@@ -201,14 +197,12 @@ custom:
   serverless-nextjs:
     nextConfigDir: ./
     pageConfig:
-      '*':
+      "*":
         layers:
           - arn:aws:lambda:${self:provider.region}:553035198032:layer:nodejs12:1
 ```
 
-The example above will deploy all page functions connected to a layer that includes the Node.js 12 binary.
-
-You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration). The values provided will be merged onto the plugin defaults.
+You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration).
 
 ## Custom page routing
 
