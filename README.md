@@ -187,7 +187,7 @@ provider:
   ...
 ```
 
-You can also add configuration for all page functions by adding an asterisk entry (`*`) to `pageConfig`. This is particularly useful when you have other functions in your service (i.e. an `api`) aside from the page functions and you only want to apply configuration changes to the latter,
+You can also add configuration for all page functions by adding an asterisk entry (`*`) to `pageConfig`. This is particularly useful when you have other functions in your service (i.e. an `api`) aside from the page functions and you only want to apply configuration changes to the latter:
 
 ```yml
 plugins:
