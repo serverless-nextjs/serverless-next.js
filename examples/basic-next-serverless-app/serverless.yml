@@ -9,7 +9,7 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - serverless-nextjs-plugin
+  - serverless-nextjs
   - serverless-offline
 
 custom:
@@ -18,7 +18,7 @@ custom:
     staticDir: ./assets
     routes:
       - src: ./assets/robots.txt
-        dest: robots.txt
+        path: robots.txt
     pageConfig:
       post:
         events:
