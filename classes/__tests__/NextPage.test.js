@@ -17,7 +17,7 @@ describe("NextPage", () => {
 
   describe("Simple page", () => {
     const buildDir = PluginBuildDir.BUILD_DIR_NAME;
-    const pagePath = `${buildDir}/admin.js`;
+    const pagePath = path.join(buildDir, "admin.js");
     let page;
 
     beforeEach(() => {

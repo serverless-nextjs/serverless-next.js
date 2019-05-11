@@ -9,7 +9,7 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - serverless-nextjs
+  - serverless-nextjs-plugin
   - serverless-offline
 
 custom:
@@ -19,15 +19,12 @@ custom:
     routes:
       - src: ./assets/robots.txt
         path: robots.txt
-    pageConfig:
-      post:
-        events:
-          - http:
-              path: post/{slug}
-              request:
-                parameters:
-                  paths:
-                    slug: true
+      - src: post
+        path: post/{slug}
+        request:
+          parameters:
+            paths:
+              slug: true
 
 package:
   # exclude everything
