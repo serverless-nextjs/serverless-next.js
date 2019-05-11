@@ -48,7 +48,7 @@ class ServerlessPluginBuilder {
     return this;
   }
 
-  withNextCustomConfig(config) {
+  withPluginConfig(config) {
     merge(this.serverless, {
       service: {
         custom: {

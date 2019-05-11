@@ -1,6 +1,5 @@
 "use strict";
 
-const path = require("path");
 const displayStackOutput = require("./lib/displayStackOutput");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
@@ -20,14 +19,14 @@ class ServerlessNextJsPlugin {
 
     this.addCustomStackResources = addCustomStackResources.bind(this);
     this.uploadStaticAssets = uploadStaticAssets.bind(this);
+    this.build = build.bind(this);
     this.printStackOutput = this.printStackOutput.bind(this);
-    this.buildNextPages = this.buildNextPages.bind(this);
     this.removePluginBuildDir = this.removePluginBuildDir.bind(this);
 
     this.hooks = {
-      "before:offline:start": this.buildNextPages,
-      "before:package:initialize": this.buildNextPages,
-      "before:deploy:function:initialize": this.buildNextPages,
+      "before:offline:start": this.build,
+      "before:package:initialize": this.build,
+      "before:deploy:function:initialize": this.build,
       "before:aws:package:finalize:mergeCustomProviderResources": this
         .addCustomStackResources,
       "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
@@ -55,22 +54,6 @@ class ServerlessNextJsPlugin {
     ];
 
     return userConfig === undefined ? defaults[param] : userConfig;
-  }
-
-  buildNextPages() {
-    const pluginBuildDir = this.pluginBuildDir;
-    const servicePackage = this.serverless.service.package;
-
-    servicePackage.include = servicePackage.include || [];
-    servicePackage.include.push(
-      path.posix.join(pluginBuildDir.posixBuildDir, "**")
-    );
-
-    return build(
-      pluginBuildDir,
-      this.getPluginConfigValue("pageConfig"),
-      this.getPluginConfigValue("customHandler")
-    ).then(nextPages => this.setNextPages(nextPages));
   }
 
   setNextPages(nextPages) {
