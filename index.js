@@ -56,19 +56,6 @@ class ServerlessNextJsPlugin {
     return userConfig === undefined ? defaults[param] : userConfig;
   }
 
-  setNextPages(nextPages) {
-    const service = this.serverless.service;
-
-    this.nextPages = nextPages;
-
-    nextPages.forEach(page => {
-      const functionName = page.functionName;
-      service.functions[functionName] = page.serverlessFunction[functionName];
-    });
-
-    this.serverless.service.setFunctionNames();
-  }
-
   printStackOutput() {
     const awsInfo = this.serverless.pluginManager.getPlugins().find(plugin => {
       return plugin.constructor.name === "AwsInfo";
