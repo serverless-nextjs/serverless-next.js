@@ -252,7 +252,7 @@ custom:
     nextConfigDir: ./
     routes:
       - src: post
-        path: foo/{slug}
+        path: posts/{slug}
         request:
           parameters:
             paths:
