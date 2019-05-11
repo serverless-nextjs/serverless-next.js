@@ -23,6 +23,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Custom page routing](#custom-page-routing)
 - [Custom error page](#custom-error-page)
 - [Custom lambda handler](#custom-lambda-handler)
+- [All plugin configuration options](#all-plugin-configuration-options)
 - [Examples](#examples)
 - [Contributing](#contributing)
 
@@ -120,11 +121,19 @@ custom:
 
 With this approach you could have a CloudFront distribution in front of the bucket and use a custom domain in the assetPrefix.
 
-| Plugin config key | Default Value | Description                                                                                                                                                                                                                      |
-| ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets                                                                                                                            |
-| staticDir         | \<empty\>     | Directory with static assets to be uploaded to S3, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
-| uploadBuildAssets | true          | In the unlikely event that you only want to upload the `staticDir`, set this to `false`                                                                                                                                          |
+If you need the static assets available in the main domain of your application, you can use the `routes` configuration to proxy API Gateway requests to S3. For example, to host `/robots.txt`:
+
+```yml
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./
+    staticDir: ./assets
+    routes:
+      - src: ./assets/robots.txt
+        path: robots.txt
+```
+
+Note that for this to work, an S3 bucket needs to be provisioned by using the `assetsBucketName` plugin config or `assetPrefix` in `next.config.js`.
 
 ## Deploying
 
@@ -217,7 +226,7 @@ E.g.
 | pages/blog/index.js         | /blog               |
 | pages/categories/uno/dos.js | /categories/uno/dos |
 
-You may want to serve your page from a different path. This is possible by setting your own http path in the `pageConfig`. For example for `pages/post.js`:
+You may want to serve your page from a different path. This is possible by setting your own http path in the `routes` config. For example for `pages/post.js`:
 
 ```js
 class Post extends React.Component {
@@ -241,15 +250,13 @@ plugins:
 custom:
   serverless-nextjs:
     nextConfigDir: ./
-    pageConfig:
-      post:
-        events:
-          - http:
-              path: post/{slug}
-              request:
-                parameters:
-                  paths:
-                    slug: true
+    routes:
+      - src: post
+        path: foo/{slug}
+        request:
+          parameters:
+            paths:
+              slug: true
 ```
 
 ## Custom error page
@@ -310,6 +317,16 @@ module.exports = page => {
   return handler;
 };
 ```
+
+## All plugin configuration options
+
+| Plugin config key | Default Value | Description                                                                                                                                                                                                                      |
+| ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nextConfigDir     | \<empty\>     | Path to parent directory of `next.config.js`                                                                                                                                                                                     |
+| assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets                                                                                                                            |
+| staticDir         | \<empty\>     | Directory with static assets to be uploaded to S3, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
+| routes            | []            | Array of custom routes for the next pages or static assets.                                                                                                                                                                      |
+| uploadBuildAssets | true          | In the unlikely event that you only want to upload the `staticDir`, set this to `false` Note it expects `nextConfigDir` to be a directory and not the actual file path.                                                          |
 
 ## Examples
 
