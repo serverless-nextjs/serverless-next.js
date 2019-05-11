@@ -103,7 +103,7 @@ class NextPage {
       merge(configuration, this.serverlessFunctionOverrides);
     }
 
-    if (this.routes) {
+    if (this.routes && this.routes.length > 0) {
       configuration.events = [];
 
       this.routes.forEach(r => {

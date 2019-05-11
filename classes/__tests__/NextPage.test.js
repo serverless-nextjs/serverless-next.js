@@ -6,7 +6,10 @@ describe("NextPage", () => {
   describe("#constructor", () => {
     it("sets a pagePath", () => {
       const pagePath = `${PluginBuildDir.BUILD_DIR_NAME}/home.js`;
-      const page = new NextPage(pagePath);
+      const page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
 
       expect(page.pagePath).toEqual(pagePath);
     });
@@ -18,7 +21,10 @@ describe("NextPage", () => {
     let page;
 
     beforeEach(() => {
-      page = new NextPage(pagePath);
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
     });
 
     it("returns pageCompatPath", () => {
@@ -107,7 +113,8 @@ describe("NextPage", () => {
           };
 
           const pageWithCustomConfig = new NextPage(pagePath, {
-            serverlessFunctionOverrides
+            serverlessFunctionOverrides,
+            routes: []
           });
 
           const { events } = pageWithCustomConfig.serverlessFunction.adminPage;
@@ -130,7 +137,8 @@ describe("NextPage", () => {
           const serverlessFunctionOverrides = { foo: "bar" };
 
           const pageWithCustomConfig = new NextPage(pagePath, {
-            serverlessFunctionOverrides
+            serverlessFunctionOverrides,
+            routes: []
           });
 
           expect(pageWithCustomConfig.serverlessFunction.adminPage.foo).toBe(
@@ -142,7 +150,8 @@ describe("NextPage", () => {
           const serverlessFunctionOverrides = { handler: "invalid/handler" };
 
           const pageWithCustomConfig = new NextPage(pagePath, {
-            serverlessFunctionOverrides
+            serverlessFunctionOverrides,
+            routes: []
           });
 
           expect(
@@ -154,7 +163,8 @@ describe("NextPage", () => {
           const serverlessFunctionOverrides = { runtime: "python2.7" };
 
           const pageWithCustomConfig = new NextPage(pagePath, {
-            serverlessFunctionOverrides
+            serverlessFunctionOverrides,
+            routes: []
           });
 
           expect(
@@ -171,7 +181,10 @@ describe("NextPage", () => {
     let page;
 
     beforeEach(() => {
-      page = new NextPage(pagePath);
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
     });
 
     it("returns pageId", () => {
@@ -203,7 +216,10 @@ describe("NextPage", () => {
     let page;
 
     beforeEach(() => {
-      page = new NextPage(pagePath);
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
     });
 
     describe("#serverlessFunction", () => {
@@ -242,7 +258,10 @@ describe("NextPage", () => {
     let page;
 
     beforeEach(() => {
-      page = new NextPage(pagePath);
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
     });
 
     it("returns pageId", () => {
@@ -272,7 +291,10 @@ describe("NextPage", () => {
     let page;
 
     beforeEach(() => {
-      page = new NextPage(pagePath);
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
     });
 
     it("returns posix pageHandler", () => {
@@ -288,7 +310,10 @@ describe("NextPage", () => {
     let page;
 
     beforeEach(() => {
-      page = new NextPage(pagePath);
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
     });
 
     it("returns pageHandler", () => {
