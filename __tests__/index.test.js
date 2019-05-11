@@ -1,14 +1,7 @@
 const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
 const displayStackOutput = require("../lib/displayStackOutput");
-const build = require("../lib/build");
-const NextPage = require("../classes/NextPage");
-const PluginBuildDir = require("../classes/PluginBuildDir");
 
-jest.mock("js-yaml");
-jest.mock("../lib/build");
-jest.mock("../lib/parseNextConfiguration");
 jest.mock("../lib/displayStackOutput");
-jest.mock("../utils/logger");
 
 describe("ServerlessNextJsPlugin", () => {
   let pluginBuilder;
@@ -25,129 +18,17 @@ describe("ServerlessNextJsPlugin", () => {
     });
 
     it.each`
-      hook                                          | method
-      ${"before:offline:start"}                     | ${"buildNextPages"}
-      ${"before:package:initialize"}                | ${"buildNextPages"}
-      ${"before:deploy:function:initialize"}        | ${"buildNextPages"}
-      ${"before:package:createDeploymentArtifacts"} | ${"addAssetsBucketForDeployment"}
-      ${"after:aws:deploy:deploy:uploadArtifacts"}  | ${"uploadStaticAssets"}
-      ${"after:aws:info:displayStackOutputs"}       | ${"printStackOutput"}
-      ${"after:package:createDeploymentArtifacts"}  | ${"removePluginBuildDir"}
+      hook                                                          | method
+      ${"before:offline:start"}                                     | ${"build"}
+      ${"before:package:initialize"}                                | ${"build"}
+      ${"before:deploy:function:initialize"}                        | ${"build"}
+      ${"after:aws:deploy:deploy:uploadArtifacts"}                  | ${"uploadStaticAssets"}
+      ${"after:aws:info:displayStackOutputs"}                       | ${"printStackOutput"}
+      ${"after:package:createDeploymentArtifacts"}                  | ${"removePluginBuildDir"}
+      ${"before:aws:package:finalize:mergeCustomProviderResources"} | ${"addCustomStackResources"}
     `("should hook to $hook with method $method", ({ hook, method }) => {
+      expect(plugin[method]).toBeDefined();
       expect(plugin.hooks[hook]).toEqual(plugin[method]);
-    });
-  });
-
-  describe("#buildNextPages", () => {
-    describe("packaging plugin build directory", () => {
-      const nextConfigDir = "/path/to/next-app";
-
-      beforeEach(() => {
-        build.mockResolvedValueOnce([]);
-      });
-
-      it("should include plugin build directory for packaging", () => {
-        expect.assertions(1);
-
-        const plugin = pluginBuilder
-          .withNextCustomConfig({ nextConfigDir })
-          .build();
-
-        return plugin.buildNextPages().then(() => {
-          expect(plugin.serverless.service.package.include).toContain(
-            `${nextConfigDir}/${PluginBuildDir.BUILD_DIR_NAME}/**`
-          );
-        });
-      });
-
-      it("should include plugin build directory for packaging when package include isn't defined", () => {
-        expect.assertions(1);
-
-        const plugin = pluginBuilder
-          .withNextCustomConfig({ nextConfigDir })
-          .build();
-
-        plugin.serverless.service.package.include = undefined;
-
-        return plugin.buildNextPages().then(() => {
-          expect(plugin.serverless.service.package.include).toContain(
-            `${nextConfigDir}/${PluginBuildDir.BUILD_DIR_NAME}/**`
-          );
-        });
-      });
-    });
-
-    it("should call build with pluginBuildDir and user provided pageConfig", () => {
-      expect.assertions(1);
-
-      build.mockResolvedValueOnce([]);
-      const nextConfigDir = "/path/to/next";
-
-      const pageConfig = {
-        home: {
-          memory: "512"
-        }
-      };
-
-      const plugin = new ServerlessPluginBuilder()
-        .withNextCustomConfig({
-          nextConfigDir: nextConfigDir,
-          pageConfig
-        })
-        .build();
-
-      return plugin.buildNextPages().then(() => {
-        expect(build).toBeCalledWith(
-          new PluginBuildDir(nextConfigDir),
-          pageConfig,
-          undefined
-        );
-      });
-    });
-
-    it("should set the next functions in serverless", () => {
-      expect.assertions(1);
-
-      const homePagePath = "/path/to/next/build/serverless/pages/home.js";
-      const aboutPagePath = "/path/to/next/build/serverless/pages/about.js";
-
-      build.mockResolvedValueOnce([
-        new NextPage(homePagePath),
-        new NextPage(aboutPagePath)
-      ]);
-
-      const plugin = new ServerlessPluginBuilder().build();
-
-      return plugin.buildNextPages().then(() => {
-        expect(Object.keys(plugin.serverless.service.functions)).toEqual([
-          "homePage",
-          "aboutPage"
-        ]);
-      });
-    });
-
-    it("should call service.setFunctionNames", () => {
-      expect.assertions(1);
-
-      const homePagePath = "/path/to/next/build/serverless/pages/home.js";
-      const aboutPagePath = "/path/to/next/build/serverless/pages/about.js";
-
-      build.mockResolvedValueOnce([
-        new NextPage(homePagePath),
-        new NextPage(aboutPagePath)
-      ]);
-
-      const setFunctionNamesMock = jest.fn();
-
-      const plugin = new ServerlessPluginBuilder()
-        .withService({
-          setFunctionNames: setFunctionNamesMock
-        })
-        .build();
-
-      return plugin.buildNextPages().then(() => {
-        expect(setFunctionNamesMock).toBeCalled();
-      });
     });
   });
 
@@ -181,6 +62,20 @@ describe("ServerlessNextJsPlugin", () => {
       return plugin.removePluginBuildDir().then(() => {
         expect(mockRemoveBuildDir).toBeCalled();
       });
+    });
+  });
+
+  describe("#getPluginConfigValue", () => {
+    it("uses default values when config key not provided", () => {
+      const plugin = pluginBuilder
+        .withPluginConfig({
+          routes: undefined,
+          uploadBuildAssets: undefined
+        })
+        .build();
+
+      expect(plugin.getPluginConfigValue("routes")).toEqual([]);
+      expect(plugin.getPluginConfigValue("uploadBuildAssets")).toEqual(true);
     });
   });
 });

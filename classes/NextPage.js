@@ -5,9 +5,10 @@ const toPosix = require("../utils/pathToPosix");
 const PluginBuildDir = require("./PluginBuildDir");
 
 class NextPage {
-  constructor(pagePath, serverlessFunctionOverrides) {
+  constructor(pagePath, { serverlessFunctionOverrides, routes } = {}) {
     this.pagePath = pagePath;
     this.serverlessFunctionOverrides = serverlessFunctionOverrides;
+    this.routes = routes;
   }
 
   get pageOriginalPath() {
@@ -20,6 +21,22 @@ class NextPage {
 
   get pageDir() {
     return path.dirname(this.pagePath);
+  }
+
+  get pageId() {
+    const pathSegments = this.pagePath.split(path.sep);
+
+    // strip out the parent build directory from path
+    // sls-next-build/foo/bar.js -> /foo/bar.js
+    const relativePathSegments = pathSegments.slice(
+      pathSegments.indexOf(PluginBuildDir.BUILD_DIR_NAME) + 1,
+      pathSegments.length
+    );
+
+    // remove extension
+    // foo/bar.js -> /foo/bar
+    const parsed = path.parse(relativePathSegments.join(path.posix.sep));
+    return path.posix.join(parsed.dir, parsed.name);
   }
 
   get pageName() {
@@ -86,6 +103,15 @@ class NextPage {
       merge(configuration, this.serverlessFunctionOverrides);
     }
 
+    if (this.routes && this.routes.length > 0) {
+      configuration.events = [];
+
+      this.routes.forEach(r => {
+        const httpEvent = this.getHttpEventForRoute(r);
+        configuration.events.push(httpEvent);
+      });
+    }
+
     const httpHeadEvents = this.getMatchingHttpHeadEvents(
       configuration.events.filter(e => e.http.method === "get")
     );
@@ -103,6 +129,17 @@ class NextPage {
       headEvent.http.method = "head";
       return headEvent;
     });
+  }
+
+  getHttpEventForRoute(route) {
+    const httpEvent = {
+      http: {
+        method: "get",
+        ...route
+      }
+    };
+
+    return httpEvent;
   }
 }
 

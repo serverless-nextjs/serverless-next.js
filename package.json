@@ -28,6 +28,7 @@
     "eslint-config-prettier": "^4.1.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.1.0",
+    "jest-when": "^2.5.0",
     "next": "^8.0.4",
     "prettier": "^1.16.4",
     "react": "^16.8.6",
@@ -60,7 +61,7 @@
     ],
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "lib/cfSchema.js",
+      "<rootDir>/utils/yml/cfSchema.js",
       "<rootDir>/utils/test"
     ],
     "modulePathIgnorePatterns": [

@@ -15,13 +15,13 @@ custom:
     pageConfig:
       post:
         memorySize: 2048
-        events:
-          - http:
-              path: posts/{id}
-              request:
-                parameters:
-                  paths:
-                    id: true
+    routes:
+      - src: post
+        path: posts/{id}
+        request:
+          parameters:
+            paths:
+              id: true
 
 package:
   # exclude everything

@@ -28,10 +28,6 @@ module.exports = {
 
 Alternatively, remove `assetPrefix` and the bucket won't be provisioned.
 
-#### Running locally
-
-`npx serverless offline`
-
 #### Deploy
 
 `serverless deploy`

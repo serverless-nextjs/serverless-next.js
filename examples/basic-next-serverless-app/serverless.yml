@@ -15,15 +15,16 @@ plugins:
 custom:
   serverless-nextjs:
     nextConfigDir: ./
-    pageConfig:
-      post:
-        events:
-          - http:
-              path: post/{slug}
-              request:
-                parameters:
-                  paths:
-                    slug: true
+    staticDir: ./assets
+    routes:
+      - src: ./assets/robots.txt
+        path: robots.txt
+      - src: post
+        path: post/{slug}
+        request:
+          parameters:
+            paths:
+              slug: true
 
 package:
   # exclude everything
