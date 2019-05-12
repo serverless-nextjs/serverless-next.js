@@ -56,6 +56,10 @@ class ServerlessNextJsPlugin {
     return userConfig === undefined ? defaults[param] : userConfig;
   }
 
+  getPluginConfigValues(...params) {
+    return params.map(p => this.getPluginConfigValue(p));
+  }
+
   printStackOutput() {
     const awsInfo = this.serverless.pluginManager.getPlugins().find(plugin => {
       return plugin.constructor.name === "AwsInfo";
