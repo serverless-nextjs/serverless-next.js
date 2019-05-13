@@ -10,7 +10,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     routes:
       - src: post
         path: post/{slug}
