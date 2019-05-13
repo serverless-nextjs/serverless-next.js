@@ -14,7 +14,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     staticDir: ./assets
     routes:
       - src: ./assets/robots.txt

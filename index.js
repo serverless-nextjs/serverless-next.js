@@ -46,6 +46,7 @@ class ServerlessNextJsPlugin {
   getPluginConfigValue(param) {
     const defaults = {
       routes: [],
+      nextConfigDir: "./",
       uploadBuildAssets: true
     };
 

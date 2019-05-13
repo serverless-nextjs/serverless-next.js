@@ -80,10 +80,6 @@ Edit the serverless.yml and add:
 plugins:
   - serverless-nextjs-plugin
 
-custom:
-  serverless-nextjs:
-    nextConfigDir: "./"
-
 package:
   exclude:
     - ./**
@@ -115,7 +111,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: "./"
     assetsBucketName: "your-bucket-name"
 ```
 
@@ -126,7 +121,6 @@ If you need the static assets available in the main domain of your application, 
 ```yml
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     staticDir: ./assets
     routes:
       - src: ./assets/robots.txt
@@ -178,7 +172,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     pageConfig:
       about:
         memorySize: 512 # default is 1024
@@ -204,7 +197,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     pageConfig:
       "*":
         layers:
@@ -249,7 +241,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     routes:
       - src: post
         path: posts/{slug}
@@ -296,7 +287,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     customHandler: ./handler.js
 ```
 
@@ -322,7 +312,7 @@ module.exports = page => {
 
 | Plugin config key | Default Value | Description                                                                                                                                                                                                                      |
 | ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nextConfigDir     | \<empty\>     | Path to parent directory of `next.config.js`.                                                                                                                                                                                    |
+| nextConfigDir     | './'          | Path to parent directory of `next.config.js`.                                                                                                                                                                                    |
 | assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                           |
 | staticDir         | \<empty\>     | Directory with static assets to be uploaded to S3, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
 | routes            | []            | Array of custom routes for the next pages or static assets.                                                                                                                                                                      |
