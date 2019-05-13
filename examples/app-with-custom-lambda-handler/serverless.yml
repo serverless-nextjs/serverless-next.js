@@ -13,7 +13,6 @@ plugins:
 
 custom:
   serverless-nextjs:
-    nextConfigDir: ./
     customHandler: ./my-lambda-handler.js
 
 package:
