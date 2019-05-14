@@ -7,5 +7,7 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "ISC",
   "devDependencies": {},
-  "dependencies": {}
+  "dependencies": {
+    "next-aws-lambda": "file:../../packages/next-aws-lambda"
+  }
 }
