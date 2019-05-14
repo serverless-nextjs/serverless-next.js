@@ -60,5 +60,9 @@
       "<rootDir>/examples/",
       "<rootDir>/integration"
     ]
+  },
+  "dependencies": {
+    "next-aws-lambda": "file:packages/next-aws-lambda",
+    "serverless-nextjs-plugin": "file:packages/next-plugin"
   }
 }
