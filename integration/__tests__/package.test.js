@@ -1,8 +1,8 @@
 const path = require("path");
 const AdmZip = require("adm-zip");
 const fs = require("fs");
-const packageTestService = require("../../utils/test/packageTestService");
-const PluginBuildDir = require("../../classes/PluginBuildDir");
+const packageTestService = require("../../packages/next-plugin/utils/test/packageTestService");
+const PluginBuildDir = require("../../packages/next-plugin/classes/PluginBuildDir");
 
 const readJsonFile = filePath => {
   return JSON.parse(fs.readFileSync(filePath, "utf-8"));

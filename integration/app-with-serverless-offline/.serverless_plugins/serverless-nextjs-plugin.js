@@ -1,2 +1,2 @@
-const plugin = require('../../../index');
+const plugin = require("../../../packages/next-plugin");
 module.exports = plugin;

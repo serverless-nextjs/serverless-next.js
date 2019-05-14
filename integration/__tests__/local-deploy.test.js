@@ -1,7 +1,7 @@
 const execSync = require("child_process").execSync;
 const path = require("path");
-const serverlessOfflineStart = require("../../utils/test/serverlessOfflineStart");
-const httpGet = require("../../utils/test/httpGet");
+const serverlessOfflineStart = require("../../packages/next-plugin/utils/test/serverlessOfflineStart");
+const httpGet = require("../../packages/next-plugin/utils/test/httpGet");
 
 describe("Local Deployment Tests (via serverless-offline)", () => {
   let slsOffline;

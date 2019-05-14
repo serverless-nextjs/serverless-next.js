@@ -6,8 +6,6 @@
   "scripts": {},
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "ISC",
-  "devDependencies": {
-    "serverless-offline": "^4.9.0"
-  },
+  "devDependencies": {},
   "dependencies": {}
 }
