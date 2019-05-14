@@ -58,7 +58,8 @@ class NextPage {
     return (
       this.pageId
         .replace(new RegExp(path.posix.sep, "g"), "-")
-        .replace(/^-/, "") + "Page"
+        .replace(/^-/, "")
+        .replace(/[^\w-]/g, "_") + "Page"
     );
   }
 

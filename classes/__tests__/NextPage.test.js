@@ -57,6 +57,15 @@ describe("NextPage", () => {
       expect(page.functionName).toEqual("adminPage");
     });
 
+    it("replaces non-alphanumeric chars in pageFunctionName", () => {
+      const pagePath = `${PluginBuildDir.BUILD_DIR_NAME}/$home.js`;
+      const page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
+      expect(page.functionName).toEqual("_homePage");
+    });
+
     it("returns pageId", () => {
       expect(page.pageId).toEqual("admin");
     });
