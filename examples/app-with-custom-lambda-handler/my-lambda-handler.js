@@ -1,4 +1,4 @@
-const compat = require("serverless-nextjs-plugin/aws-lambda-compat");
+const compat = require("next-aws-lambda");
 
 module.exports = page => {
   const handler = (event, context, callback) => {
