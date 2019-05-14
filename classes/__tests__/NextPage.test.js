@@ -270,7 +270,9 @@ describe("NextPage", () => {
 
     describe("#serverlessFunction", () => {
       it("returns URI path matching subdirectories", () => {
-        const { events } = page.serverlessFunction.fridgesPage;
+        const { events } = page.serverlessFunction[
+          "categories-fridge-fridgesPage"
+        ];
 
         expect(events).toHaveLength(2);
 
