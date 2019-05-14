@@ -30,8 +30,5 @@ module.exports = (jsHandlerPath, customHandlerPath) => {
 
   return lambdaHandlerWithFactory
     .replace(PAGE_BUNDLE_PATH, `./${basename}.original.js`)
-    .replace(
-      HANDLER_FACTORY_PATH,
-      customHandlerPath || "serverless-nextjs-plugin/aws-lambda-compat"
-    );
+    .replace(HANDLER_FACTORY_PATH, customHandlerPath || "next-aws-lambda");
 };

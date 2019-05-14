@@ -10,18 +10,11 @@
     "next",
     "api gateway"
   ],
-  "scripts": {
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "lint": "eslint .",
-    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "test": "jest"
-  },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "peerDependencies": {
     "next": "^8.0.0"
   },
-  "devDependencies": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
@@ -35,26 +28,8 @@
     "klaw": "^3.0.0",
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.1",
-    "mime": "^2.4.0"
-  },
-  "jest": {
-    "clearMocks": true,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "index.js",
-      "lib/**/*.js",
-      "utils/**/*.js",
-      "classes/**/*.js"
-    ],
-    "coverageDirectory": "<rootDir>/coverage/",
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/utils/yml/cfSchema.js",
-      "<rootDir>/utils/test"
-    ],
-    "modulePathIgnorePatterns": [
-      "<rootDir>/examples/",
-      "<rootDir>/integration"
-    ]
+    "mime": "^2.4.0",
+    "next-aws-lambda": "file:../next-aws-lambda"
   },
   "engines": {
     "node": ">=8.5.0"
