@@ -8,7 +8,7 @@ node_js:
   - "8"
   - "11.10"
 install:
-  - npm ci
+  - npm install
   - cd packages/next-plugin && npm install && cd ../../
   - cd integration/app-with-serverless-offline && npm install && cd ../../
 script:
