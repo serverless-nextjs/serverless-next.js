@@ -58,7 +58,7 @@ describe("NextPage", () => {
     });
 
     it("replaces non-alphanumeric chars in pageFunctionName", () => {
-      const pagePath = `${PluginBuildDir.BUILD_DIR_NAME}/$home.js`;
+      const pagePath = path.join(buildDir, "$home.js");
       const page = new NextPage(pagePath, {
         serverlessFunctionOverrides: {},
         routes: []
