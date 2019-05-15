@@ -34,6 +34,7 @@
     "coveralls": "^3.0.3",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.8.0",
     "jest-when": "^2.5.0",
     "lerna": "^3.13.4",
@@ -52,8 +53,8 @@
     ],
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/serverless-nextjs-plugin/utils/test"
+      "<rootDir>/packages/serverless-plugin/utils/yml/cfSchema.js",
+      "<rootDir>/packages/serverless-plugin/utils/test"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/examples/",
