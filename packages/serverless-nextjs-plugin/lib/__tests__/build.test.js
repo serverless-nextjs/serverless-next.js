@@ -81,6 +81,25 @@ describe("build", () => {
     });
   });
 
+  it("includes next-aws-lambda in node_modules/", () => {
+    expect.assertions(1);
+
+    const nextConfigDir = "path/to/next-app";
+
+    const parsedNextConfig = parsedNextConfigurationFactory();
+    parseNextConfiguration.mockResolvedValueOnce(parsedNextConfig);
+
+    const plugin = new ServerlessPluginBuilder()
+      .withPluginConfig({ nextConfigDir })
+      .build();
+
+    return build.call(plugin).then(() => {
+      expect(plugin.serverless.service.package.include).toContain(
+        `node_modules/next-aws-lambda/**`
+      );
+    });
+  });
+
   it("copies build files", () => {
     expect.assertions(2);
 

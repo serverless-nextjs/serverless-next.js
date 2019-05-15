@@ -1,8 +1,11 @@
 {
-  "name": "serverless-nextjs-plugin",
+  "name": "serverless-nextjs-monorepo",
   "version": "1.8.1",
-  "description": "A serverless plugin for nextjs 8 serverless target",
+  "description": "Collection of packages to deploy nextjs applications to AWS Api Gateway & Lambda",
   "main": "index.js",
+  "directories": {
+    "example": "examples"
+  },
   "keywords": [
     "serverless",
     "nextjs",
@@ -11,65 +14,51 @@
     "api gateway"
   ],
   "scripts": {
-    "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "test": "jest",
     "lint": "eslint .",
-    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "test": "jest"
-  },
-  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
-  "license": "ISC",
-  "peerDependencies": {
-    "next": "^8.0.0"
-  },
-  "devDependencies": {
-    "adm-zip": "^0.4.13",
-    "coveralls": "^3.0.3",
-    "eslint": "^5.14.1",
-    "eslint-config-prettier": "^4.1.0",
-    "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.1.0",
-    "jest-when": "^2.5.0",
-    "next": "^8.0.4",
-    "prettier": "^1.16.4",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "serverless": "^1.38.0"
+    "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
+    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
   },
-  "dependencies": {
-    "@mapbox/s3urls": "^1.5.3",
-    "chalk": "^2.4.2",
-    "debug": "^4.1.1",
-    "fs-extra": "^7.0.1",
-    "js-yaml": "^3.12.1",
-    "klaw": "^3.0.0",
-    "lodash.clonedeep": "^4.5.0",
-    "lodash.merge": "^4.6.1",
-    "mime": "^2.4.0"
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "devDependencies": {
+    "adm-zip": "^0.4.13",
+    "coveralls": "^3.0.3",
+    "eslint": "^5.16.0",
+    "eslint-config-prettier": "^4.2.0",
+    "eslint-plugin-prettier": "^3.0.1",
+    "jest": "^24.8.0",
+    "jest-when": "^2.5.0",
+    "lerna": "^3.13.4",
+    "next": "^8.1.0",
+    "prettier": "^1.17.1",
+    "react": "^16.8.6",
+    "react-dom": "^16.8.6",
+    "serverless": "^1.42.3",
+    "serverless-offline": "^4.10.0"
   },
   "jest": {
     "clearMocks": true,
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "index.js",
-      "lib/**/*.js",
-      "utils/**/*.js",
-      "classes/**/*.js"
+      "<rootDir>/packages/**/*.js"
     ],
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "<rootDir>/utils/yml/cfSchema.js",
-      "<rootDir>/utils/test"
+      "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
+      "<rootDir>/packages/serverless-nextjs-plugin/utils/test"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/examples/",
       "<rootDir>/integration"
     ]
-  },
-  "engines": {
-    "node": ">=8.5.0"
   }
 }

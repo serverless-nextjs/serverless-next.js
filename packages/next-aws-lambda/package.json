@@ -1,0 +1,24 @@
+{
+  "name": "next-aws-lambda",
+  "version": "1.8.1",
+  "description": "Compat layer between next.js serverless page and AWS Lambda",
+  "files": [
+    "lib/**",
+    "index.js"
+  ],
+  "main": "index.js",
+  "keywords": [
+    "serverless",
+    "nextjs",
+    "lambda",
+    "next",
+    "api gateway"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git",
+    "directory": "packages/next-aws-lambda"
+  },
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC"
+}

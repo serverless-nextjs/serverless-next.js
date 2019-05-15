@@ -9,12 +9,13 @@ node_js:
   - "11.10"
 install:
   - npm install
+  - cd packages/serverless-nextjs-plugin && npm install && cd ../../
   - cd integration/app-with-serverless-offline && npm install && cd ../../
 script:
   - npm run lint
   - npm test
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run coveralls; fi
   - npm run integration
-cache:
-  directories:
-    - "node_modules"
+# cache:
+#   directories:
+#     - "node_modules"

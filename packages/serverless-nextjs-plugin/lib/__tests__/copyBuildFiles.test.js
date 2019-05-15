@@ -46,25 +46,5 @@ describe("copyBuildFiles", () => {
         pluginBuildDir
       );
     });
-
-    it("should copy the compatLayer file", () => {
-      expect(fse.copy).toBeCalledWith(
-        path.join(__dirname, "..", `compatLayer.js`),
-        path.join(
-          pluginBuildDir,
-          "./node_modules/serverless-nextjs-plugin/lib/compatLayer.js"
-        )
-      );
-    });
-
-    it("should copy the aws-lambda-compat file", () => {
-      expect(fse.copy).toBeCalledWith(
-        path.join(__dirname, "../../", `aws-lambda-compat.js`),
-        path.join(
-          pluginBuildDir,
-          "./node_modules/serverless-nextjs-plugin/aws-lambda-compat.js"
-        )
-      );
-    });
   });
 });

@@ -1,0 +1,15 @@
+{
+  "version": "1.8.1",
+  "npmClient": "npm",
+  "command": {
+    "publish": {
+      "ignoreChanges": ["*.md"],
+      "message": "chore(release): publish"
+    },
+    "bootstrap": {
+      "ignore": "component-*",
+      "npmClientArgs": ["--no-package-lock"]
+    }
+  },
+  "packages": ["packages/*"]
+}

@@ -1,7 +1,10 @@
 const path = require("path");
 
+// .bin/serverless exists at the monorepo root
 let serverlessExec = path.join(
   __dirname,
+  "..",
+  "..",
   "..",
   "..",
   "node_modules/.bin/serverless"

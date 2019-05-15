@@ -5,7 +5,7 @@ provider:
   runtime: nodejs8.10
 
 plugins:
-  localPath: "../../"
+  localPath: "../../packages/serverless-nextjs-plugin"
   modules:
     - index
 
