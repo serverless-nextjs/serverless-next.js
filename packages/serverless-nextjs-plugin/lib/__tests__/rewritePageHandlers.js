@@ -32,10 +32,14 @@ describe("rewritePageHandlers", () => {
 
     it("should log", () => {
       expect(logger.log).toBeCalledWith(
-        expect.stringContaining("compat handler for page: home.js")
+        expect.stringContaining(
+          "compat handler for page: build/serverless/pages/home.js"
+        )
       );
       expect(logger.log).toBeCalledWith(
-        expect.stringContaining("compat handler for page: about.js")
+        expect.stringContaining(
+          "compat handler for page: build/serverless/pages/about.js"
+        )
       );
     });
 

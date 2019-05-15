@@ -12,7 +12,7 @@ const processJsHandler = async (nextPage, customHandler) => {
     customHandler
   );
 
-  logger.log(`Creating compat handler for page: ${nextPage.pageName}.js`);
+  logger.log(`Creating compat handler for page: ${nextPage.pageId}.js`);
 
   await writeFileAsync(nextPage.pageCompatPath, compatCodeContent);
 

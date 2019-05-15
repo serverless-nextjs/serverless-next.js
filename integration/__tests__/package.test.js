@@ -71,7 +71,7 @@ describe.each`
             about: resources.AboutPageLambdaFunction,
             post: resources.PostPageLambdaFunction,
             blog: resources.BlogPageLambdaFunction,
-            fridges: resources.FridgesPageLambdaFunction
+            fridges: resources.CategoriesDashfridgeDashfridgesPageLambdaFunction
           };
         });
 

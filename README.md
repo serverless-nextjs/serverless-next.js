@@ -61,9 +61,9 @@ module.exports.render = (event, context, callback) => {
 
 `npm install --save-dev serverless-nextjs-plugin`
 
-The plugin only needs to know where your `next.config.js` file is located. Using your next configuration it will automatically build the application and compile the pages using the target: `serverless`.
+Out of the box, the plugin won't require any configuration. If you need to override any defaults check [this](#all-plugin-configuration-options).
 
-Note it expects `nextConfigDir` to be a directory and not the actual file path.
+For example:
 
 ```
 nextApp
@@ -313,7 +313,7 @@ module.exports = page => {
 
 | Plugin config key | Default Value | Description                                                                                                                                                                                                                      |
 | ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nextConfigDir     | './'          | Path to parent directory of `next.config.js`.                                                                                                                                                                                    |
+| nextConfigDir     | ./          | Path to parent directory of `next.config.js`.                                                                                                                                                                                    |
 | assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                           |
 | staticDir         | \<empty\>     | Directory with static assets to be uploaded to S3, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
 | routes            | []            | Array of custom routes for the next pages or static assets.                                                                                                                                                                      |

@@ -57,6 +57,15 @@ describe("NextPage", () => {
       expect(page.functionName).toEqual("adminPage");
     });
 
+    it("replaces non-alphanumeric chars in pageFunctionName", () => {
+      const pagePath = path.join(buildDir, "$home.js");
+      const page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
+      expect(page.functionName).toEqual("_homePage");
+    });
+
     it("returns pageId", () => {
       expect(page.pageId).toEqual("admin");
     });
@@ -270,7 +279,9 @@ describe("NextPage", () => {
 
     describe("#serverlessFunction", () => {
       it("returns URI path matching subdirectories", () => {
-        const { events } = page.serverlessFunction.fridgesPage;
+        const { events } = page.serverlessFunction[
+          "categories-fridge-fridgesPage"
+        ];
 
         expect(events).toHaveLength(2);
 

@@ -51,15 +51,20 @@ class NextPage {
   }
 
   get functionName() {
-    if (this.pageName === "_error") {
+    if (this.pageId === "_error") {
       return "notFoundErrorPage";
     }
 
-    return this.pageName + "Page";
+    return (
+      this.pageId
+        .replace(new RegExp(path.posix.sep, "g"), "-")
+        .replace(/^-/, "")
+        .replace(/[^\w-]/g, "_") + "Page"
+    );
   }
 
   get pageRoute() {
-    switch (this.pageName) {
+    switch (this.pageId) {
       case "index":
         return "/";
       case "_error":
