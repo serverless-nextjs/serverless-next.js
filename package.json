@@ -53,16 +53,12 @@
     ],
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "<rootDir>/packages/next-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/next-plugin/utils/test"
+      "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
+      "<rootDir>/packages/serverless-nextjs-plugin/utils/test"
     ],
     "modulePathIgnorePatterns": [
       "<rootDir>/examples/",
       "<rootDir>/integration"
     ]
-  },
-  "dependencies": {
-    "next-aws-lambda": "file:packages/next-aws-lambda",
-    "serverless-nextjs-plugin": "file:packages/next-plugin"
   }
 }
