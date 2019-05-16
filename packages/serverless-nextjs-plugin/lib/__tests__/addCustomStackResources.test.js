@@ -194,6 +194,42 @@ describe("addCustomStackResources", () => {
     });
   });
 
+  it("adds static proxy route to resources with correct bucket url for the region", () => {
+    expect.assertions(2);
+
+    const euWestRegion = "eu-west-1";
+    const bucketUrlIreland = `https://s3-${euWestRegion}.amazonaws.com/${bucketName}`;
+    const getRegion = jest.fn().mockReturnValueOnce(euWestRegion);
+
+    const plugin = new ServerlessPluginBuilder()
+      .withPluginConfig({
+        staticDir: "./public",
+        routes: [
+          {
+            src: "./public/foo/bar.js",
+            path: "foo/bar.js"
+          }
+        ]
+      })
+      .withService({
+        provider: {
+          getRegion
+        }
+      })
+      .build();
+
+    return addCustomStackResources.call(plugin).then(() => {
+      const {
+        FooBarProxyMethod
+      } = plugin.serverless.service.resources.Resources;
+
+      expect(getRegion).toBeCalled();
+      expect(FooBarProxyMethod.Properties.Integration.Uri).toEqual(
+        `${bucketUrlIreland}/public/foo/bar.js`
+      );
+    });
+  });
+
   it("doesn't add static proxy route to resources if src isn't a sub path of staticDir", () => {
     expect.assertions(1);
 
