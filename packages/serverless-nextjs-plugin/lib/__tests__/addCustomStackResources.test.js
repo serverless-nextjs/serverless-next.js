@@ -211,12 +211,9 @@ describe("addCustomStackResources", () => {
           }
         ]
       })
-      .withService({
-        provider: {
-          getRegion
-        }
-      })
       .build();
+
+    plugin.provider.getRegion = getRegion;
 
     return addCustomStackResources.call(plugin).then(() => {
       const {

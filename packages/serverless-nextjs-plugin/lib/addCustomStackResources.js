@@ -38,7 +38,7 @@ const getStaticRouteProxyResources = async function(bucketName) {
     Resources: {}
   };
 
-  const region = this.serverless.service.provider.getRegion();
+  const region = this.provider.getRegion();
 
   // see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
   const bucketBaseUrl =
