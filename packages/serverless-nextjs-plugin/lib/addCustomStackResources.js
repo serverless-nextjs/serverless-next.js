@@ -38,15 +38,20 @@ const getStaticRouteProxyResources = async function(bucketName) {
     Resources: {}
   };
 
+  const region = this.serverless.service.provider.getRegion();
+
+  // see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
+  const bucketBaseUrl =
+    region === "us-east-1"
+      ? "https://s3.amazonaws.com"
+      : `https://s3-${region}.amazonaws.com`;
+
   routes
     .filter(r => isSubPath(staticDir, r.src))
     .forEach(r => {
       const { src, path: routePath } = r;
 
-      const bucketUrl = `https://s3.amazonaws.com/${path.posix.join(
-        bucketName,
-        src
-      )}`;
+      const bucketUrl = `${bucketBaseUrl}/${path.posix.join(bucketName, src)}`;
 
       let resourceName = normaliseSrc(staticDir, src);
       resourceName = path.parse(resourceName).name;

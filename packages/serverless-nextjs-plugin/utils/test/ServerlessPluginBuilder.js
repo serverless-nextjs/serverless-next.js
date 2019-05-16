@@ -21,6 +21,7 @@ class ServerlessPluginBuilder {
         setFunctionNames: () => {},
         functions: {},
         provider: {
+          getRegion: () => "us-east-1",
           compiledCloudFormationTemplate: {}
         },
         custom: {
