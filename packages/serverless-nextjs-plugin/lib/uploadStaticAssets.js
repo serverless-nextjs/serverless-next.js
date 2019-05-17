@@ -31,7 +31,7 @@ module.exports = function() {
       path.join(this.nextConfigDir, nextConfiguration.distDir, "static"),
       {
         bucket: staticAssetsBucket,
-        prefix: "static",
+        truncate: "static",
         rootPrefix: "_next"
       }
     );
@@ -41,7 +41,7 @@ module.exports = function() {
   if (staticDir) {
     const staticDirUpload = uploadDirToS3(staticDir, {
       bucket: staticAssetsBucket,
-      prefix: path.basename(staticDir)
+      truncate: path.basename(staticDir)
     });
 
     uploadPromises.push(staticDirUpload);

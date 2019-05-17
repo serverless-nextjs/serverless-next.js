@@ -169,48 +169,51 @@ describe("s3Upload", () => {
     return promise;
   });
 
-  it("S3 Key should use prefix", () => {
-    expect.assertions(2);
+  it.each`
+    filePath                           | truncate    | expectedKey
+    ${"/some/path/to/foo.js"}          | ${"to"}     | ${"to/foo.js"}
+    ${"/static-app/static/foo/bar.js"} | ${"static"} | ${"static/foo/bar.js"}
+  `(
+    "When file path is $filePath S3 Key should be $expectedKey",
+    ({ filePath, truncate, expectedKey }) => {
+      expect.assertions(2);
 
-    const promise = upload("/path/to/dir", {
-      bucket: "my-bucket",
-      prefix: "to"
-    }).then(() => {
-      expect(awsProvider).toBeCalledWith(
-        "S3",
-        "upload",
-        expect.objectContaining({
-          Key: "to/foo.js"
-        })
-      );
-      expect(awsProvider).toBeCalledWith(
-        "S3",
-        "upload",
-        expect.objectContaining({
-          Key: "to/bar.js"
-        })
-      );
-    });
+      const promise = upload("/path/to/dir", {
+        bucket: "my-bucket",
+        truncate: truncate
+      }).then(() => {
+        [1, 2].forEach(i => {
+          expect(awsProvider).toHaveBeenNthCalledWith(
+            i,
+            "S3",
+            "upload",
+            expect.objectContaining({
+              Key: expectedKey
+            })
+          );
+        });
+      });
 
-    walkStream.emit("data", {
-      path: "/some/path/to/foo.js"
-    });
+      walkStream.emit("data", {
+        path: filePath
+      });
 
-    walkStream.emit("data", {
-      path: path.win32.normalize("/some/path/to/bar.js")
-    });
+      walkStream.emit("data", {
+        path: path.win32.normalize(filePath)
+      });
 
-    walkStream.emit("end");
+      walkStream.emit("end");
 
-    return promise;
-  });
+      return promise;
+    }
+  );
 
   it("S3 Key should use rootPrefix", () => {
     expect.assertions(2);
 
     const promise = upload("/path/to/dir", {
       bucket: "my-bucket",
-      prefix: "/to",
+      truncate: "to",
       rootPrefix: "blah"
     }).then(() => {
       expect(awsProvider).toBeCalledWith(

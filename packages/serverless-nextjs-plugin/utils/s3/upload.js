@@ -7,11 +7,18 @@ const get = require("./get");
 const logger = require("../logger");
 const debug = require("debug")("sls-next:s3");
 
-const getUploadParameters = (bucket, filePath, prefix, rootPrefix) => {
+const getUploadParameters = (bucket, filePath, truncate, rootPrefix) => {
   let key = pathToPosix(filePath);
 
-  if (prefix) {
-    key = key.substring(key.indexOf(prefix), key.length);
+  if (truncate) {
+    const pathSegments = key.split(path.posix.sep);
+    const prefixIndex = pathSegments.indexOf(truncate);
+
+    if (prefixIndex !== -1) {
+      key = pathSegments
+        .slice(prefixIndex, pathSegments.length)
+        .join(path.posix.sep);
+    }
   }
 
   if (rootPrefix) {
@@ -32,7 +39,7 @@ const filesAreEqual = (s3Object, fStats) =>
 
 module.exports = awsProvider => (
   dir,
-  { bucket, prefix = null, rootPrefix = null }
+  { bucket, truncate = null, rootPrefix = null }
 ) => {
   const getObjectFromS3 = get(awsProvider);
   const promises = [];
@@ -47,7 +54,7 @@ module.exports = awsProvider => (
             const uploadParams = getUploadParameters(
               bucket,
               item.path,
-              prefix,
+              truncate,
               rootPrefix
             );
 

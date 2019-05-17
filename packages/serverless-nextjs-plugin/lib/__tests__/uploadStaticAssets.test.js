@@ -44,7 +44,7 @@ describe("uploadStaticAssets", () => {
         path.join("/path/to/next", distDir, "static"),
         {
           bucket: "my-bucket",
-          prefix: "static",
+          truncate: "static",
           rootPrefix: "_next"
         }
       );
@@ -70,7 +70,7 @@ describe("uploadStaticAssets", () => {
         path.join("/path/to/next", distDir, "static"),
         {
           bucket: "custom-bucket",
-          prefix: "static",
+          truncate: "static",
           rootPrefix: "_next"
         }
       );
@@ -93,7 +93,7 @@ describe("uploadStaticAssets", () => {
     return uploadStaticAssets.call(plugin).then(() => {
       expect(uploadDirToS3).toBeCalledWith(staticDir, {
         bucket: "my-bucket",
-        prefix: "assets"
+        truncate: "assets"
       });
     });
   });
@@ -116,7 +116,7 @@ describe("uploadStaticAssets", () => {
       expect(uploadDirToS3).toBeCalledTimes(1);
       expect(uploadDirToS3).toBeCalledWith(staticDir, {
         bucket: "my-bucket",
-        prefix: "assets"
+        truncate: "assets"
       });
     });
   });
