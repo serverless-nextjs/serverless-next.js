@@ -230,17 +230,17 @@ describe("NextPage", () => {
     });
 
     describe("#serverlessFunction", () => {
-      it("should name the function notFoundErrorPage", () => {
-        expect(page.serverlessFunction.notFoundErrorPage).toBeDefined();
+      it("should name the function not-found", () => {
+        expect(page.serverlessFunction["not-found"]).toBeDefined();
       });
 
       it("returns two events", () => {
-        const { events } = page.serverlessFunction.notFoundErrorPage;
+        const { events } = page.serverlessFunction["not-found"];
         expect(events).toHaveLength(2);
       });
 
       it("returns http event path /{proxy+} with GET method", () => {
-        const { events } = page.serverlessFunction.notFoundErrorPage;
+        const { events } = page.serverlessFunction["not-found"];
 
         const httpGet = events[0].http;
 
@@ -249,7 +249,7 @@ describe("NextPage", () => {
       });
 
       it("returns http event path /{proxy+} with HEAD method", () => {
-        const { events } = page.serverlessFunction.notFoundErrorPage;
+        const { events } = page.serverlessFunction["not-found"];
 
         const httpHead = events[1].http;
 

@@ -52,7 +52,7 @@ class NextPage {
 
   get functionName() {
     if (this.pageId === "_error") {
-      return "notFoundErrorPage";
+      return "not-found";
     }
 
     return this.pageId
