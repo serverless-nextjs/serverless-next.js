@@ -67,11 +67,11 @@ describe.each`
 
         beforeAll(() => {
           lambdaFunctions = {
-            home: resources.HomePageLambdaFunction,
-            about: resources.AboutPageLambdaFunction,
-            post: resources.PostPageLambdaFunction,
-            blog: resources.BlogPageLambdaFunction,
-            fridges: resources.CategoriesDashfridgeDashfridgesPageLambdaFunction
+            home: resources.HomeLambdaFunction,
+            about: resources.AboutLambdaFunction,
+            post: resources.PostLambdaFunction,
+            blog: resources.BlogLambdaFunction,
+            fridges: resources.CategoriesDashfridgeDashfridgesLambdaFunction
           };
         });
 

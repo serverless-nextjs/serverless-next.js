@@ -54,7 +54,7 @@ describe("NextPage", () => {
     });
 
     it("returns pageFunctionName", () => {
-      expect(page.functionName).toEqual("adminPage");
+      expect(page.functionName).toEqual("admin");
     });
 
     it("replaces non-alphanumeric chars in pageFunctionName", () => {
@@ -63,7 +63,7 @@ describe("NextPage", () => {
         serverlessFunctionOverrides: {},
         routes: []
       });
-      expect(page.functionName).toEqual("_homePage");
+      expect(page.functionName).toEqual("_home");
     });
 
     it("returns pageId", () => {
@@ -73,21 +73,21 @@ describe("NextPage", () => {
     describe("#serverlessFunction", () => {
       it("returns function name", () => {
         const pageFunction = page.serverlessFunction;
-        expect(pageFunction.adminPage).toBeDefined();
+        expect(pageFunction.admin).toBeDefined();
       });
 
       it("returns function handler", () => {
-        const { handler } = page.serverlessFunction.adminPage;
+        const { handler } = page.serverlessFunction.admin;
         expect(handler).toEqual(`${buildDir}/admin.render`);
       });
 
       it("returns 2 http events", () => {
-        const { events } = page.serverlessFunction.adminPage;
+        const { events } = page.serverlessFunction.admin;
         expect(events).toHaveLength(2);
       });
 
       it("returns function http GET event", () => {
-        const { events } = page.serverlessFunction.adminPage;
+        const { events } = page.serverlessFunction.admin;
 
         const httpEvent = events[0].http;
 
@@ -96,7 +96,7 @@ describe("NextPage", () => {
       });
 
       it("returns function http HEAD event", () => {
-        const { events } = page.serverlessFunction.adminPage;
+        const { events } = page.serverlessFunction.admin;
 
         const httpEvent = events[1].http;
 
@@ -126,7 +126,7 @@ describe("NextPage", () => {
             routes: []
           });
 
-          const { events } = pageWithCustomConfig.serverlessFunction.adminPage;
+          const { events } = pageWithCustomConfig.serverlessFunction.admin;
           expect(events).toHaveLength(2);
 
           const httpGet = events[0].http;
@@ -150,9 +150,7 @@ describe("NextPage", () => {
             routes: []
           });
 
-          expect(pageWithCustomConfig.serverlessFunction.adminPage.foo).toBe(
-            "bar"
-          );
+          expect(pageWithCustomConfig.serverlessFunction.admin.foo).toBe("bar");
         });
 
         it("doesn't change handler with provided pageConfig", () => {
@@ -163,9 +161,9 @@ describe("NextPage", () => {
             routes: []
           });
 
-          expect(
-            pageWithCustomConfig.serverlessFunction.adminPage.handler
-          ).toBe(pageWithCustomConfig.pageHandler);
+          expect(pageWithCustomConfig.serverlessFunction.admin.handler).toBe(
+            pageWithCustomConfig.pageHandler
+          );
         });
 
         it("doesn't change runtime with provided pageConfig", () => {
@@ -176,9 +174,9 @@ describe("NextPage", () => {
             routes: []
           });
 
-          expect(
-            pageWithCustomConfig.serverlessFunction.adminPage.runtime
-          ).toBe(undefined);
+          expect(pageWithCustomConfig.serverlessFunction.admin.runtime).toBe(
+            undefined
+          );
         });
       });
     });
@@ -202,7 +200,7 @@ describe("NextPage", () => {
 
     describe("#serverlessFunction", () => {
       it("returns http GET event with path /", () => {
-        const { events } = page.serverlessFunction.indexPage;
+        const { events } = page.serverlessFunction.index;
 
         const httpEvent = events[0].http;
         expect(httpEvent.method).toEqual("get");
@@ -210,7 +208,7 @@ describe("NextPage", () => {
       });
 
       it("returns http HEAD event with path /", () => {
-        const { events } = page.serverlessFunction.indexPage;
+        const { events } = page.serverlessFunction.index;
 
         const httpEvent = events[1].http;
         expect(httpEvent.method).toEqual("head");
@@ -279,9 +277,7 @@ describe("NextPage", () => {
 
     describe("#serverlessFunction", () => {
       it("returns URI path matching subdirectories", () => {
-        const { events } = page.serverlessFunction[
-          "categories-fridge-fridgesPage"
-        ];
+        const { events } = page.serverlessFunction["categories-fridge-fridges"];
 
         expect(events).toHaveLength(2);
 
@@ -362,7 +358,7 @@ describe("NextPage", () => {
     });
 
     it("sets http GET and HEAD events for the route given", () => {
-      const { events } = pageWithCustomRoutes.serverlessFunction.fooPage;
+      const { events } = pageWithCustomRoutes.serverlessFunction.foo;
       expect(events).toHaveLength(4);
 
       const httpGetOne = events[0].http;

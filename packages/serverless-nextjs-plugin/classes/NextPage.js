@@ -55,12 +55,10 @@ class NextPage {
       return "notFoundErrorPage";
     }
 
-    return (
-      this.pageId
-        .replace(new RegExp(path.posix.sep, "g"), "-")
-        .replace(/^-/, "")
-        .replace(/[^\w-]/g, "_") + "Page"
-    );
+    return this.pageId
+      .replace(new RegExp(path.posix.sep, "g"), "-")
+      .replace(/^-/, "")
+      .replace(/[^\w-]/g, "_");
   }
 
   get pageRoute() {
