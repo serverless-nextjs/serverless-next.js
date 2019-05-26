@@ -7,8 +7,7 @@ const loadYml = require("../utils/yml/load");
 
 const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
 
-const normaliseResourceName = str =>
-  str.charAt(0).toUpperCase() + str.slice(1).replace(/[^0-9a-zA-Z]/g, "");
+const normaliseResourceName = str => str.replace(/[^0-9a-zA-Z]/g, "");
 
 const isSubPath = (parentDir, subPath) => {
   const relative = path.relative(parentDir, subPath);
