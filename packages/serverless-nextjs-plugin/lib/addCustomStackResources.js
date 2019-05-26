@@ -6,10 +6,7 @@ const logger = require("../utils/logger");
 const loadYml = require("../utils/yml/load");
 
 const normaliseString = str =>
-  str
-    .charAt(0)
-    .toUpperCase() + str.slice(1)
-    .replace(/[^0-9a-zA-Z]/g, '');
+  str.charAt(0).toUpperCase() + str.slice(1).replace(/[^0-9a-zA-Z]/g, "");
 
 const isSubPath = (parentDir, subPath) => {
   const relative = path.relative(parentDir, subPath);
@@ -82,36 +79,27 @@ const addCustomStackResources = async function() {
   const bucketName = getAssetsBucketName.call(this);
 
   if (bucketName === null) {
-    return;
+    return Promise.resolve();
   }
 
-  let assetsBucketResource = await loadYml(
+  let resources = await loadYml(
     path.join(__dirname, "../resources/assets-bucket.yml")
   );
 
   logger.log(`Found bucket "${bucketName}"`);
+
+  resources.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
+
+  merge(this.serverless.service.provider.coreCloudFormationTemplate, resources);
 
   const proxyResources = await getStaticRouteProxyResources.call(
     this,
     bucketName
   );
 
-  assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
+  merge(resources, proxyResources);
 
-  this.serverless.service.resources = this.serverless.service.resources || {
-    Resources: {}
-  };
-
-  merge(
-    this.serverless.service.provider.coreCloudFormationTemplate,
-    assetsBucketResource
-  );
-
-  merge(
-    this.serverless.service.resources,
-    assetsBucketResource,
-    proxyResources
-  );
+  this.serverless.service.resources = resources;
 };
 
 module.exports = addCustomStackResources;
