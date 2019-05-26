@@ -20,5 +20,5 @@
     "directory": "packages/next-aws-lambda"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
-  "license": "ISC"
+  "license": "MIT"
 }
