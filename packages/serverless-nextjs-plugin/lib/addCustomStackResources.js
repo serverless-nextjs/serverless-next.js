@@ -5,7 +5,9 @@ const getAssetsBucketName = require("./getAssetsBucketName");
 const logger = require("../utils/logger");
 const loadYml = require("../utils/yml/load");
 
-const normaliseString = str =>
+const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+
+const normaliseResourceName = str =>
   str.charAt(0).toUpperCase() + str.slice(1).replace(/[^0-9a-zA-Z]/g, "");
 
 const isSubPath = (parentDir, subPath) => {
@@ -21,7 +23,7 @@ const normaliseSrc = (staticDir, src) =>
     .relative(staticDir, src)
     .split(path.sep)
     .filter(s => s !== "." && s !== "..")
-    .map(normaliseString)
+    .map(capitaliseFirstLetter)
     .join("");
 
 const getStaticRouteProxyResources = async function(bucketName) {
@@ -56,6 +58,7 @@ const getStaticRouteProxyResources = async function(bucketName) {
 
       let resourceName = normaliseSrc(staticDir, src);
       resourceName = path.parse(resourceName).name;
+      resourceName = normaliseResourceName(resourceName);
 
       const resource = clone(baseResource);
 
