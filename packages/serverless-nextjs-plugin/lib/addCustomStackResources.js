@@ -5,7 +5,11 @@ const getAssetsBucketName = require("./getAssetsBucketName");
 const logger = require("../utils/logger");
 const loadYml = require("../utils/yml/load");
 
-const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+const normaliseString = str =>
+  str
+    .charAt(0)
+    .toUpperCase() + str.slice(1)
+    .replace(/[^0-9a-zA-Z]/g, '');
 
 const isSubPath = (parentDir, subPath) => {
   const relative = path.relative(parentDir, subPath);
@@ -20,7 +24,7 @@ const normaliseSrc = (staticDir, src) =>
     .relative(staticDir, src)
     .split(path.sep)
     .filter(s => s !== "." && s !== "..")
-    .map(capitaliseFirstLetter)
+    .map(normaliseString)
     .join("");
 
 const getStaticRouteProxyResources = async function(bucketName) {
