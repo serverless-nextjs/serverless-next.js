@@ -276,7 +276,7 @@ describe("addCustomStackResources", () => {
         expect(logger.log).not.toBeCalled();
         expect(fse.readFile).not.toBeCalled();
         expect(yaml.safeLoad).not.toBeCalled();
-        expect(plugin.serverless.service.resources).toEqual({});
+        expect(plugin.serverless.service.resources).toEqual(undefined);
         expect(
           plugin.serverless.service.provider.coreCloudFormationTemplate
         ).toEqual(undefined);

@@ -78,7 +78,7 @@ const addCustomStackResources = async function() {
   const bucketName = getAssetsBucketName.call(this);
 
   if (bucketName === null) {
-    return Promise.resolve();
+    return;
   }
 
   let assetsBucketResource = await loadYml(
@@ -93,6 +93,10 @@ const addCustomStackResources = async function() {
   );
 
   assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
+
+  this.serverless.service.resources = this.serverless.service.resources || {
+    Resources: {}
+  };
 
   merge(
     this.serverless.service.provider.coreCloudFormationTemplate,

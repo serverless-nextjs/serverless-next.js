@@ -15,7 +15,6 @@ class ServerlessPluginBuilder {
         run: () => {}
       },
       service: {
-        resources: {},
         package: {
           include: []
         },
