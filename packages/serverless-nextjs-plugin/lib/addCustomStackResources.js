@@ -7,6 +7,9 @@ const loadYml = require("../utils/yml/load");
 
 const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
 
+// removes non-alphanumeric characters to adhere to AWS naming requirements
+const normaliseResourceName = str => str.replace(/[^0-9a-zA-Z]/g, "");
+
 const isSubPath = (parentDir, subPath) => {
   const relative = path.relative(parentDir, subPath);
   return relative && !relative.startsWith("..") && !path.isAbsolute(relative);
@@ -55,6 +58,7 @@ const getStaticRouteProxyResources = async function(bucketName) {
 
       let resourceName = normaliseSrc(staticDir, src);
       resourceName = path.parse(resourceName).name;
+      resourceName = normaliseResourceName(resourceName);
 
       const resource = clone(baseResource);
 
