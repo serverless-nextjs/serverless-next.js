@@ -81,24 +81,29 @@ const addCustomStackResources = async function() {
     return Promise.resolve();
   }
 
-  let resources = await loadYml(
+  let assetsBucketResource = await loadYml(
     path.join(__dirname, "../resources/assets-bucket.yml")
   );
 
   logger.log(`Found bucket "${bucketName}"`);
-
-  resources.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
-
-  merge(this.serverless.service.provider.coreCloudFormationTemplate, resources);
 
   const proxyResources = await getStaticRouteProxyResources.call(
     this,
     bucketName
   );
 
-  merge(resources, proxyResources);
+  assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
 
-  this.serverless.service.resources = resources;
+  merge(
+    this.serverless.service.provider.coreCloudFormationTemplate,
+    assetsBucketResource
+  );
+
+  merge(
+    this.serverless.service.resources,
+    assetsBucketResource,
+    proxyResources
+  );
 };
 
 module.exports = addCustomStackResources;

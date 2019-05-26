@@ -110,8 +110,8 @@ describe("addCustomStackResources", () => {
     });
   });
 
-  it("adds single static proxy route to resources", () => {
-    expect.assertions(4);
+  it("merges single static proxy route to resources", () => {
+    expect.assertions(5);
 
     const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
@@ -125,10 +125,16 @@ describe("addCustomStackResources", () => {
       })
       .build();
 
+    plugin.serverless.service.resources = {
+      Resources: {
+        Foo: "bar"
+      }
+    };
+
     return addCustomStackResources.call(plugin).then(() => {
       const resources = plugin.serverless.service.resources.Resources;
 
-      const { RobotsProxyMethod, RobotsProxyResource } = resources;
+      const { RobotsProxyMethod, RobotsProxyResource, Foo } = resources;
 
       expect(RobotsProxyMethod.Properties.Integration.Uri).toEqual(
         `${bucketUrl}/public/robots.txt`
@@ -140,6 +146,8 @@ describe("addCustomStackResources", () => {
       expect(logger.log).toBeCalledWith(
         `Proxying robots.txt -> ${bucketUrl}/public/robots.txt`
       );
+      // make sure resources are merged and completely overridden
+      expect(Foo).toEqual("bar");
     });
   });
 
@@ -268,7 +276,7 @@ describe("addCustomStackResources", () => {
         expect(logger.log).not.toBeCalled();
         expect(fse.readFile).not.toBeCalled();
         expect(yaml.safeLoad).not.toBeCalled();
-        expect(plugin.serverless.service.resources).toEqual(undefined);
+        expect(plugin.serverless.service.resources).toEqual({});
         expect(
           plugin.serverless.service.provider.coreCloudFormationTemplate
         ).toEqual(undefined);
