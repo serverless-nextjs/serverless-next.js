@@ -52,15 +52,13 @@ class NextPage {
 
   get functionName() {
     if (this.pageId === "_error") {
-      return "notFoundErrorPage";
+      return "not-found";
     }
 
-    return (
-      this.pageId
-        .replace(new RegExp(path.posix.sep, "g"), "-")
-        .replace(/^-/, "")
-        .replace(/[^\w-]/g, "_") + "Page"
-    );
+    return this.pageId
+      .replace(new RegExp(path.posix.sep, "g"), "-")
+      .replace(/^-/, "")
+      .replace(/[^\w-]/g, "_");
   }
 
   get pageRoute() {
