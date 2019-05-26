@@ -237,8 +237,8 @@ describe("build", () => {
     return build.call(plugin).then(() => {
       expect(setFunctionNamesMock).toBeCalled();
       expect(Object.keys(plugin.serverless.service.functions)).toEqual([
-        "foo-barPage",
-        "foo-bazPage"
+        "foo-bar",
+        "foo-baz"
       ]);
     });
   });
