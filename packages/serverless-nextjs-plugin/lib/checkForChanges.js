@@ -13,7 +13,7 @@ module.exports = function() {
       }
 
       throw new Error(
-        `The assets bucket "${bucketName}" does not exist. Create it manually or delete the stack if it is no longer required.`
+        `The assets bucket "${bucketName}" does not exist. Create it manually or delete the stack and recreate it.`
       );
     });
 };
