@@ -22,6 +22,7 @@ describe("ServerlessNextJsPlugin", () => {
       ${"before:offline:start"}                                     | ${"build"}
       ${"before:package:initialize"}                                | ${"build"}
       ${"before:deploy:function:initialize"}                        | ${"build"}
+      ${"after:aws:deploy:deploy:checkForChanges"}                  | ${"checkForChanges"}
       ${"after:aws:deploy:deploy:uploadArtifacts"}                  | ${"uploadStaticAssets"}
       ${"after:aws:info:displayStackOutputs"}                       | ${"printStackOutput"}
       ${"after:package:createDeploymentArtifacts"}                  | ${"removePluginBuildDir"}

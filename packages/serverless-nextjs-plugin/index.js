@@ -6,6 +6,7 @@ const build = require("./lib/build");
 const PluginBuildDir = require("./classes/PluginBuildDir");
 const uploadStaticAssets = require("./lib/uploadStaticAssets");
 const addCustomStackResources = require("./lib/addCustomStackResources");
+const checkForChanges = require("./lib/checkForChanges");
 
 class ServerlessNextJsPlugin {
   constructor(serverless, options) {
@@ -20,6 +21,8 @@ class ServerlessNextJsPlugin {
     this.addCustomStackResources = addCustomStackResources.bind(this);
     this.uploadStaticAssets = uploadStaticAssets.bind(this);
     this.build = build.bind(this);
+    this.checkForChanges = checkForChanges.bind(this);
+
     this.printStackOutput = this.printStackOutput.bind(this);
     this.removePluginBuildDir = this.removePluginBuildDir.bind(this);
 
@@ -30,6 +33,7 @@ class ServerlessNextJsPlugin {
       "before:aws:package:finalize:mergeCustomProviderResources": this
         .addCustomStackResources,
       "after:package:createDeploymentArtifacts": this.removePluginBuildDir,
+      "after:aws:deploy:deploy:checkForChanges": this.checkForChanges,
       "after:aws:deploy:deploy:uploadArtifacts": this.uploadStaticAssets,
       "after:aws:info:displayStackOutputs": this.printStackOutput
     };
