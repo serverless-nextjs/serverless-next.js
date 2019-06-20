@@ -1,10 +1,13 @@
 const path = require("path");
+const fs = require("fs");
+const { when } = require("jest-when");
 const uploadStaticAssets = require("../uploadStaticAssets");
 const parseNextConfiguration = require("../parseNextConfiguration");
 const parsedNextConfigurationFactory = require("../../utils/test/parsedNextConfigurationFactory");
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
 const uploadDirToS3Factory = require("../../utils/s3/upload");
 
+jest.mock("fs");
 jest.mock("../../utils/s3/upload");
 jest.mock("../parseNextConfiguration");
 
@@ -80,13 +83,17 @@ describe("uploadStaticAssets", () => {
   it("should upload staticDir", () => {
     const staticDir = "/path/to/assets";
 
+    when(fs.readdirSync)
+      .calledWith(staticDir)
+      .mockReturnValueOnce(["foo/bar.js"]);
+
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()
     );
 
     const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
-        staticDir: "/path/to/assets"
+        staticDir
       })
       .build();
 
@@ -98,8 +105,37 @@ describe("uploadStaticAssets", () => {
     });
   });
 
+  it("should upload publicDir", () => {
+    const publicDir = "/path/to/assets";
+
+    when(fs.readdirSync)
+      .calledWith(publicDir)
+      .mockReturnValueOnce(["foo/bar.js"]);
+
+    parseNextConfiguration.mockReturnValueOnce(
+      parsedNextConfigurationFactory()
+    );
+
+    const plugin = new ServerlessPluginBuilder()
+      .withPluginConfig({
+        publicDir
+      })
+      .build();
+
+    return uploadStaticAssets.call(plugin).then(() => {
+      expect(uploadDirToS3).toBeCalledWith(publicDir, {
+        bucket: "my-bucket",
+        truncate: "assets"
+      });
+    });
+  });
+
   it("should not upload build assets", () => {
     const staticDir = "/path/to/assets";
+
+    when(fs.readdirSync)
+      .calledWith(staticDir)
+      .mockReturnValueOnce(["foo/bar.js"]);
 
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()
@@ -108,7 +144,7 @@ describe("uploadStaticAssets", () => {
     const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
         uploadBuildAssets: false,
-        staticDir: "/path/to/assets"
+        staticDir
       })
       .build();
 

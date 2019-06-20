@@ -117,16 +117,35 @@ custom:
 
 With this approach you could have a CloudFront distribution in front of the bucket and use a custom domain in the assetPrefix.
 
-If you need the static assets available in the main domain of your application, you can use the `routes` configuration to proxy API Gateway requests to S3. For example, to host `/robots.txt`:
+## Serving static assets
 
-```yml
+Static files can be served by [following the NextJs convention](https://github.com/zeit/next.js/#static-file-serving-eg-images) of using a `static` and `public` folder.
+
+From your code you can then reference those files with a `/static` URL:
+
+```
+function MyImage() {
+  return <img src="/static/my-image.png" alt="my image" />
+}
+
+export default MyImage
+```
+
+To serve static files from the root directory you can add a folder called public and reference those files from the root, e.g: /robots.txt.
+
+You can specify a different folder for `static` and `public` folders, but it is recommended to use the NextJS convention. These values are set by default, so unless you want to specify a directory other than `static` and `public` you do not have to specify these in the configuration file.
+
+```
+# serverless.yml
+plugins:
+  - serverless-nextjs-plugin
+
 custom:
   serverless-nextjs:
-    staticDir: ./assets
-    routes:
-      - src: ./assets/robots.txt
-        path: robots.txt
+    staticDir: anotherStaticDirectory
+    publicDir: anotherPublicDirectory
 ```
+
 
 Note that for this to work, an S3 bucket needs to be provisioned by using the `assetsBucketName` plugin config or `assetPrefix` in `next.config.js`.
 
@@ -313,9 +332,10 @@ module.exports = page => {
 
 | Plugin config key | Default Value | Description                                                                                                                                                                                                                      |
 | ----------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nextConfigDir     | ./          | Path to parent directory of `next.config.js`.                                                                                                                                                                                    |
+| nextConfigDir     | ./            | Path to parent directory of `next.config.js`.                                                                                                                                                                                    |
 | assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                           |
-| staticDir         | \<empty\>     | Directory with static assets to be uploaded to S3, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
+| staticDir         | static        | Directory with static assets to be uploaded to S3 and served with the path prefix `/static`, typically a directory named `static`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
+| publicDir         | public        | Directory with static assets to be uploaded to S3 and served at the root `/`, typically a directory named `public`, but it can be any other name. Requires a bucket provided via the `assetPrefix` described above or the `assetsBucketName` plugin config. |
 | routes            | []            | Array of custom routes for the next pages or static assets.                                                                                                                                                                      |
 | customHandler     | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                                 |
 | uploadBuildAssets | true          | In the unlikely event that you only want to upload the `staticDir`, set this to `false`.                                                                                                                                         |
