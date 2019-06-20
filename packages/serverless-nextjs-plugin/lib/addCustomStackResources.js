@@ -56,12 +56,6 @@ const getStaticRouteProxyResources = async function({
 }) {
   const [staticDir = "static"] = this.getPluginConfigValues("staticDir");
 
-  const staticFiles = fs.readdirSync(staticDir);
-
-  if (!staticFiles) {
-    return {};
-  }
-
   const baseResource = await loadYml(
     path.join(__dirname, "../resources/api-gw-static.yml")
   );
@@ -91,10 +85,16 @@ const getPublicRouteProxyResources = async function({
 }) {
   const [publicDir = "public"] = this.getPluginConfigValues("publicDir");
 
-  const publicFiles = fs.readdirSync(publicDir);
+  let publicFiles;
 
-  if (!publicFiles) {
-    return {};
+  try {
+    publicFiles = fs.readdirSync(publicDir);
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      return {};
+    }
+
+    throw err;
   }
 
   const baseResource = await loadYml(
