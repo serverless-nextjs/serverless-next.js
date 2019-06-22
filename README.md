@@ -323,7 +323,7 @@ module.exports = page => {
 | assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets. |
 | routes            | []            | Array of custom routes for the next pages.                                                             |
 | customHandler     | \<empty\>     | Path to your own lambda handler.                                                                       |
-| uploadBuildAssets | true          | In the unlikely event that you only want to upload the `staticDir`, set this to `false`.               |
+| uploadBuildAssets | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.     |
 
 ## Caveats
 
