@@ -24,6 +24,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Custom error page](#custom-error-page)
 - [Custom lambda handler](#custom-lambda-handler)
 - [All plugin configuration options](#all-plugin-configuration-options)
+- [Caveats](#caveats)
 - [Examples](#examples)
 - [Contributing](#contributing)
 
@@ -319,6 +320,10 @@ module.exports = page => {
 | routes            | []            | Array of custom routes for the next pages or static assets.                                                                                                                                                                      |
 | customHandler     | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                                 |
 | uploadBuildAssets | true          | In the unlikely event that you only want to upload the `staticDir`, set this to `false`.                                                                                                                                         |
+
+## Caveats
+
+Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Contributions are welcome to investigate how this could be worked around by using something like https://github.com/dougmoscrop/serverless-plugin-split-stacks.
 
 ## Examples
 
