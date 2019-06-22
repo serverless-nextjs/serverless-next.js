@@ -22,6 +22,7 @@
     "@zeit/next-css": "^1.0.1",
     "cowsay-browser": "^1.1.8",
     "next": "^8.0.3",
+    "next-aws-lambda": "^2.0.5-alpha.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
   },

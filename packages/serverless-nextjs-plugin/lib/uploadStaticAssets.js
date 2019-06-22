@@ -1,7 +1,6 @@
 const fs = require("fs");
 const path = require("path");
 const uploadDirToS3Factory = require("../utils/s3/upload");
-const logger = require("../utils/logger");
 
 module.exports = function() {
   const uploadDirToS3 = uploadDirToS3Factory(this.providerRequest);
@@ -45,7 +44,6 @@ module.exports = function() {
   const staticFiles = fs.readdirSync(staticDir);
 
   if (staticFiles) {
-    logger.log(`Uploading static files to ${staticAssetsBucket}/${staticDir}`);
     const staticDirUpload = uploadDirToS3(staticDir, {
       bucket: staticAssetsBucket,
       truncate: path.basename(staticDir)
@@ -57,7 +55,6 @@ module.exports = function() {
   const publicFiles = fs.readdirSync(publicDir);
 
   if (publicFiles) {
-    logger.log(`Uploading public files to ${staticAssetsBucket}/${publicDir}`);
     const staticDirUpload = uploadDirToS3(publicDir, {
       bucket: staticAssetsBucket,
       truncate: path.basename(publicDir)
