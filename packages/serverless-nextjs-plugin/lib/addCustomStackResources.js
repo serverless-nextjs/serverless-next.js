@@ -4,7 +4,7 @@ const clone = require("lodash.clonedeep");
 const getAssetsBucketName = require("./getAssetsBucketName");
 const logger = require("../utils/logger");
 const loadYml = require("../utils/yml/load");
-const fs = require("fs");
+const fse = require("fs-extra");
 
 const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
 
@@ -54,7 +54,7 @@ const getStaticRouteProxyResources = async function({
   bucketBaseUrl,
   bucketName
 }) {
-  const [staticDir = "static"] = this.getPluginConfigValues("staticDir");
+  const staticDir = "static";
 
   const baseResource = await loadYml(
     path.join(__dirname, "../resources/api-gw-static.yml")
@@ -83,19 +83,15 @@ const getPublicRouteProxyResources = async function({
   bucketBaseUrl,
   bucketName
 }) {
-  const [publicDir = "public"] = this.getPluginConfigValues("publicDir");
+  const publicDir = "public";
 
-  let publicFiles;
+  const exists = await fse.pathExists(publicDir);
 
-  try {
-    publicFiles = fs.readdirSync(publicDir);
-  } catch (err) {
-    if (err.code === "ENOENT") {
-      return {};
-    }
-
-    throw err;
+  if (!exists) {
+    return {};
   }
+
+  const publicFiles = await fse.readdir(publicDir);
 
   const baseResource = await loadYml(
     path.join(__dirname, "../resources/api-gw-proxy.yml")
