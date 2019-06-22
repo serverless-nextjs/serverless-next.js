@@ -54,7 +54,11 @@ const getStaticRouteProxyResources = async function({
   bucketBaseUrl,
   bucketName
 }) {
-  const staticDir = "static";
+  const staticDir = path.join(this.nextConfigDir, "static");
+
+  if (!(await fse.pathExists(staticDir))) {
+    return {};
+  }
 
   const baseResource = await loadYml(
     path.join(__dirname, "../resources/api-gw-static.yml")
@@ -64,7 +68,7 @@ const getStaticRouteProxyResources = async function({
 
   const bucketUrl = `${bucketBaseUrl}/${path.posix.join(
     bucketName,
-    staticDir,
+    "static",
     "{proxy}"
   )}`;
   let resource = clone(baseResource);
@@ -83,11 +87,9 @@ const getPublicRouteProxyResources = async function({
   bucketBaseUrl,
   bucketName
 }) {
-  const publicDir = "public";
+  const publicDir = path.join(this.nextConfigDir, "public");
 
-  const exists = await fse.pathExists(publicDir);
-
-  if (!exists) {
+  if (!(await fse.pathExists(publicDir))) {
     return {};
   }
 
@@ -104,7 +106,7 @@ const getPublicRouteProxyResources = async function({
   publicFiles.forEach(file => {
     const bucketUrl = `${bucketBaseUrl}/${path.posix.join(
       bucketName,
-      publicDir,
+      "public",
       file
     )}`;
 

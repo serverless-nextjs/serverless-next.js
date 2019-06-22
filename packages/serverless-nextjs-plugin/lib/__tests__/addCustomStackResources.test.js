@@ -3,6 +3,7 @@ const yaml = require("js-yaml");
 const fse = require("fs-extra");
 const clone = require("lodash.clonedeep");
 const merge = require("lodash.merge");
+const path = require("path");
 const addCustomStackResources = require("../addCustomStackResources");
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
 const getAssetsBucketName = require("../getAssetsBucketName");
@@ -127,9 +128,7 @@ describe("addCustomStackResources", () => {
       }
     };
 
-    when(fse.pathExists)
-      .calledWith("public")
-      .mockResolvedValue(false);
+    fse.pathExists.mockResolvedValue(false);
 
     when(fse.readFile)
       .calledWith(expect.stringContaining("assets-bucket.yml"), "utf-8")
@@ -202,6 +201,15 @@ describe("addCustomStackResources", () => {
 
     const plugin = new ServerlessPluginBuilder().build();
 
+    const staticDir = path.join(
+      plugin.getPluginConfigValue("nextConfigDir"),
+      "static"
+    );
+
+    when(fse.pathExists)
+      .calledWith(staticDir)
+      .mockResolvedValue(true);
+
     return addCustomStackResources.call(plugin).then(() => {
       const resources = plugin.serverless.service.resources.Resources;
       expect(Object.keys(resources)).toEqual(
@@ -241,13 +249,17 @@ describe("addCustomStackResources", () => {
     expect.assertions(8);
 
     const plugin = new ServerlessPluginBuilder().build();
+    const publicDir = path.join(
+      plugin.getPluginConfigValue("nextConfigDir"),
+      "public"
+    );
 
     when(fse.pathExists)
-      .calledWith("public")
+      .calledWith(publicDir)
       .mockResolvedValue(true);
 
     when(fse.readdir)
-      .calledWith("public")
+      .calledWith(publicDir)
       .mockResolvedValue(["robots.txt", "manifest.json"]);
 
     return addCustomStackResources.call(plugin).then(() => {
@@ -291,15 +303,20 @@ describe("addCustomStackResources", () => {
     const bucketUrlIreland = `https://s3-${euWestRegion}.amazonaws.com/${bucketName}`;
     const getRegion = jest.fn().mockReturnValueOnce(euWestRegion);
 
+    const plugin = new ServerlessPluginBuilder().build();
+
+    const publicDir = path.join(
+      plugin.getPluginConfigValue("nextConfigDir"),
+      "public"
+    );
+
     when(fse.pathExists)
-      .calledWith("public")
+      .calledWith(publicDir)
       .mockResolvedValue(true);
 
     when(fse.readdir)
-      .calledWith("public")
+      .calledWith(publicDir)
       .mockResolvedValue(["robots.txt"]);
-
-    const plugin = new ServerlessPluginBuilder().withPluginConfig().build();
 
     plugin.provider.getRegion = getRegion;
 
