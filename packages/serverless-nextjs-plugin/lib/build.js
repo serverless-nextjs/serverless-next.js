@@ -10,9 +10,7 @@ const rewritePageHandlers = require("./rewritePageHandlers");
 const overrideTargetIfNotServerless = nextConfiguration => {
   if (nextConfiguration.target !== "serverless") {
     logger.log(
-      `Target "${
-        nextConfiguration.target
-      }" found! Overriding it with serverless`
+      `Target "${nextConfiguration.target}" found! Overriding it with serverless`
     );
     nextConfiguration.target = "serverless";
   }

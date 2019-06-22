@@ -9,15 +9,13 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - serverless-nextjs-plugin
+  - serverless-nextjs
   - serverless-offline
 
 custom:
   serverless-nextjs:
-    staticDir: ./assets
+    assetsBucketName: danielcondemarinbucketname
     routes:
-      - src: ./assets/robots.txt
-        path: robots.txt
       - src: post
         path: post/{slug}
         request:

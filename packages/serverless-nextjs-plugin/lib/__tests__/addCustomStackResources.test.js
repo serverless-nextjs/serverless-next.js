@@ -3,6 +3,7 @@ const yaml = require("js-yaml");
 const fse = require("fs-extra");
 const clone = require("lodash.clonedeep");
 const merge = require("lodash.merge");
+const path = require("path");
 const addCustomStackResources = require("../addCustomStackResources");
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
 const getAssetsBucketName = require("../getAssetsBucketName");
@@ -25,9 +26,22 @@ describe("addCustomStackResources", () => {
       Resources:
         ProxyResource:...
     `;
+  const staticProxyResourcesYmlString = `
+      resources:
+        Resources:
+          StaticAssetsProxyResource:...
+    `;
+
+  const nextProxyResourcesYmlString = `
+      resources:
+        Resources:
+          NextStaticAssetsProxyResource:...
+    `;
 
   let s3Resources;
   let baseProxyResource;
+  let baseStaticProxyResource;
+  let baseNextProxyResource;
 
   beforeEach(() => {
     s3Resources = {
@@ -60,6 +74,62 @@ describe("addCustomStackResources", () => {
       }
     };
 
+    baseStaticProxyResource = {
+      resources: {
+        Resources: {
+          StaticAssetsProxyParentResource: {
+            Properties: {
+              PathPart: "TO_BE_REPLACED"
+            }
+          },
+          StaticAssetsProxyResource: {
+            Properties: {
+              PathPart: "TO_BE_REPLACED"
+            }
+          },
+          StaticAssetsProxyMethod: {
+            Properties: {
+              Integration: {
+                Uri: "TO_BE_REPLACED"
+              },
+              ResourceId: {
+                Ref: "TO_BE_REPLACED"
+              }
+            }
+          }
+        }
+      }
+    };
+
+    baseNextProxyResource = {
+      resources: {
+        Resources: {
+          NextStaticAssetsProxyParentResource: {
+            Properties: {
+              PathPart: "TO_BE_REPLACED"
+            }
+          },
+          NextStaticAssetsProxyResource: {
+            Properties: {
+              PathPart: "TO_BE_REPLACED"
+            }
+          },
+          NextStaticAssetsProxyMethod: {
+            Properties: {
+              Integration: {
+                Uri: "TO_BE_REPLACED"
+              },
+              ResourceId: {
+                Ref: "TO_BE_REPLACED"
+              }
+            }
+          }
+        }
+      }
+    };
+
+    fse.pathExists.mockResolvedValue(false);
+
     when(fse.readFile)
       .calledWith(expect.stringContaining("assets-bucket.yml"), "utf-8")
       .mockResolvedValueOnce(s3ResourcesYmlString);
@@ -75,6 +145,22 @@ describe("addCustomStackResources", () => {
     when(yaml.safeLoad)
       .calledWith(proxyResourcesYmlString, expect.any(Object))
       .mockReturnValueOnce(baseProxyResource);
+
+    when(fse.readFile)
+      .calledWith(expect.stringContaining("api-gw-next.yml"), "utf-8")
+      .mockResolvedValueOnce(nextProxyResourcesYmlString);
+
+    when(yaml.safeLoad)
+      .calledWith(nextProxyResourcesYmlString, expect.any(Object))
+      .mockReturnValueOnce(baseNextProxyResource);
+
+    when(fse.readFile)
+      .calledWith(expect.stringContaining("api-gw-static.yml"), "utf-8")
+      .mockResolvedValueOnce(staticProxyResourcesYmlString);
+
+    when(yaml.safeLoad)
+      .calledWith(staticProxyResourcesYmlString, expect.any(Object))
+      .mockReturnValueOnce(baseStaticProxyResource);
 
     getAssetsBucketName.mockReturnValueOnce(bucketName);
   });
@@ -110,31 +196,79 @@ describe("addCustomStackResources", () => {
     });
   });
 
-  it("merges single static proxy route to resources", () => {
-    expect.assertions(5);
+  it("adds proxy routes for static directory", () => {
+    expect.assertions(2);
 
-    const plugin = new ServerlessPluginBuilder()
-      .withPluginConfig({
-        staticDir: "./public",
-        routes: [
-          {
-            src: "./public/robots.txt",
-            path: "robots.txt"
-          }
-        ]
-      })
-      .build();
+    const plugin = new ServerlessPluginBuilder().build();
 
-    plugin.serverless.service.resources = {
-      Resources: {
-        Foo: "bar"
-      }
-    };
+    const staticDir = path.join(
+      plugin.getPluginConfigValue("nextConfigDir"),
+      "static"
+    );
+
+    when(fse.pathExists)
+      .calledWith(staticDir)
+      .mockResolvedValue(true);
 
     return addCustomStackResources.call(plugin).then(() => {
       const resources = plugin.serverless.service.resources.Resources;
+      expect(Object.keys(resources)).toEqual(
+        expect.arrayContaining([
+          "StaticAssetsProxyParentResource",
+          "StaticAssetsProxyResource",
+          "StaticAssetsProxyMethod"
+        ])
+      );
+      expect(
+        resources.StaticAssetsProxyMethod.Properties.Integration.Uri
+      ).toEqual("https://s3.amazonaws.com/bucket-123/static/{proxy}");
+    });
+  });
 
-      const { RobotsProxyMethod, RobotsProxyResource, Foo } = resources;
+  it("adds proxy routes for nextjs assets", () => {
+    expect.assertions(2);
+
+    const plugin = new ServerlessPluginBuilder().build();
+
+    return addCustomStackResources.call(plugin).then(() => {
+      const resources = plugin.serverless.service.resources.Resources;
+      expect(Object.keys(resources)).toEqual(
+        expect.arrayContaining([
+          "NextStaticAssetsProxyParentResource",
+          "NextStaticAssetsProxyResource",
+          "NextStaticAssetsProxyMethod"
+        ])
+      );
+      expect(
+        resources.NextStaticAssetsProxyMethod.Properties.Integration.Uri
+      ).toEqual("https://s3.amazonaws.com/bucket-123/_next/{proxy}");
+    });
+  });
+
+  it("adds proxy route to each file in the public folder", () => {
+    expect.assertions(8);
+
+    const plugin = new ServerlessPluginBuilder().build();
+    const publicDir = path.join(
+      plugin.getPluginConfigValue("nextConfigDir"),
+      "public"
+    );
+
+    when(fse.pathExists)
+      .calledWith(publicDir)
+      .mockResolvedValue(true);
+
+    when(fse.readdir)
+      .calledWith(publicDir)
+      .mockResolvedValue(["robots.txt", "manifest.json"]);
+
+    return addCustomStackResources.call(plugin).then(() => {
+      const {
+        RobotsProxyMethod,
+        RobotsProxyResource,
+        ManifestProxyMethod,
+        ManifestProxyResource
+      } = plugin.serverless.service.resources.Resources;
 
       expect(RobotsProxyMethod.Properties.Integration.Uri).toEqual(
         `${bucketUrl}/public/robots.txt`
@@ -146,118 +280,55 @@ describe("addCustomStackResources", () => {
       expect(logger.log).toBeCalledWith(
         `Proxying robots.txt -> ${bucketUrl}/public/robots.txt`
       );
-      // make sure resources are merged and completely overridden
-      expect(Foo).toEqual("bar");
-    });
-  });
 
-  it("adds static proxy route to resources when src filenames are same but different sub directories", () => {
-    expect.assertions(8);
-
-    const plugin = new ServerlessPluginBuilder()
-      .withPluginConfig({
-        staticDir: "./public",
-        routes: [
-          {
-            src: "./public/foo/bar.js",
-            path: "foo/bar.js"
-          },
-          {
-            src: "./public/bar.js",
-            path: "bar.js"
-          }
-        ]
-      })
-      .build();
-
-    return addCustomStackResources.call(plugin).then(() => {
-      const {
-        FooBarProxyMethod,
-        FooBarProxyResource,
-        BarProxyMethod,
-        BarProxyResource
-      } = plugin.serverless.service.resources.Resources;
-
-      expect(FooBarProxyMethod.Properties.Integration.Uri).toEqual(
-        `${bucketUrl}/public/foo/bar.js`
+      expect(ManifestProxyMethod.Properties.Integration.Uri).toEqual(
+        `${bucketUrl}/public/manifest.json`
       );
-      expect(FooBarProxyMethod.Properties.ResourceId.Ref).toEqual(
-        "FooBarProxyResource"
+      expect(ManifestProxyMethod.Properties.ResourceId.Ref).toEqual(
+        "ManifestProxyResource"
       );
-      expect(FooBarProxyResource.Properties.PathPart).toEqual("foo/bar.js");
+      expect(ManifestProxyResource.Properties.PathPart).toEqual(
+        `manifest.json`
+      );
       expect(logger.log).toBeCalledWith(
-        `Proxying foo/bar.js -> ${bucketUrl}/public/foo/bar.js`
-      );
-
-      expect(BarProxyMethod.Properties.Integration.Uri).toEqual(
-        `${bucketUrl}/public/bar.js`
-      );
-      expect(BarProxyMethod.Properties.ResourceId.Ref).toEqual(
-        "BarProxyResource"
-      );
-      expect(BarProxyResource.Properties.PathPart).toEqual(`bar.js`);
-      expect(logger.log).toBeCalledWith(
-        `Proxying bar.js -> ${bucketUrl}/public/bar.js`
+        `Proxying manifest.json -> ${bucketUrl}/public/manifest.json`
       );
     });
   });
 
-  it("adds static proxy route to resources with correct bucket url for the region", () => {
+  it("adds proxy route to resources with correct bucket url for the region", () => {
     expect.assertions(2);
 
     const euWestRegion = "eu-west-1";
     const bucketUrlIreland = `https://s3-${euWestRegion}.amazonaws.com/${bucketName}`;
     const getRegion = jest.fn().mockReturnValueOnce(euWestRegion);
 
-    const plugin = new ServerlessPluginBuilder()
-      .withPluginConfig({
-        staticDir: "./public",
-        routes: [
-          {
-            src: "./public/foo/bar.js",
-            path: "foo/bar.js"
-          }
-        ]
-      })
-      .build();
+    const plugin = new ServerlessPluginBuilder().build();
+
+    const publicDir = path.join(
+      plugin.getPluginConfigValue("nextConfigDir"),
+      "public"
+    );
+
+    when(fse.pathExists)
+      .calledWith(publicDir)
+      .mockResolvedValue(true);
+
+    when(fse.readdir)
+      .calledWith(publicDir)
+      .mockResolvedValue(["robots.txt"]);
 
     plugin.provider.getRegion = getRegion;
 
     return addCustomStackResources.call(plugin).then(() => {
       const {
-        FooBarProxyMethod
+        RobotsProxyMethod
       } = plugin.serverless.service.resources.Resources;
 
       expect(getRegion).toBeCalled();
-      expect(FooBarProxyMethod.Properties.Integration.Uri).toEqual(
-        `${bucketUrlIreland}/public/foo/bar.js`
+      expect(RobotsProxyMethod.Properties.Integration.Uri).toEqual(
+        `${bucketUrlIreland}/public/robots.txt`
       );
-    });
-  });
-
-  it("doesn't add static proxy route to resources if src isn't a sub path of staticDir", () => {
-    expect.assertions(1);
-
-    const plugin = new ServerlessPluginBuilder()
-      .withPluginConfig({
-        staticDir: "./public",
-        routes: [
-          {
-            src: "assets/public/sw.js",
-            path: "proxied/sw.js"
-          },
-          {
-            src: "static/sw.js",
-            path: "proxied/sw.js"
-          }
-        ]
-      })
-      .build();
-
-    return addCustomStackResources.call(plugin).then(() => {
-      const resources = plugin.serverless.service.resources.Resources;
-      // should only contain bucket
-      expect(Object.keys(resources)).toEqual(["NextStaticAssetsS3Bucket"]);
     });
   });
 
@@ -280,30 +351,6 @@ describe("addCustomStackResources", () => {
         expect(
           plugin.serverless.service.provider.coreCloudFormationTemplate
         ).toEqual(undefined);
-      });
-    });
-  });
-
-  describe("When no staticDir given", () => {
-    it("doesn't add any static proxy routes", () => {
-      expect.assertions(1);
-
-      const plugin = new ServerlessPluginBuilder()
-        .withPluginConfig({
-          staticDir: undefined,
-          routes: [
-            {
-              src: "static/sw.js",
-              path: "proxied/sw.js"
-            }
-          ]
-        })
-        .build();
-
-      return addCustomStackResources.call(plugin).then(() => {
-        const resources = plugin.serverless.service.resources.Resources;
-        // should only contain bucket
-        expect(Object.keys(resources)).toEqual(["NextStaticAssetsS3Bucket"]);
       });
     });
   });

@@ -32,7 +32,7 @@ describe("getAssetsBucketName", () => {
 
     const pluginWithoutBucket = new ServerlessPluginBuilder()
       .withPluginConfig({
-        staticDir: "./static"
+        staticDir: "static"
       })
       .build();
 

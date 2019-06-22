@@ -147,7 +147,7 @@ describe("build", () => {
   });
 
   it('overrides nextConfig target if is not "serverless" and log it', () => {
-    expect.assertions(2);
+    expect.assertions(1);
 
     const parsedConfig = parsedNextConfigurationFactory({
       target: "server",
@@ -169,9 +169,6 @@ describe("build", () => {
       .build();
 
     return build.call(plugin).then(() => {
-      expect(logger.log).toBeCalledWith(
-        expect.stringContaining('Target "server" found')
-      );
       expect(nextBuild).toBeCalledWith(
         path.resolve(nextConfigDir),
         expectedNextConfig
