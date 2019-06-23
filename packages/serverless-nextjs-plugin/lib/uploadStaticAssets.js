@@ -1,21 +1,14 @@
-const fs = require("fs");
+const fse = require("fs-extra");
 const path = require("path");
 const uploadDirToS3Factory = require("../utils/s3/upload");
 
-module.exports = function() {
+module.exports = async function() {
   const uploadDirToS3 = uploadDirToS3Factory(this.providerRequest);
 
   let { nextConfiguration, staticAssetsBucket } = this.configuration;
 
-  const [
-    bucketNameFromConfig,
-    staticDir = "static",
-    publicDir = "public",
-    uploadBuildAssets
-  ] = this.getPluginConfigValues(
+  const [bucketNameFromConfig, uploadBuildAssets] = this.getPluginConfigValues(
     "assetsBucketName",
-    "staticDir",
-    "publicDir",
     "uploadBuildAssets"
   );
 
@@ -29,6 +22,20 @@ module.exports = function() {
 
   const uploadPromises = [];
 
+  const uploadStaticOrPublicDirectory = async dirName => {
+    const dir = path.join(this.nextConfigDir, dirName);
+    const dirExists = await fse.pathExists(dir);
+
+    if (dirExists) {
+      const uploadPromise = uploadDirToS3(dir, {
+        bucket: staticAssetsBucket,
+        truncate: dirName
+      });
+
+      uploadPromises.push(uploadPromise);
+    }
+  };
+
   if (uploadBuildAssets !== false) {
     const buildAssetsUpload = uploadDirToS3(
       path.join(this.nextConfigDir, nextConfiguration.distDir, "static"),
@@ -41,27 +48,8 @@ module.exports = function() {
     uploadPromises.push(buildAssetsUpload);
   }
 
-  const staticFiles = fs.readdirSync(staticDir);
-
-  if (staticFiles) {
-    const staticDirUpload = uploadDirToS3(staticDir, {
-      bucket: staticAssetsBucket,
-      truncate: path.basename(staticDir)
-    });
-
-    uploadPromises.push(staticDirUpload);
-  }
-
-  const publicFiles = fs.readdirSync(publicDir);
-
-  if (publicFiles) {
-    const staticDirUpload = uploadDirToS3(publicDir, {
-      bucket: staticAssetsBucket,
-      truncate: path.basename(publicDir)
-    });
-
-    uploadPromises.push(staticDirUpload);
-  }
+  uploadStaticOrPublicDirectory("static");
+  uploadStaticOrPublicDirectory("public");
 
   return Promise.all(uploadPromises);
 };

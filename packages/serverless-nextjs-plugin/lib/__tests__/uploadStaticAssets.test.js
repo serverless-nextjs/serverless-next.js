@@ -1,5 +1,5 @@
 const path = require("path");
-const fs = require("fs");
+const fse = require("fs-extra");
 const { when } = require("jest-when");
 const uploadStaticAssets = require("../uploadStaticAssets");
 const parseNextConfiguration = require("../parseNextConfiguration");
@@ -7,7 +7,7 @@ const parsedNextConfigurationFactory = require("../../utils/test/parsedNextConfi
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
 const uploadDirToS3Factory = require("../../utils/s3/upload");
 
-jest.mock("fs");
+jest.mock("fs-extra");
 jest.mock("../../utils/s3/upload");
 jest.mock("../parseNextConfiguration");
 
@@ -19,7 +19,7 @@ describe("uploadStaticAssets", () => {
     uploadDirToS3Factory.mockReturnValue(uploadDirToS3);
   });
 
-  it("should NOT upload build assets when there isn't a bucket available", () => {
+  it("does NOT upload build assets when there isn't a bucket available", () => {
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory({}, null)
     );
@@ -31,7 +31,7 @@ describe("uploadStaticAssets", () => {
     });
   });
 
-  it("should upload next build assets", () => {
+  it("uploads next build assets", () => {
     const distDir = "build";
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory({
@@ -54,7 +54,7 @@ describe("uploadStaticAssets", () => {
     });
   });
 
-  it("should upload next build assets using bucketName from plugin config", () => {
+  it("uploads next build assets using bucketName from plugin config", () => {
     const distDir = "build";
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory({
@@ -80,80 +80,59 @@ describe("uploadStaticAssets", () => {
     });
   });
 
-  it("should upload staticDir", () => {
-    const staticDir = "/path/to/assets";
+  it("uploads static directory", () => {
+    const plugin = new ServerlessPluginBuilder().build();
+    const staticDir = path.join(plugin.nextConfigDir, "static");
 
-    when(fs.readdirSync)
+    when(fse.pathExists)
       .calledWith(staticDir)
-      .mockReturnValueOnce(["foo/bar.js"]);
+      .mockResolvedValueOnce(true);
 
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()
     );
-
-    const plugin = new ServerlessPluginBuilder()
-      .withPluginConfig({
-        staticDir
-      })
-      .build();
 
     return uploadStaticAssets.call(plugin).then(() => {
       expect(uploadDirToS3).toBeCalledWith(staticDir, {
         bucket: "my-bucket",
-        truncate: "assets"
+        truncate: "static"
       });
     });
   });
 
-  it("should upload publicDir", () => {
-    const publicDir = "/path/to/assets";
+  it("uploads public directory", () => {
+    const plugin = new ServerlessPluginBuilder().build();
+    const publicDir = path.join(plugin.nextConfigDir, "public");
 
-    when(fs.readdirSync)
+    when(fse.pathExists)
       .calledWith(publicDir)
-      .mockReturnValueOnce(["foo/bar.js"]);
+      .mockResolvedValueOnce(true);
 
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()
     );
-
-    const plugin = new ServerlessPluginBuilder()
-      .withPluginConfig({
-        publicDir
-      })
-      .build();
 
     return uploadStaticAssets.call(plugin).then(() => {
       expect(uploadDirToS3).toBeCalledWith(publicDir, {
         bucket: "my-bucket",
-        truncate: "assets"
+        truncate: "public"
       });
     });
   });
 
-  it("should not upload build assets", () => {
-    const staticDir = "/path/to/assets";
-
-    when(fs.readdirSync)
-      .calledWith(staticDir)
-      .mockReturnValueOnce(["foo/bar.js"]);
-
+  it("does not upload build assets", () => {
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()
     );
 
     const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
-        uploadBuildAssets: false,
-        staticDir
+        uploadBuildAssets: false
       })
       .build();
 
     return uploadStaticAssets.call(plugin).then(() => {
-      expect(uploadDirToS3).toBeCalledTimes(1);
-      expect(uploadDirToS3).toBeCalledWith(staticDir, {
-        bucket: "my-bucket",
-        truncate: "assets"
-      });
+      expect(uploadDirToS3).not.toBeCalled();
     });
   });
 });
