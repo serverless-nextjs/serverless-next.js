@@ -9,7 +9,7 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - serverless-nextjs
+  - serverless-nextjs-plugin
   - serverless-offline
 
 custom:
