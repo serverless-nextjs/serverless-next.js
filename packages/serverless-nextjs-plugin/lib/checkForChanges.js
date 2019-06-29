@@ -2,6 +2,7 @@ const getAssetsBucketName = require("./getAssetsBucketName");
 
 module.exports = function() {
   const bucketName = getAssetsBucketName.call(this);
+
   return this.provider
     .request("S3", "listObjectsV2", {
       Bucket: bucketName,

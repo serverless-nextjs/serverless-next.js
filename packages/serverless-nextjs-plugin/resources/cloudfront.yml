@@ -1,15 +1,24 @@
 AWSTemplateFormatVersion: "2010-09-09"
 Resources:
-  myDistribution:
+  NextjsCloudFront:
     Type: AWS::CloudFront::Distribution
     Properties:
       DistributionConfig:
         Origins:
-          - DomainName: danielcondemarinbucket.s3.amazonaws.com
+          - DomainName: TO_BE_REPLACED
             Id: S3StaticOrigin
             S3OriginConfig:
               OriginAccessIdentity: ""
-          - DomainName: nbw1qo4fgh.execute-api.us-east-1.amazonaws.com
+          - DomainName: TO_BE_REPLACED
+            Id: S3PublicOrigin
+            OriginPath: /public
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+          - DomainName:
+              Fn::Join:
+                - ""
+                - - Ref: ApiGatewayRestApi
+                  - ".execute-api.us-east-1.amazonaws.com"
             Id: ApiGatewayOrigin
             OriginPath: /dev
             CustomOriginConfig:
