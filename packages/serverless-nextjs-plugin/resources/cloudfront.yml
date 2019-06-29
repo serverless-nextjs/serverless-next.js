@@ -1,0 +1,43 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+  myDistribution:
+    Type: AWS::CloudFront::Distribution
+    Properties:
+      DistributionConfig:
+        Origins:
+          - DomainName: danielcondemarinbucket.s3.amazonaws.com
+            Id: S3StaticOrigin
+            S3OriginConfig:
+              OriginAccessIdentity: ""
+          - DomainName: nbw1qo4fgh.execute-api.us-east-1.amazonaws.com
+            Id: ApiGatewayOrigin
+            OriginPath: /dev
+            CustomOriginConfig:
+              HTTPSPort: 443
+              OriginProtocolPolicy: https-only
+        Enabled: "true"
+        DefaultCacheBehavior:
+          AllowedMethods:
+            - GET
+            - HEAD
+            - OPTIONS
+          TargetOriginId: ApiGatewayOrigin
+          ForwardedValues:
+            QueryString: "true"
+            Cookies:
+              Forward: all
+          ViewerProtocolPolicy: allow-all
+        CacheBehaviors:
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            TargetOriginId: S3StaticOrigin
+            ForwardedValues:
+              QueryString: "false"
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: allow-all
+            MinTTL: "50"
+            PathPattern: static/
+        PriceClass: PriceClass_All

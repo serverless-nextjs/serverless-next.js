@@ -1,8 +1,6 @@
 const { when } = require("jest-when");
-const yaml = require("js-yaml");
 const fse = require("fs-extra");
 const clone = require("lodash.clonedeep");
-const merge = require("lodash.merge");
 const path = require("path");
 const addCustomStackResources = require("../addCustomStackResources");
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
@@ -10,157 +8,17 @@ const getAssetsBucketName = require("../getAssetsBucketName");
 const logger = require("../../utils/logger");
 
 jest.mock("../getAssetsBucketName");
-jest.mock("fs-extra");
-jest.mock("js-yaml");
 jest.mock("../../utils/logger");
 
 describe("addCustomStackResources", () => {
   const bucketName = "bucket-123";
   const bucketUrl = `https://s3.amazonaws.com/${bucketName}`;
 
-  const s3ResourcesYmlString = `
-      Resources:
-        NextStaticAssetsS3Bucket:...
-    `;
-  const proxyResourcesYmlString = `
-      Resources:
-        ProxyResource:...
-    `;
-  const staticProxyResourcesYmlString = `
-      resources:
-        Resources:
-          StaticAssetsProxyResource:...
-    `;
-
-  const nextProxyResourcesYmlString = `
-      resources:
-        Resources:
-          NextStaticAssetsProxyResource:...
-    `;
-
-  let s3Resources;
-  let baseProxyResource;
-  let baseStaticProxyResource;
-  let baseNextProxyResource;
-
   beforeEach(() => {
-    s3Resources = {
-      Resources: {
-        NextStaticAssetsS3Bucket: {
-          Properties: {
-            BucketName: "TO_BE_REPLACED"
-          }
-        }
-      }
-    };
-
-    baseProxyResource = {
-      Resources: {
-        ProxyResource: {
-          Properties: {
-            PathPart: "TO_BE_REPLACED"
-          }
-        },
-        ProxyMethod: {
-          Properties: {
-            Integration: {
-              Uri: "TO_BE_REPLACED"
-            },
-            ResourceId: {
-              Ref: "TO_BE_REPLACED"
-            }
-          }
-        }
-      }
-    };
-
-    baseStaticProxyResource = {
-      resources: {
-        Resources: {
-          StaticAssetsProxyParentResource: {
-            Properties: {
-              PathPart: "TO_BE_REPLACED"
-            }
-          },
-          StaticAssetsProxyResource: {
-            Properties: {
-              PathPart: "TO_BE_REPLACED"
-            }
-          },
-          StaticAssetsProxyMethod: {
-            Properties: {
-              Integration: {
-                Uri: "TO_BE_REPLACED"
-              },
-              ResourceId: {
-                Ref: "TO_BE_REPLACED"
-              }
-            }
-          }
-        }
-      }
-    };
-
-    baseNextProxyResource = {
-      resources: {
-        Resources: {
-          NextStaticAssetsProxyParentResource: {
-            Properties: {
-              PathPart: "TO_BE_REPLACED"
-            }
-          },
-          NextStaticAssetsProxyResource: {
-            Properties: {
-              PathPart: "TO_BE_REPLACED"
-            }
-          },
-          NextStaticAssetsProxyMethod: {
-            Properties: {
-              Integration: {
-                Uri: "TO_BE_REPLACED"
-              },
-              ResourceId: {
-                Ref: "TO_BE_REPLACED"
-              }
-            }
-          }
-        }
-      }
-    };
+    fse.pathExists = jest.fn();
+    fse.readdir = jest.fn();
 
     fse.pathExists.mockResolvedValue(false);
-
-    when(fse.readFile)
-      .calledWith(expect.stringContaining("assets-bucket.yml"), "utf-8")
-      .mockResolvedValueOnce(s3ResourcesYmlString);
-
-    when(yaml.safeLoad)
-      .calledWith(s3ResourcesYmlString, expect.any(Object))
-      .mockReturnValueOnce(s3Resources);
-
-    when(fse.readFile)
-      .calledWith(expect.stringContaining("api-gw-proxy.yml"), "utf-8")
-      .mockResolvedValueOnce(proxyResourcesYmlString);
-
-    when(yaml.safeLoad)
-      .calledWith(proxyResourcesYmlString, expect.any(Object))
-      .mockReturnValueOnce(baseProxyResource);
-
-    when(fse.readFile)
-      .calledWith(expect.stringContaining("api-gw-next.yml"), "utf-8")
-      .mockResolvedValueOnce(nextProxyResourcesYmlString);
-
-    when(yaml.safeLoad)
-      .calledWith(nextProxyResourcesYmlString, expect.any(Object))
-      .mockReturnValueOnce(baseNextProxyResource);
-
-    when(fse.readFile)
-      .calledWith(expect.stringContaining("api-gw-static.yml"), "utf-8")
-      .mockResolvedValueOnce(staticProxyResourcesYmlString);
-
-    when(yaml.safeLoad)
-      .calledWith(staticProxyResourcesYmlString, expect.any(Object))
-      .mockReturnValueOnce(baseStaticProxyResource);
 
     getAssetsBucketName.mockReturnValueOnce(bucketName);
   });
@@ -170,11 +28,9 @@ describe("addCustomStackResources", () => {
 
     const coreCfTemplate = {
       Resources: {
-        foo: "bar"
+        existingResource: "existingValue"
       }
     };
-    const s3ResourcesWithBucketName = clone(s3Resources);
-    s3ResourcesWithBucketName.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
 
     const plugin = new ServerlessPluginBuilder().build();
 
@@ -186,13 +42,15 @@ describe("addCustomStackResources", () => {
       expect(logger.log).toBeCalledWith(
         expect.stringContaining(`Found bucket "${bucketName}"`)
       );
+      const { service } = plugin.serverless;
+      const { NextStaticAssetsS3Bucket } = service.resources.Resources;
+
+      expect(NextStaticAssetsS3Bucket.Properties.BucketName).toEqual(
+        bucketName
+      );
       expect(
-        plugin.serverless.service.resources.Resources.NextStaticAssetsS3Bucket
-          .Properties.BucketName
-      ).toEqual(bucketName);
-      expect(
-        plugin.serverless.service.provider.coreCloudFormationTemplate
-      ).toEqual(merge(coreCfTemplate, s3ResourcesWithBucketName));
+        service.provider.coreCloudFormationTemplate.Resources.existingResource
+      ).toEqual("existingValue");
     });
   });
 
@@ -332,6 +190,32 @@ describe("addCustomStackResources", () => {
     });
   });
 
+  describe.skip("when cloudfront is enabled", () => {
+    it("adds distribution", () => {
+      expect.assertions(1);
+
+      const plugin = new ServerlessPluginBuilder()
+        .withPluginConfig({
+          cloudFront: true
+        })
+        .build();
+
+      const publicDir = path.join(
+        plugin.getPluginConfigValue("nextConfigDir"),
+        "public"
+      );
+
+      when(fse.pathExists)
+        .calledWith(publicDir)
+        .mockResolvedValue(false);
+
+      return addCustomStackResources.call(plugin).then(() => {
+        const { Resources } = plugin.serverless.service.resources;
+        expect(Object.keys(Resources)).toHaveLength(2); // S3 bucket and CloudFront distribution
+      });
+    });
+  });
+
   describe("When no bucket available", () => {
     beforeEach(() => {
       getAssetsBucketName.mockReset();
@@ -339,14 +223,12 @@ describe("addCustomStackResources", () => {
     });
 
     it("doesn't add S3 bucket to resources", () => {
-      expect.assertions(5);
+      expect.assertions(3);
 
       const plugin = new ServerlessPluginBuilder().build();
 
       return addCustomStackResources.call(plugin).then(() => {
         expect(logger.log).not.toBeCalled();
-        expect(fse.readFile).not.toBeCalled();
-        expect(yaml.safeLoad).not.toBeCalled();
         expect(plugin.serverless.service.resources).toEqual(undefined);
         expect(
           plugin.serverless.service.provider.coreCloudFormationTemplate

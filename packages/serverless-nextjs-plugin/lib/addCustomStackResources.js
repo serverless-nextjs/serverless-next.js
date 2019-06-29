@@ -150,18 +150,26 @@ const addCustomStackResources = async function() {
 
   const resourceConfiguration = { bucketName, bucketBaseUrl };
 
-  const staticResources = await getStaticRouteProxyResources.call(
-    this,
-    resourceConfiguration
+  let assetsBucketResource = await loadYml(
+    path.join(__dirname, "../resources/assets-bucket.yml")
   );
-  const nextResources = await getNextRouteProxyResources.call(
-    this,
-    resourceConfiguration
-  );
-  const publicResources = await getPublicRouteProxyResources.call(
-    this,
-    resourceConfiguration
-  );
+
+  assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
+
+  const cloudFront = this.getPluginConfigValue("cloudFront");
+
+  // if (cloudFront) {
+
+  //   return;
+  // }
+
+  // api gateway -> S3 proxying
+
+  const [staticResources, nextResources, publicResources] = await Promise.all([
+    getStaticRouteProxyResources.call(this, resourceConfiguration),
+    getNextRouteProxyResources.call(this, resourceConfiguration),
+    getPublicRouteProxyResources.call(this, resourceConfiguration)
+  ]);
 
   const proxyResources = {
     Resources: {
@@ -170,12 +178,6 @@ const addCustomStackResources = async function() {
       ...publicResources
     }
   };
-
-  let assetsBucketResource = await loadYml(
-    path.join(__dirname, "../resources/assets-bucket.yml")
-  );
-
-  assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
 
   this.serverless.service.resources = this.serverless.service.resources || {
     Resources: {}
