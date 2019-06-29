@@ -153,6 +153,8 @@ const getPublicRouteProxyResources = async function({
 
 const addCustomStackResources = async function() {
   const region = this.provider.getRegion();
+  const stage = this.provider.getStage();
+
   const bucketName = getAssetsBucketName.call(this);
 
   if (bucketName === null) {
@@ -197,6 +199,12 @@ const addCustomStackResources = async function() {
 
     const findOrigin = originId =>
       DistributionConfig.Origins.find(o => o.Id === originId);
+
+    const apiGatewayOrigin = findOrigin("ApiGatewayOrigin");
+    apiGatewayOrigin.OriginPath = `/${stage}`;
+    apiGatewayOrigin.DomainName[
+      "Fn::Join"
+    ][1][1] = `.execute-api.${region}.amazonaws.com`;
 
     const publicOrigin = findOrigin("S3PublicOrigin");
     const staticOrigin = findOrigin("S3StaticOrigin");

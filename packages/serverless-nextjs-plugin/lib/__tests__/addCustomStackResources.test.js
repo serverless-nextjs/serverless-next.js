@@ -256,6 +256,21 @@ describe("addCustomStackResources", () => {
       );
     });
 
+    it("sets up Api Gateway origin", () => {
+      const {
+        Resources: { NextjsCloudFront }
+      } = resources;
+
+      const apiGatewayOrigin = NextjsCloudFront.Properties.DistributionConfig.Origins.find(
+        o => o.Id === "ApiGatewayOrigin"
+      );
+
+      expect(apiGatewayOrigin.OriginPath).toEqual("/test");
+      expect(apiGatewayOrigin.DomainName["Fn::Join"][1][1]).toEqual(
+        ".execute-api.us-east-1.amazonaws.com"
+      );
+    });
+
     describe("when public folder exists", () => {
       it("adds cache behaviours for public files", () => {
         expect.assertions(4);

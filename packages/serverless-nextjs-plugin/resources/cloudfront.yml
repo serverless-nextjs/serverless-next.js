@@ -18,9 +18,9 @@ Resources:
               Fn::Join:
                 - ""
                 - - Ref: ApiGatewayRestApi
-                  - ".execute-api.us-east-1.amazonaws.com"
+                  - TO_BE_REPLACED
             Id: ApiGatewayOrigin
-            OriginPath: /dev
+            OriginPath: TO_BE_REPLACED
             CustomOriginConfig:
               HTTPSPort: 443
               OriginProtocolPolicy: https-only
