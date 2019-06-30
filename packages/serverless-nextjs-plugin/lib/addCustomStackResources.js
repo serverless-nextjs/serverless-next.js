@@ -209,8 +209,10 @@ const addCustomStackResources = async function() {
     const publicOrigin = findOrigin("S3PublicOrigin");
     const staticOrigin = findOrigin("S3StaticOrigin");
 
-    publicOrigin.DomainName = `${bucketName}.s3.amazonaws.com`;
-    staticOrigin.DomainName = `${bucketName}.s3.amazonaws.com`;
+    const bucketDomainName = `${bucketName}.s3.amazonaws.com`;
+
+    publicOrigin.DomainName = bucketDomainName;
+    staticOrigin.DomainName = bucketDomainName;
 
     const [publicDirExists, publicDirFiles] = await dirInfo(
       path.join(this.nextConfigDir, "public")

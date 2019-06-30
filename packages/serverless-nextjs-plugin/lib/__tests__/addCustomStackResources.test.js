@@ -195,6 +195,9 @@ describe("addCustomStackResources", () => {
   });
 
   describe("when cloudfront is enabled and S3 bucket is configured", () => {
+    const findOrigin = (distribution, originId) =>
+      distribution.Origins.find(o => o.Id === originId);
+
     let assetsBucketName = "foo.bar";
     let resources;
 
@@ -233,8 +236,9 @@ describe("addCustomStackResources", () => {
         Resources: { NextjsCloudFront }
       } = resources;
 
-      const staticOrigin = NextjsCloudFront.Properties.DistributionConfig.Origins.find(
-        o => o.Id === "S3StaticOrigin"
+      const staticOrigin = findOrigin(
+        NextjsCloudFront.Properties.DistributionConfig,
+        "S3StaticOrigin"
       );
 
       expect(staticOrigin.DomainName).toEqual(
@@ -247,8 +251,9 @@ describe("addCustomStackResources", () => {
         Resources: { NextjsCloudFront }
       } = resources;
 
-      const publicOrigin = NextjsCloudFront.Properties.DistributionConfig.Origins.find(
-        o => o.Id === "S3PublicOrigin"
+      const publicOrigin = findOrigin(
+        NextjsCloudFront.Properties.DistributionConfig,
+        "S3PublicOrigin"
       );
 
       expect(publicOrigin.DomainName).toEqual(
@@ -261,8 +266,9 @@ describe("addCustomStackResources", () => {
         Resources: { NextjsCloudFront }
       } = resources;
 
-      const apiGatewayOrigin = NextjsCloudFront.Properties.DistributionConfig.Origins.find(
-        o => o.Id === "ApiGatewayOrigin"
+      const apiGatewayOrigin = findOrigin(
+        NextjsCloudFront.Properties.DistributionConfig,
+        "ApiGatewayOrigin"
       );
 
       expect(apiGatewayOrigin.OriginPath).toEqual("/test");
