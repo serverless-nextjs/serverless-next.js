@@ -9,7 +9,11 @@ class ServerlessPluginBuilder {
       },
       getPlugins: () => {},
       getProvider: () => {
-        return { request: () => {}, getRegion: () => "us-east-1" };
+        return {
+          request: () => {},
+          getRegion: () => "us-east-1",
+          getStage: () => "test"
+        };
       },
       pluginManager: {
         run: () => {}

@@ -17,6 +17,7 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Motivation](#motivation)
 - [Getting Started](#getting-started)
 - [Hosting static assets](#hosting-static-assets)
+- [Serving static assets](#serving-static-assets)
 - [Deploying](#deploying)
 - [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
@@ -116,8 +117,6 @@ custom:
     assetsBucketName: "your-bucket-name"
 ```
 
-With this approach you could have a CloudFront distribution in front of the bucket and use a custom domain in the assetPrefix.
-
 ## Serving static assets
 
 Static files can be served by [following the NextJs convention](https://github.com/zeit/next.js/#static-file-serving-eg-images) of using a `static` and `public` folder.
@@ -135,6 +134,23 @@ export default MyImage
 To serve static files from the root directory you can add a folder called public and reference those files from the root, e.g: /robots.txt.
 
 Note that for this to work, an S3 bucket needs to be provisioned as per [hosting-static-assets](#hosting-static-assets).
+
+**For production deployments, enabling CloudFront is recommended:**
+
+```yml
+# serverless.yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    assetsBucketName: "your-bucket-name"
+    cloudFront: true
+```
+
+By doing this, a CloudFront distribution will be created in front of your next application to serve any static assets from S3 and the pages from Api Gateway.
+
+Note that deploying the stack for the first time will take considerably longer, as CloudFront takes time propagating the changes, typically 10 - 20mins.
 
 ## Deploying
 

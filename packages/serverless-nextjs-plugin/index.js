@@ -51,7 +51,8 @@ class ServerlessNextJsPlugin {
     const defaults = {
       routes: [],
       nextConfigDir: "./",
-      uploadBuildAssets: true
+      uploadBuildAssets: true,
+      cloudFront: false
     };
 
     const userConfig = this.serverless.service.custom["serverless-nextjs"][

@@ -6,6 +6,16 @@ const logger = require("../utils/logger");
 const loadYml = require("../utils/yml/load");
 const fse = require("fs-extra");
 
+const dirInfo = async dir => {
+  const exists = await fse.pathExists(dir);
+
+  if (!exists) {
+    return [false, []];
+  }
+
+  return [true, await fse.readdir(dir)];
+};
+
 const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
 
 // removes non-alphanumeric characters to adhere to AWS naming requirements
@@ -21,6 +31,19 @@ const normaliseFilePathForCloudFrontResourceKey = filePath =>
     .map(capitaliseFirstLetter)
     .join("");
 
+const cacheBehaviour = fileName => ({
+  AllowedMethods: ["GET", "HEAD", "OPTIONS"],
+  TargetOriginId: "S3PublicOrigin",
+  Compress: true,
+  ForwardedValues: {
+    QueryString: "false",
+    Cookies: { Forward: "none" }
+  },
+  ViewerProtocolPolicy: "https-only",
+  MinTTL: "50",
+  PathPattern: path.basename(fileName)
+});
+
 const getNextRouteProxyResources = async function({
   bucketBaseUrl,
   bucketName
@@ -30,8 +53,6 @@ const getNextRouteProxyResources = async function({
     path.join(__dirname, "../resources/api-gw-next.yml")
   );
 
-  let result = {};
-
   const bucketUrl = `${bucketBaseUrl}/${path.posix.join(
     bucketName,
     nextDir,
@@ -40,14 +61,14 @@ const getNextRouteProxyResources = async function({
 
   let resource = clone(baseResource);
 
-  resource.resources.Resources.NextStaticAssetsProxyParentResource.Properties.PathPart = nextDir;
-  resource.resources.Resources.NextStaticAssetsProxyMethod.Properties.Integration.Uri = bucketUrl;
+  const { Resources } = resource.resources;
 
-  result = resource.resources.Resources;
+  Resources.NextStaticAssetsProxyParentResource.Properties.PathPart = nextDir;
+  Resources.NextStaticAssetsProxyMethod.Properties.Integration.Uri = bucketUrl;
 
   logger.log(`Proxying NextJS assets -> ${bucketUrl}`);
 
-  return result;
+  return Resources;
 };
 
 const getStaticRouteProxyResources = async function({
@@ -55,8 +76,9 @@ const getStaticRouteProxyResources = async function({
   bucketName
 }) {
   const staticDir = path.join(this.nextConfigDir, "static");
+  const [staticDirExists] = await dirInfo(staticDir);
 
-  if (!(await fse.pathExists(staticDir))) {
+  if (!staticDirExists) {
     return {};
   }
 
@@ -64,36 +86,34 @@ const getStaticRouteProxyResources = async function({
     path.join(__dirname, "../resources/api-gw-static.yml")
   );
 
-  let result = {};
-
   const bucketUrl = `${bucketBaseUrl}/${path.posix.join(
     bucketName,
     "static",
     "{proxy}"
   )}`;
+
   let resource = clone(baseResource);
+  const { Resources } = resource.resources;
 
-  resource.resources.Resources.StaticAssetsProxyParentResource.Properties.PathPart = staticDir;
-  resource.resources.Resources.StaticAssetsProxyMethod.Properties.Integration.Uri = bucketUrl;
-
-  result = resource.resources.Resources;
+  Resources.StaticAssetsProxyParentResource.Properties.PathPart = "static";
+  Resources.StaticAssetsProxyMethod.Properties.Integration.Uri = bucketUrl;
 
   logger.log(`Proxying static files -> ${bucketUrl}`);
 
-  return result;
+  return Resources;
 };
 
 const getPublicRouteProxyResources = async function({
   bucketBaseUrl,
   bucketName
 }) {
-  const publicDir = path.join(this.nextConfigDir, "public");
+  const [publicDirExists, publicDirFiles] = await dirInfo(
+    path.join(this.nextConfigDir, "public")
+  );
 
-  if (!(await fse.pathExists(publicDir))) {
+  if (!publicDirExists) {
     return {};
   }
-
-  const publicFiles = await fse.readdir(publicDir);
 
   const baseResource = await loadYml(
     path.join(__dirname, "../resources/api-gw-proxy.yml")
@@ -103,7 +123,7 @@ const getPublicRouteProxyResources = async function({
     Resources: {}
   };
 
-  publicFiles.forEach(file => {
+  publicDirFiles.forEach(file => {
     const bucketUrl = `${bucketBaseUrl}/${path.posix.join(
       bucketName,
       "public",
@@ -134,6 +154,8 @@ const getPublicRouteProxyResources = async function({
 
 const addCustomStackResources = async function() {
   const region = this.provider.getRegion();
+  const stage = this.provider.getStage();
+
   const bucketName = getAssetsBucketName.call(this);
 
   if (bucketName === null) {
@@ -150,27 +172,6 @@ const addCustomStackResources = async function() {
 
   const resourceConfiguration = { bucketName, bucketBaseUrl };
 
-  const staticResources = await getStaticRouteProxyResources.call(
-    this,
-    resourceConfiguration
-  );
-  const nextResources = await getNextRouteProxyResources.call(
-    this,
-    resourceConfiguration
-  );
-  const publicResources = await getPublicRouteProxyResources.call(
-    this,
-    resourceConfiguration
-  );
-
-  const proxyResources = {
-    Resources: {
-      ...staticResources,
-      ...nextResources,
-      ...publicResources
-    }
-  };
-
   let assetsBucketResource = await loadYml(
     path.join(__dirname, "../resources/assets-bucket.yml")
   );
@@ -185,6 +186,69 @@ const addCustomStackResources = async function() {
     this.serverless.service.provider.coreCloudFormationTemplate,
     assetsBucketResource
   );
+
+  const cloudFront = this.getPluginConfigValue("cloudFront");
+
+  if (cloudFront) {
+    let cloudFrontResource = await loadYml(
+      path.join(__dirname, "../resources/cloudfront.yml")
+    );
+
+    const {
+      DistributionConfig
+    } = cloudFrontResource.Resources.NextjsCloudFront.Properties;
+
+    const findOrigin = originId =>
+      DistributionConfig.Origins.find(o => o.Id === originId);
+
+    const apiGatewayOrigin = findOrigin("ApiGatewayOrigin");
+    apiGatewayOrigin.OriginPath = `/${stage}`;
+    apiGatewayOrigin.DomainName[
+      "Fn::Join"
+    ][1][1] = `.execute-api.${region}.amazonaws.com`;
+
+    const publicOrigin = findOrigin("S3PublicOrigin");
+    const staticOrigin = findOrigin("S3Origin");
+
+    const bucketDomainName = `${bucketName}.s3.amazonaws.com`;
+
+    publicOrigin.DomainName = bucketDomainName;
+    staticOrigin.DomainName = bucketDomainName;
+
+    const [publicDirExists, publicDirFiles] = await dirInfo(
+      path.join(this.nextConfigDir, "public")
+    );
+
+    if (publicDirExists) {
+      publicDirFiles.forEach(f => {
+        DistributionConfig.CacheBehaviors.push(cacheBehaviour(f));
+      });
+    }
+
+    merge(
+      this.serverless.service.resources,
+      assetsBucketResource,
+      cloudFrontResource
+    );
+
+    return;
+  }
+
+  // api gateway -> S3 proxying
+
+  const [staticResources, nextResources, publicResources] = await Promise.all([
+    getStaticRouteProxyResources.call(this, resourceConfiguration),
+    getNextRouteProxyResources.call(this, resourceConfiguration),
+    getPublicRouteProxyResources.call(this, resourceConfiguration)
+  ]);
+
+  const proxyResources = {
+    Resources: {
+      ...staticResources,
+      ...nextResources,
+      ...publicResources
+    }
+  };
 
   merge(
     this.serverless.service.resources,
