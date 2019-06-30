@@ -231,14 +231,14 @@ describe("addCustomStackResources", () => {
       expect(NextjsCloudFront).toBeDefined();
     });
 
-    it("sets up S3 origin for /static directory", () => {
+    it("sets up S3 origin", () => {
       const {
         Resources: { NextjsCloudFront }
       } = resources;
 
       const staticOrigin = findOrigin(
         NextjsCloudFront.Properties.DistributionConfig,
-        "S3StaticOrigin"
+        "S3Origin"
       );
 
       expect(staticOrigin.DomainName).toEqual(
@@ -311,9 +311,9 @@ describe("addCustomStackResources", () => {
             CacheBehaviors
           } = NextjsCloudFront.Properties.DistributionConfig;
 
-          expect(CacheBehaviors).toHaveLength(3); // behavior for /static origin and 2 other behaviours for robots and manifest
-          expect(CacheBehaviors[1].PathPattern).toEqual("robots.txt");
-          expect(CacheBehaviors[2].PathPattern).toEqual("manifest.json");
+          expect(CacheBehaviors).toHaveLength(4); // behavior for static/*, _next/* origins and 2 other behaviours for robots and manifest
+          expect(CacheBehaviors[2].PathPattern).toEqual("robots.txt");
+          expect(CacheBehaviors[3].PathPattern).toEqual("manifest.json");
         });
       });
     });

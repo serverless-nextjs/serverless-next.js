@@ -6,7 +6,7 @@ Resources:
       DistributionConfig:
         Origins:
           - DomainName: TO_BE_REPLACED
-            Id: S3StaticOrigin
+            Id: S3Origin
             S3OriginConfig:
               OriginAccessIdentity: ""
           - DomainName: TO_BE_REPLACED
@@ -35,18 +35,30 @@ Resources:
             QueryString: "true"
             Cookies:
               Forward: all
-          ViewerProtocolPolicy: allow-all
+          ViewerProtocolPolicy: https-only
         CacheBehaviors:
           - AllowedMethods:
               - GET
               - HEAD
               - OPTIONS
-            TargetOriginId: S3StaticOrigin
+            TargetOriginId: S3Origin
             ForwardedValues:
               QueryString: "false"
               Cookies:
                 Forward: none
-            ViewerProtocolPolicy: allow-all
+            ViewerProtocolPolicy: https-only
             MinTTL: "50"
-            PathPattern: static/
-        PriceClass: PriceClass_All
+            PathPattern: static/*
+          - AllowedMethods:
+              - GET
+              - HEAD
+              - OPTIONS
+            TargetOriginId: S3Origin
+            ForwardedValues:
+              QueryString: "false"
+              Cookies:
+                Forward: none
+            ViewerProtocolPolicy: https-only
+            MinTTL: "50"
+            PathPattern: _next/*
+        PriceClass: PriceClass_100

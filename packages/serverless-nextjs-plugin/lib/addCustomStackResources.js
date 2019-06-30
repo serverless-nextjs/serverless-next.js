@@ -38,7 +38,7 @@ const cacheBehaviour = fileName => ({
     QueryString: "false",
     Cookies: { Forward: "none" }
   },
-  ViewerProtocolPolicy: "allow-all",
+  ViewerProtocolPolicy: "https-only",
   MinTTL: "50",
   PathPattern: path.basename(fileName)
 });
@@ -207,7 +207,7 @@ const addCustomStackResources = async function() {
     ][1][1] = `.execute-api.${region}.amazonaws.com`;
 
     const publicOrigin = findOrigin("S3PublicOrigin");
-    const staticOrigin = findOrigin("S3StaticOrigin");
+    const staticOrigin = findOrigin("S3Origin");
 
     const bucketDomainName = `${bucketName}.s3.amazonaws.com`;
 
