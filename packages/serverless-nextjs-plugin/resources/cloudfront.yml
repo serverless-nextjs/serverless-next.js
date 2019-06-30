@@ -31,6 +31,7 @@ Resources:
             - HEAD
             - OPTIONS
           TargetOriginId: ApiGatewayOrigin
+          Compress: "true"
           ForwardedValues:
             QueryString: "true"
             Cookies:
@@ -42,6 +43,7 @@ Resources:
               - HEAD
               - OPTIONS
             TargetOriginId: S3Origin
+            Compress: "true"
             ForwardedValues:
               QueryString: "false"
               Cookies:
@@ -54,6 +56,7 @@ Resources:
               - HEAD
               - OPTIONS
             TargetOriginId: S3Origin
+            Compress: "true"
             ForwardedValues:
               QueryString: "false"
               Cookies:

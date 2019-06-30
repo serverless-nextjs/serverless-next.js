@@ -34,6 +34,7 @@ const normaliseFilePathForCloudFrontResourceKey = filePath =>
 const cacheBehaviour = fileName => ({
   AllowedMethods: ["GET", "HEAD", "OPTIONS"],
   TargetOriginId: "S3PublicOrigin",
+  Compress: true,
   ForwardedValues: {
     QueryString: "false",
     Cookies: { Forward: "none" }
