@@ -337,6 +337,7 @@ module.exports = page => {
 | ----------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
 | nextConfigDir     | ./            | Path to parent directory of `next.config.js`.                                                          |
 | assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets. |
+| cloudFront        | false         | Set to true to create a cloud front distribution in front of your nextjs application.                  |
 | routes            | []            | Array of custom routes for the next pages.                                                             |
 | customHandler     | \<empty\>     | Path to your own lambda handler.                                                                       |
 | uploadBuildAssets | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.     |
