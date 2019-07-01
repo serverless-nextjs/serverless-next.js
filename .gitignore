@@ -2,6 +2,7 @@ node_modules
 /coverage.data
 /coverage/
 examples/basic-next-serverless-app/build
+.serverless_plugins
 .serverless
 .next
 sls-next-build

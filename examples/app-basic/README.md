@@ -1,4 +1,4 @@
-## basic-next-serverless-app
+## app-basic
 
 ### Running the example
 
