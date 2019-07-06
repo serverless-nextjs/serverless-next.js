@@ -1,6 +1,6 @@
 "use strict";
 
-const displayStackOutput = require("./lib/displayStackOutput");
+const displayServiceInfo = require("./lib/displayServiceInfo");
 const parseNextConfiguration = require("./lib/parseNextConfiguration");
 const build = require("./lib/build");
 const PluginBuildDir = require("./classes/PluginBuildDir");
@@ -71,7 +71,7 @@ class ServerlessNextJsPlugin {
       return plugin.constructor.name === "AwsInfo";
     });
 
-    return displayStackOutput(awsInfo);
+    return displayServiceInfo(awsInfo);
   }
 
   removePluginBuildDir() {

@@ -15,7 +15,9 @@ describe("logger", () => {
 
       expect(console.log).toBeCalledWith(expect.stringContaining(message));
     });
+  });
 
+  describe("error", () => {
     it("should call console.error with message", () => {
       const message = "foo";
 

@@ -1,7 +1,7 @@
 const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
-const displayStackOutput = require("../lib/displayStackOutput");
+const displayServiceInfo = require("../lib/displayServiceInfo");
 
-jest.mock("../lib/displayStackOutput");
+jest.mock("../lib/displayServiceInfo");
 
 describe("ServerlessNextJsPlugin", () => {
   let pluginBuilder;
@@ -50,7 +50,7 @@ describe("ServerlessNextJsPlugin", () => {
 
       plugin.printStackOutput();
 
-      expect(displayStackOutput).toBeCalledWith(awsInfo);
+      expect(displayServiceInfo).toBeCalledWith(awsInfo);
     });
   });
 

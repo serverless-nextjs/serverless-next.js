@@ -65,3 +65,7 @@ Resources:
             MinTTL: "50"
             PathPattern: _next/*
         PriceClass: PriceClass_100
+Outputs:
+  NextjsCloudFrontURL:
+    Value: !Join ["", ["https://", !GetAtt [NextjsCloudFront, DomainName]]]
+    Description: CloudFront distribution URL
