@@ -194,6 +194,10 @@ const addCustomStackResources = async function() {
       path.join(__dirname, "../resources/cloudfront.yml")
     );
 
+    if (typeof cloudFront === "object") {
+      merge(cloudFrontResource.Resources.NextjsCloudFront, cloudFront);
+    }
+
     const {
       DistributionConfig
     } = cloudFrontResource.Resources.NextjsCloudFront.Properties;

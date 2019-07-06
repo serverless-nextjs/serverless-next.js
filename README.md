@@ -152,6 +152,33 @@ By doing this, a CloudFront distribution will be created in front of your next a
 
 Note that deploying the stack for the first time will take considerably longer, as CloudFront takes time propagating the changes, typically 10 - 20mins.
 
+You can provide your own configuration for the CloudFront distribution:
+
+```yml
+# serverless.yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    assetsBucketName: "your-bucket-name"
+    cloudFront: ${file(cloudfront-override.yml)}
+```
+
+```yml
+# cloudfront-override.yml
+# e.g. add custom domain name
+Properties:
+  DistributionConfig:
+    Aliases:
+      - my.alias.com
+    ViewerCertificate:
+      AcmCertificateArn: arn:aws:acm:xxxx
+      ...
+```
+
+The configuration provided will be merged onto the defaults in `packages/serverless-nextjs-plugin/resources/cloudfront.yml`.
+
 ## Deploying
 
 `serverless deploy`

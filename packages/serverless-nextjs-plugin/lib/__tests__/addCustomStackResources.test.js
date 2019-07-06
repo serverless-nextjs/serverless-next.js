@@ -317,6 +317,33 @@ describe("addCustomStackResources", () => {
         });
       });
     });
+
+    describe("when cloudfront configuration is overridden by user", () => {
+      it("adds user provided config to distribution", () => {
+        expect.assertions(1);
+
+        const plugin = new ServerlessPluginBuilder()
+          .withPluginConfig({
+            cloudFront: {
+              Properties: {
+                DistributionConfig: {
+                  Aliases: ["myalias.com"]
+                }
+              }
+            }
+          })
+          .build();
+
+        return addCustomStackResources.call(plugin).then(() => {
+          const {
+            NextjsCloudFront
+          } = plugin.serverless.service.resources.Resources;
+          expect(
+            NextjsCloudFront.Properties.DistributionConfig.Aliases
+          ).toEqual(["myalias.com"]);
+        });
+      });
+    });
   });
 
   describe("When no bucket is configured", () => {
