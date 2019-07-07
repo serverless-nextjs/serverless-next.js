@@ -360,14 +360,14 @@ module.exports = page => {
 
 ## All plugin configuration options
 
-| Plugin config key | Default Value | Description                                                                                            |
-| ----------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
-| nextConfigDir     | ./            | Path to parent directory of `next.config.js`.                                                          |
-| assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets. |
-| cloudFront        | false         | Set to true to create a cloud front distribution in front of your nextjs application.                  |
-| routes            | []            | Array of custom routes for the next pages.                                                             |
-| customHandler     | \<empty\>     | Path to your own lambda handler.                                                                       |
-| uploadBuildAssets | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.     |
+| Plugin config key | Type               | Default Value | Description                                                                                                                                                                                                                   |
+| ----------------- | ------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nextConfigDir     | `string`           | ./            | Path to parent directory of `next.config.js`.                                                                                                                                                                                 |
+| assetsBucketName  | `string`           | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                        |
+| cloudFront        | `bool` \| `object` | false         | Set to `true` to create a cloud front distribution in front of your nextjs application. Also can be set to an `object` if you need to override CloudFront configuration. See [serving static assets](#serving-static-assets). |
+| routes            | `[]object`         | []            | Array of custom routes for the next pages.                                                                                                                                                                                    |
+| customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
+| uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
 
 ## Caveats
 
