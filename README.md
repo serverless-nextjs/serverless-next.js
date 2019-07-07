@@ -19,7 +19,6 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Hosting static assets](#hosting-static-assets)
 - [Serving static assets](#serving-static-assets)
 - [Deploying](#deploying)
-- [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
 - [Custom page routing](#custom-page-routing)
 - [Custom error page](#custom-error-page)
@@ -196,20 +195,6 @@ events:
   - http:
       path: pageName # home, about, etc. Unless is the index page which is served at /
       method: head
-```
-
-## Deploying a single page
-
-If you need to deploy just one of your pages, simply run:
-
-```console
-serverless deploy function --function pageFunctionName
-```
-
-where `pageFunctionName` will be the page file name + `"Page"`. For example, to deploy `pages/home.js`, you can run:
-
-```console
-serverless deploy function --function homePage
 ```
 
 ## Overriding page configuration

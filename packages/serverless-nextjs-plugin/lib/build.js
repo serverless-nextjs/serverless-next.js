@@ -8,10 +8,9 @@ const getNextPagesFromBuildDir = require("./getNextPagesFromBuildDir");
 const rewritePageHandlers = require("./rewritePageHandlers");
 
 const overrideTargetIfNotServerless = nextConfiguration => {
-  if (nextConfiguration.target !== "serverless") {
-    logger.log(
-      `Target "${nextConfiguration.target}" found! Overriding it with serverless`
-    );
+  const { target } = nextConfiguration;
+  if (target !== "serverless") {
+    logger.log(`Target "${target}" found! Overriding it with serverless`);
     nextConfiguration.target = "serverless";
   }
 };
