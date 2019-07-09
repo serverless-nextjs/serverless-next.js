@@ -338,6 +338,23 @@ describe("NextPage", () => {
     });
   });
 
+  describe("When dynamic route with square brackets is defined", () => {
+    const buildDir = PluginBuildDir.BUILD_DIR_NAME;
+    const pagePath = `${buildDir}/[id].js`;
+    let page;
+
+    beforeEach(() => {
+      page = new NextPage(pagePath, {
+        serverlessFunctionOverrides: {},
+        routes: []
+      });
+    });
+
+    it("replaces square brackets with curly brackets", () => {
+      expect(page.pageRoute).toEqual("{id}");
+    });
+  });
+
   describe("When custom routes are provided", () => {
     let pageWithCustomRoutes;
 
