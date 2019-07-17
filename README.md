@@ -354,7 +354,7 @@ module.exports = page => {
 | customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
 | uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
 
-| createAssetBucket | `bool` | true | In the unlikely event that you don't want the plugin to create the S3 asset bucket, set this to `false`.
+| createAssetBucket | `bool` | true | Set to false if you want to manage next assets yourself.
 
 ## Caveats
 
