@@ -166,15 +166,15 @@ const addCustomStackResources = async function() {
 
   // see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
   const bucketBaseUrl =
-  region === "us-east-1"
-    ? "https://s3.amazonaws.com"
-    : `https://s3-${region}.amazonaws.com`;
+    region === "us-east-1"
+      ? "https://s3.amazonaws.com"
+      : `https://s3-${region}.amazonaws.com`;
 
   const resourceConfiguration = { bucketName, bucketBaseUrl };
   let assetsBucketResource = {};
 
   const createAssetBucket = this.getPluginConfigValue("createAssetBucket");
-  
+
   if (createAssetBucket) {
     assetsBucketResource = await loadYml(
       path.join(__dirname, "../resources/assets-bucket.yml")
