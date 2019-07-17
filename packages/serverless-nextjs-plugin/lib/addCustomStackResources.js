@@ -158,7 +158,7 @@ const addCustomStackResources = async function() {
 
   const bucketName = getAssetsBucketName.call(this);
 
-  if (bucketName === null) {
+  if (!bucketName) {
     return;
   }
 
