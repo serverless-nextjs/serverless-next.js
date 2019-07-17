@@ -2,8 +2,9 @@ const getAssetsBucketName = require("./getAssetsBucketName");
 
 module.exports = function() {
   const bucketName = getAssetsBucketName.call(this);
+  const uploadBuildAssets = this.getPluginConfigValue("uploadBuildAssets");
   
-  if (!bucketName) {
+  if (!uploadBuildAssets || !bucketName) {
     return Promise.resolve();
   }
 
