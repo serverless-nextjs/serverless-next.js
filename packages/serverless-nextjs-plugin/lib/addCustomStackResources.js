@@ -158,7 +158,7 @@ const addCustomStackResources = async function() {
 
   const bucketName = getAssetsBucketName.call(this);
 
-  if (bucketName === null) {
+  if (!bucketName) {
     return;
   }
 
@@ -171,21 +171,26 @@ const addCustomStackResources = async function() {
       : `https://s3-${region}.amazonaws.com`;
 
   const resourceConfiguration = { bucketName, bucketBaseUrl };
+  let assetsBucketResource = {};
 
-  let assetsBucketResource = await loadYml(
-    path.join(__dirname, "../resources/assets-bucket.yml")
-  );
+  const createAssetBucket = this.getPluginConfigValue("createAssetBucket");
 
-  assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
+  if (createAssetBucket) {
+    assetsBucketResource = await loadYml(
+      path.join(__dirname, "../resources/assets-bucket.yml")
+    );
 
-  this.serverless.service.resources = this.serverless.service.resources || {
-    Resources: {}
-  };
+    assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
 
-  merge(
-    this.serverless.service.provider.coreCloudFormationTemplate,
-    assetsBucketResource
-  );
+    this.serverless.service.resources = this.serverless.service.resources || {
+      Resources: {}
+    };
+
+    merge(
+      this.serverless.service.provider.coreCloudFormationTemplate,
+      assetsBucketResource
+    );
+  }
 
   const cloudFront = this.getPluginConfigValue("cloudFront");
 
