@@ -352,7 +352,9 @@ module.exports = page => {
 | cloudFront        | `bool` \| `object` | false         | Set to `true` to create a cloud front distribution in front of your nextjs application. Also can be set to an `object` if you need to override CloudFront configuration, see [serving static assets](#serving-static-assets). |
 | routes            | `[]object`         | []            | Array of custom routes for the next pages.                                                                                                                                                                                    |
 | customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
-| uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
+| uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.
+
+| createAssetBucket | `bool`             | true          | In the unlikely event that you don't want the plugin to create the S3 asset bucket, set this to `false`.
 
 ## Caveats
 
