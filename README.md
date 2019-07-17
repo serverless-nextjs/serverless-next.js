@@ -353,8 +353,7 @@ module.exports = page => {
 | routes            | `[]object`         | []            | Array of custom routes for the next pages.                                                                                                                                                                                    |
 | customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
 | uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
-
-| createAssetBucket | `bool` | true | Set to false if you want to manage next assets yourself.
+| createAssetBucket | `bool`             | true          | Set to false if you want to manage next assets yourself.                                                                                                                                                                      |
 
 ## Caveats
 
