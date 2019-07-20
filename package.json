@@ -55,8 +55,7 @@
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
       "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/serverless-nextjs-plugin/utils/test",
-      ".next"
+      "<rootDir>/packages/serverless-nextjs-plugin/utils/test"
     ],
     "testPathIgnorePatterns": [
       "/.next/",
