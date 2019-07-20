@@ -6,8 +6,8 @@ const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormati
 
 jest.mock("next/dist/build");
 
-describe("one page app", () => {
-  const fixturePath = path.join(__dirname, "./fixtures/one-page-app");
+describe("nested page app", () => {
+  const fixturePath = path.join(__dirname, "./fixtures/nested-page-app");
 
   let tmpCwd;
   let cloudFormationUpdateResources;
@@ -37,27 +37,11 @@ describe("one page app", () => {
     process.chdir(tmpCwd);
   });
 
-  describe("Assets Bucket", () => {
-    let assetsBucket;
-
-    beforeAll(() => {
-      assetsBucket = cloudFormationUpdateResources.NextStaticAssetsS3Bucket;
-    });
-
-    it("is added to the update resources", () => {
-      expect(assetsBucket).toBeDefined();
-    });
-
-    it("has correct bucket name", () => {
-      expect(assetsBucket.Properties.BucketName).toEqual("onepageappbucket");
-    });
-  });
-
   describe("Page lambda function", () => {
     let pageLambda;
 
     beforeAll(() => {
-      pageLambda = cloudFormationUpdateResources.HelloLambdaFunction;
+      pageLambda = cloudFormationUpdateResources.BlogDashpostLambdaFunction;
     });
 
     it("creates lambda resource", () => {
@@ -66,12 +50,8 @@ describe("one page app", () => {
 
     it("has correct handler", () => {
       expect(pageLambda.Properties.Handler).toEqual(
-        "sls-next-build/hello.render"
+        "sls-next-build/blog/post.render"
       );
-    });
-
-    it("has user defined memory size", () => {
-      expect(pageLambda.Properties.MemorySize).toEqual(512);
     });
   });
 
@@ -88,32 +68,37 @@ describe("one page app", () => {
 
     describe("Page route", () => {
       it("creates page route resource with correct path", () => {
-        const routeResource =
-          cloudFormationUpdateResources.ApiGatewayResourceHello;
+        const blogResource =
+          cloudFormationUpdateResources.ApiGatewayResourceBlog;
 
-        expect(routeResource).toBeDefined();
-        expect(routeResource.Properties.PathPart).toEqual("hello");
+        const blogPostResource =
+          cloudFormationUpdateResources.ApiGatewayResourceBlogPost;
+
+        expect(blogResource).toBeDefined();
+        expect(blogPostResource).toBeDefined();
+        expect(blogResource.Properties.PathPart).toEqual("blog");
+        expect(blogPostResource.Properties.PathPart).toEqual("post");
       });
 
       it("creates GET http method", () => {
         const httpMethod =
-          cloudFormationUpdateResources.ApiGatewayMethodHelloGet;
+          cloudFormationUpdateResources.ApiGatewayMethodBlogPostGet;
 
         expect(httpMethod).toBeDefined();
         expect(httpMethod.Properties.HttpMethod).toEqual("GET");
         expect(httpMethod.Properties.ResourceId.Ref).toEqual(
-          "ApiGatewayResourceHello"
+          "ApiGatewayResourceBlogPost"
         );
       });
 
       it("creates HEAD http method", () => {
         const httpMethod =
-          cloudFormationUpdateResources.ApiGatewayMethodHelloHead;
+          cloudFormationUpdateResources.ApiGatewayMethodBlogPostHead;
 
         expect(httpMethod).toBeDefined();
         expect(httpMethod.Properties.HttpMethod).toEqual("HEAD");
         expect(httpMethod.Properties.ResourceId.Ref).toEqual(
-          "ApiGatewayResourceHello"
+          "ApiGatewayResourceBlogPost"
         );
       });
     });
@@ -131,11 +116,11 @@ describe("one page app", () => {
     });
 
     it("contains next compiled page", () => {
-      expect(zipEntryNames).toContain(`sls-next-build/hello.original.js`);
+      expect(zipEntryNames).toContain(`sls-next-build/blog/post.original.js`);
     });
 
     it("contains plugin handler", () => {
-      expect(zipEntryNames).toContain(`sls-next-build/hello.js`);
+      expect(zipEntryNames).toContain(`sls-next-build/blog/post.js`);
     });
   });
 });

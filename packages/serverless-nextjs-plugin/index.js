@@ -56,9 +56,10 @@ class ServerlessNextJsPlugin {
       createAssetBucket: true
     };
 
-    const userConfig = this.serverless.service.custom["serverless-nextjs"][
-      param
-    ];
+    const userConfig =
+      this.serverless.service.custom &&
+      this.serverless.service.custom["serverless-nextjs"] &&
+      this.serverless.service.custom["serverless-nextjs"][param];
 
     return userConfig === undefined ? defaults[param] : userConfig;
   }
