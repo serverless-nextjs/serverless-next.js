@@ -1,40 +1,26 @@
 const nextBuild = require("next/dist/build");
 const path = require("path");
-const Serverless = require("serverless");
 const AdmZip = require("adm-zip");
 const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormationUpdateTemplate");
+const testableServerless = require("../utils/test/testableServerless");
 
 jest.mock("next/dist/build");
 
 describe("nested page app", () => {
   const fixturePath = path.join(__dirname, "./fixtures/nested-page-app");
 
-  let tmpCwd;
   let cloudFormationUpdateResources;
 
   beforeAll(async () => {
     nextBuild.default.mockResolvedValue();
 
-    tmpCwd = process.cwd();
-    process.chdir(fixturePath);
-
-    const serverless = new Serverless();
-
-    serverless.invocationId = "test-run";
-
-    process.argv[2] = "package";
-
-    await serverless.init();
-    await serverless.run();
+    await testableServerless(fixturePath, "package");
 
     const cloudFormationUpdateTemplate = await readCloudFormationUpdateTemplate(
       fixturePath
     );
-    cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
-  });
 
-  afterAll(() => {
-    process.chdir(tmpCwd);
+    cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
   });
 
   describe("Page lambda function", () => {
