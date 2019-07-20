@@ -60,6 +60,9 @@
     "modulePathIgnorePatterns": [
       "<rootDir>/examples/",
       "<rootDir>/integration"
+    ],
+    "modulePaths": [
+      "<rootDir>/packages/serverless-nextjs-plugin/"
     ]
   },
   "dependencies": {
