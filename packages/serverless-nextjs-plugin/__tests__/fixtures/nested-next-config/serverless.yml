@@ -1,14 +1,19 @@
-service: nested-page-app-fixture
+service: nested-next-config-fixture
 
 provider:
   name: aws
   runtime: nodejs8.10
+  memorySize: 512
 
 stage: dev
 region: eu-west-1
 
 plugins:
   - index # this works because jest modulePaths adds plugin path, see package.json
+
+custom:
+  serverless-nextjs:
+    nextConfigDir: ./app
 
 package:
   # exclude everything

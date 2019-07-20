@@ -95,7 +95,7 @@ describe("nested page app", () => {
 
     beforeAll(() => {
       const zip = new AdmZip(
-        `${fixturePath}/.serverless/one-page-app-fixture.zip`
+        `${fixturePath}/.serverless/nested-page-app-fixture.zip`
       );
       const zipEntries = zip.getEntries();
       zipEntryNames = zipEntries.map(ze => ze.entryName);
