@@ -2,6 +2,7 @@ const nextBuild = require("next/dist/build");
 const path = require("path");
 const Serverless = require("serverless");
 const fse = require("fs-extra");
+const AdmZip = require("adm-zip");
 
 jest.mock("next/dist/build");
 
@@ -125,6 +126,26 @@ describe("package", () => {
             "ApiGatewayResourceHello"
           );
         });
+      });
+    });
+
+    describe("Zip artifact", () => {
+      let zipEntryNames;
+
+      beforeAll(() => {
+        const zip = new AdmZip(
+          `${fixturePath}/.serverless/one-page-app-fixture.zip`
+        );
+        const zipEntries = zip.getEntries();
+        zipEntryNames = zipEntries.map(ze => ze.entryName);
+      });
+
+      it("contains next compiled page", () => {
+        expect(zipEntryNames).toContain(`sls-next-build/hello.original.js`);
+      });
+
+      it("contains plugin handler", () => {
+        expect(zipEntryNames).toContain(`sls-next-build/hello.js`);
       });
     });
   });
