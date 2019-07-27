@@ -13,17 +13,13 @@ module.exports = async (servicePath, command) => {
 
     process.argv[2] = command;
 
-    // setTimeout.mockImplementation(cb => {
-    //   cb();
-    // });
+    jest.useFakeTimers();
+    setTimeout.mockImplementation(cb => cb());
 
     await serverless.init();
-    const runPromise = serverless.run();
+    await serverless.run();
 
-    console.log("HERE?");
-    jest.runAllTimers();
-
-    await runPromise;
+    jest.useRealTimers();
   } catch (err) {
     console.log("TCL: err", err);
     throw err;

@@ -6,7 +6,12 @@ const testableServerless = require("../utils/test/testableServerless");
 const {
   mockDescribeStacks,
   mockCreateStack,
-  mockDescribeStackEvents
+  mockDescribeStackEvents,
+  mockDescribeStackResource,
+  mockListObjectsV2,
+  mockGetCallerIdentity,
+  mockUpdateStack,
+  mockGetRestApis
 } = require("aws-sdk");
 
 jest.mock("next/dist/build");
@@ -20,12 +25,14 @@ describe("one page app", () => {
   let cloudFormationUpdateResources;
 
   beforeAll(async () => {
-    mockDescribeStacks.mockReturnValue({
+    mockDescribeStacks.mockReturnValueOnce({
       promise: () => Promise.reject(new Error("Stack does not exist."))
     });
     mockCreateStack.mockReturnValue({
-      promise: () => Promise.resolve({StackId: "MockedStack"})
+      promise: () => Promise.resolve({ StackId: "MockedStack" })
     });
+    var aYearFromNow = new Date();
+    aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
     mockDescribeStackEvents.mockReturnValue({
       promise: () =>
         Promise.resolve({
@@ -33,12 +40,51 @@ describe("one page app", () => {
             {
               StackId: "MockedStack",
               ResourceType: "AWS::CloudFormation::Stack",
-              ResourceStatus: "_COMPLETE"
+              ResourceStatus: "CREATE_COMPLETE",
+              Timestamp: aYearFromNow
             }
           ]
         })
     });
-
+    mockDescribeStackResource.mockReturnValue({
+      promise: () =>
+        Promise.resolve({
+          StackResourceDetail: {
+            StackId: "MockedStack",
+            PhysicalResourceId: "MockedStackPhysicalResourceId"
+          }
+        })
+    });
+    mockListObjectsV2.mockReturnValue({
+      promise: () => Promise.resolve({ Contents: [] })
+    });
+    mockGetCallerIdentity.mockReturnValue({
+      promise: () =>
+        Promise.resolve({ Arn: "arn:aws:iam:testAcctId:testUser/xyz" })
+    });
+    mockUpdateStack.mockReturnValueOnce({
+      promise: () =>
+        Promise.resolve({
+          StackId: "MockedStack"
+        })
+    });
+    mockDescribeStacks.mockReturnValueOnce({
+      promise: () =>
+        Promise.resolve({
+          Stacks: [
+            {
+              StackId: "MockedStack",
+              Outputs: []
+            }
+          ]
+        })
+    });
+    mockGetRestApis.mockReturnValueOnce({
+      promise: () =>
+        Promise.resolve({
+          items: [{ id: "mockedApi" }]
+        })
+    });
     nextBuild.default.mockResolvedValue();
 
     await testableServerless(fixturePath, "deploy");
@@ -50,14 +96,14 @@ describe("one page app", () => {
     cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
   });
 
-  describe.only("Assets Bucket", () => {
+  describe("Assets Bucket", () => {
     let assetsBucket;
 
     beforeAll(() => {
       assetsBucket = cloudFormationUpdateResources.NextStaticAssetsS3Bucket;
     });
 
-    it.only("is added to the update resources", () => {
+    it("is added to the update resources", () => {
       expect(assetsBucket).toBeDefined();
     });
 
