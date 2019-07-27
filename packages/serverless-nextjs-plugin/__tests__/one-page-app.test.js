@@ -3,8 +3,16 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormationUpdateTemplate");
 const testableServerless = require("../utils/test/testableServerless");
+const {
+  mockDescribeStacks,
+  mockCreateStack,
+  mockDescribeStackEvents
+} = require("aws-sdk");
 
 jest.mock("next/dist/build");
+jest.mock("aws-sdk");
+
+jest.useFakeTimers();
 
 describe("one page app", () => {
   const fixturePath = path.join(__dirname, "./fixtures/one-page-app");
@@ -12,9 +20,28 @@ describe("one page app", () => {
   let cloudFormationUpdateResources;
 
   beforeAll(async () => {
+    mockDescribeStacks.mockReturnValue({
+      promise: () => Promise.reject(new Error("Stack does not exist."))
+    });
+    mockCreateStack.mockReturnValue({
+      promise: () => Promise.resolve({StackId: "MockedStack"})
+    });
+    mockDescribeStackEvents.mockReturnValue({
+      promise: () =>
+        Promise.resolve({
+          StackEvents: [
+            {
+              StackId: "MockedStack",
+              ResourceType: "AWS::CloudFormation::Stack",
+              ResourceStatus: "_COMPLETE"
+            }
+          ]
+        })
+    });
+
     nextBuild.default.mockResolvedValue();
 
-    await testableServerless(fixturePath, "package");
+    await testableServerless(fixturePath, "deploy");
 
     const cloudFormationUpdateTemplate = await readCloudFormationUpdateTemplate(
       fixturePath
@@ -23,14 +50,14 @@ describe("one page app", () => {
     cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
   });
 
-  describe("Assets Bucket", () => {
+  describe.only("Assets Bucket", () => {
     let assetsBucket;
 
     beforeAll(() => {
       assetsBucket = cloudFormationUpdateResources.NextStaticAssetsS3Bucket;
     });
 
-    it("is added to the update resources", () => {
+    it.only("is added to the update resources", () => {
       expect(assetsBucket).toBeDefined();
     });
 
