@@ -5,10 +5,16 @@ const readJsonFile = async filePath => {
   return JSON.parse(str);
 };
 
-const readCloudFormationUpdateTemplate = fixturePath => {
+const readUpdateTemplate = fixturePath => {
   return readJsonFile(
     `${fixturePath}/.serverless/cloudformation-template-update-stack.json`
   );
 };
 
-module.exports = readCloudFormationUpdateTemplate;
+const readCreateTemplate = fixturePath => {
+  return readJsonFile(
+    `${fixturePath}/.serverless/cloudformation-template-create-stack.json`
+  );
+};
+
+module.exports = { readCreateTemplate, readUpdateTemplate };

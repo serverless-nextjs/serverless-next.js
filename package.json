@@ -67,6 +67,9 @@
     ],
     "modulePaths": [
       "<rootDir>/packages/serverless-nextjs-plugin/"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
     ]
   },
   "dependencies": {
