@@ -5,9 +5,6 @@ const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormati
 const testableServerless = require("../utils/test/testableServerless");
 
 jest.mock("next/dist/build");
-jest.mock("aws-sdk");
-
-jest.useFakeTimers();
 
 describe("one page app", () => {
   const fixturePath = path.join(__dirname, "./fixtures/one-page-app");

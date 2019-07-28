@@ -10,6 +10,8 @@ const {
   mockGetRestApis
 } = require("aws-sdk");
 
+jest.mock("aws-sdk");
+
 const setupMocks = () => {
   // these mocks are necessary for running "serverless deploy"
 
