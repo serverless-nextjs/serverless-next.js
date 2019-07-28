@@ -38,6 +38,14 @@ const MockAPIGateway = function() {};
 const mockGetRestApis = promisify(jest.fn());
 MockAPIGateway.prototype.getRestApis = mockGetRestApis;
 
+const MockSharedIniFileCredentials = function() {};
+
+const MockMetadataService = function() {};
+const mockMetadataRequest = jest
+  .fn()
+  .mockImplementation((path, cb) => cb(null, {}));
+MockMetadataService.prototype.request = mockMetadataRequest;
+
 module.exports = {
   EnvironmentCredentials: MockEnvironmentCredentials,
   S3: MockS3,
@@ -45,6 +53,8 @@ module.exports = {
   CloudWatchLogs: MockCloudWatchLogs,
   STS: MockSTS,
   APIGateway: MockAPIGateway,
+  SharedIniFileCredentials: MockSharedIniFileCredentials,
+  MetadataService: MockMetadataService,
 
   mockDescribeStacks,
   mockCreateStack,

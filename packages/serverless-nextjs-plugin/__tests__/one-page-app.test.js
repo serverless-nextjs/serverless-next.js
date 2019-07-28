@@ -3,16 +3,6 @@ const path = require("path");
 const AdmZip = require("adm-zip");
 const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormationUpdateTemplate");
 const testableServerless = require("../utils/test/testableServerless");
-const {
-  mockDescribeStacks,
-  mockCreateStack,
-  mockDescribeStackEvents,
-  mockDescribeStackResource,
-  mockListObjectsV2,
-  mockGetCallerIdentity,
-  mockUpdateStack,
-  mockGetRestApis
-} = require("aws-sdk");
 
 jest.mock("next/dist/build");
 jest.mock("aws-sdk");
@@ -25,66 +15,6 @@ describe("one page app", () => {
   let cloudFormationUpdateResources;
 
   beforeAll(async () => {
-    mockDescribeStacks.mockReturnValueOnce({
-      promise: () => Promise.reject(new Error("Stack does not exist."))
-    });
-    mockCreateStack.mockReturnValue({
-      promise: () => Promise.resolve({ StackId: "MockedStack" })
-    });
-    var aYearFromNow = new Date();
-    aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
-    mockDescribeStackEvents.mockReturnValue({
-      promise: () =>
-        Promise.resolve({
-          StackEvents: [
-            {
-              StackId: "MockedStack",
-              ResourceType: "AWS::CloudFormation::Stack",
-              ResourceStatus: "CREATE_COMPLETE",
-              Timestamp: aYearFromNow
-            }
-          ]
-        })
-    });
-    mockDescribeStackResource.mockReturnValue({
-      promise: () =>
-        Promise.resolve({
-          StackResourceDetail: {
-            StackId: "MockedStack",
-            PhysicalResourceId: "MockedStackPhysicalResourceId"
-          }
-        })
-    });
-    mockListObjectsV2.mockReturnValue({
-      promise: () => Promise.resolve({ Contents: [] })
-    });
-    mockGetCallerIdentity.mockReturnValue({
-      promise: () =>
-        Promise.resolve({ Arn: "arn:aws:iam:testAcctId:testUser/xyz" })
-    });
-    mockUpdateStack.mockReturnValueOnce({
-      promise: () =>
-        Promise.resolve({
-          StackId: "MockedStack"
-        })
-    });
-    mockDescribeStacks.mockReturnValueOnce({
-      promise: () =>
-        Promise.resolve({
-          Stacks: [
-            {
-              StackId: "MockedStack",
-              Outputs: []
-            }
-          ]
-        })
-    });
-    mockGetRestApis.mockReturnValueOnce({
-      promise: () =>
-        Promise.resolve({
-          items: [{ id: "mockedApi" }]
-        })
-    });
     nextBuild.default.mockResolvedValue();
 
     await testableServerless(fixturePath, "deploy");

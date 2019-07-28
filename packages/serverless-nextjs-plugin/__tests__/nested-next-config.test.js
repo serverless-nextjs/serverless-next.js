@@ -14,7 +14,7 @@ describe("nested next config", () => {
   beforeAll(async () => {
     nextBuild.default.mockResolvedValue();
 
-    await testableServerless(fixturePath, "package");
+    await testableServerless(fixturePath, "deploy");
 
     const cloudFormationUpdateTemplate = await readCloudFormationUpdateTemplate(
       fixturePath
