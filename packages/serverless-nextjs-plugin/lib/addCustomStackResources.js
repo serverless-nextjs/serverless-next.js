@@ -162,6 +162,10 @@ const addCustomStackResources = async function() {
     return;
   }
 
+  this.serverless.service.resources = this.serverless.service.resources || {
+    Resources: {}
+  };
+
   logger.log(`Found bucket "${bucketName}" from serverless.yml`);
 
   // see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
@@ -181,10 +185,6 @@ const addCustomStackResources = async function() {
     );
 
     assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
-
-    this.serverless.service.resources = this.serverless.service.resources || {
-      Resources: {}
-    };
 
     merge(
       this.serverless.service.provider.coreCloudFormationTemplate,
