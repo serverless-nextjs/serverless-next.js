@@ -1,90 +1,68 @@
 const Serverless = require("serverless");
 const {
-  mockDescribeStacks,
-  mockCreateStack,
-  mockDescribeStackEvents,
-  mockDescribeStackResource,
-  mockListObjectsV2,
-  mockGetCallerIdentity,
-  mockUpdateStack,
-  mockGetRestApis
+  mockDescribeStacksPromise,
+  mockCreateStackPromise,
+  mockDescribeStackEventsPromise,
+  mockDescribeStackResourcePromise,
+  mockListObjectsV2Promise,
+  mockGetCallerIdentityPromise,
+  mockUpdateStackPromise,
+  mockGetRestApisPromise
 } = require("aws-sdk");
-
-jest.mock("aws-sdk");
 
 const setupMocks = () => {
   // these mocks are necessary for running "serverless deploy"
 
   // pretend serverless stack doesn't exist first
-  mockDescribeStacks.mockReturnValueOnce({
-    promise: () => Promise.reject(new Error("Stack does not exist."))
-  });
+  mockDescribeStacksPromise.mockRejectedValueOnce(
+    new Error("Stack does not exist.")
+  );
 
   // create stack result OK
-  mockCreateStack.mockReturnValue({
-    promise: () => Promise.resolve({ StackId: "MockedStack" })
-  });
+  mockCreateStackPromise.mockResolvedValue({ StackId: "MockedStack" });
 
   // mock a stack event for monitorStack.js
   var aYearFromNow = new Date();
   aYearFromNow.setFullYear(aYearFromNow.getFullYear() + 1);
-  mockDescribeStackEvents.mockReturnValue({
-    promise: () =>
-      Promise.resolve({
-        StackEvents: [
-          {
-            StackId: "MockedStack",
-            ResourceType: "AWS::CloudFormation::Stack",
-            ResourceStatus: "CREATE_COMPLETE",
-            Timestamp: aYearFromNow
-          }
-        ]
-      })
+  mockDescribeStackEventsPromise.mockResolvedValue({
+    StackEvents: [
+      {
+        StackId: "MockedStack",
+        ResourceType: "AWS::CloudFormation::Stack",
+        ResourceStatus: "CREATE_COMPLETE",
+        Timestamp: aYearFromNow
+      }
+    ]
   });
 
-  mockDescribeStackResource.mockReturnValue({
-    promise: () =>
-      Promise.resolve({
-        StackResourceDetail: {
-          StackId: "MockedStack",
-          PhysicalResourceId: "MockedStackPhysicalResourceId"
-        }
-      })
+  mockDescribeStackResourcePromise.mockResolvedValue({
+    StackResourceDetail: {
+      StackId: "MockedStack",
+      PhysicalResourceId: "MockedStackPhysicalResourceId"
+    }
   });
 
-  mockListObjectsV2.mockReturnValue({
-    promise: () => Promise.resolve({ Contents: [] })
+  mockListObjectsV2Promise.mockResolvedValue({ Contents: [] });
+
+  mockGetCallerIdentityPromise.mockResolvedValue({
+    Arn: "arn:aws:iam:testAcctId:testUser/xyz"
   });
 
-  mockGetCallerIdentity.mockReturnValue({
-    promise: () =>
-      Promise.resolve({ Arn: "arn:aws:iam:testAcctId:testUser/xyz" })
+  mockUpdateStackPromise.mockResolvedValueOnce({
+    StackId: "MockedStack"
   });
 
-  mockUpdateStack.mockReturnValueOnce({
-    promise: () =>
-      Promise.resolve({
-        StackId: "MockedStack"
-      })
+  mockDescribeStacksPromise.mockResolvedValueOnce({
+    Stacks: [
+      {
+        StackId: "MockedStack",
+        Outputs: []
+      }
+    ]
   });
 
-  mockDescribeStacks.mockReturnValueOnce({
-    promise: () =>
-      Promise.resolve({
-        Stacks: [
-          {
-            StackId: "MockedStack",
-            Outputs: []
-          }
-        ]
-      })
-  });
-
-  mockGetRestApis.mockReturnValueOnce({
-    promise: () =>
-      Promise.resolve({
-        items: [{ id: "mockedApi" }]
-      })
+  mockGetRestApisPromise.mockResolvedValueOnce({
+    items: [{ id: "mockedApi" }]
   });
 };
 

@@ -1,19 +1,53 @@
-const promisify = mockFunction =>
+const promisify = mockFunction => {
+  const mockPromise = jest.fn(() => Promise.resolve());
   mockFunction.mockReturnValue({
-    promise: () => Promise.resolve()
+    promise: mockPromise
   });
+
+  return {
+    mockFunction,
+    mockPromise
+  };
+};
 
 const MockCloudWatchLogs = function() {};
 function MockEnvironmentCredentials() {}
 function MockCloudFormation() {}
 
-const mockDescribeStacks = promisify(jest.fn());
-const mockCreateStack = promisify(jest.fn());
-const mockDescribeStackEvents = promisify(jest.fn());
-const mockDescribeStackResource = promisify(jest.fn());
-const mockValidateTemplate = promisify(jest.fn());
-const mockUpdateStack = promisify(jest.fn());
-const mockListStackResources = promisify(jest.fn());
+const {
+  mockFunction: mockDescribeStacks,
+  mockPromise: mockDescribeStacksPromise
+} = promisify(jest.fn());
+
+const {
+  mockFunction: mockCreateStack,
+  mockPromise: mockCreateStackPromise
+} = promisify(jest.fn());
+
+const {
+  mockFunction: mockDescribeStackEvents,
+  mockPromise: mockDescribeStackEventsPromise
+} = promisify(jest.fn());
+
+const {
+  mockFunction: mockDescribeStackResource,
+  mockPromise: mockDescribeStackResourcePromise
+} = promisify(jest.fn());
+
+const {
+  mockFunction: mockValidateTemplate,
+  mockPromise: mockValidateTemplatePromise
+} = promisify(jest.fn());
+
+const {
+  mockFunction: mockUpdateStack,
+  mockPromise: mockUpdateStackPromise
+} = promisify(jest.fn());
+
+const {
+  mockFunction: mockListStackResources,
+  mockPromise: mockListStackResourcesPromise
+} = promisify(jest.fn());
 
 MockCloudFormation.prototype.describeStacks = mockDescribeStacks;
 MockCloudFormation.prototype.createStack = mockCreateStack;
@@ -23,19 +57,30 @@ MockCloudFormation.prototype.validateTemplate = mockValidateTemplate;
 MockCloudFormation.prototype.updateStack = mockUpdateStack;
 MockCloudFormation.prototype.listStackResources = mockListStackResources;
 
-function MockS3() {}
+// function MockS3() {}
 
-const mockListObjectsV2 = promisify(jest.fn());
-const mockUpload = promisify(jest.fn());
-MockS3.prototype.listObjectsV2 = mockListObjectsV2;
-MockS3.prototype.upload = mockUpload;
+const {
+  mockFunction: mockListObjectsV2,
+  mockPromise: mockListObjectsV2Promise
+} = promisify(jest.fn());
+
+const S3MockUpload = promisify(jest.fn());
+
+// MockS3.prototype.listObjectsV2 = mockListObjectsV2;
+// MockS3.prototype.upload = mockUpload;
 
 const MockSTS = function() {};
-const mockGetCallerIdentity = promisify(jest.fn());
+const {
+  mockFunction: mockGetCallerIdentity,
+  mockPromise: mockGetCallerIdentityPromise
+} = promisify(jest.fn());
 MockSTS.prototype.getCallerIdentity = mockGetCallerIdentity;
 
 const MockAPIGateway = function() {};
-const mockGetRestApis = promisify(jest.fn());
+const {
+  mockFunction: mockGetRestApis,
+  mockPromise: mockGetRestApisPromise
+} = promisify(jest.fn());
 MockAPIGateway.prototype.getRestApis = mockGetRestApis;
 
 const MockSharedIniFileCredentials = function() {};
@@ -48,7 +93,13 @@ MockMetadataService.prototype.request = mockMetadataRequest;
 
 module.exports = {
   EnvironmentCredentials: MockEnvironmentCredentials,
-  S3: MockS3,
+  S3: jest.fn(() => {
+    console.log("CALLED!!!!!!!!");
+    return {
+      upload: S3MockUpload.mockFunction,
+      listObjectsV2: mockListObjectsV2
+    };
+  }),
   CloudFormation: MockCloudFormation,
   CloudWatchLogs: MockCloudWatchLogs,
   STS: MockSTS,
@@ -57,13 +108,25 @@ module.exports = {
   MetadataService: MockMetadataService,
 
   mockDescribeStacks,
+  mockDescribeStacksPromise,
   mockCreateStack,
+  mockCreateStackPromise,
   mockDescribeStackEvents,
+  mockDescribeStackEventsPromise,
   mockDescribeStackResource,
+  mockDescribeStackResourcePromise,
   mockListObjectsV2,
+  mockListObjectsV2Promise,
   mockGetCallerIdentity,
-  mockUpload,
+  mockGetCallerIdentityPromise,
+  mockUpload: S3MockUpload.mockFunction,
+  mockUploadPromise: S3MockUpload.mockPromise,
   mockUpdateStack,
+  mockUpdateStackPromise,
   mockListStackResources,
-  mockGetRestApis
+  mockListStackResourcesPromise,
+  mockGetRestApis,
+  mockGetRestApisPromise,
+  mockValidateTemplate,
+  mockValidateTemplatePromise
 };

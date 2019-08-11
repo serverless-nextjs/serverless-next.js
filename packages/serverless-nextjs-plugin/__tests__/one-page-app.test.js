@@ -1,11 +1,13 @@
+const fs = require("fs");
 const nextBuild = require("next/dist/build");
 const path = require("path");
 const AdmZip = require("adm-zip");
 const {
-  readUpdateTemplate,
-  readCreateTemplate
+  readUpdateTemplate
 } = require("../utils/test/readServerlessCFTemplate");
 const testableServerless = require("../utils/test/testableServerless");
+
+const AWS = require("aws-sdk");
 
 jest.mock("next/dist/build");
 
@@ -13,18 +15,15 @@ describe("one page app", () => {
   const fixturePath = path.join(__dirname, "./fixtures/one-page-app");
 
   let cloudFormationUpdateResources;
-  let cloudFormationCreateResources;
 
   beforeAll(async () => {
     nextBuild.default.mockResolvedValue();
 
     await testableServerless(fixturePath, "deploy");
 
-    const cloudFormationCreateTemplate = await readCreateTemplate(fixturePath);
     const cloudFormationUpdateTemplate = await readUpdateTemplate(fixturePath);
 
     cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
-    cloudFormationCreateResources = cloudFormationCreateTemplate.Resources;
   });
 
   describe("Assets Bucket", () => {
@@ -41,6 +40,16 @@ describe("one page app", () => {
 
       it("has correct bucket name", () => {
         expect(assetsBucket.Properties.BucketName).toEqual("onepageappbucket");
+      });
+    });
+
+    it.only("uploads build assets", () => {
+      expect(AWS.mockUpload).toBeCalledWith({
+        ACL: "public-read",
+        Bucket: "onepageappbucket",
+        Key: "_next/static/client.js",
+        ContentType: "text/javascript",
+        Body: expect.any(fs.ReadStream)
       });
     });
   });
