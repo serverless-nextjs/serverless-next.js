@@ -82,7 +82,12 @@ class NextPage {
           .slice(buildDirIndex + 1, pathSegments.length - 1)
           .concat([this.pageName]);
 
-        return routeSegments.join("/");
+        const originalPath = routeSegments.join("/");
+        const pathWithReplacedBrackets = originalPath
+          .replace(/\[/g, "{")
+          .replace(/\]/g, "}");
+
+        return pathWithReplacedBrackets;
     }
   }
 
