@@ -2,7 +2,7 @@
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
 [![Build Status](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
-[![npm version](https://badge.fury.io/js/serverless-nextjs-plugin.svg)](https://badge.fury.io/js/serverless-nextjs-plugin)
+[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/serverless-nextjs-plugin.svg)](https://badge.fury.io/js/serverless-nextjs-plugin)
 [![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-nextjs-plugin/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/app/danielcondemarin/serverless-nextjs-plugin?utm_source=github.com&utm_medium=referral&utm_content=danielcondemarin/serverless-nextjs-plugin&utm_campaign=Badge_Grade)
 
@@ -19,7 +19,6 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 - [Hosting static assets](#hosting-static-assets)
 - [Serving static assets](#serving-static-assets)
 - [Deploying](#deploying)
-- [Deploying a single page](#deploying-a-single-page)
 - [Overriding page configuration](#overriding-page-configuration)
 - [Custom page routing](#custom-page-routing)
 - [Custom error page](#custom-error-page)
@@ -152,6 +151,33 @@ By doing this, a CloudFront distribution will be created in front of your next a
 
 Note that deploying the stack for the first time will take considerably longer, as CloudFront takes time propagating the changes, typically 10 - 20mins.
 
+You can provide your own configuration for the CloudFront distribution:
+
+```yml
+# serverless.yml
+plugins:
+  - serverless-nextjs-plugin
+
+custom:
+  serverless-nextjs:
+    assetsBucketName: "your-bucket-name"
+    cloudFront: ${file(cloudfront-override.yml)}
+```
+
+```yml
+# cloudfront-override.yml
+# e.g. add custom domain name
+Properties:
+  DistributionConfig:
+    Aliases:
+      - my.alias.com
+    ViewerCertificate:
+      AcmCertificateArn: arn:aws:acm:xxxx
+      ...
+```
+
+The configuration provided will be merged onto the defaults in `packages/serverless-nextjs-plugin/resources/cloudfront.yml`.
+
 ## Deploying
 
 `serverless deploy`
@@ -169,20 +195,6 @@ events:
   - http:
       path: pageName # home, about, etc. Unless is the index page which is served at /
       method: head
-```
-
-## Deploying a single page
-
-If you need to deploy just one of your pages, simply run:
-
-```console
-serverless deploy function --function pageFunctionName
-```
-
-where `pageFunctionName` will be the page file name + `"Page"`. For example, to deploy `pages/home.js`, you can run:
-
-```console
-serverless deploy function --function homePage
 ```
 
 ## Overriding page configuration
@@ -333,14 +345,15 @@ module.exports = page => {
 
 ## All plugin configuration options
 
-| Plugin config key | Default Value | Description                                                                                            |
-| ----------------- | ------------- | ------------------------------------------------------------------------------------------------------ |
-| nextConfigDir     | ./            | Path to parent directory of `next.config.js`.                                                          |
-| assetsBucketName  | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets. |
-| cloudFront        | false         | Set to true to create a cloud front distribution in front of your nextjs application.                  |
-| routes            | []            | Array of custom routes for the next pages.                                                             |
-| customHandler     | \<empty\>     | Path to your own lambda handler.                                                                       |
-| uploadBuildAssets | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.     |
+| Plugin config key | Type               | Default Value | Description                                                                                                                                                                                                                   |
+| ----------------- | ------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| nextConfigDir     | `string`           | ./            | Path to parent directory of `next.config.js`.                                                                                                                                                                                 |
+| assetsBucketName  | `string`           | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                        |
+| cloudFront        | `bool` \| `object` | false         | Set to `true` to create a cloud front distribution in front of your nextjs application. Also can be set to an `object` if you need to override CloudFront configuration, see [serving static assets](#serving-static-assets). |
+| routes            | `[]object`         | []            | Array of custom routes for the next pages.                                                                                                                                                                                    |
+| customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
+| uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
+| createAssetBucket | `bool`             | true          | Set to false if you want to manage next assets yourself.                                                                                                                                                                      |
 
 ## Caveats
 
@@ -353,3 +366,33 @@ See the `examples/` directory.
 ## Contributing
 
 Please see the [contributing](./CONTRIBUTING.md) guide.
+
+## Contributors
+
+### Code Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/danielcondemarin/serverless-nextjs-plugin/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
+
+### Financial Contributors
+
+Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/serverless-nextjs-plugin/contribute)]
+
+#### Individuals
+
+<a href="https://opencollective.com/serverless-nextjs-plugin"><img src="https://opencollective.com/serverless-nextjs-plugin/individuals.svg?width=890"></a>
+
+#### Organizations
+
+Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/serverless-nextjs-plugin/contribute)]
+
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/0/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/0/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/1/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/1/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/2/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/2/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/3/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/3/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/4/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/4/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/5/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/5/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/6/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/6/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/7/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/7/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/8/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/8/avatar.svg"></a>
+<a href="https://opencollective.com/serverless-nextjs-plugin/organization/9/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/9/avatar.svg"></a>

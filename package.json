@@ -17,7 +17,8 @@
     "test": "jest",
     "lint": "eslint .",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js"
+    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
+    "postinstall": "opencollective-postinstall || true"
   },
   "repository": {
     "type": "git",
@@ -56,9 +57,23 @@
       "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
       "<rootDir>/packages/serverless-nextjs-plugin/utils/test"
     ],
+    "testPathIgnorePatterns": [
+      "/.next/",
+      "/node_modules/"
+    ],
     "modulePathIgnorePatterns": [
       "<rootDir>/examples/",
       "<rootDir>/integration"
+    ],
+    "modulePaths": [
+      "<rootDir>/packages/serverless-nextjs-plugin/"
     ]
+  },
+  "dependencies": {
+    "opencollective-postinstall": "^2.0.2"
+  },
+  "collective": {
+    "type": "opencollective",
+    "url": "https://opencollective.com/serverless-nextjs-plugin"
   }
 }

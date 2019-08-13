@@ -2,6 +2,11 @@ const getAssetsBucketName = require("./getAssetsBucketName");
 
 module.exports = function() {
   const bucketName = getAssetsBucketName.call(this);
+  const uploadBuildAssets = this.getPluginConfigValue("uploadBuildAssets");
+
+  if (!uploadBuildAssets || !bucketName) {
+    return Promise.resolve();
+  }
 
   return this.provider
     .request("S3", "listObjectsV2", {
