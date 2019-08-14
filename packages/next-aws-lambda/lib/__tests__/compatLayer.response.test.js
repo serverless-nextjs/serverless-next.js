@@ -195,9 +195,8 @@ describe("compatLayer.response", () => {
         done();
       }
     );
-    req.pipe(res);
-    req.push("ok");
-    req.push(null);
+
+    res.end("ok");
   });
 
   it("base64 support", done => {
