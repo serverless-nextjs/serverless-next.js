@@ -33,7 +33,7 @@ module.exports = async function() {
   servicePackage.include.push(
     path.posix.join(pluginBuildDir.posixBuildDir, "**"),
     path.posix.join("node_modules/next-aws-lambda", "**", "*.js"),
-    path.posix.join("!node_modules/next-aws-lambda", "**", "**.test.js")
+    path.posix.join("!node_modules/next-aws-lambda", "**", "*.test.js")
   );
 
   const { nextConfiguration } = await parseNextConfiguration(nextConfigDir);
