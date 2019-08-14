@@ -97,7 +97,7 @@ describe("build", () => {
       expect(plugin.serverless.service.package.include).toEqual(
         expect.arrayContaining([
           "node_modules/next-aws-lambda/**/*.js",
-          "!node_moduoles/next-aws-lambda/**/*.test.js"
+          "!node_modules/next-aws-lambda/**/*.test.js"
         ])
       );
     });
