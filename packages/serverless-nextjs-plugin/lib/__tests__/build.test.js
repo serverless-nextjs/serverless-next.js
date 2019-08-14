@@ -94,8 +94,11 @@ describe("build", () => {
       .build();
 
     return build.call(plugin).then(() => {
-      expect(plugin.serverless.service.package.include).toContain(
-        `node_modules/next-aws-lambda/**`
+      expect(plugin.serverless.service.package.include).toEqual(
+        expect.arrayContaining([
+          "node_modules/next-aws-lambda/**/*.js",
+          "!node_modules/next-aws-lambda/**/*.test.js"
+        ])
       );
     });
   });
