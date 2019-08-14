@@ -30,6 +30,10 @@ Resources:
             - GET
             - HEAD
             - OPTIONS
+            - PUT
+            - PATCH
+            - POST
+            - DELETE
           TargetOriginId: ApiGatewayOrigin
           Compress: "true"
           ForwardedValues:

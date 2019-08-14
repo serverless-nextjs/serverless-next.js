@@ -105,8 +105,8 @@ const reqResMapper = (event, callback) => {
   };
   if (event.body) {
     req.push(event.body, event.isBase64Encoded ? "base64" : undefined);
-    req.push(null);
   }
+  req.push(null);
 
   function fixApiGatewayMultipleHeaders() {
     for (const key of Object.keys(response.multiValueHeaders)) {
