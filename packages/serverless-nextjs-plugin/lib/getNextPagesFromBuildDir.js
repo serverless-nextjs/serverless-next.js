@@ -36,7 +36,12 @@ const getBuildFiles = buildDir => {
 };
 
 module.exports = async (buildDir, options = {}) => {
-  const { pageConfig = {}, additionalExcludes = [], routes = [] } = options;
+  const {
+    pageConfig = {},
+    additionalExcludes = [],
+    routes = [],
+    hashLambdas = false
+  } = options;
 
   const buildFiles = await getBuildFiles(buildDir);
   const [buildDirRoot] = buildDir.split(path.sep);
@@ -69,6 +74,8 @@ module.exports = async (buildDir, options = {}) => {
         pageConfig["*"],
         pageConfig[nextPage.pageId]
       );
+
+      nextPage.hashLambdas = hashLambdas;
 
       return nextPage;
     });

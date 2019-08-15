@@ -2,13 +2,18 @@ const path = require("path");
 const merge = require("lodash.merge");
 const clone = require("lodash.clonedeep");
 const toPosix = require("../utils/pathToPosix");
+const hash = require("../utils/hash");
 const PluginBuildDir = require("./PluginBuildDir");
 
 class NextPage {
-  constructor(pagePath, { serverlessFunctionOverrides, routes } = {}) {
+  constructor(
+    pagePath,
+    { serverlessFunctionOverrides, routes, hashLambdas } = {}
+  ) {
     this.pagePath = pagePath;
     this.serverlessFunctionOverrides = serverlessFunctionOverrides;
     this.routes = routes;
+    this.hashLambdas = hashLambdas;
   }
 
   get pageOriginalPath() {
@@ -55,10 +60,16 @@ class NextPage {
       return "not-found";
     }
 
-    return this.pageId
+    let functionName = this.pageId
       .replace(new RegExp(path.posix.sep, "g"), "-")
       .replace(/^-/, "")
       .replace(/[^\w-]/g, "_");
+
+    if (this.hashLambdas) {
+      functionName = hash(functionName);
+    }
+
+    return functionName;
   }
 
   get pageRoute() {

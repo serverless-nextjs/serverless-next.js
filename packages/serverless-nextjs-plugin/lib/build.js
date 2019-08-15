@@ -19,10 +19,16 @@ module.exports = async function() {
   const pluginBuildDir = this.pluginBuildDir;
   const nextConfigDir = pluginBuildDir.nextConfigDir;
 
-  const [pageConfig, customHandler, routes] = this.getPluginConfigValues(
+  const [
+    pageConfig,
+    customHandler,
+    routes,
+    hashLambdas
+  ] = this.getPluginConfigValues(
     "pageConfig",
     "customHandler",
-    "routes"
+    "routes",
+    "hashLambdas"
   );
 
   logger.log("Started building next app ...");
@@ -56,6 +62,7 @@ module.exports = async function() {
   const nextPages = await getNextPagesFromBuildDir(pluginBuildDir.buildDir, {
     pageConfig,
     routes,
+    hashLambdas,
     additionalExcludes: customHandler
       ? [path.basename(customHandler)]
       : undefined
