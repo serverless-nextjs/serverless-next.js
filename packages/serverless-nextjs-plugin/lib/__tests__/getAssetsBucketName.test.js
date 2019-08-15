@@ -86,4 +86,18 @@ describe("getAssetsBucketName", () => {
 
     expect(result).toEqual(bucketName);
   });
+
+  it("returns stored staticAssetsBucket if offline and set", () => {
+    expect.assertions(1);
+
+    const staticAssetsBucket = "my-assets";
+    plugin = new ServerlessPluginBuilder().build();
+    plugin.offline = {
+      staticAssetsBucket
+    };
+
+    const result = getAssetsBucketName.call(plugin);
+
+    expect(result).toEqual(staticAssetsBucket);
+  });
 });
