@@ -9,7 +9,7 @@ describe.only("offline handlers", () => {
     mime.getType.mockImplementation(() => "application/test");
   });
 
-  ["_next", "_public", "_static"].forEach(handler => {
+  ["_next", "_static"].forEach(handler => {
     const handlerFunc = require(`../${handler}`);
     describe(handler, () => {
       it("should return 200 and contents for found file", async () => {

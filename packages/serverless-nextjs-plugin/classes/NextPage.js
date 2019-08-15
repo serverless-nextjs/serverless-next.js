@@ -72,8 +72,6 @@ class NextPage {
         return "/_next/{proxy+}";
       case "_static":
         return "/static/{proxy+}";
-      case "_public":
-        return "/public/{proxy+}";
       default:
         // handle pages at any subdir level
         // e.g. sls-next-build/post.js

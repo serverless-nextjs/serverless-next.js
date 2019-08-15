@@ -1,4 +1,5 @@
 const execSync = require("child_process").execSync;
+const fse = require("fs-extra");
 const path = require("path");
 const serverlessOfflineStart = require("../../packages/serverless-nextjs-plugin/utils/test/serverlessOfflineStart");
 const httpGet = require("../../packages/serverless-nextjs-plugin/utils/test/httpGet");
@@ -72,5 +73,36 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
         expect(response).toContain("404 error page");
       }
     );
+  });
+
+  it("should serve static file", () => {
+    expect.assertions(2);
+    return httpGet("http://localhost:3000/static/checkmark.svg").then(
+      ({ response, statusCode }) => {
+        expect(statusCode).toBe(200);
+        expect(response).toContain("svg");
+      }
+    );
+  });
+
+  it("should serve .next file", () => {
+    expect.assertions(2);
+
+    return fse
+      .readJSON(
+        path.resolve(
+          __dirname,
+          "../app-with-serverless-offline/.next/build-manifest.json"
+        )
+      )
+      .then(manifest => {
+        const file = manifest.pages["/"][0];
+
+        return httpGet(`http://localhost:3000/_next/${file}`);
+      })
+      .then(({ response, statusCode }) => {
+        expect(statusCode).toBe(200);
+        expect(response).toContain("function");
+      });
   });
 });

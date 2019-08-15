@@ -400,7 +400,6 @@ describe("NextPage", () => {
       src             | handler             | route                 | id
       ${"_next.js"}   | ${"_next.render"}   | ${`/_next/{proxy+}`}  | ${"_next"}
       ${"_static.js"} | ${"_static.render"} | ${`/static/{proxy+}`} | ${"_static"}
-      ${"_public.js"} | ${"_public.render"} | ${`/public/{proxy+}`} | ${"_public"}
     `("should generate correct page", ({ src, handler, route, id }) => {
       const srcPath = path.join(PluginBuildDir.BUILD_DIR_NAME, src);
       const page = new NextPage(srcPath);
