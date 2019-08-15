@@ -26,6 +26,16 @@ class ServerlessNextJsPlugin {
     this.printStackOutput = this.printStackOutput.bind(this);
     this.removePluginBuildDir = this.removePluginBuildDir.bind(this);
 
+    // If they're using serverless-offline, automagically wire it up
+    // to serve static assets correctly.
+    if (
+      // Can be null while running tests
+      serverless.service.plugins &&
+      serverless.service.plugins.includes("serverless-offline")
+    ) {
+      this.offline = { enabled: true };
+    }
+
     this.hooks = {
       "before:offline:start": this.build,
       "before:package:initialize": this.build,

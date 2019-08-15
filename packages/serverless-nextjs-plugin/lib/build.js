@@ -6,6 +6,7 @@ const logger = require("../utils/logger");
 const copyBuildFiles = require("./copyBuildFiles");
 const getNextPagesFromBuildDir = require("./getNextPagesFromBuildDir");
 const rewritePageHandlers = require("./rewritePageHandlers");
+const writeAssetLambdas = require("./writeAssetLambdas");
 
 const overrideTargetIfNotServerless = nextConfiguration => {
   const { target } = nextConfiguration;
@@ -36,9 +37,18 @@ module.exports = async function() {
     path.posix.join("!node_modules/next-aws-lambda", "**", "*.test.js")
   );
 
-  const { nextConfiguration } = await parseNextConfiguration(nextConfigDir);
+  const {
+    nextConfiguration,
+    staticAssetsBucket
+  } = await parseNextConfiguration(nextConfigDir);
 
   overrideTargetIfNotServerless(nextConfiguration);
+
+  if (this.offline && staticAssetsBucket) {
+    logger.log("Removing assetPrefix for Offline");
+    delete nextConfiguration.assetPrefix;
+    this.offline.staticAssetsBucket = staticAssetsBucket;
+  }
 
   await nextBuild(path.resolve(nextConfigDir), nextConfiguration);
   await copyBuildFiles(
@@ -68,6 +78,16 @@ module.exports = async function() {
     this.serverless.service.functions[functionName] =
       page.serverlessFunction[functionName];
   });
+
+  if (this.offline) {
+    logger.log("Adding static file handlers for Offline");
+    const offlinePages = await writeAssetLambdas.call(this);
+    offlinePages.forEach(page => {
+      const functionName = page.functionName;
+      this.serverless.service.functions[functionName] =
+        page.serverlessFunction[functionName];
+    });
+  }
 
   this.serverless.service.setFunctionNames();
 

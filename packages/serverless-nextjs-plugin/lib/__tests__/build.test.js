@@ -9,6 +9,7 @@ const parseNextConfiguration = require("../parseNextConfiguration");
 const rewritePageHandlers = require("../rewritePageHandlers");
 const PluginBuildDir = require("../../classes/PluginBuildDir");
 const getNextPagesFromBuildDir = require("../getNextPagesFromBuildDir");
+const writeAssetLambdas = require("../writeAssetLambdas");
 const NextPage = require("../../classes/NextPage");
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
 
@@ -18,6 +19,7 @@ jest.mock("../../utils/logger");
 jest.mock("../copyBuildFiles");
 jest.mock("../parseNextConfiguration");
 jest.mock("../getNextPagesFromBuildDir");
+jest.mock("../writeAssetLambdas");
 jest.mock("../rewritePageHandlers");
 
 describe("build", () => {
@@ -272,5 +274,47 @@ describe("build", () => {
       );
       expect(nextPages).toEqual(mockNextPages);
     });
+  });
+
+  it("removes assetPrefix and logs if offline set", async () => {
+    writeAssetLambdas.mockResolvedValue([]);
+
+    const parsedNextConfig = parsedNextConfigurationFactory();
+    parsedNextConfig.assetPrefix = "test";
+    parseNextConfiguration.mockResolvedValueOnce(parsedNextConfig);
+
+    const plugin = new ServerlessPluginBuilder()
+      .withService({
+        plugins: ["serverless-offline"]
+      })
+      .build();
+
+    await build.call(plugin);
+
+    expect(logger.log).toBeCalledWith("Removing assetPrefix for Offline");
+    expect(plugin.offline.staticAssetsBucket).toBe(
+      parsedNextConfig.staticAssetsBucket
+    );
+  });
+
+  it("copies offline handlers if offline set", async () => {
+    const testPage = new NextPage("sls-build-dir/_next.js");
+    writeAssetLambdas.mockResolvedValue([testPage]);
+
+    const parsedNextConfig = parsedNextConfigurationFactory();
+    parseNextConfiguration.mockResolvedValueOnce(parsedNextConfig);
+
+    const plugin = new ServerlessPluginBuilder()
+      .withService({
+        plugins: ["serverless-offline"]
+      })
+      .build();
+
+    await build.call(plugin);
+
+    expect(writeAssetLambdas).toBeCalled();
+    expect(plugin.serverless.service.functions[testPage.functionName]).toEqual(
+      testPage.serverlessFunction[testPage.functionName]
+    );
   });
 });

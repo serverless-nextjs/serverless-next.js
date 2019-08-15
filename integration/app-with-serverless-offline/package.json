@@ -6,7 +6,9 @@
   "scripts": {},
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "MIT",
-  "devDependencies": {},
+  "devDependencies": {
+    "serverless-nextjs-plugin": "file:../../packages/serverless-nextjs-plugin"
+  },
   "dependencies": {
     "next-aws-lambda": "file:../../packages/next-aws-lambda"
   }

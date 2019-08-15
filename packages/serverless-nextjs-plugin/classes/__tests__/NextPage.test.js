@@ -394,4 +394,22 @@ describe("NextPage", () => {
       expect(httpHeadTwo.path).toBe("/another/custom/path/to/foo");
     });
   });
+
+  describe("when is offline handler page", () => {
+    it.each`
+      src             | handler             | route                 | id
+      ${"_next.js"}   | ${"_next.render"}   | ${`/_next/{proxy+}`}  | ${"_next"}
+      ${"_static.js"} | ${"_static.render"} | ${`/static/{proxy+}`} | ${"_static"}
+      ${"_public.js"} | ${"_public.render"} | ${`/public/{proxy+}`} | ${"_public"}
+    `("should generate correct page", ({ src, handler, route, id }) => {
+      const srcPath = path.join(PluginBuildDir.BUILD_DIR_NAME, src);
+      const page = new NextPage(srcPath);
+
+      expect(page.pageHandler).toBe(
+        path.posix.join(PluginBuildDir.BUILD_DIR_NAME, handler)
+      );
+      expect(page.pageRoute).toBe(route);
+      expect(page.pageId).toBe(id);
+    });
+  });
 });

@@ -1,6 +1,10 @@
 const parseNextConfiguration = require("./parseNextConfiguration");
 
 module.exports = function() {
+  if (this.offline && this.offline.staticAssetsBucket) {
+    return this.offline.staticAssetsBucket;
+  }
+
   const nextConfigDir = this.getPluginConfigValue("nextConfigDir");
   const staticDir = this.getPluginConfigValue("staticDir");
 

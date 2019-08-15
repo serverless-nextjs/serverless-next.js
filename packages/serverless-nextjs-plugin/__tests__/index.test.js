@@ -33,6 +33,16 @@ describe("ServerlessNextJsPlugin", () => {
     });
   });
 
+  describe("#offlineIntegration", () => {
+    it("should special case offline plugin", () => {
+      const plugin = new ServerlessPluginBuilder()
+        .withService({ plugins: ["serverless-offline"] })
+        .build();
+
+      expect(plugin["offline"]).toEqual({ enabled: true });
+    });
+  });
+
   describe("#printStackOutput", () => {
     it("should call displayStackOutput with awsInfo", () => {
       const awsInfo = {
