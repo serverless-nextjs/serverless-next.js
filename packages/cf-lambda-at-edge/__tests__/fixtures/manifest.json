@@ -1,0 +1,33 @@
+{
+  "cloudFrontOrigins": {
+    "ssrApi": {
+      "domainName": "ssr-api.execute-api.us-east-1.amazonaws.com"
+    },
+    "staticOrigin": {
+      "domainName": "my-bucket.s3.amazonaws.com"
+    }
+  },
+  "pages": {
+    "ssr": {
+      "dynamic": {
+        "/:root": "pages/[root].js",
+        "/blog/:id": "pages/blog/[id].js",
+        "/customers/:customer": "pages/customers/[customer].js",
+        "/customers/:customer/:post": "pages/customers/[customer]/[post].js",
+        "/customers/:customer/profile": "pages/customers/[customer]/profile.js"
+      },
+      "nonDynamic": {
+        "/": "pages/index.js",
+        "/customers": "pages/customers.js",
+        "/customers/new": "pages/customers/new.js"
+      }
+    },
+    "static": {
+      "/terms": "pages/terms.html"
+    }
+  },
+  "publicFiles": {
+    "/favicon.ico": "favicon.ico",
+    "/manifest.json": "manifest.json"
+  }
+}
