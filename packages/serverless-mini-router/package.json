@@ -1,0 +1,15 @@
+{
+  "name": "serverless-mini-router",
+  "version": "1.0.0",
+  "description": "Lightweight router for serverless next apps",
+  "main": "router.js",
+  "dependencies": {},
+  "devDependencies": {
+    "jest": "^24.8.0"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "author": "Daniel Conde <danielconde9@gmail.com>",
+  "license": "MIT"
+}
