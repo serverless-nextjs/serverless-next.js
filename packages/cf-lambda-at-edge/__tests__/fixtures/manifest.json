@@ -36,7 +36,7 @@
         "/customers/new": "pages/customers/new.js"
       }
     },
-    "static": {
+    "html": {
       "/terms": "pages/terms.html"
     }
   },

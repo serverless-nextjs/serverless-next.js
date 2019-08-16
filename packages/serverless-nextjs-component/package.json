@@ -23,6 +23,7 @@
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
   "dependencies": {
     "@serverless/core": "^1.0.0",
+    "fs-extra": "^8.1.0",
     "path-to-regexp": "^3.0.0"
   },
   "devDependencies": {

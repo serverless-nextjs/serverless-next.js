@@ -1,11 +1,20 @@
+const nextBuild = require("next/dist/build").default;
 const pathToRegexp = require("path-to-regexp");
+const fse = require("fs-extra");
+const path = require("path");
 
 const isDynamicRoute = route => {
   // Identify /[param]/ in route string
   return /\/\[[^\/]+?\](?=\/|$)/.test(route);
 };
 
-module.exports = pagesManifest => {
+module.exports = async () => {
+  await nextBuild(path.resolve("./"));
+
+  const pagesManifest = await fse.readJSON(
+    "./.next/serverless/pages/pages-manifest.json"
+  );
+
   const newManifest = {
     pages: {
       ssr: {
@@ -13,7 +22,8 @@ module.exports = pagesManifest => {
         nonDynamic: {}
       },
       html: {}
-    }
+    },
+    publicFiles: {}
   };
   const ssr = newManifest.pages.ssr;
   const allRoutes = Object.keys(pagesManifest);
@@ -32,6 +42,12 @@ module.exports = pagesManifest => {
     } else {
       ssr.nonDynamic[r] = pagesManifest[r];
     }
+  });
+
+  const publicFiles = await fse.readdir("./public");
+
+  publicFiles.forEach(pf => {
+    newManifest.publicFiles["/" + pf] = pf;
   });
 
   return newManifest;
