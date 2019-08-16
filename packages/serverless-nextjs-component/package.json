@@ -1,0 +1,31 @@
+{
+  "name": "serverless-nextjs-component",
+  "version": "1.0.0",
+  "description": "Serverless nextjs powered by Serverless Components",
+  "main": "serverless.js",
+  "scripts": {
+    "test": "jest"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+  },
+  "keywords": [
+    "serverless",
+    "component",
+    "nextjs"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "dependencies": {
+    "@serverless/core": "^1.0.0",
+    "path-to-regexp": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0"
+  }
+}
