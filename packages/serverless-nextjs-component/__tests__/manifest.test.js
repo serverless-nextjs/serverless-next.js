@@ -1,18 +1,42 @@
 const nextBuild = require("next/dist/build").default;
 const path = require("path");
-const build = require("../build");
+const fse = require("fs-extra");
+const NextjsComponent = require("../serverless");
 
 jest.mock("next/dist/build");
 
+const mockApiGatewayComponent = jest.fn();
+jest.mock("@serverless/aws-api-gateway", () =>
+  jest.fn(() => {
+    const apig = mockApiGatewayComponent;
+    apig.init = () => {};
+    apig.default = () => {};
+    apig.context = {};
+    return apig;
+  })
+);
+
 describe("manifest tests", () => {
   let tmpCwd;
+  let manifest;
+
   const fixturePath = path.join(__dirname, "./fixtures/manifest");
 
-  beforeAll(() => {
+  beforeAll(async () => {
     nextBuild.mockResolvedValueOnce();
 
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
+
+    const component = new NextjsComponent();
+    mockApiGatewayComponent.mockResolvedValueOnce({
+      url: "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/prod"
+    });
+    await component.default();
+
+    manifest = await fse.readJSON(
+      path.join(fixturePath, "serverless-nextjs-tmp/manifest.json")
+    );
   });
 
   afterAll(() => {
@@ -24,7 +48,7 @@ describe("manifest tests", () => {
       pages: {
         ssr: { nonDynamic }
       }
-    } = await build();
+    } = manifest;
 
     expect(nonDynamic["/customers/new"]).toEqual("pages/customers/new.js");
   });
@@ -34,7 +58,7 @@ describe("manifest tests", () => {
       pages: {
         ssr: { dynamic }
       }
-    } = await build();
+    } = manifest;
 
     expect(dynamic["/blog/:id"]).toEqual({
       file: "pages/blog/[id].js",
@@ -47,7 +71,7 @@ describe("manifest tests", () => {
       pages: {
         ssr: { dynamic }
       }
-    } = await build();
+    } = manifest;
 
     expect(dynamic["/customers/:customer/:post"]).toEqual({
       file: "pages/customers/[customer]/[post].js",
@@ -58,13 +82,13 @@ describe("manifest tests", () => {
   it("adds static page route", async () => {
     const {
       pages: { html }
-    } = await build();
+    } = manifest;
 
     expect(html["/terms"]).toEqual("pages/terms.html");
   });
 
   it("adds public files", async () => {
-    const { publicFiles } = await build();
+    const { publicFiles } = manifest;
 
     expect(publicFiles).toEqual({
       "/favicon.ico": "favicon.ico",
@@ -78,7 +102,7 @@ describe("manifest tests", () => {
         ssr: { dynamic, nonDynamic },
         html
       }
-    } = await build();
+    } = manifest;
 
     expect(dynamic).toEqual({
       "/:root": {
@@ -113,6 +137,16 @@ describe("manifest tests", () => {
 
     expect(html).toEqual({
       "/terms": "pages/terms.html"
+    });
+  });
+
+  it("adds ssr api domain", () => {
+    const {
+      cloudFrontOrigins: { ssrApi }
+    } = manifest;
+
+    expect(ssrApi).toEqual({
+      domainName: "ssr-api-xyz.execute-api.us-east-1.amazonaws.com"
     });
   });
 });
