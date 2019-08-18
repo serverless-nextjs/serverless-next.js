@@ -52,17 +52,18 @@ class NextjsComponent extends Component {
     );
   }
 
-  copyNodeModules() {
-    return Promise.all([
-      fse.copy(
-        path.join(__dirname, "node_modules/serverless-mini-router"),
-        "./serverless-nextjs-tmp/node_modules/serverless-mini-router"
-      ),
-      fse.copy(
-        path.join(__dirname, "node_modules/next-aws-lambda"),
-        "./serverless-nextjs-tmp/node_modules/next-aws-lambda"
-      )
-    ]);
+  copyCompatLayer() {
+    return fse.copy(
+      path.join(__dirname, "node_modules/next-aws-lambda"),
+      "./serverless-nextjs-tmp/node_modules/next-aws-lambda"
+    );
+  }
+
+  copyRouter() {
+    return fse.copy(
+      path.join(__dirname, "router.js"),
+      "./serverless-nextjs-tmp/router.js"
+    );
   }
 
   async build() {
@@ -112,7 +113,8 @@ class NextjsComponent extends Component {
       this.writeBuildManifest(buildManifest),
       this.copyPagesDirectory(),
       this.copySsrLambdaHandler(),
-      this.copyNodeModules()
+      this.copyCompatLayer(),
+      this.copyRouter()
     ]);
   }
 }

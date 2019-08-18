@@ -181,15 +181,20 @@ describe("build tests", () => {
       expect(buildDirRoot).toContain("index.js");
     });
 
+    it("copies router to build folder", async () => {
+      const buildDirRoot = await fse.readdir(
+        path.join(fixturePath, `${BUILD_DIR}`)
+      );
+
+      expect(buildDirRoot).toContain("router.js");
+    });
+
     it("copies compat layer to node_modules", async () => {
       const nodeModules = await fse.readdir(
         path.join(fixturePath, `${BUILD_DIR}/node_modules`)
       );
 
-      expect(nodeModules).toEqual([
-        "next-aws-lambda",
-        "serverless-mini-router"
-      ]);
+      expect(nodeModules).toEqual(["next-aws-lambda"]);
     });
   });
 });

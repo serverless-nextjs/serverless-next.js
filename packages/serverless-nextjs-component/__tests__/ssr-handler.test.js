@@ -1,9 +1,9 @@
-const router = require("serverless-mini-router");
+const router = require("../router");
 const compatLayer = require("next-aws-lambda");
 
 const ssrHandler = require("../ssr-handler");
 
-jest.mock("serverless-mini-router");
+jest.mock("../router");
 jest.mock("next-aws-lambda");
 
 describe("ssr handler tests", () => {

@@ -1,4 +1,4 @@
-const router = require("serverless-mini-router");
+const router = require("./router");
 const compatLayer = require("next-aws-lambda");
 
 module.exports = async (event, _context, callback) => {
