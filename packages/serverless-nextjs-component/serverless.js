@@ -41,6 +41,10 @@ class NextjsComponent extends Component {
     };
   }
 
+  async copyPagesDirectory() {
+    return fse.copy(".next/serverless/pages", "./serverless-nextjs-tmp/pages");
+  }
+
   async build() {
     await nextBuild(path.resolve("./"));
 
@@ -70,36 +74,22 @@ class NextjsComponent extends Component {
       buildManifest.publicFiles["/" + pf] = pf;
     });
 
-    const apig = await this.load("@serverless/aws-api-gateway");
-    const lambda = await this.load("@serverless/aws-lambda");
+    const backend = await this.load("@serverless/backend");
 
-    const lambdaOutputs = await lambda({});
-
-    const apigOutputs = await apig({
-      name: "serverless-nextjs-ssr-api",
-      stage: "production",
-      description: "SSR Api for nextjs serverless pages",
-      region: "us-east-1",
-      endpoints: [
-        {
-          path: "/",
-          method: "any",
-          function: lambdaOutputs.arn
-        },
-        {
-          path: "/{proxy+}",
-          method: "any",
-          function: lambdaOutputs.arn
-        }
-      ]
+    const backendOutputs = await backend({
+      code: {
+        src: "./serverless-nextjs-tmp"
+      }
     });
 
     buildManifest.cloudFrontOrigins.ssrApi = {
-      domainName: url.parse(apigOutputs.url).host
+      domainName: url.parse(backendOutputs.url).host
     };
 
     await fse.emptyDir("./serverless-nextjs-tmp");
+
     await this.writeBuildManifest(buildManifest);
+    await this.copyPagesDirectory();
   }
 }
 
