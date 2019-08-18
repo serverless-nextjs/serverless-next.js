@@ -26,7 +26,7 @@
     "@serverless/backend": "^3.3.0",
     "@serverless/core": "^1.0.0",
     "fs-extra": "^8.1.0",
-    "next-aws-lambda": "file:../next-aws-lambda",
+    "next-aws-lambda": "^2.3.2",
     "path-to-regexp": "^3.0.0",
     "serverless-mini-router": "file:../serverless-mini-router"
   },

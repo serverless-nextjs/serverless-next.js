@@ -17,7 +17,7 @@ class NextjsComponent extends Component {
   }
 
   readPagesManifest() {
-    return fse.readJSON("./.next/serverless/pages/pages-manifest.json");
+    return fse.readJSON("./.next/serverless/pages-manifest.json");
   }
 
   writeBuildManifest(newManifest) {
@@ -95,27 +95,28 @@ class NextjsComponent extends Component {
       buildManifest.publicFiles["/" + pf] = pf;
     });
 
-    const backend = await this.load("@serverless/backend");
-
-    const backendOutputs = await backend({
-      code: {
-        src: "./serverless-nextjs-tmp"
-      }
-    });
-
-    buildManifest.cloudFrontOrigins.ssrApi = {
-      domainName: url.parse(backendOutputs.url).host
-    };
-
     await fse.emptyDir("./serverless-nextjs-tmp");
 
-    return Promise.all([
+    await Promise.all([
       this.writeBuildManifest(buildManifest),
       this.copyPagesDirectory(),
       this.copySsrLambdaHandler(),
       this.copyCompatLayer(),
       this.copyRouter()
     ]);
+
+    const backend = await this.load("@serverless/backend");
+
+    return backend({
+      code: {
+        src: "./serverless-nextjs-tmp"
+      }
+    });
+  }
+
+  async remove() {
+    const backend = await this.load("@serverless/backend");
+    return backend.remove();
   }
 }
 
