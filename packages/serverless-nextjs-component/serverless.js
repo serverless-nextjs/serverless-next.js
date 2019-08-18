@@ -41,8 +41,28 @@ class NextjsComponent extends Component {
     };
   }
 
-  async copyPagesDirectory() {
+  copyPagesDirectory() {
     return fse.copy(".next/serverless/pages", "./serverless-nextjs-tmp/pages");
+  }
+
+  copySsrLambdaHandler() {
+    return fse.copy(
+      path.join(__dirname, "ssr-handler.js"),
+      "./serverless-nextjs-tmp/index.js"
+    );
+  }
+
+  copyNodeModules() {
+    return Promise.all([
+      fse.copy(
+        path.join(__dirname, "node_modules/serverless-mini-router"),
+        "./serverless-nextjs-tmp/node_modules/serverless-mini-router"
+      ),
+      fse.copy(
+        path.join(__dirname, "node_modules/next-aws-lambda"),
+        "./serverless-nextjs-tmp/node_modules/next-aws-lambda"
+      )
+    ]);
   }
 
   async build() {
@@ -88,8 +108,12 @@ class NextjsComponent extends Component {
 
     await fse.emptyDir("./serverless-nextjs-tmp");
 
-    await this.writeBuildManifest(buildManifest);
-    await this.copyPagesDirectory();
+    return Promise.all([
+      this.writeBuildManifest(buildManifest),
+      this.copyPagesDirectory(),
+      this.copySsrLambdaHandler(),
+      this.copyNodeModules()
+    ]);
   }
 }
 

@@ -16,6 +16,8 @@ jest.mock("@serverless/backend", () =>
   })
 );
 
+const BUILD_DIR = "serverless-nextjs-tmp";
+
 describe("build tests", () => {
   let tmpCwd;
   let manifest;
@@ -35,7 +37,7 @@ describe("build tests", () => {
     await component.default();
 
     manifest = await fse.readJSON(
-      path.join(fixturePath, "serverless-nextjs-tmp/manifest.json")
+      path.join(fixturePath, `${BUILD_DIR}/manifest.json`)
     );
   });
 
@@ -148,7 +150,7 @@ describe("build tests", () => {
 
       expect(mockBackend).toBeCalledWith({
         code: {
-          src: "./serverless-nextjs-tmp"
+          src: `./${BUILD_DIR}`
         }
       });
 
@@ -158,19 +160,36 @@ describe("build tests", () => {
     });
   });
 
-  it("copies nextjs pages to build folder", async () => {
-    const pagesRootFiles = await fse.readdir(
-      path.join(fixturePath, "serverless-nextjs-tmp/pages")
-    );
-    const pagesCustomersFiles = await fse.readdir(
-      path.join(fixturePath, "serverless-nextjs-tmp/pages/customers")
-    );
+  describe("build files", () => {
+    it("copies nextjs pages to build folder", async () => {
+      const pagesRootFiles = await fse.readdir(
+        path.join(fixturePath, `${BUILD_DIR}/pages`)
+      );
+      const pagesCustomersFiles = await fse.readdir(
+        path.join(fixturePath, `${BUILD_DIR}/pages/customers`)
+      );
 
-    expect(pagesRootFiles).toEqual([
-      "blog.js",
-      "customers",
-      "pages-manifest.json"
-    ]);
-    expect(pagesCustomersFiles).toEqual(["[post].js"]);
+      expect(pagesRootFiles).toContain("blog.js");
+      expect(pagesCustomersFiles).toEqual(["[post].js"]);
+    });
+
+    it("copies lambda handler to build folder", async () => {
+      const buildDirRoot = await fse.readdir(
+        path.join(fixturePath, `${BUILD_DIR}`)
+      );
+
+      expect(buildDirRoot).toContain("index.js");
+    });
+
+    it("copies compat layer to node_modules", async () => {
+      const nodeModules = await fse.readdir(
+        path.join(fixturePath, `${BUILD_DIR}/node_modules`)
+      );
+
+      expect(nodeModules).toEqual([
+        "next-aws-lambda",
+        "serverless-mini-router"
+      ]);
+    });
   });
 });
