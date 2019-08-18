@@ -71,8 +71,29 @@ class NextjsComponent extends Component {
     });
 
     const apig = await this.load("@serverless/aws-api-gateway");
+    const lambda = await this.load("@serverless/aws-lambda");
 
-    const apigOutputs = await apig({});
+    const lambdaOutputs = await lambda({});
+
+    const apigOutputs = await apig({
+      name: "serverless-nextjs-ssr-api",
+      stage: "production",
+      description: "SSR Api for nextjs serverless pages",
+      region: "us-east-1",
+      endpoints: [
+        {
+          path: "/",
+          method: "any",
+          function: lambdaOutputs.arn
+        },
+        {
+          path: "/{proxy+}",
+          method: "any",
+          function: lambdaOutputs.arn
+        }
+      ]
+    });
+
     buildManifest.cloudFrontOrigins.ssrApi = {
       domainName: url.parse(apigOutputs.url).host
     };

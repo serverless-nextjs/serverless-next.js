@@ -16,19 +16,33 @@ jest.mock("@serverless/aws-api-gateway", () =>
   })
 );
 
+const mockLambdaComponent = jest.fn();
+jest.mock("@serverless/aws-lambda", () =>
+  jest.fn(() => {
+    const lambda = mockLambdaComponent;
+    lambda.init = () => {};
+    lambda.default = () => {};
+    lambda.context = {};
+    return lambda;
+  })
+);
+
 describe("manifest tests", () => {
   let tmpCwd;
   let manifest;
 
   const fixturePath = path.join(__dirname, "./fixtures/manifest");
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     nextBuild.mockResolvedValueOnce();
 
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
 
     const component = new NextjsComponent();
+    mockLambdaComponent.mockResolvedValueOnce({
+      arn: "arn:aws:lambda:aws-region:acct-id:function:helloworld:$LATEST"
+    });
     mockApiGatewayComponent.mockResolvedValueOnce({
       url: "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/prod"
     });
@@ -39,7 +53,7 @@ describe("manifest tests", () => {
     );
   });
 
-  afterAll(() => {
+  afterEach(() => {
     process.chdir(tmpCwd);
   });
 
@@ -140,11 +154,45 @@ describe("manifest tests", () => {
     });
   });
 
-  it("adds ssr api domain", () => {
+  it.skip("adds ssr api domain", () => {
     const {
       cloudFrontOrigins: { ssrApi }
     } = manifest;
 
+    expect(mockLambdaComponent).toBeCalledWith({
+      name: "serverless-nextjs-ssr-backend",
+      description: "Backend lambda to render SSR pages",
+      memory: 896,
+      timeout: 10,
+      runtime: "nodejs8.10",
+      code: "./serverless-nextjs-tmp",
+      role: roleOutputs,
+      handler: "shim.handler",
+      shims: [path.join(__dirname, "shim.js")],
+      env: inputs.env || {},
+      bucket: bucketOutputs.name,
+      region: inputs.region
+    });
+    expect(mockApiGatewayComponent).toBeCalledWith({
+      name: "serverless-nextjs-ssr-api",
+      stage: "production",
+      description: "SSR Api for nextjs serverless pages",
+      region: "us-east-1",
+      endpoints: [
+        {
+          path: "/",
+          method: "any",
+          function:
+            "arn:aws:lambda:aws-region:acct-id:function:helloworld:$LATEST"
+        },
+        {
+          path: "/{proxy+}",
+          method: "any",
+          function:
+            "arn:aws:lambda:aws-region:acct-id:function:helloworld:$LATEST"
+        }
+      ]
+    });
     expect(ssrApi).toEqual({
       domainName: "ssr-api-xyz.execute-api.us-east-1.amazonaws.com"
     });
