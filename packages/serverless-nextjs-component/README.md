@@ -5,6 +5,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 ## Contents
 
 - [Motivation](#motivation)
+- [Design principles](#design-principles)
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
@@ -15,6 +16,20 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 ### Motivation
 
 Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
+
+### Design principles
+
+1. Zero configuration by default
+
+There is no configuration needed. You can extend defaults based on your application needs.
+
+2. Feature parity with nextjs
+
+Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's feature we know and love.
+
+3. Fast deployments / no CloudFormation resource limits.
+
+With a simplified architecture and no use of CloudFormation, there are no limits to how many pages you can have in your application, plus deployment times are very fast! with the exception of CloudFront propagation times of course.
 
 ### Features
 
