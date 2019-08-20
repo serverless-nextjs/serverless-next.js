@@ -15,7 +15,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
-- [Fast SSR with Lambda@Edge](#Fast-SSR-with-Lambda@Edge)
+- [Fast SSR with Lambda@Edge](#Fast-SSR-with-Lambda%40Edge)
 - [Deploying the SSR API onto your existing API Gateway](#deploying)
 - [Architecture](#architecture)
 
@@ -39,11 +39,15 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Features
 
-- [x] [Server side rendered pages](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle). Pages that need server side compute to render are hosted on AWS Lambda. The component takes care of all the routing for you so there is no configuration needed. If you want blazing fast response times check out the [lambda@edge](#Fast-SSR-with-Lambda@Edge) section below.
+- [x] [Server side rendered pages](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
+      Pages that need server side compute to render are hosted on AWS Lambda. The component takes care of all the routing for you so there is no configuration needed. If you want blazing fast response times check out the [lambda@edge](#Fast-SSR-with-Lambda@Edge) section below.
 - [x] [Dynamic pages / route segments](https://github.com/zeit/next.js/#dynamic-routing).
-- [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering). Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
-- [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix). Nextjs build assets `/_next/*` served from CloudFront.
-- [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images). Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
+- [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
+      Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
+- [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
+      Nextjs build assets `/_next/*` served from CloudFront.
+- [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
+      Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
 
 ### Getting started
 
@@ -89,8 +93,8 @@ myNextApplication:
   inputs:
     domain: myfrontend.example.com
     pages:
-	 - home:
-	   edge: true
+      tickets/sell:
+        edge: true
 ```
 
 ### Deploying the SSR API onto your existing API Gateway
