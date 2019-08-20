@@ -15,7 +15,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
-- [Fast SSR with Lambda@Edge](#Fast-SSR-with-Lambda%40Edge)
+- [Fast SSR with Lambda@Edge](#fast-ssr-with-lambdaedge)
 - [Deploying the SSR API onto your existing API Gateway](#deploying)
 - [Architecture](#architecture)
 
