@@ -81,7 +81,7 @@ myNextApplication:
 
 ### Fast SSR with Lambda@Edge
 
-If you have high demand server side rendered pages, you can opt-in to render them at the CloudFront edge locations. This will result in very lowest latency times by saving 2 hops and serving the user request from a close location to them. Due to current limitations in Lambda@Edge it is recommended that you turn this on a page per page basis and make sure you are not hitting any [limits](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-lambda-at-edge). Note the component uses the `origin request` event.
+If you have high demand server side rendered pages, you can opt-in to render them at the CloudFront edge locations. This will result in very low latency times by saving 2 hops and serving the user request from a close location to them. Due to current limitations in Lambda@Edge it is recommended that you turn this on a page per page basis and make sure you are not hitting any [limits](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-lambda-at-edge). Note the component uses the `origin request` event.
 
 Enable this functionality by setting the `edge` property for your page(s):
 
