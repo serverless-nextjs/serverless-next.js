@@ -1,13 +1,18 @@
 module.exports = manifest => {
   const {
     pages: {
-      ssr: { dynamic, nonDynamic }
+      ssr: { dynamic, nonDynamic },
+      html
     }
   } = manifest;
 
   return path => {
     if (nonDynamic[path]) {
       return nonDynamic[path];
+    }
+
+    if (html[path]) {
+      return html[path];
     }
 
     for (route in dynamic) {

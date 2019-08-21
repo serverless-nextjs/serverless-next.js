@@ -1,4 +1,5 @@
 const compatLayer = require("next-aws-lambda");
+const fs = require("fs");
 const ssrHandler = require("../ssr-handler");
 
 jest.mock("next-aws-lambda");
@@ -45,4 +46,30 @@ describe("ssr handler tests", () => {
       expect(render).toBeCalledWith(event, context, callback);
     }
   );
+
+  describe("static pages", () => {
+    it("renders static HTML page", done => {
+      mockPageRequire("pages/terms.html");
+
+      const readFileSpy = jest
+        .spyOn(fs, "readFile")
+        .mockImplementation((path, enc, cb) => cb(null, "<html>TERMS</html>"));
+
+      const event = { path: "/terms" };
+      const context = {};
+      const callback = jest.fn(() => done());
+
+      ssrHandler(event, context, callback);
+
+      expect(callback).toBeCalledWith(null, {
+        statusCode: 200,
+        headers: {
+          "Content-Type": "text/html"
+        },
+        body: "<html>TERMS</html>"
+      });
+
+      readFileSpy.mockRestore();
+    });
+  });
 });
