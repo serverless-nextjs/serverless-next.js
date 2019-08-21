@@ -11,6 +11,7 @@ const PluginBuildDir = require("../../classes/PluginBuildDir");
 const getNextPagesFromBuildDir = require("../getNextPagesFromBuildDir");
 const NextPage = require("../../classes/NextPage");
 const ServerlessPluginBuilder = require("../../utils/test/ServerlessPluginBuilder");
+const findup = require("findup-sync");
 
 jest.mock("fs-extra");
 jest.mock("next/dist/build");
@@ -83,8 +84,11 @@ describe("build", () => {
 
   it("includes next-aws-lambda in node_modules/", () => {
     expect.assertions(1);
-
     const nextConfigDir = "path/to/next-app";
+    const nodeModulesRelativeFolder = path.relative(
+      nextConfigDir,
+      findup("node_modules")
+    );
 
     const parsedNextConfig = parsedNextConfigurationFactory();
     parseNextConfiguration.mockResolvedValueOnce(parsedNextConfig);
@@ -96,8 +100,9 @@ describe("build", () => {
     return build.call(plugin).then(() => {
       expect(plugin.serverless.service.package.include).toEqual(
         expect.arrayContaining([
-          "node_modules/next-aws-lambda/**/*.js",
-          "!node_modules/next-aws-lambda/**/*.test.js"
+          "path/to/next-app/sls-next-build/**",
+          `${nodeModulesRelativeFolder}/next-aws-lambda/**/*.js`,
+          `!${nodeModulesRelativeFolder}/next-aws-lambda/**/*.test.js`
         ])
       );
     });
