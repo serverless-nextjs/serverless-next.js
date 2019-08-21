@@ -26,6 +26,7 @@ describe("ssr handler tests", () => {
     ${"/customers/new"}                     | ${"pages/customers/new.js"}
     ${"/blog/123"}                          | ${"pages/blog/[id].js"}
     ${"/customers/batman/howtoactlikeabat"} | ${"pages/customers/[customer]/[post].js"}
+    ${"/route/does/not/exist"}              | ${"pages/_error.js"}
   `(
     'renders path "$inputUrlPath" using page "$expectedPage"',
     ({ inputUrlPath, expectedPage }) => {

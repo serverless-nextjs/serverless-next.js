@@ -3,9 +3,6 @@
   "version": "1.0.0",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "serverless.js",
-  "scripts": {
-    "test": "jest"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
