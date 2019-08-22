@@ -6,7 +6,6 @@ const logger = require("../utils/logger");
 const copyBuildFiles = require("./copyBuildFiles");
 const getNextPagesFromBuildDir = require("./getNextPagesFromBuildDir");
 const rewritePageHandlers = require("./rewritePageHandlers");
-const findup = require("findup-sync");
 
 const overrideTargetIfNotServerless = nextConfiguration => {
   const { target } = nextConfiguration;
@@ -29,16 +28,15 @@ module.exports = async function() {
   logger.log("Started building next app ...");
 
   const servicePackage = this.serverless.service.package;
-  const nodeModulesPath = path.relative(nextConfigDir, findup("node_modules"));
+  const nextAwsLambdaPath = path.relative(
+    nextConfigDir,
+    path.dirname(require.resolve("next-aws-lambda"))
+  );
   servicePackage.include = servicePackage.include || [];
   servicePackage.include.push(
     path.posix.join(pluginBuildDir.posixBuildDir, "**"),
-    path.posix.join(`${nodeModulesPath}/next-aws-lambda`, "**", "*.js"),
-    `!${path.posix.join(
-      `${nodeModulesPath}/next-aws-lambda`,
-      "**",
-      "*.test.js"
-    )}`
+    path.posix.join(nextAwsLambdaPath, "**", "*.js"),
+    `!${path.posix.join(nextAwsLambdaPath, "**", "*.test.js")}`
   );
 
   const { nextConfiguration } = await parseNextConfiguration(nextConfigDir);
