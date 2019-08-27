@@ -16,6 +16,19 @@ jest.mock("@serverless/backend", () =>
   })
 );
 
+const mockS3Upload = jest.fn();
+const mockS3 = jest.fn();
+jest.mock("@serverless/aws-s3", () =>
+  jest.fn(() => {
+    const bucket = mockS3;
+    bucket.init = () => {};
+    bucket.default = () => {};
+    bucket.context = {};
+    bucket.upload = mockS3Upload;
+    return bucket;
+  })
+);
+
 const BUILD_DIR = "serverless-nextjs-tmp";
 
 describe("build tests", () => {
@@ -196,6 +209,26 @@ describe("build tests", () => {
       );
 
       expect(nodeModules).toEqual(["next-aws-lambda"]);
+    });
+  });
+
+  describe("assets bucket", () => {
+    it("uploads client build assets", () => {
+      expect(mockS3Upload).toBeCalledWith({
+        dir: "./.next/static"
+      });
+    });
+
+    it("uploads user static directory", () => {
+      expect(mockS3Upload).toBeCalledWith({
+        dir: "./static"
+      });
+    });
+
+    it("uploads user public directory", () => {
+      expect(mockS3Upload).toBeCalledWith({
+        dir: "./public"
+      });
     });
   });
 });

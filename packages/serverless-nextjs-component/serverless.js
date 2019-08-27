@@ -105,6 +105,23 @@ class NextjsComponent extends Component {
     ]);
 
     const backend = await this.load("@serverless/backend");
+    const bucket = await this.load("@serverless/aws-s3");
+
+    await bucket({
+      accelerated: true
+    });
+
+    await Promise.all([
+      bucket.upload({
+        dir: "./.next/static"
+      }),
+      bucket.upload({
+        dir: "./static"
+      }),
+      bucket.upload({
+        dir: "./public"
+      })
+    ]);
 
     return backend({
       code: {
