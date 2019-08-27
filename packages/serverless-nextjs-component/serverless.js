@@ -132,7 +132,9 @@ class NextjsComponent extends Component {
 
   async remove() {
     const backend = await this.load("@serverless/backend");
-    return backend.remove();
+    const bucket = await this.load("@serverless/aws-s3");
+
+    return Promise.all([backend.remove(), bucket.remove()]);
   }
 }
 
