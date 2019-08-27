@@ -2,7 +2,6 @@ const { Component } = require("@serverless/core");
 const nextBuild = require("next/dist/build").default;
 const fse = require("fs-extra");
 const path = require("path");
-const url = require("url");
 const isDynamicRoute = require("./lib/isDynamicRoute");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");

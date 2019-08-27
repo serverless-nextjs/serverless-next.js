@@ -1,1 +1,2 @@
 serverless-nextjs-tmp
+!__tests__/fixtures/simple-app/.next

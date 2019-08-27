@@ -56,6 +56,7 @@
     "coveragePathIgnorePatterns": [
       "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
       "<rootDir>/packages/serverless-nextjs-plugin/utils/test",
+      "/serverless-nextjs-tmp/",
       "/fixtures/"
     ],
     "testPathIgnorePatterns": [
