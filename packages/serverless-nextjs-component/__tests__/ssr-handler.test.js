@@ -31,24 +31,34 @@ describe("ssr handler tests", () => {
   `(
     'renders path "$inputUrlPath" using page "$expectedPage"',
     ({ inputUrlPath, expectedPage }) => {
-      const render = jest.fn();
+      expect.assertions(3);
+
+      const render = jest.fn().mockReturnValue(
+        Promise.resolve({
+          statusCode: 200
+        })
+      );
 
       mockPageRequire(expectedPage);
       compatLayer.mockReturnValue(render);
 
       const event = { path: inputUrlPath };
       const context = {};
-      const callback = () => {};
 
-      ssrHandler(event, context, callback);
-
-      expect(compatLayer).toBeCalledWith({ page: expectedPage });
-      expect(render).toBeCalledWith(event, context, callback);
+      return ssrHandler(event, context).then(response => {
+        expect(compatLayer).toBeCalledWith({ page: expectedPage });
+        expect(render).toBeCalledWith(event, context);
+        expect(response).toEqual({
+          statusCode: 200
+        });
+      });
     }
   );
 
   describe("static pages", () => {
-    it("renders static HTML page", done => {
+    it("renders static HTML page", () => {
+      expect.assertions(1);
+
       mockPageRequire("pages/terms.html");
 
       const readFileSpy = jest
@@ -57,19 +67,18 @@ describe("ssr handler tests", () => {
 
       const event = { path: "/terms" };
       const context = {};
-      const callback = jest.fn(() => done());
 
-      ssrHandler(event, context, callback);
+      return ssrHandler(event, context).then(response => {
+        expect(response).toEqual({
+          statusCode: 200,
+          headers: {
+            "Content-Type": "text/html"
+          },
+          body: "<html>TERMS</html>"
+        });
 
-      expect(callback).toBeCalledWith(null, {
-        statusCode: 200,
-        headers: {
-          "Content-Type": "text/html"
-        },
-        body: "<html>TERMS</html>"
+        readFileSpy.mockRestore();
       });
-
-      readFileSpy.mockRestore();
     });
   });
 });
