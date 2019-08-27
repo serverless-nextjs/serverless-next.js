@@ -30,9 +30,7 @@ describe("next-aws-lambda", () => {
     expect(mockRender).toBeCalledWith(req, res);
     expect(mockDefault).not.toBeCalled();
   });
-});
 
-describe("next-aws-lambda", () => {
   it("passes request and response to next api", () => {
     const event = { foo: "bar" };
     const callback = () => {};
@@ -55,5 +53,27 @@ describe("next-aws-lambda", () => {
     compat(page)(event, context, callback);
 
     expect(mockDefault).toBeCalledWith(req, res);
+  });
+
+  it("supports async signature", () => {
+    expect.assertions(1);
+
+    const event = { foo: "bar" };
+    const context = {};
+    const page = {
+      render: () => {}
+    };
+    const response = {
+      statusCode: 200
+    };
+    compatLayer.mockReturnValue({
+      responsePromise: Promise.resolve(response)
+    });
+
+    const responsePromise = compat(page)(event, context);
+
+    return responsePromise.then(result => {
+      expect(result).toEqual(response);
+    });
   });
 });
