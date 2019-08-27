@@ -9,6 +9,7 @@ const reqResMapper = (event, callback) => {
     statusCode: 200,
     multiValueHeaders: {}
   };
+  let responsePromise;
 
   const req = new Stream.Readable();
   req.url = (event.requestContext.path || event.path || "").replace(
@@ -93,7 +94,8 @@ const reqResMapper = (event, callback) => {
   res.getHeaders = () => {
     return res.headers;
   };
-  res.end = text => {
+
+  const onResEnd = (callback, resolve) => text => {
     if (text) res.write(text);
     response.body = Buffer.from(response.body).toString(
       base64Support ? "base64" : undefined
@@ -101,11 +103,26 @@ const reqResMapper = (event, callback) => {
     response.multiValueHeaders = res.headers;
     res.writeHead(response.statusCode);
     fixApiGatewayMultipleHeaders();
-    callback(null, response);
+
+    if (callback) {
+      callback(null, response);
+    } else {
+      resolve(response);
+    }
   };
+
+  if (typeof callback === "function") {
+    res.end = onResEnd(callback);
+  } else {
+    responsePromise = new Promise(resolve => {
+      res.end = onResEnd(null, resolve);
+    });
+  }
+
   if (event.body) {
     req.push(event.body, event.isBase64Encoded ? "base64" : undefined);
   }
+
   req.push(null);
 
   function fixApiGatewayMultipleHeaders() {
@@ -116,7 +133,7 @@ const reqResMapper = (event, callback) => {
     }
   }
 
-  return { req, res };
+  return { req, res, responsePromise };
 };
 
 module.exports = reqResMapper;
