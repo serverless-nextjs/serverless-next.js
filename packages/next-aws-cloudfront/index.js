@@ -3,11 +3,20 @@ const Stream = require("stream");
 module.exports = event => {
   const {request: cfRequest} = event;
 
+  const response = {
+    body: Buffer.from(""),
+    bodyEncoding: "base64",
+    status: 200,
+    statusDescription: "OK",
+    headers: {}
+  };
+
   const req = new Stream.Readable();
   req.url = cfRequest.uri;
   req.method = cfRequest.method;
   req.rawHeaders = [];
   req.headers = {};
+  req.connection = {};
 
   if (cfRequest.querystring) {
     // const parts = cfRequest.querystring.split("=");
@@ -31,17 +40,67 @@ module.exports = event => {
   req.getHeader = name => {
     return req.headers[name.toLowerCase()];
   };
+
   req.getHeaders = () => {
     return req.headers;
   };
 
-  // if (cfRequest.body) {
-  //   req.push(event.body, event.isBase64Encoded ? "base64" : undefined);
-  // }
+  if (cfRequest.body && cfRequest.body.data) {
+    req.push(
+      cfRequest.body.data,
+      cfRequest.body.encoding ? "base64" : undefined
+    );
+  }
 
-  // req.push(null);
+  req.push(null);
+
+  const res = new Stream();
+
+  Object.defineProperty(res, "statusCode", {
+    get() {
+      return response.statusCode;
+    },
+    set(statusCode) {
+      response.statusCode = statusCode;
+    }
+  });
+
+  res.headers = {};
+  res.writeHead = (status, headers) => {
+    response.status = status;
+    if (headers) {
+      Object.keys(headers).forEach(headerName => {
+        response.headers[headerName] = [
+          {
+            key: headerName,
+            value: headers[headerName]
+          }
+        ];
+      });
+    }
+  };
+  res.write = chunk => {
+    response.body = Buffer.concat([
+      response.body,
+      Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
+    ]);
+  };
+
+  const responsePromise = new Promise(resolve => {
+    res.end = text => {
+      if (text) res.write(text);
+      response.body = Buffer.from(response.body).toString("base64");
+      resolve(response);
+    };
+  });
+
+  res.setHeader = (name, value) => {
+    res.headers[name] = value;
+  };
 
   return {
-    req
+    req,
+    res,
+    responsePromise
   };
 };

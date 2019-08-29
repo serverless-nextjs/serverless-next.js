@@ -109,34 +109,13 @@ describe("Request Tests", () => {
     expect(req.rawHeaders).toEqual(["x-cUstom-1", "42", "x-custom-2", "43"]);
   });
 
-  it("stream", done => {
-    const {req} = create({
-      request: {
-        uri: ""
-      },
-      headers: {}
-    });
-
-    let data = "";
-
-    req.on("data", chunk => {
-      data += chunk;
-    });
-
-    req.on("end", () => {
-      expect(data).toEqual("ok");
-      done();
-    });
-
-    req.push("ok");
-    req.push(null);
-  });
-
   it("text body", done => {
     const {req} = create({
       request: {
         uri: "",
-        body: "ok"
+        body: {
+          data: "ok"
+        }
       }
     });
 
@@ -150,5 +129,64 @@ describe("Request Tests", () => {
       expect(data).toEqual("ok");
       done();
     });
+  });
+
+  it("text base64 body", done => {
+    const {req} = create({
+      request: {
+        uri: "",
+        body: {
+          encoding: "base64",
+          data: Buffer.from("ok").toString("base64")
+        },
+        headers: {}
+      }
+    });
+
+    let data = "";
+
+    req.on("data", chunk => {
+      data += chunk;
+    });
+
+    req.on("end", () => {
+      expect(data).toEqual("ok");
+      done();
+    });
+  });
+
+  it("text body with encoding", done => {
+    const {req} = create({
+      request: {
+        uri: "",
+        body: {
+          data: "åäöß"
+        },
+        headers: {}
+      }
+    });
+
+    let data = "";
+
+    req.on("data", chunk => {
+      data += chunk;
+    });
+
+    req.on("end", () => {
+      expect(data).toEqual("åäöß");
+      done();
+    });
+  });
+
+  it("connection", done => {
+    const {req} = create({
+      request: {
+        uri: "",
+        headers: {}
+      }
+    });
+
+    expect(req.connection).toEqual({});
+    done();
   });
 });
