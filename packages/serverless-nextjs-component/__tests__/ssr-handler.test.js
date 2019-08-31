@@ -59,8 +59,6 @@ describe("ssr handler tests", () => {
     it("renders static HTML page", () => {
       expect.assertions(1);
 
-      mockPageRequire("pages/terms.html");
-
       const readFileSpy = jest
         .spyOn(fs, "readFile")
         .mockImplementation((path, enc, cb) => cb(null, "<html>TERMS</html>"));

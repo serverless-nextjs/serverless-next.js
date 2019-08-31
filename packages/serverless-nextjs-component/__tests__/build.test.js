@@ -29,6 +29,17 @@ jest.mock("@serverless/aws-s3", () =>
   })
 );
 
+const mockCloudFront = jest.fn();
+jest.mock("@serverless/aws-cloudfront", () =>
+  jest.fn(() => {
+    const cloudFront = mockCloudFront;
+    cloudFront.init = () => {};
+    cloudFront.default = () => {};
+    cloudFront.context = {};
+    return cloudFront;
+  })
+);
+
 const BUILD_DIR = "serverless-nextjs-tmp";
 
 describe("build tests", () => {
@@ -44,7 +55,10 @@ describe("build tests", () => {
     process.chdir(fixturePath);
 
     mockBackend.mockResolvedValueOnce({
-      url: "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/prod"
+      url: "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/production"
+    });
+    mockS3.mockResolvedValue({
+      name: "bucket-xyz"
     });
 
     const component = new NextjsComponent();
@@ -215,19 +229,45 @@ describe("build tests", () => {
   describe("assets bucket", () => {
     it("uploads client build assets", () => {
       expect(mockS3Upload).toBeCalledWith({
-        dir: "./.next/static"
+        dir: "./.next/static",
+        keyPrefix: "_next/static"
       });
     });
 
     it("uploads user static directory", () => {
       expect(mockS3Upload).toBeCalledWith({
-        dir: "./static"
+        dir: "./static",
+        keyPrefix: "static"
       });
     });
 
     it("uploads user public directory", () => {
       expect(mockS3Upload).toBeCalledWith({
-        dir: "./public"
+        dir: "./public",
+        keyPrefix: "public"
+      });
+    });
+  });
+
+  describe("cloudfront", () => {
+    it("creates distribution with appropiate cache behaviours", () => {
+      expect(mockCloudFront).toBeCalledWith({
+        ttl: 5,
+        origins: [
+          "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/production",
+          {
+            url: "http://bucket-xyz.s3.amazonaws.com",
+            private: true,
+            pathPatterns: {
+              "_next/*": {
+                ttl: 86400
+              },
+              "static/*": {
+                ttl: 86400
+              }
+            }
+          }
+        ]
       });
     });
   });

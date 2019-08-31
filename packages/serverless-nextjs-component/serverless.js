@@ -106,35 +106,63 @@ class NextjsComponent extends Component {
 
     const backend = await this.load("@serverless/backend");
     const bucket = await this.load("@serverless/aws-s3");
+    const cloudFront = await this.load("@serverless/aws-cloudfront");
 
-    await bucket({
+    const bucketOutputs = await bucket({
       accelerated: true
     });
 
     await Promise.all([
       bucket.upload({
-        dir: "./.next/static"
+        dir: "./.next/static",
+        keyPrefix: "_next/static"
       }),
       bucket.upload({
-        dir: "./static"
+        dir: "./static",
+        keyPrefix: "static"
       }),
       bucket.upload({
-        dir: "./public"
+        dir: "./public",
+        keyPrefix: "public"
       })
     ]);
 
-    return backend({
+    const backendOutputs = await backend({
       code: {
         src: "./serverless-nextjs-tmp"
       }
+    });
+
+    await cloudFront({
+      ttl: 5, // default ttl in seconds
+      origins: [
+        `${backendOutputs.url}`,
+        {
+          url: `http://${bucketOutputs.name}.s3.amazonaws.com`,
+          private: true,
+          pathPatterns: {
+            "_next/*": {
+              ttl: 86400
+            },
+            "static/*": {
+              ttl: 86400
+            }
+          }
+        }
+      ]
     });
   }
 
   async remove() {
     const backend = await this.load("@serverless/backend");
     const bucket = await this.load("@serverless/aws-s3");
+    const cloudfront = await this.load("@serverless/aws-cloudfront");
 
-    return Promise.all([backend.remove(), bucket.remove()]);
+    return Promise.all([
+      cloudfront.remove(),
+      backend.remove(),
+      bucket.remove()
+    ]);
   }
 }
 
