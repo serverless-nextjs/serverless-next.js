@@ -2,6 +2,10 @@ const nextBuild = require("next/dist/build").default;
 const path = require("path");
 const fse = require("fs-extra");
 const NextjsComponent = require("../serverless");
+const {
+  SSR_LAMBDA_BUILD_DIR,
+  LAMBDA_AT_EDGE_BUILD_DIR
+} = require("../constants");
 
 jest.mock("next/dist/build");
 
@@ -40,7 +44,18 @@ jest.mock("@serverless/aws-cloudfront", () =>
   })
 );
 
-const BUILD_DIR = "serverless-nextjs-tmp";
+const mockLambda = jest.fn();
+const mockLambdaPublish = jest.fn();
+jest.mock("@serverless/aws-lambda", () =>
+  jest.fn(() => {
+    const lambda = mockLambda;
+    lambda.init = () => {};
+    lambda.default = () => {};
+    lambda.context = {};
+    lambda.publishVersion = mockLambdaPublish;
+    return lambda;
+  })
+);
 
 describe("build tests", () => {
   let tmpCwd;
@@ -60,12 +75,18 @@ describe("build tests", () => {
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
     });
+    mockLambda.mockResolvedValueOnce({
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+    });
+    mockLambdaPublish.mockResolvedValueOnce({
+      version: "v1"
+    });
 
     const component = new NextjsComponent();
     await component.default();
 
     manifest = await fse.readJSON(
-      path.join(fixturePath, `${BUILD_DIR}/manifest.json`)
+      path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/manifest.json`)
     );
   });
 
@@ -167,23 +188,28 @@ describe("build tests", () => {
       });
 
       expect(html).toEqual({
-        "/terms": "pages/terms.html"
+        "/terms": "pages/terms.html",
+        "/about": "pages/about.html"
       });
     });
 
-    it.skip("adds ssr api domain", () => {
+    it("adds ssr api domain", () => {
       const {
         cloudFrontOrigins: { ssrApi }
       } = manifest;
 
-      expect(mockBackend).toBeCalledWith({
-        code: {
-          src: `./${BUILD_DIR}`
-        }
-      });
-
       expect(ssrApi).toEqual({
         domainName: "ssr-api-xyz.execute-api.us-east-1.amazonaws.com"
+      });
+    });
+
+    it("adds s3 domain", () => {
+      const {
+        cloudFrontOrigins: { staticOrigin }
+      } = manifest;
+
+      expect(staticOrigin).toEqual({
+        domainName: "bucket-xyz.s3.amazonaws.com"
       });
     });
   });
@@ -191,10 +217,10 @@ describe("build tests", () => {
   describe("build files", () => {
     it("copies nextjs pages to build folder", async () => {
       const pagesRootFiles = await fse.readdir(
-        path.join(fixturePath, `${BUILD_DIR}/pages`)
+        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/pages`)
       );
       const pagesCustomersFiles = await fse.readdir(
-        path.join(fixturePath, `${BUILD_DIR}/pages/customers`)
+        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/pages/customers`)
       );
 
       expect(pagesRootFiles).toContain("blog.js");
@@ -203,7 +229,7 @@ describe("build tests", () => {
 
     it("copies lambda handler to build folder", async () => {
       const buildDirRoot = await fse.readdir(
-        path.join(fixturePath, `${BUILD_DIR}`)
+        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}`)
       );
 
       expect(buildDirRoot).toContain("index.js");
@@ -211,7 +237,7 @@ describe("build tests", () => {
 
     it("copies router to build folder", async () => {
       const buildDirRoot = await fse.readdir(
-        path.join(fixturePath, `${BUILD_DIR}`)
+        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}`)
       );
 
       expect(buildDirRoot).toContain("router.js");
@@ -219,10 +245,28 @@ describe("build tests", () => {
 
     it("copies compat layer to node_modules", async () => {
       const nodeModules = await fse.readdir(
-        path.join(fixturePath, `${BUILD_DIR}/node_modules`)
+        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/node_modules`)
       );
 
       expect(nodeModules).toEqual(["next-aws-lambda"]);
+    });
+  });
+
+  describe("Lambda@Edge build files", () => {
+    it("copies handler file", async () => {
+      const files = await fse.readdir(
+        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/`)
+      );
+
+      expect(files).toContain("index.js");
+    });
+
+    it("copies manifest file", async () => {
+      const files = await fse.readdir(
+        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/`)
+      );
+
+      expect(files).toContain("manifest.json");
     });
   });
 
@@ -247,12 +291,43 @@ describe("build tests", () => {
         keyPrefix: "public"
       });
     });
+
+    it("uploads html pages to S3", () => {
+      ["terms.html", "about.html"].forEach(page => {
+        expect(mockS3Upload).toBeCalledWith({
+          file: `./.next/serverless/pages/${page}`,
+          key: `static-pages/${page}`
+        });
+      });
+    });
   });
 
   describe("cloudfront", () => {
-    it("creates distribution with appropiate cache behaviours", () => {
+    it("provisions and publishes lambda@edge", () => {
+      expect(mockLambda).toBeCalledWith({
+        description: expect.any(String),
+        handler: "index.handler",
+        code: `./${LAMBDA_AT_EDGE_BUILD_DIR}`,
+        role: {
+          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+          policy: {
+            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+          }
+        }
+      });
+
+      expect(mockLambdaPublish).toBeCalled();
+    });
+
+    it("creates distribution", () => {
       expect(mockCloudFront).toBeCalledWith({
-        ttl: 5,
+        defaults: {
+          ttl: 5,
+          "lambda@edge": {
+            "origin-request":
+              "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1" // includes version
+          }
+        },
         origins: [
           "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/production",
           {

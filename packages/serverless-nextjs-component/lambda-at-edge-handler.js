@@ -5,7 +5,7 @@ exports.handler = async event => {
   const uri = request.uri;
   const { pages, cloudFrontOrigins, publicFiles } = manifest;
 
-  const isStaticPage = pages.static[uri];
+  const isStaticPage = pages.html[uri];
   const isPublicFile = publicFiles[uri];
 
   let host = cloudFrontOrigins.ssrApi.domainName;
@@ -13,10 +13,10 @@ exports.handler = async event => {
   if (isStaticPage || isPublicFile) {
     // serve static page or public file from S3
     request.origin = {
-      static: {
-        authMethod: "origin-access-identity",
+      s3: {
+        authMethod: "none",
         domainName: cloudFrontOrigins.staticOrigin.domainName,
-        path: isStaticPage ? "/static-pages" : "/public-files"
+        path: isStaticPage ? "/static-pages" : "/public"
       }
     };
 
@@ -27,10 +27,12 @@ exports.handler = async event => {
     }
   }
 
-  request.headers.host = {
-    key: "host",
-    value: host
-  };
+  request.headers.host = [
+    {
+      key: "host",
+      value: host
+    }
+  ];
 
   return request;
 };

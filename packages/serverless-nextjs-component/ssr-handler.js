@@ -5,13 +5,12 @@ const createRouter = require("./router");
 const compatLayer = require("next-aws-lambda");
 const manifest = require("./manifest.json");
 
-const readFileAsync = promisify(fs.readFile);
-
 module.exports = async (event, context) => {
   const router = createRouter(manifest);
   const pagePath = router(event.path);
 
   if (path.extname(pagePath) === ".html") {
+    const readFileAsync = promisify(fs.readFile);
     const html = await readFileAsync(path.join(__dirname, pagePath), "utf-8");
     return {
       statusCode: 200,

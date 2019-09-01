@@ -1,4 +1,4 @@
-const { handler } = require("../lambda");
+const { handler } = require("../lambda-at-edge-handler");
 
 jest.mock("../manifest.json", () => require("./fixtures/manifest.json"), {
   virtual: true
@@ -39,10 +39,12 @@ describe("Lambda@Edge", () => {
 
     const request = await handler(event, {});
 
-    expect(request.headers["host"]).toEqual({
-      key: "host",
-      value: "ssr-api.execute-api.us-east-1.amazonaws.com"
-    });
+    expect(request.headers["host"]).toEqual([
+      {
+        key: "host",
+        value: "ssr-api.execute-api.us-east-1.amazonaws.com"
+      }
+    ]);
     expect(request.uri).toEqual("/blog/howtodance");
   });
 
@@ -60,16 +62,18 @@ describe("Lambda@Edge", () => {
     const request = await handler(event, {});
 
     expect(request.origin).toEqual({
-      static: {
-        authMethod: "origin-access-identity",
+      s3: {
+        authMethod: "none",
         domainName: "my-bucket.s3.amazonaws.com",
         path: "/static-pages"
       }
     });
-    expect(request.headers["host"]).toEqual({
-      key: "host",
-      value: "my-bucket.s3.amazonaws.com"
-    });
+    expect(request.headers["host"]).toEqual([
+      {
+        key: "host",
+        value: "my-bucket.s3.amazonaws.com"
+      }
+    ]);
     expect(request.uri).toEqual("/terms.html");
   });
 
@@ -87,16 +91,18 @@ describe("Lambda@Edge", () => {
     const request = await handler(event, {});
 
     expect(request.origin).toEqual({
-      static: {
-        authMethod: "origin-access-identity",
+      s3: {
+        authMethod: "none",
         domainName: "my-bucket.s3.amazonaws.com",
-        path: "/public-files"
+        path: "/public"
       }
     });
-    expect(request.headers["host"]).toEqual({
-      key: "host",
-      value: "my-bucket.s3.amazonaws.com"
-    });
+    expect(request.headers["host"]).toEqual([
+      {
+        key: "host",
+        value: "my-bucket.s3.amazonaws.com"
+      }
+    ]);
     expect(request.uri).toEqual("/manifest.json");
   });
 });
