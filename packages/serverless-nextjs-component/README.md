@@ -66,7 +66,7 @@ And simply deploy:
 $ serverless
 ```
 
-### Custom domain name
+### Custom domain name (Coming soon!)
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name:
 
@@ -81,9 +81,9 @@ myNextApplication:
 
 ### Fast SSR with Lambda@Edge
 
-If you have high demand server side rendered pages, you can opt-in to render them at the CloudFront edge locations. This will result in very low latency times by saving 2 hops and serving the user request from a close location to them. Due to current limitations in Lambda@Edge it is recommended that you turn this on a page per page basis and make sure you are not hitting any [limits](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-lambda-at-edge). Note the component uses the `origin request` event.
+You can opt-in to render the server side rendered pages at the CloudFront edge locations. This will result in very low latency times by saving 2 hops and serving the user request from a close location to them.
 
-Enable this functionality by setting the `edge` property for your page(s):
+Enable this functionality by setting `ssr@edge: true`:
 
 ```yml
 # serverless.yml
@@ -91,23 +91,11 @@ Enable this functionality by setting the `edge` property for your page(s):
 myNextApplication:
   component: @serverless/nextjs
   inputs:
+    ssr@edge: true
     domain: myfrontend.example.com
     pages:
       tickets/sell:
         edge: true
-```
-
-### Deploying the SSR API onto your existing API Gateway
-
-If you already have a provisioned REST API and want to deploy the next application to it, use the `ssrApiId` option:
-
-```yml
-# serverless.yml
-
-myNextApplication:
-  component: @serverless/nextjs
-  inputs:
-    ssrApiId: qwerty
 ```
 
 ### Architecture
