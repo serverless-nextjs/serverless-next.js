@@ -93,9 +93,6 @@ myNextApplication:
   inputs:
     ssr@edge: true
     domain: myfrontend.example.com
-    pages:
-      tickets/sell:
-        edge: true
 ```
 
 ### Architecture
