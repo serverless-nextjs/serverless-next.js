@@ -1,3 +1,4 @@
+const fs = require("fs");
 const manifest = require("./manifest.json");
 const cloudFrontCompat = require("./next-aws-cloudfront");
 const router = require("./router");
@@ -27,16 +28,20 @@ exports.handler = async event => {
     if (isStaticPage) {
       request.uri = request.uri + ".html";
     }
-  } else if (manifest.ssrOptimisationEnabled) {
+  } else if (manifest["ssr@edge"]) {
     const pagePath = router(manifest)(uri);
 
     if (!pagePath.includes("_error.js")) {
-      const page = require(pagePath);
+      console.log("TCL: pagePath", pagePath);
+      // console.log(fs.readdirSync("./pages"));
+      const page = require(`./${pagePath}`);
       const { req, res, responsePromise } = cloudFrontCompat(
         event.Records[0].cf
       );
       page.render(req, res);
-      return responsePromise;
+      const response = await responsePromise;
+      console.log("TCL: response", JSON.stringify(response));
+      return response;
     }
   }
 

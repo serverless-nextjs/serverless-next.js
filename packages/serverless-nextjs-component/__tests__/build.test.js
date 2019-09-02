@@ -214,7 +214,7 @@ describe("build tests", () => {
     });
   });
 
-  describe("build files", () => {
+  describe("Ssr Api build files", () => {
     it("copies nextjs pages to build folder", async () => {
       const pagesRootFiles = await fse.readdir(
         path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/pages`)

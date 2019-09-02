@@ -5,7 +5,7 @@ jest.mock(
   "../manifest.json",
   () => {
     const manifest = require("./fixtures/manifest.json");
-    manifest.ssrOptimisationEnabled = true;
+    manifest["ssr@edge"] = true;
     return manifest;
   },
   {
@@ -35,7 +35,7 @@ describe("When SSR@Edge is enabled", () => {
       }
     });
 
-    mockPageRequire("pages/customers/index.js");
+    mockPageRequire("./pages/customers/index.js");
 
     const response = await handler(event, {});
 

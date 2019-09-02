@@ -4,12 +4,15 @@ const toCloudFrontHeaders = headers => {
   const result = {};
 
   Object.keys(headers).forEach(headerName => {
-    result[headerName] = [
-      {
-        key: headerName,
-        value: headers[headerName]
-      }
-    ];
+    console.log("TCL: headerName", headerName);
+    if (headerName !== "Content-Length") {
+      result[headerName] = [
+        {
+          key: headerName,
+          value: headers[headerName].toString()
+        }
+      ];
+    }
   });
 
   return result;

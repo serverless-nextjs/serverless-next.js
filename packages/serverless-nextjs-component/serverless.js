@@ -13,7 +13,7 @@ const {
 
 class NextjsComponent extends Component {
   async default(inputs = {}) {
-    return this.build();
+    return this.build(inputs);
   }
 
   readPublicFiles() {
@@ -28,6 +28,7 @@ class NextjsComponent extends Component {
   // they have different formats and data
   getBlankBuildManifest() {
     return {
+      ssrOptimisationEnabled: false,
       pages: {
         ssr: {
           dynamic: {},
@@ -63,7 +64,7 @@ class NextjsComponent extends Component {
   }
 
   buildLambdaAtEdge(buildManifest) {
-    return Promise.all([
+    const copyPromises = [
       fse.copy(
         path.join(__dirname, "lambda-at-edge-handler.js"),
         `./${LAMBDA_AT_EDGE_BUILD_DIR}/index.js`
@@ -76,10 +77,27 @@ class NextjsComponent extends Component {
         path.join(__dirname, "next-aws-cloudfront.js"),
         `./${LAMBDA_AT_EDGE_BUILD_DIR}/next-aws-cloudfront.js`
       )
-    ]);
+    ];
+
+    if (buildManifest["ssr@edge"]) {
+      copyPromises.push(
+        fse.copy(
+          ".next/serverless/pages",
+          `./${LAMBDA_AT_EDGE_BUILD_DIR}/pages`
+        )
+      );
+      copyPromises.push(
+        fse.copy(
+          path.join(__dirname, "router.js"),
+          `./${LAMBDA_AT_EDGE_BUILD_DIR}/router.js`
+        )
+      );
+    }
+
+    return Promise.all(copyPromises);
   }
 
-  async build() {
+  async build(inputs) {
     await nextBuild(path.resolve("./"));
 
     const pagesManifest = await this.readPagesManifest();
@@ -159,6 +177,8 @@ class NextjsComponent extends Component {
         domainName: `${bucketOutputs.name}.s3.amazonaws.com`
       }
     };
+
+    buildManifest["ssr@edge"] = inputs["ssr@edge"] === true;
 
     await this.buildLambdaAtEdge(buildManifest);
 
