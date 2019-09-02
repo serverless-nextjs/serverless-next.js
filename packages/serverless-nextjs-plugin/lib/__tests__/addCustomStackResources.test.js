@@ -344,6 +344,26 @@ describe("addCustomStackResources", () => {
         });
       });
     });
+
+    describe("when asset bucket is not to be created", () => {
+      it("adds the cloudfront distribution", () => {
+        expect.assertions(2);
+
+        const plugin = new ServerlessPluginBuilder()
+          .withPluginConfig({
+            cloudFront: true,
+            createAssetBucket: false
+          })
+          .build();
+
+        return addCustomStackResources.call(plugin).then(() => {
+          const { Resources } = plugin.serverless.service.resources;
+          expect(Object.keys(Resources)).toHaveLength(1); // CloudFront distribution
+          const { NextjsCloudFront } = Resources;
+          expect(NextjsCloudFront).toBeDefined();
+        });
+      });
+    });
   });
 
   describe("When no bucket is configured", () => {

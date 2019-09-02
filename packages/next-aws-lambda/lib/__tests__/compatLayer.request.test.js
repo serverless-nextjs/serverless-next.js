@@ -190,29 +190,6 @@ describe("compatLayer.request", () => {
     ]);
   });
 
-  it("stream", done => {
-    const { req } = create({
-      requestContext: {
-        path: ""
-      },
-      headers: {}
-    });
-
-    let data = "";
-
-    req.on("data", chunk => {
-      data += chunk;
-    });
-
-    req.on("end", () => {
-      expect(data).toEqual("ok");
-      done();
-    });
-
-    req.push("ok");
-    req.push(null);
-  });
-
   it("text body", done => {
     const { req } = create({
       requestContext: {

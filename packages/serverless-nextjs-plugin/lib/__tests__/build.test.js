@@ -83,8 +83,11 @@ describe("build", () => {
 
   it("includes next-aws-lambda in node_modules/", () => {
     expect.assertions(1);
-
     const nextConfigDir = "path/to/next-app";
+    const nextAwsLambdaRelativePath = path.relative(
+      nextConfigDir,
+      path.dirname(require.resolve("next-aws-lambda"))
+    );
 
     const parsedNextConfig = parsedNextConfigurationFactory();
     parseNextConfiguration.mockResolvedValueOnce(parsedNextConfig);
@@ -94,8 +97,12 @@ describe("build", () => {
       .build();
 
     return build.call(plugin).then(() => {
-      expect(plugin.serverless.service.package.include).toContain(
-        `node_modules/next-aws-lambda/**`
+      expect(plugin.serverless.service.package.include).toEqual(
+        expect.arrayContaining([
+          "path/to/next-app/sls-next-build/**",
+          `${nextAwsLambdaRelativePath}/**/*.js`,
+          `!${nextAwsLambdaRelativePath}/**/*.test.js`
+        ])
       );
     });
   });

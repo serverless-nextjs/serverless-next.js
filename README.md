@@ -51,8 +51,7 @@ const compat = require("next-aws-lambda");
 const page = require(".next/serverless/pages/somePage.js");
 
 module.exports.render = (event, context, callback) => {
-  const { req, res } = compat(page)(event, callback);
-  page.render(req, res);
+  compat(page)(event, context, callback);
 };
 ```
 

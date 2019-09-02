@@ -6,9 +6,10 @@ const lambdaHandlerWithFactory = `
   const page = require("${PAGE_BUNDLE_PATH}");
   const handlerFactory = require("${HANDLER_FACTORY_PATH}");
 
-  module.exports.render = (event, context, callback) => {
+  module.exports.render = async (event, context) => {
     const handler = handlerFactory(page);
-    handler(event, context, callback);
+    const responsePromise = handler(event, context);
+    return responsePromise;
   };
 `;
 

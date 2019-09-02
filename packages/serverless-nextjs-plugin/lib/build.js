@@ -28,11 +28,15 @@ module.exports = async function() {
   logger.log("Started building next app ...");
 
   const servicePackage = this.serverless.service.package;
-
+  const nextAwsLambdaPath = path.relative(
+    nextConfigDir,
+    path.dirname(require.resolve("next-aws-lambda"))
+  );
   servicePackage.include = servicePackage.include || [];
   servicePackage.include.push(
     path.posix.join(pluginBuildDir.posixBuildDir, "**"),
-    path.posix.join("node_modules/next-aws-lambda", "**")
+    path.posix.join(nextAwsLambdaPath, "**", "*.js"),
+    `!${path.posix.join(nextAwsLambdaPath, "**", "*.test.js")}`
   );
 
   const { nextConfiguration } = await parseNextConfiguration(nextConfigDir);
