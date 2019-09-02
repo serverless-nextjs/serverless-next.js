@@ -7,7 +7,7 @@ const manifest = require("./manifest.json");
 
 module.exports = async (event, context) => {
   const router = createRouter(manifest);
-  const pagePath = router(event.path);
+  const pagePath = router(event.requestContext.path);
 
   if (path.extname(pagePath) === ".html") {
     const readFileAsync = promisify(fs.readFile);

@@ -1,3 +1,5 @@
 module.exports = {
-  page: "pages/index.js"
+  render: (req, res) => {
+    res.end("pages/index.js");
+  }
 };

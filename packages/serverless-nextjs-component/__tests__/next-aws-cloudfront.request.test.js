@@ -1,8 +1,8 @@
-const create = require("../index");
+const create = require("../next-aws-cloudfront");
 
 describe("Request Tests", () => {
   it("request url path", () => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "/"
       }
@@ -12,7 +12,7 @@ describe("Request Tests", () => {
   });
 
   it("querystring /?x=42", () => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "/",
         querystring: "x=42"
@@ -69,7 +69,7 @@ describe("Request Tests", () => {
   // });
 
   it("request method", () => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "",
         method: "GET"
@@ -80,7 +80,7 @@ describe("Request Tests", () => {
   });
 
   it("request headers", () => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "",
         headers: {
@@ -110,7 +110,7 @@ describe("Request Tests", () => {
   });
 
   it("text body", done => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "",
         body: {
@@ -132,7 +132,7 @@ describe("Request Tests", () => {
   });
 
   it("text base64 body", done => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "",
         body: {
@@ -156,7 +156,7 @@ describe("Request Tests", () => {
   });
 
   it("text body with encoding", done => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "",
         body: {
@@ -179,7 +179,7 @@ describe("Request Tests", () => {
   });
 
   it("connection", done => {
-    const {req} = create({
+    const { req } = create({
       request: {
         uri: "",
         headers: {}

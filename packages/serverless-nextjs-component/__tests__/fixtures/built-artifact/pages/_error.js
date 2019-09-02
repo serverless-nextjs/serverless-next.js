@@ -1,3 +1,5 @@
 module.exports = {
-  page: "pages/_error.js"
+  render: (req, res) => {
+    res.end("pages/_error.js");
+  }
 };

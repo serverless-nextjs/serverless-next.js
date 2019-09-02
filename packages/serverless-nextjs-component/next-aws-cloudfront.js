@@ -1,7 +1,22 @@
 const Stream = require("stream");
 
+const toCloudFrontHeaders = headers => {
+  const result = {};
+
+  Object.keys(headers).forEach(headerName => {
+    result[headerName] = [
+      {
+        key: headerName,
+        value: headers[headerName]
+      }
+    ];
+  });
+
+  return result;
+};
+
 module.exports = event => {
-  const {request: cfRequest} = event;
+  const { request: cfRequest } = event;
 
   const response = {
     body: Buffer.from(""),
@@ -69,14 +84,7 @@ module.exports = event => {
   res.writeHead = (status, headers) => {
     response.status = status;
     if (headers) {
-      Object.keys(headers).forEach(headerName => {
-        response.headers[headerName] = [
-          {
-            key: headerName,
-            value: headers[headerName]
-          }
-        ];
-      });
+      res.headers = Object.assign(res.headers, headers);
     }
   };
   res.write = chunk => {
@@ -90,12 +98,23 @@ module.exports = event => {
     res.end = text => {
       if (text) res.write(text);
       response.body = Buffer.from(response.body).toString("base64");
+      response.headers = toCloudFrontHeaders(res.headers);
+
       resolve(response);
     };
   });
 
   res.setHeader = (name, value) => {
     res.headers[name] = value;
+  };
+  res.removeHeader = name => {
+    delete res.headers[name];
+  };
+  res.getHeader = name => {
+    return res.headers[name.toLowerCase()];
+  };
+  res.getHeaders = () => {
+    return res.headers;
   };
 
   return {

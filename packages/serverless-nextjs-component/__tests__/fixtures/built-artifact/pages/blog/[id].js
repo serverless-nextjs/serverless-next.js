@@ -1,3 +1,5 @@
 module.exports = {
-  page: "pages/blog/[id].js"
+  render: (req, res) => {
+    res.end("pages/blog/[id].js");
+  }
 };

@@ -71,6 +71,10 @@ class NextjsComponent extends Component {
       fse.writeJson(
         `./${LAMBDA_AT_EDGE_BUILD_DIR}/manifest.json`,
         buildManifest
+      ),
+      fse.copy(
+        path.join(__dirname, "next-aws-cloudfront.js"),
+        `./${LAMBDA_AT_EDGE_BUILD_DIR}/next-aws-cloudfront.js`
       )
     ]);
   }

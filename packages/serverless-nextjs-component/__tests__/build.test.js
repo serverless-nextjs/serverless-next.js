@@ -268,6 +268,14 @@ describe("build tests", () => {
 
       expect(files).toContain("manifest.json");
     });
+
+    it("copies compat file", async () => {
+      const files = await fse.readdir(
+        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/`)
+      );
+
+      expect(files).toContain("next-aws-cloudfront.js");
+    });
   });
 
   describe("assets bucket", () => {

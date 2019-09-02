@@ -1,3 +1,5 @@
 module.exports = {
-  page: "pages/customers/new.js"
+  render: (req, res) => {
+    res.end("pages/customers/new.js");
+  }
 };

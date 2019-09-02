@@ -1,8 +1,6 @@
-const compatLayer = require("next-aws-lambda");
 const fs = require("fs");
 const ssrHandler = require("../ssr-handler");
 
-jest.mock("next-aws-lambda");
 jest.mock(
   "../manifest.json",
   () => require("./fixtures/built-artifact/manifest.json"),
@@ -31,25 +29,23 @@ describe("ssr handler tests", () => {
   `(
     'renders path "$inputUrlPath" using page "$expectedPage"',
     ({ inputUrlPath, expectedPage }) => {
-      expect.assertions(3);
-
-      const render = jest.fn().mockReturnValue(
-        Promise.resolve({
-          statusCode: 200
-        })
-      );
+      expect.assertions(1);
 
       mockPageRequire(expectedPage);
-      compatLayer.mockReturnValue(render);
 
-      const event = { path: inputUrlPath };
+      const event = {
+        requestContext: {
+          path: inputUrlPath
+        }
+      };
       const context = {};
 
       return ssrHandler(event, context).then(response => {
-        expect(compatLayer).toBeCalledWith({ page: expectedPage });
-        expect(render).toBeCalledWith(event, context);
         expect(response).toEqual({
-          statusCode: 200
+          body: Buffer.from(expectedPage).toString(),
+          isBase64Encoded: false,
+          statusCode: 200,
+          multiValueHeaders: {}
         });
       });
     }
@@ -63,7 +59,11 @@ describe("ssr handler tests", () => {
         .spyOn(fs, "readFile")
         .mockImplementation((path, enc, cb) => cb(null, "<html>TERMS</html>"));
 
-      const event = { path: "/terms" };
+      const event = {
+        requestContext: {
+          path: "/terms"
+        }
+      };
       const context = {};
 
       return ssrHandler(event, context).then(response => {

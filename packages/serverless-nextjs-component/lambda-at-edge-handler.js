@@ -1,4 +1,6 @@
 const manifest = require("./manifest.json");
+const cloudFrontCompat = require("./next-aws-cloudfront");
+const router = require("./router");
 
 exports.handler = async event => {
   const request = event.Records[0].cf.request;
@@ -24,6 +26,17 @@ exports.handler = async event => {
 
     if (isStaticPage) {
       request.uri = request.uri + ".html";
+    }
+  } else if (manifest.ssrOptimisationEnabled) {
+    const pagePath = router(manifest)(uri);
+
+    if (!pagePath.includes("_error.js")) {
+      const page = require(pagePath);
+      const { req, res, responsePromise } = cloudFrontCompat(
+        event.Records[0].cf
+      );
+      page.render(req, res);
+      return responsePromise;
     }
   }
 

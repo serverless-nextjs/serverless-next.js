@@ -1,3 +1,5 @@
 module.exports = {
-  page: "pages/[customers]/[customer]/profile.js"
+  render: (req, res) => {
+    res.end("pages/[customers]/[customer]/profile.js");
+  }
 };
