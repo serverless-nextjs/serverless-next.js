@@ -2,7 +2,6 @@ const { Component } = require("@serverless/core");
 const nextBuild = require("next/dist/build").default;
 const fse = require("fs-extra");
 const path = require("path");
-const url = require("url");
 const isDynamicRoute = require("./lib/isDynamicRoute");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
@@ -43,26 +42,6 @@ class NextjsComponent extends Component {
     };
   }
 
-  buildSsrLambda(buildManifest) {
-    const copyOperations = [
-      [".next/serverless/pages", `./${SSR_LAMBDA_BUILD_DIR}/pages`],
-      [
-        path.join(__dirname, "ssr-handler.js"),
-        `./${SSR_LAMBDA_BUILD_DIR}/index.js`
-      ],
-      [
-        path.join(__dirname, "node_modules/next-aws-lambda"),
-        `./${SSR_LAMBDA_BUILD_DIR}/node_modules/next-aws-lambda`
-      ],
-      [path.join(__dirname, "router.js"), `./${SSR_LAMBDA_BUILD_DIR}/router.js`]
-    ];
-
-    return Promise.all([
-      ...copyOperations.map(([from, to]) => fse.copy(from, to)),
-      fse.writeJson(`./${SSR_LAMBDA_BUILD_DIR}/manifest.json`, buildManifest)
-    ]);
-  }
-
   buildLambdaAtEdge(buildManifest) {
     const copyPromises = [
       fse.copy(
@@ -76,23 +55,13 @@ class NextjsComponent extends Component {
       fse.copy(
         path.join(__dirname, "next-aws-cloudfront.js"),
         `./${LAMBDA_AT_EDGE_BUILD_DIR}/next-aws-cloudfront.js`
+      ),
+      fse.copy(".next/serverless/pages", `./${LAMBDA_AT_EDGE_BUILD_DIR}/pages`),
+      fse.copy(
+        path.join(__dirname, "router.js"),
+        `./${LAMBDA_AT_EDGE_BUILD_DIR}/router.js`
       )
     ];
-
-    if (buildManifest["ssr@edge"]) {
-      copyPromises.push(
-        fse.copy(
-          ".next/serverless/pages",
-          `./${LAMBDA_AT_EDGE_BUILD_DIR}/pages`
-        )
-      );
-      copyPromises.push(
-        fse.copy(
-          path.join(__dirname, "router.js"),
-          `./${LAMBDA_AT_EDGE_BUILD_DIR}/router.js`
-        )
-      );
-    }
 
     return Promise.all(copyPromises);
   }
@@ -129,9 +98,6 @@ class NextjsComponent extends Component {
     await fse.emptyDir(`./${SSR_LAMBDA_BUILD_DIR}`);
     await fse.emptyDir(`./${LAMBDA_AT_EDGE_BUILD_DIR}`);
 
-    await this.buildSsrLambda(buildManifest);
-
-    const backend = await this.load("@serverless/backend");
     const bucket = await this.load("@serverless/aws-s3");
     const cloudFront = await this.load("@serverless/aws-cloudfront");
     const lambda = await this.load("@serverless/aws-lambda");
@@ -163,22 +129,11 @@ class NextjsComponent extends Component {
       ...uploadHtmlPages
     ]);
 
-    const backendOutputs = await backend({
-      code: {
-        src: "./serverless-nextjs-tmp"
-      }
-    });
-
     buildManifest.cloudFrontOrigins = {
-      ssrApi: {
-        domainName: url.parse(backendOutputs.url).hostname
-      },
       staticOrigin: {
         domainName: `${bucketOutputs.name}.s3.amazonaws.com`
       }
     };
-
-    buildManifest["ssr@edge"] = inputs["ssr@edge"] === true;
 
     await this.buildLambdaAtEdge(buildManifest);
 
@@ -196,6 +151,8 @@ class NextjsComponent extends Component {
 
     const lambdaPublishOutputs = await lambda.publishVersion();
 
+    const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
+
     await cloudFront({
       defaults: {
         ttl: 5,
@@ -204,9 +161,8 @@ class NextjsComponent extends Component {
         }
       },
       origins: [
-        `${backendOutputs.url}`,
         {
-          url: `http://${bucketOutputs.name}.s3.amazonaws.com`,
+          url: bucketUrl,
           private: true,
           pathPatterns: {
             "_next/*": {
@@ -222,12 +178,10 @@ class NextjsComponent extends Component {
   }
 
   async remove() {
-    const backend = await this.load("@serverless/backend");
     const bucket = await this.load("@serverless/aws-s3");
     const cloudfront = await this.load("@serverless/aws-cloudfront");
 
     await cloudfront.remove();
-    await backend.remove();
     await bucket.remove();
   }
 }

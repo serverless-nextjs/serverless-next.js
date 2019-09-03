@@ -2,23 +2,9 @@ const nextBuild = require("next/dist/build").default;
 const path = require("path");
 const fse = require("fs-extra");
 const NextjsComponent = require("../serverless");
-const {
-  SSR_LAMBDA_BUILD_DIR,
-  LAMBDA_AT_EDGE_BUILD_DIR
-} = require("../constants");
+const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
 
 jest.mock("next/dist/build");
-
-const mockBackend = jest.fn();
-jest.mock("@serverless/backend", () =>
-  jest.fn(() => {
-    const backend = mockBackend;
-    backend.init = () => {};
-    backend.default = () => {};
-    backend.context = {};
-    return backend;
-  })
-);
 
 const mockS3Upload = jest.fn();
 const mockS3 = jest.fn();
@@ -69,9 +55,6 @@ describe("build tests", () => {
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
 
-    mockBackend.mockResolvedValueOnce({
-      url: "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/production"
-    });
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
     });
@@ -193,16 +176,6 @@ describe("build tests", () => {
       });
     });
 
-    it("adds ssr api domain", () => {
-      const {
-        cloudFrontOrigins: { ssrApi }
-      } = manifest;
-
-      expect(ssrApi).toEqual({
-        domainName: "ssr-api-xyz.execute-api.us-east-1.amazonaws.com"
-      });
-    });
-
     it("adds s3 domain", () => {
       const {
         cloudFrontOrigins: { staticOrigin }
@@ -211,44 +184,6 @@ describe("build tests", () => {
       expect(staticOrigin).toEqual({
         domainName: "bucket-xyz.s3.amazonaws.com"
       });
-    });
-  });
-
-  describe("Ssr Api build files", () => {
-    it("copies nextjs pages to build folder", async () => {
-      const pagesRootFiles = await fse.readdir(
-        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/pages`)
-      );
-      const pagesCustomersFiles = await fse.readdir(
-        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/pages/customers`)
-      );
-
-      expect(pagesRootFiles).toContain("blog.js");
-      expect(pagesCustomersFiles).toEqual(["[post].js"]);
-    });
-
-    it("copies lambda handler to build folder", async () => {
-      const buildDirRoot = await fse.readdir(
-        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}`)
-      );
-
-      expect(buildDirRoot).toContain("index.js");
-    });
-
-    it("copies router to build folder", async () => {
-      const buildDirRoot = await fse.readdir(
-        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}`)
-      );
-
-      expect(buildDirRoot).toContain("router.js");
-    });
-
-    it("copies compat layer to node_modules", async () => {
-      const nodeModules = await fse.readdir(
-        path.join(fixturePath, `${SSR_LAMBDA_BUILD_DIR}/node_modules`)
-      );
-
-      expect(nodeModules).toEqual(["next-aws-lambda"]);
     });
   });
 
@@ -337,7 +272,6 @@ describe("build tests", () => {
           }
         },
         origins: [
-          "https://ssr-api-xyz.execute-api.us-east-1.amazonaws.com/production",
           {
             url: "http://bucket-xyz.s3.amazonaws.com",
             private: true,

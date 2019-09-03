@@ -6,29 +6,20 @@ const router = require("./router");
 exports.handler = async event => {
   const request = event.Records[0].cf.request;
   const uri = request.uri;
-  const { pages, cloudFrontOrigins, publicFiles } = manifest;
+  const { pages, publicFiles } = manifest;
 
   const isStaticPage = pages.html[uri];
   const isPublicFile = publicFiles[uri];
 
-  let host = cloudFrontOrigins.ssrApi.domainName;
-
   if (isStaticPage || isPublicFile) {
-    // serve static page or public file from S3
-    request.origin = {
-      s3: {
-        authMethod: "none",
-        domainName: cloudFrontOrigins.staticOrigin.domainName,
-        path: isStaticPage ? "/static-pages" : "/public"
-      }
-    };
-
-    host = cloudFrontOrigins.staticOrigin.domainName;
+    request.origin.s3.path = isStaticPage ? "/static-pages" : "/public";
 
     if (isStaticPage) {
       request.uri = request.uri + ".html";
     }
-  } else if (manifest["ssr@edge"]) {
+
+    return request;
+  } else {
     const pagePath = router(manifest)(uri);
 
     if (!pagePath.includes("_error.js")) {
@@ -41,13 +32,6 @@ exports.handler = async event => {
       return response;
     }
   }
-
-  request.headers.host = [
-    {
-      key: "host",
-      value: host
-    }
-  ];
 
   return request;
 };
