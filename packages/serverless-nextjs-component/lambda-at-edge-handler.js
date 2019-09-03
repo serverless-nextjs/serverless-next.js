@@ -19,19 +19,13 @@ exports.handler = async event => {
     }
 
     return request;
-  } else {
-    const pagePath = router(manifest)(uri);
-
-    if (!pagePath.includes("_error.js")) {
-      const page = require(`${pagePath}`);
-      const { req, res, responsePromise } = cloudFrontCompat(
-        event.Records[0].cf
-      );
-      page.render(req, res);
-      const response = await responsePromise;
-      return response;
-    }
   }
 
-  return request;
+  const pagePath = router(manifest)(uri);
+
+  const page = require(`./${pagePath}`);
+  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
+  page.render(req, res);
+  const response = await responsePromise;
+  return response;
 };
