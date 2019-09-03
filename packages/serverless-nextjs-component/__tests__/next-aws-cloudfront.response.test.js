@@ -71,6 +71,35 @@ describe("Response Tests", () => {
     });
   });
 
+  it("writeHead ignores special CloudFront Headers", () => {
+    expect.assertions(1);
+
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      }
+    });
+
+    const specialHeaders = {
+      "Accept-Encoding": "gzip",
+      "Content-Length": "1234",
+      "If-Modified-Since": "Wed, 21 Oct 2015 07:28:00 GMT",
+      "If-None-Match": "*",
+      "If-Range": "Wed, 21 Oct 2015 07:28:00 GMT",
+      "If-Unmodified-Since": "Wed, 21 Oct 2015 07:28:00 GMT",
+      "Transfer-Encoding": "compress",
+      Via: "HTTP/1.1 GWA"
+    };
+
+    res.writeHead(200, specialHeaders);
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.headers).toEqual({});
+    });
+  });
+
   it("setHeader", () => {
     const { res, responsePromise } = create({
       request: {
@@ -91,6 +120,30 @@ describe("Response Tests", () => {
             value: "1"
           }
         ],
+        "x-custom-2": [
+          {
+            key: "x-custom-2",
+            value: "2"
+          }
+        ]
+      });
+    });
+  });
+
+  it("setHeader ignores special CloudFront headers", () => {
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      }
+    });
+
+    res.setHeader("Content-Length", "123");
+    res.setHeader("x-custom-2", "2");
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.headers).toEqual({
         "x-custom-2": [
           {
             key: "x-custom-2",

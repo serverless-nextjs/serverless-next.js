@@ -1,11 +1,21 @@
 const Stream = require("stream");
 
+const readOnlyHeaders = {
+  "accept-encoding": true,
+  "content-length": true,
+  "if-modified-since": true,
+  "if-none-match": true,
+  "if-range": true,
+  "if-unmodified-since": true,
+  "transfer-encoding": true,
+  via: true
+};
+
 const toCloudFrontHeaders = headers => {
   const result = {};
 
   Object.keys(headers).forEach(headerName => {
-    console.log("TCL: headerName", headerName);
-    if (headerName !== "Content-Length") {
+    if (!readOnlyHeaders[headerName.toLowerCase()]) {
       result[headerName] = [
         {
           key: headerName,
@@ -37,11 +47,6 @@ module.exports = event => {
   req.connection = {};
 
   if (cfRequest.querystring) {
-    // const parts = cfRequest.querystring.split("=");
-    // const
-    // const key = parts[0];
-    // const value = encodeURIComponent(parts[1]);
-    // req.url = req.url + `?${key}=${value}`;
     req.url = req.url + `?` + cfRequest.querystring;
   }
 

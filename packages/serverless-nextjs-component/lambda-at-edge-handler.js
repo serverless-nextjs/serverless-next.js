@@ -32,15 +32,12 @@ exports.handler = async event => {
     const pagePath = router(manifest)(uri);
 
     if (!pagePath.includes("_error.js")) {
-      console.log("TCL: pagePath", pagePath);
-      // console.log(fs.readdirSync("./pages"));
-      const page = require(`./${pagePath}`);
+      const page = require(`${pagePath}`);
       const { req, res, responsePromise } = cloudFrontCompat(
         event.Records[0].cf
       );
       page.render(req, res);
       const response = await responsePromise;
-      console.log("TCL: response", JSON.stringify(response));
       return response;
     }
   }

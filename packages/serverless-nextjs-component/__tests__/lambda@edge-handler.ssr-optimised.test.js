@@ -15,7 +15,7 @@ jest.mock(
 
 const mockPageRequire = mockPagePath => {
   jest.mock(
-    mockPagePath,
+    `${mockPagePath}`,
     () => require(`./fixtures/built-artifact/${mockPagePath}`),
     {
       virtual: true
@@ -35,7 +35,7 @@ describe("When SSR@Edge is enabled", () => {
       }
     });
 
-    mockPageRequire("./pages/customers/index.js");
+    mockPageRequire("pages/customers/index.js");
 
     const response = await handler(event, {});
 
