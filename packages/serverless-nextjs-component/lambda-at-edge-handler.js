@@ -22,10 +22,14 @@ exports.handler = async event => {
   }
 
   const pagePath = router(manifest)(uri);
-
+  
   const page = require(`./${pagePath}`);
   const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
-  page.render(req, res);
+  if (page.render) {
+    page.render(req, res);
+  } else {
+    page.default(req, res);
+  }
   const response = await responsePromise;
   return response;
 };

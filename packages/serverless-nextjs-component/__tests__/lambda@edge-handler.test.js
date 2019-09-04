@@ -89,5 +89,26 @@ describe("Lambda@Edge", () => {
       expect(decodedBody).toEqual("pages/customers/index.js");
       expect(response.status).toEqual(200);
     });
+
+    it("serves api request at the edge", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/getCustomers",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          ssr: {
+            domainName: "ssr-api.execute-api.us-east-1.amazonaws.com"
+          }
+        }
+      });
+
+      mockPageRequire("pages/api/getCustomers.js");
+
+      const response = await handler(event, {});
+
+      const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+
+      expect(decodedBody).toEqual("pages/api/getCustomers");
+      expect(response.status).toEqual(200);
+    });
   });
 });

@@ -33,7 +33,8 @@
       "nonDynamic": {
         "/": "pages/index.js",
         "/customers": "pages/customers/index.js",
-        "/customers/new": "pages/customers/new.js"
+        "/customers/new": "pages/customers/new.js",
+        "/api/getCustomers": "pages/api/getCustomers.js"
       }
     },
     "html": {
