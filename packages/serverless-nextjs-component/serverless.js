@@ -1,5 +1,4 @@
 const { Component } = require("@serverless/core");
-// const nextBuild = require("next/dist/build").default;
 const fse = require("fs-extra");
 const path = require("path");
 const execa = require("execa");
@@ -7,7 +6,6 @@ const isDynamicRoute = require("./lib/isDynamicRoute");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
 const {
-  SSR_LAMBDA_BUILD_DIR,
   LAMBDA_AT_EDGE_BUILD_DIR
 } = require("./constants");
 
@@ -28,7 +26,6 @@ class NextjsComponent extends Component {
   // they have different formats and data
   getBlankBuildManifest() {
     return {
-      ssrOptimisationEnabled: false,
       pages: {
         ssr: {
           dynamic: {},
@@ -38,7 +35,6 @@ class NextjsComponent extends Component {
       },
       publicFiles: {},
       cloudFrontOrigins: {
-        ssrApi: {}
       }
     };
   }
@@ -97,7 +93,6 @@ class NextjsComponent extends Component {
       buildManifest.publicFiles["/" + pf] = pf;
     });
 
-    await fse.emptyDir(`./${SSR_LAMBDA_BUILD_DIR}`);
     await fse.emptyDir(`./${LAMBDA_AT_EDGE_BUILD_DIR}`);
 
     const bucket = await this.load("@serverless/aws-s3");
