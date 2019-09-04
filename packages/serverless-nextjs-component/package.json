@@ -20,7 +20,7 @@
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
   "dependencies": {
     "@serverless/aws-api-gateway": "^1.0.1",
-    "@serverless/aws-cloudfront": "git://github.com/serverless-components/aws-cloudfront.git",
+    "@serverless/aws-cloudfront": "git://github.com/danielcondemarin/aws-cloudfront.git#add-allowed-http-methods",
     "@serverless/aws-lambda": "git://github.com/serverless-components/aws-lambda.git",
     "@serverless/aws-s3": "git://github.com/serverless-components/aws-s3.git",
     "@serverless/backend": "^3.3.0",

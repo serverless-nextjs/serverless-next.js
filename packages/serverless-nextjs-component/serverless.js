@@ -158,6 +158,15 @@ class NextjsComponent extends Component {
     await cloudFront({
       defaults: {
         ttl: 5,
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         "lambda@edge": {
           "origin-request": `${lambdaAtEdgeOutputs.arn}:${lambdaPublishOutputs.version}`
         }

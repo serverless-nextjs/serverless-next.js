@@ -39,8 +39,8 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Features
 
-- [x] [Server side rendered pages](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
-      Pages that need server side compute to render are hosted on AWS Lambda. The component takes care of all the routing for you so there is no configuration needed. If you want blazing fast response times check out the [lambda@edge](#Fast-SSR-with-Lambda@Edge) section below.
+- [x] [Server side rendered pages at the Edge](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
+      Pages that need server side compute to render are hosted on Lambda@Edge. The component takes care of all the routing for you so there is no configuration needed. Because rendering happens at the CloudFront edge locations latency is very low!
 - [x] [Dynamic pages / route segments](https://github.com/zeit/next.js/#dynamic-routing).
 - [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
       Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
@@ -69,21 +69,6 @@ $ serverless
 ### Custom domain name (Coming soon!)
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name:
-
-```yml
-# serverless.yml
-
-myNextApplication:
-  component: @serverless/nextjs
-  inputs:
-    domain: myfrontend.example.com
-```
-
-### Fast SSR with Lambda@Edge
-
-You can opt-in to render the server side rendered pages at the CloudFront edge locations. This will result in very low latency times by saving 2 hops and serving the user request from a close location to them.
-
-Enable this functionality by setting `ssr@edge: true`:
 
 ```yml
 # serverless.yml
