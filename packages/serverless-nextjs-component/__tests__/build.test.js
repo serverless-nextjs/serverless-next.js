@@ -1,10 +1,10 @@
-const nextBuild = require("next/dist/build").default;
 const path = require("path");
 const fse = require("fs-extra");
+const execa = require("execa");
 const NextjsComponent = require("../serverless");
 const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
 
-jest.mock("next/dist/build");
+jest.mock("execa");
 
 const mockS3Upload = jest.fn();
 const mockS3 = jest.fn();
@@ -50,7 +50,7 @@ describe("build tests", () => {
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
   beforeEach(async () => {
-    nextBuild.mockResolvedValueOnce();
+    execa.mockResolvedValueOnce();
 
     tmpCwd = process.cwd();
     process.chdir(fixturePath);

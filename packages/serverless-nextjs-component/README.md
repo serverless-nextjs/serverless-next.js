@@ -91,7 +91,6 @@ Enable this functionality by setting `ssr@edge: true`:
 myNextApplication:
   component: @serverless/nextjs
   inputs:
-    ssr@edge: true
     domain: myfrontend.example.com
 ```
 

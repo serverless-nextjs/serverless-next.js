@@ -1,7 +1,8 @@
 const { Component } = require("@serverless/core");
-const nextBuild = require("next/dist/build").default;
+// const nextBuild = require("next/dist/build").default;
 const fse = require("fs-extra");
 const path = require("path");
+const execa = require("execa");
 const isDynamicRoute = require("./lib/isDynamicRoute");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
@@ -67,7 +68,8 @@ class NextjsComponent extends Component {
   }
 
   async build(inputs) {
-    await nextBuild(path.resolve("./"));
+    await execa("next", ["build"]);
+    // await nextBuild(path.resolve("."));
 
     const pagesManifest = await this.readPagesManifest();
     const buildManifest = this.getBlankBuildManifest();
