@@ -46,6 +46,7 @@ jest.mock("@serverless/aws-lambda", () =>
 describe("build tests", () => {
   let tmpCwd;
   let manifest;
+  let componentOutputs;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
@@ -64,9 +65,12 @@ describe("build tests", () => {
     mockLambdaPublish.mockResolvedValueOnce({
       version: "v1"
     });
+    mockCloudFront.mockResolvedValueOnce({
+      url: "https://cloudfrontdistrib.amazonaws.com"
+    });
 
     const component = new NextjsComponent();
-    await component.default();
+    componentOutputs = await component.default();
 
     manifest = await fse.readJSON(
       path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/manifest.json`)
@@ -75,6 +79,12 @@ describe("build tests", () => {
 
   afterEach(() => {
     process.chdir(tmpCwd);
+  });
+
+  it("outputs next application url from cloudfront", () => {
+    expect(componentOutputs).toEqual({
+      appUrl: "https://cloudfrontdistrib.amazonaws.com"
+    });
   });
 
   describe("manifest", () => {
@@ -265,6 +275,7 @@ describe("build tests", () => {
     it("creates distribution", () => {
       expect(mockCloudFront).toBeCalledWith({
         defaults: {
+          allowedHttpMethods: expect.any(Array),
           ttl: 5,
           "lambda@edge": {
             "origin-request":

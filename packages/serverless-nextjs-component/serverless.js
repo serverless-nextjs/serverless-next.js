@@ -155,7 +155,7 @@ class NextjsComponent extends Component {
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
 
-    await cloudFront({
+    const { url } = await cloudFront({
       defaults: {
         ttl: 5,
         allowedHttpMethods: [
@@ -186,6 +186,10 @@ class NextjsComponent extends Component {
         }
       ]
     });
+
+    return {
+      appUrl: url
+    };
   }
 
   async remove() {
