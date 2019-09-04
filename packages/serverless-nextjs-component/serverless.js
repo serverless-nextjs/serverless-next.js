@@ -5,9 +5,7 @@ const execa = require("execa");
 const isDynamicRoute = require("./lib/isDynamicRoute");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
-const {
-  LAMBDA_AT_EDGE_BUILD_DIR
-} = require("./constants");
+const { LAMBDA_AT_EDGE_BUILD_DIR } = require("./constants");
 
 class NextjsComponent extends Component {
   async default(inputs = {}) {
@@ -34,8 +32,7 @@ class NextjsComponent extends Component {
         html: {}
       },
       publicFiles: {},
-      cloudFrontOrigins: {
-      }
+      cloudFrontOrigins: {}
     };
   }
 
@@ -65,7 +62,6 @@ class NextjsComponent extends Component {
 
   async build(inputs) {
     await execa("next", ["build"]);
-    // await nextBuild(path.resolve("."));
 
     const pagesManifest = await this.readPagesManifest();
     const buildManifest = this.getBlankBuildManifest();
