@@ -23,7 +23,8 @@
           "regex": "/^/customers/([^/]+?)(?:/)?$/i"
         },
         "/customers/:customer/:post": {
-          "file": "/^/customers/([^/]+?)/([^/]+?)(?:/)?$/i"
+          "file": "/customers/:customer/:post",
+          "regex": "/^/customers/([^/]+?)/([^/]+?)(?:/)?$/i"
         },
         "/customers/:customer/profile": {
           "file": "pages/customers/[customer]/profile.js",
@@ -34,7 +35,8 @@
         "/": "pages/index.js",
         "/customers": "pages/customers/index.js",
         "/customers/new": "pages/customers/new.js",
-        "/api/getCustomers": "pages/api/getCustomers.js"
+        "/api/getCustomers": "pages/api/getCustomers.js",
+        "/_error":"pages/_error.js"
       }
     },
     "html": {

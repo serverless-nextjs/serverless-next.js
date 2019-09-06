@@ -68,47 +68,66 @@ describe("Lambda@Edge", () => {
     });
   });
 
-  describe("When SSR@Edge is enabled", () => {
-    it("renders page at the edge", async () => {
-      const event = createCloudFrontEvent({
-        uri: "/customers",
-        host: "mydistribution.cloudfront.net",
-        origin: {
-          ssr: {
-            domainName: "ssr-api.execute-api.us-east-1.amazonaws.com"
-          }
+  it("renders page at the edge", async () => {
+    const event = createCloudFrontEvent({
+      uri: "/customers",
+      host: "mydistribution.cloudfront.net",
+      origin: {
+        s3: {
+          domainName: "my-bucket.amazonaws.com"
         }
-      });
-
-      mockPageRequire("pages/customers/index.js");
-
-      const response = await handler(event, {});
-
-      const decodedBody = new Buffer(response.body, "base64").toString("utf8");
-
-      expect(decodedBody).toEqual("pages/customers/index.js");
-      expect(response.status).toEqual(200);
+      }
     });
 
-    it("serves api request at the edge", async () => {
-      const event = createCloudFrontEvent({
-        uri: "/api/getCustomers",
-        host: "mydistribution.cloudfront.net",
-        origin: {
-          ssr: {
-            domainName: "ssr-api.execute-api.us-east-1.amazonaws.com"
-          }
+    mockPageRequire("pages/customers/index.js");
+
+    const response = await handler(event, {});
+
+    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+
+    expect(decodedBody).toEqual("pages/customers/index.js");
+    expect(response.status).toEqual(200);
+  });
+
+  it("serves api request at the edge", async () => {
+    const event = createCloudFrontEvent({
+      uri: "/api/getCustomers",
+      host: "mydistribution.cloudfront.net",
+      origin: {
+        s3: {
+          domainName: "my-bucket.amazonaws.com"
         }
-      });
-
-      mockPageRequire("pages/api/getCustomers.js");
-
-      const response = await handler(event, {});
-
-      const decodedBody = new Buffer(response.body, "base64").toString("utf8");
-
-      expect(decodedBody).toEqual("pages/api/getCustomers");
-      expect(response.status).toEqual(200);
+      }
     });
+
+    mockPageRequire("pages/api/getCustomers.js");
+
+    const response = await handler(event, {});
+
+    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+
+    expect(decodedBody).toEqual("pages/api/getCustomers");
+    expect(response.status).toEqual(200);
+  });
+
+  it.only("renders 404 page if request path can't be matched to any page / api routes", async () => {
+    const event = createCloudFrontEvent({
+      uri: "/page/does/not/exist",
+      host: "mydistribution.cloudfront.net",
+      origin: {
+        s3: {
+          domainName: "my-bucket.amazonaws.com"
+        }
+      }
+    });
+
+    mockPageRequire("pages/_error.js");
+
+    const response = await handler(event, {});
+
+    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+
+    expect(decodedBody).toEqual("pages/_error.js");
+    expect(response.status).toEqual(200);
   });
 });
