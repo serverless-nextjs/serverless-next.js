@@ -42,16 +42,6 @@ describe("one page app", () => {
         expect(assetsBucket.Properties.BucketName).toEqual("onepageappbucket");
       });
     });
-
-    it.only("uploads build assets", () => {
-      expect(AWS.mockUpload).toBeCalledWith({
-        ACL: "public-read",
-        Bucket: "onepageappbucket",
-        Key: "_next/static/client.js",
-        ContentType: "text/javascript",
-        Body: expect.any(fs.ReadStream)
-      });
-    });
   });
 
   describe("Page lambda function", () => {

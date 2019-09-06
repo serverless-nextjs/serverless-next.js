@@ -57,17 +57,12 @@ MockCloudFormation.prototype.validateTemplate = mockValidateTemplate;
 MockCloudFormation.prototype.updateStack = mockUpdateStack;
 MockCloudFormation.prototype.listStackResources = mockListStackResources;
 
-// function MockS3() {}
-
 const {
   mockFunction: mockListObjectsV2,
   mockPromise: mockListObjectsV2Promise
 } = promisify(jest.fn());
 
 const S3MockUpload = promisify(jest.fn());
-
-// MockS3.prototype.listObjectsV2 = mockListObjectsV2;
-// MockS3.prototype.upload = mockUpload;
 
 const MockSTS = function() {};
 const {
@@ -94,7 +89,6 @@ MockMetadataService.prototype.request = mockMetadataRequest;
 module.exports = {
   EnvironmentCredentials: MockEnvironmentCredentials,
   S3: jest.fn(() => {
-    console.log("CALLED!!!!!!!!");
     return {
       upload: S3MockUpload.mockFunction,
       listObjectsV2: mockListObjectsV2

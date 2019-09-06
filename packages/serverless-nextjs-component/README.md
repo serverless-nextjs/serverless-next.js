@@ -101,3 +101,7 @@ Of course there are tradeoffs ... An architecture using one lambda per page in t
 _How do I interact with other AWS Services within my app_?
 
 See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB.
+
+_Should I use the [serverless-nextjs-plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin/tree/master/packages/serverless-nextjs-plugin) or this component?_
+
+Users are enocouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed to fix issues the plugin has like the [CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17).
