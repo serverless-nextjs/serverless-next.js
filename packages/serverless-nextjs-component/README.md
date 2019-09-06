@@ -16,6 +16,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
 - [Architecture](#architecture)
+- [FAQ](#faq)
 
 ### Motivation
 
@@ -84,3 +85,19 @@ myNextApplication:
 The application architecture deployed by the component is the following with minor variations:
 
 ![architecture](./arch.png)
+
+### FAQ
+
+_Is it one monolith Lambda or one Lambda per serverless page?_
+
+Only one Lambda is provisioned. There are a few reasons why:
+
+- Simplicity. One lambda responsible for server side rendering or serving the API requests is very easy to manage. On the other hand, one lambda per page is a large surface area for a web app. For example a next application with 40+ pages would have resulted in 40+ lambda functions to maintain.
+
+- Deployment speed. Is much faster building and deploying one lambda function.
+
+Of course there are tradeoffs ... An architecture using one lambda per page in theory results in lower boot times. However, the implementation of this component is designed to ensure a minimum amount of compute happens at the Lambda@Edge.
+
+_How do I interact with other AWS Services within my app_?
+
+See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB.
