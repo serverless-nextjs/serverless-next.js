@@ -21,7 +21,7 @@ Rename `.env.sample` to `.env` and set your aws credentials.
 
 ## Local development
 
-**Provision the DynamoDB Todos Table**
+#### Provision the DynamoDB Todos Table
 
 Make sure you have a [running local dynamodb server](https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/DynamoDBLocal.html).
 
@@ -29,28 +29,28 @@ Then simply run:
 
 `npm run dev:infra`
 
-**Start the next app**
+#### Start the next app
 
 `npm run dev`
 // available at http://localhost:3000
 
 ## Production
 
-**Provision the DynamoDB Global Todos Table**
+#### Provision the DynamoDB Global Todos Table
 
 `npm run infra`
 
-**Deploying**
+#### Deploying
 
 To deploy your application to the cloud:
 
 `npm run deploy:up`
 
-**Tearing down the application resources**
+#### Tearing down the application resources
 
 `npm run deploy:down`
 
-## A few notes:
+## A few notes
 
 - Server side the DynamoDB table is queried directly for SSR of the page
 - On client side `fetch` is used to query the /api that talks to DynamoDB. Client side routing prevents having to reload every resource on the page like js, css, etc.
