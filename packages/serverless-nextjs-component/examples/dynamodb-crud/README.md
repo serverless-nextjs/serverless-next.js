@@ -1,3 +1,7 @@
+## Description
+
+Example nextjs serverless app using a dynamodb database replicated across `eu-west-2` and `us-west-2`.
+
 ## Getting started
 
 Install serverless-nextjs component deps
@@ -32,7 +36,7 @@ Then simply run:
 
 ## Production
 
-**Provision the DynamoDB Todos Table**
+**Provision the DynamoDB Global Todos Table**
 
 `npm run infra`
 
@@ -52,7 +56,3 @@ To deploy your application to the cloud:
 - On client side `fetch` is used to query the /api that talks to DynamoDB. Client side routing prevents having to reload every resource on the page like js, css, etc.
 - Top level resources like /favicon.ico can be placed on the `public/` folder
 - Images or any other user assets can be placed in the `static/` folder and are accessible via `/static/*`
-
-## TODO:
-
-- Setup global DynamoDB TODO table
