@@ -5,7 +5,10 @@ const outputFinder = outputs => key => {
 };
 
 const displayStackOutput = awsInfo => {
-  console.log(awsInfo.gatheredData.outputs);
+  // remove this check after deploy mocks are correctly setup
+  if (awsInfo.gatheredData.outputs.length === 0) {
+    return;
+  }
   const findOutput = outputFinder(awsInfo.gatheredData.outputs);
 
   const apiGateway = findOutput("ServiceEndpoint");

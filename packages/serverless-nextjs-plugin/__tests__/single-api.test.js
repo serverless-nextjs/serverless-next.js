@@ -1,7 +1,9 @@
 const nextBuild = require("next/dist/build");
 const path = require("path");
 const AdmZip = require("adm-zip");
-const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormationUpdateTemplate");
+const {
+  readUpdateTemplate
+} = require("../utils/test/readServerlessCFTemplate");
 const testableServerless = require("../utils/test/testableServerless");
 
 jest.mock("next/dist/build");
@@ -16,9 +18,7 @@ describe("single api", () => {
 
     await testableServerless(fixturePath, "package");
 
-    const cloudFormationUpdateTemplate = await readCloudFormationUpdateTemplate(
-      fixturePath
-    );
+    const cloudFormationUpdateTemplate = await readUpdateTemplate(fixturePath);
 
     cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
   });

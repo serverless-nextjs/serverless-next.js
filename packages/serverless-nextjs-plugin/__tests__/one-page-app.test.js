@@ -1,7 +1,10 @@
+const fs = require("fs");
 const nextBuild = require("next/dist/build");
 const path = require("path");
 const AdmZip = require("adm-zip");
-const readCloudFormationUpdateTemplate = require("../utils/test/readCloudFormationUpdateTemplate");
+const {
+  readUpdateTemplate
+} = require("../utils/test/readServerlessCFTemplate");
 const testableServerless = require("../utils/test/testableServerless");
 
 jest.mock("next/dist/build");
@@ -16,26 +19,26 @@ describe("one page app", () => {
 
     await testableServerless(fixturePath, "package");
 
-    const cloudFormationUpdateTemplate = await readCloudFormationUpdateTemplate(
-      fixturePath
-    );
+    const cloudFormationUpdateTemplate = await readUpdateTemplate(fixturePath);
 
     cloudFormationUpdateResources = cloudFormationUpdateTemplate.Resources;
   });
 
   describe("Assets Bucket", () => {
-    let assetsBucket;
+    describe("CF Update resources", () => {
+      let assetsBucket;
 
-    beforeAll(() => {
-      assetsBucket = cloudFormationUpdateResources.NextStaticAssetsS3Bucket;
-    });
+      beforeAll(() => {
+        assetsBucket = cloudFormationUpdateResources.NextStaticAssetsS3Bucket;
+      });
 
-    it("is added to the update resources", () => {
-      expect(assetsBucket).toBeDefined();
-    });
+      it("is added to the resources", () => {
+        expect(assetsBucket).toBeDefined();
+      });
 
-    it("has correct bucket name", () => {
-      expect(assetsBucket.Properties.BucketName).toEqual("onepageappbucket");
+      it("has correct bucket name", () => {
+        expect(assetsBucket.Properties.BucketName).toEqual("onepageappbucket");
+      });
     });
   });
 

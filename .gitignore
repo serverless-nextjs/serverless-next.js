@@ -6,4 +6,6 @@ examples/basic-next-serverless-app/build
 .serverless
 .next
 sls-next-build
+.serverless_nextjs
 package-lock.json
+.DS_Store

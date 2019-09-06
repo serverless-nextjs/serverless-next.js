@@ -1,0 +1,5 @@
+.next
+node_modules
+.serverless
+.serverless_nextjs
+.env

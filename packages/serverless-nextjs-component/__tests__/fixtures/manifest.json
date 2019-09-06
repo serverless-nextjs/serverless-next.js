@@ -1,0 +1,50 @@
+{
+  "cloudFrontOrigins": {
+    "ssrApi": {
+      "domainName": "ssr-api.execute-api.us-east-1.amazonaws.com"
+    },
+    "staticOrigin": {
+      "domainName": "my-bucket.s3.amazonaws.com"
+    }
+  },
+  "pages": {
+    "ssr": {
+      "dynamic": {
+        "/:root": {
+          "file": "pages/[root].js",
+          "regex": "/^/([^/]+?)(?:/)?$/i"
+        },
+        "/blog/:id": {
+          "file": "pages/blog/[id].js",
+          "regex": "/^/blog/([^/]+?)(?:/)?$/i"
+        },
+        "/customers/:customer": {
+          "file": "pages/customers/[customer].js",
+          "regex": "/^/customers/([^/]+?)(?:/)?$/i"
+        },
+        "/customers/:customer/:post": {
+          "file": "/customers/:customer/:post",
+          "regex": "/^/customers/([^/]+?)/([^/]+?)(?:/)?$/i"
+        },
+        "/customers/:customer/profile": {
+          "file": "pages/customers/[customer]/profile.js",
+          "regex": "/^/customers/([^/]+?)/profile(?:/)?$/i"
+        }
+      },
+      "nonDynamic": {
+        "/": "pages/index.js",
+        "/customers": "pages/customers/index.js",
+        "/customers/new": "pages/customers/new.js",
+        "/api/getCustomers": "pages/api/getCustomers.js",
+        "/_error":"pages/_error.js"
+      }
+    },
+    "html": {
+      "/terms": "pages/terms.html"
+    }
+  },
+  "publicFiles": {
+    "/favicon.ico": "favicon.ico",
+    "/manifest.json": "manifest.json"
+  }
+}

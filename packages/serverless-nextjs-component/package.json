@@ -1,0 +1,39 @@
+{
+  "name": "serverless-nextjs-component",
+  "version": "1.0.0",
+  "description": "Serverless nextjs powered by Serverless Components",
+  "main": "serverless.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+  },
+  "keywords": [
+    "serverless",
+    "component",
+    "nextjs"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "dependencies": {
+    "@serverless/aws-api-gateway": "^1.0.1",
+    "@serverless/aws-cloudfront": "git://github.com/danielcondemarin/aws-cloudfront.git#add-allowed-http-methods",
+    "@serverless/aws-lambda": "git://github.com/serverless-components/aws-lambda.git",
+    "@serverless/aws-s3": "git://github.com/serverless-components/aws-s3.git",
+    "@serverless/backend": "^3.3.0",
+    "@serverless/core": "^1.0.0",
+    "execa": "^2.0.4",
+    "fs-extra": "^8.1.0",
+    "next-aws-lambda": "^2.3.2",
+    "path-to-regexp": "^3.0.0"
+  },
+  "devDependencies": {
+    "jest": "^24.8.0",
+    "next": "^9.0.4",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0"
+  }
+}

@@ -5,11 +5,12 @@ os:
   - osx
 language: node_js
 node_js:
-  - "8"
-  - "11.10"
+  - "10.16"
+  - "12.7.0"
 install:
   - npm install
   - cd packages/serverless-nextjs-plugin && npm install && cd ../../
+  - cd packages/serverless-nextjs-component && npm install && cd ../../
   - cd integration/app-with-serverless-offline && npm install && cd ../../
 script:
   - npm run lint

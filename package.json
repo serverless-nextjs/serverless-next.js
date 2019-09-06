@@ -15,6 +15,7 @@
   ],
   "scripts": {
     "test": "jest",
+    "test:watch": "jest --watch",
     "lint": "eslint .",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
@@ -32,18 +33,18 @@
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
   "devDependencies": {
     "adm-zip": "^0.4.13",
-    "coveralls": "^3.0.3",
+    "coveralls": "^3.0.6",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^24.8.0",
-    "jest-when": "^2.5.0",
+    "jest": "^24.9.0",
+    "jest-when": "^2.7.0",
     "lerna": "^3.13.4",
     "next": "^8.1.0",
     "prettier": "^1.17.1",
-    "react": "^16.8.6",
-    "react-dom": "^16.8.6",
-    "serverless": "^1.42.3",
+    "react": "^16.9.0",
+    "react-dom": "^16.9.0",
+    "serverless": "^1.51.0",
     "serverless-offline": "^4.10.0"
   },
   "jest": {
@@ -55,21 +56,31 @@
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
       "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/serverless-nextjs-plugin/utils/test"
+      "<rootDir>/packages/serverless-nextjs-plugin/utils/test",
+      "/.serverless_nextjs/",
+      "/fixtures/",
+      "/examples/"
     ],
     "testPathIgnorePatterns": [
       "/.next/",
-      "/node_modules/"
+      "/node_modules/",
+      "/fixtures/"
     ],
     "modulePathIgnorePatterns": [
-      "<rootDir>/examples/",
+      "/examples/",
       "<rootDir>/integration"
     ],
     "modulePaths": [
       "<rootDir>/packages/serverless-nextjs-plugin/"
+    ],
+    "setupFiles": [
+      "<rootDir>/jest.setup.js"
     ]
   },
   "dependencies": {
+    "@serverless/aws-cloudfront": "^3.1.0",
+    "@serverless/aws-lambda": "^3.0.0",
+    "@serverless/aws-s3": "^3.1.0",
     "opencollective-postinstall": "^2.0.2"
   },
   "collective": {

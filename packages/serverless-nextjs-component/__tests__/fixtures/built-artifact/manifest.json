@@ -1,0 +1,45 @@
+{
+  "cloudFrontOrigins": {
+    "staticOrigin": {
+      "domainName": "my-bucket.s3.amazonaws.com"
+    }
+  },
+  "pages": {
+    "ssr": {
+      "dynamic": {
+        "/:root": {
+          "file": "pages/[root].js",
+          "regex": "^\/([^\/]+?)(?:\/)?$"
+        },
+        "/blog/:id": {
+          "file": "pages/blog/[id].js",
+          "regex": "^\/blog\/([^\/]+?)(?:\/)?$"
+        },
+        "/customers/:customer": {
+          "file": "pages/customers/[customer].js",
+          "regex": "^\/customers\/([^\/]+?)(?:\/)?$"
+        },
+        "/customers/:customer/:post": {
+          "file": "pages/customers/[customer]/[post].js",
+          "regex": "^\/customers\/([^\/]+?)\/([^\/]+?)(?:\/)?$"
+        },
+        "/customers/:customer/profile": {
+          "file": "pages/customers/[customer]/profile",
+          "regex": "^\/customers\/([^\/]+?)\/profile(?:\/)?$"
+        }
+      },
+      "nonDynamic": {
+        "/": "pages/index.js",
+        "/customers": "pages/customers/index.js",
+        "/customers/new": "pages/customers/new.js"
+      }
+    },
+    "html": {
+      "/terms": "pages/terms.html"
+    }
+  },
+  "publicFiles": {
+    "/favicon.ico": "favicon.ico",
+    "/manifest.json": "manifest.json"
+  }
+}
