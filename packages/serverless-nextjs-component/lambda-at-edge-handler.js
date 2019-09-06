@@ -1,4 +1,3 @@
-const fs = require("fs");
 const manifest = require("./manifest.json");
 const cloudFrontCompat = require("./next-aws-cloudfront");
 const router = require("./router");
@@ -22,7 +21,7 @@ exports.handler = async event => {
   }
 
   const pagePath = router(manifest)(uri);
-  
+
   const page = require(`./${pagePath}`);
   const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
   if (page.render) {

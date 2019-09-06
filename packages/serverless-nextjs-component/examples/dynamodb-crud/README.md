@@ -6,16 +6,14 @@ Example nextjs serverless app using a dynamodb database replicated across `eu-we
 
 Install serverless-nextjs component deps
 
-```
+```bash
 cd ../../
 npm install
 ```
 
 Install example project deps:
 
-```
-npm install
-```
+`npm install`
 
 Rename `.env.sample` to `.env` and set your aws credentials.
 
