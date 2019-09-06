@@ -8,7 +8,7 @@ const testableServerless = require("../utils/test/testableServerless");
 
 jest.mock("next/dist/build");
 
-describe.skip("nested next config", () => {
+describe("nested next config", () => {
   const fixturePath = path.join(__dirname, "./fixtures/nested-next-config");
 
   let cloudFormationUpdateResources;
@@ -16,7 +16,7 @@ describe.skip("nested next config", () => {
   beforeAll(async () => {
     nextBuild.default.mockResolvedValue();
 
-    await testableServerless(fixturePath, "deploy");
+    await testableServerless(fixturePath, "package");
 
     const cloudFormationUpdateTemplate = await readUpdateTemplate(fixturePath);
 

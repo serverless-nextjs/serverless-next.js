@@ -16,7 +16,7 @@ describe("nested page app", () => {
   beforeAll(async () => {
     nextBuild.default.mockResolvedValue();
 
-    await testableServerless(fixturePath, "deploy");
+    await testableServerless(fixturePath, "package");
 
     const cloudFormationUpdateTemplate = await readUpdateTemplate(fixturePath);
 

@@ -7,8 +7,6 @@ const {
 } = require("../utils/test/readServerlessCFTemplate");
 const testableServerless = require("../utils/test/testableServerless");
 
-const AWS = require("aws-sdk");
-
 jest.mock("next/dist/build");
 
 describe("one page app", () => {
@@ -19,7 +17,7 @@ describe("one page app", () => {
   beforeAll(async () => {
     nextBuild.default.mockResolvedValue();
 
-    await testableServerless(fixturePath, "deploy");
+    await testableServerless(fixturePath, "package");
 
     const cloudFormationUpdateTemplate = await readUpdateTemplate(fixturePath);
 
