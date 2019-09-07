@@ -60,7 +60,7 @@ class NextjsComponent extends Component {
     return Promise.all(copyPromises);
   }
 
-  async build(inputs) {
+  async build() {
     await execa("next", ["build"]);
 
     const pagesManifest = await this.readPagesManifest();
@@ -185,10 +185,12 @@ class NextjsComponent extends Component {
 
   async remove() {
     const bucket = await this.load("@serverless/aws-s3");
+    const lambda = await this.load("@serverless/aws-lambda");
     const cloudfront = await this.load("@serverless/aws-cloudfront");
 
-    await cloudfront.remove();
     await bucket.remove();
+    await lambda.remove();
+    await cloudfront.remove();
   }
 }
 

@@ -2,46 +2,12 @@ const path = require("path");
 const fse = require("fs-extra");
 const execa = require("execa");
 const NextjsComponent = require("../serverless");
+const { mockS3 } = require("@serverless/aws-s3");
+const { mockCloudFront } = require("@serverless/aws-cloudfront");
+const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
 const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
 
 jest.mock("execa");
-
-const mockS3Upload = jest.fn();
-const mockS3 = jest.fn();
-jest.mock("@serverless/aws-s3", () =>
-  jest.fn(() => {
-    const bucket = mockS3;
-    bucket.init = () => {};
-    bucket.default = () => {};
-    bucket.context = {};
-    bucket.upload = mockS3Upload;
-    return bucket;
-  })
-);
-
-const mockCloudFront = jest.fn();
-jest.mock("@serverless/aws-cloudfront", () =>
-  jest.fn(() => {
-    const cloudFront = mockCloudFront;
-    cloudFront.init = () => {};
-    cloudFront.default = () => {};
-    cloudFront.context = {};
-    return cloudFront;
-  })
-);
-
-const mockLambda = jest.fn();
-const mockLambdaPublish = jest.fn();
-jest.mock("@serverless/aws-lambda", () =>
-  jest.fn(() => {
-    const lambda = mockLambda;
-    lambda.init = () => {};
-    lambda.default = () => {};
-    lambda.context = {};
-    lambda.publishVersion = mockLambdaPublish;
-    return lambda;
-  })
-);
 
 describe("build tests", () => {
   let tmpCwd;
@@ -220,38 +186,6 @@ describe("build tests", () => {
       );
 
       expect(files).toContain("next-aws-cloudfront.js");
-    });
-  });
-
-  describe("assets bucket", () => {
-    it("uploads client build assets", () => {
-      expect(mockS3Upload).toBeCalledWith({
-        dir: "./.next/static",
-        keyPrefix: "_next/static"
-      });
-    });
-
-    it("uploads user static directory", () => {
-      expect(mockS3Upload).toBeCalledWith({
-        dir: "./static",
-        keyPrefix: "static"
-      });
-    });
-
-    it("uploads user public directory", () => {
-      expect(mockS3Upload).toBeCalledWith({
-        dir: "./public",
-        keyPrefix: "public"
-      });
-    });
-
-    it("uploads html pages to S3", () => {
-      ["terms.html", "about.html"].forEach(page => {
-        expect(mockS3Upload).toBeCalledWith({
-          file: `./.next/serverless/pages/${page}`,
-          key: `static-pages/${page}`
-        });
-      });
     });
   });
 
