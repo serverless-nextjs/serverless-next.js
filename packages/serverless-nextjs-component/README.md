@@ -105,4 +105,4 @@ See `examples/dynamodb-crud` for an example Todo application that interacts with
 
 #### Should I use the [serverless-nextjs-plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin/tree/master/packages/serverless-nextjs-plugin) or this component?
 
-Users are enocouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed to fix issues the plugin has like the [CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17).
+Users are encouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed using lessons learned from the serverless plugin.
