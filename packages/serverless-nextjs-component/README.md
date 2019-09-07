@@ -90,7 +90,8 @@ The application architecture deployed by the component is the following with min
 
 #### Is it one monolith Lambda or one Lambda per serverless page?
 
-Only one Lambda is provisioned. There are a few reasons why:
+One master lambda is provisioned, then CloudFront behind the scenes creates replicas at the edge locations.
+There are a few reasons why all pages are deployed onto one lambda:
 
 - Simplicity. One lambda responsible for server side rendering or serving the API requests is very easy to manage. On the other hand, one lambda per page is a large surface area for a web app. For example a next application with 40+ pages would have resulted in 40+ lambda functions to maintain.
 
