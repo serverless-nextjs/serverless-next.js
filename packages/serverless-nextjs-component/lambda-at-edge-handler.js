@@ -2,9 +2,11 @@ const manifest = require("./manifest.json");
 const cloudFrontCompat = require("./next-aws-cloudfront");
 const router = require("./router");
 
+const normaliseUri = uri => (uri === "/" ? "/index" : uri);
+
 exports.handler = async event => {
   const request = event.Records[0].cf.request;
-  const uri = request.uri;
+  const uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
 
   const isStaticPage = pages.html[uri];
@@ -14,7 +16,7 @@ exports.handler = async event => {
     request.origin.s3.path = isStaticPage ? "/static-pages" : "/public";
 
     if (isStaticPage) {
-      request.uri = request.uri + ".html";
+      request.uri = uri + ".html";
     }
 
     return request;

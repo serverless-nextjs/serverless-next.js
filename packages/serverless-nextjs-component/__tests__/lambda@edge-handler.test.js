@@ -17,30 +17,38 @@ const mockPageRequire = mockPagePath => {
 
 describe("Lambda@Edge", () => {
   describe("Routing", () => {
-    it("serves optimised page from S3 static-pages folder", async () => {
-      const event = createCloudFrontEvent({
-        uri: "/terms",
-        host: "mydistribution.cloudfront.net",
-        origin: {
+    it.each`
+      path        | expectedUri
+      ${"/"}      | ${"/index.html"}
+      ${"/index"} | ${"/index.html"}
+      ${"/terms"} | ${"/terms.html"}
+    `(
+      "serves $path from S3 static-pages folder",
+      async ({ path, expectedUri }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net",
+          origin: {
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: ""
+            }
+          }
+        });
+
+        const request = await handler(event, {});
+
+        expect(request.origin).toEqual({
           s3: {
             authMethod: "origin-access-identity",
             domainName: "my-bucket.s3.amazonaws.com",
-            path: ""
+            path: "/static-pages"
           }
-        }
-      });
-
-      const request = await handler(event, {});
-
-      expect(request.origin).toEqual({
-        s3: {
-          authMethod: "origin-access-identity",
-          domainName: "my-bucket.s3.amazonaws.com",
-          path: "/static-pages"
-        }
-      });
-      expect(request.uri).toEqual("/terms.html");
-    });
+        });
+        expect(request.uri).toEqual(expectedUri);
+      }
+    );
 
     it("serves public file from S3 /public folder", async () => {
       const event = createCloudFrontEvent({
@@ -110,7 +118,7 @@ describe("Lambda@Edge", () => {
     expect(response.status).toEqual(200);
   });
 
-  it.only("renders 404 page if request path can't be matched to any page / api routes", async () => {
+  it("renders 404 page if request path can't be matched to any page / api routes", async () => {
     const event = createCloudFrontEvent({
       uri: "/page/does/not/exist",
       host: "mydistribution.cloudfront.net",
