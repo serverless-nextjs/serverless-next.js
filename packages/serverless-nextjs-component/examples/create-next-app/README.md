@@ -2,7 +2,7 @@
 
 ### Bootstrap your next app
 
-```
+```bash
 npx create-next-app
 cd yourProjectName
 ```
