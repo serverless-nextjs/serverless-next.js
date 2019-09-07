@@ -1,3 +1,7 @@
+const fse = require("fs-extra");
+const path = require("path");
+const { BUILD_DIR } = require("../constants");
+
 const createCloudFrontEvent = ({ uri, host, origin }) => ({
   Records: [
     {
@@ -19,6 +23,11 @@ const createCloudFrontEvent = ({ uri, host, origin }) => ({
   ]
 });
 
+const cleanupFixtureDirectory = fixtureDir => () => {
+  return fse.remove(path.join(fixtureDir, BUILD_DIR));
+};
+
 module.exports = {
-  createCloudFrontEvent
+  createCloudFrontEvent,
+  cleanupFixtureDirectory
 };

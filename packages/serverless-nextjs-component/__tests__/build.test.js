@@ -6,6 +6,7 @@ const { mockS3 } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
 const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
+const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
 jest.mock("execa");
 
@@ -46,6 +47,8 @@ describe("build tests", () => {
   afterEach(() => {
     process.chdir(tmpCwd);
   });
+
+  afterAll(cleanupFixtureDirectory(fixturePath));
 
   it("outputs next application url from cloudfront", () => {
     expect(componentOutputs).toEqual({

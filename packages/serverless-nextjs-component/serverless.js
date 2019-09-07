@@ -12,8 +12,9 @@ class NextjsComponent extends Component {
     return this.build(inputs);
   }
 
-  readPublicFiles() {
-    return fse.readdir("./public");
+  async readPublicFiles() {
+    const dirExists = await fse.exists("./public");
+    return dirExists ? fse.readdir("./public") : [];
   }
 
   readPagesManifest() {
@@ -106,21 +107,33 @@ class NextjsComponent extends Component {
       })
     );
 
-    await Promise.all([
+    const assetsUpload = [
       bucket.upload({
         dir: "./.next/static",
         keyPrefix: "_next/static"
       }),
-      bucket.upload({
-        dir: "./static",
-        keyPrefix: "static"
-      }),
-      bucket.upload({
-        dir: "./public",
-        keyPrefix: "public"
-      }),
       ...uploadHtmlPages
-    ]);
+    ];
+
+    if (await fse.exists("./public")) {
+      assetsUpload.push(
+        bucket.upload({
+          dir: "./public",
+          keyPrefix: "public"
+        })
+      );
+    }
+
+    if (await fse.exists("./static")) {
+      assetsUpload.push(
+        bucket.upload({
+          dir: "./static",
+          keyPrefix: "static"
+        })
+      );
+    }
+
+    await Promise.all(assetsUpload);
 
     buildManifest.cloudFrontOrigins = {
       staticOrigin: {

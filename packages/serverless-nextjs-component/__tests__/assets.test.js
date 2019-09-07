@@ -1,12 +1,15 @@
 const path = require("path");
+const fse = require("fs-extra");
 const NextjsComponent = require("../serverless");
 const { mockS3, mockS3Upload } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
+const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
+const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
 jest.mock("execa");
 
-describe("Assets Upload Tests", () => {
+describe("Assets Tests", () => {
   beforeEach(() => {
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
@@ -23,8 +26,9 @@ describe("Assets Upload Tests", () => {
   });
 
   describe("When public and static directories exist", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+
     beforeEach(async () => {
-      const fixturePath = path.join(__dirname, "./fixtures/simple-app");
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
@@ -33,6 +37,8 @@ describe("Assets Upload Tests", () => {
 
       process.chdir(tmpCwd);
     });
+
+    afterAll(cleanupFixtureDirectory(fixturePath));
 
     it("uploads client build assets", () => {
       expect(mockS3Upload).toBeCalledWith({
@@ -62,6 +68,47 @@ describe("Assets Upload Tests", () => {
           key: `static-pages/${page}`
         });
       });
+    });
+  });
+
+  describe("When public and static directories do not exist", () => {
+    const fixturePath = path.join(
+      __dirname,
+      "./fixtures/app-with-no-static-or-public-directory"
+    );
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      const component = new NextjsComponent();
+      await component.default();
+
+      process.chdir(tmpCwd);
+    });
+
+    afterAll(cleanupFixtureDirectory(fixturePath));
+
+    it("does not upload user static directory", () => {
+      expect(mockS3Upload).not.toBeCalledWith({
+        dir: "./static",
+        keyPrefix: "static"
+      });
+    });
+
+    it("does not upload user public directory", () => {
+      expect(mockS3Upload).not.toBeCalledWith({
+        dir: "./public",
+        keyPrefix: "public"
+      });
+    });
+
+    it("does not put any public files in the build manifest", async () => {
+      manifest = await fse.readJSON(
+        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/manifest.json`)
+      );
+
+      expect(manifest.publicFiles).toEqual({});
     });
   });
 });
