@@ -65,23 +65,12 @@ describe("single api", () => {
         expect(apiPostResource.Properties.PathPart).toEqual("api");
       });
 
-      it("creates GET http method", () => {
+      it("creates ANY http method", () => {
         const httpMethod =
-          cloudFormationUpdateResources.ApiGatewayMethodApiApiGet;
+          cloudFormationUpdateResources.ApiGatewayMethodApiApiAny;
 
         expect(httpMethod).toBeDefined();
-        expect(httpMethod.Properties.HttpMethod).toEqual("GET");
-        expect(httpMethod.Properties.ResourceId.Ref).toEqual(
-          "ApiGatewayResourceApiApi"
-        );
-      });
-
-      it("creates HEAD http method", () => {
-        const httpMethod =
-          cloudFormationUpdateResources.ApiGatewayMethodApiApiHead;
-
-        expect(httpMethod).toBeDefined();
-        expect(httpMethod.Properties.HttpMethod).toEqual("HEAD");
+        expect(httpMethod.Properties.HttpMethod).toEqual("ANY");
         expect(httpMethod.Properties.ResourceId.Ref).toEqual(
           "ApiGatewayResourceApiApi"
         );

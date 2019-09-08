@@ -6,6 +6,7 @@ const PluginBuildDir = require("./PluginBuildDir");
 
 class NextPage {
   constructor(pagePath, { serverlessFunctionOverrides, routes } = {}) {
+    this.isApi = pagePath.indexOf(path.join("sls-next-build", "api")) === 0;
     this.pagePath = pagePath;
     this.serverlessFunctionOverrides = serverlessFunctionOverrides;
     this.routes = routes;
@@ -98,7 +99,7 @@ class NextPage {
         {
           http: {
             path: this.pageRoute,
-            method: "get"
+            method: this.isApi ? "any" : "get"
           }
         }
       ]
