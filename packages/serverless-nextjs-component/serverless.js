@@ -62,7 +62,7 @@ class NextjsComponent extends Component {
   }
 
   async build() {
-    await execa("next", ["build"]);
+    await execa("./node_modules/.bin/next", ["build"]);
 
     const pagesManifest = await this.readPagesManifest();
     const buildManifest = this.getBlankBuildManifest();
