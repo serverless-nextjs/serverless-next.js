@@ -1,3 +1,11 @@
+# UPDATE!
+
+A new iteration of this project has been released powered by the amazing [Serverless Components](https://github.com/serverless/components).
+Check it out [here](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component). As you can see, it lives in the same monorepo.
+The new version has feature parity with nextjs 9.0 and does not use CloudFormation, allowing faster deployments and no [resource limit issues](https://github.com/danielcondemarin/serverless-next.js/issues/17).
+
+It is recommended for both existing and new users to try the new version. Obviously existing users of the next plugin don't have to migrate over straight away, the plan is to continue maintaining the plugin until the new component is more mature.
+
 # Serverless Nextjs Plugin
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
