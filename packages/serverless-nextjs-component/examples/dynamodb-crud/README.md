@@ -4,7 +4,7 @@ Example nextjs serverless app using a dynamodb database replicated across `eu-we
 
 ## Getting started
 
-Install serverless-nextjs component deps
+Install serverless-next.js component dependency
 
 ```bash
 cd ../../

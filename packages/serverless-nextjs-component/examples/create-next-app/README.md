@@ -7,6 +7,10 @@ npx create-next-app
 cd yourProjectName
 ```
 
+### Install the nextjs component
+
+`npm i serverless-next.js -D`
+
 ### Set serverless mode
 
 ```js
@@ -28,7 +32,7 @@ AWS_SECRET_ACCESS_KEY=sshh
 
 ```yaml
 nextApp:
-  component: "@serverless/nextjs"
+  component: "serverless-next.js"
 ```
 
 ### Deploy
