@@ -364,7 +364,7 @@ module.exports = page => {
 
 ## Caveats
 
-Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Contributions are welcome to investigate how this could be worked around by using something like https://github.com/dougmoscrop/serverless-plugin-split-stacks.
+Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component which solves this problem by not using CloudFormation.
 
 ## Examples
 
