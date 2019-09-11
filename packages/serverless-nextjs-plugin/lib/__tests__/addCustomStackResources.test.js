@@ -18,7 +18,7 @@ describe("addCustomStackResources", () => {
     fse.pathExists.mockResolvedValue(false);
   });
 
-  describe("When cloudfront is disabled and S3 bucket is configured", () => {
+  describe("When cloudfront is disabled and S3 bucket is provided", () => {
     const bucketName = "bucket-123";
     const bucketUrl = `https://s3.amazonaws.com/${bucketName}`;
 
