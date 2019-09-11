@@ -1,6 +1,6 @@
 {
   "name": "serverless-nextjs-plugin",
-  "version": "2.3.4",
+  "version": "2.3.5",
   "description": "A serverless plugin for nextjs 8 serverless target",
   "main": "index.js",
   "keywords": [
