@@ -30,17 +30,17 @@ describe("copyBuildFiles", () => {
       return copyBuildDirPromise;
     });
 
-    it("should cleanup pluginBuildDir before copying", () => {
+    it("cleans up pluginBuildDir before copying", () => {
       expect(pluginBuildDirObj.setupBuildDir).toBeCalled();
     });
 
-    it("should log it has started copying", () => {
+    it("logs it has started copying", () => {
       expect(logger.log).toBeCalledWith(
         expect.stringContaining("Copying next pages")
       );
     });
 
-    it("should copy serverless pages folder from next build directory", () => {
+    it("copies serverless pages folder from next build directory", () => {
       expect(fse.copy).toBeCalledWith(
         path.join(nextBuildDir, "serverless/pages"),
         pluginBuildDir

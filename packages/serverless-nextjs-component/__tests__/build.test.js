@@ -56,7 +56,7 @@ describe("build tests", () => {
     });
   });
 
-  describe("manifest", () => {
+  describe("build manifest", () => {
     it("adds ssr page route", async () => {
       const {
         pages: {
