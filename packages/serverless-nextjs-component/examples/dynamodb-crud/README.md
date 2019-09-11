@@ -42,11 +42,11 @@ Then simply run:
 
 To deploy your application to the cloud:
 
-`npm run deploy:up`
+`npx serverless`
 
 #### Tearing down the application resources
 
-`npm run deploy:down`
+`npx serverless remove`
 
 ## A few notes
 

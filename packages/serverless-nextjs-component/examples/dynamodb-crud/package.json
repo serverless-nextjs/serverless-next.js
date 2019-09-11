@@ -6,9 +6,7 @@
   "scripts": {
     "dev:infra": "LOCAL_DYNAMO_DB_ENDPOINT=\"http://localhost:8000\" npm run infra",
     "dev": "BUNDLE_AWS_SDK=1 AWS_ACCESS_KEY_ID=1 AWS_SECRET_ACCESS_KEY=1 LOCAL_DYNAMO_DB_ENDPOINT=\"http://localhost:8000\" next dev",
-    "infra": "node infrastructure/provisionTable",
-    "deploy:up": "serverless",
-    "deploy:down": "serverless remove"
+    "infra": "node infrastructure/provisionTable"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "MIT",
