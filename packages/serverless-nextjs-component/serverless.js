@@ -61,7 +61,7 @@ class NextjsComponent extends Component {
     return Promise.all(copyPromises);
   }
 
-  async build() {
+  async build(inputs) {
     await execa("./node_modules/.bin/next", ["build"]);
 
     const pagesManifest = await this.readPagesManifest();
@@ -159,7 +159,7 @@ class NextjsComponent extends Component {
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
 
-    const { url } = await cloudFront({
+    const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 5,
         allowedHttpMethods: [
@@ -191,8 +191,23 @@ class NextjsComponent extends Component {
       ]
     });
 
+    let appUrl = cloudFrontOutputs.url;
+
+    if (inputs.domain instanceof Array) {
+      const domain = await this.load("@serverless/domain");
+      const domainOutputs = await domain({
+        privateZone: false,
+        domain: inputs.domain[1],
+        subdomains: {
+          [inputs.domain[0]]: cloudFrontOutputs
+        }
+      });
+
+      appUrl = domainOutputs.domains[0];
+    }
+
     return {
-      appUrl: url
+      appUrl
     };
   }
 

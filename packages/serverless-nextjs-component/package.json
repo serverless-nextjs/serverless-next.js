@@ -25,6 +25,7 @@
     "@serverless/aws-s3": "git://github.com/serverless-components/aws-s3.git",
     "@serverless/backend": "^3.3.0",
     "@serverless/core": "^1.0.0",
+    "@serverless/domain": "github:serverless-components/domain",
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "next-aws-lambda": "^2.3.2",

@@ -30,7 +30,7 @@ There is no configuration needed. You can extend defaults based on your applicat
 
 2. Feature parity with nextjs
 
-Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's feature we know and love.
+Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love.
 
 3. Fast deployments / no CloudFormation resource limits.
 
@@ -78,9 +78,11 @@ And simply deploy:
 $ serverless
 ```
 
-### Custom domain name (Coming soon!)
+### Custom domain name
 
-In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name:
+In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
+
+First, make sure you've purchased your domain within Route53. Then simply configure your `subdomain` and `domain` like the example below.
 
 ```yml
 # serverless.yml
@@ -88,7 +90,7 @@ In most cases you wouldn't want to use CloudFront's distribution domain to acces
 myNextApplication:
   component: serverless-next.js
   inputs:
-    domain: myfrontend.example.com
+    domain: ["www", "example.com"] # [ sub-domain, domain ]
 ```
 
 ### Architecture
