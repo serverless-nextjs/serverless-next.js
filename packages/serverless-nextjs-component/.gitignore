@@ -1,3 +1,4 @@
 .serverless_nextjs
 !__tests__/fixtures/simple-app/.next
 !__tests__/fixtures/app-with-no-static-or-public-directory/.next
+!__tests__/fixtures/app-with-custom-domain/.next
