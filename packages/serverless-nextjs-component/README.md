@@ -1,5 +1,7 @@
 # Serverless Nextjs Component
 
+![logo](./logo.gif)
+
 A zero configuration Nextjs 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
