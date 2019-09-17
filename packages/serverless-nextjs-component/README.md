@@ -113,17 +113,6 @@ The reason why 2. and 3. have to go through Lambda@Edge first is because these r
 
 ### FAQ
 
-#### Is it one monolith Lambda or one Lambda per serverless page?
-
-One master lambda is provisioned, then CloudFront behind the scenes creates replicas at the edge locations.
-There are a few reasons why all pages are deployed onto one lambda:
-
-- Simplicity. One lambda responsible for server side rendering or serving the API requests is very easy to manage. On the other hand, one lambda per page is a large surface area for a web app. For example a next application with 40+ pages would have resulted in 40+ lambda functions to maintain.
-
-- Deployment speed. Is much faster building and deploying one lambda function.
-
-Of course there are tradeoffs ... An architecture using one lambda per page in theory results in lower boot times. However, the implementation of this component is designed to ensure a minimum amount of compute happens at the Lambda@Edge.
-
 #### How do I interact with other AWS Services within my app?
 
 See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB.
