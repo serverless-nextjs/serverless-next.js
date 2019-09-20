@@ -23,10 +23,10 @@ describe("Custom domain", () => {
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
     });
-    mockLambda.mockResolvedValueOnce({
+    mockLambda.mockResolvedValue({
       arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
     });
-    mockLambdaPublish.mockResolvedValueOnce({
+    mockLambdaPublish.mockResolvedValue({
       version: "v1"
     });
     mockCloudFront.mockResolvedValueOnce({

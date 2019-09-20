@@ -1,9 +1,13 @@
-const { handler } = require("../lambda-at-edge-handler");
+const { handler } = require("../default-lambda-handler");
 const { createCloudFrontEvent } = require("../lib/test-utils");
 
-jest.mock("../manifest.json", () => require("./fixtures/manifest.json"), {
-  virtual: true
-});
+jest.mock(
+  "../manifest.json",
+  () => require("./fixtures/default-build-manifest.json"),
+  {
+    virtual: true
+  }
+);
 
 const mockPageRequire = mockPagePath => {
   jest.mock(
@@ -76,7 +80,7 @@ describe("Lambda@Edge", () => {
     });
   });
 
-  it("renders page at the edge", async () => {
+  it("renders page", async () => {
     const event = createCloudFrontEvent({
       uri: "/customers",
       host: "mydistribution.cloudfront.net",
@@ -94,27 +98,6 @@ describe("Lambda@Edge", () => {
     const decodedBody = new Buffer(response.body, "base64").toString("utf8");
 
     expect(decodedBody).toEqual("pages/customers/index.js");
-    expect(response.status).toEqual(200);
-  });
-
-  it("serves api request at the edge", async () => {
-    const event = createCloudFrontEvent({
-      uri: "/api/getCustomers",
-      host: "mydistribution.cloudfront.net",
-      origin: {
-        s3: {
-          domainName: "my-bucket.amazonaws.com"
-        }
-      }
-    });
-
-    mockPageRequire("pages/api/getCustomers.js");
-
-    const response = await handler(event, {});
-
-    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
-
-    expect(decodedBody).toEqual("pages/api/getCustomers");
     expect(response.status).toEqual(200);
   });
 

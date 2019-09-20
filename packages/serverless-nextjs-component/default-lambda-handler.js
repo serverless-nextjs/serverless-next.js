@@ -1,6 +1,38 @@
 const manifest = require("./manifest.json");
 const cloudFrontCompat = require("./next-aws-cloudfront");
-const router = require("./router");
+
+const router = manifest => {
+  const {
+    pages: {
+      ssr: { dynamic, nonDynamic },
+      html
+    }
+  } = manifest;
+
+  return path => {
+    if (nonDynamic[path]) {
+      return nonDynamic[path];
+    }
+
+    if (html[path]) {
+      return html[path];
+    }
+
+    for (route in dynamic) {
+      const { file, regex } = dynamic[route];
+
+      const re = new RegExp(regex, "i");
+      const pathMatchesRoute = re.test(path);
+
+      if (pathMatchesRoute) {
+        return file;
+      }
+    }
+
+    // path didn't match any route, return error page
+    return "pages/_error.js";
+  };
+};
 
 const normaliseUri = uri => (uri === "/" ? "/index" : uri);
 
@@ -26,11 +58,8 @@ exports.handler = async event => {
 
   const page = require(`./${pagePath}`);
   const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
-  if (page.render) {
-    page.render(req, res);
-  } else {
-    page.default(req, res);
-  }
-  const response = await responsePromise;
-  return response;
+
+  page.render(req, res);
+
+  return responsePromise;
 };
