@@ -5,14 +5,17 @@ const NextjsComponent = require("../serverless");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
-const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
+const {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR
+} = require("../constants");
 const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
 jest.mock("execa");
 
 describe("build tests", () => {
   let tmpCwd;
-  let manifest;
+  let defaultBuildManifest;
   let componentOutputs;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
@@ -27,9 +30,14 @@ describe("build tests", () => {
       name: "bucket-xyz"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+      arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
     });
-    mockLambdaPublish.mockResolvedValueOnce({
+    mockLambda.mockResolvedValueOnce({
+      arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
+    });
+    mockLambdaPublish.mockResolvedValue({
       version: "v1"
     });
     mockCloudFront.mockResolvedValueOnce({
@@ -37,10 +45,15 @@ describe("build tests", () => {
     });
 
     const component = new NextjsComponent();
+
     componentOutputs = await component.default();
 
-    manifest = await fse.readJSON(
-      path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/manifest.json`)
+    defaultBuildManifest = await fse.readJSON(
+      path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
+    );
+
+    apiBuildManifest = await fse.readJSON(
+      path.join(fixturePath, `${API_LAMBDA_CODE_DIR}/manifest.json`)
     );
   });
 
@@ -56,67 +69,16 @@ describe("build tests", () => {
     });
   });
 
-  describe("build manifest", () => {
-    it("adds ssr page route", async () => {
+  describe("Default build manifest", () => {
+    it("adds full manifest", () => {
       const {
-        pages: {
-          ssr: { nonDynamic }
-        }
-      } = manifest;
-
-      expect(nonDynamic["/customers/new"]).toEqual("pages/customers/new.js");
-    });
-
-    it("adds ssr dynamic page route to express equivalent", async () => {
-      const {
-        pages: {
-          ssr: { dynamic }
-        }
-      } = manifest;
-
-      expect(dynamic["/blog/:id"]).toEqual({
-        file: "pages/blog/[id].js",
-        regex: "^\\/blog\\/([^\\/]+?)(?:\\/)?$"
-      });
-    });
-
-    it("adds dynamic page with multiple segments to express equivalent", async () => {
-      const {
-        pages: {
-          ssr: { dynamic }
-        }
-      } = manifest;
-
-      expect(dynamic["/customers/:customer/:post"]).toEqual({
-        file: "pages/customers/[customer]/[post].js",
-        regex: "^\\/customers\\/([^\\/]+?)\\/([^\\/]+?)(?:\\/)?$"
-      });
-    });
-
-    it("adds static page route", async () => {
-      const {
-        pages: { html }
-      } = manifest;
-
-      expect(html["/terms"]).toEqual("pages/terms.html");
-    });
-
-    it("adds public files", async () => {
-      const { publicFiles } = manifest;
-
-      expect(publicFiles).toEqual({
-        "/favicon.ico": "favicon.ico",
-        "/sw.js": "sw.js"
-      });
-    });
-
-    it("adds the full manifest", async () => {
-      const {
+        publicFiles,
         pages: {
           ssr: { dynamic, nonDynamic },
           html
-        }
-      } = manifest;
+        },
+        cloudFrontOrigins: { staticOrigin }
+      } = defaultBuildManifest;
 
       expect(dynamic).toEqual({
         "/:root": {
@@ -153,51 +115,96 @@ describe("build tests", () => {
         "/terms": "pages/terms.html",
         "/about": "pages/about.html"
       });
-    });
 
-    it("adds s3 domain", () => {
-      const {
-        cloudFrontOrigins: { staticOrigin }
-      } = manifest;
-
+      expect(publicFiles).toEqual({
+        "/favicon.ico": "favicon.ico",
+        "/sw.js": "sw.js"
+      });
       expect(staticOrigin).toEqual({
         domainName: "bucket-xyz.s3.amazonaws.com"
       });
     });
   });
 
-  describe("Lambda@Edge build files", () => {
-    it("copies handler file", async () => {
-      const files = await fse.readdir(
-        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/`)
-      );
+  describe("API build manifest", () => {
+    it("adds full api manifest", () => {
+      const {
+        apis: { dynamic, nonDynamic }
+      } = apiBuildManifest;
 
-      expect(files).toContain("index.js");
+      expect(nonDynamic).toEqual({
+        "/api/customers": "pages/api/customers.js",
+        "/api/customers/new": "pages/api/customers/new.js"
+      });
+      expect(dynamic).toEqual({
+        "/api/customers/:id": {
+          file: "pages/api/customers/[id].js",
+          regex: expect.any(String)
+        }
+      });
     });
+  });
 
-    it("copies manifest file", async () => {
+  describe("Default lambda build files", () => {
+    it("copies build files", async () => {
+      expect.assertions(4);
+
       const files = await fse.readdir(
-        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/`)
+        path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}`)
+      );
+      const pages = await fse.readdir(
+        path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/pages`)
+      );
+      const customerPages = await fse.readdir(
+        path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/pages/customers`)
+      );
+      const apiDirExists = await fse.exists(
+        path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
       );
 
-      expect(files).toContain("manifest.json");
+      expect(files).toEqual([
+        "index.js",
+        "manifest.json",
+        "next-aws-cloudfront.js",
+        "pages"
+      ]);
+
+      // api pages should not be included in the default lambda
+      expect(apiDirExists).toEqual(false);
+
+      // html pages should not be included in the default lambda
+      expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
+      expect(customerPages).toEqual(["[post].js"]);
     });
+  });
 
-    it("copies compat file", async () => {
+  describe("API lambda build files", () => {
+    it("copies build files", async () => {
+      expect.assertions(2);
+
       const files = await fse.readdir(
-        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/`)
+        path.join(fixturePath, `${API_LAMBDA_CODE_DIR}`)
+      );
+      const pages = await fse.readdir(
+        path.join(fixturePath, `${API_LAMBDA_CODE_DIR}/pages`)
       );
 
-      expect(files).toContain("next-aws-cloudfront.js");
+      expect(files).toEqual([
+        "index.js",
+        "manifest.json",
+        "next-aws-cloudfront.js",
+        "pages"
+      ]);
+      expect(pages).toEqual(["_error.js", "api"]);
     });
   });
 
   describe("cloudfront", () => {
-    it("provisions and publishes lambda@edge", () => {
+    it("provisions default lambda", () => {
       expect(mockLambda).toBeCalledWith({
         description: expect.any(String),
         handler: "index.handler",
-        code: `./${LAMBDA_AT_EDGE_BUILD_DIR}`,
+        code: `./${DEFAULT_LAMBDA_CODE_DIR}`,
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
@@ -205,8 +212,20 @@ describe("build tests", () => {
           }
         }
       });
+    });
 
-      expect(mockLambdaPublish).toBeCalled();
+    it("provisions api lambda", () => {
+      expect(mockLambda).toBeCalledWith({
+        description: expect.any(String),
+        handler: "index.handler",
+        code: `./${API_LAMBDA_CODE_DIR}`,
+        role: {
+          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+          policy: {
+            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+          }
+        }
+      });
     });
 
     it("creates distribution", () => {
@@ -216,7 +235,7 @@ describe("build tests", () => {
           ttl: 5,
           "lambda@edge": {
             "origin-request":
-              "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1" // includes version
+              "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
           }
         },
         origins: [
@@ -229,6 +248,14 @@ describe("build tests", () => {
               },
               "static/*": {
                 ttl: 86400
+              },
+              "api/*": {
+                ttl: 5,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
+                },
+                allowedHttpMethods: expect.any(Array)
               }
             }
           }

@@ -4,7 +4,7 @@ const NextjsComponent = require("../serverless");
 const { mockS3, mockS3Upload } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
-const { LAMBDA_AT_EDGE_BUILD_DIR } = require("../constants");
+const { DEFAULT_LAMBDA_CODE_DIR } = require("../constants");
 const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
 jest.mock("execa");
@@ -14,10 +14,10 @@ describe("Assets Tests", () => {
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
     });
-    mockLambda.mockResolvedValueOnce({
+    mockLambda.mockResolvedValue({
       arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
     });
-    mockLambdaPublish.mockResolvedValueOnce({
+    mockLambdaPublish.mockResolvedValue({
       version: "v1"
     });
     mockCloudFront.mockResolvedValueOnce({
@@ -105,7 +105,7 @@ describe("Assets Tests", () => {
 
     it("does not put any public files in the build manifest", async () => {
       manifest = await fse.readJSON(
-        path.join(fixturePath, `${LAMBDA_AT_EDGE_BUILD_DIR}/manifest.json`)
+        path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
       );
 
       expect(manifest.publicFiles).toEqual({});
