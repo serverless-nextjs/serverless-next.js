@@ -97,7 +97,7 @@ myNextApplication:
 
 ### Architecture
 
-![architecture](./arch.png)
+![architecture](./arch_no_grid.png)
 
 Three Cache Behaviours are created in CloudFront.
 
@@ -121,6 +121,6 @@ See `examples/dynamodb-crud` for an example Todo application that interacts with
 
 Users are encouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
-#### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that. 
+#### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that.
 
 You need to commit your application state in source control. That is the files under the `.serverless` directory. The serverless team is currently working on remote state storage so this won't be necessary in the future.
