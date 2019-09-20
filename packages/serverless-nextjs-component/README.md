@@ -99,17 +99,21 @@ myNextApplication:
 
 ![architecture](./arch_no_grid.png)
 
-Three Cache Behaviours are created in CloudFront.
+Four Cache Behaviours are created in CloudFront.
 
 The first two `_next/*` and `static/*` forward the requests to S3.
 
-The 3rd. is associated to a lambda function which is responsible for handling three types of requests.
+The third is associated to a lambda function which is responsible for handling three types of requests.
 
-- Server side rendered page. Any page that defines getInitialPropsmethod will be rendered at this level and the response is returned immediately to the user.
-- Statically optimised page. Requests to pages that were pre-compiled by next to HTML are forwarded to S3 where the HTML is stored.
-- Public resources. These are requests to root level resources like /robots.txt, /favicon.ico, /manifest.jsonetc. These are also forwarded to S3 where these resources can be found.
+1. Server side rendered page. Any page that defines `getInitialProps` method will be rendered at this level and the response is returned immediately to the user.
 
-The reason why 2. and 3. have to go through Lambda@Edge first is because these routes don't conform to a pattern like `_next/*` or `static/*`. Also, one cache behaviour per route is a bad idea because CloudFront only allows [25 per distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-web-distributions).
+2. Statically optimised page. Requests to pages that were pre-compiled by next to HTML are forwarded to S3.
+
+3. Public resources. Requests to root level resources like `/robots.txt`, `/favicon.ico`, `/manifest.json`, etc. These are forwarded to S3.
+
+The reason why 2. and 3. have to go through Lambda@Edge first is because the routes don't conform to a pattern like `_next/*` or `static/*`. Also, one cache behaviour per route is a bad idea because CloudFront only allows [25 per distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-web-distributions).
+
+The fourth cache behaviour handles next API requests `api/*`.
 
 ### FAQ
 
