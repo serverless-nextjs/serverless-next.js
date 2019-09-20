@@ -13,6 +13,8 @@ const join = path.join;
 const writeJson = fse.writeJson;
 const emptyDir = fse.emptyDir;
 
+const pathToPosix = path => path.replace(/\\/g, "/");
+
 class NextjsComponent extends Component {
   async default(inputs = {}) {
     return this.build(inputs);
@@ -110,7 +112,7 @@ class NextjsComponent extends Component {
         // skip api pages from default lambda code
         filter: file => {
           const isHTMLPage = path.extname(file) === ".html";
-          return file.indexOf("pages/api") === -1 && !isHTMLPage;
+          return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
         }
       })
     ]);
