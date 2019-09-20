@@ -1,16 +1,24 @@
+# UPDATE!
+
+A new iteration of this project has been released powered by the amazing [Serverless Components](https://github.com/serverless/components).
+Check it out [here](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component). As you can see, it lives in the same monorepo.
+The new version has feature parity with nextjs 9.0 and does not use CloudFormation, allowing faster deployments and no [resource limit issues](https://github.com/danielcondemarin/serverless-next.js/issues/17).
+
+It is recommended for both existing and new users to try the new version. Obviously existing users of the next plugin don't have to migrate over straight away, the plan is to continue maintaining the plugin until the new component is more mature.
+
 # Serverless Nextjs Plugin
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
-[![Build Status](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
+[![Build Status](https://travis-ci.org/danielcondemarin/serverless-next.js.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
 [![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/serverless-nextjs-plugin.svg)](https://badge.fury.io/js/serverless-nextjs-plugin)
-[![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-nextjs-plugin/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/app/danielcondemarin/serverless-nextjs-plugin?utm_source=github.com&utm_medium=referral&utm_content=danielcondemarin/serverless-nextjs-plugin&utm_campaign=Badge_Grade)
 
 A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
 
 The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serverless-nextjs)
 
-![demo](../../demo.gif)
+![demo](./demo.gif)
 
 ## Contents
 
@@ -51,8 +59,7 @@ const compat = require("next-aws-lambda");
 const page = require(".next/serverless/pages/somePage.js");
 
 module.exports.render = (event, context, callback) => {
-  const { req, res } = compat(page)(event, callback);
-  page.render(req, res);
+  compat(page)(event, context, callback);
 };
 ```
 
@@ -357,7 +364,7 @@ module.exports = page => {
 
 ## Caveats
 
-Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Contributions are welcome to investigate how this could be worked around by using something like https://github.com/dougmoscrop/serverless-plugin-split-stacks.
+Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component which solves this problem by not using CloudFormation.
 
 ## Examples
 

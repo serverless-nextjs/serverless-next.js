@@ -78,9 +78,6 @@
     ]
   },
   "dependencies": {
-    "@serverless/aws-cloudfront": "^3.1.0",
-    "@serverless/aws-lambda": "^3.0.0",
-    "@serverless/aws-s3": "^3.1.0",
     "opencollective-postinstall": "^2.0.2"
   },
   "collective": {

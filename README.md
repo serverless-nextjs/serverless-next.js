@@ -1,374 +1,134 @@
-# UPDATE!
+# Serverless Nextjs Component
 
-A new iteration of this project has been released powered by the amazing [Serverless Components](https://github.com/serverless/components).
-Check it out [here](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component). As you can see, it lives in the same monorepo.
-The new version has feature parity with nextjs 9.0 and does not use CloudFormation, allowing faster deployments and no [resource limit issues](https://github.com/danielcondemarin/serverless-next.js/issues/17).
+![logo](./logo.gif)
 
-It is recommended for both existing and new users to try the new version. Obviously existing users of the next plugin don't have to migrate over straight away, the plan is to continue maintaining the plugin until the new component is more mature.
-
-# Serverless Nextjs Plugin
+A zero configuration Nextjs 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
-[![Build Status](https://travis-ci.org/danielcondemarin/serverless-next.js.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-nextjs-plugin)
-[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/serverless-nextjs-plugin.svg)](https://badge.fury.io/js/serverless-nextjs-plugin)
-[![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-nextjs-plugin?branch=master)
+[![Build Status](https://travis-ci.org/danielcondemarin/serverless-next.js.svg?branch=master)](https://travis-ci.org/danielcondemarin/serverless-next.js)
+[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/serverless-next.js.svg)](https://badge.fury.io/js/serverless-next.js)
+[![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-next.js?branch=master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/app/danielcondemarin/serverless-nextjs-plugin?utm_source=github.com&utm_medium=referral&utm_content=danielcondemarin/serverless-nextjs-plugin&utm_campaign=Badge_Grade)
-
-A [serverless framework](https://serverless.com/) plugin to deploy nextjs apps.
-
-The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serverless-nextjs)
-
-![demo](./demo.gif)
 
 ## Contents
 
 - [Motivation](#motivation)
-- [Getting Started](#getting-started)
-- [Hosting static assets](#hosting-static-assets)
-- [Serving static assets](#serving-static-assets)
-- [Deploying](#deploying)
-- [Overriding page configuration](#overriding-page-configuration)
-- [Custom page routing](#custom-page-routing)
-- [Custom error page](#custom-error-page)
-- [Custom lambda handler](#custom-lambda-handler)
-- [All plugin configuration options](#all-plugin-configuration-options)
-- [Examples](#examples)
-- [Caveats](#caveats)
-- [Contributing](#contributing)
+- [Design principles](#design-principles)
+- [Features](#features)
+- [Getting started](#getting-started)
+- [Custom domain name](#custom-domain-name)
+- [Architecture](#architecture)
+- [FAQ](#faq)
 
-## Motivation
+### Motivation
 
-Next 8 released [official support](https://nextjs.org/blog/next-8/#serverless-nextjs) for serverless! It doesn't work out of the box with AWS Lambdas, instead, next provides a low level API which this plugin uses to deploy the serverless pages.
+Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
 
-Nextjs serverless page handler signature:
+### Design principles
 
-```js
-exports.render = function(req, res) => {...}
-```
+1. Zero configuration by default
 
-AWS Lambda handler:
+There is no configuration needed. You can extend defaults based on your application needs.
 
-```js
-exports.handler = function(event, context, callback) {...}
-```
+2. Feature parity with nextjs
 
-A compat layer between the nextjs page bundles and AWS Lambda is added at build time:
+Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love.
 
-```js
-const compat = require("next-aws-lambda");
-const page = require(".next/serverless/pages/somePage.js");
+3. Fast deployments / no CloudFormation resource limits.
 
-module.exports.render = (event, context, callback) => {
-  compat(page)(event, context, callback);
-};
-```
+With a simplified architecture and no use of CloudFormation, there are no limits to how many pages you can have in your application, plus deployment times are very fast! with the exception of CloudFront propagation times of course.
 
-## Getting started
+### Features
 
-### Installing
+- [x] [Server side rendered pages at the Edge](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
+      Pages that need server side compute to render are hosted on Lambda@Edge. The component takes care of all the routing for you so there is no configuration needed. Because rendering happens at the CloudFront edge locations latency is very low!
+- [x] [API Routes](https://nextjs.org/docs#api-routes).
+      Similarly to the server side rendered pages, API requests are also served from the CloudFront edge locations using Lambda@Edge.
+- [x] [Dynamic pages / route segments](https://github.com/zeit/next.js/#dynamic-routing).
+- [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
+      Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
+- [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
+      Nextjs build assets `/_next/*` served from CloudFront.
+- [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
+      Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
 
-`npm install --save-dev serverless-nextjs-plugin`
+### Getting started
 
-Out of the box, the plugin won't require any configuration. If you need to override any defaults check [this](#all-plugin-configuration-options).
+Install the next.js component:
 
-For example:
+`npm install serverless-next.js --save-dev`
 
-```
-nextApp
-│   next.config.js
-│   serverless.yml
-└───pages
-│   │   home.js
-│   │   about.js
-│   │   admin.js
-```
-
-Edit the serverless.yml and add:
-
-```yml
-plugins:
-  - serverless-nextjs-plugin
-
-package:
-  exclude:
-    - ./**
-```
-
-You can exclude everything. The plugin makes sure the page handlers are included in the artifacts.
-
-## Hosting static assets
-
-If you don't want to manage uploading the next static assets yourself, like uploading them to a CDN, the plugin can do this for you by hosting the asset files on S3.
-
-The easiest way is to use a [valid bucket URL](https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html#access-bucket-intro) in the `assetPrefix` field of your next configuration:
-
-```js
-// next.config.js
-module.exports = {
-  assetPrefix: "https://s3.amazonaws.com/your-bucket-name"
-};
-```
-
-The plugin will create a new S3 Bucket using the parsed name. On deployment, static assets will be uploaded to the bucket provisioned.
-
-Alternatively, if you just want the assets to get uploaded to S3, you can provide the bucket name via the plugin config:
+Add your next application to the serverless.yml:
 
 ```yml
 # serverless.yml
-plugins:
-  - serverless-nextjs-plugin
 
-custom:
-  serverless-nextjs:
-    assetsBucketName: "your-bucket-name"
+myNextApplication:
+  component: serverless-next.js
 ```
 
-## Serving static assets
+Set your aws credentials in a `.env` file:
 
-Static files can be served by [following the NextJs convention](https://github.com/zeit/next.js/#static-file-serving-eg-images) of using a `static` and `public` folder.
-
-From your code you can then reference those files with a `/static` URL:
-
-```
-function MyImage() {
-  return <img src="/static/my-image.png" alt="my image" />
-}
-
-export default MyImage
+```bash
+AWS_ACCESS_KEY_ID=accesskey
+AWS_SECRET_ACCESS_KEY=sshhh
 ```
 
-To serve static files from the root directory you can add a folder called public and reference those files from the root, e.g: /robots.txt.
+And simply deploy:
 
-Note that for this to work, an S3 bucket needs to be provisioned as per [hosting-static-assets](#hosting-static-assets).
+```bash
+$ serverless
+```
 
-**For production deployments, enabling CloudFront is recommended:**
+### Custom domain name
+
+In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
+
+First, make sure you've purchased your domain within Route53. Then simply configure your `subdomain` and `domain` like the example below.
 
 ```yml
 # serverless.yml
-plugins:
-  - serverless-nextjs-plugin
 
-custom:
-  serverless-nextjs:
-    assetsBucketName: "your-bucket-name"
-    cloudFront: true
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    domain: ["www", "example.com"] # [ sub-domain, domain ]
 ```
 
-By doing this, a CloudFront distribution will be created in front of your next application to serve any static assets from S3 and the pages from Api Gateway.
+### Architecture
 
-Note that deploying the stack for the first time will take considerably longer, as CloudFront takes time propagating the changes, typically 10 - 20mins.
+![architecture](./arch_no_grid.png)
 
-You can provide your own configuration for the CloudFront distribution:
+Four Cache Behaviours are created in CloudFront.
 
-```yml
-# serverless.yml
-plugins:
-  - serverless-nextjs-plugin
+The first two `_next/*` and `static/*` forward the requests to S3.
 
-custom:
-  serverless-nextjs:
-    assetsBucketName: "your-bucket-name"
-    cloudFront: ${file(cloudfront-override.yml)}
-```
+The third is associated to a lambda function which is responsible for handling three types of requests.
 
-```yml
-# cloudfront-override.yml
-# e.g. add custom domain name
-Properties:
-  DistributionConfig:
-    Aliases:
-      - my.alias.com
-    ViewerCertificate:
-      AcmCertificateArn: arn:aws:acm:xxxx
-      ...
-```
+1. Server side rendered page. Any page that defines `getInitialProps` method will be rendered at this level and the response is returned immediately to the user.
 
-The configuration provided will be merged onto the defaults in `packages/serverless-nextjs-plugin/resources/cloudfront.yml`.
+2. Statically optimised page. Requests to pages that were pre-compiled by next to HTML are forwarded to S3.
 
-## Deploying
+3. Public resources. Requests to root level resources like `/robots.txt`, `/favicon.ico`, `/manifest.json`, etc. These are forwarded to S3.
 
-`serverless deploy`
+The reason why 2. and 3. have to go through Lambda@Edge first is because the routes don't conform to a pattern like `_next/*` or `static/*`. Also, one cache behaviour per route is a bad idea because CloudFront only allows [25 per distribution](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html#limits-web-distributions).
 
-When running `serverless deploy` all your next pages will be automatically compiled, packaged and deployed.
+The fourth cache behaviour handles next API requests `api/*`.
 
-The Lambda functions created for each page have by default the following configuration:
+### FAQ
 
-```yml
-handler: /path/to/page/handler.render
-events:
-  - http:
-      path: pageName # home, about, etc. Unless is the index page which is served at /
-      method: get
-  - http:
-      path: pageName # home, about, etc. Unless is the index page which is served at /
-      method: head
-```
+#### How do I interact with other AWS Services within my app?
 
-## Overriding page configuration
+See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB.
 
-You may want to have a different configuration for one or more of your page functions. This is possible by setting the `pageConfig` key in the plugin config:
+#### Should I use the [serverless-nextjs-plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin/tree/master/packages/serverless-nextjs-plugin) or this component?
 
-```yml
-plugins:
-  - serverless-nextjs-plugin
+Users are encouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
-custom:
-  serverless-nextjs:
-    pageConfig:
-      about:
-        memorySize: 512 # default is 1024
-      home:
-        timeout: 10 # default is 6
-```
+#### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
-If you need to change the default configuration, such as `memorySize`, `timeout` etc. use the top level `provider` which will override all the functions configuration. For example, to change the memorySize to 512MB:
-
-```yml
-provider:
-  name: aws
-  runtime: nodejs8.10
-  memorySize: 512
-  ...
-```
-
-You can also add configuration for all page functions by adding an asterisk entry (`*`) to `pageConfig`. This is particularly useful when you have other functions in your service (i.e. an `api`) aside from the page functions and you only want to apply configuration changes to the latter:
-
-```yml
-plugins:
-  - serverless-nextjs-plugin
-
-custom:
-  serverless-nextjs:
-    pageConfig:
-      "*":
-        layers:
-          - arn:aws:lambda:${self:provider.region}:553035198032:layer:nodejs12:1
-```
-
-You can set any function property described [here](https://serverless.com/framework/docs/providers/aws/guide/functions#configuration).
-
-## Custom page routing
-
-The default page routes follow the same convention as next `useFileSystemPublicRoutes` documented [here](https://nextjs.org/docs/#routing).
-
-E.g.
-
-| page                        | path                |
-| --------------------------- | ------------------- |
-| pages/index.js              | /                   |
-| pages/post.js               | /post               |
-| pages/blog/index.js         | /blog               |
-| pages/categories/uno/dos.js | /categories/uno/dos |
-
-You may want to serve your page from a different path. This is possible by setting your own http path in the `routes` config. For example for `pages/post.js`:
-
-```js
-class Post extends React.Component {
-  static async getInitialProps({ query }) {
-    return {
-      slug: query.slug
-    };
-  }
-  render() {
-    return <h1>Post page: {this.props.slug}</h1>;
-  }
-}
-
-export default Post;
-```
-
-```yml
-plugins:
-  - serverless-nextjs-plugin
-
-custom:
-  serverless-nextjs:
-    routes:
-      - src: post
-        path: posts/{slug}
-        request:
-          parameters:
-            paths:
-              slug: true
-```
-
-## Custom error page
-
-404 or 500 errors are handled both client and server side by a default component `error.js`, same as documented [here](https://github.com/zeit/next.js/#custom-error-handling).
-
-Simply add `pages/_error.js`:
-
-```js
-class Error extends React.Component {
-  static getInitialProps({ res, err }) {
-    const statusCode = res ? res.statusCode : err ? err.statusCode : null;
-    return { statusCode };
-  }
-
-  render() {
-    return (
-      <p>
-        {this.props.statusCode
-          ? `An error ${this.props.statusCode} occurred on server (╯°□°)╯︵ ┻━┻`
-          : "An error occurred on client"}
-      </p>
-    );
-  }
-}
-
-export default Error;
-```
-
-## Custom lambda handler
-
-If you need to customize the lambda handler you can do so by providing a path to your own handler in the `customHandler` field. Note that it resolves the path to the custom handler relative to your `next.config.js`.
-
-```yml
-plugins:
-  - serverless-nextjs-plugin
-
-custom:
-  serverless-nextjs:
-    customHandler: ./handler.js
-```
-
-The custom handler needs to look something like this:
-
-```js
-const compat = require("next-aws-lambda");
-
-module.exports = page => {
-  const handler = (event, context, callback) => {
-    // do any stuff you like
-
-    // this makes sure the next page renders
-    compat(page)(event, context, callback);
-
-    // do any other stuff you like
-  };
-  return handler;
-};
-```
-
-## All plugin configuration options
-
-| Plugin config key | Type               | Default Value | Description                                                                                                                                                                                                                   |
-| ----------------- | ------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| nextConfigDir     | `string`           | ./            | Path to parent directory of `next.config.js`.                                                                                                                                                                                 |
-| assetsBucketName  | `string`           | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                        |
-| cloudFront        | `bool` \| `object` | false         | Set to `true` to create a cloud front distribution in front of your nextjs application. Also can be set to an `object` if you need to override CloudFront configuration, see [serving static assets](#serving-static-assets). |
-| routes            | `[]object`         | []            | Array of custom routes for the next pages.                                                                                                                                                                                    |
-| customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
-| uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
-| createAssetBucket | `bool`             | true          | Set to false if you want to manage next assets yourself.                                                                                                                                                                      |
-
-## Caveats
-
-Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component which solves this problem by not using CloudFormation.
-
-## Examples
-
-See the `examples/` directory.
+You need to commit your application state in source control. That is the files under the `.serverless` directory.
+The serverless team is currently working on remote state storage so this won't be necessary in the future.
 
 ## Contributing
 
