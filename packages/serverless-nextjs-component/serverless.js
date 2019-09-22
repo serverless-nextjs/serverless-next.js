@@ -159,7 +159,8 @@ class NextjsComponent extends Component {
     );
 
     const bucketOutputs = await bucket({
-      accelerated: true
+      accelerated: true,
+      name: inputs.bucketName
     });
 
     const uploadHtmlPages = Object.values(defaultBuildManifest.pages.html).map(
@@ -304,7 +305,8 @@ class NextjsComponent extends Component {
     }
 
     return {
-      appUrl
+      appUrl,
+      bucketName: bucketOutputs.name
     };
   }
 
