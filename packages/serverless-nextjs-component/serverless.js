@@ -311,9 +311,11 @@ class NextjsComponent extends Component {
   async remove() {
     const bucket = await this.load("@serverless/aws-s3");
     const cloudfront = await this.load("@serverless/aws-cloudfront");
+    const domain = await this.load("@serverless/domain");
 
     await bucket.remove();
     await cloudfront.remove();
+    await domain.remove();
   }
 }
 
