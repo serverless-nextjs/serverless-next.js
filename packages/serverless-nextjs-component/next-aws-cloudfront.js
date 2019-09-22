@@ -1,6 +1,26 @@
 const Stream = require("stream");
 
-const readOnlyHeaders = {
+const specialNodeHeaders = [
+  "age",
+  "authorization",
+  "content-length",
+  "content-type",
+  "etag",
+  "expires",
+  "from",
+  "host",
+  "if-modified-since",
+  "if-unmodified-since",
+  "last-modified",
+  "location",
+  "max-forwards",
+  "proxy-authorization",
+  "referer",
+  "retry-after",
+  "user-agent"
+];
+
+const readOnlyCloudFrontHeaders = {
   "accept-encoding": true,
   "content-length": true,
   "if-modified-since": true,
@@ -15,7 +35,7 @@ const toCloudFrontHeaders = headers => {
   const result = {};
 
   Object.keys(headers).forEach(headerName => {
-    if (!readOnlyHeaders[headerName.toLowerCase()]) {
+    if (!readOnlyCloudFrontHeaders[headerName.toLowerCase()]) {
       result[headerName] = [
         {
           key: headerName,
@@ -28,7 +48,7 @@ const toCloudFrontHeaders = headers => {
   return result;
 };
 
-module.exports = event => {
+const handler = event => {
   const { request: cfRequest } = event;
 
   const response = {
@@ -53,11 +73,14 @@ module.exports = event => {
   const headers = cfRequest.headers || {};
 
   for (const lowercaseKey of Object.keys(headers)) {
-    const header = headers[lowercaseKey];
+    const headerKeyValPairs = headers[lowercaseKey];
 
-    req.rawHeaders.push(header.key);
-    req.rawHeaders.push(header.value);
-    req.headers[lowercaseKey] = header.value;
+    headerKeyValPairs.forEach(keyVal => {
+      req.rawHeaders.push(keyVal.key);
+      req.rawHeaders.push(keyVal.value);
+    });
+
+    req.headers[lowercaseKey] = headerKeyValPairs[0].value;
   }
 
   req.getHeader = name => {
@@ -131,3 +154,7 @@ module.exports = event => {
     responsePromise
   };
 };
+
+handler.SPECIAL_NODE_HEADERS = specialNodeHeaders;
+
+module.exports = handler;

@@ -1,5 +1,7 @@
 const create = require("../next-aws-cloudfront");
 
+const { SPECIAL_NODE_HEADERS } = create;
+
 describe("Request Tests", () => {
   it("request url path", () => {
     const { req } = create({
@@ -22,52 +24,6 @@ describe("Request Tests", () => {
     expect(req.url).toEqual("/?x=42");
   });
 
-  // it("querystring /?x=åäö", () => {
-  //   const {req} = create({
-  //     request: {
-  //       uri: "/",
-  //       querystring: "x=åäö"
-  //     }
-  //   });
-
-  //   expect(req.url).toEqual("/?x=%C3%A5%C3%A4%C3%B6");
-  // });
-
-  // it("querystring /?x=õ", () => {
-  //   const {req} = create({
-  //     request: {
-  //       uri: "/",
-  //       querystring: "x=õ"
-  //     }
-  //   });
-
-  //   expect(req.url).toEqual("/?x=%C3%B5");
-  // });
-
-  // it("querystring with multiple values for same name /?x=1&x=2", () => {
-  //   const {req} = create({
-  //     request: {
-  //       uri: "/",
-  //       querystring: "x=1&x=2"
-  //     }
-  //   });
-
-  //   expect(req.url).toEqual("/?x=1&x=2");
-  // });
-
-  // it("complicated querystring", () => {
-  //   const { req } = create({
-  //     request: {
-  //       uri: "/",
-  //       querystring: "a=8&as=1&t=2&tk=1&url=https://example.com/õ"
-  //     }
-  //   });
-
-  //   expect(req.url).toEqual(
-  //     "/?url=https%3A%2F%2Fexample.com%2Ft%2Ft%3Fa%3D8%26as%3D1%26t%3D2%26tk%3D1%26url%3Dhttps%3A%2F%2Fexample.com%2F%C3%B5&clickSource=yes&category=cat"
-  //   );
-  // });
-
   it("request method", () => {
     const { req } = create({
       request: {
@@ -84,29 +40,78 @@ describe("Request Tests", () => {
       request: {
         uri: "",
         headers: {
-          "x-custom-1": {
-            key: "x-cUstom-1",
-            value: "42"
-          },
-          "x-custom-2": {
-            key: "x-custom-2",
-            value: "43"
-          }
+          host: [
+            {
+              key: "Host",
+              value: "xyz.net"
+            }
+          ],
+          "user-agent": [
+            {
+              key: "User-Agent",
+              value: "mozilla"
+            }
+          ]
         }
       }
     });
 
-    expect(req.headers["x-custom-1"]).toEqual("42");
-    expect(req.getHeader("x-custom-1")).toEqual("42");
-    expect(req.headers["x-custom-2"]).toEqual("43");
-    expect(req.getHeader("x-custom-2")).toEqual("43");
+    expect(req.headers["host"]).toEqual("xyz.net");
+    expect(req.getHeader("host")).toEqual("xyz.net");
+    expect(req.headers["user-agent"]).toEqual("mozilla");
+    expect(req.getHeader("user-agent")).toEqual("mozilla");
 
     expect(req.getHeaders()).toEqual({
-      "x-custom-1": "42",
-      "x-custom-2": "43"
+      host: "xyz.net",
+      "user-agent": "mozilla"
     });
 
-    expect(req.rawHeaders).toEqual(["x-cUstom-1", "42", "x-custom-2", "43"]);
+    expect(req.rawHeaders).toEqual([
+      "Host",
+      "xyz.net",
+      "User-Agent",
+      "mozilla"
+    ]);
+  });
+
+  it("duplicates of special request headers are discarded", () => {
+    SPECIAL_NODE_HEADERS.forEach(headerName => {
+      // user-agent -> uSER-AGENT
+      const duplicateHeaderName =
+        headerName.charAt(0) + headerName.substring(1).toUpperCase();
+
+      const { req } = create({
+        request: {
+          uri: "",
+          headers: {
+            [headerName]: [
+              {
+                key: headerName,
+                value: "headerValue"
+              },
+              {
+                key: duplicateHeaderName,
+                value: "hEaderValue"
+              }
+            ]
+          }
+        }
+      });
+
+      expect(req.headers[headerName]).toEqual("headerValue");
+      expect(req.getHeader(headerName)).toEqual("headerValue");
+
+      expect(req.getHeaders()).toEqual({
+        [headerName]: "headerValue"
+      });
+
+      expect(req.rawHeaders).toEqual([
+        headerName,
+        "headerValue",
+        duplicateHeaderName,
+        "hEaderValue"
+      ]);
+    });
   });
 
   it("text body", done => {

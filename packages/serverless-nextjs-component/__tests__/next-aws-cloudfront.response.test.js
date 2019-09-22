@@ -81,7 +81,7 @@ describe("Response Tests", () => {
       }
     });
 
-    const specialHeaders = {
+    const cloudFrontReadOnlyHeaders = {
       "Accept-Encoding": "gzip",
       "Content-Length": "1234",
       "If-Modified-Since": "Wed, 21 Oct 2015 07:28:00 GMT",
@@ -92,7 +92,7 @@ describe("Response Tests", () => {
       Via: "HTTP/1.1 GWA"
     };
 
-    res.writeHead(200, specialHeaders);
+    res.writeHead(200, cloudFrontReadOnlyHeaders);
     res.end();
 
     return responsePromise.then(response => {
