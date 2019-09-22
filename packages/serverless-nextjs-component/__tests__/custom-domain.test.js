@@ -59,8 +59,6 @@ describe("Custom domain", () => {
   });
 
   it("uses outputs custom domain url", async () => {
-    expect(componentOutputs).toEqual({
-      appUrl: "https://www.example.com"
-    });
+    expect(componentOutputs.appUrl).toEqual("https://www.example.com");
   });
 });
