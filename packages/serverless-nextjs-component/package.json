@@ -18,6 +18,9 @@
     "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
   },
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "engines": {
+    "node": ">=10.11.0"
+  },
   "dependencies": {
     "@serverless/aws-cloudfront": "^3.2.0",
     "@serverless/aws-lambda": "^3.0.0",
