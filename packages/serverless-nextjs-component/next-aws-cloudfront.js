@@ -104,10 +104,10 @@ const handler = event => {
 
   Object.defineProperty(res, "statusCode", {
     get() {
-      return response.statusCode;
+      return response.status;
     },
     set(statusCode) {
-      response.statusCode = statusCode;
+      response.status = statusCode;
     }
   });
 
