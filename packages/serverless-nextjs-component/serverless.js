@@ -282,6 +282,8 @@ class NextjsComponent extends Component {
       defaults: {
         ttl: 5,
         allowedHttpMethods: ["HEAD", "GET"],
+        cookies: "all",
+        queryString: true,
         "lambda@edge": {
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
