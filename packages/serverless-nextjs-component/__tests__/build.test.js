@@ -64,9 +64,13 @@ describe("build tests", () => {
   afterAll(cleanupFixtureDirectory(fixturePath));
 
   it("outputs next application url from cloudfront", () => {
-    expect(componentOutputs).toEqual({
-      appUrl: "https://cloudfrontdistrib.amazonaws.com"
-    });
+    expect(componentOutputs.appUrl).toEqual(
+      "https://cloudfrontdistrib.amazonaws.com"
+    );
+  });
+
+  it("outputs S3 bucket name", () => {
+    expect(componentOutputs.bucketName).toEqual("bucket-xyz");
   });
 
   describe("Default build manifest", () => {

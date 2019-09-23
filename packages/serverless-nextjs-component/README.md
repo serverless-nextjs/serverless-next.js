@@ -95,6 +95,19 @@ myNextApplication:
     domain: ["www", "example.com"] # [ sub-domain, domain ]
 ```
 
+### Custom bucket name
+
+To override the default generated bucket name provided by Serverless, configure your `bucketName` like the example below:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    bucketName: my-next-application
+```
+
 ### Architecture
 
 ![architecture](./arch_no_grid.png)
