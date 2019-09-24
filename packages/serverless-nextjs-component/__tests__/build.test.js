@@ -237,7 +237,7 @@ describe("build tests", () => {
         defaults: {
           allowedHttpMethods: expect.any(Array),
           queryString: true,
-          cookies: 'all',
+          cookies: "all",
           ttl: 5,
           "lambda@edge": {
             "origin-request":
