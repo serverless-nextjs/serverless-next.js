@@ -236,6 +236,8 @@ describe("build tests", () => {
       expect(mockCloudFront).toBeCalledWith({
         defaults: {
           allowedHttpMethods: expect.any(Array),
+          queryString: true,
+          cookies: "all",
           ttl: 5,
           "lambda@edge": {
             "origin-request":
