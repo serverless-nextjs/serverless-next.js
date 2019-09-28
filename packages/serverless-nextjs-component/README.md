@@ -134,18 +134,61 @@ myNextApp:
 
 ### FAQ
 
-#### How do I interact with other AWS Services within my app?
+#### My component doesn't deploy
 
-See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB.
+Make sure your `serverless.yml` uses the `serverless-components` format. [serverless components](https://serverless.com/blog/what-are-serverless-components-how-use/) differ from the original serverless framework, even though they are both accessible via the same CLI.
+
+✅ **Do**
+
+```yml
+# serverless.yml
+myNextApp:
+  component: serverless-next.js
+
+myTable:
+  component: serverless/aws-dynamodb
+  inputs:
+    name: Customers
+# other components
+```
+
+❌ **Don't**
+
+```yml
+# serverless.yml
+provider:
+  name: aws
+  runtime: nodejs10.x
+  region: eu-west-1
+
+myNextApp:
+  component: serverless-next.js
+
+Resources: ...
+```
+
+Note how the correct yaml doesn't declare a `provider`, `Resources`, etc.
+
+For deploying, don't run `serverless deploy`. Simply run `serverless` and that deploys your components declared in the `serverless.yml` file.
+
+For more information about serverless components go [here](https://serverless.com/blog/what-are-serverless-components-how-use/).
 
 #### Should I use the [serverless-nextjs-plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin/tree/master/packages/serverless-nextjs-plugin) or this component?
 
 Users are encouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
+#### How do I interact with other AWS Services within my app?
+
+See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB.
+
 #### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
 You need to commit your application state in source control. That is the files under the `.serverless` directory.
 The serverless team is currently working on remote state storage so this won't be necessary in the future.
+
+#### My lambda is deployed to `us-east-1`. How can I deploy it to another region?
+
+Serverless next.js is _regionless_. By design, `serverless-next.js` applications will be deployed across the globe to every CloudFront edge location. The lambda might look like is only deployed to `us-east-1` but behind the scenes, it is replicated to every other region.
 
 ## Contributing
 
