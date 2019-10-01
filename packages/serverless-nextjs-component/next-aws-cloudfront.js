@@ -101,6 +101,7 @@ const handler = event => {
   req.push(null);
 
   const res = new Stream();
+  res.finished = false;
 
   Object.defineProperty(res, "statusCode", {
     get() {
@@ -128,6 +129,7 @@ const handler = event => {
   const responsePromise = new Promise(resolve => {
     res.end = text => {
       if (text) res.write(text);
+      res.finished = true;
       response.body = Buffer.from(response.body).toString("base64");
       response.headers = toCloudFrontHeaders(res.headers);
 
