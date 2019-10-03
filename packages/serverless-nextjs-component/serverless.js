@@ -20,24 +20,26 @@ class NextjsComponent extends Component {
     return this.build(inputs);
   }
 
-  async readPublicFiles() {
-    const dirExists = await fse.exists("./public");
-    return dirExists ? fse.readdir("./public") : [];
+  async readPublicFiles(nextConfigPath) {
+    const dirExists = await fse.exists(join(nextConfigPath, "public"));
+    return dirExists ? fse.readdir(join(nextConfigPath, "public")) : [];
   }
 
-  readPagesManifest() {
-    return fse.readJSON("./.next/serverless/pages-manifest.json");
+  readPagesManifest(nextConfigPath) {
+    return fse.readJSON(
+      join(nextConfigPath, ".next/serverless/pages-manifest.json")
+    );
   }
 
-  async emptyBuildDirectory() {
+  async emptyBuildDirectory(nextConfigPath) {
     return Promise.all([
-      emptyDir(`./${DEFAULT_LAMBDA_CODE_DIR}`),
-      emptyDir(`./${API_LAMBDA_CODE_DIR}`)
+      emptyDir(join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR)),
+      emptyDir(join(nextConfigPath, API_LAMBDA_CODE_DIR))
     ]);
   }
 
-  async prepareBuildManifests() {
-    const pagesManifest = await this.readPagesManifest();
+  async prepareBuildManifests(nextConfigPath) {
+    const pagesManifest = await this.readPagesManifest(nextConfigPath);
 
     const defaultBuildManifest = {
       pages: {
@@ -85,7 +87,7 @@ class NextjsComponent extends Component {
       }
     });
 
-    const publicFiles = await this.readPublicFiles();
+    const publicFiles = await this.readPublicFiles(nextConfigPath);
 
     publicFiles.forEach(pf => {
       defaultBuildManifest.publicFiles["/" + pf] = pf;
@@ -97,55 +99,74 @@ class NextjsComponent extends Component {
     };
   }
 
-  buildDefaultLambda(buildManifest) {
+  buildDefaultLambda(nextConfigPath, buildManifest) {
     return Promise.all([
       copy(
         join(__dirname, "default-lambda-handler.js"),
-        `./${DEFAULT_LAMBDA_CODE_DIR}/index.js`
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
-      writeJson(`./${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`, buildManifest),
+      writeJson(
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
       copy(
         join(__dirname, "next-aws-cloudfront.js"),
-        `./${DEFAULT_LAMBDA_CODE_DIR}/next-aws-cloudfront.js`
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
       ),
-      copy(".next/serverless/pages", `./${DEFAULT_LAMBDA_CODE_DIR}/pages`, {
-        // skip api pages from default lambda code
-        filter: file => {
-          const isHTMLPage = path.extname(file) === ".html";
-          return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
+      copy(
+        join(nextConfigPath, ".next/serverless/pages"),
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "pages"),
+        {
+          // skip api pages from default lambda code
+          filter: file => {
+            const isHTMLPage = path.extname(file) === ".html";
+            return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
+          }
         }
-      })
+      )
     ]);
   }
 
-  async buildApiLambda(apiBuildManifest) {
+  async buildApiLambda(nextConfigPath, apiBuildManifest) {
     return Promise.all([
       copy(
         join(__dirname, "api-lambda-handler.js"),
-        `./${API_LAMBDA_CODE_DIR}/index.js`
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "index.js")
       ),
       copy(
         join(__dirname, "next-aws-cloudfront.js"),
-        `./${API_LAMBDA_CODE_DIR}/next-aws-cloudfront.js`
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
       ),
-      copy(".next/serverless/pages/api", `./${API_LAMBDA_CODE_DIR}/pages/api`),
       copy(
-        ".next/serverless/pages/_error.js",
-        `./${API_LAMBDA_CODE_DIR}/pages/_error.js`
+        join(nextConfigPath, ".next/serverless/pages/api"),
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "pages/api")
       ),
-      writeJson(`./${API_LAMBDA_CODE_DIR}/manifest.json`, apiBuildManifest)
+      copy(
+        join(nextConfigPath, ".next/serverless/pages/_error.js"),
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "pages/_error.js")
+      ),
+      writeJson(
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "manifest.json"),
+        apiBuildManifest
+      )
     ]);
   }
 
   async build(inputs) {
-    await execa("./node_modules/.bin/next", ["build"]);
+    const nextConfigPath = inputs.nextConfigDir
+      ? path.resolve(inputs.nextConfigDir)
+      : process.cwd();
 
-    await this.emptyBuildDirectory();
+    await execa("node_modules/.bin/next", ["build"], {
+      cwd: nextConfigPath
+    });
+
+    await this.emptyBuildDirectory(nextConfigPath);
 
     const {
       defaultBuildManifest,
       apiBuildManifest
-    } = await this.prepareBuildManifests();
+    } = await this.prepareBuildManifests(nextConfigPath);
 
     const bucket = await this.load("@serverless/aws-s3");
     const cloudFront = await this.load("@serverless/aws-cloudfront");
@@ -166,32 +187,32 @@ class NextjsComponent extends Component {
     const uploadHtmlPages = Object.values(defaultBuildManifest.pages.html).map(
       page =>
         bucket.upload({
-          file: `./.next/serverless/${page}`,
+          file: join(nextConfigPath, ".next/serverless", page),
           key: `static-pages/${page.replace("pages/", "")}`
         })
     );
 
     const assetsUpload = [
       bucket.upload({
-        dir: "./.next/static",
+        dir: join(nextConfigPath, ".next/static"),
         keyPrefix: "_next/static"
       }),
       ...uploadHtmlPages
     ];
 
-    if (await fse.exists("./public")) {
+    if (await fse.exists(join(nextConfigPath, "public"))) {
       assetsUpload.push(
         bucket.upload({
-          dir: "./public",
+          dir: join(nextConfigPath, "public"),
           keyPrefix: "public"
         })
       );
     }
 
-    if (await fse.exists("./static")) {
+    if (await fse.exists(join(nextConfigPath, "static"))) {
       assetsUpload.push(
         bucket.upload({
-          dir: "./static",
+          dir: join(nextConfigPath, "static"),
           keyPrefix: "static"
         })
       );
@@ -205,7 +226,7 @@ class NextjsComponent extends Component {
       }
     };
 
-    await this.buildDefaultLambda(defaultBuildManifest);
+    await this.buildDefaultLambda(nextConfigPath, defaultBuildManifest);
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
     const cloudFrontOrigins = [
@@ -231,12 +252,12 @@ class NextjsComponent extends Component {
       Object.keys(apiBuildManifest.apis.dynamic).length > 0;
 
     if (hasAPIPages) {
-      await this.buildApiLambda(apiBuildManifest);
+      await this.buildApiLambda(nextConfigPath, apiBuildManifest);
 
       apiEdgeLambdaOutputs = await apiEdgeLambda({
         description: "API Lambda@Edge for Next CloudFront distribution",
         handler: "index.handler",
-        code: `./${API_LAMBDA_CODE_DIR}`,
+        code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
@@ -267,7 +288,7 @@ class NextjsComponent extends Component {
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda({
       description: "Default Lambda@Edge for Next CloudFront distribution",
       handler: "index.handler",
-      code: `./${DEFAULT_LAMBDA_CODE_DIR}`,
+      code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
         policy: {

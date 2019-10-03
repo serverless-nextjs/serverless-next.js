@@ -42,21 +42,21 @@ describe("Assets Tests", () => {
 
     it("uploads client build assets", () => {
       expect(mockS3Upload).toBeCalledWith({
-        dir: "./.next/static",
+        dir: path.join(fixturePath, ".next/static"),
         keyPrefix: "_next/static"
       });
     });
 
     it("uploads user static directory", () => {
       expect(mockS3Upload).toBeCalledWith({
-        dir: "./static",
+        dir: path.join(fixturePath, "static"),
         keyPrefix: "static"
       });
     });
 
     it("uploads user public directory", () => {
       expect(mockS3Upload).toBeCalledWith({
-        dir: "./public",
+        dir: path.join(fixturePath, "public"),
         keyPrefix: "public"
       });
     });
@@ -64,7 +64,7 @@ describe("Assets Tests", () => {
     it("uploads html pages to S3", () => {
       ["terms.html", "about.html"].forEach(page => {
         expect(mockS3Upload).toBeCalledWith({
-          file: `./.next/serverless/pages/${page}`,
+          file: path.join(fixturePath, ".next/serverless/pages", page),
           key: `static-pages/${page}`
         });
       });
