@@ -208,7 +208,7 @@ describe("build tests", () => {
       expect(mockLambda).toBeCalledWith({
         description: expect.any(String),
         handler: "index.handler",
-        code: `./${DEFAULT_LAMBDA_CODE_DIR}`,
+        code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
@@ -222,7 +222,7 @@ describe("build tests", () => {
       expect(mockLambda).toBeCalledWith({
         description: expect.any(String),
         handler: "index.handler",
-        code: `./${API_LAMBDA_CODE_DIR}`,
+        code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
