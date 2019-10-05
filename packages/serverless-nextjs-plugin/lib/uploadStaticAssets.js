@@ -1,11 +1,15 @@
+const fs = require("fs");
 const fse = require("fs-extra");
 const path = require("path");
 const uploadDirToS3Factory = require("../utils/s3/upload");
 
 module.exports = async function() {
-  const uploadDirToS3 = uploadDirToS3Factory(this.providerRequest);
-
   let { nextConfiguration, staticAssetsBucket } = this.configuration;
+  const buildId = nextConfiguration.distDir // eslint-disable-next-line prettier/prettier
+    ? fs.readFileSync(path.join(this.nextConfigDir, nextConfiguration.distDir, "BUILD_ID"))
+    : null;
+
+  const uploadDirToS3 = uploadDirToS3Factory(this.providerRequest, buildId);
 
   const [bucketNameFromConfig, uploadBuildAssets] = this.getPluginConfigValues(
     "assetsBucketName",
