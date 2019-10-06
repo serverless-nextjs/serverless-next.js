@@ -338,13 +338,15 @@ The custom handler needs to look something like this:
 const compat = require("next-aws-lambda");
 
 module.exports = page => {
-  const handler = (event, context, callback) => {
+  const handler = (event, context) => {
     // do any stuff you like
 
     // this makes sure the next page renders
-    compat(page)(event, context, callback);
+    const responsePromise = compat(page)(event, context);
 
     // do any other stuff you like
+
+    return responsePromise;
   };
   return handler;
 };
