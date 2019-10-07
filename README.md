@@ -17,6 +17,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
+- [Environment configuration](#environment-configuration)
 - [Architecture](#architecture)
 - [Inputs](#inputs)
 - [FAQ](#faq)
@@ -94,6 +95,26 @@ myNextApplication:
   component: serverless-next.js
   inputs:
     domain: ["www", "example.com"] # [ sub-domain, domain ]
+```
+
+### Environment configuration
+
+For passing environment configuration to your pages, you can use next [build time config.](https://github.com/zeit/next.js/#build-time-configuration). However, the way this works means the env. variables are inlined in the page bundles. This could lead to accidentally leaking secrets to the client side code.
+
+If you have secret configuration that should only be accessible in the lambda runtime, use the `env` input in the component. For example:
+
+```yaml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    env:
+      MY_SECRET: ${env.MY_SECRET}
+```
+
+```bash
+$ MY_SECRET=ssshhh serverless
 ```
 
 ### Architecture

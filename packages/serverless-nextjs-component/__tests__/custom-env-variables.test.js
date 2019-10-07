@@ -1,6 +1,5 @@
-const execa = require("execa");
 const fse = require("fs-extra");
-const { mockDomain } = require("@serverless/domain");
+const execa = require("execa");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
@@ -9,12 +8,9 @@ const NextjsComponent = require("../serverless");
 jest.mock("execa");
 jest.mock("fs-extra");
 
-describe("Custom domain", () => {
-  let componentOutputs;
-
+describe("Custom environment variables", () => {
   beforeEach(async () => {
     execa.mockResolvedValueOnce();
-    fse.readJSON.mockResolvedValue({});
 
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
@@ -28,29 +24,37 @@ describe("Custom domain", () => {
     mockCloudFront.mockResolvedValueOnce({
       url: "https://cloudfrontdistrib.amazonaws.com"
     });
-    mockDomain.mockResolvedValueOnce({
-      domains: ["https://www.example.com"]
+
+    fse.readJSON.mockResolvedValue({
+      "/blog/[id]": "pages/blog/[id].js",
+      "/api/customers/new": "pages/api/customers/new.js"
     });
 
     const component = new NextjsComponent();
-    componentOutputs = await component.default({
-      domain: ["www", "example.com"]
-    });
-  });
 
-  it("uses @serverless/domain to provision custom domain", async () => {
-    expect(mockDomain).toBeCalledWith({
-      privateZone: false,
-      domain: "example.com",
-      subdomains: {
-        www: {
-          url: "https://cloudfrontdistrib.amazonaws.com"
-        }
+    await component.default({
+      env: {
+        MY_SECRET: "sshhh"
       }
     });
   });
 
-  it("uses outputs custom domain url", async () => {
-    expect(componentOutputs.appUrl).toEqual("https://www.example.com");
+  it("passes environment variables to Lambda functions provisioned", () => {
+    expect(mockLambda).toBeCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining("API Lambda@Edge"),
+        env: {
+          MY_SECRET: "sshhh"
+        }
+      })
+    );
+    expect(mockLambda).toBeCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining("Default Lambda@Edge"),
+        env: {
+          MY_SECRET: "sshhh"
+        }
+      })
+    );
   });
 });

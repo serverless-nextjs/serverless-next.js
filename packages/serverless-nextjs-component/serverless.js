@@ -263,7 +263,8 @@ class NextjsComponent extends Component {
           policy: {
             arn: "arn:aws:iam::aws:policy/AdministratorAccess"
           }
-        }
+        },
+        env: inputs.env
       });
 
       apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
@@ -294,7 +295,8 @@ class NextjsComponent extends Component {
         policy: {
           arn: "arn:aws:iam::aws:policy/AdministratorAccess"
         }
-      }
+      },
+      env: inputs.env
     });
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
