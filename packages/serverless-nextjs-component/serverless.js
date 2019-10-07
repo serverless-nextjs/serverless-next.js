@@ -17,7 +17,13 @@ const pathToPosix = path => path.replace(/\\/g, "/");
 
 class NextjsComponent extends Component {
   async default(inputs = {}) {
-    return this.build(inputs);
+
+    if(inputs.build !== false){
+      await this.build(inputs);
+    }
+    
+    return this.deploy(inputs);
+    
   }
 
   async readPublicFiles(nextConfigPath) {
@@ -29,6 +35,17 @@ class NextjsComponent extends Component {
     return fse.readJSON(
       join(nextConfigPath, ".next/serverless/pages-manifest.json")
     );
+  }
+
+  readDefaultBuildManifest(nextConfigPath) {
+    return fse.readJSON(
+      join(nextConfigPath, ".serverless_nextjs/default-lambda/manifest.json")
+    );
+  }
+
+  async readApiBuildManifest(nextConfigPath) { 
+    const path = join(nextConfigPath, ".serverless_nextjs/api-lambda/manifest.json");
+    return await fse.exists(path) ? fse.readJSON(path) : Promise.resolve(undefined);
   }
 
   async emptyBuildDirectory(nextConfigPath) {
@@ -151,8 +168,8 @@ class NextjsComponent extends Component {
       )
     ]);
   }
-
-  async build(inputs) {
+  
+  async build(inputs = {}) {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -167,7 +184,27 @@ class NextjsComponent extends Component {
       defaultBuildManifest,
       apiBuildManifest
     } = await this.prepareBuildManifests(nextConfigPath);
+  
 
+    await this.buildDefaultLambda(nextConfigPath, defaultBuildManifest);
+
+    const hasAPIPages =
+      Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
+      Object.keys(apiBuildManifest.apis.dynamic).length > 0;
+
+    if (hasAPIPages) {
+      await this.buildApiLambda(nextConfigPath, apiBuildManifest);
+    }
+  }
+
+  async deploy(inputs = {}){
+    const nextConfigPath = inputs.nextConfigDir
+      ? path.resolve(inputs.nextConfigDir)
+      : process.cwd();
+
+    const defaultBuildManifest = await this.readDefaultBuildManifest(nextConfigPath);
+    const apiBuildManifest = await this.readApiBuildManifest(nextConfigPath);
+    
     const bucket = await this.load("@serverless/aws-s3");
     const cloudFront = await this.load("@serverless/aws-cloudfront");
     const defaultEdgeLambda = await this.load(
@@ -226,8 +263,7 @@ class NextjsComponent extends Component {
       }
     };
 
-    await this.buildDefaultLambda(nextConfigPath, defaultBuildManifest);
-
+    
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
     const cloudFrontOrigins = [
       {
@@ -248,12 +284,12 @@ class NextjsComponent extends Component {
     let apiEdgeLambdaPublishOutputs;
 
     const hasAPIPages =
-      Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
-      Object.keys(apiBuildManifest.apis.dynamic).length > 0;
+      apiBuildManifest &&
+        (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
+        Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
     if (hasAPIPages) {
-      await this.buildApiLambda(nextConfigPath, apiBuildManifest);
-
+      
       apiEdgeLambdaOutputs = await apiEdgeLambda({
         description: "API Lambda@Edge for Next CloudFront distribution",
         handler: "index.handler",
