@@ -18,6 +18,7 @@ const pathToPosix = path => path.replace(/\\/g, "/");
 class NextjsComponent extends Component {
   async default(inputs = {}) {
     if (inputs.build !== false) {
+      this.context.debug("Skipping nextjs build phase ...");
       await this.build(inputs);
     }
 
@@ -204,21 +205,22 @@ class NextjsComponent extends Component {
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
 
-    const defaultBuildManifest = await this.readDefaultBuildManifest(
-      nextConfigPath
-    );
-    const apiBuildManifest = await this.readApiBuildManifest(nextConfigPath);
+    const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
+      this.readDefaultBuildManifest(nextConfigPath),
+      this.readApiBuildManifest(nextConfigPath)
+    ]);
 
-    const bucket = await this.load("@serverless/aws-s3");
-    const cloudFront = await this.load("@serverless/aws-cloudfront");
-    const defaultEdgeLambda = await this.load(
-      "@serverless/aws-lambda",
-      "defaultEdgeLambda"
-    );
-    const apiEdgeLambda = await this.load(
-      "@serverless/aws-lambda",
-      "apiEdgeLambda"
-    );
+    const [
+      bucket,
+      cloudFront,
+      defaultEdgeLambda,
+      apiEdgeLambda
+    ] = await Promise.all([
+      this.load("@serverless/aws-s3"),
+      this.load("@serverless/aws-cloudfront"),
+      this.load("@serverless/aws-lambda", "defaultEdgeLambda"),
+      this.load("@serverless/aws-lambda", "apiEdgeLambda")
+    ]);
 
     const bucketOutputs = await bucket({
       accelerated: true,
@@ -241,7 +243,12 @@ class NextjsComponent extends Component {
       ...uploadHtmlPages
     ];
 
-    if (await fse.exists(join(nextConfigPath, "public"))) {
+    const [publicDirExists, staticDirExists] = await Promise.all([
+      fse.exists(join(nextConfigPath, "public")),
+      fse.exists(join(nextConfigPath, "static"))
+    ]);
+
+    if (publicDirExists) {
       assetsUpload.push(
         bucket.upload({
           dir: join(nextConfigPath, "public"),
@@ -250,7 +257,7 @@ class NextjsComponent extends Component {
       );
     }
 
-    if (await fse.exists(join(nextConfigPath, "static"))) {
+    if (staticDirExists) {
       assetsUpload.push(
         bucket.upload({
           dir: join(nextConfigPath, "static"),
@@ -372,13 +379,13 @@ class NextjsComponent extends Component {
   }
 
   async remove() {
-    const bucket = await this.load("@serverless/aws-s3");
-    const cloudfront = await this.load("@serverless/aws-cloudfront");
-    const domain = await this.load("@serverless/domain");
+    const [bucket, cloudfront, domain] = await Promise.all([
+      this.load("@serverless/aws-s3"),
+      this.load("@serverless/aws-cloudfront"),
+      this.load("@serverless/domain")
+    ]);
 
-    await bucket.remove();
-    await cloudfront.remove();
-    await domain.remove();
+    await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
   }
 }
 
