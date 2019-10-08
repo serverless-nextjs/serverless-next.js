@@ -24,7 +24,7 @@ describe("build tests", () => {
 
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
-  
+
     const component = new NextjsComponent();
 
     componentOutputs = await component.build();
@@ -44,7 +44,6 @@ describe("build tests", () => {
 
   afterAll(cleanupFixtureDirectory(fixturePath));
 
-  
   describe("Default build manifest", () => {
     it("adds full manifest", () => {
       const {
