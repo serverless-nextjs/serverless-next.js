@@ -84,7 +84,8 @@ describe("deploy tests", () => {
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+            arn:
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         }
       });
@@ -98,7 +99,8 @@ describe("deploy tests", () => {
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+            arn:
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         }
       });
