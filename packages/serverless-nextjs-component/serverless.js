@@ -306,6 +306,7 @@ class NextjsComponent extends Component {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
             arn:
+              inputs.policy ||
               "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         }
@@ -330,6 +331,7 @@ class NextjsComponent extends Component {
       };
     }
 
+    console.log("TCL: deploy -> inputs.policy", inputs.policy);
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda({
       description: "Default Lambda@Edge for Next CloudFront distribution",
       handler: "index.handler",
@@ -338,6 +340,7 @@ class NextjsComponent extends Component {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
         policy: {
           arn:
+            inputs.policy ||
             "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         }
       }
