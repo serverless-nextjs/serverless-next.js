@@ -34,8 +34,8 @@ class NextjsComponent extends Component {
     return (await fse.exists(path))
       ? fse.readJSON(path)
       : Promise.reject(
-        "page-manifest.json file not found. Check if `next.config.js` target is set to 'serverless'"
-      );
+          "page-manifest.json file not found. Check if `next.config.js` target is set to 'serverless'"
+        );
   }
 
   readDefaultBuildManifest(nextConfigPath) {
