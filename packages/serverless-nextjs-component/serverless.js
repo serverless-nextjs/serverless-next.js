@@ -199,6 +199,7 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
+    const nextStaticPath = inputs.nextStaticDir || "";
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -239,14 +240,14 @@ class NextjsComponent extends Component {
     ];
 
     const [publicDirExists, staticDirExists] = await Promise.all([
-      fse.exists(join(nextConfigPath, "public")),
-      fse.exists(join(nextConfigPath, "static"))
+      fse.exists(join(nextConfigPath, nextStaticPath, "public")),
+      fse.exists(join(nextConfigPath, nextStaticPath, "static"))
     ]);
 
     if (publicDirExists) {
       assetsUpload.push(
         bucket.upload({
-          dir: join(nextConfigPath, "public"),
+          dir: join(nextConfigPath, nextStaticPath, "public"),
           keyPrefix: "public"
         })
       );
@@ -255,7 +256,7 @@ class NextjsComponent extends Component {
     if (staticDirExists) {
       assetsUpload.push(
         bucket.upload({
-          dir: join(nextConfigPath, "static"),
+          dir: join(nextConfigPath, nextStaticPath, "static"),
           keyPrefix: "static"
         })
       );
