@@ -177,10 +177,6 @@ class NextjsComponent extends Component {
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
 
-    await execa("node_modules/.bin/next", ["build"], {
-      cwd: nextConfigPath
-    });
-
     await this.emptyBuildDirectory(nextConfigPath);
 
     const {
