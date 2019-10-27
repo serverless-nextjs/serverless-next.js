@@ -331,7 +331,6 @@ class NextjsComponent extends Component {
       };
     }
 
-    console.log("TCL: deploy -> inputs.policy", inputs.policy);
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda({
       description: "Default Lambda@Edge for Next CloudFront distribution",
       handler: "index.handler",
