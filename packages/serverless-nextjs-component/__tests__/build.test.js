@@ -1,7 +1,6 @@
 const path = require("path");
 const fse = require("fs-extra");
 const execa = require("execa");
-const { mockS3 } = require("@serverless/aws-s3");
 const NextjsComponent = require("../serverless");
 
 const {
@@ -15,7 +14,6 @@ jest.mock("execa");
 describe("build tests", () => {
   let tmpCwd;
   let defaultBuildManifest;
-  let componentOutputs;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 

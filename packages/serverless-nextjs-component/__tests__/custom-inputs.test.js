@@ -12,7 +12,7 @@ describe("Custom domain", () => {
   let tmpCwd;
   let componentOutputs;
 
-  const fixturePath = path.join(__dirname, "./fixtures/app-with-custom-domain");
+  const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
   beforeEach(async () => {
     execa.mockResolvedValueOnce();
@@ -38,6 +38,7 @@ describe("Custom domain", () => {
 
     const component = new NextjsComponent();
     componentOutputs = await component.default({
+      policy: "arn:aws:iam::aws:policy/CustomRole",
       domain: ["www", "example.com"]
     });
   });
@@ -58,7 +59,31 @@ describe("Custom domain", () => {
     });
   });
 
-  it("uses outputs custom domain url", async () => {
+  it("uses custom policy document provided", () => {
+    expect(mockLambda).toBeCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining("Default Lambda@Edge"),
+        role: expect.objectContaining({
+          policy: {
+            arn: "arn:aws:iam::aws:policy/CustomRole"
+          }
+        })
+      })
+    );
+
+    expect(mockLambda).toBeCalledWith(
+      expect.objectContaining({
+        description: expect.stringContaining("API Lambda@Edge"),
+        role: expect.objectContaining({
+          policy: {
+            arn: "arn:aws:iam::aws:policy/CustomRole"
+          }
+        })
+      })
+    );
+  });
+
+  it("outputs custom domain url", async () => {
     expect(componentOutputs.appUrl).toEqual("https://www.example.com");
   });
 });

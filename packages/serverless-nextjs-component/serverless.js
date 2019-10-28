@@ -303,7 +303,9 @@ class NextjsComponent extends Component {
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+            arn:
+              inputs.policy ||
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         }
       });
@@ -334,7 +336,9 @@ class NextjsComponent extends Component {
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
         policy: {
-          arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+          arn:
+            inputs.policy ||
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         }
       }
     });
