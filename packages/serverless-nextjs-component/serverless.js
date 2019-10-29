@@ -6,6 +6,7 @@ const execa = require("execa");
 const isDynamicRoute = require("./lib/isDynamicRoute");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
+const isPlainObject = require("./lib/isPlainObject");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
 
 const copy = fse.copy;
@@ -177,8 +178,15 @@ class NextjsComponent extends Component {
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
 
+    if (inputs.buildEnv && !isPlainObject(inputs.buildEnv)) {
+      throw new Error(
+        "buildEnv children must be specified as a sequence of key-value pairs"
+      );
+    }
+
     await execa("node_modules/.bin/next", ["build"], {
-      cwd: nextConfigPath
+      cwd: nextConfigPath,
+      env: inputs.buildEnv
     });
 
     await this.emptyBuildDirectory(nextConfigPath);

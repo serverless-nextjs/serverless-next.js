@@ -8,4 +8,5 @@ examples/basic-next-serverless-app/build
 sls-next-build
 .serverless_nextjs
 package-lock.json
+yarn.lock
 .DS_Store
