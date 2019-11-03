@@ -1,4 +1,3 @@
-
 service: single-api-fixture
 
 provider:
@@ -9,7 +8,7 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - index # this works because jest modulePaths adds plugin path, see package.json
+  - ../../../../index
 
 package:
   # exclude everything
