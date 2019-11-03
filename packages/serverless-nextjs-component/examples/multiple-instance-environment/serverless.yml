@@ -1,0 +1,4 @@
+myNextApp:
+ component: "../../"
+ inputs:
+  domain: ${env.domain}
