@@ -18,6 +18,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
 - [Enviroment variables from other components](#enviroment-variables-from-other-components)
+- [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
 - [Inputs](#inputs)
 - [FAQ](#faq)
@@ -126,6 +127,21 @@ module.exports = {
 ```
 
 After this you will be able to access the variables from the built app using `process.env.MY_NEXT_VAR`.
+
+### AWS Permissions
+
+By default the Lambda@Edge functions run using AWSLambdaBasicExecutionRole which only allows uploading logs to CloudWatch. If you need permissions beyond this, like for example access to DynamoDB or any other AWS resource you will need your own custom policy arn:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    policy: "arn:aws:iam::123456789012:policy/MyCustomPolicy"
+```
+
+Make sure you add CloudWatch log permissions to your custom policy.
 
 ### Architecture
 
