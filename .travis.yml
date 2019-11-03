@@ -8,10 +8,10 @@ node_js:
   - "10.16"
   - "12.7.0"
 install:
-  - npm install
-  - cd packages/serverless-nextjs-plugin && npm install && cd ../../
-  - cd packages/serverless-nextjs-component && npm install && cd ../../
-  - cd integration/app-with-serverless-offline && npm install && cd ../../
+  - npm ci
+  - cd packages/serverless-nextjs-plugin && npm ci && cd ../../
+  - cd packages/serverless-nextjs-component && npm ci && cd ../../
+  - cd integration/app-with-serverless-offline && npm ci && cd ../../
 script:
   - npm run lint
   - npm test
