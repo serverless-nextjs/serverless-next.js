@@ -9,7 +9,7 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - ../../../../index
+  - index
 
 custom:
   serverless-nextjs:
