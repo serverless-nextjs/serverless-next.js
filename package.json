@@ -65,9 +65,7 @@
     "testPathIgnorePatterns": [
       "/.next/",
       "/node_modules/",
-      "/fixtures/"
-    ],
-    "modulePathIgnorePatterns": [
+      "/fixtures/",
       "/examples/",
       "<rootDir>/integration"
     ],
