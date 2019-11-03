@@ -8,7 +8,7 @@ stage: dev
 region: eu-west-1
 
 plugins:
-  - ../../../../index
+  - index
 
 package:
   # exclude everything
