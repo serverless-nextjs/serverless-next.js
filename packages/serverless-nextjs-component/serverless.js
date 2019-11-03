@@ -29,10 +29,13 @@ class NextjsComponent extends Component {
     return dirExists ? fse.readdir(join(nextConfigPath, "public")) : [];
   }
 
-  readPagesManifest(nextConfigPath) {
-    return fse.readJSON(
-      join(nextConfigPath, ".next/serverless/pages-manifest.json")
-    );
+  async readPagesManifest(nextConfigPath) {
+    const path = join(nextConfigPath, ".next/serverless/pages-manifest.json");
+    return (await fse.exists(path))
+      ? fse.readJSON(path)
+      : Promise.reject(
+          "page-manifest.json file not found. Check if `next.config.js` target is set to 'serverless'"
+        );
   }
 
   readDefaultBuildManifest(nextConfigPath) {
