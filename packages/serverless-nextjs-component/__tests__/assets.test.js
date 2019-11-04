@@ -43,6 +43,7 @@ describe("Assets Tests", () => {
     it("uploads client build assets", () => {
       expect(mockS3Upload).toBeCalledWith({
         dir: path.join(fixturePath, ".next/static"),
+        cacheControl: "Cache-Control': 'public, max-age=31536000, immutable",
         keyPrefix: "_next/static"
       });
     });
