@@ -86,7 +86,18 @@ $ serverless
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
 
-First, make sure you've purchased your domain within Route53. Then simply configure your `subdomain` and `domain` like the example below.
+Make sure you've purchased your `domain` within Route53: 
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    domain: "example.com"
+```
+
+You can also configure a `subdomain`:
 
 ```yml
 # serverless.yml

@@ -4,6 +4,7 @@ const path = require("path");
 const execa = require("execa");
 
 const isDynamicRoute = require("./lib/isDynamicRoute");
+const obtainDomains = require("./lib/obtainDomains");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
@@ -368,16 +369,17 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
-    if (inputs.domain instanceof Array) {
-      const domain = await this.load("@serverless/domain");
-      const domainOutputs = await domain({
+    // Create domain
+    const { domain, subdomain } = obtainDomains(inputs.domain);
+    if (domain) {
+      const domainComponent = await this.load("@serverless/domain");
+      const domainOutputs = await domainComponent({
         privateZone: false,
-        domain: inputs.domain[1],
+        domain,
         subdomains: {
-          [inputs.domain[0]]: cloudFrontOutputs
+          [subdomain]: cloudFrontOutputs
         }
       });
-
       appUrl = domainOutputs.domains[0];
     }
 

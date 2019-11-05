@@ -5,10 +5,17 @@ const { mockS3 } = require("@serverless/aws-s3");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const NextjsComponent = require("../serverless");
+const obtainDomains = require("../lib/obtainDomains");
 
 jest.mock("execa");
 
-describe("Custom domain", () => {
+describe.each([
+  [["dev", "example.com"], "https://dev.example.com"],
+  [["www", "example.com"], "https://www.example.com"],
+  [[undefined, "example.com"], "https://www.example.com"],
+  [["example.com"], "https://www.example.com"],
+  ["example.com", "https://www.example.com"]
+])("Custom domain", (inputDomains, expectedDomain) => {
   let tmpCwd;
   let componentOutputs;
 
@@ -33,13 +40,13 @@ describe("Custom domain", () => {
       url: "https://cloudfrontdistrib.amazonaws.com"
     });
     mockDomain.mockResolvedValueOnce({
-      domains: ["https://www.example.com"]
+      domains: [expectedDomain]
     });
 
     const component = new NextjsComponent();
     componentOutputs = await component.default({
       policy: "arn:aws:iam::aws:policy/CustomRole",
-      domain: ["www", "example.com"]
+      domain: inputDomains
     });
   });
 
@@ -48,11 +55,13 @@ describe("Custom domain", () => {
   });
 
   it("uses @serverless/domain to provision custom domain", async () => {
+    const { domain, subdomain } = obtainDomains(inputDomains);
+
     expect(mockDomain).toBeCalledWith({
       privateZone: false,
-      domain: "example.com",
+      domain,
       subdomains: {
-        www: {
+        [subdomain]: {
           url: "https://cloudfrontdistrib.amazonaws.com"
         }
       }
@@ -84,6 +93,6 @@ describe("Custom domain", () => {
   });
 
   it("outputs custom domain url", async () => {
-    expect(componentOutputs.appUrl).toEqual("https://www.example.com");
+    expect(componentOutputs.appUrl).toEqual(expectedDomain);
   });
 });
