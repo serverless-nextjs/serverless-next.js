@@ -1,1 +1,2 @@
-domain=['dev', 'myapp.com']
+domain='myapp.com'
+subdomain='dev'
