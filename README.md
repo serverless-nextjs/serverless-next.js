@@ -17,6 +17,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Custom domain name](#custom-domain-name)
+- [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
 - [Inputs](#inputs)
 - [FAQ](#faq)
@@ -85,7 +86,18 @@ $ serverless
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
 
-First, make sure you've purchased your domain within Route53. Then simply configure your `subdomain` and `domain` like the example below.
+Make sure you've purchased your `domain` within Route53:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    domain: "example.com"
+```
+
+You can also configure a `subdomain`:
 
 ```yml
 # serverless.yml
@@ -95,6 +107,21 @@ myNextApplication:
   inputs:
     domain: ["www", "example.com"] # [ sub-domain, domain ]
 ```
+
+### AWS Permissions
+
+By default the Lambda@Edge functions run using AWSLambdaBasicExecutionRole which only allows uploading logs to CloudWatch. If you need permissions beyond this, like for example access to DynamoDB or any other AWS resource you will need your own custom policy arn:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    policy: "arn:aws:iam::123456789012:policy/MyCustomPolicy"
+```
+
+Make sure you add CloudWatch log permissions to your custom policy.
 
 ### Architecture
 
