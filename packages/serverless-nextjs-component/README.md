@@ -94,7 +94,7 @@ Make sure you've purchased your `domain` within Route53:
 myNextApplication:
   component: serverless-next.js
   inputs:
-    domain: "example.com"
+    domain: "example.com" # sub-domain defaults to www
 ```
 
 You can also configure a `subdomain`:
@@ -105,7 +105,7 @@ You can also configure a `subdomain`:
 myNextApplication:
   component: serverless-next.js
   inputs:
-    domain: ["www", "example.com"] # [ sub-domain, domain ]
+    domain: ["sub", "example.com"] # [ sub-domain, domain ]
 ```
 
 ### AWS Permissions
