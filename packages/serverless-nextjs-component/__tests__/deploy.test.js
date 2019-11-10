@@ -131,6 +131,9 @@ describe("deploy tests", () => {
               "static/*": {
                 ttl: 86400
               },
+              "public/*": {
+                ttl: 86400
+              },
               "api/*": {
                 ttl: 5,
                 "lambda@edge": {

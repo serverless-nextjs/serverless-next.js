@@ -289,6 +289,9 @@ class NextjsComponent extends Component {
           },
           "static/*": {
             ttl: 86400
+          },
+          "public/*": {
+            ttl: 86400
           }
         }
       }
