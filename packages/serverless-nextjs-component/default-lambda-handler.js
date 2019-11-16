@@ -3,23 +3,18 @@ const cloudFrontCompat = require("./next-aws-cloudfront");
 
 const router = manifest => {
   const {
-    pages: {
-      ssr: { dynamic, nonDynamic },
-      html
-    }
+    pages: { ssr, html }
   } = manifest;
 
+  const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
+
   return path => {
-    if (nonDynamic[path]) {
-      return nonDynamic[path];
+    if (ssr.nonDynamic[path]) {
+      return ssr.nonDynamic[path];
     }
 
-    if (html[path]) {
-      return html[path];
-    }
-
-    for (route in dynamic) {
-      const { file, regex } = dynamic[route];
+    for (route in allDynamicRoutes) {
+      const { file, regex } = allDynamicRoutes[route];
 
       const re = new RegExp(regex, "i");
       const pathMatchesRoute = re.test(path);
@@ -41,7 +36,7 @@ exports.handler = async event => {
   const uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
 
-  const isStaticPage = pages.html[uri];
+  const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
 
   if (isStaticPage || isPublicFile) {
@@ -56,7 +51,14 @@ exports.handler = async event => {
 
   const pagePath = router(manifest)(uri);
 
+  if (pagePath.endsWith(".html")) {
+    request.origin.s3.path = "/static-pages";
+    request.uri = pagePath.replace("pages", "");
+    return request;
+  }
+
   const page = require(`./${pagePath}`);
+
   const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
 
   page.render(req, res);
