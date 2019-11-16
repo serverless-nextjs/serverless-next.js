@@ -274,13 +274,20 @@ class NextjsComponent extends Component {
       name: inputs.bucketName
     });
 
-    const uploadHtmlPages = Object.values(
+    const nonDynamicHtmlPages = Object.values(
       defaultBuildManifest.pages.html.nonDynamic
-    ).map(page =>
-      bucket.upload({
-        file: join(nextConfigPath, ".next/serverless", page),
-        key: `static-pages/${page.replace("pages/", "")}`
-      })
+    );
+
+    const dynamicHtmlPages = Object.values(
+      defaultBuildManifest.pages.html.dynamic
+    ).map(x => x.file);
+
+    const uploadHtmlPages = [...nonDynamicHtmlPages, ...dynamicHtmlPages].map(
+      page =>
+        bucket.upload({
+          file: join(nextConfigPath, ".next/serverless", page),
+          key: `static-pages/${page.replace("pages/", "")}`
+        })
     );
 
     const assetsUpload = [
