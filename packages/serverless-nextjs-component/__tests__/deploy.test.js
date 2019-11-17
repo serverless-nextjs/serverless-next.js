@@ -48,7 +48,9 @@ describe("deploy tests", () => {
 
     await component.build();
 
-    componentOutputs = await component.deploy();
+    componentOutputs = await component.deploy({
+      forwardHeaders: ["Authorization", "Origin"]
+    });
 
     defaultBuildManifest = await fse.readJSON(
       path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
@@ -112,7 +114,8 @@ describe("deploy tests", () => {
           allowedHttpMethods: expect.any(Array),
           forward: {
             queryString: true,
-            cookies: "all"
+            cookies: "all",
+            headers: expect.any(Array)
           },
           ttl: 5,
           "lambda@edge": {

@@ -352,14 +352,20 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
+    let cloudFrontForward = {
+      cookies: "all",
+      queryString: true
+    };
+
+    if (inputs.forwardHeaders) {
+      cloudFrontForward.headers = inputs.forwardHeaders;
+    }
+
     const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 5,
         allowedHttpMethods: ["HEAD", "GET"],
-        forward: {
-          cookies: "all",
-          queryString: true
-        },
+        forward: cloudFrontForward,
         "lambda@edge": {
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
