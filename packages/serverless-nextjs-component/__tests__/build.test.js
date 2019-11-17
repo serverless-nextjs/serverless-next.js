@@ -58,10 +58,6 @@ describe("build tests", () => {
           file: "pages/[root].js",
           regex: expect.any(String)
         },
-        "/blog/:id": {
-          file: "pages/blog/[id].js",
-          regex: expect.any(String)
-        },
         "/customers/:customer": {
           file: "pages/customers/[customer].js",
           regex: expect.any(String)
@@ -85,8 +81,16 @@ describe("build tests", () => {
       });
 
       expect(html).toEqual({
-        "/terms": "pages/terms.html",
-        "/about": "pages/about.html"
+        nonDynamic: {
+          "/terms": "pages/terms.html",
+          "/about": "pages/about.html"
+        },
+        dynamic: {
+          "/blog/:post": {
+            file: "pages/blog/[post].html",
+            regex: expect.any(String)
+          }
+        }
       });
 
       expect(publicFiles).toEqual({

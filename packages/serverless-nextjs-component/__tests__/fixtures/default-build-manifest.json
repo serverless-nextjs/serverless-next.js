@@ -12,23 +12,23 @@
       "dynamic": {
         "/:root": {
           "file": "pages/[root].js",
-          "regex": "/^/([^/]+?)(?:/)?$/i"
+          "regex": "^/([^/]+?)(?:/)?$"
         },
         "/blog/:id": {
           "file": "pages/blog/[id].js",
-          "regex": "/^/blog/([^/]+?)(?:/)?$/i"
+          "regex": "^/blog/([^/]+?)(?:/)?$"
         },
         "/customers/:customer": {
           "file": "pages/customers/[customer].js",
-          "regex": "/^/customers/([^/]+?)(?:/)?$/i"
+          "regex": "^/customers/([^/]+?)(?:/)?$"
         },
         "/customers/:customer/:post": {
-          "file": "/customers/:customer/:post",
-          "regex": "/^/customers/([^/]+?)/([^/]+?)(?:/)?$/i"
+          "file": "pages/customers/:customer/:post",
+          "regex": "^/customers/([^/]+?)/([^/]+?)(?:/)?$"
         },
         "/customers/:customer/profile": {
           "file": "pages/customers/[customer]/profile.js",
-          "regex": "/^/customers/([^/]+?)/profile(?:/)?$/i"
+          "regex": "^/customers/([^/]+?)/profile(?:/)?$"
         }
       },
       "nonDynamic": {
@@ -36,13 +36,25 @@
         "/customers": "pages/customers/index.js",
         "/customers/new": "pages/customers/new.js",
         "/api/getCustomers": "pages/api/getCustomers.js",
-        "/_error":"pages/_error.js"
+        "/_error": "pages/_error.js"
       }
     },
     "html": {
-      "/": "pages/index.html",
-      "/index": "pages/index.html",
-      "/terms": "pages/terms.html"
+      "nonDynamic": {
+        "/": "pages/index.html",
+        "/index": "pages/index.html",
+        "/terms": "pages/terms.html"
+      },
+      "dynamic": {
+        "/users/:user": {
+          "file": "pages/users/[user].html",
+          "regex": "^/users/([^/]+?)(?:/)?$"
+        },
+        "/:username/:id": {
+          "file": "pages/[username]/[id].html",
+          "regex": "^/([^/]+?)/([^/]+?)(?:/)?$"
+        }
+      }
     }
   },
   "publicFiles": {
