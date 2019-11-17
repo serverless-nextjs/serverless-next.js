@@ -1,0 +1,6 @@
+{
+  "/[blog]/[id]": "pages/[blog]/[id].js",
+  "/customers/[customer]": "pages/customers/[customer].js",
+  "/api/[blog]/[id]": "pages/api/[blog]/[id].js",
+  "/api/customers/[customer]": "pages/api/customers/[customer].js"
+}

@@ -8,6 +8,7 @@ const obtainDomains = require("./lib/obtainDomains");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
+const getSortedRoutes = require("./lib/sortedRoutes");
 
 const copy = fse.copy;
 const join = path.join;
@@ -32,11 +33,39 @@ class NextjsComponent extends Component {
 
   async readPagesManifest(nextConfigPath) {
     const path = join(nextConfigPath, ".next/serverless/pages-manifest.json");
-    return (await fse.exists(path))
-      ? fse.readJSON(path)
-      : Promise.reject(
-          "page-manifest.json file not found. Check if `next.config.js` target is set to 'serverless'"
-        );
+    const hasServerlessPageManifest = await fse.exists(path);
+
+    if (!hasServerlessPageManifest) {
+      return Promise.reject(
+        "pages-manifest not found. Check if `next.config.js` target is set to 'serverless'"
+      );
+    }
+
+    const pagesManifest = await fse.readJSON(path);
+    const pagesManifestWithoutDynamicRoutes = Object.keys(pagesManifest).reduce(
+      (acc, route) => {
+        if (isDynamicRoute(route)) {
+          return acc;
+        }
+
+        acc[route] = pagesManifest[route];
+        return acc;
+      },
+      {}
+    );
+
+    const dynamicRoutedPages = Object.keys(pagesManifest).filter(
+      isDynamicRoute
+    );
+    const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
+
+    const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
+
+    sortedDynamicRoutedPages.forEach(route => {
+      sortedPagesManifest[route] = pagesManifest[route];
+    });
+
+    return sortedPagesManifest;
   }
 
   readDefaultBuildManifest(nextConfigPath) {
@@ -71,7 +100,10 @@ class NextjsComponent extends Component {
           dynamic: {},
           nonDynamic: {}
         },
-        html: {}
+        html: {
+          dynamic: {},
+          nonDynamic: {}
+        }
       },
       publicFiles: {},
       cloudFrontOrigins: {}
@@ -85,29 +117,41 @@ class NextjsComponent extends Component {
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;
+    const htmlPages = defaultBuildManifest.pages.html;
+    const apiPages = apiBuildManifest.apis;
 
-    Object.keys(pagesManifest).forEach(r => {
-      const dynamicRoute = isDynamicRoute(r);
-      const expressRoute = dynamicRoute ? expressifyDynamicRoute(r) : null;
+    const isHtmlPage = p => p.endsWith(".html");
+    const isApiPage = p => p.startsWith("pages/api");
 
-      if (pagesManifest[r].endsWith(".html")) {
-        defaultBuildManifest.pages.html[r] = pagesManifest[r];
-      } else if (pagesManifest[r].startsWith("pages/api")) {
+    Object.entries(pagesManifest).forEach(([route, pageFile]) => {
+      const dynamicRoute = isDynamicRoute(route);
+      const expressRoute = dynamicRoute ? expressifyDynamicRoute(route) : null;
+
+      if (isHtmlPage(pageFile)) {
         if (dynamicRoute) {
-          apiBuildManifest.apis.dynamic[expressRoute] = {
-            file: pagesManifest[r],
+          htmlPages.dynamic[expressRoute] = {
+            file: pageFile,
             regex: pathToRegexStr(expressRoute)
           };
         } else {
-          apiBuildManifest.apis.nonDynamic[r] = pagesManifest[r];
+          htmlPages.nonDynamic[route] = pageFile;
+        }
+      } else if (isApiPage(pageFile)) {
+        if (dynamicRoute) {
+          apiPages.dynamic[expressRoute] = {
+            file: pageFile,
+            regex: pathToRegexStr(expressRoute)
+          };
+        } else {
+          apiPages.nonDynamic[route] = pageFile;
         }
       } else if (dynamicRoute) {
         ssrPages.dynamic[expressRoute] = {
-          file: pagesManifest[r],
+          file: pageFile,
           regex: pathToRegexStr(expressRoute)
         };
       } else {
-        ssrPages.nonDynamic[r] = pagesManifest[r];
+        ssrPages.nonDynamic[route] = pageFile;
       }
     });
 
@@ -230,7 +274,15 @@ class NextjsComponent extends Component {
       name: inputs.bucketName
     });
 
-    const uploadHtmlPages = Object.values(defaultBuildManifest.pages.html).map(
+    const nonDynamicHtmlPages = Object.values(
+      defaultBuildManifest.pages.html.nonDynamic
+    );
+
+    const dynamicHtmlPages = Object.values(
+      defaultBuildManifest.pages.html.dynamic
+    ).map(x => x.file);
+
+    const uploadHtmlPages = [...nonDynamicHtmlPages, ...dynamicHtmlPages].map(
       page =>
         bucket.upload({
           file: join(nextConfigPath, ".next/serverless", page),
