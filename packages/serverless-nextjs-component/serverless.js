@@ -294,7 +294,7 @@ class NextjsComponent extends Component {
       bucket.upload({
         dir: join(nextConfigPath, ".next/static"),
         keyPrefix: "_next/static",
-        cacheControl: "Cache-Control': 'public, max-age=31536000, immutable"
+        cacheControl: "public, max-age=31536000, immutable"
       }),
       ...uploadHtmlPages
     ];
