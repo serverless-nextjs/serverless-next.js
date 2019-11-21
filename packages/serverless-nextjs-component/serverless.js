@@ -32,7 +32,12 @@ class NextjsComponent extends Component {
     if (dirExists) {
       return getAllFiles(join(nextConfigPath, "public"))
         .map(e => e.replace(nextConfigPath, ""))
-        .map(e => e.replace(/^\/public\//, ""));
+        .map(e =>
+          e
+            .split(path.sep)
+            .slice(2)
+            .join("/")
+        );
     } else {
       return [];
     }
