@@ -28,8 +28,11 @@ class NextjsComponent extends Component {
 
   async readPublicFiles(nextConfigPath) {
     const dirExists = await fse.exists(join(nextConfigPath, "public"));
-    return dirExists ? fse.readdir(join(nextConfigPath, "public")) : [];
-  }
+    if (dirExists) {
+      return getAllFiles(join(nextConfigPath, "public")).map(e => e.replace(nextConfigPath, "")).map(e => e.replace(/^\/public\//, ""));
+    } else {
+      return []
+    }
 
   async readPagesManifest(nextConfigPath) {
     const path = join(nextConfigPath, ".next/serverless/pages-manifest.json");
