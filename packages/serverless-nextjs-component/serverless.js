@@ -9,6 +9,7 @@ const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
 const getSortedRoutes = require("./lib/sortedRoutes");
+const getAllFiles = require("./lib/getAllFiles");
 
 const copy = fse.copy;
 const join = path.join;
