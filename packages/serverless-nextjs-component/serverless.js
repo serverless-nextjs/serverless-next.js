@@ -33,6 +33,7 @@ class NextjsComponent extends Component {
     } else {
       return []
     }
+  }
 
   async readPagesManifest(nextConfigPath) {
     const path = join(nextConfigPath, ".next/serverless/pages-manifest.json");
