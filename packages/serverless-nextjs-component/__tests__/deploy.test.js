@@ -15,7 +15,6 @@ jest.mock("execa");
 
 describe("deploy tests", () => {
   let tmpCwd;
-  let defaultBuildManifest;
   let componentOutputs;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");

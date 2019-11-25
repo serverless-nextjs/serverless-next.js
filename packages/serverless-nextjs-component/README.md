@@ -95,7 +95,7 @@ $ next-build && serverless
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
 
-First, make sure you've purchased your domain within Route53. Then simply configure your `subdomain` and `domain` like the example below.
+Make sure you've purchased your `domain` within Route53:
 
 ```yml
 # serverless.yml
@@ -103,7 +103,18 @@ First, make sure you've purchased your domain within Route53. Then simply config
 myNextApplication:
   component: serverless-next.js
   inputs:
-    domain: ["www", "example.com"] # [ sub-domain, domain ]
+    domain: "example.com" # sub-domain defaults to www
+```
+
+You can also configure a `subdomain`:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    domain: ["sub", "example.com"] # [ sub-domain, domain ]
 ```
 
 ### AWS Permissions
