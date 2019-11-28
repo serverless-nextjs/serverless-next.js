@@ -13,7 +13,7 @@ const router = manifest => {
       return nonDynamic[path];
     }
 
-    for (route in dynamic) {
+    for (let route in dynamic) {
       const { file, regex } = dynamic[route];
 
       const re = new RegExp(regex, "i");

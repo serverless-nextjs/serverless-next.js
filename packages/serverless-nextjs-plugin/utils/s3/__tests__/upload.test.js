@@ -10,6 +10,7 @@ jest.mock("fs-extra");
 jest.mock("klaw");
 jest.mock("../get");
 jest.mock("../../logger");
+const mockBuildId = "1hCeVQzuD6WJQAxuV3hwc";
 
 describe("s3Upload", () => {
   let upload;
@@ -27,7 +28,7 @@ describe("s3Upload", () => {
     fse.lstat.mockResolvedValue({ isDirectory: () => false });
     fse.createReadStream.mockReturnValue("readStream");
 
-    upload = s3Upload(awsProvider);
+    upload = s3Upload(awsProvider, mockBuildId);
   });
 
   it("should read from the directory given", () => {
@@ -37,6 +38,66 @@ describe("s3Upload", () => {
 
     const r = upload(dir, { bucket: "my-bucket" }).then(() => {
       expect(walkDir).toBeCalledWith(dir);
+    });
+
+    walkStream.emit("end");
+
+    return r;
+  });
+
+  it("should upload build assets files to S3 with correct parameters and resolve with file count", () => {
+    expect.assertions(5);
+
+    const bucket = "my-bucket";
+
+    const r = upload("/path/to/dir", {
+      bucket,
+      rootPrefix: "_next"
+    }).then(result => {
+      expect(logger.log).toBeCalledWith(
+        `Uploading /path/to/dir to ${bucket} ...`
+      );
+
+      expect(awsProvider).toBeCalledWith("S3", "upload", {
+        ContentType: "application/javascript",
+        ACL: "public-read",
+        Bucket: bucket,
+        CacheControl: "public, max-age=31536000, immutable",
+        Key: "_next/runtime/foo.js",
+        Body: "readStream"
+      });
+
+      expect(awsProvider).toBeCalledWith("S3", "upload", {
+        ContentType: "application/javascript",
+        ACL: "public-read",
+        Bucket: bucket,
+        CacheControl: "public, max-age=31536000, immutable",
+        Key: "_next/chunk/foo.js",
+        Body: "readStream"
+      });
+
+      expect(awsProvider).toBeCalledWith("S3", "upload", {
+        ContentType: "application/javascript",
+        ACL: "public-read",
+        Bucket: bucket,
+        CacheControl: "public, max-age=31536000, immutable",
+        Key: `_next/${mockBuildId}/path/foo.js`,
+        Body: "readStream"
+      });
+
+      expect(result.count).toEqual(3);
+    });
+
+    walkStream.emit("data", {
+      path: "/chunk/foo.js"
+    });
+
+    walkStream.emit("data", {
+      path: "/runtime/foo.js"
+    });
+
+    walkStream.emit("data", {
+      path: `/${mockBuildId}/path/foo.js`
     });
 
     walkStream.emit("end");
@@ -60,6 +121,7 @@ describe("s3Upload", () => {
         ContentType: "application/javascript",
         ACL: "public-read",
         Bucket: bucket,
+        CacheControl: undefined,
         Key: "/path/to/foo.js",
         Body: "readStream"
       });
@@ -68,6 +130,7 @@ describe("s3Upload", () => {
         ContentType: "text/css",
         ACL: "public-read",
         Bucket: bucket,
+        CacheControl: undefined,
         Key: "/path/to/bar.css",
         Body: "readStream"
       });
@@ -76,6 +139,7 @@ describe("s3Upload", () => {
         ContentType: "text/plain",
         ACL: "public-read",
         Bucket: bucket,
+        CacheControl: undefined,
         Key: "/path/to/readme.txt",
         Body: "readStream"
       });

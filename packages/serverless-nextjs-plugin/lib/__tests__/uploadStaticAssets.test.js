@@ -1,4 +1,5 @@
 const path = require("path");
+const fs = require("fs");
 const fse = require("fs-extra");
 const { when } = require("jest-when");
 const uploadStaticAssets = require("../uploadStaticAssets");
@@ -10,6 +11,7 @@ const uploadDirToS3Factory = require("../../utils/s3/upload");
 jest.mock("fs-extra");
 jest.mock("../../utils/s3/upload");
 jest.mock("../parseNextConfiguration");
+jest.mock("fs");
 
 describe("uploadStaticAssets", () => {
   let uploadDirToS3;
@@ -17,6 +19,7 @@ describe("uploadStaticAssets", () => {
   beforeEach(() => {
     uploadDirToS3 = jest.fn().mockResolvedValue();
     uploadDirToS3Factory.mockReturnValue(uploadDirToS3);
+    fs.readFileSync.mockResolvedValue("1hCeVQzuD6WJQAxuV3hwc");
   });
 
   it("does NOT upload build assets when there isn't a bucket available", () => {

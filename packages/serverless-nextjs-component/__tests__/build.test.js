@@ -2,9 +2,7 @@ const path = require("path");
 const fse = require("fs-extra");
 const execa = require("execa");
 const NextjsComponent = require("../serverless");
-const { mockS3 } = require("@serverless/aws-s3");
-const { mockCloudFront } = require("@serverless/aws-cloudfront");
-const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
+
 const {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR
@@ -16,7 +14,6 @@ jest.mock("execa");
 describe("build tests", () => {
   let tmpCwd;
   let defaultBuildManifest;
-  let componentOutputs;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
@@ -26,27 +23,9 @@ describe("build tests", () => {
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
 
-    mockS3.mockResolvedValue({
-      name: "bucket-xyz"
-    });
-    mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
-    });
-    mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
-    });
-    mockLambdaPublish.mockResolvedValue({
-      version: "v1"
-    });
-    mockCloudFront.mockResolvedValueOnce({
-      url: "https://cloudfrontdistrib.amazonaws.com"
-    });
-
     const component = new NextjsComponent();
 
-    componentOutputs = await component.default();
+    componentOutputs = await component.build();
 
     defaultBuildManifest = await fse.readJSON(
       path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
@@ -63,16 +42,6 @@ describe("build tests", () => {
 
   afterAll(cleanupFixtureDirectory(fixturePath));
 
-  it("outputs next application url from cloudfront", () => {
-    expect(componentOutputs.appUrl).toEqual(
-      "https://cloudfrontdistrib.amazonaws.com"
-    );
-  });
-
-  it("outputs S3 bucket name", () => {
-    expect(componentOutputs.bucketName).toEqual("bucket-xyz");
-  });
-
   describe("Default build manifest", () => {
     it("adds full manifest", () => {
       const {
@@ -87,10 +56,6 @@ describe("build tests", () => {
       expect(dynamic).toEqual({
         "/:root": {
           file: "pages/[root].js",
-          regex: expect.any(String)
-        },
-        "/blog/:id": {
-          file: "pages/blog/[id].js",
           regex: expect.any(String)
         },
         "/customers/:customer": {
@@ -116,17 +81,24 @@ describe("build tests", () => {
       });
 
       expect(html).toEqual({
-        "/terms": "pages/terms.html",
-        "/about": "pages/about.html"
+        nonDynamic: {
+          "/terms": "pages/terms.html",
+          "/about": "pages/about.html"
+        },
+        dynamic: {
+          "/blog/:post": {
+            file: "pages/blog/[post].html",
+            regex: expect.any(String)
+          }
+        }
       });
 
       expect(publicFiles).toEqual({
         "/favicon.ico": "favicon.ico",
         "/sw.js": "sw.js"
       });
-      expect(staticOrigin).toEqual({
-        domainName: "bucket-xyz.s3.amazonaws.com"
-      });
+
+      expect(staticOrigin).toBeUndefined();
     });
   });
 
@@ -200,73 +172,6 @@ describe("build tests", () => {
         "pages"
       ]);
       expect(pages).toEqual(["_error.js", "api"]);
-    });
-  });
-
-  describe("cloudfront", () => {
-    it("provisions default lambda", () => {
-      expect(mockLambda).toBeCalledWith({
-        description: expect.any(String),
-        handler: "index.handler",
-        code: `./${DEFAULT_LAMBDA_CODE_DIR}`,
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
-          }
-        }
-      });
-    });
-
-    it("provisions api lambda", () => {
-      expect(mockLambda).toBeCalledWith({
-        description: expect.any(String),
-        handler: "index.handler",
-        code: `./${API_LAMBDA_CODE_DIR}`,
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
-          }
-        }
-      });
-    });
-
-    it("creates distribution", () => {
-      expect(mockCloudFront).toBeCalledWith({
-        defaults: {
-          allowedHttpMethods: expect.any(Array),
-          queryString: true,
-          cookies: "all",
-          ttl: 5,
-          "lambda@edge": {
-            "origin-request":
-              "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
-          }
-        },
-        origins: [
-          {
-            url: "http://bucket-xyz.s3.amazonaws.com",
-            private: true,
-            pathPatterns: {
-              "_next/*": {
-                ttl: 86400
-              },
-              "static/*": {
-                ttl: 86400
-              },
-              "api/*": {
-                ttl: 5,
-                "lambda@edge": {
-                  "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
-                },
-                allowedHttpMethods: expect.any(Array)
-              }
-            }
-          }
-        ]
-      });
     });
   });
 });

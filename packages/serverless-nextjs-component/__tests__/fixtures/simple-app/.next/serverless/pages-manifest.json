@@ -1,6 +1,5 @@
 {
   "/[root]": "pages/[root].js",
-  "/blog/[id]": "pages/blog/[id].js",
   "/customers/[customer]": "pages/customers/[customer].js",
   "/customers/[customer]/[post]": "pages/customers/[customer]/[post].js",
   "/customers/new": "pages/customers/new.js",
@@ -10,6 +9,7 @@
   "/api/customers/new": "pages/api/customers/new.js",
   "/terms": "pages/terms.html",
   "/about": "pages/about.html",
+  "/blog/[post]": "pages/blog/[post].html",
   "/": "pages/index.js",
   "/_app": "pages/_app.js",
   "/_document": "pages/_document.js",

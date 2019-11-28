@@ -4,9 +4,11 @@ const path = require("path");
 const execa = require("execa");
 
 const isDynamicRoute = require("./lib/isDynamicRoute");
+const obtainDomains = require("./lib/obtainDomains");
 const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
+const getSortedRoutes = require("./lib/sortedRoutes");
 
 const copy = fse.copy;
 const join = path.join;
@@ -17,27 +19,80 @@ const pathToPosix = path => path.replace(/\\/g, "/");
 
 class NextjsComponent extends Component {
   async default(inputs = {}) {
-    return this.build(inputs);
+    if (inputs.build !== false) {
+      await this.build(inputs);
+    }
+
+    return this.deploy(inputs);
   }
 
-  async readPublicFiles() {
-    const dirExists = await fse.exists("./public");
-    return dirExists ? fse.readdir("./public") : [];
+  async readPublicFiles(nextConfigPath) {
+    const dirExists = await fse.exists(join(nextConfigPath, "public"));
+    return dirExists ? fse.readdir(join(nextConfigPath, "public")) : [];
   }
 
-  readPagesManifest() {
-    return fse.readJSON("./.next/serverless/pages-manifest.json");
+  async readPagesManifest(nextConfigPath) {
+    const path = join(nextConfigPath, ".next/serverless/pages-manifest.json");
+    const hasServerlessPageManifest = await fse.exists(path);
+
+    if (!hasServerlessPageManifest) {
+      return Promise.reject(
+        "pages-manifest not found. Check if `next.config.js` target is set to 'serverless'"
+      );
+    }
+
+    const pagesManifest = await fse.readJSON(path);
+    const pagesManifestWithoutDynamicRoutes = Object.keys(pagesManifest).reduce(
+      (acc, route) => {
+        if (isDynamicRoute(route)) {
+          return acc;
+        }
+
+        acc[route] = pagesManifest[route];
+        return acc;
+      },
+      {}
+    );
+
+    const dynamicRoutedPages = Object.keys(pagesManifest).filter(
+      isDynamicRoute
+    );
+    const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
+
+    const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
+
+    sortedDynamicRoutedPages.forEach(route => {
+      sortedPagesManifest[route] = pagesManifest[route];
+    });
+
+    return sortedPagesManifest;
   }
 
-  async emptyBuildDirectory() {
+  readDefaultBuildManifest(nextConfigPath) {
+    return fse.readJSON(
+      join(nextConfigPath, ".serverless_nextjs/default-lambda/manifest.json")
+    );
+  }
+
+  async readApiBuildManifest(nextConfigPath) {
+    const path = join(
+      nextConfigPath,
+      ".serverless_nextjs/api-lambda/manifest.json"
+    );
+    return (await fse.exists(path))
+      ? fse.readJSON(path)
+      : Promise.resolve(undefined);
+  }
+
+  async emptyBuildDirectory(nextConfigPath) {
     return Promise.all([
-      emptyDir(`./${DEFAULT_LAMBDA_CODE_DIR}`),
-      emptyDir(`./${API_LAMBDA_CODE_DIR}`)
+      emptyDir(join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR)),
+      emptyDir(join(nextConfigPath, API_LAMBDA_CODE_DIR))
     ]);
   }
 
-  async prepareBuildManifests() {
-    const pagesManifest = await this.readPagesManifest();
+  async prepareBuildManifests(nextConfigPath) {
+    const pagesManifest = await this.readPagesManifest(nextConfigPath);
 
     const defaultBuildManifest = {
       pages: {
@@ -45,7 +100,10 @@ class NextjsComponent extends Component {
           dynamic: {},
           nonDynamic: {}
         },
-        html: {}
+        html: {
+          dynamic: {},
+          nonDynamic: {}
+        }
       },
       publicFiles: {},
       cloudFrontOrigins: {}
@@ -59,33 +117,45 @@ class NextjsComponent extends Component {
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;
+    const htmlPages = defaultBuildManifest.pages.html;
+    const apiPages = apiBuildManifest.apis;
 
-    Object.keys(pagesManifest).forEach(r => {
-      const dynamicRoute = isDynamicRoute(r);
-      const expressRoute = dynamicRoute ? expressifyDynamicRoute(r) : null;
+    const isHtmlPage = p => p.endsWith(".html");
+    const isApiPage = p => p.startsWith("pages/api");
 
-      if (pagesManifest[r].endsWith(".html")) {
-        defaultBuildManifest.pages.html[r] = pagesManifest[r];
-      } else if (pagesManifest[r].startsWith("pages/api")) {
+    Object.entries(pagesManifest).forEach(([route, pageFile]) => {
+      const dynamicRoute = isDynamicRoute(route);
+      const expressRoute = dynamicRoute ? expressifyDynamicRoute(route) : null;
+
+      if (isHtmlPage(pageFile)) {
         if (dynamicRoute) {
-          apiBuildManifest.apis.dynamic[expressRoute] = {
-            file: pagesManifest[r],
+          htmlPages.dynamic[expressRoute] = {
+            file: pageFile,
             regex: pathToRegexStr(expressRoute)
           };
         } else {
-          apiBuildManifest.apis.nonDynamic[r] = pagesManifest[r];
+          htmlPages.nonDynamic[route] = pageFile;
+        }
+      } else if (isApiPage(pageFile)) {
+        if (dynamicRoute) {
+          apiPages.dynamic[expressRoute] = {
+            file: pageFile,
+            regex: pathToRegexStr(expressRoute)
+          };
+        } else {
+          apiPages.nonDynamic[route] = pageFile;
         }
       } else if (dynamicRoute) {
         ssrPages.dynamic[expressRoute] = {
-          file: pagesManifest[r],
+          file: pageFile,
           regex: pathToRegexStr(expressRoute)
         };
       } else {
-        ssrPages.nonDynamic[r] = pagesManifest[r];
+        ssrPages.nonDynamic[route] = pageFile;
       }
     });
 
-    const publicFiles = await this.readPublicFiles();
+    const publicFiles = await this.readPublicFiles(nextConfigPath);
 
     publicFiles.forEach(pf => {
       defaultBuildManifest.publicFiles["/" + pf] = pf;
@@ -97,101 +167,156 @@ class NextjsComponent extends Component {
     };
   }
 
-  buildDefaultLambda(buildManifest) {
+  buildDefaultLambda(nextConfigPath, buildManifest) {
     return Promise.all([
       copy(
         join(__dirname, "default-lambda-handler.js"),
-        `./${DEFAULT_LAMBDA_CODE_DIR}/index.js`
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
-      writeJson(`./${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`, buildManifest),
+      writeJson(
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
       copy(
         join(__dirname, "next-aws-cloudfront.js"),
-        `./${DEFAULT_LAMBDA_CODE_DIR}/next-aws-cloudfront.js`
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
       ),
-      copy(".next/serverless/pages", `./${DEFAULT_LAMBDA_CODE_DIR}/pages`, {
-        // skip api pages from default lambda code
-        filter: file => {
-          const isHTMLPage = path.extname(file) === ".html";
-          return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
+      copy(
+        join(nextConfigPath, ".next/serverless/pages"),
+        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "pages"),
+        {
+          // skip api pages from default lambda code
+          filter: file => {
+            const isHTMLPage = path.extname(file) === ".html";
+            return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
+          }
         }
-      })
+      )
     ]);
   }
 
-  async buildApiLambda(apiBuildManifest) {
+  async buildApiLambda(nextConfigPath, apiBuildManifest) {
     return Promise.all([
       copy(
         join(__dirname, "api-lambda-handler.js"),
-        `./${API_LAMBDA_CODE_DIR}/index.js`
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "index.js")
       ),
       copy(
         join(__dirname, "next-aws-cloudfront.js"),
-        `./${API_LAMBDA_CODE_DIR}/next-aws-cloudfront.js`
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
       ),
-      copy(".next/serverless/pages/api", `./${API_LAMBDA_CODE_DIR}/pages/api`),
       copy(
-        ".next/serverless/pages/_error.js",
-        `./${API_LAMBDA_CODE_DIR}/pages/_error.js`
+        join(nextConfigPath, ".next/serverless/pages/api"),
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "pages/api")
       ),
-      writeJson(`./${API_LAMBDA_CODE_DIR}/manifest.json`, apiBuildManifest)
+      copy(
+        join(nextConfigPath, ".next/serverless/pages/_error.js"),
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "pages/_error.js")
+      ),
+      writeJson(
+        join(nextConfigPath, API_LAMBDA_CODE_DIR, "manifest.json"),
+        apiBuildManifest
+      )
     ]);
   }
 
-  async build(inputs) {
-    await execa("./node_modules/.bin/next", ["build"]);
+  async build(inputs = {}) {
+    const nextConfigPath = inputs.nextConfigDir
+      ? path.resolve(inputs.nextConfigDir)
+      : process.cwd();
 
-    await this.emptyBuildDirectory();
+    await execa("node_modules/.bin/next", ["build"], {
+      cwd: nextConfigPath
+    });
+
+    await this.emptyBuildDirectory(nextConfigPath);
 
     const {
       defaultBuildManifest,
       apiBuildManifest
-    } = await this.prepareBuildManifests();
+    } = await this.prepareBuildManifests(nextConfigPath);
 
-    const bucket = await this.load("@serverless/aws-s3");
-    const cloudFront = await this.load("@serverless/aws-cloudfront");
-    const defaultEdgeLambda = await this.load(
-      "@serverless/aws-lambda",
-      "defaultEdgeLambda"
-    );
-    const apiEdgeLambda = await this.load(
-      "@serverless/aws-lambda",
-      "apiEdgeLambda"
-    );
+    await this.buildDefaultLambda(nextConfigPath, defaultBuildManifest);
+
+    const hasAPIPages =
+      Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
+      Object.keys(apiBuildManifest.apis.dynamic).length > 0;
+
+    if (hasAPIPages) {
+      await this.buildApiLambda(nextConfigPath, apiBuildManifest);
+    }
+  }
+
+  async deploy(inputs = {}) {
+    const nextConfigPath = inputs.nextConfigDir
+      ? path.resolve(inputs.nextConfigDir)
+      : process.cwd();
+
+    const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
+      this.readDefaultBuildManifest(nextConfigPath),
+      this.readApiBuildManifest(nextConfigPath)
+    ]);
+
+    const [
+      bucket,
+      cloudFront,
+      defaultEdgeLambda,
+      apiEdgeLambda
+    ] = await Promise.all([
+      this.load("@serverless/aws-s3"),
+      this.load("@serverless/aws-cloudfront"),
+      this.load("@serverless/aws-lambda", "defaultEdgeLambda"),
+      this.load("@serverless/aws-lambda", "apiEdgeLambda")
+    ]);
 
     const bucketOutputs = await bucket({
       accelerated: true,
       name: inputs.bucketName
     });
 
-    const uploadHtmlPages = Object.values(defaultBuildManifest.pages.html).map(
+    const nonDynamicHtmlPages = Object.values(
+      defaultBuildManifest.pages.html.nonDynamic
+    );
+
+    const dynamicHtmlPages = Object.values(
+      defaultBuildManifest.pages.html.dynamic
+    ).map(x => x.file);
+
+    const uploadHtmlPages = [...nonDynamicHtmlPages, ...dynamicHtmlPages].map(
       page =>
         bucket.upload({
-          file: `./.next/serverless/${page}`,
+          file: join(nextConfigPath, ".next/serverless", page),
           key: `static-pages/${page.replace("pages/", "")}`
         })
     );
 
     const assetsUpload = [
       bucket.upload({
-        dir: "./.next/static",
-        keyPrefix: "_next/static"
+        dir: join(nextConfigPath, ".next/static"),
+        keyPrefix: "_next/static",
+        cacheControl: "public, max-age=31536000, immutable"
       }),
       ...uploadHtmlPages
     ];
 
-    if (await fse.exists("./public")) {
+    const [publicDirExists, staticDirExists] = await Promise.all([
+      fse.exists(join(nextConfigPath, "public")),
+      fse.exists(join(nextConfigPath, "static"))
+    ]);
+
+    if (publicDirExists) {
       assetsUpload.push(
         bucket.upload({
-          dir: "./public",
+          dir: join(nextConfigPath, "public"),
           keyPrefix: "public"
         })
       );
     }
 
-    if (await fse.exists("./static")) {
+    if (staticDirExists) {
       assetsUpload.push(
         bucket.upload({
-          dir: "./static",
+          dir: join(nextConfigPath, "static"),
           keyPrefix: "static"
         })
       );
@@ -204,8 +329,6 @@ class NextjsComponent extends Component {
         domainName: `${bucketOutputs.name}.s3.amazonaws.com`
       }
     };
-
-    await this.buildDefaultLambda(defaultBuildManifest);
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
     const cloudFrontOrigins = [
@@ -227,20 +350,21 @@ class NextjsComponent extends Component {
     let apiEdgeLambdaPublishOutputs;
 
     const hasAPIPages =
-      Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
-      Object.keys(apiBuildManifest.apis.dynamic).length > 0;
+      apiBuildManifest &&
+      (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
+        Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
     if (hasAPIPages) {
-      await this.buildApiLambda(apiBuildManifest);
-
       apiEdgeLambdaOutputs = await apiEdgeLambda({
         description: "API Lambda@Edge for Next CloudFront distribution",
         handler: "index.handler",
-        code: `./${API_LAMBDA_CODE_DIR}`,
+        code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+            arn:
+              inputs.policy ||
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         }
       });
@@ -267,11 +391,13 @@ class NextjsComponent extends Component {
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda({
       description: "Default Lambda@Edge for Next CloudFront distribution",
       handler: "index.handler",
-      code: `./${DEFAULT_LAMBDA_CODE_DIR}`,
+      code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
         policy: {
-          arn: "arn:aws:iam::aws:policy/AdministratorAccess"
+          arn:
+            inputs.policy ||
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         }
       }
     });
@@ -282,8 +408,10 @@ class NextjsComponent extends Component {
       defaults: {
         ttl: 5,
         allowedHttpMethods: ["HEAD", "GET"],
-        cookies: "all",
-        queryString: true,
+        forward: {
+          cookies: "all",
+          queryString: true
+        },
         "lambda@edge": {
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
@@ -293,16 +421,17 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
-    if (inputs.domain instanceof Array) {
-      const domain = await this.load("@serverless/domain");
-      const domainOutputs = await domain({
+    // Create domain
+    const { domain, subdomain } = obtainDomains(inputs.domain);
+    if (domain) {
+      const domainComponent = await this.load("@serverless/domain");
+      const domainOutputs = await domainComponent({
         privateZone: false,
-        domain: inputs.domain[1],
+        domain,
         subdomains: {
-          [inputs.domain[0]]: cloudFrontOutputs
+          [subdomain]: cloudFrontOutputs
         }
       });
-
       appUrl = domainOutputs.domains[0];
     }
 
@@ -313,13 +442,13 @@ class NextjsComponent extends Component {
   }
 
   async remove() {
-    const bucket = await this.load("@serverless/aws-s3");
-    const cloudfront = await this.load("@serverless/aws-cloudfront");
-    const domain = await this.load("@serverless/domain");
+    const [bucket, cloudfront, domain] = await Promise.all([
+      this.load("@serverless/aws-s3"),
+      this.load("@serverless/aws-cloudfront"),
+      this.load("@serverless/domain")
+    ]);
 
-    await bucket.remove();
-    await cloudfront.remove();
-    await domain.remove();
+    await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
   }
 }
 
