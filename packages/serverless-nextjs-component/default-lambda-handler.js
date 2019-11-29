@@ -29,7 +29,7 @@ const router = manifest => {
   };
 };
 
-const normaliseUri = uri => (uri === "/" ? "/index" : uri);
+const normaliseUri = uri => (uri === "/" ? "/index" : uri.replace(/^(.+?)\/*?$/, "$1"));
 
 exports.handler = async event => {
   const request = event.Records[0].cf.request;
