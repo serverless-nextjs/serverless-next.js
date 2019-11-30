@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "test": "jest --runInBand",
-    "test:watch": "npm test -- --watch",
+    "test:watch": "npm run test -- --watch",
     "publish": "lerna publish --conventional-commits",
     "lint": "eslint .",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
