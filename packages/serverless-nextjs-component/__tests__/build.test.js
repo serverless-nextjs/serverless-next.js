@@ -95,6 +95,7 @@ describe("build tests", () => {
 
       expect(publicFiles).toEqual({
         "/favicon.ico": "favicon.ico",
+        "/sub/image.png": "sub/image.png",
         "/sw.js": "sw.js"
       });
 
