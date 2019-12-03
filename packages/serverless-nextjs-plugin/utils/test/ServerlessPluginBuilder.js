@@ -65,7 +65,9 @@ class ServerlessPluginBuilder {
   }
 
   build() {
-    return new ServerlessNextJsPlugin(this.serverless, {});
+    const plugin = new ServerlessNextJsPlugin(this.serverless, {});
+    plugin.initializeVariables();
+    return plugin;
   }
 }
 

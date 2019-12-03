@@ -1,5 +1,6 @@
 const ServerlessPluginBuilder = require("../utils/test/ServerlessPluginBuilder");
 const displayServiceInfo = require("../lib/displayServiceInfo");
+const ServerlessNextJsPlugin = require("../index");
 
 jest.mock("../lib/displayServiceInfo");
 
@@ -11,12 +12,6 @@ describe("ServerlessNextJsPlugin", () => {
   });
 
   describe("#constructor", () => {
-    let plugin;
-
-    beforeAll(() => {
-      plugin = new ServerlessPluginBuilder().build();
-    });
-
     it.each`
       hook                                                          | method
       ${"before:offline:start"}                                     | ${"build"}
@@ -28,8 +23,12 @@ describe("ServerlessNextJsPlugin", () => {
       ${"after:package:createDeploymentArtifacts"}                  | ${"removePluginBuildDir"}
       ${"before:aws:package:finalize:mergeCustomProviderResources"} | ${"addCustomStackResources"}
     `("should hook to $hook with method $method", ({ hook, method }) => {
-      expect(plugin[method]).toBeDefined();
-      expect(plugin.hooks[hook]).toEqual(plugin[method]);
+      const spy = jest
+        .spyOn(ServerlessNextJsPlugin.prototype, "hookWrapper")
+        .mockImplementation(() => {});
+      const plugin = new ServerlessPluginBuilder().build();
+      plugin.hooks[hook]();
+      expect(spy).toHaveBeenCalledWith(plugin[method]);
     });
   });
 

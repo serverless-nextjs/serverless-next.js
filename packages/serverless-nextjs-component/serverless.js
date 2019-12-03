@@ -9,6 +9,7 @@ const expressifyDynamicRoute = require("./lib/expressifyDynamicRoute");
 const pathToRegexStr = require("./lib/pathToRegexStr");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
 const getSortedRoutes = require("./lib/sortedRoutes");
+const getAllFiles = require("./lib/getAllFiles");
 
 const copy = fse.copy;
 const join = path.join;
@@ -28,7 +29,18 @@ class NextjsComponent extends Component {
 
   async readPublicFiles(nextConfigPath) {
     const dirExists = await fse.exists(join(nextConfigPath, "public"));
-    return dirExists ? fse.readdir(join(nextConfigPath, "public")) : [];
+    if (dirExists) {
+      return getAllFiles(join(nextConfigPath, "public"))
+        .map(e => e.replace(nextConfigPath, ""))
+        .map(e =>
+          e
+            .split(path.sep)
+            .slice(2)
+            .join("/")
+        );
+    } else {
+      return [];
+    }
   }
 
   async readPagesManifest(nextConfigPath) {
