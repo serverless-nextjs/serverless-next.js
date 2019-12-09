@@ -10,3 +10,4 @@ sls-next-build
 .serverless_nextjs
 **/examples/**/package-lock.json
 .DS_Store
+yarn.lock
