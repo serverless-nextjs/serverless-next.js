@@ -80,6 +80,7 @@ describe("deploy tests", () => {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+        memory: 512,
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
@@ -95,6 +96,7 @@ describe("deploy tests", () => {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+        memory: 512,
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {

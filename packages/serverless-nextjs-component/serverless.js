@@ -376,7 +376,11 @@ class NextjsComponent extends Component {
               inputs.policy ||
               "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
-        }
+        },
+        memory:
+          typeof inputs.memory === "number"
+            ? inputs.memory
+            : (inputs.memory && inputs.memory.apiLambda) || 512
       });
 
       apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
@@ -409,7 +413,11 @@ class NextjsComponent extends Component {
             inputs.policy ||
             "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         }
-      }
+      },
+      memory:
+        typeof inputs.memory === "number"
+          ? inputs.memory
+          : (inputs.memory && inputs.memory.defaultLambda) || 512
     });
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
