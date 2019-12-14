@@ -11,4 +11,6 @@ class Post extends React.Component {
   }
 }
 
+Post.getInitialProps = () => ({});
+
 export default Post;

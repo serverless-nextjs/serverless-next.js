@@ -31,11 +31,5 @@
     "fs-extra": "^8.1.0",
     "next-aws-lambda": "^2.3.2",
     "path-to-regexp": "^3.0.0"
-  },
-  "devDependencies": {
-    "jest": "^24.8.0",
-    "next": "^9.0.4",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0"
   }
 }

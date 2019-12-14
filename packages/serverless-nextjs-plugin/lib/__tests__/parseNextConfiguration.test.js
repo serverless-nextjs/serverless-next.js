@@ -1,8 +1,8 @@
-const nextLoadConfig = require("next-server/dist/server/config").default;
-const { PHASE_PRODUCTION_BUILD } = require("next-server/dist/lib/constants");
+const nextLoadConfig = require("next/dist/next-server/server/config").default;
+const { PHASE_PRODUCTION_BUILD } = require("next/dist/next-server/lib/constants");
 const parseNextConfiguration = require("../parseNextConfiguration");
 
-jest.mock("next-server/dist/server/config");
+jest.mock("next/dist/next-server/server/config");
 
 describe("parseNextConfiguration", () => {
   it("should throw an error if no nextConfigDir is given", () => {
