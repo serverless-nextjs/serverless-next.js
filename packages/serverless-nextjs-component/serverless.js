@@ -237,6 +237,40 @@ class NextjsComponent extends Component {
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
 
+    if (!inputs.buildScripts || inputs.buildScripts.length === 0) {
+      inputs.buildScripts = [
+        {
+          name: "NextJS Build",
+          cmd: "node_modules/.bin/next",
+          args: ["build"].concat(inputs.nextBuildArguments || []),
+          cwd: nextConfigPath
+        }
+      ];
+    } else {
+      inputs.buildScripts.forEach(buildScript => {
+        buildScript.cwd = buildScript.cwd
+          ? path.resolve(buildScript.cwd)
+          : process.cwd();
+      });
+    }
+
+    for (var i = 0, len = inputs.buildScripts.length; i < len; i++) {
+      let { name, cmd, args, cwd, env, enabled } = inputs.buildScripts[i];
+
+      if (enabled === false) {
+        continue;
+      }
+
+      this.context.status(
+        `Running Build Script: ${name || i} - ${i + 1} of ${len}`
+      );
+
+      await execa(cmd, args, {
+        cwd,
+        env
+      });
+    }
+
     await this.emptyBuildDirectory(nextConfigPath);
 
     const {
