@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.6.1...serverless-next.js@1.7.0) (2019-12-09)
+
+
+### Features
+
+* memory input for lambdas ([#255](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/255)) ([54dfaa2](https://github.com/danielcondemarin/serverless-nextjs-plugin/commit/54dfaa2762f6e809d064880973948eb2b2ccc82c))
+
+
+
+
+
 ## [1.6.1](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.6.0...serverless-next.js@1.6.1) (2019-11-30)
 
 

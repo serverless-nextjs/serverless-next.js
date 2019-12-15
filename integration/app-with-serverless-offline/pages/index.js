@@ -4,4 +4,6 @@ function Home() {
   return <div>Index page</div>;
 }
 
+Home.getInitialProps = () => ({});
+
 export default Home;
