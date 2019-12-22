@@ -1,5 +1,7 @@
 const nextLoadConfig = require("next/dist/next-server/server/config").default;
-const { PHASE_PRODUCTION_BUILD } = require("next/dist/next-server/lib/constants");
+const { 
+    PHASE_PRODUCTION_BUILD
+} = require("next/dist/next-server/lib/constants");
 const parseNextConfiguration = require("../parseNextConfiguration");
 
 jest.mock("next/dist/next-server/server/config");
