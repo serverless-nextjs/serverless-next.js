@@ -17,6 +17,3 @@ script:
   - npm test
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run coveralls; fi
   - npm run integration
-cache:
-  directories:
-    - "node_modules"
