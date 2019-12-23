@@ -238,7 +238,9 @@ class NextjsComponent extends Component {
       : process.cwd();
 
     const buildConfig = {
-      enabled: inputs.build && inputs.build.enabled !== false,
+      enabled: inputs.build
+        ? inputs.build !== false && inputs.build.enabled !== false
+        : true,
       cmd: "node_modules/.bin/next",
       args: ["build"],
       ...(typeof inputs.build === "object" ? inputs.build : {}),
