@@ -237,9 +237,26 @@ class NextjsComponent extends Component {
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
 
-    await execa("node_modules/.bin/next", ["build"], {
-      cwd: nextConfigPath
-    });
+    const buildConfig = {
+      enabled: inputs.build
+        ? inputs.build !== false && inputs.build.enabled !== false
+        : true,
+      cmd: "node_modules/.bin/next",
+      args: ["build"],
+      ...(typeof inputs.build === "object" ? inputs.build : {}),
+      cwd:
+        inputs.build && inputs.build.cwd
+          ? path.resolve(inputs.build.cwd)
+          : nextConfigPath
+    };
+
+    if (buildConfig.enabled) {
+      let { cmd, args, cwd, env } = buildConfig;
+      await execa(cmd, args, {
+        cwd,
+        env
+      });
+    }
 
     await this.emptyBuildDirectory(nextConfigPath);
 
@@ -263,6 +280,8 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
+    const nextStaticPath = inputs.nextStaticDir || "";
+    const staticPath = nextStaticPath || nextConfigPath;
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -312,14 +331,14 @@ class NextjsComponent extends Component {
     ];
 
     const [publicDirExists, staticDirExists] = await Promise.all([
-      fse.exists(join(nextConfigPath, "public")),
-      fse.exists(join(nextConfigPath, "static"))
+      fse.exists(join(staticPath, "public")),
+      fse.exists(join(staticPath, "static"))
     ]);
 
     if (publicDirExists) {
       assetsUpload.push(
         bucket.upload({
-          dir: join(nextConfigPath, "public"),
+          dir: join(staticPath, "public"),
           keyPrefix: "public"
         })
       );
@@ -328,7 +347,7 @@ class NextjsComponent extends Component {
     if (staticDirExists) {
       assetsUpload.push(
         bucket.upload({
-          dir: join(nextConfigPath, "static"),
+          dir: join(staticPath, "static"),
           keyPrefix: "static"
         })
       );
