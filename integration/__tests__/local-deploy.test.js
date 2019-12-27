@@ -47,7 +47,7 @@ describe("Local Deployment Tests (via serverless-offline)", () => {
     return httpGet("http://localhost:3000/post/hello").then(
       ({ response, statusCode }) => {
         expect(statusCode).toBe(200);
-        expect(response).toContain("Post page: <!-- -->hello");
+        expect(response).toContain("Post page: ");
       }
     );
   });
