@@ -115,7 +115,7 @@ describe("deploy tests", () => {
             queryString: true,
             cookies: "all"
           },
-          ttl: 5,
+          ttl: 0,
           "lambda@edge": {
             "origin-request":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
@@ -133,7 +133,7 @@ describe("deploy tests", () => {
                 ttl: 86400
               },
               "api/*": {
-                ttl: 5,
+                ttl: 0,
                 "lambda@edge": {
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
