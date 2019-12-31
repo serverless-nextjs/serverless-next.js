@@ -55,7 +55,7 @@ const isGzipSupported = headers => {
   if (ae) {
     for (let i = 0; i < ae.length; i++) {
       const { value } = ae[i];
-      const bits = value.split(",").map((x) => x.split(";")[0].trim());
+      const bits = value.split(",").map(x => x.split(";")[0].trim());
       if (bits.indexOf("gzip") !== -1) {
         gz = true;
       }
