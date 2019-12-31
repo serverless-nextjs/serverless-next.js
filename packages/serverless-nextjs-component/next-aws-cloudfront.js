@@ -49,6 +49,21 @@ const toCloudFrontHeaders = headers => {
   return result;
 };
 
+const isGzipSupported = headers => {
+  let gz = false;
+  const ae = headers["accept-encoding"];
+  if (ae) {
+    for (let i = 0; i < ae.length; i++) {
+      const { value } = ae[i];
+      const bits = value.split(",").map((x) => x.split(";")[0].trim());
+      if (bits.indexOf("gzip") !== -1) {
+        gz = true;
+      }
+    }
+  }
+  return gz;
+};
+
 const handler = event => {
   const { request: cfRequest } = event;
 
@@ -126,17 +141,7 @@ const handler = event => {
       Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
     ]);
   };
-  let gz = false;
-  const ae = headers["accept-encoding"];
-  if (ae) {
-    for (let i = 0; i < ae.length; i++) {
-      const { value } = ae[i];
-      const bits = value.split(",").map((x) => x.split(";")[0].trim());
-      if (bits.indexOf("gzip") !== -1) {
-        gz = true;
-      }
-    }
-  }
+  let gz = isGzipSupported(headers);
 
   const responsePromise = new Promise(resolve => {
     res.end = text => {
