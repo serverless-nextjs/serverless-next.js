@@ -385,6 +385,16 @@ class NextjsComponent extends Component {
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
+    const getLambdaMemory = lambdaType =>
+      typeof inputs.memory === "number"
+        ? inputs.memory
+        : (inputs.memory && inputs.memory[lambdaType]) || 512;
+
+    const getLambdaTimeout = lambdaType =>
+      typeof inputs.timeout === "number"
+        ? inputs.timeout
+        : (inputs.timeout && inputs.timeout[lambdaType]) || 10;
+
     if (hasAPIPages) {
       apiEdgeLambdaOutputs = await apiEdgeLambda({
         description: "API Lambda@Edge for Next CloudFront distribution",
@@ -398,10 +408,8 @@ class NextjsComponent extends Component {
               "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         },
-        memory:
-          typeof inputs.memory === "number"
-            ? inputs.memory
-            : (inputs.memory && inputs.memory.apiLambda) || 512
+        memory: getLambdaMemory("apiLambda"),
+        timeout: getLambdaTimeout("apiLambda")
       });
 
       apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
@@ -435,10 +443,8 @@ class NextjsComponent extends Component {
             "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         }
       },
-      memory:
-        typeof inputs.memory === "number"
-          ? inputs.memory
-          : (inputs.memory && inputs.memory.defaultLambda) || 512
+      memory: getLambdaMemory("defaultLambda"),
+      timeout: getLambdaTimeout("defaultLambda")
     });
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();

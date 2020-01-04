@@ -93,13 +93,16 @@ describe("Custom inputs", () => {
   });
 
   describe.each([
-    [undefined, { defaultMem: 512, apiMem: 512 }],
-    [{}, { defaultMem: 512, apiMem: 512 }],
-    [1024, { defaultMem: 1024, apiMem: 1024 }],
-    [{ defaultLambda: 1024 }, { defaultMem: 1024, apiMem: 512 }],
-    [{ apiLambda: 2048 }, { defaultMem: 512, apiMem: 2048 }],
-    [{ defaultLambda: 128, apiLambda: 2048 }, { defaultMem: 128, apiMem: 2048 }]
-  ])("Custom memory", (memory, expectedMemory) => {
+    [undefined, { defaultMemory: 512, apiMemory: 512 }],
+    [{}, { defaultMemory: 512, apiMemory: 512 }],
+    [1024, { defaultMemory: 1024, apiMemory: 1024 }],
+    [{ defaultLambda: 1024 }, { defaultMemory: 1024, apiMemory: 512 }],
+    [{ apiLambda: 2048 }, { defaultMemory: 512, apiMemory: 2048 }],
+    [
+      { defaultLambda: 128, apiLambda: 2048 },
+      { defaultMemory: 128, apiMemory: 2048 }
+    ]
+  ])("Lambda memory input", (inputMemory, expectedMemory) => {
     let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
@@ -115,22 +118,17 @@ describe("Custom inputs", () => {
 
       const component = new NextjsComponent();
       componentOutputs = await component.default({
-        memory
+        memory: inputMemory
       });
     });
-
-    afterEach(() => {
-      process.chdir(tmpCwd);
-    });
-
-    it("uses custom memory", () => {
-      const { defaultMem, apiMem } = expectedMemory;
+    it(`sets default lambda memory to ${expectedMemory.defaultMemory} and api lambda memory to ${expectedMemory.apiMemory}`, () => {
+      const { defaultMemory, apiMemory } = expectedMemory;
 
       // Default Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
-          memory: defaultMem
+          memory: defaultMemory
         })
       );
 
@@ -138,7 +136,62 @@ describe("Custom inputs", () => {
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
-          memory: apiMem
+          memory: apiMemory
+        })
+      );
+    });
+  });
+
+  describe.each([
+    [undefined, { defaultTimeout: 10, apiTimeout: 10 }],
+    [{}, { defaultTimeout: 10, apiTimeout: 10 }],
+    [40, { defaultTimeout: 40, apiTimeout: 40 }],
+    [{ defaultLambda: 20 }, { defaultTimeout: 20, apiTimeout: 10 }],
+    [{ apiLambda: 20 }, { defaultTimeout: 10, apiTimeout: 20 }],
+    [
+      { defaultLambda: 15, apiLambda: 20 },
+      { defaultTimeout: 15, apiTimeout: 20 }
+    ]
+  ])("Lambda timeout input", (inputTimeout, expectedTimeout) => {
+    let tmpCwd;
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+
+    beforeEach(async () => {
+      execa.mockResolvedValueOnce();
+
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockCloudFront.mockResolvedValueOnce({
+        url: "https://cloudfrontdistrib.amazonaws.com"
+      });
+
+      const component = new NextjsComponent();
+      componentOutputs = await component.default({
+        timeout: inputTimeout
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+    });
+
+    it(`sets default lambda timeout to ${expectedTimeout.defaultTimeout} and api lambda timeout to ${expectedTimeout.apiTimeout}`, () => {
+      const { defaultTimeout, apiTimeout } = expectedTimeout;
+
+      // Default Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          timeout: defaultTimeout
+        })
+      );
+
+      // Api Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          timeout: apiTimeout
         })
       );
     });
