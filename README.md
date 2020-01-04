@@ -16,6 +16,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Design principles](#design-principles)
 - [Features](#features)
 - [Getting started](#getting-started)
+- [Lambda@Edge configuration](#lambda-at-edge-configuration)
 - [Custom domain name](#custom-domain-name)
 - [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
@@ -133,8 +134,9 @@ myNextApplication:
 
 Make sure you add CloudWatch log permissions to your custom policy.
 
-### Lambda memory
-Both **default** and **api** lambdas will be assigned 512mb of memory by default. This value can be altered by assigning a number to the `memory` input
+### Lambda At Edge Configuration
+
+Both **default** and **api** edge lambdas will be assigned 512mb of memory by default. This value can be altered by assigning a number to the `memory` input
 
 ```yml
 # serverless.yml
@@ -157,6 +159,21 @@ myNextApplication:
       defaultLambda: 1024
       apiLambda: 2048
 ```
+
+Similarly, the timeout by default is 10 seconds. To customise you can:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    timeout:
+      defaultLambda: 20
+      apiLambda: 15
+```
+
+Note the maximum timeout allowed for Lambda@Edge is 30 seconds. See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html
 
 ### Architecture
 
@@ -187,6 +204,8 @@ The fourth cache behaviour handles next API requests `api/*`.
 | nextConfigDir | `string`              | `./`                     | Directory where your application `next.config.js` file is. This input is useful when the `serverless.yml` is not in the same directory as the next app. <br>**Note:** `nextConfigDir` should be set if `next.config.js` `distDir` is used.                           |
 | nextStaticDir | `string`              | `./`                     | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed.                                                                                                                                                                      |
 | memory        | `number` or `object`  | `512`                    | When assigned a number, both the default and api lambdas will assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                            |  |
+| timeout        | `number` or `object`  | `10`                    | When assigned a number, both the default and api lambdas will assigned a timeout of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                            |  |
+
 | build         | `boolean` or `Object` | `true`                   | When true builds and deploys app, when false assume the app has been built and uses the `.next` `.serverless_nextjs` directories in `nextConfigDir` to deploy. If an object is passed `build` allows for overriding what script gets called and with what arguments. |
 | build.cmd     | `string`              | `node_modules/.bin/next` | Build command                                                                                                                                                                                                                                                        |
 | build.args    | `Array|string`        | `['build']`              | Arguments to pass to the build                                                                                                                                                                                                                                       |
