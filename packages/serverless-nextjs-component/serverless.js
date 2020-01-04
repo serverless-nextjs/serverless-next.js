@@ -498,4 +498,3 @@ class NextjsComponent extends Component {
 }
 
 module.exports = NextjsComponent;
-module.exports = NextjsComponent;
