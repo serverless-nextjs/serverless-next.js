@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.7.3...serverless-next.js@1.8.0) (2020-01-04)
+
+
+### Features
+
+* add custom input for lambda(s) timeout ([#275](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/275)) ([236231e](https://github.com/danielcondemarin/serverless-nextjs-plugin/commit/236231e83e5d82ca1061dddab4106961883bbda1))
+
+
+
+
+
 ## [1.7.3](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.7.2...serverless-next.js@1.7.3) (2019-12-27)
 
 
