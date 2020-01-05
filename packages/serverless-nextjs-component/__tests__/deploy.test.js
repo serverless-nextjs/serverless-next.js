@@ -81,6 +81,7 @@ describe("deploy tests", () => {
         handler: "index.handler",
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
         memory: 512,
+        timeout: 10,
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
@@ -97,6 +98,7 @@ describe("deploy tests", () => {
         handler: "index.handler",
         code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
         memory: 512,
+        timeout: 10,
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
