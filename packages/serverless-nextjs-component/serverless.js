@@ -282,6 +282,7 @@ class NextjsComponent extends Component {
       : process.cwd();
     const nextStaticPath = inputs.nextStaticDir || "";
     const staticPath = nextStaticPath || nextConfigPath;
+    const cloudFrontConfigs = inputs.cloudfront || {};
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -372,7 +373,8 @@ class NextjsComponent extends Component {
           },
           "static/*": {
             ttl: 86400
-          }
+          },
+          ...cloudFrontConfigs
         }
       }
     ];
