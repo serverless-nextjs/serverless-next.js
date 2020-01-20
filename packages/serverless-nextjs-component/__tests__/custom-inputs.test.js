@@ -13,6 +13,21 @@ const {
 
 jest.mock("execa");
 
+expect.extend({
+  objectContainingCloudFrontInput(received, expected) {
+    const receivedPathPatterns = received.origins[0].pathPatterns;
+    expect(receivedPathPatterns).toContainKeys(Object.keys(expected));
+    for (pathPattern in expected) {
+      expect(receivedPathPatterns[pathPattern]).toContainEntries(
+        Object.entries(expected[pathPattern])
+      );
+    }
+    return {
+      pass: true
+    };
+  }
+});
+
 describe("Custom inputs", () => {
   describe.each([
     [["dev", "example.com"], "https://dev.example.com"],
@@ -89,6 +104,53 @@ describe("Custom inputs", () => {
 
     it("outputs custom domain url", async () => {
       expect(componentOutputs.appUrl).toEqual(expectedDomain);
+    });
+  });
+
+  describe.each([
+    { test1: { a: "1", b: "2" } },
+    { "test*123": { some: "other", 3: "here" }, second: { entry: "here" } }
+  ])("Custom CloudFront input", inputCloudFront => {
+    let tmpCwd;
+    let componentOutputs;
+
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+
+    beforeEach(async () => {
+      execa.mockResolvedValueOnce();
+
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockS3.mockResolvedValue({
+        name: "bucket-xyz"
+      });
+      mockLambda.mockResolvedValue({
+        arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+      });
+      mockLambdaPublish.mockResolvedValue({
+        version: "v1"
+      });
+      mockCloudFront.mockResolvedValueOnce({
+        url: "https://cloudfrontdistrib.amazonaws.com"
+      });
+
+      const component = new NextjsComponent();
+      componentOutputs = await component.default({
+        policy: "arn:aws:iam::aws:policy/CustomRole",
+        memory: 512,
+        cloudfront: inputCloudFront
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+    });
+
+    it("passes custom cloudfront input to cloudfront component", () => {
+      expect(mockCloudFront).toBeCalledWith(
+        expect.objectContainingCloudFrontInput(inputCloudFront)
+      );
     });
   });
 

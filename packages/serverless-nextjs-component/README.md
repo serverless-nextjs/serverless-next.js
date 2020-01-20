@@ -18,6 +18,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Getting started](#getting-started)
 - [Lambda@Edge configuration](#lambda-at-edge-configuration)
 - [Custom domain name](#custom-domain-name)
+- [Custom CloudFront configuration](#custom-cloudfront-configuration)
 - [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
 - [Inputs](#inputs)
@@ -119,6 +120,26 @@ myNextApplication:
     domain: ["sub", "example.com"] # [ sub-domain, domain ]
 ```
 
+### Custom CloudFront configuration
+
+To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    cloudfront:
+      my-page/*:
+        ttl: 0
+        forward:
+          cookies: "all"
+          queryString: false
+      my-other-page:
+        viewerProtocolPolicy: redirect-to-https
+```
+
 ### AWS Permissions
 
 By default the Lambda@Edge functions run using AWSLambdaBasicExecutionRole which only allows uploading logs to CloudWatch. If you need permissions beyond this, like for example access to DynamoDB or any other AWS resource you will need your own custom policy arn:
@@ -211,6 +232,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | build.cwd     | `string`          | `./`                     | Override the current working directory                                                                                                                                                                                                                               |
 | build.enabled | `boolean`         | `true`                   | Same as passing `build:false` but from within the config                                                                                                                                                                                                             |
 | build.env     | `object`          | `{}`                     | Add additional environment variables to the script                                                                                                                                                                                                                   |
+| cloudfront    | `object`          | `{}`                     | Inputs to be passed to [aws-cloudfront](https://github.com/serverless-components/aws-cloudfront)                                                                                                                                                                     |
 
 Custom inputs can be configured like this:
 

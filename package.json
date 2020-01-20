@@ -39,6 +39,7 @@
     "eslint-config-prettier": "^4.2.0",
     "eslint-plugin-prettier": "^3.0.1",
     "jest": "^24.9.0",
+    "jest-extended": "^0.11.2",
     "jest-when": "^2.7.0",
     "lerna": "^3.16.4",
     "next": "^9.1.5",
@@ -71,6 +72,9 @@
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
+    ],
+    "setupFilesAfterEnv": [
+      "jest-extended"
     ]
   },
   "dependencies": {
