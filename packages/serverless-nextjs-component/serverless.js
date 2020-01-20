@@ -373,8 +373,7 @@ class NextjsComponent extends Component {
           },
           "static/*": {
             ttl: 86400
-          },
-          ...cloudFrontConfigs
+          }
         }
       }
     ];
@@ -450,6 +449,16 @@ class NextjsComponent extends Component {
     });
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
+
+    // Add any custom cloudfront configuration
+    Object.entries(cloudFrontConfigs).map(([path, config]) => {
+      cloudFrontOrigins[0].pathPatterns[path] = {
+        "lambda@edge": {
+          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+        },
+        ...config
+      };
+    });
 
     const cloudFrontOutputs = await cloudFront({
       defaults: {
