@@ -23,6 +23,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Architecture](#architecture)
 - [Inputs](#inputs)
 - [FAQ](#faq)
+- [TEST](#test)
 
 ### Motivation
 
