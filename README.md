@@ -175,6 +175,19 @@ myNextApplication:
 
 Note the maximum timeout allowed for Lambda@Edge is 30 seconds. See https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html
 
+You can also set a custom name for **default** and **api** lambdas - if not the default is set by the [aws-lambda serverless component](https://github.com/serverless-components/aws-lambda) to the resource id:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    name:
+      defaultLambda: fooDefaultLambda
+      apiLambda: fooApiLambda
+```
+
 ### Architecture
 
 ![architecture](./arch_no_grid.png)
@@ -205,6 +218,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | nextStaticDir | `string`          | `./`                     | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed                                                                                                                                                                       |
 | memory        | `number\|object`  | `512`                    | When assigned a number, both the default and api lambdas will assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                            |  |
 | timeout       | `number\|object`  | `10`                     | Same as above                                                                                                                                                                                                                                                        |
+| name          | `string\|object`  | /                        | When assigned a string, both the default and api lambdas will assigned name of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                              |
 | build         | `boolean\|object` | `true`                   | When true builds and deploys app, when false assume the app has been built and uses the `.next` `.serverless_nextjs` directories in `nextConfigDir` to deploy. If an object is passed `build` allows for overriding what script gets called and with what arguments. |
 | build.cmd     | `string`          | `node_modules/.bin/next` | Build command                                                                                                                                                                                                                                                        |
 | build.args    | `Array\|string`   | `['build']`              | Arguments to pass to the build                                                                                                                                                                                                                                       |

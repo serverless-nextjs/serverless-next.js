@@ -196,4 +196,64 @@ describe("Custom inputs", () => {
       );
     });
   });
+
+  describe.each([
+    [undefined, { defaultName: undefined, apiName: undefined }],
+    [{}, { defaultName: undefined, apiName: undefined }],
+    ["fooFunction", { defaultName: "fooFunction", apiName: "fooFunction" }],
+    [
+      { defaultLambda: "fooFunction" },
+      { defaultName: "fooFunction", apiName: undefined }
+    ],
+    [
+      { apiLambda: "fooFunction" },
+      { defaultName: undefined, apiName: "fooFunction" }
+    ],
+    [
+      { defaultLambda: "fooFunction", apiLambda: "barFunction" },
+      { defaultName: "fooFunction", apiName: "barFunction" }
+    ]
+  ])("Lambda name input", (inputName, expectedName) => {
+    let tmpCwd;
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+
+    beforeEach(async () => {
+      execa.mockResolvedValueOnce();
+
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockCloudFront.mockResolvedValueOnce({
+        url: "https://cloudfrontdistrib.amazonaws.com"
+      });
+
+      const component = new NextjsComponent();
+      componentOutputs = await component.default({
+        name: inputName
+      });
+    });
+    it(`sets default lambda name to ${expectedName.defaultName} and api lambda name to ${expectedName.apiName}`, () => {
+      const { defaultName, apiName } = expectedName;
+
+      // Default Lambda
+      const expectedDefaultObject = {
+        code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR)
+      };
+      if (defaultName) expectedDefaultObject.name = defaultName;
+
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining(expectedDefaultObject)
+      );
+
+      // Api Lambda
+      const expectedApiObject = {
+        code: path.join(fixturePath, API_LAMBDA_CODE_DIR)
+      };
+      if (apiName) expectedApiObject.name = apiName;
+
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining(expectedApiObject)
+      );
+    });
+  });
 });
