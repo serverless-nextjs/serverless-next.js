@@ -22,20 +22,20 @@ The plugin targets [Next 8 serverless mode](https://nextjs.org/blog/next-8/#serv
 
 ## Contents
 
-- [Motivation](#motivation)
-- [Getting Started](#getting-started)
-- [Hosting static assets](#hosting-static-assets)
-- [Serving static assets](#serving-static-assets)
-- [Deploying](#deploying)
-- [Overriding page configuration](#overriding-page-configuration)
-- [Custom page routing](#custom-page-routing)
-- [Custom error page](#custom-error-page)
-- [Remove error page](#remove-error-page)
-- [Custom lambda handler](#custom-lambda-handler)
-- [All plugin configuration options](#all-plugin-configuration-options)
-- [Examples](#examples)
-- [Caveats](#caveats)
-- [Contributing](#contributing)
+-   [Motivation](#motivation)
+-   [Getting Started](#getting-started)
+-   [Hosting static assets](#hosting-static-assets)
+-   [Serving static assets](#serving-static-assets)
+-   [Deploying](#deploying)
+-   [Overriding page configuration](#overriding-page-configuration)
+-   [Custom page routing](#custom-page-routing)
+-   [Custom error page](#custom-error-page)
+-   [Remove error page](#remove-error-page)
+-   [Custom lambda handler](#custom-lambda-handler)
+-   [All plugin configuration options](#all-plugin-configuration-options)
+-   [Examples](#examples)
+-   [Caveats](#caveats)
+-   [Contributing](#contributing)
 
 ## Motivation
 
@@ -74,15 +74,13 @@ Out of the box, the plugin won't require any configuration. If you need to overr
 
 For example:
 
-```
-nextApp
-│   next.config.js
-│   serverless.yml
-└───pages
-│   │   home.js
-│   │   about.js
-│   │   admin.js
-```
+    nextApp
+    │   next.config.js
+    │   serverless.yml
+    └───pages
+    │   │   home.js
+    │   │   about.js
+    │   │   admin.js
 
 Edit the serverless.yml and add:
 
@@ -130,13 +128,11 @@ Static files can be served by [following the NextJs convention](https://github.c
 
 From your code you can then reference those files with a `/static` URL:
 
-```
-function MyImage() {
-  return <img src="/static/my-image.png" alt="my image" />
-}
+    function MyImage() {
+      return <img src="/static/my-image.png" alt="my image" />
+    }
 
-export default MyImage
-```
+    export default MyImage
 
 To serve static files from the root directory you can add a folder called public and reference those files from the root, e.g: /robots.txt.
 
@@ -369,16 +365,17 @@ module.exports = page => {
 | Plugin config key | Type               | Default Value | Description                                                                                                                                                                                                                   |
 | ----------------- | ------------------ | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | nextConfigDir     | `string`           | ./            | Path to parent directory of `next.config.js`.                                                                                                                                                                                 |
-| assetsBucketName  | `string`           | \<empty\>     | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                        |
+| assetsBucketName  | `string`           | &lt;empty>    | Creates an S3 bucket with the name provided. The bucket will be used for uploading next static assets.                                                                                                                        |
 | cloudFront        | `bool` \| `object` | false         | Set to `true` to create a cloud front distribution in front of your nextjs application. Also can be set to an `object` if you need to override CloudFront configuration, see [serving static assets](#serving-static-assets). |
-| routes            | `[]object`         | []            | Array of custom routes for the next pages.                                                                                                                                                                                    |
-| customHandler     | `string`           | \<empty\>     | Path to your own lambda handler.                                                                                                                                                                                              |
+| routes            | `[]object`         | \[]           | Array of custom routes for the next pages.                                                                                                                                                                                    |
+| customHandler     | `string`           | &lt;empty>    | Path to your own lambda handler.                                                                                                                                                                                              |
+| omitErrorPage     | `bool`             | &lt;empty>    | Set to false if you don't want to deploy the `_error` page.                                                                                                                                                                   |
 | uploadBuildAssets | `bool`             | true          | In the unlikely event that you only want to upload `static` or `public` dirs, set this to `false`.                                                                                                                            |
 | createAssetBucket | `bool`             | true          | Set to false if you want to manage next assets yourself.                                                                                                                                                                      |
 
 ## Caveats
 
-Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component which solves this problem by not using CloudFormation.
+Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use <https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component> which solves this problem by not using CloudFormation.
 
 ## Examples
 
@@ -392,12 +389,12 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 
 ### Code Contributors
 
-This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+This project exists thanks to all the people who contribute. \[[Contribute](CONTRIBUTING.md)].
 <a href="https://github.com/danielcondemarin/serverless-nextjs-plugin/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
 
-Become a financial contributor and help us sustain our community. [[Contribute](https://opencollective.com/serverless-nextjs-plugin/contribute)]
+Become a financial contributor and help us sustain our community. \[[Contribute](https://opencollective.com/serverless-nextjs-plugin/contribute)]
 
 #### Individuals
 
@@ -405,7 +402,7 @@ Become a financial contributor and help us sustain our community. [[Contribute](
 
 #### Organizations
 
-Support this project with your organization. Your logo will show up here with a link to your website. [[Contribute](https://opencollective.com/serverless-nextjs-plugin/contribute)]
+Support this project with your organization. Your logo will show up here with a link to your website. \[[Contribute](https://opencollective.com/serverless-nextjs-plugin/contribute)]
 
 <a href="https://opencollective.com/serverless-nextjs-plugin/organization/0/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/0/avatar.svg"></a>
 <a href="https://opencollective.com/serverless-nextjs-plugin/organization/1/website"><img src="https://opencollective.com/serverless-nextjs-plugin/organization/1/avatar.svg"></a>
