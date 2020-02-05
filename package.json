@@ -20,7 +20,7 @@
     "lint": "eslint .",
     "coveralls": "jest --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "postinstall": "opencollective-postinstall || true"
+    "postinstall": "lerna exec -- npm install && opencollective-postinstall || true"
   },
   "repository": {
     "type": "git",

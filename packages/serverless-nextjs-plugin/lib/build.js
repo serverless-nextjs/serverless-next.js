@@ -19,10 +19,16 @@ module.exports = async function() {
   const pluginBuildDir = this.pluginBuildDir;
   const nextConfigDir = pluginBuildDir.nextConfigDir;
 
-  const [pageConfig, customHandler, routes] = this.getPluginConfigValues(
+  const [
+    pageConfig,
+    customHandler,
+    routes,
+    omitErrorPage
+  ] = this.getPluginConfigValues(
     "pageConfig",
     "customHandler",
-    "routes"
+    "routes",
+    "omitErrorPage"
   );
 
   logger.log("Started building next app ...");
@@ -56,13 +62,18 @@ module.exports = async function() {
     );
   }
 
-  const nextPages = await getNextPagesFromBuildDir(pluginBuildDir.buildDir, {
+  let nextPages = await getNextPagesFromBuildDir(pluginBuildDir.buildDir, {
     pageConfig,
     routes,
     additionalExcludes: customHandler
       ? [path.basename(customHandler)]
       : undefined
   });
+
+  if (omitErrorPage) {
+    console.log("Omitting _error page");
+    nextPages = nextPages.filter(page => page.pageName != "_error");
+  }
 
   await rewritePageHandlers(nextPages, customHandler);
 

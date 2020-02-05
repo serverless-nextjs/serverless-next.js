@@ -199,12 +199,14 @@ describe("build", () => {
     const pageConfig = {};
     const routes = [];
     const customHandler = undefined;
+    const omitErrorPage = undefined;
 
     const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
         pageConfig,
         routes,
-        nextConfigDir
+        nextConfigDir,
+        omitErrorPage
       })
       .build();
 
@@ -260,12 +262,14 @@ describe("build", () => {
     const pageConfig = {};
     const routes = [];
     const customHandler = undefined;
+    const omitErrorPage = undefined;
 
     const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
         pageConfig,
         routes,
-        nextConfigDir
+        nextConfigDir,
+        omitErrorPage
       })
       .build();
 
@@ -275,6 +279,40 @@ describe("build", () => {
         { pageConfig, routes, additionalExcludes: customHandler }
       );
       expect(nextPages).toEqual(mockNextPages);
+    });
+  });
+
+  it("should not return the _error page when omitErrorPage is true", () => {
+    expect.assertions(2);
+
+    const parsedConfig = parsedNextConfigurationFactory();
+    parseNextConfiguration.mockResolvedValueOnce(parsedConfig);
+    const bazPage = new NextPage("/foo/baz");
+    const mockNextPages = [new NextPage("/foo/_error"), bazPage];
+    getNextPagesFromBuildDir.mockResolvedValueOnce(mockNextPages);
+
+    const nextConfigDir = "path/to/next-app";
+
+    const pageConfig = {};
+    const routes = [];
+    const customHandler = undefined;
+    const omitErrorPage = true;
+
+    const plugin = new ServerlessPluginBuilder()
+      .withPluginConfig({
+        pageConfig,
+        routes,
+        nextConfigDir,
+        omitErrorPage
+      })
+      .build();
+
+    return build.call(plugin).then(nextPages => {
+      expect(getNextPagesFromBuildDir).toBeCalledWith(
+        new PluginBuildDir(nextConfigDir).buildDir,
+        { pageConfig, routes, additionalExcludes: customHandler }
+      );
+      expect(nextPages).toEqual([bazPage]);
     });
   });
 });
