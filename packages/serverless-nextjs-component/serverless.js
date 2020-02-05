@@ -485,14 +485,23 @@ class NextjsComponent extends Component {
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain) {
       const domainComponent = await this.load("@serverless/domain");
-      const domainOutputs = await domainComponent({
+      const domainInputs = {
         privateZone: false,
-        domain,
-        subdomains: {
+        domain
+      };
+      
+      // only allow to use naked domain when subdomain is www
+      if (!(inputs.useNakedDomain && subdomain === "www")) {
+        domainInputs.subdomains = {
           [subdomain]: cloudFrontOutputs
-        }
-      });
-      appUrl = domainOutputs.domains[0];
+      }
+
+      const domainOutputs = await domainComponent(domainInputs);
+      if (domainOutputs.domains.length) {
+        appUrl = domainOutputs.domains[0];
+      } else {
+        appUrl = domain;
+      }
     }
 
     return {
