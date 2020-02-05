@@ -74,13 +74,15 @@ Out of the box, the plugin won't require any configuration. If you need to overr
 
 For example:
 
-    nextApp
-    │   next.config.js
-    │   serverless.yml
-    └───pages
-    │   │   home.js
-    │   │   about.js
-    │   │   admin.js
+```
+nextApp
+│   next.config.js
+│   serverless.yml
+└───pages
+│   │   home.js
+│   │   about.js
+│   │   admin.js
+```
 
 Edit the serverless.yml and add:
 
@@ -128,11 +130,13 @@ Static files can be served by [following the NextJs convention](https://github.c
 
 From your code you can then reference those files with a `/static` URL:
 
-    function MyImage() {
-      return <img src="/static/my-image.png" alt="my image" />
-    }
+```
+function MyImage() {
+  return <img src="/static/my-image.png" alt="my image" />
+}
 
-    export default MyImage
+export default MyImage
+```
 
 To serve static files from the root directory you can add a folder called public and reference those files from the root, e.g: /robots.txt.
 
