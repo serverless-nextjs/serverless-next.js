@@ -17,6 +17,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Features](#features)
 - [Getting started](#getting-started)
 - [Lambda@Edge configuration](#lambda-at-edge-configuration)
+- [Custom Cloudfront configuration](#custom-cloudfront-configuration)
 - [Custom domain name](#custom-domain-name)
 - [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
@@ -92,6 +93,27 @@ And simply deploy:
 ```bash
 $ serverless
 ```
+
+### Custom Cloudfront configuration
+There are four cache behaviours created in Cloudfront (see Architecture section below for more). This option allows one to set cloudfront
+cache configuration options for the lambda that handles SSR and/or the api lambda. The options that can be set are listed in the 
+[aws-cloudfront component](https://github.com/serverless-components/aws-cloudfront).
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    cloudfront:
+      defaults: # options for lambda that handle SSR
+        forward:
+          headers: [CloudFront-Is-Desktop-Viewer, CloudFront-Is-Mobile-Viewer, CloudFront-Is-Tablet-Viewer]
+      api: # options for lambdas that handle API request
+        ttl: 10
+```
+
+The example above adds headers that can be forwarded to the SSR lambda, and sets the *ttl* for api lambdas.
 
 ### Custom domain name
 

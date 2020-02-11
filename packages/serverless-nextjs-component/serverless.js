@@ -422,12 +422,10 @@ class NextjsComponent extends Component {
       apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
 
       apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
-
+      const apiCloudfrontInputs =
+        (inputs.cloudfront && inputs.cloudfront.api) || {};
       cloudFrontOrigins[0].pathPatterns["api/*"] = {
         ttl: 0,
-        "lambda@edge": {
-          "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
-        },
         allowedHttpMethods: [
           "HEAD",
           "DELETE",
@@ -436,7 +434,12 @@ class NextjsComponent extends Component {
           "OPTIONS",
           "PUT",
           "PATCH"
-        ]
+        ],
+        ...apiCloudfrontInputs,
+        // lambda@edge key is last and therefore cannot be overridden
+        "lambda@edge": {
+          "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
+        }
       };
     }
 
@@ -464,14 +467,19 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
+    const defaultCloudfrontInputs =
+      (inputs.cloudfront && inputs.cloudfront.defaults) || {};
     const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 0,
         allowedHttpMethods: ["HEAD", "GET"],
+        ...defaultCloudfrontInputs,
         forward: {
           cookies: "all",
-          queryString: true
+          queryString: true,
+          ...defaultCloudfrontInputs.forward
         },
+        // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
