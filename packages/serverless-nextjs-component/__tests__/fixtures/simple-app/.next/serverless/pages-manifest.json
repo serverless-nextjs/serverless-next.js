@@ -4,6 +4,7 @@
   "/customers/[customer]/[post]": "pages/customers/[customer]/[post].js",
   "/customers/new": "pages/customers/new.js",
   "/customers/[customer]/profile": "pages/customers/[customer]/profile.js",
+  "/customers/[...catchAll]": "pages/customers/[...catchAll].js",
   "/api/customers": "pages/api/customers.js",
   "/api/customers/[id]": "pages/api/customers/[id].js",
   "/api/customers/new": "pages/api/customers/new.js",
