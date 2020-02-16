@@ -138,7 +138,6 @@ class NextjsComponent extends Component {
     Object.entries(pagesManifest).forEach(([route, pageFile]) => {
       const dynamicRoute = isDynamicRoute(route);
       const expressRoute = dynamicRoute ? expressifyDynamicRoute(route) : null;
-
       if (isHtmlPage(pageFile)) {
         if (dynamicRoute) {
           htmlPages.dynamic[expressRoute] = {
