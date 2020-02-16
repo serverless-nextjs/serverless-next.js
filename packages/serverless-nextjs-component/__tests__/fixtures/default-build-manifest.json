@@ -22,13 +22,17 @@
           "file": "pages/customers/[customer].js",
           "regex": "^/customers/([^/]+?)(?:/)?$"
         },
-        "/customers/:customer/:post": {
-          "file": "pages/customers/:customer/:post",
-          "regex": "^/customers/([^/]+?)/([^/]+?)(?:/)?$"
-        },
         "/customers/:customer/profile": {
           "file": "pages/customers/[customer]/profile.js",
           "regex": "^/customers/([^/]+?)/profile(?:/)?$"
+        },
+        "/customers/:customer/:post": {
+          "file": "pages/customers/[customer]/[post].js",
+          "regex": "^/customers/([^/]+?)/([^/]+?)(?:/)?$"
+        },
+        "/customers/:catchAll*": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
         }
       },
       "nonDynamic": {
