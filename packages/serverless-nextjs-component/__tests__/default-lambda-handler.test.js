@@ -23,12 +23,13 @@ describe("Lambda@Edge", () => {
   describe("Routing", () => {
     describe("HTML pages routing", () => {
       it.each`
-        path               | expectedPage
-        ${"/"}             | ${"/index.html"}
-        ${"/index"}        | ${"/index.html"}
-        ${"/terms"}        | ${"/terms.html"}
-        ${"/users/batman"} | ${"/users/[user].html"}
-        ${"/john/123"}     | ${"/[username]/[id].html"}
+        path                       | expectedPage
+        ${"/"}                     | ${"/index.html"}
+        ${"/index"}                | ${"/index.html"}
+        ${"/terms"}                | ${"/terms.html"}
+        ${"/users/batman"}         | ${"/users/[user].html"}
+        ${"/users/test/catch/all"} | ${"/users/[...user].html"}
+        ${"/john/123"}             | ${"/[username]/[id].html"}
       `(
         "serves page $expectedPage for path $path",
         async ({ path, expectedPage }) => {

@@ -50,6 +50,10 @@
           "file": "pages/users/[user].html",
           "regex": "^/users/([^/]+?)(?:/)?$"
         },
+        "/users/:user*": {
+          "file": "pages/users/[...user].html",
+          "regex": "^/users(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+        },
         "/:username/:id": {
           "file": "pages/[username]/[id].html",
           "regex": "^/([^/]+?)/([^/]+?)(?:/)?$"
