@@ -23,12 +23,13 @@ describe("Lambda@Edge", () => {
   describe("Routing", () => {
     describe("HTML pages routing", () => {
       it.each`
-        path               | expectedPage
-        ${"/"}             | ${"/index.html"}
-        ${"/index"}        | ${"/index.html"}
-        ${"/terms"}        | ${"/terms.html"}
-        ${"/users/batman"} | ${"/users/[user].html"}
-        ${"/john/123"}     | ${"/[username]/[id].html"}
+        path                       | expectedPage
+        ${"/"}                     | ${"/index.html"}
+        ${"/index"}                | ${"/index.html"}
+        ${"/terms"}                | ${"/terms.html"}
+        ${"/users/batman"}         | ${"/users/[user].html"}
+        ${"/users/test/catch/all"} | ${"/users/[...user].html"}
+        ${"/john/123"}             | ${"/[username]/[id].html"}
       `(
         "serves page $expectedPage for path $path",
         async ({ path, expectedPage }) => {
@@ -86,28 +87,39 @@ describe("Lambda@Edge", () => {
     });
 
     describe("SSR Pages routing", () => {
-      it("renders page", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/customers",
-          host: "mydistribution.cloudfront.net",
-          origin: {
-            s3: {
-              domainName: "my-bucket.amazonaws.com"
+      it.each`
+        path                              | expectedPage
+        ${"/abc"}                         | ${"pages/[root].js"}
+        ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
+        ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
+        ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
+        ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
+        ${"/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
+      `(
+        "renders page $expectedPage for path $path",
+        async ({ path, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net",
+            origin: {
+              s3: {
+                domainName: "my-bucket.amazonaws.com"
+              }
             }
-          }
-        });
+          });
 
-        mockPageRequire("pages/customers/index.js");
+          mockPageRequire(expectedPage);
 
-        const response = await handler(event, {});
+          const response = await handler(event, {});
 
-        const decodedBody = new Buffer(response.body, "base64").toString(
-          "utf8"
-        );
+          const decodedBody = new Buffer(response.body, "base64").toString(
+            "utf8"
+          );
 
-        expect(decodedBody).toEqual("pages/customers/index.js");
-        expect(response.status).toEqual(200);
-      });
+          expect(decodedBody).toEqual(expectedPage);
+          expect(response.status).toEqual(200);
+        }
+      );
     });
   });
 
