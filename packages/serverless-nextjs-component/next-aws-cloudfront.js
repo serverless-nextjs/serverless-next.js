@@ -42,21 +42,21 @@ const toCloudFrontHeaders = headers => {
       return;
     }
 
-      result[lowerCaseHeaderName] = [];
+    result[lowerCaseHeaderName] = [];
 
-      if (headerValue instanceof Array) {
-        headerValue.forEach(val => {
-          result[lowerCaseHeaderName].push({
-            key: headerName,
-            value: val.toString()
-          });
-        });
-      } else {
+    if (headerValue instanceof Array) {
+      headerValue.forEach(val => {
         result[lowerCaseHeaderName].push({
           key: headerName,
-          value: headerValue.toString()
+          value: val.toString()
         });
-      }
+      });
+    } else {
+      result[lowerCaseHeaderName].push({
+        key: headerName,
+        value: headerValue.toString()
+      });
+    }
   });
 
   return result;
