@@ -35,13 +35,25 @@ const toCloudFrontHeaders = headers => {
   const result = {};
 
   Object.keys(headers).forEach(headerName => {
-    if (!readOnlyCloudFrontHeaders[headerName.toLowerCase()]) {
-      result[headerName] = [
-        {
+    const lowerCaseHeaderName = headerName.toLowerCase();
+    const headerValue = headers[headerName];
+
+    if (!readOnlyCloudFrontHeaders[lowerCaseHeaderName]) {
+      result[lowerCaseHeaderName] = [];
+
+      if (headerValue instanceof Array) {
+        headerValue.forEach(val => {
+          result[lowerCaseHeaderName].push({
+            key: headerName,
+            value: val
+          });
+        });
+      } else {
+        result[lowerCaseHeaderName].push({
           key: headerName,
-          value: headers[headerName].toString()
-        }
-      ];
+          value: headerValue.toString()
+        });
+      }
     }
   });
 
