@@ -78,7 +78,7 @@ const reqResMapper = (event, callback) => {
   };
   res.write = chunk => {
     response.body = Buffer.concat([
-      response.body,
+      Buffer.isBuffer(response.body) ? response.body : Buffer.from(response.body),
       Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
     ]);
   };
