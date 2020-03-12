@@ -100,6 +100,33 @@ describe("Response Tests", () => {
     });
   });
 
+  it("setHeader (multiple headers with same name)", () => {
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      }
+    });
+
+    res.setHeader("set-cookie", ["1", "2"]);
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.headers).toEqual({
+        "set-cookie": [
+          {
+            key: "set-cookie",
+            value: "1"
+          },
+          {
+            key: "set-cookie",
+            value: "2"
+          }
+        ]
+      });
+    });
+  });
+
   it("setHeader", () => {
     const { res, responsePromise } = create({
       request: {
