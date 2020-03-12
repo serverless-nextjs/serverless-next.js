@@ -15,7 +15,7 @@ const reqResMapper = (event, callback) => {
   req.url = (event.requestContext.path || event.path || "").replace(
     new RegExp("^/" + event.requestContext.stage),
     ""
-  );
+  ) || "/";
 
   let qs = "";
 
