@@ -70,7 +70,7 @@ myNextApplication:
   component: serverless-next.js
 ```
 
-Set your aws credentials in a `.env` file:
+Set your aws credentials in a `.env` file (or set them as environment variables):
 
 ```bash
 AWS_ACCESS_KEY_ID=accesskey
