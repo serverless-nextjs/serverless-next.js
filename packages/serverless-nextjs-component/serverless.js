@@ -399,6 +399,11 @@ class NextjsComponent extends Component {
         ? inputs.name
         : inputs.name && inputs.name[lambdaType];
 
+    const getRuntime = lambdaType =>
+      typeof inputs.runtime === "string"
+        ? inputs.runtime
+        : inputs.runtime && inputs.runtime[lambdaType] || "nodejs12.x";
+
     if (hasAPIPages) {
       const apiEdgeLambdaInput = {
         description: "API Lambda@Edge for Next CloudFront distribution",
@@ -413,7 +418,8 @@ class NextjsComponent extends Component {
           }
         },
         memory: getLambdaMemory("apiLambda"),
-        timeout: getLambdaTimeout("apiLambda")
+        timeout: getLambdaTimeout("apiLambda"),
+        runtime: getRuntime("apiLambda")
       };
       const apiLambdaName = getLambdaName("apiLambda");
       if (apiLambdaName) apiEdgeLambdaInput.name = apiLambdaName;
@@ -455,7 +461,8 @@ class NextjsComponent extends Component {
         }
       },
       memory: getLambdaMemory("defaultLambda"),
-      timeout: getLambdaTimeout("defaultLambda")
+      timeout: getLambdaTimeout("defaultLambda"),
+      runtime: getRuntime("apiLambda")
     };
     const defaultLambdaName = getLambdaName("defaultLambda");
     if (defaultLambdaName) defaultEdgeLambdaInput.name = defaultLambdaName;
