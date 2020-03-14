@@ -1,3 +1,4 @@
+const zlib = require("zlib");
 const create = require("../next-aws-cloudfront");
 
 describe("Response Tests", () => {
@@ -254,6 +255,9 @@ describe("Response Tests", () => {
   });
 
   it(`gzips`, () => {
+    const gzipSpy = jest.spyOn(zlib, "gzipSync");
+    gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
+
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -270,11 +274,13 @@ describe("Response Tests", () => {
 
     res.end("ok");
 
+    gzipSpy.mockRestore();
+
     return responsePromise.then(response => {
       expect(response.headers["content-encoding"]).toEqual([
         { key: "Content-Encoding", value: "gzip" }
       ]);
-      expect(response.body).toEqual("H4sIAAAAAAAAE8vPBgBH3dx5AgAAAA=="); // gzipped "ok" string base64 encoded
+      expect(response.body).toEqual("b2stZ3ppcHBlZA=="); // "ok-gzipped" base64 encoded
     });
   });
 });
