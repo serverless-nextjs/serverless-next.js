@@ -252,4 +252,29 @@ describe("Response Tests", () => {
       expect(response.body).toEqual("b2s=");
     });
   });
+
+  it(`gzips`, () => {
+    const { res, responsePromise } = create({
+      request: {
+        path: "/",
+        headers: {
+          "accept-encoding": [
+            {
+              key: "Accept-Encoding",
+              value: "gzip"
+            }
+          ]
+        }
+      }
+    });
+
+    res.end("ok");
+
+    return responsePromise.then(response => {
+      expect(response.headers["content-encoding"]).toEqual([
+        { key: "Content-Encoding", value: "gzip" }
+      ]);
+      expect(response.body).toEqual("H4sIAAAAAAAAE8vPBgBH3dx5AgAAAA=="); // gzipped "ok" string base64 encoded
+    });
+  });
 });
