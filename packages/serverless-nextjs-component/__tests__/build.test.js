@@ -69,6 +69,10 @@ describe("build tests", () => {
         "/customers/:customer/profile": {
           file: "pages/customers/[customer]/profile.js",
           regex: expect.any(String)
+        },
+        "/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
+          regex: expect.any(String)
         }
       });
 
@@ -151,7 +155,7 @@ describe("build tests", () => {
 
       // html pages should not be included in the default lambda
       expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
-      expect(customerPages).toEqual(["[post].js"]);
+      expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
     });
   });
 
