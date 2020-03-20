@@ -299,9 +299,12 @@ class NextjsComponent extends Component {
       this.load("@serverless/aws-lambda", "apiEdgeLambda")
     ]);
 
+    const defaultRegion = "us-east-1";
+
     const bucketOutputs = await bucket({
       accelerated: true,
-      name: inputs.bucketName
+      name: inputs.bucketName,
+      region: inputs.region || defaultRegion
     });
 
     const nonDynamicHtmlPages = Object.values(
@@ -483,7 +486,8 @@ class NextjsComponent extends Component {
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
       },
-      origins: cloudFrontOrigins
+      origins: cloudFrontOrigins,
+      region: inputs.region || defaultRegion
     });
 
     let appUrl = cloudFrontOutputs.url;
