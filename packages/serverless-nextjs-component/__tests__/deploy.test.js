@@ -144,7 +144,8 @@ describe("deploy tests", () => {
               }
             }
           }
-        ]
+        ],
+        region: "us-east-1"
       });
     });
   });
