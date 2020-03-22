@@ -35,7 +35,7 @@ describe("compatLayer.request", () => {
     const { req } = create({
       requestContext: {
         stage: "dev",
-        path: "/dev",
+        path: "/dev"
       }
     });
 
