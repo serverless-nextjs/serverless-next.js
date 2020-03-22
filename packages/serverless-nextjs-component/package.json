@@ -1,6 +1,6 @@
 {
   "name": "serverless-next.js",
-  "version": "1.9.4",
+  "version": "1.9.5",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "serverless.js",
   "repository": {
@@ -29,7 +29,7 @@
     "@serverless/domain": "^6.1.0",
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
-    "next-aws-lambda": "^2.3.5",
+    "next-aws-lambda": "^2.3.6",
     "path-to-regexp": "^3.0.0"
   }
 }
