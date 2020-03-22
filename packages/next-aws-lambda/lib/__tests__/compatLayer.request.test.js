@@ -31,6 +31,17 @@ describe("compatLayer.request", () => {
     expect(req.url).toEqual("/");
   });
 
+  it("request url path just stage name no trailing slash", () => {
+    const { req } = create({
+      requestContext: {
+        stage: "dev",
+        path: "/dev"
+      }
+    });
+
+    expect(req.url).toEqual("/");
+  });
+
   it("querystring /?x=42", () => {
     const { req } = create({
       requestContext: {

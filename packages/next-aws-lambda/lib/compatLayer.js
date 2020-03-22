@@ -12,10 +12,11 @@ const reqResMapper = (event, callback) => {
   let responsePromise;
 
   const req = new Stream.Readable();
-  req.url = (event.requestContext.path || event.path || "").replace(
-    new RegExp("^/" + event.requestContext.stage),
-    ""
-  );
+  req.url =
+    (event.requestContext.path || event.path || "").replace(
+      new RegExp("^/" + event.requestContext.stage),
+      ""
+    ) || "/";
 
   let qs = "";
 
