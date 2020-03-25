@@ -97,6 +97,9 @@ const reqResMapper = (event, callback) => {
   res.getHeaders = () => {
     return res.headers;
   };
+  res.hasHeader = name => {
+    return !!res.getHeader(name);
+  };
 
   const onResEnd = (callback, resolve) => text => {
     if (text) res.write(text);
