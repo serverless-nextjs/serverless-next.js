@@ -86,10 +86,10 @@ const reqResMapper = (event, callback) => {
     ]);
   };
   res.setHeader = (name, value) => {
-    res.headers[name] = value;
+    res.headers[name.toLowerCase()] = value;
   };
   res.removeHeader = name => {
-    delete res.headers[name];
+    delete res.headers[name.toLowerCase()];
   };
   res.getHeader = name => {
     return res.headers[name.toLowerCase()];
