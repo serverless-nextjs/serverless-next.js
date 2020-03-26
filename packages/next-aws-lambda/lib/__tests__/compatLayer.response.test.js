@@ -265,6 +265,19 @@ describe("compatLayer.response", () => {
     });
   });
 
+  it("hasHeader", () => {
+    const { res } = create({
+      requestContext: {
+        path: "/"
+      },
+      headers: {}
+    });
+    res.setHeader("x-custom-1", "1");
+
+    expect(res.hasHeader("x-custom-1")).toBe(true);
+    expect(res.hasHeader("x-custom-2")).toBe(false);
+  });
+
   it(`res.write('ok')`, done => {
     const { res } = create(
       {
