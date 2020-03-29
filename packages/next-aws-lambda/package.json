@@ -1,6 +1,6 @@
 {
   "name": "next-aws-lambda",
-  "version": "2.3.6",
+  "version": "2.3.7",
   "description": "Compat layer between next.js serverless page and AWS Lambda",
   "files": [
     "lib/**",

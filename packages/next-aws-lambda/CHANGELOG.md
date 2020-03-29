@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.3.7](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/next-aws-lambda@2.3.6...next-aws-lambda@2.3.7) (2020-03-29)
+
+**Note:** Version bump only for package next-aws-lambda
+
+
+
+
+
 ## [2.3.6](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/next-aws-lambda@2.3.5...next-aws-lambda@2.3.6) (2020-03-22)
 
 
