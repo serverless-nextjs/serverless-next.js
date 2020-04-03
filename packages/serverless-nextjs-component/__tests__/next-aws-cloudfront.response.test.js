@@ -223,6 +223,19 @@ describe("Response Tests", () => {
     });
   });
 
+  it("hasHeader", () => {
+    const { res } = create({
+      request: {
+        path: "/",
+        headers: {}
+      }
+    });
+    res.setHeader("x-custom-1", "1");
+
+    expect(res.hasHeader("x-custom-1")).toBe(true);
+    expect(res.hasHeader("x-custom-2")).toBe(false);
+  });
+
   it(`res.write('ok')`, () => {
     const { res, responsePromise } = create({
       request: {

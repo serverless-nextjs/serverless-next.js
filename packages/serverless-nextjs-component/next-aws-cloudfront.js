@@ -187,6 +187,9 @@ const handler = event => {
   res.getHeaders = () => {
     return res.headers;
   };
+  res.hasHeader = name => {
+    return !!res.getHeader(name);
+  };
 
   return {
     req,
