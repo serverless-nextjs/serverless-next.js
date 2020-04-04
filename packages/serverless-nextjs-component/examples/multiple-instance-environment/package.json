@@ -10,7 +10,7 @@
     "deployProd": "serverless --stage=prod"
   },
   "dependencies": {
-    "next": "9.1.1",
+    "next": "9.3.4",
     "react": "16.11.0",
     "react-dom": "16.11.0"
   },
