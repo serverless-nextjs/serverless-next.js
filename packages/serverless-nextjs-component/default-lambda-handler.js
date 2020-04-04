@@ -13,7 +13,7 @@ const router = manifest => {
       return ssr.nonDynamic[path];
     }
 
-    for (route in allDynamicRoutes) {
+    for (let route in allDynamicRoutes) {
       const { file, regex } = allDynamicRoutes[route];
 
       const re = new RegExp(regex, "i");
