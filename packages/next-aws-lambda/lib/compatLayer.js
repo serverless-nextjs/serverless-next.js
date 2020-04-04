@@ -12,10 +12,11 @@ const reqResMapper = (event, callback) => {
   let responsePromise;
 
   const req = new Stream.Readable();
-  req.url = (event.requestContext.path || event.path || "").replace(
-    new RegExp("^/" + event.requestContext.stage),
-    ""
-  );
+  req.url =
+    (event.requestContext.path || event.path || "").replace(
+      new RegExp("^/" + event.requestContext.stage),
+      ""
+    ) || "/";
 
   let qs = "";
 
@@ -85,16 +86,19 @@ const reqResMapper = (event, callback) => {
     ]);
   };
   res.setHeader = (name, value) => {
-    res.headers[name] = value;
+    res.headers[name.toLowerCase()] = value;
   };
   res.removeHeader = name => {
-    delete res.headers[name];
+    delete res.headers[name.toLowerCase()];
   };
   res.getHeader = name => {
     return res.headers[name.toLowerCase()];
   };
   res.getHeaders = () => {
     return res.headers;
+  };
+  res.hasHeader = name => {
+    return !!res.getHeader(name);
   };
 
   const onResEnd = (callback, resolve) => text => {

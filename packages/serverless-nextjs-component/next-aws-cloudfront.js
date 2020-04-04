@@ -1,4 +1,5 @@
 const Stream = require("stream");
+const zlib = require("zlib");
 
 const specialNodeHeaders = [
   "age",
@@ -60,6 +61,21 @@ const toCloudFrontHeaders = headers => {
   });
 
   return result;
+};
+
+const isGzipSupported = headers => {
+  let gz = false;
+  const ae = headers["accept-encoding"];
+  if (ae) {
+    for (let i = 0; i < ae.length; i++) {
+      const { value } = ae[i];
+      const bits = value.split(",").map(x => x.split(";")[0].trim());
+      if (bits.indexOf("gzip") !== -1) {
+        gz = true;
+      }
+    }
+  }
+  return gz;
 };
 
 const handler = event => {
@@ -139,29 +155,40 @@ const handler = event => {
       Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
     ]);
   };
+  let gz = isGzipSupported(headers);
 
   const responsePromise = new Promise(resolve => {
     res.end = text => {
       if (text) res.write(text);
       res.finished = true;
-      response.body = Buffer.from(response.body).toString("base64");
+      response.body = gz
+        ? zlib.gzipSync(response.body).toString("base64")
+        : Buffer.from(response.body).toString("base64");
       response.headers = toCloudFrontHeaders(res.headers);
 
+      if (gz) {
+        response.headers["content-encoding"] = [
+          { key: "Content-Encoding", value: "gzip" }
+        ];
+      }
       resolve(response);
     };
   });
 
   res.setHeader = (name, value) => {
-    res.headers[name] = value;
+    res.headers[name.toLowerCase()] = value;
   };
   res.removeHeader = name => {
-    delete res.headers[name];
+    delete res.headers[name.toLowerCase()];
   };
   res.getHeader = name => {
     return res.headers[name.toLowerCase()];
   };
   res.getHeaders = () => {
     return res.headers;
+  };
+  res.hasHeader = name => {
+    return !!res.getHeader(name);
   };
 
   return {
