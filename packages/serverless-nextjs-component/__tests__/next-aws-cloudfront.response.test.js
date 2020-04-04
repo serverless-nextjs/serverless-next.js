@@ -223,6 +223,47 @@ describe("Response Tests", () => {
     });
   });
 
+  it("hasHeader", () => {
+    const { res } = create({
+      request: {
+        path: "/",
+        headers: {}
+      }
+    });
+    res.setHeader("x-custom-1", "1");
+
+    expect(res.hasHeader("x-custom-1")).toBe(true);
+    expect(res.hasHeader("x-custom-2")).toBe(false);
+  });
+
+  it("case insensitive headers", () => {
+    const { res } = create({
+      request: {
+        path: "/",
+        headers: {}
+      }
+    });
+    res.setHeader("x-custom-1", "1");
+    res.setHeader("X-CUSTOM-2", "2");
+    res.setHeader("X-cUsToM-3", "3");
+
+    expect(res.getHeader("X-CUSTOM-1")).toEqual("1");
+    expect(res.getHeader("x-custom-2")).toEqual("2");
+    expect(res.getHeader("x-CuStOm-3")).toEqual("3");
+
+    expect(res.getHeaders()).toEqual({
+      "x-custom-1": "1",
+      "x-custom-2": "2",
+      "x-custom-3": "3"
+    });
+
+    res.removeHeader("X-CUSTOM-1");
+    res.removeHeader("x-custom-2");
+    res.removeHeader("x-CUSTom-3");
+
+    expect(res.getHeaders()).toEqual({});
+  });
+
   it(`res.write('ok')`, () => {
     const { res, responsePromise } = create({
       request: {
