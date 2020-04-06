@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.8](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.9.7...serverless-next.js@1.9.8) (2020-04-06)
+
+
+### Bug Fixes
+
+* **serverless-next.js:** Fix the issue with TypeError hasHeader is not a function ([#342](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/342)) ([20f42fd](https://github.com/danielcondemarin/serverless-nextjs-plugin/commit/20f42fddb9fd80238dfd1e700bba1afa459126a6)), closes [/github.com/zeit/next.js/blob/v9.3.1/packages/next/next-server/server/send-payload.ts#L25](https://github.com//github.com/zeit/next.js/blob/v9.3.1/packages/next/next-server/server/send-payload.ts/issues/L25) [zeit/next.js#11223](https://github.com/zeit/next.js/issues/11223) [#329](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/329) [#331](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/331)
+
+
+
+
+
 ## [1.9.7](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.9.6...serverless-next.js@1.9.7) (2020-03-29)
 
 **Note:** Version bump only for package serverless-next.js
