@@ -25,6 +25,10 @@ describe("Assets Tests", () => {
     });
   });
 
+  describe("Prerender manifest JSON files for static props", () => {
+    it.todo("copies JSON files in prerender manifest", () => {});
+  });
+
   describe("When public and static directories exist", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
