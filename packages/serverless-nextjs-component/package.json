@@ -1,6 +1,6 @@
 {
   "name": "serverless-next.js",
-  "version": "1.9.9",
+  "version": "1.9.10",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "serverless.js",
   "repository": {

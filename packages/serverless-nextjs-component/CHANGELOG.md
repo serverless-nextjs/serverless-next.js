@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.10](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.9.9...serverless-next.js@1.9.10) (2020-04-13)
+
+
+### Bug Fixes
+
+* **serverless-next.js:** fix resolution of next-aws-cloudfront ([0c22c85](https://github.com/danielcondemarin/serverless-nextjs-plugin/commit/0c22c858f77932d0215d2768bdea0cd9ff44a1f5))
+
+
+
+
+
 ## [1.9.9](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.9.8...serverless-next.js@1.9.9) (2020-04-13)
 
 
