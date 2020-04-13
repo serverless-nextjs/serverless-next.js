@@ -1,9 +1,19 @@
-const { handler } = require("../api-lambda-handler");
 const { createCloudFrontEvent } = require("../lib/test-utils");
+const { handler } = require("../api-lambda-handler");
 
 jest.mock(
   "../manifest.json",
   () => require("./fixtures/api-build-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
+jest.mock(
+  "../next-aws-cloudfront",
+  () => {
+    return require("next-aws-cloudfront");
+  },
   {
     virtual: true
   }

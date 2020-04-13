@@ -9,6 +9,16 @@ jest.mock(
   }
 );
 
+jest.mock(
+  "../next-aws-cloudfront",
+  () => {
+    return require("next-aws-cloudfront");
+  },
+  {
+    virtual: true
+  }
+);
+
 const mockPageRequire = mockPagePath => {
   jest.mock(
     `../${mockPagePath}`,

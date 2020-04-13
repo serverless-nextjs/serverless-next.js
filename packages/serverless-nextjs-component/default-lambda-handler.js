@@ -1,5 +1,5 @@
 const manifest = require("./manifest.json");
-const cloudFrontCompat = require("next-aws-cloudfront");
+const cloudFrontCompat = require("./next-aws-cloudfront");
 
 const router = manifest => {
   const {
