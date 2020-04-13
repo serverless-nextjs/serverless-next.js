@@ -5,7 +5,8 @@
   "main": "next-aws-cloudfront.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git",
+    "directory": "packages/next-aws-cloudfront"
   },
   "keywords": [
     "AWS",
