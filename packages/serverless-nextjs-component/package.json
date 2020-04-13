@@ -22,6 +22,7 @@
     "node": ">=10.11.0"
   },
   "dependencies": {
+    "next-aws-cloudfront": "file:../next-aws-cloudfront",
     "@serverless/aws-cloudfront": "^5.0.0",
     "@serverless/aws-lambda": "^3.0.0",
     "@serverless/aws-s3": "^4.2.0",
