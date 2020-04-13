@@ -1,0 +1,22 @@
+{
+  "name": "next-aws-cloudfront",
+  "version": "1.0.0",
+  "description": "Compat layer for running next.js apps in Lambda@Edge",
+  "main": "next-aws-cloudfront.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+  },
+  "keywords": [
+    "AWS",
+    "Lambda",
+    "CloudFront",
+    "Next.js"
+  ],
+  "author": "Daniel Conde <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme"
+}
