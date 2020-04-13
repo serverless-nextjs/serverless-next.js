@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.9](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.9.8...serverless-next.js@1.9.9) (2020-04-13)
+
+
+### Bug Fixes
+
+* **serverless-nextjs-component:** fix require of next-aws-cloudfront compat in edge fn handlers ([e6a8336](https://github.com/danielcondemarin/serverless-nextjs-plugin/commit/e6a8336b0d489b4fecac48ff8bcfbd1a7b111b55))
+
+
+
+
+
 ## [1.9.8](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/serverless-next.js@1.9.7...serverless-next.js@1.9.8) (2020-04-06)
 
 

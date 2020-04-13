@@ -1,6 +1,6 @@
 {
   "name": "next-aws-cloudfront",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Compat layer for running next.js apps in Lambda@Edge",
   "main": "next-aws-cloudfront.js",
   "repository": {

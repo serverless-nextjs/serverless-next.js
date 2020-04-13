@@ -1,6 +1,6 @@
 {
   "name": "serverless-next.js",
-  "version": "1.9.8",
+  "version": "1.9.9",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "serverless.js",
   "repository": {
@@ -22,7 +22,6 @@
     "node": ">=10.11.0"
   },
   "dependencies": {
-    "next-aws-cloudfront": "file:../next-aws-cloudfront",
     "@serverless/aws-cloudfront": "^5.0.0",
     "@serverless/aws-lambda": "^3.0.0",
     "@serverless/aws-s3": "^4.2.0",
@@ -30,6 +29,7 @@
     "@serverless/domain": "^6.1.0",
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
+    "next-aws-cloudfront": "file:../next-aws-cloudfront",
     "next-aws-lambda": "^2.3.8",
     "path-to-regexp": "^3.0.0"
   }
