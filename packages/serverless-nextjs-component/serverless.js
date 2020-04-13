@@ -189,7 +189,10 @@ class NextjsComponent extends Component {
         buildManifest
       ),
       copy(
-        join(__dirname, "next-aws-cloudfront.js"),
+        join(
+          __dirname,
+          "node_modules/next-aws-cloudfront/next-aws-cloudfront.js"
+        ),
         join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
       ),
       copy(
@@ -213,7 +216,10 @@ class NextjsComponent extends Component {
         join(nextConfigPath, API_LAMBDA_CODE_DIR, "index.js")
       ),
       copy(
-        join(__dirname, "next-aws-cloudfront.js"),
+        join(
+          __dirname,
+          "node_modules/next-aws-cloudfront/next-aws-cloudfront.js"
+        ),
         join(nextConfigPath, API_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
       ),
       copy(

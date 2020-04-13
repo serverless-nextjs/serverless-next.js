@@ -1,5 +1,5 @@
 const manifest = require("./manifest.json");
-const cloudFrontCompat = require("./next-aws-cloudfront");
+const cloudFrontCompat = require("next-aws-cloudfront");
 
 const normaliseUri = uri => (uri === "/" ? "/index" : uri);
 
