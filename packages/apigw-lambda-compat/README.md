@@ -2,7 +2,7 @@
 
 Compat layer between next.js serverless page and API Gateway => Lambda Proxy Integration.
 
-Lambda Proxy Integration event structure documentation can be found (here)[https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html].
+Lambda Proxy Integration event structure documentation can be found [here](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-lambda-proxy-integrations.html).
 
 ## Installation
 
