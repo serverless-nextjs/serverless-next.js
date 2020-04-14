@@ -1,0 +1,30 @@
+{
+  "name": "nextjs-lambda-origin-request",
+  "version": "1.0.0",
+  "description": "Lambda@Edge origin request handler for serverless next.js",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git"
+  },
+  "keywords": [
+    "AWS",
+    "Lambda@Edge",
+    "Next.js"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.48"
+  },
+  "dependencies": {
+    "next-aws-cloudfront": "file:../next-aws-cloudfront"
+  }
+}
