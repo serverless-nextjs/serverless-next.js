@@ -1,6 +1,12 @@
 # Next AWS CloudFront
 
-Compat layer between next.js serverless page and AWS CloudFront Lambda@Edge.
+Compat layer between next.js serverless page and CloudFront => Lambda@Edge event
+
+Lambda@Edge event structure documentation can be found (here)[https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-event-structure.html].
+
+## Installation
+
+`npm install next-aws-cloudfront`
 
 ## Usage
 
