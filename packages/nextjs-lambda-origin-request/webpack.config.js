@@ -12,13 +12,18 @@ module.exports = {
     ]
   },
   resolve: {
-    extensions: [".tsx", ".ts", ".js"]
+    extensions: [".tsx", ".ts", ".js", ".json"]
   },
   output: {
     filename: "bundle.js",
     path: path.resolve(__dirname, "dist")
   },
   externals: {
+    "next-aws-cloudfront": "next-aws-cloudfront",
     "./manifest.json": "./manifest.json"
-  }
+  },
+  optimization: {
+    minimize: false // TODO: When minifying Terser currently throws an error
+  },
+  mode: "production"
 };

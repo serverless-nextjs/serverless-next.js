@@ -1,10 +1,10 @@
 // @ts-ignore
 import Manifest from "./manifest.json";
 import lambdaAtEdgeCompat from "next-aws-cloudfront";
-import { CloudFrontS3Origin, CloudFrontOrigin } from "aws-lambda";
+import { CloudFrontS3Origin, CloudFrontOrigin, CloudFrontResultResponse } from "aws-lambda";
 import type { CloudFrontRequest } from "aws-lambda";
 
-type OriginRequestEvent = {
+export type OriginRequestEvent = {
   Records: [{ cf: { request: CloudFrontRequest } }];
 };
 
@@ -73,7 +73,7 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
 
 const normaliseUri = (uri: string) => (uri === "/" ? "/index" : uri);
 
-exports.handler = async (event: OriginRequestEvent) => {
+export const handler = async (event: OriginRequestEvent): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
   const manifest = Manifest as NextLambdaOriginRequestManifest;

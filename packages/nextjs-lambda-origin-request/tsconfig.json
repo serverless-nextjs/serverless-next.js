@@ -1,14 +1,15 @@
 {
   "compilerOptions": {
-    "esModuleInterop": true,
     "resolveJsonModule": true,
-    "target": "ES2015",
-    "module": "commonjs",
+    "esModuleInterop": true,
+    "target": "ES5",
+    "module": "CommonJS",
     "declaration": true,
     "noImplicitAny": true,
     "outDir": "dist",
+    "sourceMap": true,
     "strict": true,
-    "removeComments": true
+    "allowJs": true
   },
   "include": ["src/**/*"]
 }
