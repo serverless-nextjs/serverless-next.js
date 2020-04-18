@@ -3,6 +3,7 @@
   "version": "1.0.1",
   "description": "Compat layer for running next.js apps in Lambda@Edge",
   "main": "next-aws-cloudfront.js",
+  "types": "next-aws-cloudfront.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git",
@@ -19,5 +20,8 @@
   "bugs": {
     "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme"
+  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "devDependencies": {
+    "@types/aws-lambda": "^8.10.50"
+  }
 }
