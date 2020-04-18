@@ -1,8 +1,47 @@
-import type from { NextLambdaOriginRequestManifest, OriginRequestEvent } from "./types";
 // @ts-ignore
 import Manifest from "./manifest.json";
 import lambdaAtEdgeCompat from "next-aws-cloudfront";
 import { CloudFrontS3Origin, CloudFrontOrigin } from "aws-lambda";
+import type { CloudFrontRequest } from "aws-lambda";
+
+type OriginRequestEvent = {
+  Records: [{ cf: { request: CloudFrontRequest } }];
+};
+
+export type NextLambdaOriginRequestManifest = {
+  cloudFrontOrigins: {
+    staticOrigin: {
+      domainName: string;
+    };
+  };
+  pages: {
+    ssr: {
+      dynamic: {
+        [key: string]: {
+          file: string;
+          regex: string;
+        };
+      };
+      nonDynamic: {
+        [key: string]: string;
+      };
+    };
+    html: {
+      nonDynamic: {
+        [path: string]: string;
+      };
+      dynamic: {
+        [key: string]: {
+          file: string;
+          regex: string;
+        };
+      };
+    };
+  };
+  publicFiles: {
+    [key: string]: string;
+  };
+};
 
 const router = (manifest: NextLambdaOriginRequestManifest) => {
   const {

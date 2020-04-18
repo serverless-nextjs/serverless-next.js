@@ -23,7 +23,11 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.50",
-    "@types/node": "^13.13.0"
+    "@types/node": "^13.13.0",
+    "ts-loader": "^7.0.0",
+    "typescript": "^3.8.3",
+    "webpack": "^4.42.1",
+    "webpack-cli": "^3.3.11"
   },
   "dependencies": {
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"

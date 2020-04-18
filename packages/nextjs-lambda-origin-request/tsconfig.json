@@ -5,7 +5,8 @@
     "target": "ES2015",
     "module": "commonjs",
     "declaration": true,
-    "outDir": "lib",
+    "noImplicitAny": true,
+    "outDir": "dist",
     "strict": true,
     "removeComments": true
   },
