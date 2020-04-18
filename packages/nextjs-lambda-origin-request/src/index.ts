@@ -1,12 +1,8 @@
-import { NextLambdaOriginRequestManifest } from "./types";
+import type from { NextLambdaOriginRequestManifest, OriginRequestEvent } from "./types";
 // @ts-ignore
-import manifest = require("./manifest.json");
+import Manifest from "./manifest.json";
 import lambdaAtEdgeCompat from "next-aws-cloudfront";
-import {
-  CloudFrontRequest,
-  CloudFrontS3Origin,
-  CloudFrontOrigin
-} from "aws-lambda";
+import { CloudFrontS3Origin, CloudFrontOrigin } from "aws-lambda";
 
 const router = (manifest: NextLambdaOriginRequestManifest) => {
   const {
@@ -38,11 +34,10 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
 
 const normaliseUri = (uri: string) => (uri === "/" ? "/index" : uri);
 
-type OriginRequestEvent = { Records: [{ cf: { request: CloudFrontRequest } }] };
-
 exports.handler = async (event: OriginRequestEvent) => {
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
+  const manifest = Manifest as NextLambdaOriginRequestManifest;
   const { pages, publicFiles } = manifest;
 
   const isStaticPage = pages.html.nonDynamic[uri];

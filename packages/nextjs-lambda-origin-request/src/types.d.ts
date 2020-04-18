@@ -1,3 +1,9 @@
+import { CloudFrontRequest } from "aws-lambda";
+
+export type OriginRequestEvent = {
+  Records: [{ cf: { request: CloudFrontRequest } }];
+};
+
 export type NextLambdaOriginRequestManifest = {
   cloudFrontOrigins: {
     staticOrigin: {
