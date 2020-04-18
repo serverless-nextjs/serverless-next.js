@@ -76,7 +76,7 @@ describe("getAssetsBucketName", () => {
       parsedNextConfigurationFactory()
     );
 
-    plugin = new ServerlessPluginBuilder()
+    const plugin = new ServerlessPluginBuilder()
       .withPluginConfig({
         assetsBucketName: bucketName
       })

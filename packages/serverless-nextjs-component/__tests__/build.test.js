@@ -14,6 +14,7 @@ jest.mock("execa");
 describe("build tests", () => {
   let tmpCwd;
   let defaultBuildManifest;
+  let apiBuildManifest;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
@@ -25,7 +26,7 @@ describe("build tests", () => {
 
     const component = new NextjsComponent();
 
-    componentOutputs = await component.build();
+    const componentOutputs = await component.build();
 
     defaultBuildManifest = await fse.readJSON(
       path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)

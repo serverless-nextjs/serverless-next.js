@@ -14,6 +14,7 @@ jest.mock("execa");
 describe("Dynamic Routes Precedence", () => {
   let tmpCwd;
   let pagesBuildManifest;
+  let componentOutputs;
 
   const fixturePath = path.join(
     __dirname,
@@ -56,7 +57,7 @@ describe("Dynamic Routes Precedence", () => {
   it("adds dynamic api routes to the manifest in correct order of precedence", async () => {
     expect.assertions(1);
 
-    apiBuildManifest = await fse.readJSON(
+    const apiBuildManifest = await fse.readJSON(
       path.join(fixturePath, `${API_LAMBDA_CODE_DIR}/manifest.json`)
     );
 

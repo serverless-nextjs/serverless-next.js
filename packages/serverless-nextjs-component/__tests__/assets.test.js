@@ -29,7 +29,7 @@ describe("Assets Tests", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
     beforeEach(async () => {
-      tmpCwd = process.cwd();
+      const tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
       const component = new NextjsComponent();
@@ -79,7 +79,7 @@ describe("Assets Tests", () => {
     );
 
     beforeEach(async () => {
-      tmpCwd = process.cwd();
+      const tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
       const component = new NextjsComponent();
@@ -105,7 +105,7 @@ describe("Assets Tests", () => {
     });
 
     it("does not put any public files in the build manifest", async () => {
-      manifest = await fse.readJSON(
+      const manifest = await fse.readJSON(
         path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
       );
 

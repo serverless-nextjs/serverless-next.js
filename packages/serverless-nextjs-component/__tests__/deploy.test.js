@@ -48,14 +48,6 @@ describe("deploy tests", () => {
     await component.build();
 
     componentOutputs = await component.deploy();
-
-    defaultBuildManifest = await fse.readJSON(
-      path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
-    );
-
-    apiBuildManifest = await fse.readJSON(
-      path.join(fixturePath, `${API_LAMBDA_CODE_DIR}/manifest.json`)
-    );
   });
 
   afterEach(() => {

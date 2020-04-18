@@ -14,6 +14,9 @@ const {
 jest.mock("execa");
 
 describe("Custom inputs", () => {
+  let tmpCwd;
+  let componentOutputs;
+
   describe.each([
     [["dev", "example.com"], "https://dev.example.com"],
     [["www", "example.com"], "https://www.example.com"],
@@ -21,9 +24,6 @@ describe("Custom inputs", () => {
     [["example.com"], "https://www.example.com"],
     ["example.com", "https://www.example.com"]
   ])("Custom domain", (inputDomains, expectedDomain, memory) => {
-    let tmpCwd;
-    let componentOutputs;
-
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
