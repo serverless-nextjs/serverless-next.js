@@ -48,7 +48,9 @@
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
     "serverless": "^1.51.0",
-    "serverless-offline": "^4.10.0"
+    "serverless-offline": "^4.10.0",
+    "typescript": "^3.8.3",
+    "next-aws-cloudfront": "file:packages/cloudfront-lambda@edge-compat"
   },
   "jest": {
     "clearMocks": true,
