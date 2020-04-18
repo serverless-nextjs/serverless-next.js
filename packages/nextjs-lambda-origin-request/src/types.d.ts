@@ -1,4 +1,4 @@
-type NextLambdaOriginRequestManifest = {
+export type NextLambdaOriginRequestManifest = {
   cloudFrontOrigins: {
     staticOrigin: {
       domainName: string;
@@ -32,13 +32,3 @@ type NextLambdaOriginRequestManifest = {
     [key: string]: string;
   };
 };
-
-declare module "next-aws-cloudfront" {
-  const value: any;
-  export default value;
-}
-
-declare module "*.json" {
-  const value: NextLambdaOriginRequestManifest;
-  export default value;
-}

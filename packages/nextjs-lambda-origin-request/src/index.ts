@@ -1,5 +1,12 @@
-import manifest from "manifest.json";
-import cloudFrontCompat from "next-aws-cloudfront";
+import { NextLambdaOriginRequestManifest } from "./types";
+// @ts-ignore
+import manifest = require("./manifest.json");
+import lambdaAtEdgeCompat from "next-aws-cloudfront";
+import {
+  CloudFrontRequest,
+  CloudFrontS3Origin,
+  CloudFrontOrigin
+} from "aws-lambda";
 
 const router = (manifest: NextLambdaOriginRequestManifest) => {
   const {
@@ -8,7 +15,7 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
 
   const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
 
-  return path => {
+  return (path: string) => {
     if (ssr.nonDynamic[path]) {
       return ssr.nonDynamic[path];
     }
@@ -29,9 +36,11 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
   };
 };
 
-const normaliseUri = uri => (uri === "/" ? "/index" : uri);
+const normaliseUri = (uri: string) => (uri === "/" ? "/index" : uri);
 
-exports.handler = async event => {
+type OriginRequestEvent = { Records: [{ cf: { request: CloudFrontRequest } }] };
+
+exports.handler = async (event: OriginRequestEvent) => {
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
@@ -39,8 +48,11 @@ exports.handler = async event => {
   const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
 
+  const origin = request.origin as CloudFrontOrigin;
+  const s3Origin = origin.s3 as CloudFrontS3Origin;
+
   if (isStaticPage || isPublicFile) {
-    request.origin.s3.path = isStaticPage ? "/static-pages" : "/public";
+    s3Origin.path = isStaticPage ? "/static-pages" : "/public";
 
     if (isStaticPage) {
       request.uri = uri + ".html";
@@ -52,14 +64,14 @@ exports.handler = async event => {
   const pagePath = router(manifest)(uri);
 
   if (pagePath.endsWith(".html")) {
-    request.origin.s3.path = "/static-pages";
+    s3Origin.path = "/static-pages";
     request.uri = pagePath.replace("pages", "");
     return request;
   }
 
   const page = require(`./${pagePath}`);
 
-  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
 
   page.render(req, res);
 
