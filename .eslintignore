@@ -3,6 +3,7 @@ node_modules
 .next
 .serverless
 build
+dist
 sls-next-build
 examples
 integration/basic-app

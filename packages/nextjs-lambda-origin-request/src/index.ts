@@ -1,8 +1,12 @@
 // @ts-ignore
 import Manifest from "./manifest.json";
 import lambdaAtEdgeCompat from "next-aws-cloudfront";
-import { CloudFrontS3Origin, CloudFrontOrigin, CloudFrontResultResponse } from "aws-lambda";
-import type { CloudFrontRequest } from "aws-lambda";
+import {
+  CloudFrontRequest,
+  CloudFrontS3Origin,
+  CloudFrontOrigin,
+  CloudFrontResultResponse
+} from "aws-lambda";
 
 export type OriginRequestEvent = {
   Records: [{ cf: { request: CloudFrontRequest } }];
@@ -55,7 +59,7 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
       return ssr.nonDynamic[path];
     }
 
-    for (let route in allDynamicRoutes) {
+    for (const route in allDynamicRoutes) {
       const { file, regex } = allDynamicRoutes[route];
 
       const re = new RegExp(regex, "i");
@@ -73,7 +77,9 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
 
 const normaliseUri = (uri: string) => (uri === "/" ? "/index" : uri);
 
-export const handler = async (event: OriginRequestEvent): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
+export const handler = async (
+  event: OriginRequestEvent
+): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
   const manifest = Manifest as NextLambdaOriginRequestManifest;
@@ -103,6 +109,7 @@ export const handler = async (event: OriginRequestEvent): Promise<CloudFrontResu
     return request;
   }
 
+  // eslint-disable-next-line
   const page = require(`./${pagePath}`);
 
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
