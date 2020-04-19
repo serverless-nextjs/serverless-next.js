@@ -1,7 +1,10 @@
 const path = require("path");
 
 module.exports = {
-  entry: "./src/index.ts",
+  entry: {
+    defaultHandler: "./src/default-handler.ts",
+    apiHandler: "./src/api-handler.ts"
+  },
   module: {
     rules: [
       {
@@ -19,7 +22,7 @@ module.exports = {
     extensions: [".tsx", ".ts", ".js", ".json"]
   },
   output: {
-    filename: "bundle.js",
+    filename: "[name].bundle.js",
     path: path.resolve(__dirname, "dist")
   },
   externals: {

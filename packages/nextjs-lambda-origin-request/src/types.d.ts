@@ -1,4 +1,22 @@
-export type NextLambdaOriginRequestManifest = {
+import { CloudFrontRequest } from "aws-lambda";
+
+export type DynamicPageKeyValue = {
+  [key: string]: {
+    file: string;
+    regex: string;
+  };
+};
+
+export type OriginRequestApiHandlerManifest = {
+  apis: {
+    dynamic: DynamicPageKeyValue;
+    nonDynamic: {
+      [key: string]: string;
+    };
+  };
+};
+
+export type OriginRequestDefaultHandlerManifest = {
   cloudFrontOrigins: {
     staticOrigin: {
       domainName: string;
@@ -6,12 +24,7 @@ export type NextLambdaOriginRequestManifest = {
   };
   pages: {
     ssr: {
-      dynamic: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
-      };
+      dynamic: DynamicPageKeyValue;
       nonDynamic: {
         [key: string]: string;
       };
@@ -20,15 +33,14 @@ export type NextLambdaOriginRequestManifest = {
       nonDynamic: {
         [path: string]: string;
       };
-      dynamic: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
-      };
+      dynamic: DynamicPageKeyValue;
     };
   };
   publicFiles: {
     [key: string]: string;
   };
+};
+
+export type OriginRequestEvent = {
+  Records: [{ cf: { request: CloudFrontRequest } }];
 };

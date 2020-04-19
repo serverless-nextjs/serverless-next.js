@@ -1,20 +1,10 @@
-import { handler } from "../src/index";
+import { handler } from "../src/default-handler";
 import { createCloudFrontEvent } from "./test-utils";
 import { CloudFrontRequest, CloudFrontResultResponse } from "aws-lambda";
 
 jest.mock(
   "../src/manifest.json",
   () => require("./fixtures/default-build-manifest.json"),
-  {
-    virtual: true
-  }
-);
-
-jest.mock(
-  "../src/next-aws-cloudfront",
-  () => {
-    return require("next-aws-cloudfront");
-  },
   {
     virtual: true
   }

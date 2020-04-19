@@ -7,14 +7,13 @@ import {
   CloudFrontOrigin,
   CloudFrontResultResponse
 } from "aws-lambda";
-import { NextLambdaOriginRequestManifest } from "./types";
-
-export type OriginRequestEvent = {
-  Records: [{ cf: { request: CloudFrontRequest } }];
-};
+import {
+  OriginRequestEvent,
+  OriginRequestDefaultHandlerManifest
+} from "./types";
 
 const router = (
-  manifest: NextLambdaOriginRequestManifest
+  manifest: OriginRequestDefaultHandlerManifest
 ): ((path: string) => string) => {
   const {
     pages: { ssr, html }
@@ -50,7 +49,7 @@ export const handler = async (
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
-  const manifest = Manifest as NextLambdaOriginRequestManifest;
+  const manifest = Manifest as OriginRequestDefaultHandlerManifest;
   const { pages, publicFiles } = manifest;
 
   const isStaticPage = pages.html.nonDynamic[uri];

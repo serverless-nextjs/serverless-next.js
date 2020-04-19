@@ -4,7 +4,6 @@
     "esModuleInterop": true,
     "target": "ES5",
     "module": "CommonJS",
-    "declaration": true,
     "noImplicitAny": true,
     "outDir": "dist",
     "sourceMap": true,

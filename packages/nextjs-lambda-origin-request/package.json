@@ -2,12 +2,16 @@
   "name": "nextjs-lambda-origin-request",
   "version": "1.0.0",
   "description": "Lambda@Edge origin request handler for serverless next.js",
-  "main": "dist/bundle.js",
-  "typings": "dist/index.d.ts",
+  "main": "dist/apiHandler.bundle.js",
+  "typings": "src/types.d.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
+  "files": [
+    "dist",
+    "src/types.d.ts"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git"
