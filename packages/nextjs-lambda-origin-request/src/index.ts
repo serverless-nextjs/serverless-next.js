@@ -7,54 +7,22 @@ import {
   CloudFrontOrigin,
   CloudFrontResultResponse
 } from "aws-lambda";
+import { NextLambdaOriginRequestManifest } from "./types";
 
 export type OriginRequestEvent = {
   Records: [{ cf: { request: CloudFrontRequest } }];
 };
 
-export type NextLambdaOriginRequestManifest = {
-  cloudFrontOrigins: {
-    staticOrigin: {
-      domainName: string;
-    };
-  };
-  pages: {
-    ssr: {
-      dynamic: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
-      };
-      nonDynamic: {
-        [key: string]: string;
-      };
-    };
-    html: {
-      nonDynamic: {
-        [path: string]: string;
-      };
-      dynamic: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
-      };
-    };
-  };
-  publicFiles: {
-    [key: string]: string;
-  };
-};
-
-const router = (manifest: NextLambdaOriginRequestManifest) => {
+const router = (
+  manifest: NextLambdaOriginRequestManifest
+): ((path: string) => string) => {
   const {
     pages: { ssr, html }
   } = manifest;
 
   const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
 
-  return (path: string) => {
+  return (path: string): string => {
     if (ssr.nonDynamic[path]) {
       return ssr.nonDynamic[path];
     }
@@ -75,7 +43,7 @@ const router = (manifest: NextLambdaOriginRequestManifest) => {
   };
 };
 
-const normaliseUri = (uri: string) => (uri === "/" ? "/index" : uri);
+const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
 
 export const handler = async (
   event: OriginRequestEvent
