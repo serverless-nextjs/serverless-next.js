@@ -181,7 +181,9 @@ class NextjsComponent extends Component {
   buildDefaultLambda(nextConfigPath, buildManifest) {
     return Promise.all([
       copy(
-        join(__dirname, "default-lambda-handler.js"),
+        require.resolve(
+          "nextjs-lambda-origin-request/dist/defaultHandler.bundle.js"
+        ),
         join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
       writeJson(
@@ -209,7 +211,9 @@ class NextjsComponent extends Component {
   async buildApiLambda(nextConfigPath, apiBuildManifest) {
     return Promise.all([
       copy(
-        join(__dirname, "api-lambda-handler.js"),
+        require.resolve(
+          "nextjs-lambda-origin-request/dist/apiHandler.bundle.js"
+        ),
         join(nextConfigPath, API_LAMBDA_CODE_DIR, "index.js")
       ),
       copy(
