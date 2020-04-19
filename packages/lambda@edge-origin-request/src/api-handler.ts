@@ -3,6 +3,7 @@ import manifest from "./manifest.json";
 import cloudFrontCompat from "next-aws-cloudfront";
 import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "./types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
+import dynamicRequire from "./dynamicRequire";
 
 const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
 
@@ -41,8 +42,7 @@ export const handler = async (
 
   const pagePath = router(manifest)(uri);
 
-  // eslint-disable-next-line
-  const page = require(`./${pagePath}`);
+  const page = dynamicRequire(`./${pagePath}`);
   const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
 
   page.default(req, res);

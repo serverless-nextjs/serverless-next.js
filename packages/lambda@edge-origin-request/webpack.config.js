@@ -5,6 +5,7 @@ module.exports = {
     defaultHandler: "./src/default-handler.ts",
     apiHandler: "./src/api-handler.ts"
   },
+  devtool: "source-map",
   module: {
     rules: [
       {
@@ -23,14 +24,12 @@ module.exports = {
   },
   output: {
     filename: "[name].bundle.js",
-    path: path.resolve(__dirname, "dist")
+    path: path.resolve(__dirname, "dist"),
+    libraryTarget: "commonjs"
   },
   externals: {
-    "next-aws-cloudfront": "next-aws-cloudfront",
-    "./manifest.json": "./manifest.json"
-  },
-  optimization: {
-    minimize: false // TODO: When minifying Terser currently throws an error
+    "next-aws-cloudfront": "commonjs2 next-aws-cloudfront",
+    "./manifest.json": "commonjs2 ./manifest.json"
   },
   mode: "production"
 };

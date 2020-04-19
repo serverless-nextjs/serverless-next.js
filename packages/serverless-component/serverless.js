@@ -192,7 +192,11 @@ class NextjsComponent extends Component {
       ),
       copy(
         require.resolve("next-aws-cloudfront"),
-        join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
+        join(
+          nextConfigPath,
+          DEFAULT_LAMBDA_CODE_DIR,
+          "node_modules/next-aws-cloudfront/index.js"
+        )
       ),
       copy(
         join(nextConfigPath, ".next/serverless/pages"),
@@ -218,7 +222,11 @@ class NextjsComponent extends Component {
       ),
       copy(
         require.resolve("next-aws-cloudfront"),
-        join(nextConfigPath, API_LAMBDA_CODE_DIR, "next-aws-cloudfront.js")
+        join(
+          nextConfigPath,
+          API_LAMBDA_CODE_DIR,
+          "node_modules/next-aws-cloudfront/index.js"
+        )
       ),
       copy(
         join(nextConfigPath, ".next/serverless/pages/api"),

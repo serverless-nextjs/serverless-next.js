@@ -129,7 +129,7 @@ describe("build tests", () => {
 
   describe("Default lambda build files", () => {
     it("copies build files", async () => {
-      expect.assertions(4);
+      expect.assertions(5);
 
       const files = await fse.readdir(
         path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}`)
@@ -143,13 +143,21 @@ describe("build tests", () => {
       const apiDirExists = await fse.exists(
         path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
       );
+      const compatLayerIncluded = await fse.exists(
+        path.join(
+          fixturePath,
+          `${DEFAULT_LAMBDA_CODE_DIR}/node_modules/next-aws-cloudfront/index.js`
+        )
+      );
 
       expect(files).toEqual([
         "index.js",
         "manifest.json",
-        "next-aws-cloudfront.js",
+        "node_modules",
         "pages"
       ]);
+
+      expect(compatLayerIncluded).toEqual(true);
 
       // api pages should not be included in the default lambda
       expect(apiDirExists).toEqual(false);
@@ -162,7 +170,7 @@ describe("build tests", () => {
 
   describe("API lambda build files", () => {
     it("copies build files", async () => {
-      expect.assertions(2);
+      expect.assertions(3);
 
       const files = await fse.readdir(
         path.join(fixturePath, `${API_LAMBDA_CODE_DIR}`)
@@ -171,10 +179,18 @@ describe("build tests", () => {
         path.join(fixturePath, `${API_LAMBDA_CODE_DIR}/pages`)
       );
 
+      const compatLayerIncluded = await fse.exists(
+        path.join(
+          fixturePath,
+          `${API_LAMBDA_CODE_DIR}/node_modules/next-aws-cloudfront/index.js`
+        )
+      );
+
+      expect(compatLayerIncluded).toEqual(true);
       expect(files).toEqual([
         "index.js",
         "manifest.json",
-        "next-aws-cloudfront.js",
+        "node_modules",
         "pages"
       ]);
       expect(pages).toEqual(["_error.js", "api"]);

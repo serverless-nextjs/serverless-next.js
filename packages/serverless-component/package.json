@@ -5,7 +5,8 @@
   "main": "serverless.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git",
+    "directory": "packages/serverless-component"
   },
   "keywords": [
     "serverless",
