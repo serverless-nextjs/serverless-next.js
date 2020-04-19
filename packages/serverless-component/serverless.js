@@ -182,7 +182,7 @@ class NextjsComponent extends Component {
     return Promise.all([
       copy(
         require.resolve(
-          "nextjs-lambda-origin-request/dist/defaultHandler.bundle.js"
+          "@sls-next/lambda-origin-request/dist/defaultHandler.bundle.js"
         ),
         join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
@@ -212,7 +212,7 @@ class NextjsComponent extends Component {
     return Promise.all([
       copy(
         require.resolve(
-          "nextjs-lambda-origin-request/dist/apiHandler.bundle.js"
+          "@sls-next/lambda-origin-request/dist/apiHandler.bundle.js"
         ),
         join(nextConfigPath, API_LAMBDA_CODE_DIR, "index.js")
       ),

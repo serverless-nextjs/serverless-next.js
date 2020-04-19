@@ -30,7 +30,7 @@
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat",
-    "nextjs-lambda-origin-request": "file:../nextjs-lambda-origin-request",
+    "@sls-next/lambda-origin-request": "file:../lambda@edge-origin-request",
     "path-to-regexp": "^3.0.0"
   }
 }
