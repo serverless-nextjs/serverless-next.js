@@ -83,8 +83,14 @@ module.exports = async (servicePath, command) => {
     jest.useFakeTimers();
     setTimeout.mockImplementation(cb => cb());
 
+    const supressConsoleLog = jest
+      .spyOn(console, "log")
+      .mockImplementation(() => {});
+
     await serverless.init();
     await serverless.run();
+
+    supressConsoleLog.mockRestore();
 
     jest.useRealTimers();
   } catch (err) {
