@@ -6,11 +6,10 @@
   "typings": "src/types.d.ts",
   "scripts": {
     "prepare": "npm run build",
-    "build": "webpack"
+    "build": "tsc"
   },
   "files": [
-    "dist",
-    "src/types.d.ts"
+    "dist"
   ],
   "repository": {
     "type": "git",
@@ -34,9 +33,7 @@
     "@types/fs-extra": "^8.1.0",
     "@types/node": "^13.13.0",
     "@types/path-to-regexp": "^1.7.0",
-    "ts-loader": "^7.0.0",
-    "webpack": "^4.42.1",
-    "webpack-cli": "^3.3.11"
+    "ts-loader": "^7.0.0"
   },
   "peerDependencies": {
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"

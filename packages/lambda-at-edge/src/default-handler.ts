@@ -11,7 +11,6 @@ import {
   OriginRequestEvent,
   OriginRequestDefaultHandlerManifest
 } from "./types";
-import dynamicRequire from "./lib/dynamicRequire";
 
 const router = (
   manifest: OriginRequestDefaultHandlerManifest
@@ -79,7 +78,8 @@ export const handler = async (
 
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
 
-  const page = dynamicRequire(`./${pagePath}`);
+  // eslint-disable-next-line
+  const page = require(`./${pagePath}`);
   page.render(req, res);
 
   return responsePromise;
