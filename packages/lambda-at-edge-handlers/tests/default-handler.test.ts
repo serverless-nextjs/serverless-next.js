@@ -12,7 +12,7 @@ jest.mock(
 
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
-    `../src/${mockPagePath}`,
+    `../src/lib/${mockPagePath}`,
     () => require(`./fixtures/built-artifact/${mockPagePath}`),
     {
       virtual: true

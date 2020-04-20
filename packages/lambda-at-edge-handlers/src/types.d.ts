@@ -17,11 +17,6 @@ export type OriginRequestApiHandlerManifest = {
 };
 
 export type OriginRequestDefaultHandlerManifest = {
-  cloudFrontOrigins: {
-    staticOrigin: {
-      domainName: string;
-    };
-  };
   pages: {
     ssr: {
       dynamic: DynamicPageKeyValue;

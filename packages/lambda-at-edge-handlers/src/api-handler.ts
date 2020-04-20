@@ -3,7 +3,7 @@ import manifest from "./manifest.json";
 import cloudFrontCompat from "next-aws-cloudfront";
 import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "./types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
-import dynamicRequire from "./dynamicRequire";
+import dynamicRequire from "./lib/dynamicRequire";
 
 const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
 

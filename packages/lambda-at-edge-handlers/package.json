@@ -29,12 +29,18 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.50",
+    "@types/fs-extra": "^8.1.0",
     "@types/node": "^13.13.0",
+    "@types/path-to-regexp": "^1.7.0",
     "ts-loader": "^7.0.0",
     "webpack": "^4.42.1",
     "webpack-cli": "^3.3.11"
   },
   "peerDependencies": {
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"
+  },
+  "dependencies": {
+    "fs-extra": "^9.0.0",
+    "path-to-regexp": "^6.1.0"
   }
 }

@@ -11,7 +11,7 @@ import {
   OriginRequestEvent,
   OriginRequestDefaultHandlerManifest
 } from "./types";
-import dynamicRequire from "./dynamicRequire";
+import dynamicRequire from "./lib/dynamicRequire";
 
 const router = (
   manifest: OriginRequestDefaultHandlerManifest

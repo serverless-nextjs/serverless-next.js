@@ -49,6 +49,7 @@
     "lerna": "^3.16.4",
     "next": "^9.1.5",
     "next-aws-cloudfront": "file:packages/cloudfront-lambda@edge-compat",
+    "@sls-next/lambda-at-edge-handlers": "file:packages/lambda-at-edge-handlers",
     "prettier": "^1.17.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",

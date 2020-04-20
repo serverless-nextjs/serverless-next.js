@@ -1,14 +1,23 @@
-import type { OriginRequestEvent } from '../src/index';
+import { remove } from "fs-extra";
+import { OriginRequestEvent } from "../src/types";
 
-export const createCloudFrontEvent = ({ uri, host, origin }): OriginRequestEvent => ({
+export const cleanupDir = (dir): Promise<void> => {
+  return remove(dir);
+};
+
+export const createCloudFrontEvent = ({
+  uri,
+  host,
+  origin
+}): OriginRequestEvent => ({
   Records: [
     {
       cf: {
         request: {
-          method: 'GET',
+          method: "GET",
           uri,
-          clientIp: '1.2.3.4',
-          querystring: '',
+          clientIp: "1.2.3.4",
+          querystring: "",
           headers: {
             host: [
               {
