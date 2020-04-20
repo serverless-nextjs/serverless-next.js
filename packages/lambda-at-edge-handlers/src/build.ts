@@ -1,5 +1,6 @@
+import execa from "execa";
 import { emptyDir, readJSON, pathExists, copy, writeJson } from "fs-extra";
-import { resolve, join } from "path";
+import { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
@@ -15,13 +16,35 @@ import pathToRegexStr from "./lib/pathToRegexStr";
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
 
+type BuildOptions = {
+  enabled: boolean;
+  args: string[];
+  cwd: string;
+  env: NodeJS.ProcessEnv;
+  cmd: string;
+};
+
 class Builder {
   nextConfigDir: string;
   outputDir: string;
+  buildOptions: BuildOptions = {
+    args: [],
+    enabled: true,
+    cwd: process.cwd(),
+    env: {},
+    cmd: "./node_modules/.bin/next"
+  };
 
-  constructor(nextConfigDir: string, outputDir: string) {
+  constructor(
+    nextConfigDir: string,
+    outputDir: string,
+    buildOptions?: BuildOptions
+  ) {
     this.nextConfigDir = nextConfigDir;
     this.outputDir = outputDir;
+    if (buildOptions) {
+      this.buildOptions = buildOptions;
+    }
   }
 
   async readPublicFiles(): Promise<string[]> {
@@ -230,33 +253,15 @@ class Builder {
     };
   }
 
-  async emptyBuildDirectory() {}
-
   async build(): Promise<void> {
-    const nextConfigDir = resolve(this.nextConfigDir);
+    if (this.buildOptions.enabled) {
+      const { cmd, args, cwd, env } = this.buildOptions;
 
-    // TODO: Implement build options and directory cleanup
-    //    const buildConfig = {
-    //      enabled: inputs.build
-    //        ? inputs.build !== false && inputs.build.enabled !== false
-    //        : true,
-    //      cmd: "node_modules/.bin/next",
-    //      args: ["build"],
-    //      ...(typeof inputs.build === "object" ? inputs.build : {}),
-    //      cwd:
-    //        inputs.build && inputs.build.cwd
-    //          ? path.resolve(inputs.build.cwd)
-    //          : nextConfigDir
-    //    };
-    //
-    //    if (buildConfig.enabled) {
-    //      let { cmd, args, cwd, env } = buildConfig;
-    //      await execa(cmd, args, {
-    //        cwd,
-    //        env
-    //      });
-    //    }
-    //
+      await execa(cmd, args, {
+        cwd,
+        env
+      });
+    }
 
     // ensure directories are empty and exist before proceeding
     await emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
