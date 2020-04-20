@@ -1,10 +1,11 @@
 {
-  "name": "@sls-next/lambda-at-edge-handlers",
+  "name": "@sls-next/lambda-at-edge",
   "version": "1.0.0",
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/defaultHandler.bundle.js",
   "typings": "src/types.d.ts",
   "scripts": {
+    "prepare": "npm run build",
     "build": "webpack"
   },
   "files": [

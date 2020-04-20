@@ -109,7 +109,7 @@ class Builder {
     return Promise.all([
       copy(
         require.resolve(
-          "@sls-next/lambda-at-edge-handlers/dist/defaultHandler.bundle.js"
+          "@sls-next/lambda-at-edge/dist/defaultHandler.bundle.js"
         ),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
@@ -144,9 +144,7 @@ class Builder {
   ): Promise<void[]> {
     return Promise.all([
       copy(
-        require.resolve(
-          "@sls-next/lambda-at-edge-handlers/dist/apiHandler.bundle.js"
-        ),
+        require.resolve("@sls-next/lambda-at-edge/dist/apiHandler.bundle.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
       ),
       copy(
