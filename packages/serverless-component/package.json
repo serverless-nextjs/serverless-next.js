@@ -31,7 +31,7 @@
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat",
-    "@sls-next/lambda-origin-request": "file:../lambda@edge-origin-request",
+    "@sls-next/lambda-at-edge-handlers": "file:../lambda-at-edge-handlers",
     "path-to-regexp": "^3.0.0"
   }
 }

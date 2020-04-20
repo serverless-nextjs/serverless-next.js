@@ -1,11 +1,10 @@
 {
-  "name": "@sls-next/lambda-origin-request",
+  "name": "@sls-next/lambda-at-edge-handlers",
   "version": "1.0.0",
-  "description": "Lambda@Edge origin request handlers for serverless next.js",
+  "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/defaultHandler.bundle.js",
   "typings": "src/types.d.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "build": "webpack"
   },
   "files": [
@@ -15,7 +14,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
-    "directory": "packages/lambda@edge-origin-request"
+    "directory": "packages/lambda-at-edge"
   },
   "keywords": [
     "AWS",
