@@ -30,7 +30,7 @@
     "@serverless/domain": "^6.1.0",
     "execa": "^2.0.4",
     "fs-extra": "^8.1.0",
-    "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat",
+    "next-aws-cloudfront": "file:../lambda-at-edge-compat",
     "@sls-next/lambda-at-edge": "file:../lambda-at-edge",
     "path-to-regexp": "^3.0.0"
   }

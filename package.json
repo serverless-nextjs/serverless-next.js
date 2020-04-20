@@ -48,7 +48,7 @@
     "jest-when": "^2.7.0",
     "lerna": "^3.16.4",
     "next": "^9.1.5",
-    "next-aws-cloudfront": "file:packages/cloudfront-lambda@edge-compat",
+    "next-aws-cloudfront": "file:packages/lambda-at-edge-compat",
     "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
     "prettier": "^1.17.1",
     "react": "^16.9.0",
