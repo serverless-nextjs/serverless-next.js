@@ -2,7 +2,8 @@
   "compilerOptions": {
     "resolveJsonModule": true,
     "esModuleInterop": true,
-    "target": "ES5",
+    "declaration": true,
+    "target": "ES2015",
     "module": "CommonJS",
     "noImplicitAny": true,
     "outDir": "dist",
@@ -10,5 +11,6 @@
     "strict": true,
     "allowJs": true
   },
-  "include": ["src/**/*"]
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts"]
 }

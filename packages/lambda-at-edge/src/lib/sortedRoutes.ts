@@ -1,7 +1,9 @@
-// Copied from next.js repo: https://github.com/zeit/next.js/blob/canary/packages/next/next-server/lib/router/utils/sorted-routes.ts:w
+// copied as is from https://github.com/zeit/next.js/blob/canary/packages/next/next-server/lib/router/utils/sorted-routes.ts
+/* eslint-disable */
+// @ts-nocheck
 
 class UrlNode {
-  placeholder = true;
+  placeholder: boolean = true;
   children: Map<string, UrlNode> = new Map();
   slugName: string | null = null;
   restSlugName: string | null = null;
@@ -14,8 +16,7 @@ class UrlNode {
     return this._smoosh();
   }
 
-  private _smoosh(prefix = "/"): string[] {
-    // @ts-ignore
+  private _smoosh(prefix: string = "/"): string[] {
     const childrenPaths = [...this.children.keys()].sort();
     if (this.slugName !== null) {
       childrenPaths.splice(childrenPaths.indexOf("[]"), 1);
@@ -81,8 +82,7 @@ class UrlNode {
         );
       }
 
-      // @ts-ignore
-      function handleSlug(previousSlug: string | null, nextSlug: string): void {
+      function handleSlug(previousSlug: string | null, nextSlug: string) {
         if (previousSlug !== null) {
           // If the specific segment already has a slug but the slug is not `something`
           // This prevents collisions like:

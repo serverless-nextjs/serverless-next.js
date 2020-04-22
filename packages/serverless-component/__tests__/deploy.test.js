@@ -1,6 +1,5 @@
 const path = require("path");
 const fse = require("fs-extra");
-const execa = require("execa");
 const NextjsComponent = require("../serverless");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
@@ -11,8 +10,6 @@ const {
 } = require("../constants");
 const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
-jest.mock("execa");
-
 describe("deploy tests", () => {
   let tmpCwd;
   let componentOutputs;
@@ -20,8 +17,6 @@ describe("deploy tests", () => {
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
   beforeEach(async () => {
-    execa.mockResolvedValueOnce();
-
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
 

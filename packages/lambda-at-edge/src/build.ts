@@ -17,7 +17,6 @@ export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
 
 type BuildOptions = {
-  enabled: boolean;
   args: string[];
   cwd: string;
   env: NodeJS.ProcessEnv;
@@ -29,7 +28,6 @@ class Builder {
   outputDir: string;
   buildOptions: BuildOptions = {
     args: [],
-    enabled: true,
     cwd: process.cwd(),
     env: {},
     cmd: "./node_modules/.bin/next"
@@ -93,7 +91,6 @@ class Builder {
       isDynamicRoute
     );
     const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
-
     const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
 
     sortedDynamicRoutedPages.forEach(route => {
@@ -250,14 +247,12 @@ class Builder {
   }
 
   async build(): Promise<void> {
-    if (this.buildOptions.enabled) {
-      const { cmd, args, cwd, env } = this.buildOptions;
+    const { cmd, args, cwd, env } = this.buildOptions;
 
-      await execa(cmd, args, {
-        cwd,
-        env
-      });
-    }
+    await execa(cmd, args, {
+      cwd,
+      env
+    });
 
     // ensure directories are empty and exist before proceeding
     await emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));

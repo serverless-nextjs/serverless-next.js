@@ -1,13 +1,9 @@
 const path = require("path");
-const fse = require("fs-extra");
 const NextjsComponent = require("../serverless");
 const { mockS3, mockS3Upload } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
-const { DEFAULT_LAMBDA_CODE_DIR } = require("../constants");
 const { cleanupFixtureDirectory } = require("../lib/test-utils");
-
-jest.mock("execa");
 
 describe("Assets Tests", () => {
   beforeEach(() => {
@@ -102,14 +98,6 @@ describe("Assets Tests", () => {
         dir: "./public",
         keyPrefix: "public"
       });
-    });
-
-    it("does not put any public files in the build manifest", async () => {
-      const manifest = await fse.readJSON(
-        path.join(fixturePath, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
-      );
-
-      expect(manifest.publicFiles).toEqual({});
     });
   });
 });

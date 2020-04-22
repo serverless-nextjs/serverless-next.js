@@ -1,5 +1,4 @@
 const path = require("path");
-const execa = require("execa");
 const { mockDomain } = require("@serverless/domain");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
@@ -10,8 +9,6 @@ const {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR
 } = require("../constants");
-
-jest.mock("execa");
 
 describe("Custom inputs", () => {
   let tmpCwd;
@@ -27,8 +24,6 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
-      execa.mockResolvedValueOnce();
-
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
@@ -106,7 +101,6 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
-      execa.mockResolvedValueOnce();
       process.chdir(fixturePath);
 
       mockCloudFront.mockResolvedValueOnce({
@@ -154,8 +148,6 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
-      execa.mockResolvedValueOnce();
-
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
@@ -214,7 +206,6 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
-      execa.mockResolvedValueOnce();
       process.chdir(fixturePath);
 
       mockCloudFront.mockResolvedValueOnce({
@@ -315,7 +306,6 @@ describe("Custom inputs", () => {
     };
 
     beforeEach(async () => {
-      execa.mockResolvedValueOnce();
       process.chdir(fixturePath);
 
       mockCloudFront.mockResolvedValueOnce({
