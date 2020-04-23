@@ -26,14 +26,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git"
+    "url": "https://github.com/danielcondemarin/serverless-next.js"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.9.0",
     "@types/jest": "^25.2.1",
@@ -65,8 +65,8 @@
     ],
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "<rootDir>/packages/serverless-nextjs-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/serverless-nextjs-plugin/utils/test",
+      "<rootDir>/packages/serverless-plugin/utils/yml/cfSchema.js",
+      "<rootDir>/packages/serverless-plugin/utils/test",
       "/.serverless_nextjs/",
       "/fixtures/",
       "/examples/",

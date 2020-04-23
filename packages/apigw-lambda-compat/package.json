@@ -16,7 +16,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
     "directory": "packages/next-aws-lambda"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",

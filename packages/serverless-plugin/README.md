@@ -183,7 +183,7 @@ Properties:
       ...
 ```
 
-The configuration provided will be merged onto the defaults in `packages/serverless-nextjs-plugin/resources/cloudfront.yml`.
+The configuration provided will be merged onto the defaults in `packages/serverless-plugin/resources/cloudfront.yml`.
 
 ## Deploying
 

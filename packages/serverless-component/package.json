@@ -5,7 +5,7 @@
   "main": "serverless.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-nextjs-plugin.git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
     "directory": "packages/serverless-component"
   },
   "keywords": [
@@ -16,9 +16,9 @@
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-nextjs-plugin/issues"
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "engines": {
     "node": ">=10.11.0"
   },

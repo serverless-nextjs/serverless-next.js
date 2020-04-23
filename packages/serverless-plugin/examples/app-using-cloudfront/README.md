@@ -3,8 +3,8 @@
 ### Running the example
 
 ```shell
-git clone https://github.com/danielcondemarin/serverless-nextjs-plugin
-cd serverless-nextjs-plugin/examples/app-using-cloudfront
+git clone https://github.com/danielcondemarin/serverless-next.js
+cd serverless-plugin/examples/app-using-cloudfront
 ```
 
 #### Install dependencies

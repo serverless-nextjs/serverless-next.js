@@ -276,9 +276,9 @@ For deploying, don't run `serverless deploy`. Simply run `serverless` and that d
 
 For more information about serverless components go [here](https://serverless.com/blog/what-are-serverless-components-how-use/).
 
-#### Should I use the [serverless-nextjs-plugin](https://github.com/danielcondemarin/serverless-nextjs-plugin/tree/master/packages/serverless-nextjs-plugin) or this component?
+#### Should I use the [serverless-plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-plugin) or this component?
 
-Users are encouraged to use this component instead of the `serverless-nextjs-plugin`. This component was built and designed using lessons learned from the serverless plugin.
+Users are encouraged to use this component instead of the `serverless-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
 #### How do I interact with other AWS Services within my app?
 
@@ -318,7 +318,7 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 ### Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/danielcondemarin/serverless-nextjs-plugin/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/danielcondemarin/serverless-next.js/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
 
