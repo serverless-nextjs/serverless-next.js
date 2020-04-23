@@ -1,4 +1,4 @@
-const TableName = "Todos";
+const TableName = process.env.TABLE_NAME;
 
 const getDynamoDBClient = () => {
   // important to require the sdk here rather than a top level import
