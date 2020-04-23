@@ -5,7 +5,6 @@ const { Builder } = require("@sls-next/lambda-at-edge");
 
 const obtainDomains = require("./lib/obtainDomains");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
-const getAllFiles = require("./lib/getAllFiles");
 const join = path.join;
 const emptyDir = fse.emptyDir;
 
@@ -18,21 +17,6 @@ class NextjsComponent extends Component {
     return this.deploy(inputs);
   }
 
-  async readPublicFiles(nextConfigPath) {
-    const dirExists = await fse.exists(join(nextConfigPath, "public"));
-    if (dirExists) {
-      return getAllFiles(join(nextConfigPath, "public"))
-        .map(e => e.replace(nextConfigPath, ""))
-        .map(e =>
-          e
-            .split(path.sep)
-            .slice(2)
-            .join("/")
-        );
-    } else {
-      return [];
-    }
-  }
   readDefaultBuildManifest(nextConfigPath) {
     return fse.readJSON(
       join(nextConfigPath, ".serverless_nextjs/default-lambda/manifest.json")
@@ -47,13 +31,6 @@ class NextjsComponent extends Component {
     return (await fse.exists(path))
       ? fse.readJSON(path)
       : Promise.resolve(undefined);
-  }
-
-  async emptyBuildDirectory(nextConfigPath) {
-    return Promise.all([
-      emptyDir(join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR)),
-      emptyDir(join(nextConfigPath, API_LAMBDA_CODE_DIR))
-    ]);
   }
 
   async build(inputs = {}) {
