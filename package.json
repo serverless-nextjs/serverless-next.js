@@ -15,7 +15,7 @@
   ],
   "scripts": {
     "test": "jest --runInBand",
-    "packages-install": "lerna exec -- npm ci",
+    "packages-install": "lerna exec -- npm install",
     "packages-build": "lerna run build",
     "test:watch": "npm run test -- --watch --collect-coverage=false",
     "publish": "lerna publish --conventional-commits",
