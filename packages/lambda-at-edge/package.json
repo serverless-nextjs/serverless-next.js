@@ -1,7 +1,7 @@
 {
   "name": "@sls-next/lambda-at-edge",
   "publishConfig": {
-    "access": "restricted"
+    "access": "public"
   },
   "version": "1.1.0-alpha.1",
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
