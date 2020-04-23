@@ -45,7 +45,7 @@ describe("PluginBuildDir", () => {
       fs.emptyDir.mockResolvedValueOnce();
       const nextConfigDir = "path/to/nextApp";
 
-      pluginBuildDir = new PluginBuildDir(nextConfigDir);
+      const pluginBuildDir = new PluginBuildDir(nextConfigDir);
 
       return pluginBuildDir.setupBuildDir().then(() => {
         expect(fs.emptyDir).toBeCalledWith(pluginBuildDir.buildDir);
@@ -60,7 +60,7 @@ describe("PluginBuildDir", () => {
       fs.remove.mockResolvedValueOnce();
       const nextConfigDir = "path/to/nextApp";
 
-      pluginBuildDir = new PluginBuildDir(nextConfigDir);
+      const pluginBuildDir = new PluginBuildDir(nextConfigDir);
 
       return pluginBuildDir.removeBuildDir().then(() => {
         expect(logger.log).toBeCalledWith(
@@ -75,7 +75,7 @@ describe("PluginBuildDir", () => {
       fs.remove.mockResolvedValueOnce();
       const nextConfigDir = "path/to/nextApp";
 
-      pluginBuildDir = new PluginBuildDir(nextConfigDir);
+      const pluginBuildDir = new PluginBuildDir(nextConfigDir);
 
       return pluginBuildDir.removeBuildDir().then(() => {
         expect(fs.remove).toBeCalledWith(pluginBuildDir.buildDir);

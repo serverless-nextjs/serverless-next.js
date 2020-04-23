@@ -67,24 +67,29 @@ const setupMocks = () => {
 };
 
 module.exports = async (servicePath, command) => {
-  setupMocks();
+  setupMocks(command);
 
   const tmpCwd = process.cwd();
 
   process.chdir(servicePath);
 
   try {
+    // Hack to get serverless to think user is calling "serverless [command]" e.g. serverless package
+    // See https://github.com/serverless/serverless/blob/master/lib/utils/resolveCliInput.js
+    const tmpProcessArgv = process.argv;
+    process.argv = [undefined, undefined, command];
+
     const serverless = new Serverless();
 
     serverless.invocationId = "test-run";
-
-    process.argv[2] = command;
 
     jest.useFakeTimers();
     setTimeout.mockImplementation(cb => cb());
 
     await serverless.init();
     await serverless.run();
+
+    process.argv = tmpProcessArgv;
 
     jest.useRealTimers();
   } catch (err) {
