@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.4.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/next-aws-lambda@2.3.8...next-aws-lambda@2.4.0-alpha.0) (2020-04-23)
+
+
+### Features
+
+* **lambda-at-edge:** create new package with Lambda@Edge builder and handlers ([94f0a29](https://github.com/danielcondemarin/serverless-next.js/commit/94f0a29f0654f51d60653c8218c15802b2abb476))
+
+
+
+
+
 ## [2.3.8](https://github.com/danielcondemarin/serverless-nextjs-plugin/compare/next-aws-lambda@2.3.7...next-aws-lambda@2.3.8) (2020-03-29)
 
 **Note:** Version bump only for package next-aws-lambda

@@ -11,8 +11,8 @@ describe("next-aws-lambda", () => {
 
     // Mock due to mismatched Function types
     // https://github.com/facebook/jest/issues/6329
-    mockRender = jest.fn();
-    mockDefault = jest.fn();
+    const mockRender = jest.fn();
+    const mockDefault = jest.fn();
     const page = {
       render: (...args) => mockRender(...args),
       default: (...args) => mockDefault(...args)
@@ -38,7 +38,7 @@ describe("next-aws-lambda", () => {
 
     // Mock due to mismatched Function types
     // https://github.com/facebook/jest/issues/6329
-    mockDefault = jest.fn();
+    const mockDefault = jest.fn();
     const page = {
       default: (...args) => mockDefault(...args)
     };
