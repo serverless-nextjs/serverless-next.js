@@ -1,6 +1,6 @@
 ### AWS Lambda@Edge library to help you deploy serverless next.js applications to CloudFront
 
-This library was created to decouple the core logic of creating serverless rendered next.js applications on the Cloud agnostic of a specific provider. In other words, this library could be used to deploy via serverles components, AWS CDK, or any other providers you'd like.
+This library was created to decouple the core logic of deploying serverless rendered next.js applications on the Cloud agnostic of a specific provider. In other words, this library could be used to deploy via serverles components, AWS CDK, or any other providers you'd like.
 
 ## Usage
 
