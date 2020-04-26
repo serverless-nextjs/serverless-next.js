@@ -14,6 +14,6 @@ install:
   - cd integration/app-with-serverless-offline && npm ci && cd ../../
 script:
   - npm run lint
-  - npm test
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then npm test; fi
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then npm run coveralls; fi
   - npm run integration
