@@ -1,0 +1,38 @@
+{
+  "name": "@sls-next/s3-static-assets",
+  "version": "1.0.0",
+  "description": "Handles upload to S3 of next.js static assets",
+  "main": "dist/index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "directory": "packages/s3-static-assets"
+  },
+  "keywords": [
+    "AWS",
+    "S3",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "dependencies": {
+    "aws-sdk": "^2.664.0",
+    "klaw": "^3.0.0",
+    "mime-types": "^2.1.27"
+  },
+  "devDependencies": {
+    "@types/klaw": "^3.0.1",
+    "@types/mime-types": "^2.1.0"
+  }
+}
