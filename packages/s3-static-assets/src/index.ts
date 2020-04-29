@@ -1,29 +1,19 @@
 import path from "path";
 import fse from "fs-extra";
 import mime from "mime-types";
-import klaw, { Item } from "klaw";
 import AWS from "aws-sdk";
+import readDirectoryFiles from "./lib/readDirectoryFiles";
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
 };
+
 const filePathToS3Key = (filePath: string): string => {
   const relevantFilePathPart = filePath.substring(
     filePath.indexOf(".next" + path.sep)
   );
   return relevantFilePathPart.replace(".next", "_next");
-};
-const readDirectoryFiles = (directory: string): Promise<Array<Item>> => {
-  const items: Item[] = [];
-  return new Promise((resolve, reject) => {
-    klaw(directory.trim())
-      .on("data", item => items.push(item))
-      .on("end", () => {
-        resolve(items);
-      })
-      .on("error", reject);
-  });
 };
 
 const uploadStaticAssets = async (
@@ -90,7 +80,6 @@ const uploadStaticAssets = async (
   await Promise.all(uploadTasks);
   // read public/ folder and upload files
   // read static/ folder and upload files
-  // get HTML pages from pages manifest
   // get JSON data files from prerender manifest
 };
 
