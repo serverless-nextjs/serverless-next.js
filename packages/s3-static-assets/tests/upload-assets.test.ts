@@ -1,7 +1,6 @@
-import stream from "stream";
-import fse from "fs-extra";
 import path from "path";
-import uploadStaticAssets from "../index";
+import uploadStaticAssets from "../src/index";
+import { IMMUTABLE_CACHE_CONTROL_HEADER } from "../src/constants";
 import { mockUpload } from "aws-sdk";
 
 declare module "aws-sdk" {
@@ -9,33 +8,45 @@ declare module "aws-sdk" {
 }
 
 describe("Upload assets tests", () => {
-  it("uploads any contents inside build directory specified in BUILD_ID", async () => {
+  beforeEach(async () => {
     await uploadStaticAssets({
       bucketName: "test-bucket-name",
       nextAppDir: path.join(__dirname, "./fixtures/basic-next-app")
     });
+  });
 
-    const mockedBodyStream = new stream.Readable();
-    jest
-      .spyOn(fse, "readFile")
-      .mockResolvedValue(Promise.resolve(mockedBodyStream));
-
-    const expectedCacheControl = "public, max-age=31536000, immutable";
+  it("uploads any contents inside build directory specified in BUILD_ID", async () => {
+    expect(mockUpload).toBeCalledTimes(2);
 
     expect(mockUpload).toBeCalledWith({
       Bucket: "test-bucket-name",
-      Key: "_next/static/a_test_build_id/testFileOne.js",
-      Body: mockedBodyStream,
+      Key: "_next/static/a_test_build_id/two.js",
+      Body: expect.any(Buffer),
       ContentType: "application/javascript",
-      CacheControl: expectedCacheControl
+      CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
     });
 
     expect(mockUpload).toBeCalledWith({
       Bucket: "test-bucket-name",
-      Key: "_next/static/a_test_build_id/subdir/testFileTwo.js",
-      Body: mockedBodyStream,
-      ContentType: "application/javascript",
-      CacheControl: expectedCacheControl
+      Key: "_next/static/a_test_build_id/css/one.css",
+      Body: expect.any(Buffer),
+      ContentType: "text/css",
+      CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+    });
+  });
+
+  it("uploads prerendered HTML pages specified in pages manifest", async () => {
+    expect(mockUpload).toBeCalledWith({
+      Key: "static-pages/todos/terms.html",
+      ContentType: "text/html",
+      CacheControl: undefined
+    });
+
+    expect(mockUpload).toBeCalledWith({
+      Key: "static-pages/todos/terms/[section].html",
+      Body: expect.any(Buffer),
+      ContentType: "text/html",
+      CacheControl: undefined
     });
   });
 });

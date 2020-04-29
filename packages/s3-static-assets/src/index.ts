@@ -8,7 +8,12 @@ type UploadStaticAssetsOptions = {
   bucketName: string;
   nextAppDir: string;
 };
-
+const filePathToS3Key = (filePath: string): string => {
+  const relevantFilePathPart = filePath.substring(
+    filePath.indexOf(".next" + path.sep)
+  );
+  return relevantFilePathPart.replace(".next", "_next");
+};
 const readDirectoryFiles = (directory: string): Promise<Array<Item>> => {
   const items: Item[] = [];
   return new Promise((resolve, reject) => {
@@ -40,20 +45,22 @@ const uploadStaticAssets = async (
 
   const uploadTasks = buildStaticFiles
     .filter(item => !item.stats.isDirectory())
-    .map(fileItem => {
-      return fse.readFile(fileItem.path).then(fileBodyStream =>
-        s3
-          .upload({
-            Bucket: bucketName,
-            Key: fileItem.path,
-            Body: fileBodyStream,
-            ContentType:
-              mime.lookup(path.basename(fileItem.path)) ||
-              "application/octet-stream",
-            CacheControl: "public, max-age=31536000, immutable"
-          })
-          .promise()
-      );
+    .map(async fileItem => {
+      const fileBody = await fse.readFile(fileItem.path);
+
+      const s3Key = filePathToS3Key(fileItem.path);
+
+      return s3
+        .upload({
+          Bucket: bucketName,
+          Key: s3Key,
+          Body: fileBody,
+          ContentType:
+            mime.lookup(path.basename(fileItem.path)) ||
+            "application/octet-stream",
+          CacheControl: "public, max-age=31536000, immutable"
+        })
+        .promise();
     });
 
   await Promise.all(uploadTasks);
