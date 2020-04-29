@@ -11,7 +11,7 @@ describe("Upload assets tests", () => {
   beforeEach(async () => {
     await uploadStaticAssets({
       bucketName: "test-bucket-name",
-      nextAppDir: path.join(__dirname, "./fixtures/basic-next-app")
+      nextConfigDir: path.join(__dirname, "./fixtures/basic-next-app")
     });
   });
 
@@ -36,17 +36,21 @@ describe("Upload assets tests", () => {
   });
 
   it("uploads prerendered HTML pages specified in pages manifest", async () => {
-    expect(mockUpload).toBeCalledWith({
-      Key: "static-pages/todos/terms.html",
-      ContentType: "text/html",
-      CacheControl: undefined
-    });
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "static-pages/todos/terms.html",
+        ContentType: "text/html",
+        CacheControl: undefined
+      })
+    );
 
-    expect(mockUpload).toBeCalledWith({
-      Key: "static-pages/todos/terms/[section].html",
-      Body: expect.any(Buffer),
-      ContentType: "text/html",
-      CacheControl: undefined
-    });
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "static-pages/todos/terms/[section].html",
+        Body: expect.any(Buffer),
+        ContentType: "text/html",
+        CacheControl: undefined
+      })
+    );
   });
 });
