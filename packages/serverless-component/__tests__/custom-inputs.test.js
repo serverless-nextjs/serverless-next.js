@@ -256,11 +256,30 @@ describe("Custom inputs", () => {
     [
       { api: { ttl: 500, "lambda@edge": "ignored value" } },
       { api: { ttl: 500 } } // expecting lambda@edge value to be ignored
+    ],
+    [
+      {
+        origins: [
+          "http://some-origin",
+          "/relative",
+          { url: "http://diff-origin" },
+          { url: "/diff-relative" }
+        ]
+      },
+      {
+        origins: [
+          "http://some-origin",
+          "http://bucket-xyz.s3.amazonaws.com/relative",
+          { url: "http://diff-origin" },
+          { url: "http://bucket-xyz.s3.amazonaws.com/diff-relative" }
+        ]
+      }
     ]
   ])("Custom cloudfront inputs", (inputCloudfrontConfig, expectedInConfig) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
     const defaultCloudfrontInputs = expectedInConfig.defaults || {};
     const apiCloudfrontInputs = expectedInConfig.api || {};
+    const originCloudfrontInputs = expectedInConfig.origins || [];
     const cloudfrontConfig = {
       defaults: {
         ttl: 0,
@@ -301,7 +320,8 @@ describe("Custom inputs", () => {
           },
           private: true,
           url: "http://bucket-xyz.s3.amazonaws.com"
-        }
+        },
+        ...originCloudfrontInputs
       ]
     };
 
