@@ -111,6 +111,15 @@ myNextApplication:
           headers: [CloudFront-Is-Desktop-Viewer, CloudFront-Is-Mobile-Viewer, CloudFront-Is-Tablet-Viewer]
       api: # options for lambdas that handle API request
         ttl: 10
+      origins: # options for custom origins and behaviors
+        - url: /static
+          pathPatterns:
+            /wp-content/*:
+              ttl: 10
+        - url: https://old-static.com
+          pathPatterns:
+            /old-static/*:
+              ttl: 10
 ```
 
 The example above adds headers that can be forwarded to the SSR lambda, and sets the *ttl* for api lambdas.
