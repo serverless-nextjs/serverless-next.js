@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.11.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.10.0...serverless-next.js@1.11.0) (2020-05-01)
+
+
+### Features
+
+* **serverless-component:** custom cloudfront.origins input ([#376](https://github.com/danielcondemarin/serverless-next.js/issues/376)) ([69beb5a](https://github.com/danielcondemarin/serverless-next.js/commit/69beb5af20c5c3b4435b3b7a3de08265848c3692))
+
+
+
+
+
 # [1.10.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.10.0-alpha.2...serverless-next.js@1.10.0) (2020-04-25)
 
 **Note:** Version bump only for package serverless-next.js
