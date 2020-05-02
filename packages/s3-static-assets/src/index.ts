@@ -17,7 +17,7 @@ const uploadStaticAssets = async (
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   const { bucketName, nextConfigDir } = options;
 
-  const s3 = S3ClientFactory({
+  const s3 = await S3ClientFactory({
     bucketName,
     credentials: options.credentials
   });

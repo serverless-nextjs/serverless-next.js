@@ -25,11 +25,27 @@ export type Credentials = {
   sessionToken?: string;
 };
 
-export default ({
+export default async ({
   bucketName,
   credentials
-}: S3ClientFactoryOptions): S3Client => {
-  const s3 = new AWS.S3({ ...credentials });
+}: S3ClientFactoryOptions): Promise<S3Client> => {
+  let s3 = new AWS.S3({ ...credentials });
+
+  try {
+    const { Status } = await s3
+      .getBucketAccelerateConfiguration({
+        Bucket: bucketName
+      })
+      .promise();
+
+    if (Status === "Enabled") {
+      s3 = new AWS.S3({ ...credentials, useAccelerateEndpoint: true });
+    }
+  } catch (err) {
+    console.warn(
+      "Checking for bucket acceleration failed, falling back to non-accelerated S3 client"
+    );
+  }
 
   return {
     uploadFile: async (

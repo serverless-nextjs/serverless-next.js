@@ -1,27 +1,25 @@
-import AWS from "aws-sdk";
 import path from "path";
 import uploadStaticAssets from "../src/index";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "../src/lib/constants";
-import { mockUpload } from "aws-sdk";
+import AWS, { mockGetBucketAccelerateConfiguration, mockUpload } from "aws-sdk";
+import { mockGetBucketAccelerateConfigurationPromise } from "../__mocks__/aws-sdk";
 
-declare module "aws-sdk" {
-  const mockUpload: jest.Mock;
-}
-
-describe("Upload assets tests", () => {
-  beforeEach(async () => {
-    await uploadStaticAssets({
-      bucketName: "test-bucket-name",
-      nextConfigDir: path.join(__dirname, "./fixtures/basic-next-app"),
-      credentials: {
-        accessKeyId: "fake-access-key",
-        secretAccessKey: "fake-secret-key",
-        sessionToken: "fake-session-token"
-      }
-    });
+const upload = (): Promise<AWS.S3.ManagedUpload.SendData[]> => {
+  return uploadStaticAssets({
+    bucketName: "test-bucket-name",
+    nextConfigDir: path.join(__dirname, "./fixtures/basic-next-app"),
+    credentials: {
+      accessKeyId: "fake-access-key",
+      secretAccessKey: "fake-secret-key",
+      sessionToken: "fake-session-token"
+    }
   });
+};
 
-  it("passes credentials to S3 client", () => {
+describe("Upload tests", () => {
+  it("passes credentials to S3 client", async () => {
+    await upload();
+
     expect(AWS.S3).toBeCalledWith({
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
@@ -29,7 +27,43 @@ describe("Upload assets tests", () => {
     });
   });
 
+  it("uses accelerated bucket option if available", async () => {
+    mockGetBucketAccelerateConfigurationPromise.mockResolvedValueOnce({
+      Status: "Enabled"
+    });
+
+    await upload();
+
+    expect(AWS.S3).toBeCalledTimes(2);
+    expect(AWS.S3).toBeCalledWith({
+      accessKeyId: "fake-access-key",
+      secretAccessKey: "fake-secret-key",
+      sessionToken: "fake-session-token",
+      useAccelerateEndpoint: true
+    });
+    expect(mockGetBucketAccelerateConfiguration).toBeCalledWith({
+      Bucket: "test-bucket-name"
+    });
+  });
+
+  it("falls back to non accelerated client if checking for bucket acceleration throws an error", async () => {
+    const warnSpy = jest.spyOn(console, "warn").mockReturnValueOnce();
+
+    mockGetBucketAccelerateConfigurationPromise.mockRejectedValueOnce(
+      new Error("Unexpected error!")
+    );
+
+    await upload();
+
+    expect(warnSpy).toBeCalledWith(expect.stringContaining("falling back"));
+    expect(AWS.S3).toBeCalledTimes(1);
+
+    warnSpy.mockRestore();
+  });
+
   it("uploads any contents inside build directory specified in BUILD_ID", async () => {
+    await upload();
+
     expect(mockUpload).toBeCalledWith({
       Bucket: "test-bucket-name",
       Key: "_next/static/a_test_build_id/two.js",
@@ -48,6 +82,8 @@ describe("Upload assets tests", () => {
   });
 
   it("uploads prerendered HTML pages specified in pages manifest", async () => {
+    await upload();
+
     expect(mockUpload).toBeCalledWith(
       expect.objectContaining({
         Key: "static-pages/todos/terms.html",
@@ -66,6 +102,8 @@ describe("Upload assets tests", () => {
   });
 
   it("uploads files in the public folder", async () => {
+    await upload();
+
     expect(mockUpload).toBeCalledWith(
       expect.objectContaining({
         Key: "public/robots.txt",
@@ -84,6 +122,8 @@ describe("Upload assets tests", () => {
   });
 
   it("uploads files in the static folder", async () => {
+    await upload();
+
     expect(mockUpload).toBeCalledWith(
       expect.objectContaining({
         Key: "static/robots.txt",
