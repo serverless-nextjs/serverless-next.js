@@ -153,6 +153,29 @@ class NextjsComponent extends Component {
     };
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
+
+    // If origin is relative path then prepend the bucketUrl
+    // e.g. /path => http://bucket.s3.aws.com/path
+    const expandRelativeUrls = origin => {
+      const originUrl = typeof origin === "string" ? origin : origin.url;
+      const fullOriginUrl =
+        originUrl.charAt(0) === "/" ? `${bucketUrl}${originUrl}` : originUrl;
+
+      if (typeof origin === "string") {
+        return fullOriginUrl;
+      } else {
+        return {
+          ...origin,
+          url: fullOriginUrl
+        };
+      }
+    };
+    // Parse origins from inputs
+    const inputOrigins = (
+      (inputs.cloudfront && inputs.cloudfront.origins) ||
+      []
+    ).map(expandRelativeUrls);
+
     const cloudFrontOrigins = [
       {
         url: bucketUrl,
@@ -165,7 +188,8 @@ class NextjsComponent extends Component {
             ttl: 86400
           }
         }
-      }
+      },
+      ...inputOrigins
     ];
 
     let apiEdgeLambdaOutputs;
