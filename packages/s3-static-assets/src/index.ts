@@ -5,6 +5,7 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
+import pathToPosix from "./lib/pathToPosix";
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
@@ -35,9 +36,11 @@ const uploadStaticAssets = async (
   const nextBuildFileUploads = buildStaticFiles
     .filter(filterOutDirectories)
     .map(async fileItem => {
-      const s3Key = path
-        .relative(path.resolve(nextConfigDir), fileItem.path)
-        .replace(/^.next/, "_next");
+      const s3Key = pathToPosix(
+        path
+          .relative(path.resolve(nextConfigDir), fileItem.path)
+          .replace(/^.next/, "_next")
+      );
 
       return s3.uploadFile({
         s3Key,
@@ -53,9 +56,8 @@ const uploadStaticAssets = async (
   const htmlPageUploads = Object.values(pagesManifest)
     .filter(pageFile => (pageFile as string).endsWith(".html"))
     .map(relativePageFilePath => {
-      const pageFilePath = path.join(
-        dotNextDirectory,
-        `serverless/${relativePageFilePath}`
+      const pageFilePath = pathToPosix(
+        path.join(dotNextDirectory, `serverless/${relativePageFilePath}`)
       );
 
       return s3.uploadFile({
