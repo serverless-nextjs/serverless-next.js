@@ -48,7 +48,7 @@ class NextjsComponent extends Component {
       cwd:
         inputs.build && inputs.build.cwd
           ? path.resolve(inputs.build.cwd)
-          : nextConfigPath,
+          : nextConfigPath
     };
 
     if (buildConfig.enabled) {
@@ -59,7 +59,7 @@ class NextjsComponent extends Component {
           cmd: buildConfig.cmd,
           cwd: buildConfig.cwd,
           env: buildConfig.env,
-          args: buildConfig.args,
+          args: buildConfig.args
         }
       );
 
@@ -77,24 +77,24 @@ class NextjsComponent extends Component {
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
-      this.readApiBuildManifest(nextConfigPath),
+      this.readApiBuildManifest(nextConfigPath)
     ]);
 
     const [
       bucket,
       cloudFront,
       defaultEdgeLambda,
-      apiEdgeLambda,
+      apiEdgeLambda
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@serverless/aws-cloudfront"),
       this.load("@serverless/aws-lambda", "defaultEdgeLambda"),
-      this.load("@serverless/aws-lambda", "apiEdgeLambda"),
+      this.load("@serverless/aws-lambda", "apiEdgeLambda")
     ]);
 
     const bucketOutputs = await bucket({
       accelerated: true,
-      name: inputs.bucketName,
+      name: inputs.bucketName
     });
 
     const nonDynamicHtmlPages = Object.values(
@@ -103,13 +103,13 @@ class NextjsComponent extends Component {
 
     const dynamicHtmlPages = Object.values(
       defaultBuildManifest.pages.html.dynamic
-    ).map((x) => x.file);
+    ).map(x => x.file);
 
     const uploadHtmlPages = [...nonDynamicHtmlPages, ...dynamicHtmlPages].map(
-      (page) =>
+      page =>
         bucket.upload({
           file: join(nextConfigPath, ".next/serverless", page),
-          key: `static-pages/${page.replace("pages/", "")}`,
+          key: `static-pages/${page.replace("pages/", "")}`
         })
     );
 
@@ -117,21 +117,21 @@ class NextjsComponent extends Component {
       bucket.upload({
         dir: join(nextConfigPath, ".next/static"),
         keyPrefix: "_next/static",
-        cacheControl: "public, max-age=31536000, immutable",
+        cacheControl: "public, max-age=31536000, immutable"
       }),
-      ...uploadHtmlPages,
+      ...uploadHtmlPages
     ];
 
     const [publicDirExists, staticDirExists] = await Promise.all([
       fse.exists(join(staticPath, "public")),
-      fse.exists(join(staticPath, "static")),
+      fse.exists(join(staticPath, "static"))
     ]);
 
     if (publicDirExists) {
       assetsUpload.push(
         bucket.upload({
           dir: join(staticPath, "public"),
-          keyPrefix: "public",
+          keyPrefix: "public"
         })
       );
     }
@@ -140,7 +140,7 @@ class NextjsComponent extends Component {
       assetsUpload.push(
         bucket.upload({
           dir: join(staticPath, "static"),
-          keyPrefix: "static",
+          keyPrefix: "static"
         })
       );
     }
@@ -149,15 +149,15 @@ class NextjsComponent extends Component {
 
     defaultBuildManifest.cloudFrontOrigins = {
       staticOrigin: {
-        domainName: `${bucketOutputs.name}.s3.amazonaws.com`,
-      },
+        domainName: `${bucketOutputs.name}.s3.amazonaws.com`
+      }
     };
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
 
     // If origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
-    const expandRelativeUrls = (origin) => {
+    const expandRelativeUrls = origin => {
       const originUrl = typeof origin === "string" ? origin : origin.url;
       const fullOriginUrl =
         originUrl.charAt(0) === "/" ? `${bucketUrl}${originUrl}` : originUrl;
@@ -167,7 +167,7 @@ class NextjsComponent extends Component {
       } else {
         return {
           ...origin,
-          url: fullOriginUrl,
+          url: fullOriginUrl
         };
       }
     };
@@ -178,13 +178,13 @@ class NextjsComponent extends Component {
         private: true,
         pathPatterns: {
           "_next/*": {
-            ttl: 86400,
+            ttl: 86400
           },
           "static/*": {
-            ttl: 86400,
-          },
-        },
-      },
+            ttl: 86400
+          }
+        }
+      }
     ];
 
     let apiEdgeLambdaOutputs;
@@ -195,17 +195,17 @@ class NextjsComponent extends Component {
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
-    const getLambdaMemory = (lambdaType) =>
+    const getLambdaMemory = lambdaType =>
       typeof inputs.memory === "number"
         ? inputs.memory
         : (inputs.memory && inputs.memory[lambdaType]) || 512;
 
-    const getLambdaTimeout = (lambdaType) =>
+    const getLambdaTimeout = lambdaType =>
       typeof inputs.timeout === "number"
         ? inputs.timeout
         : (inputs.timeout && inputs.timeout[lambdaType]) || 10;
 
-    const getLambdaName = (lambdaType) =>
+    const getLambdaName = lambdaType =>
       typeof inputs.name === "string"
         ? inputs.name
         : inputs.name && inputs.name[lambdaType];
@@ -220,11 +220,11 @@ class NextjsComponent extends Component {
           policy: {
             arn:
               inputs.policy ||
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-          },
+              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+          }
         },
         memory: getLambdaMemory("apiLambda"),
-        timeout: getLambdaTimeout("apiLambda"),
+        timeout: getLambdaTimeout("apiLambda")
       };
       const apiLambdaName = getLambdaName("apiLambda");
       if (apiLambdaName) apiEdgeLambdaInput.name = apiLambdaName;
@@ -242,12 +242,12 @@ class NextjsComponent extends Component {
           "GET",
           "OPTIONS",
           "PUT",
-          "PATCH",
+          "PATCH"
         ],
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
-          "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`,
-        },
+          "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
+        }
       };
     }
 
@@ -260,11 +260,11 @@ class NextjsComponent extends Component {
         policy: {
           arn:
             inputs.policy ||
-            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
-        },
+            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        }
       },
       memory: getLambdaMemory("defaultLambda"),
-      timeout: getLambdaTimeout("defaultLambda"),
+      timeout: getLambdaTimeout("defaultLambda")
     };
     const defaultLambdaName = getLambdaName("defaultLambda");
     if (defaultLambdaName) defaultEdgeLambdaInput.name = defaultLambdaName;
@@ -293,8 +293,8 @@ class NextjsComponent extends Component {
         // set lambda@edge last so that it can't be overriden. dont set if
         // the path is static or _next
         "lambda@edge": !["static/*", "_next/*"].includes(path) && {
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        },
+          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+        }
       };
     });
 
@@ -304,15 +304,15 @@ class NextjsComponent extends Component {
         allowedHttpMethods: ["HEAD", "GET"],
         forward: {
           cookies: "all",
-          queryString: true,
+          queryString: true
         },
         ...defaultCloudfrontInputs,
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        },
+          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+        }
       },
-      origins: cloudFrontOrigins,
+      origins: cloudFrontOrigins
     });
 
     let appUrl = cloudFrontOutputs.url;
@@ -325,15 +325,15 @@ class NextjsComponent extends Component {
         privateZone: false,
         domain,
         subdomains: {
-          [subdomain]: cloudFrontOutputs,
-        },
+          [subdomain]: cloudFrontOutputs
+        }
       });
       appUrl = domainOutputs.domains[0];
     }
 
     return {
       appUrl,
-      bucketName: bucketOutputs.name,
+      bucketName: bucketOutputs.name
     };
   }
 
@@ -341,7 +341,7 @@ class NextjsComponent extends Component {
     const [bucket, cloudfront, domain] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@serverless/aws-cloudfront"),
-      this.load("@serverless/domain"),
+      this.load("@serverless/domain")
     ]);
 
     await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
