@@ -77,7 +77,10 @@ const uploadStaticAssets = async (
     return files.filter(filterOutDirectories).map(fileItem =>
       s3.uploadFile({
         filePath: fileItem.path,
-        s3Key: path.posix.relative(path.resolve(nextConfigDir), fileItem.path)
+        s3Key: path.posix.relative(
+          path.posix.resolve(nextConfigDir),
+          fileItem.path
+        )
       })
     );
   };
