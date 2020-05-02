@@ -39,7 +39,7 @@
     "ts-loader": "^7.0.0"
   },
   "peerDependencies": {
-    "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"
+    "next-aws-cloudfront": "file:../lambda-at-edge-compat"
   },
   "dependencies": {
     "execa": "^4.0.0",
