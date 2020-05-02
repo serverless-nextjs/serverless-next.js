@@ -43,7 +43,7 @@ export default async ({
     }
   } catch (err) {
     console.warn(
-      "Checking for bucket acceleration failed, falling back to non-accelerated S3 client"
+      `Checking for bucket acceleration failed, falling back to non-accelerated S3 client. Err: ${err.message}`
     );
   }
 
