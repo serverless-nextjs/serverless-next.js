@@ -1,2 +1,2 @@
-const plugin = require("../../../packages/serverless-nextjs-plugin");
+const plugin = require("../../../packages/serverless-plugin");
 module.exports = plugin;
