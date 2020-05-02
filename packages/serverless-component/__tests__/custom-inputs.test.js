@@ -245,17 +245,47 @@ describe("Custom inputs", () => {
   describe.each([
     [undefined, {}], // no input
     [{}, {}], // empty input
+    // Ignore origin-requests
     [
-      { defaults: { ttl: 500, "lambda@edge": "ignored value" } },
-      { defaults: { ttl: 500 } } // expecting lambda@edge value to be ignored
+      {
+        defaults: {
+          ttl: 500,
+          "lambda@edge": { "origin-request": "ignored value" }
+        }
+      },
+      { defaults: { ttl: 500 } } // expecting lambda@edge origin-request to be ignored
+    ],
+    // Allow other lamdba@edge types
+    [
+      {
+        defaults: {
+          ttl: 500,
+          "lambda@edge": { "origin-response": "used value" }
+        }
+      },
+      {
+        defaults: {
+          ttl: 500,
+          "lambda@edge": { "origin-response": "used value" }
+        }
+      }
     ],
     [
       { defaults: { forward: { headers: "X" } } },
       { defaults: { forward: { headers: "X" } } }
     ],
     [
-      { api: { ttl: 500, "lambda@edge": "ignored value" } },
-      { api: { ttl: 500 } } // expecting lambda@edge value to be ignored
+      {
+        api: {
+          ttl: 500,
+          "lambda@edge": { "origin-request": "ignored value" }
+        }
+      },
+      { api: { ttl: 500 } } // expecting lambda@edge origin-request to be ignored
+    ],
+    [
+      { api: { ttl: 500, "lambda@edge": { "origin-response": "used value" } } },
+      { api: { ttl: 500, "lambda@edge": { "origin-response": "used value" } } }
     ],
     [
       {
@@ -292,7 +322,8 @@ describe("Custom inputs", () => {
         },
         "lambda@edge": {
           "origin-request":
-            "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+            "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+          ...defaultCloudfrontInputs["lambda@edge"]
         }
       },
       origins: [
@@ -310,11 +341,12 @@ describe("Custom inputs", () => {
                 "PATCH"
               ],
               ttl: 0,
+              ...apiCloudfrontInputs,
               "lambda@edge": {
                 "origin-request":
-                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
-              },
-              ...apiCloudfrontInputs
+                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                ...apiCloudfrontInputs["lambda@edge"]
+              }
             },
             "static/*": { ttl: 86400 }
           },

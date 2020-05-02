@@ -109,6 +109,8 @@ myNextApplication:
       defaults: # options for lambda that handle SSR
         forward:
           headers: [CloudFront-Is-Desktop-Viewer, CloudFront-Is-Mobile-Viewer, CloudFront-Is-Tablet-Viewer]
+        lambda@edge:
+          viewer-response: lambdaarn:version
       api: # options for lambdas that handle API request
         ttl: 10
       origins: # options for custom origins and behaviors

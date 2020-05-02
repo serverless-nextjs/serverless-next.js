@@ -253,6 +253,7 @@ class NextjsComponent extends Component {
         ...apiCloudfrontInputs,
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
+          ...(apiCloudfrontInputs["lambda@edge"] || {}),
           "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
         }
       };
@@ -296,6 +297,7 @@ class NextjsComponent extends Component {
         },
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
+          ...(defaultCloudfrontInputs["lambda@edge"] || {}),
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
       },
