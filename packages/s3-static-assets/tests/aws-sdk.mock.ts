@@ -1,6 +1,7 @@
 declare module "aws-sdk" {
   const mockUpload: jest.Mock;
   const mockGetBucketAccelerateConfiguration: jest.Mock;
+  const mockGetBucketAccelerateConfigurationPromise: jest.Mock;
 }
 
 const promisifyMock = (mockFn: jest.Mock): jest.Mock => {

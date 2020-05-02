@@ -1,8 +1,16 @@
 import path from "path";
 import uploadStaticAssets from "../src/index";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "../src/lib/constants";
-import AWS, { mockGetBucketAccelerateConfiguration, mockUpload } from "aws-sdk";
-import { mockGetBucketAccelerateConfigurationPromise } from "../__mocks__/aws-sdk";
+import AWS, {
+  mockGetBucketAccelerateConfigurationPromise,
+  mockGetBucketAccelerateConfiguration,
+  mockUpload
+} from "aws-sdk";
+
+// unfortunately can't use __mocks__ because aws-sdk is being mocked in other
+// packages in the monorepo
+// https://github.com/facebook/jest/issues/2070
+jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
 const upload = (): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   return uploadStaticAssets({
