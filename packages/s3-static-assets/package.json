@@ -11,6 +11,10 @@
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
     "directory": "packages/s3-static-assets"
   },
+  "scripts": {
+    "prepare": "npm run build",
+    "build": "tsc -p tsconfig.build.json"
+  },
   "keywords": [
     "AWS",
     "S3",
