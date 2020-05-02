@@ -17,6 +17,16 @@ const upload = (): Promise<AWS.S3.ManagedUpload.SendData[]> => {
 };
 
 describe("Upload tests", () => {
+  let consoleWarnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
+
   it("passes credentials to S3 client", async () => {
     await upload();
 
@@ -47,18 +57,16 @@ describe("Upload tests", () => {
   });
 
   it("falls back to non accelerated client if checking for bucket acceleration throws an error", async () => {
-    const warnSpy = jest.spyOn(console, "warn").mockReturnValueOnce();
-
     mockGetBucketAccelerateConfigurationPromise.mockRejectedValueOnce(
       new Error("Unexpected error!")
     );
 
     await upload();
 
-    expect(warnSpy).toBeCalledWith(expect.stringContaining("falling back"));
+    expect(consoleWarnSpy).toBeCalledWith(
+      expect.stringContaining("falling back")
+    );
     expect(AWS.S3).toBeCalledTimes(1);
-
-    warnSpy.mockRestore();
   });
 
   it("uploads any contents inside build directory specified in BUILD_ID", async () => {
