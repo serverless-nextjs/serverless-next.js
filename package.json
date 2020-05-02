@@ -37,7 +37,6 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.9.0",
     "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
-    "@types/fs-extra": "^8.1.0",
     "@types/jest": "^25.2.1",
     "@typescript-eslint/eslint-plugin": "^2.28.0",
     "@typescript-eslint/parser": "^2.28.0",
@@ -85,8 +84,6 @@
     ]
   },
   "dependencies": {
-    "@aws-sdk/client-s3-node": "0.1.0-preview.2",
-    "fs-extra": "^9.0.0",
     "opencollective-postinstall": "^2.0.2"
   },
   "collective": {
