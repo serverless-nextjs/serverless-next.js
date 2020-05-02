@@ -1,3 +1,4 @@
+import AWS from "aws-sdk";
 import path from "path";
 import uploadStaticAssets from "../src/index";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "../src/lib/constants";
@@ -11,7 +12,20 @@ describe("Upload assets tests", () => {
   beforeEach(async () => {
     await uploadStaticAssets({
       bucketName: "test-bucket-name",
-      nextConfigDir: path.join(__dirname, "./fixtures/basic-next-app")
+      nextConfigDir: path.join(__dirname, "./fixtures/basic-next-app"),
+      credentials: {
+        accessKeyId: "fake-access-key",
+        secretAccessKey: "fake-secret-key",
+        sessionToken: "fake-session-token"
+      }
+    });
+  });
+
+  it("passes credentials to S3 client", () => {
+    expect(AWS.S3).toBeCalledWith({
+      accessKeyId: "fake-access-key",
+      secretAccessKey: "fake-secret-key",
+      sessionToken: "fake-session-token"
     });
   });
 

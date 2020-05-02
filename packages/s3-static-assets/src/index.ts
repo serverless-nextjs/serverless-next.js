@@ -4,11 +4,12 @@ import fse from "fs-extra";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
-import S3ClientFactory from "./lib/s3";
+import S3ClientFactory, { Credentials } from "./lib/s3";
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
+  credentials: Credentials;
 };
 
 const uploadStaticAssets = async (
@@ -17,7 +18,8 @@ const uploadStaticAssets = async (
   const { bucketName, nextConfigDir } = options;
 
   const s3 = S3ClientFactory({
-    bucketName
+    bucketName,
+    credentials: options.credentials
   });
 
   const dotNextDirectory = path.join(nextConfigDir, ".next");

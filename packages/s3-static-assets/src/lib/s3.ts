@@ -4,6 +4,7 @@ import AWS from "aws-sdk";
 
 type S3ClientFactoryOptions = {
   bucketName: string;
+  credentials: Credentials;
 };
 
 type UploadFileOptions = {
@@ -18,8 +19,17 @@ export type S3Client = {
   ) => Promise<AWS.S3.ManagedUpload.SendData>;
 };
 
-export default ({ bucketName }: S3ClientFactoryOptions): S3Client => {
-  const s3 = new AWS.S3();
+export type Credentials = {
+  accessKeyId: string;
+  secretAccessKey: string;
+  sessionToken?: string;
+};
+
+export default ({
+  bucketName,
+  credentials
+}: S3ClientFactoryOptions): S3Client => {
+  const s3 = new AWS.S3({ ...credentials });
 
   return {
     uploadFile: async (
