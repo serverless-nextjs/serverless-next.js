@@ -33,7 +33,6 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
   "devDependencies": {
-    "@mapbox/s3urls": "^1.5.3",
     "adm-zip": "^0.4.13",
     "coveralls": "^3.0.6",
     "eslint": "^5.16.0",
@@ -43,7 +42,6 @@
     "jest-extended": "^0.11.2",
     "jest-when": "^2.7.0",
     "lerna": "^3.16.4",
-    "lodash.merge": "^4.6.2",
     "next": "^9.1.5",
     "prettier": "^1.17.1",
     "react": "^16.9.0",
