@@ -290,8 +290,9 @@ class NextjsComponent extends Component {
         ...cloudFrontOrigins[0].pathPatterns[path],
         // spread the supplied overrides
         ...config,
-        // set lambda@edge last so that it can't be overriden
-        "lambda@edge": {
+        // set lambda@edge last so that it can't be overriden. dont set if
+        // the path is static or _next
+        "lambda@edge": !["static/*", "_next/*"].includes(path) && {
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
         },
       };
