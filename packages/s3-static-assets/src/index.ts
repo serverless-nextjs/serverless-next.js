@@ -1,12 +1,29 @@
+import AWS from "aws-sdk";
 import path from "path";
 import fse from "fs-extra";
-import mime from "mime-types";
-import AWS from "aws-sdk";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
+import filterOutDirectories from "./lib/filterOutDirectories";
+import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
+import S3ClientFactory, { S3Client } from "./lib/s3";
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
+};
+
+const uploadPublicOrStaticDirectory = async (
+  s3: S3Client,
+  directory: "public" | "static",
+  nextConfigDir: string
+): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
+  const files = await readDirectoryFiles(path.join(nextConfigDir, directory));
+
+  return files.filter(filterOutDirectories).map(fileItem =>
+    s3.uploadFile({
+      filePath: fileItem.path,
+      s3Key: path.posix.relative(path.resolve(nextConfigDir), fileItem.path)
+    })
+  );
 };
 
 const filePathToS3Key = (filePath: string): string => {
@@ -18,10 +35,12 @@ const filePathToS3Key = (filePath: string): string => {
 
 const uploadStaticAssets = async (
   options: UploadStaticAssetsOptions
-): Promise<void> => {
+): Promise<AWS.S3.ManagedUpload.SendData> => {
   const { bucketName, nextConfigDir } = options;
 
-  const s3 = new AWS.S3();
+  const s3 = S3ClientFactory({
+    bucketName
+  });
 
   const dotNextDirectory = path.join(nextConfigDir, ".next");
 
@@ -33,54 +52,56 @@ const uploadStaticAssets = async (
     path.join(dotNextDirectory, "static", BUILD_ID)
   );
 
-  const uploadTasks = buildStaticFiles
-    .filter(item => !item.stats.isDirectory())
+  const nextBuildFileUploads = buildStaticFiles
+    .filter(filterOutDirectories)
     .map(async fileItem => {
-      const fileBody = await fse.readFile(fileItem.path);
-
       const s3Key = filePathToS3Key(fileItem.path);
 
-      return s3
-        .upload({
-          Bucket: bucketName,
-          Key: s3Key,
-          Body: fileBody,
-          ContentType:
-            mime.lookup(path.basename(fileItem.path)) ||
-            "application/octet-stream",
-          CacheControl: "public, max-age=31536000, immutable"
-        })
-        .promise();
+      return s3.uploadFile({
+        s3Key,
+        filePath: fileItem.path,
+        cacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      });
     });
 
   const pagesManifest = await fse.readJSON(
     path.join(dotNextDirectory, "serverless/pages-manifest.json")
   );
 
-  const htmlPageUploadTasks = Object.values(pagesManifest)
+  const htmlPageUploads = Object.values(pagesManifest)
     .filter(pageFile => (pageFile as string).endsWith(".html"))
-    .map(async pageFile => {
-      const fileBody = await fse.readFile(
-        path.join(dotNextDirectory, `serverless/${pageFile}`)
+    .map(relativePageFilePath => {
+      const pageFilePath = path.join(
+        dotNextDirectory,
+        `serverless/${relativePageFilePath}`
       );
 
-      return s3
-        .upload({
-          Bucket: bucketName,
-          Key: `static-pages/${(pageFile as string).replace(/^pages\//, "")}`,
-          Body: fileBody,
-          ContentType: "text/html",
-          CacheControl: undefined
-        })
-        .promise();
+      return s3.uploadFile({
+        s3Key: `static-pages/${relativePageFilePath.replace(/^pages\//, "")}`,
+        filePath: pageFilePath
+      });
     });
 
-  uploadTasks.concat(htmlPageUploadTasks);
+  const publicDirUploads = await uploadPublicOrStaticDirectory(
+    s3,
+    "public",
+    nextConfigDir
+  );
 
-  await Promise.all(uploadTasks);
-  // read public/ folder and upload files
-  // read static/ folder and upload files
-  // get JSON data files from prerender manifest
+  const staticDirUploads = await uploadPublicOrStaticDirectory(
+    s3,
+    "static",
+    nextConfigDir
+  );
+
+  const allUploads = [
+    ...nextBuildFileUploads,
+    ...htmlPageUploads,
+    ...publicDirUploads,
+    ...staticDirUploads
+  ];
+
+  return Promise.all(allUploads);
 };
 
 export default uploadStaticAssets;
