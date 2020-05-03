@@ -42,6 +42,12 @@ describe("deploy tests", () => {
     });
 
     const component = new NextjsComponent();
+    component.context.credentials = {
+      aws: {
+        accessKeyId: "123",
+        secretAccessKey: "456"
+      }
+    };
 
     await component.build();
 

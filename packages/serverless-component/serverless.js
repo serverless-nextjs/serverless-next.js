@@ -97,7 +97,7 @@ class NextjsComponent extends Component {
     await uploadAssetsToS3.default({
       bucketName: bucketOutputs.name,
       nextConfigDir: nextConfigPath,
-      credentials: this.context.credentials
+      credentials: this.context.credentials.aws
     });
 
     defaultBuildManifest.cloudFrontOrigins = {
