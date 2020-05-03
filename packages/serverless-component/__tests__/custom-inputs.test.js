@@ -13,6 +13,15 @@ const {
 describe("Custom inputs", () => {
   let tmpCwd;
   let componentOutputs;
+  let consoleWarnSpy;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
 
   describe.each([
     [["dev", "example.com"], "https://dev.example.com"],

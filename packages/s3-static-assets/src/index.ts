@@ -72,7 +72,13 @@ const uploadStaticAssets = async (
   const uploadPublicOrStaticDirectory = async (
     directory: "public" | "static"
   ): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
-    const files = await readDirectoryFiles(path.join(nextConfigDir, directory));
+    const directoryPath = path.join(nextConfigDir, directory);
+
+    if (!(await fse.pathExists(directoryPath))) {
+      return Promise.resolve([]);
+    }
+
+    const files = await readDirectoryFiles(directoryPath);
 
     return files.filter(filterOutDirectories).map(fileItem =>
       s3.uploadFile({

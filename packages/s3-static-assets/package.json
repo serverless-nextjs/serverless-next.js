@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Handles upload to S3 of next.js static assets",
   "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "directories": {
     "dist": "dist"
   },
@@ -36,6 +37,7 @@
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",
     "@types/klaw": "^3.0.1",
-    "@types/mime-types": "^2.1.0"
+    "@types/mime-types": "^2.1.0",
+    "typescript": "^3.8.3"
   }
 }

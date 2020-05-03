@@ -12,10 +12,10 @@ import AWS, {
 // https://github.com/facebook/jest/issues/2070
 jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
-const upload = (): Promise<AWS.S3.ManagedUpload.SendData[]> => {
+const upload = (fixture?: string): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   return uploadStaticAssets({
     bucketName: "test-bucket-name",
-    nextConfigDir: path.join(__dirname, "./fixtures/basic-next-app"),
+    nextConfigDir: path.join(__dirname, fixture || "./fixtures/basic-next-app"),
     credentials: {
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
@@ -155,5 +155,9 @@ describe("Upload tests", () => {
         CacheControl: undefined
       })
     );
+  });
+
+  describe("when no public or static directory exists", () => {
+    it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
   });
 });
