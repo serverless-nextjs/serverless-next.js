@@ -2,6 +2,9 @@
   "name": "@sls-next/s3-static-assets",
   "version": "1.0.0",
   "description": "Handles upload to S3 of next.js static assets",
+  "publishConfig": {
+    "access": "public"
+  },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "directories": {
