@@ -10,9 +10,29 @@ const {
   API_LAMBDA_CODE_DIR
 } = require("../constants");
 
+const createNextComponent = inputs => {
+  const component = new NextjsComponent(inputs);
+  component.context.credentials = {
+    aws: {
+      accessKeyId: "123",
+      secretAccessKey: "456"
+    }
+  };
+  return component;
+};
+
 describe("Custom inputs", () => {
   let tmpCwd;
   let componentOutputs;
+  let consoleWarnSpy;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
 
   describe.each([
     [["dev", "example.com"], "https://dev.example.com"],
@@ -43,7 +63,8 @@ describe("Custom inputs", () => {
         domains: [expectedDomain]
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         policy: "arn:aws:iam::aws:policy/CustomRole",
         domain: inputDomains,
@@ -107,7 +128,10 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent({
+        memory: inputMemory
+      });
+
       componentOutputs = await component.default({
         memory: inputMemory
       });
@@ -155,7 +179,8 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         timeout: inputTimeout
       });
@@ -212,7 +237,8 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         name: inputName
       });
@@ -332,7 +358,8 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         cloudfront: inputCloudfrontConfig
       });

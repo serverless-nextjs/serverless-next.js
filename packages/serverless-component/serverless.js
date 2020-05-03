@@ -2,11 +2,11 @@ const { Component } = require("@serverless/core");
 const fse = require("fs-extra");
 const path = require("path");
 const { Builder } = require("@sls-next/lambda-at-edge");
+const uploadAssetsToS3 = require("@sls-next/s3-static-assets");
 
 const obtainDomains = require("./lib/obtainDomains");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
 const join = path.join;
-const emptyDir = fse.emptyDir;
 
 class NextjsComponent extends Component {
   async default(inputs = {}) {
@@ -71,8 +71,6 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
-    const nextStaticPath = inputs.nextStaticDir || "";
-    const staticPath = nextStaticPath || nextConfigPath;
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -96,55 +94,11 @@ class NextjsComponent extends Component {
       name: inputs.bucketName
     });
 
-    const nonDynamicHtmlPages = Object.values(
-      defaultBuildManifest.pages.html.nonDynamic
-    );
-
-    const dynamicHtmlPages = Object.values(
-      defaultBuildManifest.pages.html.dynamic
-    ).map(x => x.file);
-
-    const uploadHtmlPages = [...nonDynamicHtmlPages, ...dynamicHtmlPages].map(
-      page =>
-        bucket.upload({
-          file: join(nextConfigPath, ".next/serverless", page),
-          key: `static-pages/${page.replace("pages/", "")}`
-        })
-    );
-
-    const assetsUpload = [
-      bucket.upload({
-        dir: join(nextConfigPath, ".next/static"),
-        keyPrefix: "_next/static",
-        cacheControl: "public, max-age=31536000, immutable"
-      }),
-      ...uploadHtmlPages
-    ];
-
-    const [publicDirExists, staticDirExists] = await Promise.all([
-      fse.exists(join(staticPath, "public")),
-      fse.exists(join(staticPath, "static"))
-    ]);
-
-    if (publicDirExists) {
-      assetsUpload.push(
-        bucket.upload({
-          dir: join(staticPath, "public"),
-          keyPrefix: "public"
-        })
-      );
-    }
-
-    if (staticDirExists) {
-      assetsUpload.push(
-        bucket.upload({
-          dir: join(staticPath, "static"),
-          keyPrefix: "static"
-        })
-      );
-    }
-
-    await Promise.all(assetsUpload);
+    await uploadAssetsToS3.default({
+      bucketName: bucketOutputs.name,
+      nextConfigDir: nextConfigPath,
+      credentials: this.context.credentials.aws
+    });
 
     defaultBuildManifest.cloudFrontOrigins = {
       staticOrigin: {
@@ -170,6 +124,7 @@ class NextjsComponent extends Component {
         };
       }
     };
+    //
     // Parse origins from inputs
     const inputOrigins = (
       (inputs.cloudfront && inputs.cloudfront.origins) ||
@@ -290,6 +245,8 @@ class NextjsComponent extends Component {
         allowedHttpMethods: ["HEAD", "GET"],
         ...defaultCloudfrontInputs,
         forward: {
+          cookies: "all",
+          queryString: true,
           cookies: "all",
           queryString: true,
           ...defaultCloudfrontInputs.forward

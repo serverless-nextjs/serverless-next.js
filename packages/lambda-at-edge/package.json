@@ -36,7 +36,8 @@
     "@types/fs-extra": "^8.1.0",
     "@types/node": "^13.13.0",
     "@types/path-to-regexp": "^1.7.0",
-    "ts-loader": "^7.0.0"
+    "ts-loader": "^7.0.0",
+    "typescript": "^3.8.3"
   },
   "peerDependencies": {
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"
