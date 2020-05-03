@@ -19,6 +19,8 @@
     "packages-build": "lerna run build",
     "test:watch": "npm run test -- --watch --collect-coverage=false",
     "publish": "lerna publish --conventional-commits",
+    "prerelease": "lerna publish --conventional-commits --conventional-prerelease",
+    "graduate": "lerna publish --conventional-commits --conventional-graduate",
     "lint": "eslint .",
     "coveralls": "jest --runInBand --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
