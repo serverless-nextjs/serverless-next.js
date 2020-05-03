@@ -157,6 +157,24 @@ describe("Upload tests", () => {
     );
   });
 
+  it("uploads files specified in the build-manifest.json", async () => {
+    await upload();
+
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "_next/static/chunks/chunk1.js",
+        CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      })
+    );
+
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "_next/static/runtime/runtime1.js",
+        CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      })
+    );
+  });
+
   describe("when no public or static directory exists", () => {
     it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
   });

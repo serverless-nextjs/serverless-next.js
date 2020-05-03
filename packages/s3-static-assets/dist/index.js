@@ -42,6 +42,18 @@ const uploadStaticAssets = (options) => __awaiter(void 0, void 0, void 0, functi
             cacheControl: constants_1.IMMUTABLE_CACHE_CONTROL_HEADER
         });
     }));
+    const buildManifest = yield fs_extra_1.default.readJson(path_1.default.join(dotNextDirectory, "build-manifest.json"));
+    const buildManifestFileUploads = Object.values(buildManifest.pages)
+        .reduce((acc, pageBuildFiles) => {
+        return acc.concat(pageBuildFiles);
+    }, [])
+        .map(relativeFilePath => {
+        return s3.uploadFile({
+            s3Key: `_next/${relativeFilePath}`,
+            filePath: path_1.default.join(dotNextDirectory, relativeFilePath),
+            cacheControl: constants_1.IMMUTABLE_CACHE_CONTROL_HEADER
+        });
+    });
     const pagesManifest = yield fs_extra_1.default.readJSON(path_1.default.join(dotNextDirectory, "serverless/pages-manifest.json"));
     const htmlPageUploads = Object.values(pagesManifest)
         .filter(pageFile => pageFile.endsWith(".html"))
@@ -67,6 +79,7 @@ const uploadStaticAssets = (options) => __awaiter(void 0, void 0, void 0, functi
     const staticDirUploads = yield uploadPublicOrStaticDirectory("static");
     const allUploads = [
         ...nextBuildFileUploads,
+        ...buildManifestFileUploads,
         ...htmlPageUploads,
         ...publicDirUploads,
         ...staticDirUploads

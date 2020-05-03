@@ -13,6 +13,12 @@ type UploadStaticAssetsOptions = {
   credentials: Credentials;
 };
 
+type NextBuildManifest = {
+  pages: {
+    [pageRoute: string]: string[];
+  };
+};
+
 const uploadStaticAssets = async (
   options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
@@ -45,6 +51,22 @@ const uploadStaticAssets = async (
       return s3.uploadFile({
         s3Key,
         filePath: fileItem.path,
+        cacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      });
+    });
+
+  const buildManifest: NextBuildManifest = await fse.readJson(
+    path.join(dotNextDirectory, "build-manifest.json")
+  );
+
+  const buildManifestFileUploads = Object.values(buildManifest.pages)
+    .reduce((acc, pageBuildFiles) => {
+      return acc.concat(pageBuildFiles);
+    }, [])
+    .map(relativeFilePath => {
+      return s3.uploadFile({
+        s3Key: `_next/${relativeFilePath}`,
+        filePath: path.join(dotNextDirectory, relativeFilePath),
         cacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
       });
     });
@@ -94,10 +116,11 @@ const uploadStaticAssets = async (
   const staticDirUploads = await uploadPublicOrStaticDirectory("static");
 
   const allUploads = [
-    ...nextBuildFileUploads,
-    ...htmlPageUploads,
-    ...publicDirUploads,
-    ...staticDirUploads
+    ...nextBuildFileUploads, // .next/static/BUILD_ID/*
+    ...buildManifestFileUploads, // .next/static/runtime/x.js, //.next/static/chunks/y.js ... as specified in build-manifest.json
+    ...htmlPageUploads, // prerendered HTML pages
+    ...publicDirUploads, // app public dir
+    ...staticDirUploads // app static dir
   ];
 
   return Promise.all(allUploads);
