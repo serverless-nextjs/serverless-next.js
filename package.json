@@ -2,7 +2,7 @@
   "name": "serverless-nextjs-monorepo",
   "version": "1.8.1",
   "description": "Deploy your serverless next applications using the serverless framework",
-  "main": "index.js",
+  "main": "packages/serverless-plugin/index.js",
   "directories": {
     "example": "examples"
   },
