@@ -37,6 +37,11 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
+    "@mapbox/s3urls": "^1.5.3",
+    "fs-extra": "^7.0.1",
+    "klaw": "^3.0.0",
+    "lodash.merge": "^4.6.1",
+    "mime": "^2.4.0",
     "@babel/preset-typescript": "^7.9.0",
     "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
     "@types/jest": "^25.2.1",
