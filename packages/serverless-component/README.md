@@ -111,7 +111,11 @@ myNextApplication:
           headers: [CloudFront-Is-Desktop-Viewer, CloudFront-Is-Mobile-Viewer, CloudFront-Is-Tablet-Viewer]
         lambda@edge:
           viewer-response: lambdaarn:version
-      api: # options for lambdas that handle API request
+      api: # options for lambdas that handle API
+        ttl: 10
+      static: # options for user static assets
+        ttl: 10
+      next: # options for build assets
         ttl: 10
       origins: # options for custom origins and behaviors
         - url: /static

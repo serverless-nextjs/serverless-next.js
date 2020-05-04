@@ -176,16 +176,22 @@ class NextjsComponent extends Component {
       []
     ).map(expandRelativeUrls);
 
+    const nextCloudfrontInputs =
+      (inputs.cloudfront && inputs.cloudfront.next) || {};
+    const staticCloudfrontInputs =
+      (inputs.cloudfront && inputs.cloudfront.static) || {};
     const cloudFrontOrigins = [
       {
         url: bucketUrl,
         private: true,
         pathPatterns: {
           "_next/*": {
-            ttl: 86400
+            ttl: 86400,
+            ...nextCloudfrontInputs
           },
           "static/*": {
-            ttl: 86400
+            ttl: 86400,
+            ...staticCloudfrontInputs
           }
         }
       },
