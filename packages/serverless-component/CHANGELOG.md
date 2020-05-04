@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.1](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.1-alpha.0...serverless-next.js@1.11.1) (2020-05-04)
+
+
+### Bug Fixes
+
+* **serverless-component:** bump aws-lambda with fix for catch all routes ([a09b469](https://github.com/danielcondemarin/serverless-next.js/commit/a09b469ffb70f07ff255067a7b4975b2d69eefa8))
+
+
+
+
+
 ## [1.11.1-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.0...serverless-next.js@1.11.1-alpha.0) (2020-05-03)
 
 **Note:** Version bump only for package serverless-next.js
