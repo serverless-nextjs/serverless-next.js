@@ -172,7 +172,13 @@ class NextjsComponent extends Component {
 
     if (hasAPIPages) {
       const apiEdgeLambdaInput = {
+<<<<<<< Updated upstream
         description: `${inputs.description} (API)` || "API Lambda@Edge for Next CloudFront distribution",
+=======
+        description:
+          `${inputs.description} (API)` ||
+          "API Lambda@Edge for Next CloudFront distribution",
+>>>>>>> Stashed changes
         handler: "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
@@ -214,7 +220,13 @@ class NextjsComponent extends Component {
     }
 
     const defaultEdgeLambdaInput = {
+<<<<<<< Updated upstream
       description: inputs.description || "Default Lambda@Edge for Next CloudFront distribution",
+=======
+      description:
+        inputs.description ||
+        "Default Lambda@Edge for Next CloudFront distribution",
+>>>>>>> Stashed changes
       handler: "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
