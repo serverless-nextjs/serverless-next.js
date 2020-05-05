@@ -1,11 +1,8 @@
 {
-  "name": "serverless-nextjs-monorepo",
-  "version": "1.8.1",
-  "description": "Deploy your serverless next applications using the serverless framework",
-  "main": "packages/serverless-plugin/index.js",
-  "directories": {
-    "example": "examples"
-  },
+  "name": "serverless-nextjs-plugin",
+  "version": "2.4.10",
+  "description": "A serverless plugin for nextjs 8 serverless target",
+  "main": "index.js",
   "keywords": [
     "serverless",
     "nextjs",
@@ -13,88 +10,29 @@
     "next",
     "api gateway"
   ],
-  "scripts": {
-    "test": "jest --runInBand",
-    "packages-install": "lerna exec -- npm install",
-    "packages-build": "lerna run build",
-    "test:watch": "npm run test -- --watch --collect-coverage=false",
-    "publish": "lerna publish --conventional-commits",
-    "prerelease": "lerna publish --conventional-commits --conventional-prerelease",
-    "graduate": "lerna publish --conventional-commits --conventional-graduate",
-    "lint": "eslint .",
-    "coveralls": "jest --runInBand --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "postinstall": "opencollective-postinstall || true"
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "MIT",
+  "peerDependencies": {
+    "next": "^8.0.0"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/danielcondemarin/serverless-next.js"
-  },
-  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
-  },
-  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
-  "devDependencies": {
-    "@mapbox/s3urls": "^1.5.3",
-    "fs-extra": "^7.0.1",
-    "klaw": "^3.0.0",
-    "lodash.merge": "^4.6.1",
-    "mime": "^2.4.0",
-    "@babel/preset-typescript": "^7.9.0",
-    "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
-    "@types/jest": "^25.2.1",
-    "@typescript-eslint/eslint-plugin": "^2.28.0",
-    "@typescript-eslint/parser": "^2.28.0",
-    "adm-zip": "^0.4.13",
-    "coveralls": "^3.0.6",
-    "eslint": "^6.8.0",
-    "eslint-config-prettier": "^6.10.1",
-    "eslint-plugin-prettier": "^3.0.1",
-    "jest": "^25.3.0",
-    "jest-when": "^2.7.0",
-    "lerna": "^3.16.4",
-    "next": "^9.1.5",
-    "next-aws-cloudfront": "file:packages/lambda-at-edge-compat",
-    "prettier": "^1.17.1",
-    "react": "^16.9.0",
-    "react-dom": "^16.9.0",
-    "serverless": "^1.51.0",
-    "serverless-offline": "^4.10.0",
-    "typescript": "^3.8.3"
-  },
-  "jest": {
-    "clearMocks": true,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/packages/**/*.js"
-    ],
-    "coverageDirectory": "<rootDir>/coverage/",
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/packages/serverless-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/serverless-plugin/utils/test",
-      "/.serverless_nextjs/",
-      "/fixtures/",
-      "/examples/",
-      "/dist/"
-    ],
-    "testPathIgnorePatterns": [
-      "/.next/",
-      "/node_modules/",
-      "/fixtures/",
-      "/examples/",
-      "<rootDir>/integration"
-    ],
-    "setupFiles": [
-      "<rootDir>/jest.setup.js"
-    ]
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "directory": "packages/serverless-plugin"
   },
   "dependencies": {
-    "opencollective-postinstall": "^2.0.2"
+    "@mapbox/s3urls": "^1.5.3",
+    "chalk": "^2.4.2",
+    "debug": "^4.1.1",
+    "fs-extra": "^7.0.1",
+    "js-yaml": "^3.12.1",
+    "klaw": "^3.0.0",
+    "lodash.clonedeep": "^4.5.0",
+    "lodash.merge": "^4.6.1",
+    "mime": "^2.4.0",
+    "next-aws-lambda": "^2.4.0"
   },
-  "collective": {
-    "type": "opencollective",
-    "url": "https://opencollective.com/serverless-nextjs-plugin"
+  "engines": {
+    "node": ">=8.5.0"
   }
 }

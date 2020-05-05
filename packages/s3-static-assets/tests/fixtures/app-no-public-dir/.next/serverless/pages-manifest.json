@@ -1,4 +1,0 @@
-{
-  "/todos/terms": "pages/todos/terms.html",
-  "/todos/terms/[section]": "pages/todos/terms/[section].html"
-}

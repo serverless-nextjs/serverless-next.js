@@ -1,6 +1,0 @@
-nextApp:
-  component: "../../"
-  inputs:
-    build:
-      env:
-        TABLE_NAME: Todos

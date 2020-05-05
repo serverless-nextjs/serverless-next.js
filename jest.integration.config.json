@@ -1,4 +1,0 @@
-{
-  "testMatch": ["<rootDir>/integration/**/*.test.js"],
-  "modulePathIgnorePatterns": ["<rootDir>/integration/basic-app"]
-}
