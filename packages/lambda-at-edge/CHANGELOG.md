@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.2-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.1.2-alpha.0...@sls-next/lambda-at-edge@1.1.2-alpha.1) (2020-05-05)
+
+
+### Bug Fixes
+
+* **lambda-at-edge:** dont throw when no prev .next dir ([8dfd19d](https://github.com/danielcondemarin/serverless-next.js/commit/8dfd19dc3b479edd43862051de756e895b56c88e))
+
+
+
+
+
 ## [1.1.2-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.1.1...@sls-next/lambda-at-edge@1.1.2-alpha.0) (2020-05-05)
 
 
