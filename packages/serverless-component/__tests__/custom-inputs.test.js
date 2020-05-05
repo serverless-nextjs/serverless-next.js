@@ -10,24 +10,29 @@ const {
   API_LAMBDA_CODE_DIR
 } = require("../constants");
 
-// expect.extend({
-//   objectContainingCloudFrontInput(received, expected) {
-//     const receivedPathPatterns = received.origins[0].pathPatterns;
-//     expect(receivedPathPatterns).toContainKeys(Object.keys(expected));
-//     for (pathPattern in expected.origins) {
-//       expect(receivedPathPatterns[pathPattern]).toContainEntries(
-//         Object.entries(expected[pathPattern])
-//       );
-//     }
-//     return {
-//       pass: true,
-//     };
-//   },
-// });
+const createNextComponent = inputs => {
+  const component = new NextjsComponent(inputs);
+  component.context.credentials = {
+    aws: {
+      accessKeyId: "123",
+      secretAccessKey: "456"
+    }
+  };
+  return component;
+};
 
 describe("Custom inputs", () => {
   let tmpCwd;
   let componentOutputs;
+  let consoleWarnSpy;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
 
   describe.each([
     [["dev", "example.com"], "https://dev.example.com"],
@@ -58,7 +63,8 @@ describe("Custom inputs", () => {
         domains: [expectedDomain]
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         policy: "arn:aws:iam::aws:policy/CustomRole",
         domain: inputDomains,
@@ -102,51 +108,6 @@ describe("Custom inputs", () => {
     });
   });
 
-  // describe.each([
-  //   { test1: { a: "1", b: "2" } },
-  //   { "test*123": { some: "other", 3: "here" }, second: { entry: "here" } },
-  // ])("Custom CloudFront input", (inputCloudFront) => {
-  //   let tmpCwd;
-  //   let componentOutputs;
-
-  //   const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-
-  //   beforeEach(async () => {
-  //     tmpCwd = process.cwd();
-  //     process.chdir(fixturePath);
-
-  //     mockS3.mockResolvedValue({
-  //       name: "bucket-xyz",
-  //     });
-  //     mockLambda.mockResolvedValue({
-  //       arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
-  //     });
-  //     mockLambdaPublish.mockResolvedValue({
-  //       version: "v1",
-  //     });
-  //     mockCloudFront.mockResolvedValueOnce({
-  //       url: "https://cloudfrontdistrib.amazonaws.com",
-  //     });
-
-  //     const component = new NextjsComponent();
-  //     componentOutputs = await component.default({
-  //       policy: "arn:aws:iam::aws:policy/CustomRole",
-  //       memory: 512,
-  //       cloudfront: inputCloudFront,
-  //     });
-  //   });
-
-  //   afterEach(() => {
-  //     process.chdir(tmpCwd);
-  //   });
-
-  //   it("passes custom cloudfront input to cloudfront component", () => {
-  //     expect(mockCloudFront).toBeCalledWith(
-  //       expect.objectContainingCloudFrontInput(inputCloudFront)
-  //     );
-  //   });
-  // });
-
   describe.each([
     [undefined, { defaultMemory: 512, apiMemory: 512 }],
     [{}, { defaultMemory: 512, apiMemory: 512 }],
@@ -167,7 +128,10 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent({
+        memory: inputMemory
+      });
+
       componentOutputs = await component.default({
         memory: inputMemory
       });
@@ -215,7 +179,8 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         timeout: inputTimeout
       });
@@ -272,7 +237,8 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         name: inputName
       });
@@ -472,7 +438,8 @@ describe("Custom inputs", () => {
         url: "https://cloudfrontdistrib.amazonaws.com"
       });
 
-      const component = new NextjsComponent();
+      const component = createNextComponent();
+
       componentOutputs = await component.default({
         cloudfront: inputCloudfrontConfig
       });

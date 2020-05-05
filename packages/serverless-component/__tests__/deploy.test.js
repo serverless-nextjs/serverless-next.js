@@ -13,10 +13,13 @@ const { cleanupFixtureDirectory } = require("../lib/test-utils");
 describe("deploy tests", () => {
   let tmpCwd;
   let componentOutputs;
+  let consoleWarnSpy;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
   beforeEach(async () => {
+    consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
+
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
 
@@ -39,6 +42,12 @@ describe("deploy tests", () => {
     });
 
     const component = new NextjsComponent();
+    component.context.credentials = {
+      aws: {
+        accessKeyId: "123",
+        secretAccessKey: "456"
+      }
+    };
 
     await component.build();
 
@@ -46,6 +55,7 @@ describe("deploy tests", () => {
   });
 
   afterEach(() => {
+    consoleWarnSpy.mockRestore();
     process.chdir(tmpCwd);
   });
 
