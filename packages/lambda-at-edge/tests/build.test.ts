@@ -61,10 +61,10 @@ describe("Builder Tests", () => {
 
     it("output directory is cleanup before building", () => {
       expect(fseEmptyDirSpy).toBeCalledWith(
-        expect.stringContaining(".test_sls_next_output/default-lambda")
+        expect.stringContaining(join(".test_sls_next_output", "default-lambda"))
       );
       expect(fseEmptyDirSpy).toBeCalledWith(
-        expect.stringContaining(".test_sls_next_output/api-lambda")
+        expect.stringContaining(join(".test_sls_next_output", "api-lambda"))
       );
     });
   });

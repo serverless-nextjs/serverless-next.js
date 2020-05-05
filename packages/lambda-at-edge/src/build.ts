@@ -246,17 +246,22 @@ class Builder {
     };
   }
 
-  async cleanupDotNext(): Promise<void[]> {
+  async cleanupDotNext(): Promise<void> {
     const dotNextDirectory = join(path.resolve(this.nextConfigDir), ".next");
-    const fileItems = await fse.readdir(dotNextDirectory);
 
-    return Promise.all(
-      fileItems
-        .filter(
-          fileItem => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
-        )
-        .map(fileItem => fse.remove(join(dotNextDirectory, fileItem)))
-    );
+    const exists = await fse.pathExists(dotNextDirectory);
+
+    if (exists) {
+      const fileItems = await fse.readdir(dotNextDirectory);
+
+      await Promise.all(
+        fileItems
+          .filter(
+            fileItem => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
+          )
+          .map(fileItem => fse.remove(join(dotNextDirectory, fileItem)))
+      );
+    }
   }
 
   async build(): Promise<void> {
