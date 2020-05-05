@@ -1,4 +1,4 @@
-import fse from "fs-extra";
+const fse = require("fs-extra");
 const path = require("path");
 const { mockDomain } = require("@serverless/domain");
 const { mockS3 } = require("@serverless/aws-s3");

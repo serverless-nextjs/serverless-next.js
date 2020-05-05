@@ -1,1 +1,0 @@
-{"apis":{"dynamic":{"/api/customers/:customer":{"file":"pages/api/customers/[customer].js","regex":"^\\/api\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"},"/api/:blog/:id":{"file":"pages/api/[blog]/[id].js","regex":"^\\/api(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"}},"nonDynamic":{}}}

@@ -10,6 +10,7 @@ jest.mock("execa");
 
 describe("When public and static directories do not exist", () => {
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
+  let fseRemoveSpy: jest.SpyInstance;
 
   const fixturePath = join(
     __dirname,
@@ -17,10 +18,10 @@ describe("When public and static directories do not exist", () => {
   );
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const mockExeca = execa as jest.Mock;
     mockExeca.mockResolvedValueOnce();
-    jest.spyOn(fse, "remove").mockImplementation(() => {
+    fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
 
@@ -32,7 +33,10 @@ describe("When public and static directories do not exist", () => {
     );
   });
 
-  afterAll(() => cleanupDir(outputDir));
+  afterEach(() => {
+    fseRemoveSpy.mockRestore();
+    return cleanupDir(outputDir);
+  });
 
   it("does not put any public files in the build manifest", async () => {
     expect(defaultBuildManifest.publicFiles).toEqual({});

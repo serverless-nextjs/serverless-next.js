@@ -14,14 +14,15 @@ jest.mock("execa");
 describe("Dynamic Routes Precedence", () => {
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
   let apiBuildManifest: OriginRequestApiHandlerManifest;
+  let fseRemoveSpy: jest.SpyInstance;
 
   const fixturePath = join(__dirname, "./fixtures/dynamic-routes-precedence");
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const mockExeca = execa as jest.Mock;
     mockExeca.mockResolvedValueOnce();
-    jest.spyOn(fse, "remove").mockImplementation(() => {
+    fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
 
@@ -37,7 +38,10 @@ describe("Dynamic Routes Precedence", () => {
     );
   });
 
-  afterAll(() => cleanupDir(outputDir));
+  afterEach(() => {
+    fseRemoveSpy.mockRestore();
+    return cleanupDir(outputDir);
+  });
 
   it("adds dynamic page routes to the manifest in correct order of precedence", async () => {
     expect.assertions(1);

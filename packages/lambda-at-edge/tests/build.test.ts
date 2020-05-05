@@ -13,6 +13,7 @@ jest.mock("execa");
 
 describe("Builder Tests", () => {
   let fseRemoveSpy: jest.SpyInstance;
+  let fseEmptyDirSpy: jest.SpyInstance;
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
   let apiBuildManifest: OriginRequestApiHandlerManifest;
 
@@ -26,6 +27,7 @@ describe("Builder Tests", () => {
     fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
+    fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
 
     const builder = new Builder(fixturePath, outputDir);
     await builder.build();
@@ -39,7 +41,11 @@ describe("Builder Tests", () => {
     );
   });
 
-  afterAll(() => cleanupDir(outputDir));
+  afterEach(() => {
+    fseEmptyDirSpy.mockRestore();
+    fseRemoveSpy.mockRestore();
+    return cleanupDir(outputDir);
+  });
 
   describe("Cleanup", () => {
     it(".next directory is emptied except for cache/ folder", () => {
@@ -51,6 +57,15 @@ describe("Builder Tests", () => {
         join(fixturePath, ".next/prerender-manifest.json")
       );
       expect(fseRemoveSpy).not.toBeCalledWith(join(fixturePath, ".next/cache"));
+    });
+
+    it("output directory is cleanup before building", () => {
+      expect(fseEmptyDirSpy).toBeCalledWith(
+        expect.stringContaining(".test_sls_next_output/default-lambda")
+      );
+      expect(fseEmptyDirSpy).toBeCalledWith(
+        expect.stringContaining(".test_sls_next_output/api-lambda")
+      );
     });
   });
 
