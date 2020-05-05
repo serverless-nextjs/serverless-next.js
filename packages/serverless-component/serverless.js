@@ -127,7 +127,7 @@ class NextjsComponent extends Component {
         };
       }
     };
-  
+
     // Parse origins from inputs
     let inputOrigins = [];
     if (inputs.cloudfront && inputs.cloudfront.origins) {
@@ -273,7 +273,7 @@ class NextjsComponent extends Component {
         forward: {
           cookies: "all",
           queryString: true,
-          queryString: true,
+          queryString: true
         },
         ...defaultCloudfrontInputs,
         // lambda@edge key is last and therefore cannot be overridden
