@@ -1,0 +1,1 @@
+{"pages":{"ssr":{"dynamic":{"/customers/:customer":{"file":"pages/customers/[customer].js","regex":"^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"},"/:blog/:id":{"file":"pages/[blog]/[id].js","regex":"^(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"}},"nonDynamic":{}},"html":{"dynamic":{},"nonDynamic":{}}},"publicFiles":{}}

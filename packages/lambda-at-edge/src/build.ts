@@ -1,5 +1,5 @@
 import execa from "execa";
-import { emptyDir, readJSON, pathExists, copy, writeJson } from "fs-extra";
+import fse from "fs-extra";
 import { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
@@ -46,7 +46,7 @@ class Builder {
   }
 
   async readPublicFiles(): Promise<string[]> {
-    const dirExists = await pathExists(join(this.nextConfigDir, "public"));
+    const dirExists = await fse.pathExists(join(this.nextConfigDir, "public"));
     if (dirExists) {
       return getAllFiles(join(this.nextConfigDir, "public"))
         .map(e => e.replace(this.nextConfigDir, ""))
@@ -66,7 +66,7 @@ class Builder {
       this.nextConfigDir,
       ".next/serverless/pages-manifest.json"
     );
-    const hasServerlessPageManifest = await pathExists(path);
+    const hasServerlessPageManifest = await fse.pathExists(path);
 
     if (!hasServerlessPageManifest) {
       return Promise.reject(
@@ -74,7 +74,7 @@ class Builder {
       );
     }
 
-    const pagesManifest = await readJSON(path);
+    const pagesManifest = await fse.readJSON(path);
     const pagesManifestWithoutDynamicRoutes = Object.keys(pagesManifest).reduce(
       (acc: { [key: string]: string }, route: string) => {
         if (isDynamicRoute(route)) {
@@ -104,15 +104,15 @@ class Builder {
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
     return Promise.all([
-      copy(
+      fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
-      writeJson(
+      fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
       ),
-      copy(
+      fse.copy(
         require.resolve("next-aws-cloudfront"),
         join(
           this.outputDir,
@@ -120,7 +120,7 @@ class Builder {
           "node_modules/next-aws-cloudfront/index.js"
         )
       ),
-      copy(
+      fse.copy(
         join(this.nextConfigDir, ".next/serverless/pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
@@ -138,11 +138,11 @@ class Builder {
     apiBuildManifest: OriginRequestApiHandlerManifest
   ): Promise<void[]> {
     return Promise.all([
-      copy(
+      fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
       ),
-      copy(
+      fse.copy(
         require.resolve("next-aws-cloudfront"),
         join(
           this.outputDir,
@@ -150,15 +150,15 @@ class Builder {
           "node_modules/next-aws-cloudfront/index.js"
         )
       ),
-      copy(
+      fse.copy(
         join(this.nextConfigDir, ".next/serverless/pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
-      copy(
+      fse.copy(
         join(this.nextConfigDir, ".next/serverless/pages/_error.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/_error.js")
       ),
-      writeJson(
+      fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
       )
@@ -246,17 +246,33 @@ class Builder {
     };
   }
 
+  async cleanupDotNext(): Promise<void[]> {
+    const dotNextDirectory = join(path.resolve(this.nextConfigDir), ".next");
+    const fileItems = await fse.readdir(dotNextDirectory);
+
+    return Promise.all(
+      fileItems
+        .filter(
+          fileItem => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
+        )
+        .map(fileItem => fse.remove(join(dotNextDirectory, fileItem)))
+    );
+  }
+
   async build(): Promise<void> {
     const { cmd, args, cwd, env } = this.buildOptions;
+
+    // cleanup .next/ directory except for cache/ folder
+    await this.cleanupDotNext();
+
+    // ensure directories are empty and exist before proceeding
+    await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
 
     await execa(cmd, args, {
       cwd,
       env
     });
-
-    // ensure directories are empty and exist before proceeding
-    await emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
-    await emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
 
     const {
       defaultBuildManifest,

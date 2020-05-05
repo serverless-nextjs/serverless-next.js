@@ -47,6 +47,7 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.10.1",
     "eslint-plugin-prettier": "^3.0.1",
+    "fs-extra": "^9.0.0",
     "jest": "^25.3.0",
     "jest-when": "^2.7.0",
     "lerna": "^3.16.4",
@@ -65,6 +66,9 @@
     "collectCoverageFrom": [
       "<rootDir>/packages/**/*.js"
     ],
+    "moduleNameMapper": {
+      "fs-extra": "<rootDir>/node_modules/fs-extra"
+    },
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
       "<rootDir>/packages/serverless-plugin/utils/yml/cfSchema.js",

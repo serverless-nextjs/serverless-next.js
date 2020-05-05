@@ -1,6 +1,0 @@
-{
-  "pages": {
-    "/": ["static/runtime/runtime1.js"],
-    "/foo": ["static/chunks/chunk1.js"]
-  }
-}
