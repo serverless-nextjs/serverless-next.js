@@ -71,8 +71,7 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
-    const nextStaticPath = inputs.nextStaticDir || "";
-    const staticPath = nextStaticPath || nextConfigPath;
+    const nextStaticPath = inputs.nextStaticDir ? path.resolve(inputs.nextStaticDir) : nextConfigPath;
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -98,7 +97,8 @@ class NextjsComponent extends Component {
 
     await uploadAssetsToS3.default({
       bucketName: bucketOutputs.name,
-      nextConfigDir: staticPath,
+      nextConfigDir: nextConfigPath,
+      nextStaticDir: nextStaticPath,
       credentials: this.context.credentials.aws
     });
 

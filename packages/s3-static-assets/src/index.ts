@@ -10,13 +10,14 @@ import pathToPosix from "./lib/pathToPosix";
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
+  nextStaticDir: string;
   credentials: Credentials;
 };
 
 const uploadStaticAssets = async (
   options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
-  const { bucketName, nextConfigDir } = options;
+  const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = options;
 
   const s3 = await S3ClientFactory({
     bucketName,
@@ -68,7 +69,7 @@ const uploadStaticAssets = async (
   const uploadPublicOrStaticDirectory = async (
     directory: "public" | "static"
   ): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
-    const directoryPath = path.join(nextConfigDir, directory);
+    const directoryPath = path.join(nextStaticDir, directory);
 
     if (!(await fse.pathExists(directoryPath))) {
       return Promise.resolve([]);
@@ -80,7 +81,7 @@ const uploadStaticAssets = async (
       s3.uploadFile({
         filePath: fileItem.path,
         s3Key: pathToPosix(
-          path.relative(path.resolve(nextConfigDir), fileItem.path)
+          path.relative(path.resolve(nextStaticDir), fileItem.path)
         )
       })
     );
