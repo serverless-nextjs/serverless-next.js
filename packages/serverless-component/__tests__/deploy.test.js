@@ -18,6 +18,9 @@ describe("deploy tests", () => {
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
   beforeEach(async () => {
+    jest.spyOn(fse, "remove").mockImplementation(() => {
+      return;
+    });
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
 
     tmpCwd = process.cwd();

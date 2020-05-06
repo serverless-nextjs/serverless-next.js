@@ -77,7 +77,7 @@ describe("Upload tests", () => {
     expect(AWS.S3).toBeCalledTimes(1);
   });
 
-  it("uploads any contents inside build directory specified in BUILD_ID", async () => {
+  it("uploads any contents inside the .next/static", async () => {
     await upload();
 
     expect(mockUpload).toBeCalledWith({
@@ -153,24 +153,6 @@ describe("Upload tests", () => {
         Key: "static/scripts/test-script.js",
         ContentType: "application/javascript",
         CacheControl: undefined
-      })
-    );
-  });
-
-  it("uploads files specified in the build-manifest.json", async () => {
-    await upload();
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "_next/static/chunks/chunk1.js",
-        CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
-      })
-    );
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "_next/static/runtime/runtime1.js",
-        CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
       })
     );
   });

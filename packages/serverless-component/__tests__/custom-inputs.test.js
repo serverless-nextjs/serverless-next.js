@@ -1,3 +1,4 @@
+const fse = require("fs-extra");
 const path = require("path");
 const { mockDomain } = require("@serverless/domain");
 const { mockS3 } = require("@serverless/aws-s3");
@@ -27,6 +28,9 @@ describe("Custom inputs", () => {
   let consoleWarnSpy;
 
   beforeEach(() => {
+    jest.spyOn(fse, "remove").mockImplementation(() => {
+      return;
+    });
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
   });
 

@@ -3,6 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.11.3](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.2...serverless-next.js@1.11.3) (2020-05-06)
+
+**Note:** Version bump only for package serverless-next.js
+
+
+
+
+
+## [1.11.2](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.2-alpha.1...serverless-next.js@1.11.2) (2020-05-05)
+
+**Note:** Version bump only for package serverless-next.js
+
+
+
+
+
+## [1.11.2-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.2-alpha.0...serverless-next.js@1.11.2-alpha.1) (2020-05-05)
+
+**Note:** Version bump only for package serverless-next.js
+
+
+
+
+
+## [1.11.2-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.1...serverless-next.js@1.11.2-alpha.0) (2020-05-05)
+
+
+### Bug Fixes
+
+* **serverless-component:** upload whole .next/static folder and dont clear cache between builds ([4406ebb](https://github.com/danielcondemarin/serverless-next.js/commit/4406ebbb8937c75dfbc5644913b7c0d05ff3a52f))
+
+
+
+
+
 ## [1.11.1](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.11.1-alpha.0...serverless-next.js@1.11.1) (2020-05-04)
 
 
