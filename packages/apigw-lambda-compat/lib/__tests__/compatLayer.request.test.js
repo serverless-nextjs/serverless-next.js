@@ -1,4 +1,5 @@
 const create = require("../compatLayer");
+const http = require("http");
 
 describe("compatLayer.request", () => {
   it("request url path", () => {
@@ -275,5 +276,34 @@ describe("compatLayer.request", () => {
 
     expect(req.connection).toEqual({});
     done();
+  });
+
+  it("request preserve http.IncomingMessage.prototype property", () => {
+    const exampleProperty = "I'm an example property";
+    http.IncomingMessage.prototype.exampleProperty = exampleProperty;
+    const { req } = create({
+      requestContext: {
+        path: ""
+      }
+    });
+
+    expect(typeof req.exampleProperty !== "undefined").toEqual(true);
+    expect(req.exampleProperty).toEqual(exampleProperty);
+  });
+
+  it("request preserve http.IncomingMessage.prototype function", () => {
+    const exampleFunction = function() {
+      return "I'm an example function.";
+    };
+    http.IncomingMessage.prototype.exampleFunction = exampleFunction;
+    const { req } = create({
+      requestContext: {
+        path: ""
+      }
+    });
+
+    expect(typeof req.exampleFunction === "function").toEqual(true);
+    expect(req.exampleFunction()).toEqual(exampleFunction());
+    expect(req.exampleFunction.toString()).toEqual(exampleFunction.toString());
   });
 });
