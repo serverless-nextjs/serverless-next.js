@@ -3,36 +3,35 @@
 ### Getting started
 
 1. First, [fork](https://help.github.com/en/articles/fork-a-repo) the repo to your own github account and clone it.
-2. Install dependencies: `npm install`
+2. Install dependencies: `npm install && npm run packages-install`
 
 ### Running the tests
 
 #### Unit tests
 
-```bash
-npm test
-```
-
-or in watch mode:
+I recommend testing the specific package in the monorepo that you are working with. For example:
 
 ```bash
-npm test -- --watch
+npm test -- lambda-at-edge/
 ```
 
-#### Integration
+In watch mode:
 
 ```bash
-npm run integration
+npm test -- --watch lambda-at-edge/
 ```
 
-#### Testing the plugin on a serverless application
+#### Deploying to AWS and testing your changes
 
-Configure the app's `serverless.yml` to use your fork of the plugin as documented [here](https://serverless.com/framework/docs/providers/aws/guide/plugins#service-local-plugin).
+First, create your own test serverless component app and in the `serverless.yml` point the `component` field to your fork:
 
 ```yml
 # serverless.yml
-plugins:
-  localPath: "path/to/serverless-plugin"
-  modules:
-    - index
+nextApp:
+  component: "/path/to/your/fork/serverless-next.js/packages/serverless-component"
+  inputs: ...
 ```
+
+Then from the app simply run `serverless` or `npx serverless` if you don't have the serverless cli installed.
+
+Note: If you are working with a Typescript package make sure you build it (`npm run build`) before deploying ;)
