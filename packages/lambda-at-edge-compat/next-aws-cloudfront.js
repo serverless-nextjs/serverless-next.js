@@ -1,5 +1,6 @@
 const Stream = require("stream");
 const zlib = require("zlib");
+const http = require("http");
 
 const specialNodeHeaders = [
   "age",
@@ -89,7 +90,8 @@ const handler = event => {
     headers: {}
   };
 
-  const req = new Stream.Readable();
+  const newStream = new Stream.Readable();
+  const req = Object.assign(newStream, http.IncomingMessage.prototype);
   req.url = cfRequest.uri;
   req.method = cfRequest.method;
   req.rawHeaders = [];
