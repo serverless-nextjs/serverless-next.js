@@ -46,7 +46,7 @@ describe("Upload tests shared", () => {
   });
 
   it("passes credentials to S3 client", async () => {
-    await upload("./fixtures/basic-next-app");
+    await upload("./fixtures/app-basic");
 
     expect(AWS.S3).toBeCalledWith({
       accessKeyId: "fake-access-key",
@@ -60,7 +60,7 @@ describe("Upload tests shared", () => {
       Status: "Enabled"
     });
 
-    await upload("./fixtures/basic-next-app");
+    await upload("./fixtures/app-basic");
 
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
@@ -79,7 +79,7 @@ describe("Upload tests shared", () => {
       new Error("Unexpected error!")
     );
 
-    await upload("./fixtures/basic-next-app");
+    await upload("./fixtures/app-basic");
 
     expect(consoleWarnSpy).toBeCalledWith(
       expect.stringContaining("falling back")
@@ -93,9 +93,9 @@ describe("Upload tests shared", () => {
 });
 
 describe.each`
-  nextConfigDir                           | nextStaticDir
-  ${"./fixtures/basic-next-app"}          | ${undefined}
-  ${"./fixtures/split-app/nextConfigDir"} | ${"./fixtures/split-app/nextStaticDir"}
+  nextConfigDir                                                   | nextStaticDir
+  ${"./fixtures/app-basic"}                                       | ${undefined}
+  ${"./fixtures/app-public-dir-in-custom-location/nextConfigDir"} | ${"./fixtures/app-public-dir-in-custom-location/nextStaticDir"}
 `(
   "Content Upload Tests - nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
   ({ nextConfigDir, nextStaticDir }) => {
