@@ -117,6 +117,34 @@ describe("Upload tests", () => {
     );
   });
 
+  it("uploads prerendered JSON files specified in preprender manifest", async () => {
+    await upload();
+
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "_next/data/zsWqBqLjpgRmswfQomanp/index.json",
+        ContentType: "application/json",
+        CacheControl: undefined
+      })
+    );
+
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "_next/data/zsWqBqLjpgRmswfQomanp/todos/terms/a.json",
+        ContentType: "application/json",
+        CacheControl: undefined
+      })
+    );
+
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "_next/data/zsWqBqLjpgRmswfQomanp/todos/terms/b.json",
+        ContentType: "application/json",
+        CacheControl: undefined
+      })
+    );
+  });
+
   it("uploads files in the public folder", async () => {
     await upload();
 
