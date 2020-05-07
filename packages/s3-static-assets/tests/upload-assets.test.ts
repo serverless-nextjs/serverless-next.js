@@ -12,10 +12,20 @@ import AWS, {
 // https://github.com/facebook/jest/issues/2070
 jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
-const upload = (fixture?: string): Promise<AWS.S3.ManagedUpload.SendData[]> => {
+const upload = (
+  nextConfigDir: string,
+  nextStaticDir?: string
+): Promise<AWS.S3.ManagedUpload.SendData[]> => {
+  let staticDir = nextStaticDir;
+
+  if (nextStaticDir) {
+    staticDir = path.join(__dirname, nextStaticDir);
+  }
+
   return uploadStaticAssets({
     bucketName: "test-bucket-name",
-    nextConfigDir: path.join(__dirname, fixture || "./fixtures/basic-next-app"),
+    nextConfigDir: path.join(__dirname, nextConfigDir),
+    nextStaticDir: staticDir,
     credentials: {
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
@@ -24,7 +34,7 @@ const upload = (fixture?: string): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   });
 };
 
-describe("Upload tests", () => {
+describe("Upload tests shared", () => {
   let consoleWarnSpy: jest.SpyInstance;
 
   beforeEach(() => {
@@ -36,7 +46,7 @@ describe("Upload tests", () => {
   });
 
   it("passes credentials to S3 client", async () => {
-    await upload();
+    await upload("./fixtures/app-basic");
 
     expect(AWS.S3).toBeCalledWith({
       accessKeyId: "fake-access-key",
@@ -50,7 +60,7 @@ describe("Upload tests", () => {
       Status: "Enabled"
     });
 
-    await upload();
+    await upload("./fixtures/app-basic");
 
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
@@ -69,7 +79,7 @@ describe("Upload tests", () => {
       new Error("Unexpected error!")
     );
 
-    await upload();
+    await upload("./fixtures/app-basic");
 
     expect(consoleWarnSpy).toBeCalledWith(
       expect.stringContaining("falling back")
@@ -77,87 +87,96 @@ describe("Upload tests", () => {
     expect(AWS.S3).toBeCalledTimes(1);
   });
 
-  it("uploads any contents inside the .next/static", async () => {
-    await upload();
-
-    expect(mockUpload).toBeCalledWith({
-      Bucket: "test-bucket-name",
-      Key: "_next/static/a_test_build_id/two.js",
-      Body: expect.any(Buffer),
-      ContentType: "application/javascript",
-      CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
-    });
-
-    expect(mockUpload).toBeCalledWith({
-      Bucket: "test-bucket-name",
-      Key: "_next/static/a_test_build_id/css/one.css",
-      Body: expect.any(Buffer),
-      ContentType: "text/css",
-      CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
-    });
-  });
-
-  it("uploads prerendered HTML pages specified in pages manifest", async () => {
-    await upload();
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "static-pages/todos/terms.html",
-        ContentType: "text/html",
-        CacheControl: undefined
-      })
-    );
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "static-pages/todos/terms/[section].html",
-        ContentType: "text/html",
-        CacheControl: undefined
-      })
-    );
-  });
-
-  it("uploads files in the public folder", async () => {
-    await upload();
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "public/robots.txt",
-        ContentType: "text/plain",
-        CacheControl: undefined
-      })
-    );
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "public/scripts/test-script.js",
-        ContentType: "application/javascript",
-        CacheControl: undefined
-      })
-    );
-  });
-
-  it("uploads files in the static folder", async () => {
-    await upload();
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "static/robots.txt",
-        ContentType: "text/plain",
-        CacheControl: undefined
-      })
-    );
-
-    expect(mockUpload).toBeCalledWith(
-      expect.objectContaining({
-        Key: "static/scripts/test-script.js",
-        ContentType: "application/javascript",
-        CacheControl: undefined
-      })
-    );
-  });
-
   describe("when no public or static directory exists", () => {
     it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
   });
 });
+
+describe.each`
+  nextConfigDir                                                   | nextStaticDir
+  ${"./fixtures/app-basic"}                                       | ${undefined}
+  ${"./fixtures/app-public-dir-in-custom-location/nextConfigDir"} | ${"./fixtures/app-public-dir-in-custom-location/nextStaticDir"}
+`(
+  "Content Upload Tests - nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
+  ({ nextConfigDir, nextStaticDir }) => {
+    it("uploads any contents inside the .next/static", async () => {
+      await upload(nextConfigDir, nextStaticDir);
+
+      expect(mockUpload).toBeCalledWith({
+        Bucket: "test-bucket-name",
+        Key: "_next/static/a_test_build_id/two.js",
+        Body: expect.any(Buffer),
+        ContentType: "application/javascript",
+        CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      });
+
+      expect(mockUpload).toBeCalledWith({
+        Bucket: "test-bucket-name",
+        Key: "_next/static/a_test_build_id/css/one.css",
+        Body: expect.any(Buffer),
+        ContentType: "text/css",
+        CacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      });
+    });
+
+    it("uploads prerendered HTML pages specified in pages manifest", async () => {
+      await upload(nextConfigDir, nextStaticDir);
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static-pages/todos/terms.html",
+          ContentType: "text/html",
+          CacheControl: undefined
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static-pages/todos/terms/[section].html",
+          ContentType: "text/html",
+          CacheControl: undefined
+        })
+      );
+    });
+
+    it("uploads files in the public folder", async () => {
+      await upload(nextConfigDir, nextStaticDir);
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "public/robots.txt",
+          ContentType: "text/plain",
+          CacheControl: undefined
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "public/scripts/test-script.js",
+          ContentType: "application/javascript",
+          CacheControl: undefined
+        })
+      );
+    });
+
+    it("uploads files in the static folder", async () => {
+      await upload(nextConfigDir, nextStaticDir);
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static/robots.txt",
+          ContentType: "text/plain",
+          CacheControl: undefined
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static/scripts/test-script.js",
+          ContentType: "application/javascript",
+          CacheControl: undefined
+        })
+      );
+    });
+  }
+);
