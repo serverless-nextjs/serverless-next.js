@@ -126,8 +126,14 @@ class Builder {
         {
           // skip api pages from default lambda code
           filter: file => {
-            const isHTMLPage = path.extname(file) === ".html";
-            return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
+            const isHTML = path.extname(file) === ".html";
+            const isJSON = path.extname(file) === ".json";
+
+            return (
+              pathToPosix(file).indexOf("pages/api") === -1 &&
+              !isHTML &&
+              !isJSON
+            );
           }
         }
       )
