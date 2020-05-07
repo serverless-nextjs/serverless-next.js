@@ -268,7 +268,7 @@ class NextjsComponent extends Component {
     // Create domain
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain) {
-        try {
+      try {
         const domainComponent = await this.load("@serverless/domain");
         const domainOutputs = await domainComponent({
           privateZone: false,
@@ -278,7 +278,7 @@ class NextjsComponent extends Component {
           }
         });
         appUrl = domainOutputs.domains[0];
-      } catch(e) {
+      } catch (e) {
         console.error(`Could not setup domain ${subdomain}.${domain}`);
       }
     }
