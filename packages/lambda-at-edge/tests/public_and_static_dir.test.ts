@@ -1,6 +1,6 @@
 import execa from "execa";
 import Builder from "../src/build";
-import { readJSON } from "fs-extra";
+import fse, { readJSON } from "fs-extra";
 import { join } from "path";
 import { DEFAULT_LAMBDA_CODE_DIR } from "../src/build";
 import { cleanupDir } from "./test-utils";
@@ -10,6 +10,7 @@ jest.mock("execa");
 
 describe("When public and static directories do not exist", () => {
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
+  let fseRemoveSpy: jest.SpyInstance;
 
   const fixturePath = join(
     __dirname,
@@ -17,9 +18,12 @@ describe("When public and static directories do not exist", () => {
   );
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const mockExeca = execa as jest.Mock;
     mockExeca.mockResolvedValueOnce();
+    fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
+      return;
+    });
 
     const builder = new Builder(fixturePath, outputDir);
     await builder.build();
@@ -29,7 +33,10 @@ describe("When public and static directories do not exist", () => {
     );
   });
 
-  afterAll(() => cleanupDir(outputDir));
+  afterEach(() => {
+    fseRemoveSpy.mockRestore();
+    return cleanupDir(outputDir);
+  });
 
   it("does not put any public files in the build manifest", async () => {
     expect(defaultBuildManifest.publicFiles).toEqual({});

@@ -1,5 +1,5 @@
 import { join } from "path";
-import { readJSON, pathExists, readdir } from "fs-extra";
+import fse from "fs-extra";
 import execa from "execa";
 import Builder from "../src/build";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/build";
@@ -12,29 +12,62 @@ import {
 jest.mock("execa");
 
 describe("Builder Tests", () => {
+  let fseRemoveSpy: jest.SpyInstance;
+  let fseEmptyDirSpy: jest.SpyInstance;
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
   let apiBuildManifest: OriginRequestApiHandlerManifest;
 
   const fixturePath = join(__dirname, "./fixtures/simple-app");
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
-  beforeAll(async () => {
+  beforeEach(async () => {
     const mockExeca = execa as jest.Mock;
     mockExeca.mockResolvedValueOnce();
+
+    fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
+      return;
+    });
+    fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
 
     const builder = new Builder(fixturePath, outputDir);
     await builder.build();
 
-    defaultBuildManifest = await readJSON(
+    defaultBuildManifest = await fse.readJSON(
       join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
     );
 
-    apiBuildManifest = await readJSON(
+    apiBuildManifest = await fse.readJSON(
       join(outputDir, `${API_LAMBDA_CODE_DIR}/manifest.json`)
     );
   });
 
-  afterAll(() => cleanupDir(outputDir));
+  afterEach(() => {
+    fseEmptyDirSpy.mockRestore();
+    fseRemoveSpy.mockRestore();
+    return cleanupDir(outputDir);
+  });
+
+  describe("Cleanup", () => {
+    it(".next directory is emptied except for cache/ folder", () => {
+      expect(fseRemoveSpy).toBeCalledTimes(2);
+      expect(fseRemoveSpy).toBeCalledWith(
+        join(fixturePath, ".next/serverless")
+      );
+      expect(fseRemoveSpy).toBeCalledWith(
+        join(fixturePath, ".next/prerender-manifest.json")
+      );
+      expect(fseRemoveSpy).not.toBeCalledWith(join(fixturePath, ".next/cache"));
+    });
+
+    it("output directory is cleanup before building", () => {
+      expect(fseEmptyDirSpy).toBeCalledWith(
+        expect.stringContaining(join(".test_sls_next_output", "default-lambda"))
+      );
+      expect(fseEmptyDirSpy).toBeCalledWith(
+        expect.stringContaining(join(".test_sls_next_output", "api-lambda"))
+      );
+    });
+  });
 
   describe("Default Handler Manifest", () => {
     it("adds full manifest", () => {
@@ -121,19 +154,19 @@ describe("Builder Tests", () => {
     it("copies build files", async () => {
       expect.assertions(5);
 
-      const files = await readdir(
+      const files = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
       );
-      const pages = await readdir(
+      const pages = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages`)
       );
-      const customerPages = await readdir(
+      const customerPages = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/customers`)
       );
-      const apiDirExists = await pathExists(
+      const apiDirExists = await fse.pathExists(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
       );
-      const compatLayerIncluded = await pathExists(
+      const compatLayerIncluded = await fse.pathExists(
         join(
           outputDir,
           `${DEFAULT_LAMBDA_CODE_DIR}/node_modules/next-aws-cloudfront/index.js`
@@ -162,12 +195,14 @@ describe("Builder Tests", () => {
     it("copies build files", async () => {
       expect.assertions(3);
 
-      const files = await readdir(join(outputDir, `${API_LAMBDA_CODE_DIR}`));
-      const pages = await readdir(
+      const files = await fse.readdir(
+        join(outputDir, `${API_LAMBDA_CODE_DIR}`)
+      );
+      const pages = await fse.readdir(
         join(outputDir, `${API_LAMBDA_CODE_DIR}/pages`)
       );
 
-      const compatLayerIncluded = await pathExists(
+      const compatLayerIncluded = await fse.pathExists(
         join(
           outputDir,
           `${API_LAMBDA_CODE_DIR}/node_modules/next-aws-cloudfront/index.js`

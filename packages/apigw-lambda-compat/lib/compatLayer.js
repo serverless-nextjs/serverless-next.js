@@ -1,5 +1,6 @@
 const Stream = require("stream");
 const queryString = require("querystring");
+const http = require("http");
 
 const reqResMapper = (event, callback) => {
   const base64Support = process.env.BINARY_SUPPORT === "yes";
@@ -11,7 +12,8 @@ const reqResMapper = (event, callback) => {
   };
   let responsePromise;
 
-  const req = new Stream.Readable();
+  const newStream = new Stream.Readable();
+  const req = Object.assign(newStream, http.IncomingMessage.prototype);
   req.url =
     (event.requestContext.path || event.path || "").replace(
       new RegExp("^/" + event.requestContext.stage),
