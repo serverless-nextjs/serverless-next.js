@@ -10,7 +10,7 @@ import pathToPosix from "./lib/pathToPosix";
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
-  nextStaticDir: string;
+  nextStaticDir?: string;
   credentials: Credentials;
 };
 
