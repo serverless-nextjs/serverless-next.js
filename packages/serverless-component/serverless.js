@@ -150,8 +150,7 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
-    const nextStaticPath = inputs.nextStaticDir || "";
-    const staticPath = nextStaticPath || nextConfigPath;
+
     const customCloudFrontConfig = inputs.cloudfront || {};
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
