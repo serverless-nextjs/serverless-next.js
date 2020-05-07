@@ -114,73 +114,59 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [
-      {
-        nextConfigDir: undefined,
-        nextStaticDir: undefined,
-        fixturePath: path.join(__dirname, "./fixtures/simple-app")
-      }
-    ],
-    [
-      {
-        nextConfigDir: "simple-app",
-        nextStaticDir: undefined,
-        fixturePath: path.join(__dirname, "./fixtures")
-      }
-    ],
-    [
-      {
-        nextConfigDir: "nextConfigDir",
-        nextStaticDir: "nextStaticDir",
-        fixturePath: path.join(__dirname, "./fixtures/split-app")
-      }
-    ]
-  ])("Next config and static location", ({ fixturePath, ...inputs }) => {
-    beforeEach(async () => {
-      process.chdir(fixturePath);
+  describe.each`
+    nextConfigDir      | nextStaticDir      | fixturePath
+    ${undefined}       | ${undefined}       | ${path.join(__dirname, "./fixtures/simple-app")}
+    ${"simple-app"}    | ${undefined}       | ${path.join(__dirname, "./fixtures")}
+    ${"nextConfigDir"} | ${"nextStaticDir"} | ${path.join(__dirname, "./fixtures/split-app")}
+  `(
+    "nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
+    ({ fixturePath, ...inputs }) => {
+      beforeEach(async () => {
+        process.chdir(fixturePath);
 
-      mockS3.mockResolvedValue({
-        name: "bucket-xyz"
+        mockS3.mockResolvedValue({
+          name: "bucket-xyz"
+        });
+
+        mockCloudFront.mockResolvedValueOnce({
+          url: "https://cloudfrontdistrib.amazonaws.com"
+        });
+
+        const component = createNextComponent();
+
+        componentOutputs = await component.default({
+          nextConfigDir: inputs.nextConfigDir,
+          nextStaticDir: inputs.nextStaticDir
+        });
       });
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
+      it("uploads static assets to S3 correctly", () => {
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching(
+              "_next/static/test-build-id/placeholder.js"
+            )
+          })
+        );
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("static-pages/terms.html")
+          })
+        );
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("static/donotdelete.txt")
+          })
+        );
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("public/favicon.ico")
+          })
+        );
       });
-
-      const component = createNextComponent();
-
-      componentOutputs = await component.default({
-        nextConfigDir: inputs.nextConfigDir,
-        nextStaticDir: inputs.nextStaticDir
-      });
-    });
-
-    it(`sets nextConfigDir to "${inputs.nextConfigDir}" and nextStaticDir to "${inputs.nextStaticDir}"`, () => {
-      expect(mockUpload).toBeCalledWith(
-        expect.objectContaining({
-          Key: expect.stringMatching(
-            "_next/static/test-build-id/placeholder.js"
-          )
-        })
-      );
-      expect(mockUpload).toBeCalledWith(
-        expect.objectContaining({
-          Key: expect.stringMatching("static-pages/terms.html")
-        })
-      );
-      expect(mockUpload).toBeCalledWith(
-        expect.objectContaining({
-          Key: expect.stringMatching("static/donotdelete.txt")
-        })
-      );
-      expect(mockUpload).toBeCalledWith(
-        expect.objectContaining({
-          Key: expect.stringMatching("public/favicon.ico")
-        })
-      );
-    });
-  });
+    }
+  );
 
   describe.each([
     [undefined, { defaultMemory: 512, apiMemory: 512 }],
