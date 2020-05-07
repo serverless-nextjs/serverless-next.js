@@ -5,9 +5,6 @@
   "main": "index.js",
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "MIT",
-  "peerDependencies": {
-    "next": "^8.0.0"
-  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/tnguven/serverless-next.js.git"
