@@ -12,19 +12,20 @@ import AWS, {
 // https://github.com/facebook/jest/issues/2070
 jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
-const DEFAULT_FIXTURE = "./fixtures/basic-next-app";
-
 const upload = (
-  nextConfigDir?: string,
+  nextConfigDir: string,
   nextStaticDir?: string
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
+  let staticDir = nextStaticDir;
+
+  if (nextStaticDir) {
+    staticDir = path.join(__dirname, nextStaticDir);
+  }
+
   return uploadStaticAssets({
     bucketName: "test-bucket-name",
-    nextConfigDir: path.join(__dirname, nextConfigDir || DEFAULT_FIXTURE),
-    nextStaticDir: path.join(
-      __dirname,
-      nextStaticDir || nextConfigDir || DEFAULT_FIXTURE
-    ),
+    nextConfigDir: path.join(__dirname, nextConfigDir),
+    nextStaticDir: staticDir,
     credentials: {
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
@@ -45,7 +46,7 @@ describe("Upload tests shared", () => {
   });
 
   it("passes credentials to S3 client", async () => {
-    await upload();
+    await upload("./fixtures/basic-next-app");
 
     expect(AWS.S3).toBeCalledWith({
       accessKeyId: "fake-access-key",
@@ -59,7 +60,7 @@ describe("Upload tests shared", () => {
       Status: "Enabled"
     });
 
-    await upload();
+    await upload("./fixtures/basic-next-app");
 
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
@@ -78,7 +79,7 @@ describe("Upload tests shared", () => {
       new Error("Unexpected error!")
     );
 
-    await upload();
+    await upload("./fixtures/basic-next-app");
 
     expect(consoleWarnSpy).toBeCalledWith(
       expect.stringContaining("falling back")
@@ -91,22 +92,13 @@ describe("Upload tests shared", () => {
   });
 });
 
-describe.each([
-  [[DEFAULT_FIXTURE, ""]],
-  [["./fixtures/split-app/nextConfigDir", "./fixtures/split-app/nextStaticDir"]]
-])(
-  "Upload tests nextConfigDir=%s nextStaticDir=%s",
-  ([nextConfigDir, nextStaticDir]) => {
-    let consoleWarnSpy: jest.SpyInstance;
-
-    beforeEach(() => {
-      consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
-    });
-
-    afterEach(() => {
-      consoleWarnSpy.mockRestore();
-    });
-
+describe.each`
+  nextConfigDir                           | nextStaticDir
+  ${"./fixtures/basic-next-app"}          | ${undefined}
+  ${"./fixtures/split-app/nextConfigDir"} | ${"./fixtures/split-app/nextStaticDir"}
+`(
+  "Content Upload Tests - nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
+  ({ nextConfigDir, nextStaticDir }) => {
     it("uploads any contents inside the .next/static", async () => {
       await upload(nextConfigDir, nextStaticDir);
 

@@ -18,7 +18,6 @@ const uploadStaticAssets = async (
   options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = options;
-
   const s3 = await S3ClientFactory({
     bucketName,
     credentials: options.credentials
@@ -70,7 +69,6 @@ const uploadStaticAssets = async (
     directory: "public" | "static"
   ): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
     const directoryPath = path.join(nextStaticDir, directory);
-
     if (!(await fse.pathExists(directoryPath))) {
       return Promise.resolve([]);
     }
