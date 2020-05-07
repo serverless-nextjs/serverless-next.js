@@ -2,6 +2,7 @@ const fse = require("fs-extra");
 const path = require("path");
 const { mockDomain } = require("@serverless/domain");
 const { mockS3 } = require("@serverless/aws-s3");
+const { mockUpload } = require("aws-sdk");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const NextjsComponent = require("../serverless");
@@ -110,6 +111,74 @@ describe("Custom inputs", () => {
 
     it("outputs custom domain url", async () => {
       expect(componentOutputs.appUrl).toEqual(expectedDomain);
+    });
+  });
+
+  describe.each([
+    [
+      {
+        nextConfigDir: undefined,
+        nextStaticDir: undefined,
+        fixturePath: path.join(__dirname, "./fixtures/simple-app")
+      }
+    ],
+    [
+      {
+        nextConfigDir: "simple-app",
+        nextStaticDir: undefined,
+        fixturePath: path.join(__dirname, "./fixtures")
+      }
+    ],
+    [
+      {
+        nextConfigDir: "nextConfigDir",
+        nextStaticDir: "nextStaticDir",
+        fixturePath: path.join(__dirname, "./fixtures/split-app")
+      }
+    ]
+  ])("Next config and static location", ({ fixturePath, ...inputs }) => {
+    beforeEach(async () => {
+      process.chdir(fixturePath);
+
+      mockS3.mockResolvedValue({
+        name: "bucket-xyz"
+      });
+
+      mockCloudFront.mockResolvedValueOnce({
+        url: "https://cloudfrontdistrib.amazonaws.com"
+      });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        nextConfigDir: inputs.nextConfigDir,
+        nextStaticDir: inputs.nextStaticDir
+      });
+    });
+
+    it(`sets nextConfigDir to "${inputs.nextConfigDir}" and nextStaticDir to "${inputs.nextStaticDir}"`, () => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: expect.stringMatching(
+            "_next/static/test-build-id/placeholder.js"
+          )
+        })
+      );
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: expect.stringMatching("static-pages/terms.html")
+        })
+      );
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: expect.stringMatching("static/donotdelete.txt")
+        })
+      );
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: expect.stringMatching("public/favicon.ico")
+        })
+      );
     });
   });
 
