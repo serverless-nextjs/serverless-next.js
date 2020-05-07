@@ -21,7 +21,7 @@ In watch mode:
 npm test -- --watch lambda-at-edge/
 ```
 
-#### Deploying to AWS and testing your changes
+### Deploying to AWS and testing your changes
 
 First, create your own test serverless component app and in the `serverless.yml` point the `component` field to your fork:
 
