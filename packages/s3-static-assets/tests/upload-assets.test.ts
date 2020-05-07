@@ -85,6 +85,10 @@ describe("Upload tests shared", () => {
     );
     expect(AWS.S3).toBeCalledTimes(1);
   });
+
+  describe("when no public or static directory exists", () => {
+    it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
+  });
 });
 
 describe.each([
@@ -181,10 +185,6 @@ describe.each([
           CacheControl: undefined
         })
       );
-    });
-
-    describe("when no public or static directory exists", () => {
-      it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
     });
   }
 );
