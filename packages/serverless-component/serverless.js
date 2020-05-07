@@ -71,7 +71,9 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
-    const nextStaticPath = inputs.nextStaticDir ? path.resolve(inputs.nextStaticDir) : nextConfigPath;
+    const nextStaticPath = inputs.nextStaticDir
+      ? path.resolve(inputs.nextStaticDir)
+      : nextConfigPath;
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
