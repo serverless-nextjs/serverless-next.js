@@ -68,6 +68,7 @@ describe("Custom inputs", () => {
       componentOutputs = await component.default({
         policy: "arn:aws:iam::aws:policy/CustomRole",
         domain: inputDomains,
+        description: "Custom description",
         memory: 512
       });
     });
@@ -93,7 +94,7 @@ describe("Custom inputs", () => {
     it("uses custom policy document provided", () => {
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
-          description: expect.stringContaining("Default Lambda@Edge"),
+          description: expect.stringContaining("Custom description"),
           role: expect.objectContaining({
             policy: {
               arn: "arn:aws:iam::aws:policy/CustomRole"
