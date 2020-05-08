@@ -6,21 +6,29 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
+import getPublicAssetCacheControl, {
+  PublicAssetCacheControl
+} from "./lib/getPublicAssetCacheControl";
+
+type Options = {
+  publicAssetCache?: PublicAssetCacheControl;
+};
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
   nextStaticDir?: string;
   credentials: Credentials;
+  options: Options;
 };
 
 const uploadStaticAssets = async (
-  options: UploadStaticAssetsOptions
+  config: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
-  const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = options;
+  const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = config;
   const s3 = await S3ClientFactory({
     bucketName,
-    credentials: options.credentials
+    credentials: config.credentials
   });
 
   const dotNextDirectory = path.join(nextConfigDir, ".next");
@@ -66,7 +74,8 @@ const uploadStaticAssets = async (
     });
 
   const uploadPublicOrStaticDirectory = async (
-    directory: "public" | "static"
+    directory: "public" | "static",
+    options: Options
   ): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
     const directoryPath = path.join(nextStaticDir, directory);
     if (!(await fse.pathExists(directoryPath))) {
@@ -80,13 +89,23 @@ const uploadStaticAssets = async (
         filePath: fileItem.path,
         s3Key: pathToPosix(
           path.relative(path.resolve(nextStaticDir), fileItem.path)
+        ),
+        cacheControl: getPublicAssetCacheControl(
+          fileItem.path,
+          options.publicAssetCache
         )
       })
     );
   };
 
-  const publicDirUploads = await uploadPublicOrStaticDirectory("public");
-  const staticDirUploads = await uploadPublicOrStaticDirectory("static");
+  const publicDirUploads = await uploadPublicOrStaticDirectory(
+    "public",
+    config.options
+  );
+  const staticDirUploads = await uploadPublicOrStaticDirectory(
+    "static",
+    config.options
+  );
 
   const allUploads = [
     ...buildStaticFileUploads, // .next/static

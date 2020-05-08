@@ -101,7 +101,10 @@ class NextjsComponent extends Component {
       bucketName: bucketOutputs.name,
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,
-      credentials: this.context.credentials.aws
+      credentials: this.context.credentials.aws,
+      options: {
+        publicAssetCache: inputs.publicAssetCache || false
+      }
     });
 
     defaultBuildManifest.cloudFrontOrigins = {
@@ -253,8 +256,6 @@ class NextjsComponent extends Component {
         allowedHttpMethods: ["HEAD", "GET"],
         ...defaultCloudfrontInputs,
         forward: {
-          cookies: "all",
-          queryString: true,
           cookies: "all",
           queryString: true,
           ...defaultCloudfrontInputs.forward

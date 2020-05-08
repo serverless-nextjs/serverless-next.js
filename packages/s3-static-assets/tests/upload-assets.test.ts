@@ -1,6 +1,9 @@
 import path from "path";
 import uploadStaticAssets from "../src/index";
-import { IMMUTABLE_CACHE_CONTROL_HEADER } from "../src/lib/constants";
+import {
+  IMMUTABLE_CACHE_CONTROL_HEADER,
+  DEFAULT_ASSET_CACHE_CONTROL_HEADER
+} from "../src/lib/constants";
 import AWS, {
   mockGetBucketAccelerateConfigurationPromise,
   mockGetBucketAccelerateConfiguration,
@@ -14,7 +17,15 @@ jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
 const upload = (
   nextConfigDir: string,
-  nextStaticDir?: string
+  nextStaticDir?: string,
+  options?: {
+    publicAssetCache?:
+      | boolean
+      | {
+          test?: string;
+          value?: string;
+        };
+  }
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   let staticDir = nextStaticDir;
 
@@ -30,7 +41,8 @@ const upload = (
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token"
-    }
+    },
+    options: options || {}
   });
 };
 
@@ -180,3 +192,35 @@ describe.each`
     });
   }
 );
+
+describe("Content upload options", () => {
+  describe.each([
+    [undefined, undefined],
+    [true, DEFAULT_ASSET_CACHE_CONTROL_HEADER],
+    [{ value: "public, max-age=36000" }, "public, max-age=36000"]
+  ])("publicAssetCache", (input, expected) => {
+    beforeEach(async () => {
+      await upload("./fixtures/app-with-images", undefined, {
+        publicAssetCache: input
+      });
+    });
+
+    it(`sets ${expected} for value of ${input}`, () => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "public/1x1.png",
+          ContentType: "image/png",
+          CacheControl: expected
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static/1x1.png",
+          ContentType: "image/png",
+          CacheControl: expected
+        })
+      );
+    });
+  });
+});
