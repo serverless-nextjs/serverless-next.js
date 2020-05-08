@@ -177,7 +177,8 @@ describe("Builder Tests", () => {
         "index.js",
         "manifest.json",
         "node_modules",
-        "pages"
+        "pages",
+        "prerender-manifest.json"
       ]);
 
       expect(compatLayerIncluded).toEqual(true);
