@@ -469,8 +469,7 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each`
-  `([
+  describe.each([
     {
       "some-invalid-page-route": { ttl: 100 }
     },
