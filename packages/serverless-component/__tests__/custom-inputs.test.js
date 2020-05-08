@@ -38,13 +38,14 @@ describe("Custom inputs", () => {
     consoleWarnSpy.mockRestore();
   });
 
-  describe.each([
-    [["dev", "example.com"], "https://dev.example.com"],
-    [["www", "example.com"], "https://www.example.com"],
-    [[undefined, "example.com"], "https://www.example.com"],
-    [["example.com"], "https://www.example.com"],
-    ["example.com", "https://www.example.com"]
-  ])("Custom domain", (inputDomains, expectedDomain, memory) => {
+  describe.each`
+    inputDomains                  | expectedDomain
+    ${["dev", "example.com"]}     | ${"https://dev.example.com"}
+    ${["www", "example.com"]}     | ${"https://www.example.com"}
+    ${"example.com"}              | ${"https://www.example.com"}
+    ${[undefined, "example.com"]} | ${"https://www.example.com"}
+    ${"example.com"}              | ${"https://www.example.com"}
+  `("Custom domain", ({ inputDomains, expectedDomain }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
