@@ -69,21 +69,41 @@ const uploadStaticAssets = async (
     path.join(dotNextDirectory, "prerender-manifest.json")
   );
 
-  const dataRouteUploads = Object.keys(prerenderManifest["routes"]).map(key => {
-    const pageFilePath = pathToPosix(
-      path.join(
-        dotNextDirectory,
-        `serverless/pages/${
-          key.endsWith("/") ? key + "index.json" : key + ".json"
-        }`
-      )
-    );
+  const dataRouteJsonUploads = Object.keys(prerenderManifest["routes"]).map(key => {
+      const pageFilePath = pathToPosix(
+        path.join(
+          dotNextDirectory,
+          `serverless/pages/${
+            key.endsWith("/") ? key + "index.json" : key + ".json"
+          }`
+        )
+      );
 
-    return s3.uploadFile({
-      s3Key: prerenderManifest["routes"][key]["dataRoute"].slice(1),
-      filePath: pageFilePath
-    });
-  });
+      return s3.uploadFile({
+        s3Key: prerenderManifest["routes"][key]["dataRoute"].slice(1),
+        filePath: pageFilePath
+      });
+    }
+  );
+
+  const dataRouteHtmlUploads = Object.keys(prerenderManifest["routes"]).map(key => {
+      const pageFilePath = pathToPosix(
+        path.join(
+          dotNextDirectory,
+          `serverless/pages/${
+            key.endsWith("/") ? key + "index.html" : key + ".html"
+          }`
+        )
+      );
+
+      return s3.uploadFile({
+        s3Key: prerenderManifest["routes"][key]["dataRoute"]
+          .slice(1)
+          .replace(/\.json$/, ".html"),
+        filePath: pageFilePath
+      });
+    }
+  );
 
   const uploadPublicOrStaticDirectory = async (
     directory: "public" | "static"
@@ -111,7 +131,8 @@ const uploadStaticAssets = async (
   const allUploads = [
     ...buildStaticFileUploads, // .next/static
     ...htmlPageUploads, // prerendered HTML pages
-    ...dataRouteUploads, // SSG JSON files
+    ...dataRouteJsonUploads, // SSG JSON files
+    ...dataRouteHtmlUploads, // SSG HTML files
     ...publicDirUploads, // app public dir
     ...staticDirUploads // app static dir
   ];
