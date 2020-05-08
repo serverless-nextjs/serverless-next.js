@@ -28,6 +28,7 @@ describe("Custom inputs", () => {
   let consoleWarnSpy;
 
   beforeEach(() => {
+    // mock out remove to prevent fixture files from being wiped out
     jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
@@ -114,17 +115,16 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [undefined, { defaultMemory: 512, apiMemory: 512 }],
-    [{}, { defaultMemory: 512, apiMemory: 512 }],
-    [1024, { defaultMemory: 1024, apiMemory: 1024 }],
-    [{ defaultLambda: 1024 }, { defaultMemory: 1024, apiMemory: 512 }],
-    [{ apiLambda: 2048 }, { defaultMemory: 512, apiMemory: 2048 }],
-    [
-      { defaultLambda: 128, apiLambda: 2048 },
-      { defaultMemory: 128, apiMemory: 2048 }
-    ]
-  ])("Lambda memory input", (inputMemory, expectedMemory) => {
+  describe.each`
+    inputMemory                                | expectedMemory
+    ${undefined}                               | ${{ defaultMemory: 512, apiMemory: 512 }}
+    ${1024}                                    | ${{ defaultMemory: 1024, apiMemory: 1024 }}
+    ${{ defaultLambda: 1024 }}                 | ${{ defaultMemory: 1024, apiMemory: 512 }}
+    ${{}}                                      | ${{ defaultMemory: 512, apiMemory: 512 }}
+    ${{ apiLambda: 2048 }}                     | ${{ defaultMemory: 512, apiMemory: 2048 }}
+    ${{ defaultLambda: 128, apiLambda: 2048 }} | ${{ defaultMemory: 128, apiMemory: 2048 }}
+    ${{ defaultLambda: 1024 }}                 | ${{ defaultMemory: 1024, apiMemory: 512 }}
+  `("Lambda memory input", ({ inputMemory, expectedMemory }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
@@ -163,17 +163,15 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [undefined, { defaultTimeout: 10, apiTimeout: 10 }],
-    [{}, { defaultTimeout: 10, apiTimeout: 10 }],
-    [40, { defaultTimeout: 40, apiTimeout: 40 }],
-    [{ defaultLambda: 20 }, { defaultTimeout: 20, apiTimeout: 10 }],
-    [{ apiLambda: 20 }, { defaultTimeout: 10, apiTimeout: 20 }],
-    [
-      { defaultLambda: 15, apiLambda: 20 },
-      { defaultTimeout: 15, apiTimeout: 20 }
-    ]
-  ])("Lambda timeout input", (inputTimeout, expectedTimeout) => {
+  describe.each`
+    inputTimeout                            | expectedTimeout
+    ${undefined}                            | ${{ defaultTimeout: 10, apiTimeout: 10 }}
+    ${{}}                                   | ${{ defaultTimeout: 10, apiTimeout: 10 }}
+    ${40}                                   | ${{ defaultTimeout: 40, apiTimeout: 40 }}
+    ${{ defaultLambda: 20 }}                | ${{ defaultTimeout: 20, apiTimeout: 10 }}
+    ${{ apiLambda: 20 }}                    | ${{ defaultTimeout: 10, apiTimeout: 20 }}
+    ${{ defaultLambda: 15, apiLambda: 20 }} | ${{ defaultTimeout: 15, apiTimeout: 20 }}
+  `("Input timeout options", ({ inputTimeout, expectedTimeout }) => {
     let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
@@ -217,23 +215,15 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [undefined, { defaultName: undefined, apiName: undefined }],
-    [{}, { defaultName: undefined, apiName: undefined }],
-    ["fooFunction", { defaultName: "fooFunction", apiName: "fooFunction" }],
-    [
-      { defaultLambda: "fooFunction" },
-      { defaultName: "fooFunction", apiName: undefined }
-    ],
-    [
-      { apiLambda: "fooFunction" },
-      { defaultName: undefined, apiName: "fooFunction" }
-    ],
-    [
-      { defaultLambda: "fooFunction", apiLambda: "barFunction" },
-      { defaultName: "fooFunction", apiName: "barFunction" }
-    ]
-  ])("Lambda name input", (inputName, expectedName) => {
+  describe.each`
+    inputName                                                     | expectedName
+    ${undefined}                                                  | ${{ defaultName: undefined, apiName: undefined }}
+    ${{}}                                                         | ${{ defaultName: undefined, apiName: undefined }}
+    ${"fooFunction"}                                              | ${{ defaultName: "fooFunction", apiName: "fooFunction" }}
+    ${{ defaultLambda: "fooFunction" }}                           | ${{ defaultName: "fooFunction", apiName: undefined }}
+    ${{ apiLambda: "fooFunction" }}                               | ${{ defaultName: undefined, apiName: "fooFunction" }}
+    ${{ defaultLambda: "fooFunction", apiLambda: "barFunction" }} | ${{ defaultName: "fooFunction", apiName: "barFunction" }}
+  `("Lambda name input", ({ inputName, expectedName }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
