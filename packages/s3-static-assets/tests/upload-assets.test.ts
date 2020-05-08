@@ -140,7 +140,7 @@ describe.each`
     });
 
     it("uploads prerendered JSON files specified in preprender manifest", async () => {
-      await upload();
+      await upload(nextConfigDir, nextStaticDir);
 
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
