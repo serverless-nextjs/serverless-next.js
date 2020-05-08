@@ -373,7 +373,8 @@ describe("Custom inputs", () => {
   ])("Custom cloudfront inputs", (inputCloudfrontConfig, expectedInConfig) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
     const { origins = [], defaults = {}, ...other } = expectedInConfig;
-    const defaultCloudfrontInputs = {
+
+    const expectedDefaultCacheBehaviour = {
       ...defaults,
       "lambda@edge": {
         "origin-request":
@@ -381,8 +382,9 @@ describe("Custom inputs", () => {
         ...defaults["lambda@edge"]
       }
     };
-    const apiCloudfrontInputs = {
-      ...other["api/*"],
+
+    const expectedApiCacheBehaviour = {
+      ...expectedInConfig["api/*"],
       allowedHttpMethods: [
         "HEAD",
         "DELETE",
@@ -395,18 +397,19 @@ describe("Custom inputs", () => {
       "lambda@edge": {
         "origin-request":
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
-        ...(other["api/*"] && other["api/*"]["lambda@edge"])
+        ...(expectedInConfig["api/*"] &&
+          expectedInConfig["api/*"]["lambda@edge"])
       }
     };
 
-    let otherCloudfrontInputs = {};
-    Object.entries(other).forEach(([path, config]) => {
-      otherCloudfrontInputs[path] = {
-        ...config,
+    let customPageCacheBehaviours = {};
+    Object.entries(other).forEach(([path, cacheBehaviour]) => {
+      customPageCacheBehaviours[path] = {
+        ...cacheBehaviour,
         "lambda@edge": {
           "origin-request":
             "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
-          ...(config && config["lambda@edge"])
+          ...(cacheBehaviour && cacheBehaviour["lambda@edge"])
         }
       };
     });
@@ -419,22 +422,22 @@ describe("Custom inputs", () => {
           cookies: "all",
           queryString: true
         },
-        ...defaultCloudfrontInputs
+        ...expectedDefaultCacheBehaviour
       },
       origins: [
         {
           pathPatterns: {
-            ...otherCloudfrontInputs,
+            ...customPageCacheBehaviours,
             "_next/*": {
-              ...otherCloudfrontInputs["_next/*"],
+              ...customPageCacheBehaviours["_next/*"],
               ttl: 86400
             },
             "api/*": {
               ttl: 0,
-              ...apiCloudfrontInputs
+              ...expectedApiCacheBehaviour
             },
             "static/*": {
-              ...otherCloudfrontInputs["static/*"],
+              ...customPageCacheBehaviours["static/*"],
               ttl: 86400
             }
           },
