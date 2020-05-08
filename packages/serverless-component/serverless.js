@@ -150,6 +150,9 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
+    const nextStaticPath = inputs.nextStaticDir
+      ? path.resolve(inputs.nextStaticDir)
+      : nextConfigPath;
 
     const customCloudFrontConfig = inputs.cloudfront || {};
 
@@ -178,6 +181,7 @@ class NextjsComponent extends Component {
     await uploadAssetsToS3.default({
       bucketName: bucketOutputs.name,
       nextConfigDir: nextConfigPath,
+      nextStaticDir: nextStaticPath,
       credentials: this.context.credentials.aws
     });
 
