@@ -124,10 +124,16 @@ class Builder {
         join(this.nextConfigDir, ".next/serverless/pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
-          // skip api pages from default lambda code
-          filter: file => {
-            const isHTMLPage = path.extname(file) === ".html";
-            return pathToPosix(file).indexOf("pages/api") === -1 && !isHTMLPage;
+          filter: (file: string) => {
+            const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
+            const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
+            const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
+
+            return (
+              isNotApiPage &&
+              isNotPrerenderedHTMLPage &&
+              isNotStaticPropsJSONFile
+            );
           }
         }
       )

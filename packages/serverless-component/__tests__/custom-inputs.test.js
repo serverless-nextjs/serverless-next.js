@@ -2,6 +2,7 @@ const fse = require("fs-extra");
 const path = require("path");
 const { mockDomain } = require("@serverless/domain");
 const { mockS3 } = require("@serverless/aws-s3");
+const { mockUpload } = require("aws-sdk");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const NextjsComponent = require("../serverless");
@@ -112,6 +113,60 @@ describe("Custom inputs", () => {
       expect(componentOutputs.appUrl).toEqual(expectedDomain);
     });
   });
+
+  describe.each`
+    nextConfigDir      | nextStaticDir      | fixturePath
+    ${undefined}       | ${undefined}       | ${path.join(__dirname, "./fixtures/simple-app")}
+    ${"simple-app"}    | ${undefined}       | ${path.join(__dirname, "./fixtures")}
+    ${"nextConfigDir"} | ${"nextStaticDir"} | ${path.join(__dirname, "./fixtures/split-app")}
+  `(
+    "nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
+    ({ fixturePath, ...inputs }) => {
+      beforeEach(async () => {
+        process.chdir(fixturePath);
+
+        mockS3.mockResolvedValue({
+          name: "bucket-xyz"
+        });
+
+        mockCloudFront.mockResolvedValueOnce({
+          url: "https://cloudfrontdistrib.amazonaws.com"
+        });
+
+        const component = createNextComponent();
+
+        componentOutputs = await component.default({
+          nextConfigDir: inputs.nextConfigDir,
+          nextStaticDir: inputs.nextStaticDir
+        });
+      });
+
+      it("uploads static assets to S3 correctly", () => {
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching(
+              "_next/static/test-build-id/placeholder.js"
+            )
+          })
+        );
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("static-pages/terms.html")
+          })
+        );
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("static/donotdelete.txt")
+          })
+        );
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("public/favicon.ico")
+          })
+        );
+      });
+    }
+  );
 
   describe.each([
     [undefined, { defaultMemory: 512, apiMemory: 512 }],
