@@ -469,9 +469,10 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
+  describe.each`
+  `([
     {
-      "some-invalid-path": { ttl: 100 }
+      "some-invalid-page-route": { ttl: 100 }
     },
     {
       "/api": { ttl: 100 }
