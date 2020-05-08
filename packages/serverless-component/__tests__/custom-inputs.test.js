@@ -265,9 +265,11 @@ describe("Custom inputs", () => {
   });
 
   describe.each([
-    [undefined, {}], // no input
-    [{}, {}], // empty input
-    // Ignore origin-requests
+    // no input
+    [undefined, {}],
+    // empty input
+    [{}, {}],
+    // ignores custom lambda@edge origin-request trigger set on the default cache behaviour
     [
       {
         defaults: {
@@ -275,9 +277,9 @@ describe("Custom inputs", () => {
           "lambda@edge": { "origin-request": "ignored value" }
         }
       },
-      { defaults: { ttl: 500 } } // expecting lambda@edge origin-request to be ignored
+      { defaults: { ttl: 500 } }
     ],
-    // Allow other lamdba@edge types
+    // allow lamdba@edge triggers other than origin-request
     [
       {
         defaults: {
@@ -296,6 +298,7 @@ describe("Custom inputs", () => {
       { defaults: { forward: { headers: "X" } } },
       { defaults: { forward: { headers: "X" } } }
     ],
+    // ignore custom lambda@edge origin-request trigger set on the api cache behaviour
     [
       {
         "api/*": {
@@ -303,8 +306,9 @@ describe("Custom inputs", () => {
           "lambda@edge": { "origin-request": "ignored value" }
         }
       },
-      { "api/*": { ttl: 500 } } // expecting lambda@edge origin-request to be ignored
+      { "api/*": { ttl: 500 } }
     ],
+    // allow other lambda@edge triggers on the api cache behaviour
     [
       {
         "api/*": {
@@ -319,6 +323,7 @@ describe("Custom inputs", () => {
         }
       }
     ],
+    // custom origins and expanding relative URLs to full S3 origin
     [
       {
         origins: [
@@ -337,6 +342,7 @@ describe("Custom inputs", () => {
         ]
       }
     ],
+    // custom page cache behaviours
     [
       {
         "/terms": {
