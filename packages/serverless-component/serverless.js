@@ -358,6 +358,14 @@ class NextjsComponent extends Component {
       };
     });
 
+    // make sure that origin-response is not set.
+    // if you inject "origin-response": undefined
+    // the key will still exist and break our tests
+    let defaultCloudfrontEdgeInputs = {
+      ...(defaultCloudfrontInputs["lambda@edge"] || {})
+    };
+    delete defaultCloudfrontEdgeInputs["origin-response"];
+
     const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 0,
@@ -369,7 +377,7 @@ class NextjsComponent extends Component {
         // everything after here cant be overriden
         allowedHttpMethods: ["HEAD", "GET"],
         "lambda@edge": {
-          ...(defaultCloudfrontInputs["lambda@edge"] || {}),
+          ...defaultCloudfrontEdgeInputs,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
       },

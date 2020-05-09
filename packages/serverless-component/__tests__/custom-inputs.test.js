@@ -337,23 +337,28 @@ describe("Custom inputs", () => {
       {
         defaults: {
           ttl: 500,
-          "lambda@edge": { "origin-request": "ignored value" }
+          "lambda@edge": {
+            "origin-request": "ignored value",
+            "origin-response": "other ignored value"
+          }
         }
       },
       { defaults: { ttl: 500 } }
     ],
-    // allow lamdba@edge triggers other than origin-request
+    // allow lamdba@edge triggers other than origin-request and origin-response
     [
       {
         defaults: {
           ttl: 500,
-          "lambda@edge": { "origin-response": "used value" }
+          "lambda@edge": {
+            "other-field": "used value"
+          }
         }
       },
       {
         defaults: {
           ttl: 500,
-          "lambda@edge": { "origin-response": "used value" }
+          "lambda@edge": { "other-field": "used value" }
         }
       }
     ],
@@ -411,7 +416,9 @@ describe("Custom inputs", () => {
         "/terms": {
           ttl: 5500,
           "misc-param": "misc-value",
-          "lambda@edge": { "origin-request": "ignored value" }
+          "lambda@edge": {
+            "origin-request": "ignored value"
+          }
         }
       },
       {
