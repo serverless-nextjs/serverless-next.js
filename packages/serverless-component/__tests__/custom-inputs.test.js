@@ -539,36 +539,50 @@ describe("Custom inputs", () => {
     });
   });
 
-  // describe.each([
-  //   [
-  //     {
-  //       "some-invalid-page-route": { ttl: 100 }
-  //     },
-  //     Error(
-  //       "Custom CloudFront input failed validation. Failed to find Next.js paths for some-invalid-page-route"
-  //     )
-  //   ],
-  //   [
-  //     {
-  //       "/api": { ttl: 100 }
-  //     },
-  //     Error("test")
-  //   ],
-  //   [{ api: { ttl: 100 } }, Error("test")],
-  //   [{ "api/test": { ttl: 100 } }, Error("test")]
-  // ])("Invalid cloudfront inputs", (inputCloudfrontConfig, expectedError) => {
-  //   const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+  describe.each([
+    [
+      {
+        "some-invalid-page-route": { ttl: 100 }
+      },
+      Error(
+        "Custom CloudFront input failed validation. Failed to find Next.js paths for some-invalid-page-route"
+      )
+    ],
+    [
+      {
+        "/api": { ttl: 100 }
+      },
+      Error(
+        "No custom CloudFront configuration is permitted for path /api. It violates api/* behaivour"
+      )
+    ],
+    [
+      { api: { ttl: 100 } },
+      Error(
+        "No custom CloudFront configuration is permitted for path api. It violates api/* behaivour"
+      )
+    ],
+    [
+      { "api/test": { ttl: 100 } },
+      Error(
+        "No custom CloudFront configuration is permitted for path api/test. It violates api/* behaivour"
+      )
+    ]
+  ])("Invalid cloudfront inputs", (inputCloudfrontConfig, expectedError) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
-  //   beforeEach(async () => {
-  //     process.chdir(fixturePath);
-  //   });
+    beforeEach(async () => {
+      process.chdir(fixturePath);
+    });
 
-  //   it("throws the correct error", () => {
-  //     expect(() =>
-  //       createNextComponent().default({
-  //         cloudfront: inputCloudfrontConfig
-  //       })
-  //     ).toEqual(expectedError);
-  //   });
-  // });
+    it("throws the correct error", async () => {
+      // jest doesnt handle exceptions in async code very well,
+      // its being documented here: https://github.com/facebook/jest/issues/1700
+      await expect(
+        createNextComponent().deploy({
+          cloudfront: inputCloudfrontConfig
+        })
+      ).rejects.toThrow(expectedError);
+    });
+  });
 });

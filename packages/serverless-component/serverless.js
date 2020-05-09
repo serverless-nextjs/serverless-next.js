@@ -35,7 +35,7 @@ class NextjsComponent extends Component {
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
         throw Error(
-          `No custom CloudFront configuration is permitted for path ${path} . It violates api/* behaivour`
+          `No custom CloudFront configuration is permitted for path ${path}. It violates api/* behaivour`
         );
       }
     }
