@@ -168,6 +168,43 @@ describe("Custom inputs", () => {
     }
   );
 
+  describe.each`
+    publicDirectoryCache                                           | expected
+    ${undefined}                                                   | ${"public, max-age=31536000, must-revalidate"}
+    ${false}                                                       | ${undefined}
+    ${{ test: "/.(ico|png)$/i", value: "public, max-age=306000" }} | ${"public, max-age=306000"}
+  `(
+    "input=inputPublicDirectoryCache, expected=$expectedPublicDirectoryCache",
+    ({ publicDirectoryCache, expected }) => {
+      beforeEach(async () => {
+        process.chdir(path.join(__dirname, "./fixtures/simple-app"));
+
+        mockS3.mockResolvedValue({
+          name: "bucket-xyz"
+        });
+
+        mockCloudFront.mockResolvedValueOnce({
+          url: "https://cloudfrontdistrib.amazonaws.com"
+        });
+
+        const component = createNextComponent();
+
+        componentOutputs = await component.default({
+          publicDirectoryCache
+        });
+      });
+
+      it(`sets the ${expected} Cache-Control header on ${publicDirectoryCache}`, () => {
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("public/favicon.ico"),
+            CacheControl: expected
+          })
+        );
+      });
+    }
+  );
+
   describe.each([
     [undefined, { defaultMemory: 512, apiMemory: 512 }],
     [{}, { defaultMemory: 512, apiMemory: 512 }],

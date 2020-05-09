@@ -2,7 +2,7 @@ import path from "path";
 import uploadStaticAssets from "../src/index";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
-  DEFAULT_ASSET_CACHE_CONTROL_HEADER
+  DEFAULT_PUBLIC_DIR_CACHE_CONTROL
 } from "../src/lib/constants";
 import AWS, {
   mockGetBucketAccelerateConfigurationPromise,
@@ -18,14 +18,12 @@ jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 const upload = (
   nextConfigDir: string,
   nextStaticDir?: string,
-  options?: {
-    publicAssetCache?:
-      | boolean
-      | {
-          test?: string;
-          value?: string;
-        };
-  }
+  publicAssetCache?:
+    | boolean
+    | {
+        test?: string;
+        value?: string;
+      }
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   let staticDir = nextStaticDir;
 
@@ -42,7 +40,7 @@ const upload = (
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token"
     },
-    options: options || {}
+    publicDirectoryCache: publicAssetCache
   });
 };
 
@@ -193,19 +191,25 @@ describe.each`
   }
 );
 
-describe("Content upload options", () => {
-  describe.each([
-    [undefined, undefined],
-    [true, DEFAULT_ASSET_CACHE_CONTROL_HEADER],
-    [{ value: "public, max-age=36000" }, "public, max-age=36000"]
-  ])("publicAssetCache", (input, expected) => {
+describe.each`
+  publicDirectoryCache                                          | expected
+  ${undefined}                                                  | ${DEFAULT_PUBLIC_DIR_CACHE_CONTROL}
+  ${false}                                                      | ${undefined}
+  ${true}                                                       | ${DEFAULT_PUBLIC_DIR_CACHE_CONTROL}
+  ${{ value: "public, max-age=36000" }}                         | ${"public, max-age=36000"}
+  ${{ value: "public, max-age=36000", test: "/.(txt|xml)$/i" }} | ${undefined}
+`(
+  "Public directory cache settings - publicDirectoryCache=$publicDirectoryCache, expected=$expected",
+  ({ publicDirectoryCache, expected }) => {
     beforeEach(async () => {
-      await upload("./fixtures/app-with-images", undefined, {
-        publicAssetCache: input
-      });
+      await upload(
+        "./fixtures/app-with-images",
+        undefined,
+        publicDirectoryCache
+      );
     });
 
-    it(`sets ${expected} for value of ${input}`, () => {
+    it(`sets ${expected} for input value of ${publicDirectoryCache}`, () => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: "public/1x1.png",
@@ -222,5 +226,5 @@ describe("Content upload options", () => {
         })
       );
     });
-  });
-});
+  }
+);

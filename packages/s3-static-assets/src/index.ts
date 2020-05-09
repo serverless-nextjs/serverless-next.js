@@ -7,28 +7,24 @@ import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
 import getPublicAssetCacheControl, {
-  PublicAssetCacheControl
+  PublicDirectoryCache
 } from "./lib/getPublicAssetCacheControl";
-
-type Options = {
-  publicAssetCache?: PublicAssetCacheControl;
-};
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
   nextStaticDir?: string;
   credentials: Credentials;
-  options: Options;
+  publicDirectoryCache?: PublicDirectoryCache;
 };
 
 const uploadStaticAssets = async (
-  config: UploadStaticAssetsOptions
+  options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
-  const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = config;
+  const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = options;
   const s3 = await S3ClientFactory({
     bucketName,
-    credentials: config.credentials
+    credentials: options.credentials
   });
 
   const dotNextDirectory = path.join(nextConfigDir, ".next");
@@ -75,7 +71,7 @@ const uploadStaticAssets = async (
 
   const uploadPublicOrStaticDirectory = async (
     directory: "public" | "static",
-    options: Options
+    publicDirectoryCache?: PublicDirectoryCache
   ): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
     const directoryPath = path.join(nextStaticDir, directory);
     if (!(await fse.pathExists(directoryPath))) {
@@ -92,7 +88,7 @@ const uploadStaticAssets = async (
         ),
         cacheControl: getPublicAssetCacheControl(
           fileItem.path,
-          options.publicAssetCache
+          publicDirectoryCache
         )
       })
     );
@@ -100,11 +96,11 @@ const uploadStaticAssets = async (
 
   const publicDirUploads = await uploadPublicOrStaticDirectory(
     "public",
-    config.options
+    options.publicDirectoryCache
   );
   const staticDirUploads = await uploadPublicOrStaticDirectory(
     "static",
-    config.options
+    options.publicDirectoryCache
   );
 
   const allUploads = [

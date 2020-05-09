@@ -102,9 +102,7 @@ class NextjsComponent extends Component {
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,
       credentials: this.context.credentials.aws,
-      options: {
-        publicAssetCache: inputs.publicAssetCache || false
-      }
+      publicDirectoryCache: inputs.publicDirectoryCache
     });
 
     defaultBuildManifest.cloudFrontOrigins = {

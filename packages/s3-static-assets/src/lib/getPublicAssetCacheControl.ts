@@ -1,27 +1,32 @@
 import path from "path";
 import regexParser from "regex-parser";
 import {
-  DEFAULT_ASSET_CACHE_CONTROL_HEADER,
-  DEFAULT_ASSET_CACHE_REGEX
+  DEFAULT_PUBLIC_DIR_CACHE_CONTROL,
+  DEFAULT_PUBLIC_DIR_CACHE_REGEX
 } from "./constants";
 
-export type PublicAssetCacheControl =
+export type PublicDirectoryCache =
   | boolean
   | {
       test?: string;
       value?: string;
     };
 
+/**
+ * If options is not present, or is explicitly set to true, returns a default Cache-Control configuration for image types.
+ * If options is explicitly set to false, it returns undefined.
+ * If assigned an options object, it uses whichever value is defined there, falling back to the default if one is not present.
+ */
 const getPublicAssetCacheControl = (
   filePath: string,
-  options?: PublicAssetCacheControl
+  options?: PublicDirectoryCache
 ): string | undefined => {
-  if (!options) {
+  if (options === false) {
     return undefined;
   }
 
-  let value: string = DEFAULT_ASSET_CACHE_CONTROL_HEADER;
-  let test: RegExp = DEFAULT_ASSET_CACHE_REGEX;
+  let value: string = DEFAULT_PUBLIC_DIR_CACHE_CONTROL;
+  let test: RegExp = DEFAULT_PUBLIC_DIR_CACHE_REGEX;
 
   if (typeof options === "object") {
     if (options.value) {
