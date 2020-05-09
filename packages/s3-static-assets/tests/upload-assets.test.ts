@@ -1,6 +1,9 @@
 import path from "path";
 import uploadStaticAssets from "../src/index";
-import { IMMUTABLE_CACHE_CONTROL_HEADER } from "../src/lib/constants";
+import {
+  IMMUTABLE_CACHE_CONTROL_HEADER,
+  DEFAULT_PUBLIC_DIR_CACHE_CONTROL
+} from "../src/lib/constants";
 import AWS, {
   mockGetBucketAccelerateConfigurationPromise,
   mockGetBucketAccelerateConfiguration,
@@ -14,7 +17,13 @@ jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
 const upload = (
   nextConfigDir: string,
-  nextStaticDir?: string
+  nextStaticDir?: string,
+  publicAssetCache?:
+    | boolean
+    | {
+        test?: string;
+        value?: string;
+      }
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   let staticDir = nextStaticDir;
 
@@ -30,7 +39,8 @@ const upload = (
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token"
-    }
+    },
+    publicDirectoryCache: publicAssetCache
   });
 };
 
@@ -175,6 +185,44 @@ describe.each`
           Key: "static/scripts/test-script.js",
           ContentType: "application/javascript",
           CacheControl: undefined
+        })
+      );
+    });
+  }
+);
+
+describe.each`
+  publicDirectoryCache                                          | expected
+  ${undefined}                                                  | ${DEFAULT_PUBLIC_DIR_CACHE_CONTROL}
+  ${false}                                                      | ${undefined}
+  ${true}                                                       | ${DEFAULT_PUBLIC_DIR_CACHE_CONTROL}
+  ${{ value: "public, max-age=36000" }}                         | ${"public, max-age=36000"}
+  ${{ value: "public, max-age=36000", test: "/.(txt|xml)$/i" }} | ${undefined}
+`(
+  "Public directory cache settings - publicDirectoryCache=$publicDirectoryCache, expected=$expected",
+  ({ publicDirectoryCache, expected }) => {
+    beforeEach(async () => {
+      await upload(
+        "./fixtures/app-with-images",
+        undefined,
+        publicDirectoryCache
+      );
+    });
+
+    it(`sets ${expected} for input value of ${publicDirectoryCache}`, () => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "public/1x1.png",
+          ContentType: "image/png",
+          CacheControl: expected
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static/1x1.png",
+          ContentType: "image/png",
+          CacheControl: expected
         })
       );
     });
