@@ -26,7 +26,7 @@ class NextjsComponent extends Component {
   validatePathPatterns(pathPatterns, buildManifest) {
     let stillToMatch = new Set(pathPatterns);
     if (stillToMatch.size !== pathPatterns.length) {
-      throw Error("duplicate path path declared in cloudfront configuration");
+      throw Error("Duplicate path declared in cloudfront configuration");
     }
 
     // there wont be a page path for this so we can remove it
@@ -35,7 +35,7 @@ class NextjsComponent extends Component {
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
         throw Error(
-          `No custom CloudFront configuration is permitted for path ${path}. It violates api/* behaivour`
+          `Setting custom cache behaviour for api/ route "${path}" is not supported`
         );
       }
     }
@@ -60,7 +60,7 @@ class NextjsComponent extends Component {
     Object.entries({
       ...ssrDynamic,
       ...htmlDynamic
-    }).map(([path, { file, regex }]) => {
+    }).map(([, { regex }]) => {
       manifestRegex.push(new RegExp(regex));
     });
 
@@ -74,7 +74,7 @@ class NextjsComponent extends Component {
 
     // first we check if the path patterns match any of the dynamic page regex.
     // paths with stars (*) shouldnt cause any issues because the regex will treat these
-    // as characters. Its n^2 but n is small
+    // as characters.
     manifestRegex.forEach(re => {
       for (const path of stillToMatch) {
         if (re.test(path)) {
@@ -95,9 +95,9 @@ class NextjsComponent extends Component {
 
     if (stillToMatch.size > 0) {
       throw Error(
-        `Custom CloudFront input failed validation. Failed to find Next.js paths for ${[
+        `CloudFront input failed validation. Could not find next.js pages for "${[
           ...stillToMatch
-        ]}`
+        ]}"`
       );
     }
   }

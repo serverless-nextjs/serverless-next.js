@@ -33,10 +33,16 @@ describe("Custom inputs", () => {
     jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
+    jest.spyOn(fse, "emptyDir").mockImplementation(() => {
+      return;
+    });
+
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
   });
 
   afterEach(() => {
+    fse.remove.mockRestore();
+    fse.emptyDir.mockRestore();
     consoleWarnSpy.mockRestore();
   });
 
@@ -332,14 +338,14 @@ describe("Custom inputs", () => {
     [undefined, {}],
     // empty input
     [{}, {}],
-    // ignores custom lambda@edge origin-request trigger set on the default cache behaviour
+    // ignores origin-request and origin-response triggers as they're reserved by serverless-next.js
     [
       {
         defaults: {
           ttl: 500,
           "lambda@edge": {
-            "origin-request": "ignored value",
-            "origin-response": "other ignored value"
+            "origin-request": "ignored",
+            "origin-response": "also ignored"
           }
         }
       },
@@ -351,14 +357,14 @@ describe("Custom inputs", () => {
         defaults: {
           ttl: 500,
           "lambda@edge": {
-            "other-field": "used value"
+            "viewer-request": "used value"
           }
         }
       },
       {
         defaults: {
           ttl: 500,
-          "lambda@edge": { "other-field": "used value" }
+          "lambda@edge": { "viewer-request": "used value" }
         }
       }
     ],
@@ -541,25 +547,30 @@ describe("Custom inputs", () => {
 
   describe.each`
     cloudFrontInput                                | expectedErrorMessage
-    ${{ "some-invalid-page-route": { ttl: 100 } }} | ${"Custom CloudFront input failed validation. Failed to find Next.js paths for some-invalid-page-route"}
-    ${{ "/api": { ttl: 100 } }}                    | ${"No custom CloudFront configuration is permitted for path /api. It violates api/* behaivour"}
-    ${{ api: { ttl: 100 } }}                       | ${"No custom CloudFront configuration is permitted for path api. It violates api/* behaivour"}
-    ${{ "api/test": { ttl: 100 } }}                | ${"No custom CloudFront configuration is permitted for path api/test. It violates api/* behaivour"}
-  `("Invalid cloudfront inputs", (inputCloudfrontConfig, expectedError) => {
-    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    ${{ "some-invalid-page-route": { ttl: 100 } }} | ${'Could not find next.js pages for "some-invalid-page-route"'}
+    ${{ "/api": { ttl: 100 } }}                    | ${'route "/api" is not supported'}
+    ${{ api: { ttl: 100 } }}                       | ${'route "api" is not supported'}
+    ${{ "api/test": { ttl: 100 } }}                | ${'route "api/test" is not supported'}
+  `(
+    "Invalid cloudfront inputs",
+    ({ cloudFrontInput, expectedErrorMessage }) => {
+      const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
-    beforeEach(async () => {
-      process.chdir(fixturePath);
-    });
+      beforeEach(async () => {
+        process.chdir(fixturePath);
+      });
 
-    it("throws the correct error", async () => {
-      // jest doesnt handle exceptions in async code very well,
-      // its being documented here: https://github.com/facebook/jest/issues/1700
-      await expect(
-        createNextComponent().deploy({
-          cloudfront: inputCloudfrontConfig
-        })
-      ).rejects.toThrow(expectedError);
-    });
-  });
+      it("throws the correct error", async () => {
+        expect.assertions(1);
+
+        try {
+          await createNextComponent().default({
+            cloudfront: cloudFrontInput
+          });
+        } catch (err) {
+          expect(err.message).toContain(expectedErrorMessage);
+        }
+      });
+    }
+  );
 });
