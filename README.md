@@ -99,8 +99,9 @@ In most cases you wouldn't want to use CloudFront's distribution domain to acces
 
 You can use any domain name but you must be using AWS Route53 for your DNS hosting. To migrate DNS records from an existing domain follow the instructions
 [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/MigratingDNS.html). The requirements to use a custom domain name:
- * Route53 must include a _hosted zone_ for your domain (e.g. `mydomain.com`) with a set of nameservers.
- * You must update the nameservers listed with your domain name registrar (e.g. namecheap, godaddy, etc.) with those provided for your new _hosted zone_.
+
+- Route53 must include a _hosted zone_ for your domain (e.g. `mydomain.com`) with a set of nameservers.
+- You must update the nameservers listed with your domain name registrar (e.g. namecheap, godaddy, etc.) with those provided for your new _hosted zone_.
 
 The serverless next.js component will automatically generate an SSL certificate and create a new record to point to your CloudFront distribution.
 
@@ -143,6 +144,8 @@ myNextApplication:
       my-other-page:
         viewerProtocolPolicy: redirect-to-https
 ```
+
+This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](/https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
 
 ### AWS Permissions
 
