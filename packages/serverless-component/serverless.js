@@ -210,7 +210,7 @@ class NextjsComponent extends Component {
       }
     };
 
-    // Parse origins from inputs
+    // parse origins from inputs
     let inputOrigins = [];
     if (inputs.cloudfront && inputs.cloudfront.origins) {
       inputOrigins = inputs.cloudfront.origins.map(expandRelativeUrls);
@@ -339,7 +339,7 @@ class NextjsComponent extends Component {
       defaultBuildManifest
     );
 
-    // Add any custom cloudfront configuration
+    // add any custom cloudfront configuration
     // this includes overrides for _next, static and api
     Object.entries(customCloudFrontConfig).map(([path, config]) => {
       cloudFrontOrigins[0].pathPatterns[path] = {
@@ -359,12 +359,11 @@ class NextjsComponent extends Component {
     });
 
     // make sure that origin-response is not set.
-    // if you inject "origin-response": undefined
-    // the key will still exist and break our tests
-    let defaultCloudfrontEdgeInputs = {
+    // this is reserved for serverless-next.js usage
+    let defaultLambdaAtEdgeConfig = {
       ...(defaultCloudfrontInputs["lambda@edge"] || {})
     };
-    delete defaultCloudfrontEdgeInputs["origin-response"];
+    delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
       defaults: {
@@ -377,7 +376,7 @@ class NextjsComponent extends Component {
         // everything after here cant be overriden
         allowedHttpMethods: ["HEAD", "GET"],
         "lambda@edge": {
-          ...defaultCloudfrontEdgeInputs,
+          ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
       },
@@ -386,7 +385,7 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
-    // Create domain
+    // create domain
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain) {
       const domainComponent = await this.load("@serverless/domain");
