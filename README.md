@@ -17,6 +17,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Getting started](#getting-started)
 - [Lambda@Edge configuration](#lambda-at-edge-configuration)
 - [Custom domain name](#custom-domain-name)
+- [Custom CloudFront configuration](#custom-cloudfront-configuration)
 - [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
 - [Inputs](#inputs)
@@ -98,8 +99,9 @@ In most cases you wouldn't want to use CloudFront's distribution domain to acces
 
 You can use any domain name but you must be using AWS Route53 for your DNS hosting. To migrate DNS records from an existing domain follow the instructions
 [here](https://docs.aws.amazon.com/Route53/latest/DeveloperGuide/MigratingDNS.html). The requirements to use a custom domain name:
- * Route53 must include a _hosted zone_ for your domain (e.g. `mydomain.com`) with a set of nameservers.
- * You must update the nameservers listed with your domain name registrar (e.g. namecheap, godaddy, etc.) with those provided for your new _hosted zone_.
+
+- Route53 must include a _hosted zone_ for your domain (e.g. `mydomain.com`) with a set of nameservers.
+- You must update the nameservers listed with your domain name registrar (e.g. namecheap, godaddy, etc.) with those provided for your new _hosted zone_.
 
 The serverless next.js component will automatically generate an SSL certificate and create a new record to point to your CloudFront distribution.
 
@@ -122,6 +124,28 @@ myNextApplication:
   inputs:
     domain: ["sub", "example.com"] # [ sub-domain, domain ]
 ```
+
+### Custom CloudFront configuration
+
+To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    cloudfront:
+      my-page/*:
+        ttl: 0
+        forward:
+          cookies: "all"
+          queryString: false
+      my-other-page:
+        viewerProtocolPolicy: redirect-to-https
+```
+
+This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](/https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
 
 ### AWS Permissions
 
@@ -229,6 +253,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | build.cwd     | `string`          | `./`                     | Override the current working directory                                                                                                                                                                                                                               |
 | build.enabled | `boolean`         | `true`                   | Same as passing `build:false` but from within the config                                                                                                                                                                                                             |
 | build.env     | `object`          | `{}`                     | Add additional environment variables to the script                                                                                                                                                                                                                   |
+| cloudfront    | `object`          | `{}`                     | Inputs to be passed to [aws-cloudfront](https://github.com/serverless-components/aws-cloudfront)                                                                                                                                                                     |
 
 Custom inputs can be configured like this:
 

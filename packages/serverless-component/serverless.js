@@ -23,6 +23,85 @@ class NextjsComponent extends Component {
     );
   }
 
+  validatePathPatterns(pathPatterns, buildManifest) {
+    let stillToMatch = new Set(pathPatterns);
+    if (stillToMatch.size !== pathPatterns.length) {
+      throw Error("Duplicate path declared in cloudfront configuration");
+    }
+
+    // there wont be a page path for this so we can remove it
+    stillToMatch.delete("api/*");
+    // check for other api like paths
+    for (const path of stillToMatch) {
+      if (/^(\/?api\/.*|\/?api)$/.test(path)) {
+        throw Error(
+          `Setting custom cache behaviour for api/ route "${path}" is not supported`
+        );
+      }
+    }
+
+    // theres a lot of n^2 code running below but n is small and it only runs once so we can
+    // accept it
+
+    // setup containers for the paths we're going to be matching against
+
+    // for dynamic routes
+    let manifestRegex = [];
+    // for static routes
+    let manifestPaths = new Set();
+
+    // extract paths to validate against from build manifest
+    const ssrDynamic = buildManifest.pages.ssr.dynamic || {};
+    const ssrNonDynamic = buildManifest.pages.ssr.nonDynamic || {};
+    const htmlDynamic = buildManifest.pages.html.dynamic || {};
+    const htmlNonDynamic = buildManifest.pages.html.nonDynamic || {};
+
+    // dynamic paths to check. We use their regex to match against our input yaml
+    Object.entries({
+      ...ssrDynamic,
+      ...htmlDynamic
+    }).map(([, { regex }]) => {
+      manifestRegex.push(new RegExp(regex));
+    });
+
+    // static paths to check
+    Object.entries({
+      ...ssrNonDynamic,
+      ...htmlNonDynamic
+    }).map(([path]) => {
+      manifestPaths.add(path);
+    });
+
+    // first we check if the path patterns match any of the dynamic page regex.
+    // paths with stars (*) shouldnt cause any issues because the regex will treat these
+    // as characters.
+    manifestRegex.forEach(re => {
+      for (const path of stillToMatch) {
+        if (re.test(path)) {
+          stillToMatch.delete(path);
+        }
+      }
+    });
+
+    // now we check the remaining unmatched paths against the non dynamic paths
+    // and use the path as regex so that we are testing *
+    for (const pathToMatch of stillToMatch) {
+      for (const path of manifestPaths) {
+        if (new RegExp(pathToMatch).test(path)) {
+          stillToMatch.delete(pathToMatch);
+        }
+      }
+    }
+
+    if (stillToMatch.size > 0) {
+      throw Error(
+        `CloudFront input failed validation. Could not find next.js pages for "${[
+          ...stillToMatch
+        ]}"`
+      );
+    }
+  }
+
   async readApiBuildManifest(nextConfigPath) {
     const path = join(
       nextConfigPath,
@@ -74,6 +153,8 @@ class NextjsComponent extends Component {
     const nextStaticPath = inputs.nextStaticDir
       ? path.resolve(inputs.nextStaticDir)
       : nextConfigPath;
+
+    const customCloudFrontConfig = inputs.cloudfront || {};
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -129,12 +210,13 @@ class NextjsComponent extends Component {
         };
       }
     };
-    //
-    // Parse origins from inputs
-    const inputOrigins = (
-      (inputs.cloudfront && inputs.cloudfront.origins) ||
-      []
-    ).map(expandRelativeUrls);
+
+    // parse origins from inputs
+    let inputOrigins = [];
+    if (inputs.cloudfront && inputs.cloudfront.origins) {
+      inputOrigins = inputs.cloudfront.origins.map(expandRelativeUrls);
+      delete inputs.cloudfront.origins;
+    }
 
     const cloudFrontOrigins = [
       {
@@ -199,8 +281,7 @@ class NextjsComponent extends Component {
       apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
 
       apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
-      const apiCloudfrontInputs =
-        (inputs.cloudfront && inputs.cloudfront.api) || {};
+
       cloudFrontOrigins[0].pathPatterns["api/*"] = {
         ttl: 0,
         allowedHttpMethods: [
@@ -212,7 +293,6 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
-        ...apiCloudfrontInputs,
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
           "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
@@ -246,20 +326,59 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
-    const defaultCloudfrontInputs =
-      (inputs.cloudfront && inputs.cloudfront.defaults) || {};
+    let defaultCloudfrontInputs;
+    if (inputs.cloudfront && inputs.cloudfront.defaults) {
+      defaultCloudfrontInputs = inputs.cloudfront.defaults;
+      delete inputs.cloudfront.defaults;
+    } else {
+      defaultCloudfrontInputs = {};
+    }
+
+    // validate that the custom config paths match generated paths in the manifest
+    this.validatePathPatterns(
+      Object.keys(customCloudFrontConfig),
+      defaultBuildManifest
+    );
+
+    // add any custom cloudfront configuration
+    // this includes overrides for _next, static and api
+    Object.entries(customCloudFrontConfig).map(([path, config]) => {
+      cloudFrontOrigins[0].pathPatterns[path] = {
+        // spread the existing value if there is one
+        ...cloudFrontOrigins[0].pathPatterns[path],
+        // spread custom config
+        ...config,
+        "lambda@edge": {
+          ...(config["lambda@edge"] || {}),
+          "origin-request":
+            // dont set if the path is static or _next
+            // spread the supplied overrides
+            !["static/*", "_next/*"].includes(path) &&
+            `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+        }
+      };
+    });
+
+    // make sure that origin-response is not set.
+    // this is reserved for serverless-next.js usage
+    let defaultLambdaAtEdgeConfig = {
+      ...(defaultCloudfrontInputs["lambda@edge"] || {})
+    };
+    delete defaultLambdaAtEdgeConfig["origin-response"];
+
     const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 0,
-        allowedHttpMethods: ["HEAD", "GET"],
-        ...defaultCloudfrontInputs,
         forward: {
           cookies: "all",
           queryString: true,
           ...defaultCloudfrontInputs.forward
         },
-        // lambda@edge key is last and therefore cannot be overridden
+        ...defaultCloudfrontInputs,
+        // everything after here cant be overriden
+        allowedHttpMethods: ["HEAD", "GET"],
         "lambda@edge": {
+          ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
       },
@@ -268,7 +387,7 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
-    // Create domain
+    // create domain
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain) {
       const domainComponent = await this.load("@serverless/domain");

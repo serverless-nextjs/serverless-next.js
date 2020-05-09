@@ -11,6 +11,7 @@ const {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR
 } = require("../constants");
+const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
 const createNextComponent = inputs => {
   const component = new NextjsComponent(inputs);
@@ -23,49 +24,63 @@ const createNextComponent = inputs => {
   return component;
 };
 
+const mockServerlessComponentDependencies = ({ expectedDomain }) => {
+  mockS3.mockResolvedValue({
+    name: "bucket-xyz"
+  });
+
+  mockLambda.mockResolvedValue({
+    arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+  });
+
+  mockLambdaPublish.mockResolvedValue({
+    version: "v1"
+  });
+
+  mockCloudFront.mockResolvedValueOnce({
+    url: "https://cloudfrontdistrib.amazonaws.com"
+  });
+
+  mockDomain.mockResolvedValueOnce({
+    domains: [expectedDomain]
+  });
+};
+
 describe("Custom inputs", () => {
-  let tmpCwd;
   let componentOutputs;
   let consoleWarnSpy;
 
   beforeEach(() => {
+    // mock out remove to prevent fixture files from being wiped out
     jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
+
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
   });
 
   afterEach(() => {
+    fse.remove.mockRestore();
     consoleWarnSpy.mockRestore();
   });
 
-  describe.each([
-    [["dev", "example.com"], "https://dev.example.com"],
-    [["www", "example.com"], "https://www.example.com"],
-    [[undefined, "example.com"], "https://www.example.com"],
-    [["example.com"], "https://www.example.com"],
-    ["example.com", "https://www.example.com"]
-  ])("Custom domain", (inputDomains, expectedDomain, memory) => {
+  describe.each`
+    inputDomains                  | expectedDomain
+    ${["dev", "example.com"]}     | ${"https://dev.example.com"}
+    ${["www", "example.com"]}     | ${"https://www.example.com"}
+    ${"example.com"}              | ${"https://www.example.com"}
+    ${[undefined, "example.com"]} | ${"https://www.example.com"}
+    ${"example.com"}              | ${"https://www.example.com"}
+  `("Custom domain", ({ inputDomains, expectedDomain }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockS3.mockResolvedValue({
-        name: "bucket-xyz"
-      });
-      mockLambda.mockResolvedValue({
-        arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
-      });
-      mockLambdaPublish.mockResolvedValue({
-        version: "v1"
-      });
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
-      mockDomain.mockResolvedValueOnce({
-        domains: [expectedDomain]
+      mockServerlessComponentDependencies({
+        expectedDomain
       });
 
       const component = createNextComponent();
@@ -80,9 +95,10 @@ describe("Custom inputs", () => {
 
     afterEach(() => {
       process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
     });
 
-    it("uses @serverless/domain to provision custom domain", async () => {
+    it("uses @serverless/domain to provision custom domain", () => {
       const { domain, subdomain } = obtainDomains(inputDomains);
 
       expect(mockDomain).toBeCalledWith({
@@ -109,29 +125,24 @@ describe("Custom inputs", () => {
       );
     });
 
-    it("outputs custom domain url", async () => {
+    it("outputs custom domain url", () => {
       expect(componentOutputs.appUrl).toEqual(expectedDomain);
     });
   });
 
   describe.each`
     nextConfigDir      | nextStaticDir      | fixturePath
-    ${undefined}       | ${undefined}       | ${path.join(__dirname, "./fixtures/simple-app")}
-    ${"simple-app"}    | ${undefined}       | ${path.join(__dirname, "./fixtures")}
     ${"nextConfigDir"} | ${"nextStaticDir"} | ${path.join(__dirname, "./fixtures/split-app")}
   `(
     "nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
     ({ fixturePath, ...inputs }) => {
+      let tmpCwd;
+
       beforeEach(async () => {
+        tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
-        mockS3.mockResolvedValue({
-          name: "bucket-xyz"
-        });
-
-        mockCloudFront.mockResolvedValueOnce({
-          url: "https://cloudfrontdistrib.amazonaws.com"
-        });
+        mockServerlessComponentDependencies({});
 
         const component = createNextComponent();
 
@@ -139,6 +150,11 @@ describe("Custom inputs", () => {
           nextConfigDir: inputs.nextConfigDir,
           nextStaticDir: inputs.nextStaticDir
         });
+      });
+
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
       });
 
       it("uploads static assets to S3 correctly", () => {
@@ -176,22 +192,25 @@ describe("Custom inputs", () => {
   `(
     "input=inputPublicDirectoryCache, expected=$expectedPublicDirectoryCache",
     ({ publicDirectoryCache, expected }) => {
+      let tmpCwd;
+      let fixturePath = path.join(__dirname, "./fixtures/simple-app");
+
       beforeEach(async () => {
-        process.chdir(path.join(__dirname, "./fixtures/simple-app"));
+        tmpCwd = process.cwd();
+        process.chdir(fixturePath);
 
-        mockS3.mockResolvedValue({
-          name: "bucket-xyz"
-        });
-
-        mockCloudFront.mockResolvedValueOnce({
-          url: "https://cloudfrontdistrib.amazonaws.com"
-        });
+        mockServerlessComponentDependencies({});
 
         const component = createNextComponent();
 
         componentOutputs = await component.default({
           publicDirectoryCache
         });
+      });
+
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
       });
 
       it(`sets the ${expected} Cache-Control header on ${publicDirectoryCache}`, () => {
@@ -217,13 +236,13 @@ describe("Custom inputs", () => {
     ]
   ])("Lambda memory input", (inputMemory, expectedMemory) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
 
     beforeEach(async () => {
+      tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent({
         memory: inputMemory
@@ -233,10 +252,16 @@ describe("Custom inputs", () => {
         memory: inputMemory
       });
     });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
     it(`sets default lambda memory to ${expectedMemory.defaultMemory} and api lambda memory to ${expectedMemory.apiMemory}`, () => {
       const { defaultMemory, apiMemory } = expectedMemory;
 
-      // Default Lambda
+      // default Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -244,7 +269,7 @@ describe("Custom inputs", () => {
         })
       );
 
-      // Api Lambda
+      // api Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
@@ -254,17 +279,15 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [undefined, { defaultTimeout: 10, apiTimeout: 10 }],
-    [{}, { defaultTimeout: 10, apiTimeout: 10 }],
-    [40, { defaultTimeout: 40, apiTimeout: 40 }],
-    [{ defaultLambda: 20 }, { defaultTimeout: 20, apiTimeout: 10 }],
-    [{ apiLambda: 20 }, { defaultTimeout: 10, apiTimeout: 20 }],
-    [
-      { defaultLambda: 15, apiLambda: 20 },
-      { defaultTimeout: 15, apiTimeout: 20 }
-    ]
-  ])("Lambda timeout input", (inputTimeout, expectedTimeout) => {
+  describe.each`
+    inputTimeout                            | expectedTimeout
+    ${undefined}                            | ${{ defaultTimeout: 10, apiTimeout: 10 }}
+    ${{}}                                   | ${{ defaultTimeout: 10, apiTimeout: 10 }}
+    ${40}                                   | ${{ defaultTimeout: 40, apiTimeout: 40 }}
+    ${{ defaultLambda: 20 }}                | ${{ defaultTimeout: 20, apiTimeout: 10 }}
+    ${{ apiLambda: 20 }}                    | ${{ defaultTimeout: 10, apiTimeout: 20 }}
+    ${{ defaultLambda: 15, apiLambda: 20 }} | ${{ defaultTimeout: 15, apiTimeout: 20 }}
+  `("Input timeout options", ({ inputTimeout, expectedTimeout }) => {
     let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
@@ -272,9 +295,7 @@ describe("Custom inputs", () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent();
 
@@ -285,12 +306,12 @@ describe("Custom inputs", () => {
 
     afterEach(() => {
       process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
     });
 
     it(`sets default lambda timeout to ${expectedTimeout.defaultTimeout} and api lambda timeout to ${expectedTimeout.apiTimeout}`, () => {
       const { defaultTimeout, apiTimeout } = expectedTimeout;
 
-      // Default Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -298,7 +319,6 @@ describe("Custom inputs", () => {
         })
       );
 
-      // Api Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
@@ -308,31 +328,23 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [undefined, { defaultName: undefined, apiName: undefined }],
-    [{}, { defaultName: undefined, apiName: undefined }],
-    ["fooFunction", { defaultName: "fooFunction", apiName: "fooFunction" }],
-    [
-      { defaultLambda: "fooFunction" },
-      { defaultName: "fooFunction", apiName: undefined }
-    ],
-    [
-      { apiLambda: "fooFunction" },
-      { defaultName: undefined, apiName: "fooFunction" }
-    ],
-    [
-      { defaultLambda: "fooFunction", apiLambda: "barFunction" },
-      { defaultName: "fooFunction", apiName: "barFunction" }
-    ]
-  ])("Lambda name input", (inputName, expectedName) => {
+  describe.each`
+    inputName                                                     | expectedName
+    ${undefined}                                                  | ${{ defaultName: undefined, apiName: undefined }}
+    ${{}}                                                         | ${{ defaultName: undefined, apiName: undefined }}
+    ${"fooFunction"}                                              | ${{ defaultName: "fooFunction", apiName: "fooFunction" }}
+    ${{ defaultLambda: "fooFunction" }}                           | ${{ defaultName: "fooFunction", apiName: undefined }}
+    ${{ apiLambda: "fooFunction" }}                               | ${{ defaultName: undefined, apiName: "fooFunction" }}
+    ${{ defaultLambda: "fooFunction", apiLambda: "barFunction" }} | ${{ defaultName: "fooFunction", apiName: "barFunction" }}
+  `("Lambda name input", ({ inputName, expectedName }) => {
+    let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
+      tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent();
 
@@ -340,10 +352,15 @@ describe("Custom inputs", () => {
         name: inputName
       });
     });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
     it(`sets default lambda name to ${expectedName.defaultName} and api lambda name to ${expectedName.apiName}`, () => {
       const { defaultName, apiName } = expectedName;
 
-      // Default Lambda
       const expectedDefaultObject = {
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR)
       };
@@ -353,7 +370,6 @@ describe("Custom inputs", () => {
         expect.objectContaining(expectedDefaultObject)
       );
 
-      // Api Lambda
       const expectedApiObject = {
         code: path.join(fixturePath, API_LAMBDA_CODE_DIR)
       };
@@ -366,20 +382,70 @@ describe("Custom inputs", () => {
   });
 
   describe.each([
-    [undefined, {}], // no input
-    [{}, {}], // empty input
+    // no input
+    [undefined, {}],
+    // empty input
+    [{}, {}],
+    // ignores origin-request and origin-response triggers as they're reserved by serverless-next.js
     [
-      { defaults: { ttl: 500, "lambda@edge": "ignored value" } },
-      { defaults: { ttl: 500 } } // expecting lambda@edge value to be ignored
+      {
+        defaults: {
+          ttl: 500,
+          "lambda@edge": {
+            "origin-request": "ignored",
+            "origin-response": "also ignored"
+          }
+        }
+      },
+      { defaults: { ttl: 500 } }
+    ],
+    // allow lamdba@edge triggers other than origin-request and origin-response
+    [
+      {
+        defaults: {
+          ttl: 500,
+          "lambda@edge": {
+            "viewer-request": "used value"
+          }
+        }
+      },
+      {
+        defaults: {
+          ttl: 500,
+          "lambda@edge": { "viewer-request": "used value" }
+        }
+      }
     ],
     [
       { defaults: { forward: { headers: "X" } } },
       { defaults: { forward: { headers: "X" } } }
     ],
+    // ignore custom lambda@edge origin-request trigger set on the api cache behaviour
     [
-      { api: { ttl: 500, "lambda@edge": "ignored value" } },
-      { api: { ttl: 500 } } // expecting lambda@edge value to be ignored
+      {
+        "api/*": {
+          ttl: 500,
+          "lambda@edge": { "origin-request": "ignored value" }
+        }
+      },
+      { "api/*": { ttl: 500 } }
     ],
+    // allow other lambda@edge triggers on the api cache behaviour
+    [
+      {
+        "api/*": {
+          ttl: 500,
+          "lambda@edge": { "origin-response": "used value" }
+        }
+      },
+      {
+        "api/*": {
+          ttl: 500,
+          "lambda@edge": { "origin-response": "used value" }
+        }
+      }
+    ],
+    // custom origins and expanding relative URLs to full S3 origin
     [
       {
         origins: [
@@ -397,63 +463,121 @@ describe("Custom inputs", () => {
           { url: "http://bucket-xyz.s3.amazonaws.com/diff-relative" }
         ]
       }
+    ],
+    // custom page cache behaviours
+    [
+      {
+        "/terms": {
+          ttl: 5500,
+          "misc-param": "misc-value",
+          "lambda@edge": {
+            "origin-request": "ignored value"
+          }
+        }
+      },
+      {
+        "/terms": {
+          ttl: 5500,
+          "misc-param": "misc-value"
+        }
+      }
+    ],
+    [
+      {
+        "/customers/stan-sack": {
+          ttl: 5500
+        }
+      },
+      {
+        "/customers/stan-sack": {
+          ttl: 5500
+        }
+      }
     ]
   ])("Custom cloudfront inputs", (inputCloudfrontConfig, expectedInConfig) => {
+    let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-    const defaultCloudfrontInputs = expectedInConfig.defaults || {};
-    const apiCloudfrontInputs = expectedInConfig.api || {};
-    const originCloudfrontInputs = expectedInConfig.origins || [];
+    const { origins = [], defaults = {}, ...other } = expectedInConfig;
+
+    const expectedDefaultCacheBehaviour = {
+      ...defaults,
+      "lambda@edge": {
+        "origin-request":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+        ...defaults["lambda@edge"]
+      }
+    };
+
+    const expectedApiCacheBehaviour = {
+      ...expectedInConfig["api/*"],
+      allowedHttpMethods: [
+        "HEAD",
+        "DELETE",
+        "POST",
+        "GET",
+        "OPTIONS",
+        "PUT",
+        "PATCH"
+      ],
+      "lambda@edge": {
+        "origin-request":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+        ...(expectedInConfig["api/*"] &&
+          expectedInConfig["api/*"]["lambda@edge"])
+      }
+    };
+
+    let customPageCacheBehaviours = {};
+    Object.entries(other).forEach(([path, cacheBehaviour]) => {
+      customPageCacheBehaviours[path] = {
+        ...cacheBehaviour,
+        "lambda@edge": {
+          "origin-request":
+            "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+          ...(cacheBehaviour && cacheBehaviour["lambda@edge"])
+        }
+      };
+    });
+
     const cloudfrontConfig = {
       defaults: {
         ttl: 0,
         allowedHttpMethods: ["HEAD", "GET"],
-        ...defaultCloudfrontInputs,
         forward: {
           cookies: "all",
-          queryString: true,
-          ...defaultCloudfrontInputs.forward
+          queryString: true
         },
-        "lambda@edge": {
-          "origin-request":
-            "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
-        }
+        ...expectedDefaultCacheBehaviour
       },
       origins: [
         {
           pathPatterns: {
-            "_next/*": { ttl: 86400 },
-            "api/*": {
-              allowedHttpMethods: [
-                "HEAD",
-                "DELETE",
-                "POST",
-                "GET",
-                "OPTIONS",
-                "PUT",
-                "PATCH"
-              ],
-              ttl: 0,
-              "lambda@edge": {
-                "origin-request":
-                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
-              },
-              ...apiCloudfrontInputs
+            ...customPageCacheBehaviours,
+            "_next/*": {
+              ...customPageCacheBehaviours["_next/*"],
+              ttl: 86400
             },
-            "static/*": { ttl: 86400 }
+            "api/*": {
+              ttl: 0,
+              ...expectedApiCacheBehaviour
+            },
+            "static/*": {
+              ...customPageCacheBehaviours["static/*"],
+              ttl: 86400
+            }
           },
           private: true,
           url: "http://bucket-xyz.s3.amazonaws.com"
         },
-        ...originCloudfrontInputs
+        ...origins
       ]
     };
 
     beforeEach(async () => {
+      tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent();
 
@@ -462,10 +586,53 @@ describe("Custom inputs", () => {
       });
     });
 
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
     it("Sets cloudfront options if present", () => {
       expect(mockCloudFront).toBeCalledWith(
         expect.objectContaining(cloudfrontConfig)
       );
     });
   });
+
+  describe.each`
+    cloudFrontInput                                | expectedErrorMessage
+    ${{ "some-invalid-page-route": { ttl: 100 } }} | ${'Could not find next.js pages for "some-invalid-page-route"'}
+    ${{ "/api": { ttl: 100 } }}                    | ${'route "/api" is not supported'}
+    ${{ api: { ttl: 100 } }}                       | ${'route "api" is not supported'}
+    ${{ "api/test": { ttl: 100 } }}                | ${'route "api/test" is not supported'}
+  `(
+    "Invalid cloudfront inputs",
+    ({ cloudFrontInput, expectedErrorMessage }) => {
+      const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+      let tmpCwd;
+
+      beforeEach(async () => {
+        tmpCwd = process.cwd();
+        process.chdir(fixturePath);
+
+        mockServerlessComponentDependencies({});
+      });
+
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
+      });
+
+      it("throws the correct error", async () => {
+        expect.assertions(1);
+
+        try {
+          await createNextComponent().default({
+            cloudfront: cloudFrontInput
+          });
+        } catch (err) {
+          expect(err.message).toContain(expectedErrorMessage);
+        }
+      });
+    }
+  );
 });
