@@ -539,36 +539,13 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe.each([
-    [
-      {
-        "some-invalid-page-route": { ttl: 100 }
-      },
-      Error(
-        "Custom CloudFront input failed validation. Failed to find Next.js paths for some-invalid-page-route"
-      )
-    ],
-    [
-      {
-        "/api": { ttl: 100 }
-      },
-      Error(
-        "No custom CloudFront configuration is permitted for path /api. It violates api/* behaivour"
-      )
-    ],
-    [
-      { api: { ttl: 100 } },
-      Error(
-        "No custom CloudFront configuration is permitted for path api. It violates api/* behaivour"
-      )
-    ],
-    [
-      { "api/test": { ttl: 100 } },
-      Error(
-        "No custom CloudFront configuration is permitted for path api/test. It violates api/* behaivour"
-      )
-    ]
-  ])("Invalid cloudfront inputs", (inputCloudfrontConfig, expectedError) => {
+  describe.each`
+    cloudFrontInput                                | expectedErrorMessage
+    ${{ "some-invalid-page-route": { ttl: 100 } }} | ${"Custom CloudFront input failed validation. Failed to find Next.js paths for some-invalid-page-route"}
+    ${{ "/api": { ttl: 100 } }}                    | ${"No custom CloudFront configuration is permitted for path /api. It violates api/* behaivour"}
+    ${{ api: { ttl: 100 } }}                       | ${"No custom CloudFront configuration is permitted for path api. It violates api/* behaivour"}
+    ${{ "api/test": { ttl: 100 } }}                | ${"No custom CloudFront configuration is permitted for path api/test. It violates api/* behaivour"}
+  `("Invalid cloudfront inputs", (inputCloudfrontConfig, expectedError) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
