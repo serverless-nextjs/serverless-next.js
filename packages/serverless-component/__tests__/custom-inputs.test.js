@@ -23,6 +23,28 @@ const createNextComponent = inputs => {
   return component;
 };
 
+const mockServerlessComponentDependencies = ({ expectedDomain }) => {
+  mockS3.mockResolvedValue({
+    name: "bucket-xyz"
+  });
+
+  mockLambda.mockResolvedValue({
+    arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+  });
+
+  mockLambdaPublish.mockResolvedValue({
+    version: "v1"
+  });
+
+  mockCloudFront.mockResolvedValueOnce({
+    url: "https://cloudfrontdistrib.amazonaws.com"
+  });
+
+  mockDomain.mockResolvedValueOnce({
+    domains: [expectedDomain]
+  });
+};
+
 describe("Custom inputs", () => {
   let tmpCwd;
   let componentOutputs;
@@ -60,24 +82,8 @@ describe("Custom inputs", () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockS3.mockResolvedValue({
-        name: "bucket-xyz"
-      });
-
-      mockLambda.mockResolvedValue({
-        arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
-      });
-
-      mockLambdaPublish.mockResolvedValue({
-        version: "v1"
-      });
-
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
-
-      mockDomain.mockResolvedValueOnce({
-        domains: [expectedDomain]
+      mockServerlessComponentDependencies({
+        expectedDomain
       });
 
       const component = createNextComponent();
@@ -135,20 +141,8 @@ describe("Custom inputs", () => {
       beforeEach(async () => {
         process.chdir(fixturePath);
 
-        mockS3.mockResolvedValue({
-          name: "bucket-xyz"
-        });
+        mockServerlessComponentDependencies({});
 
-        mockCloudFront.mockResolvedValueOnce({
-          url: "https://cloudfrontdistrib.amazonaws.com"
-        });
-
-        mockLambda.mockResolvedValue({
-          arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
-        });
-        mockLambdaPublish.mockResolvedValue({
-          version: "v1"
-        });
         const component = createNextComponent();
 
         componentOutputs = await component.default({
@@ -199,9 +193,7 @@ describe("Custom inputs", () => {
     beforeEach(async () => {
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent({
         memory: inputMemory
@@ -211,10 +203,11 @@ describe("Custom inputs", () => {
         memory: inputMemory
       });
     });
+
     it(`sets default lambda memory to ${expectedMemory.defaultMemory} and api lambda memory to ${expectedMemory.apiMemory}`, () => {
       const { defaultMemory, apiMemory } = expectedMemory;
 
-      // Default Lambda
+      // default Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -222,7 +215,7 @@ describe("Custom inputs", () => {
         })
       );
 
-      // Api Lambda
+      // api Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
@@ -248,9 +241,7 @@ describe("Custom inputs", () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent();
 
@@ -266,7 +257,6 @@ describe("Custom inputs", () => {
     it(`sets default lambda timeout to ${expectedTimeout.defaultTimeout} and api lambda timeout to ${expectedTimeout.apiTimeout}`, () => {
       const { defaultTimeout, apiTimeout } = expectedTimeout;
 
-      // Default Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -274,7 +264,6 @@ describe("Custom inputs", () => {
         })
       );
 
-      // Api Lambda
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
@@ -298,9 +287,7 @@ describe("Custom inputs", () => {
     beforeEach(async () => {
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent();
 
@@ -311,7 +298,6 @@ describe("Custom inputs", () => {
     it(`sets default lambda name to ${expectedName.defaultName} and api lambda name to ${expectedName.apiName}`, () => {
       const { defaultName, apiName } = expectedName;
 
-      // Default Lambda
       const expectedDefaultObject = {
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR)
       };
@@ -321,7 +307,6 @@ describe("Custom inputs", () => {
         expect.objectContaining(expectedDefaultObject)
       );
 
-      // Api Lambda
       const expectedApiObject = {
         code: path.join(fixturePath, API_LAMBDA_CODE_DIR)
       };
@@ -527,9 +512,7 @@ describe("Custom inputs", () => {
     beforeEach(async () => {
       process.chdir(fixturePath);
 
-      mockCloudFront.mockResolvedValueOnce({
-        url: "https://cloudfrontdistrib.amazonaws.com"
-      });
+      mockServerlessComponentDependencies({});
 
       const component = createNextComponent();
 
@@ -555,9 +538,17 @@ describe("Custom inputs", () => {
     "Invalid cloudfront inputs",
     ({ cloudFrontInput, expectedErrorMessage }) => {
       const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+      let tmpCwd;
 
       beforeEach(async () => {
+        tmpCwd = process.cwd();
         process.chdir(fixturePath);
+
+        mockServerlessComponentDependencies({});
+      });
+
+      afterEach(() => {
+        process.chdir(tmpCwd);
       });
 
       it("throws the correct error", async () => {
