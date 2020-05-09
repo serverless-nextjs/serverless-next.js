@@ -11,6 +11,7 @@ const {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR
 } = require("../constants");
+const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
 const createNextComponent = inputs => {
   const component = new NextjsComponent(inputs);
@@ -46,7 +47,6 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
 };
 
 describe("Custom inputs", () => {
-  let tmpCwd;
   let componentOutputs;
   let consoleWarnSpy;
 
@@ -55,16 +55,12 @@ describe("Custom inputs", () => {
     jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });
-    jest.spyOn(fse, "emptyDir").mockImplementation(() => {
-      return;
-    });
 
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
   });
 
   afterEach(() => {
     fse.remove.mockRestore();
-    fse.emptyDir.mockRestore();
     consoleWarnSpy.mockRestore();
   });
 
@@ -77,6 +73,7 @@ describe("Custom inputs", () => {
     ${"example.com"}              | ${"https://www.example.com"}
   `("Custom domain", ({ inputDomains, expectedDomain }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
@@ -98,9 +95,10 @@ describe("Custom inputs", () => {
 
     afterEach(() => {
       process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
     });
 
-    it("uses @serverless/domain to provision custom domain", async () => {
+    it("uses @serverless/domain to provision custom domain", () => {
       const { domain, subdomain } = obtainDomains(inputDomains);
 
       expect(mockDomain).toBeCalledWith({
@@ -127,7 +125,7 @@ describe("Custom inputs", () => {
       );
     });
 
-    it("outputs custom domain url", async () => {
+    it("outputs custom domain url", () => {
       expect(componentOutputs.appUrl).toEqual(expectedDomain);
     });
   });
@@ -138,7 +136,10 @@ describe("Custom inputs", () => {
   `(
     "nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
     ({ fixturePath, ...inputs }) => {
+      let tmpCwd;
+
       beforeEach(async () => {
+        tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
         mockServerlessComponentDependencies({});
@@ -149,6 +150,11 @@ describe("Custom inputs", () => {
           nextConfigDir: inputs.nextConfigDir,
           nextStaticDir: inputs.nextStaticDir
         });
+      });
+
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
       });
 
       it("uploads static assets to S3 correctly", () => {
@@ -188,9 +194,11 @@ describe("Custom inputs", () => {
     ${{ defaultLambda: 128, apiLambda: 2048 }} | ${{ defaultMemory: 128, apiMemory: 2048 }}
     ${{ defaultLambda: 1024 }}                 | ${{ defaultMemory: 1024, apiMemory: 512 }}
   `("Lambda memory input", ({ inputMemory, expectedMemory }) => {
+    let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
+      tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
       mockServerlessComponentDependencies({});
@@ -202,6 +210,11 @@ describe("Custom inputs", () => {
       componentOutputs = await component.default({
         memory: inputMemory
       });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
     });
 
     it(`sets default lambda memory to ${expectedMemory.defaultMemory} and api lambda memory to ${expectedMemory.apiMemory}`, () => {
@@ -252,6 +265,7 @@ describe("Custom inputs", () => {
 
     afterEach(() => {
       process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
     });
 
     it(`sets default lambda timeout to ${expectedTimeout.defaultTimeout} and api lambda timeout to ${expectedTimeout.apiTimeout}`, () => {
@@ -282,9 +296,11 @@ describe("Custom inputs", () => {
     ${{ apiLambda: "fooFunction" }}                               | ${{ defaultName: undefined, apiName: "fooFunction" }}
     ${{ defaultLambda: "fooFunction", apiLambda: "barFunction" }} | ${{ defaultName: "fooFunction", apiName: "barFunction" }}
   `("Lambda name input", ({ inputName, expectedName }) => {
+    let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
+      tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
       mockServerlessComponentDependencies({});
@@ -295,6 +311,12 @@ describe("Custom inputs", () => {
         name: inputName
       });
     });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
     it(`sets default lambda name to ${expectedName.defaultName} and api lambda name to ${expectedName.apiName}`, () => {
       const { defaultName, apiName } = expectedName;
 
@@ -432,6 +454,7 @@ describe("Custom inputs", () => {
       }
     ]
   ])("Custom cloudfront inputs", (inputCloudfrontConfig, expectedInConfig) => {
+    let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
     const { origins = [], defaults = {}, ...other } = expectedInConfig;
 
@@ -510,6 +533,7 @@ describe("Custom inputs", () => {
     };
 
     beforeEach(async () => {
+      tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
       mockServerlessComponentDependencies({});
@@ -519,6 +543,11 @@ describe("Custom inputs", () => {
       componentOutputs = await component.default({
         cloudfront: inputCloudfrontConfig
       });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
     });
 
     it("Sets cloudfront options if present", () => {
@@ -549,6 +578,7 @@ describe("Custom inputs", () => {
 
       afterEach(() => {
         process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
       });
 
       it("throws the correct error", async () => {
