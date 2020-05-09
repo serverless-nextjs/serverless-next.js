@@ -35,7 +35,8 @@
     "aws-sdk": "^2.664.0",
     "fs-extra": "^9.0.0",
     "klaw": "^3.0.0",
-    "mime-types": "^2.1.27"
+    "mime-types": "^2.1.27",
+    "regex-parser": "^2.2.10"
   },
   "devDependencies": {
     "@types/fs-extra": "^8.1.0",

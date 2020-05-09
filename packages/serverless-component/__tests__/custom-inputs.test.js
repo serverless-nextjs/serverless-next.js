@@ -185,17 +185,58 @@ describe("Custom inputs", () => {
   );
 
   describe.each`
-    inputMemory                                | expectedMemory
-    ${undefined}                               | ${{ defaultMemory: 512, apiMemory: 512 }}
-    ${1024}                                    | ${{ defaultMemory: 1024, apiMemory: 1024 }}
-    ${{ defaultLambda: 1024 }}                 | ${{ defaultMemory: 1024, apiMemory: 512 }}
-    ${{}}                                      | ${{ defaultMemory: 512, apiMemory: 512 }}
-    ${{ apiLambda: 2048 }}                     | ${{ defaultMemory: 512, apiMemory: 2048 }}
-    ${{ defaultLambda: 128, apiLambda: 2048 }} | ${{ defaultMemory: 128, apiMemory: 2048 }}
-    ${{ defaultLambda: 1024 }}                 | ${{ defaultMemory: 1024, apiMemory: 512 }}
-  `("Lambda memory input", ({ inputMemory, expectedMemory }) => {
-    let tmpCwd;
+    publicDirectoryCache                                           | expected
+    ${undefined}                                                   | ${"public, max-age=31536000, must-revalidate"}
+    ${false}                                                       | ${undefined}
+    ${{ test: "/.(ico|png)$/i", value: "public, max-age=306000" }} | ${"public, max-age=306000"}
+  `(
+    "input=inputPublicDirectoryCache, expected=$expectedPublicDirectoryCache",
+    ({ publicDirectoryCache, expected }) => {
+      let tmpCwd;
+      let fixturePath = path.join(__dirname, "./fixtures/simple-app");
+
+      beforeEach(async () => {
+        tmpCwd = process.cwd();
+        process.chdir(fixturePath);
+
+        mockServerlessComponentDependencies({});
+
+        const component = createNextComponent();
+
+        componentOutputs = await component.default({
+          publicDirectoryCache
+        });
+      });
+
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
+      });
+
+      it(`sets the ${expected} Cache-Control header on ${publicDirectoryCache}`, () => {
+        expect(mockUpload).toBeCalledWith(
+          expect.objectContaining({
+            Key: expect.stringMatching("public/favicon.ico"),
+            CacheControl: expected
+          })
+        );
+      });
+    }
+  );
+
+  describe.each([
+    [undefined, { defaultMemory: 512, apiMemory: 512 }],
+    [{}, { defaultMemory: 512, apiMemory: 512 }],
+    [1024, { defaultMemory: 1024, apiMemory: 1024 }],
+    [{ defaultLambda: 1024 }, { defaultMemory: 1024, apiMemory: 512 }],
+    [{ apiLambda: 2048 }, { defaultMemory: 512, apiMemory: 2048 }],
+    [
+      { defaultLambda: 128, apiLambda: 2048 },
+      { defaultMemory: 128, apiMemory: 2048 }
+    ]
+  ])("Lambda memory input", (inputMemory, expectedMemory) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();

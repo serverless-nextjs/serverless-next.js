@@ -182,7 +182,8 @@ class NextjsComponent extends Component {
       bucketName: bucketOutputs.name,
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,
-      credentials: this.context.credentials.aws
+      credentials: this.context.credentials.aws,
+      publicDirectoryCache: inputs.publicDirectoryCache
     });
 
     defaultBuildManifest.cloudFrontOrigins = {
@@ -370,7 +371,8 @@ class NextjsComponent extends Component {
         ttl: 0,
         forward: {
           cookies: "all",
-          queryString: true
+          queryString: true,
+          ...defaultCloudfrontInputs.forward
         },
         ...defaultCloudfrontInputs,
         // everything after here cant be overriden
