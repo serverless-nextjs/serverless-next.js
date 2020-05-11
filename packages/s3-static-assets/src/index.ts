@@ -6,6 +6,7 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
+import { PrerenderManifest } from "next/dist/build/index";
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
@@ -65,11 +66,11 @@ const uploadStaticAssets = async (
       });
     });
 
-  const prerenderManifest = await fse.readJSON(
+  const prerenderManifest: PrerenderManifest = await fse.readJSON(
     path.join(dotNextDirectory, "prerender-manifest.json")
   );
 
-  const dataRouteJsonUploads = Object.keys(prerenderManifest["routes"]).map(
+  const dataRouteJsonUploads = Object.keys(prerenderManifest.routes).map(
     key => {
       const pageFilePath = pathToPosix(
         path.join(
@@ -81,13 +82,13 @@ const uploadStaticAssets = async (
       );
 
       return s3.uploadFile({
-        s3Key: prerenderManifest["routes"][key]["dataRoute"].slice(1),
+        s3Key: prerenderManifest.routes[key].dataRoute.slice(1),
         filePath: pageFilePath
       });
     }
   );
 
-  const dataRouteHtmlUploads = Object.keys(prerenderManifest["routes"]).map(
+  const dataRouteHtmlUploads = Object.keys(prerenderManifest.routes).map(
     key => {
       const pageFilePath = pathToPosix(
         path.join(
@@ -99,7 +100,7 @@ const uploadStaticAssets = async (
       );
 
       return s3.uploadFile({
-        s3Key: prerenderManifest["routes"][key]["dataRoute"]
+        s3Key: prerenderManifest.routes[key].dataRoute
           .slice(1)
           .replace(/\.json$/, ".html"),
         filePath: pageFilePath
