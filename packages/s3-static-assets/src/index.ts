@@ -69,7 +69,8 @@ const uploadStaticAssets = async (
     path.join(dotNextDirectory, "prerender-manifest.json")
   );
 
-  const dataRouteJsonUploads = Object.keys(prerenderManifest["routes"]).map(key => {
+  const dataRouteJsonUploads = Object.keys(prerenderManifest["routes"]).map(
+    key => {
       const pageFilePath = pathToPosix(
         path.join(
           dotNextDirectory,
@@ -86,7 +87,8 @@ const uploadStaticAssets = async (
     }
   );
 
-  const dataRouteHtmlUploads = Object.keys(prerenderManifest["routes"]).map(key => {
+  const dataRouteHtmlUploads = Object.keys(prerenderManifest["routes"]).map(
+    key => {
       const pageFilePath = pathToPosix(
         path.join(
           dotNextDirectory,
