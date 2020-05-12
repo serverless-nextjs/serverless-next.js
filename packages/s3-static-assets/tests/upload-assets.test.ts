@@ -119,7 +119,7 @@ describe.each`
       });
     });
 
-    it("uploads prerendered HTML pages specified in pages manifest", async () => {
+    it("uploads HTML pages specified in pages manifest", async () => {
       await upload(nextConfigDir, nextStaticDir);
 
       expect(mockUpload).toBeCalledWith(
@@ -139,7 +139,7 @@ describe.each`
       );
     });
 
-    it("uploads prerendered JSON files specified in preprender manifest", async () => {
+    it("uploads staticProps JSON files specified in prerender manifest", async () => {
       await upload(nextConfigDir, nextStaticDir);
 
       expect(mockUpload).toBeCalledWith(
@@ -162,6 +162,26 @@ describe.each`
         expect.objectContaining({
           Key: "_next/data/zsWqBqLjpgRmswfQomanp/todos/terms/b.json",
           ContentType: "application/json",
+          CacheControl: undefined
+        })
+      );
+    });
+
+    it("uploads prerendered HTML pages specified in prerender manifest", async () => {
+      await upload(nextConfigDir, nextStaticDir);
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static-pages/todos/terms/a.html",
+          ContentType: "text/html",
+          CacheControl: undefined
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static-pages/todos/terms/b.html",
+          ContentType: "text/html",
           CacheControl: undefined
         })
       );
