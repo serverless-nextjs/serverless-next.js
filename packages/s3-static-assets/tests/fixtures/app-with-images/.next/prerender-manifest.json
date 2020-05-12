@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "routes": {
+    "/todos/terms": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/test-build-id/todos/terms.json"
+    }
+  }
+}
