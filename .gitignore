@@ -13,3 +13,4 @@ sls-next-build
 yarn.lock
 dist
 .vscode
+.env

@@ -7,12 +7,16 @@ import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
 import { PrerenderManifest } from "next/dist/build/index";
+import getPublicAssetCacheControl, {
+  PublicDirectoryCache
+} from "./lib/getPublicAssetCacheControl";
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
   nextConfigDir: string;
   nextStaticDir?: string;
   credentials: Credentials;
+  publicDirectoryCache?: PublicDirectoryCache;
 };
 
 const uploadStaticAssets = async (
@@ -106,7 +110,8 @@ const uploadStaticAssets = async (
   });
 
   const uploadPublicOrStaticDirectory = async (
-    directory: "public" | "static"
+    directory: "public" | "static",
+    publicDirectoryCache?: PublicDirectoryCache
   ): Promise<Promise<AWS.S3.ManagedUpload.SendData>[]> => {
     const directoryPath = path.join(nextStaticDir, directory);
     if (!(await fse.pathExists(directoryPath))) {
@@ -120,13 +125,23 @@ const uploadStaticAssets = async (
         filePath: fileItem.path,
         s3Key: pathToPosix(
           path.relative(path.resolve(nextStaticDir), fileItem.path)
+        ),
+        cacheControl: getPublicAssetCacheControl(
+          fileItem.path,
+          publicDirectoryCache
         )
       })
     );
   };
 
-  const publicDirUploads = await uploadPublicOrStaticDirectory("public");
-  const staticDirUploads = await uploadPublicOrStaticDirectory("static");
+  const publicDirUploads = await uploadPublicOrStaticDirectory(
+    "public",
+    options.publicDirectoryCache
+  );
+  const staticDirUploads = await uploadPublicOrStaticDirectory(
+    "static",
+    options.publicDirectoryCache
+  );
 
   const allUploads = [
     ...buildStaticFileUploads, // .next/static
