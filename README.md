@@ -59,17 +59,13 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Getting started
 
-Install the next.js component:
-
-`npm install serverless-next.js --save-dev`
-
 Add your next application to the serverless.yml:
 
 ```yml
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: serverless-next.js@{version_here} # it is recommended you pin the latest stable version of serverless-next.js
 ```
 
 Set your aws credentials in a `.env` file (or set them as environment variables):
