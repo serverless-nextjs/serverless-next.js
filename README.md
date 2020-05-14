@@ -56,6 +56,8 @@ With a simplified architecture and no use of CloudFormation, there are no limits
       Nextjs build assets `/_next/*` served from CloudFront.
 - [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
+- [ ] [getStaticProps / getStaticPaths / getServerSideProps](https://nextjs.org/blog/next-9-3#next-gen-static-site-generation-ssg-support).
+      Currently in progress. See [this RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
 
 ### Getting started
 
