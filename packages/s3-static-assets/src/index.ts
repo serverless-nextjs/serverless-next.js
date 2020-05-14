@@ -6,6 +6,7 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
+import { PrerenderManifest } from "next/dist/build/index";
 import getPublicAssetCacheControl, {
   PublicDirectoryCache
 } from "./lib/getPublicAssetCacheControl";
@@ -69,6 +70,45 @@ const uploadStaticAssets = async (
       });
     });
 
+  const prerenderManifest: PrerenderManifest = await fse.readJSON(
+    path.join(dotNextDirectory, "prerender-manifest.json")
+  );
+
+  const prerenderManifestJSONPropFileUploads = Object.keys(
+    prerenderManifest.routes
+  ).map(key => {
+    const pageFilePath = pathToPosix(
+      path.join(
+        dotNextDirectory,
+        `serverless/pages/${
+          key.endsWith("/") ? key + "index.json" : key + ".json"
+        }`
+      )
+    );
+
+    return s3.uploadFile({
+      s3Key: prerenderManifest.routes[key].dataRoute.slice(1),
+      filePath: pageFilePath
+    });
+  });
+
+  const prerenderManifestHTMLPageUploads = Object.keys(
+    prerenderManifest.routes
+  ).map(key => {
+    const relativePageFilePath = key.endsWith("/")
+      ? path.posix.join(key, "index.html")
+      : key + ".html";
+
+    const pageFilePath = pathToPosix(
+      path.join(dotNextDirectory, `serverless/pages/${relativePageFilePath}`)
+    );
+
+    return s3.uploadFile({
+      s3Key: path.posix.join("static-pages", relativePageFilePath),
+      filePath: pageFilePath
+    });
+  });
+
   const uploadPublicOrStaticDirectory = async (
     directory: "public" | "static",
     publicDirectoryCache?: PublicDirectoryCache
@@ -106,6 +146,8 @@ const uploadStaticAssets = async (
   const allUploads = [
     ...buildStaticFileUploads, // .next/static
     ...htmlPageUploads, // prerendered HTML pages
+    ...prerenderManifestJSONPropFileUploads, // SSG JSON files
+    ...prerenderManifestHTMLPageUploads, // SSG HTML files
     ...publicDirUploads, // app public dir
     ...staticDirUploads // app static dir
   ];

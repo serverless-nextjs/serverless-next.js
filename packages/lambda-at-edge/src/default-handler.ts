@@ -1,5 +1,8 @@
 // @ts-ignore
+import PrerenderManifest from "./prerender-manifest.json";
+// @ts-ignore
 import Manifest from "./manifest.json";
+import { PrerenderManifest as PrerenderManifestType } from "next/dist/build/index";
 import lambdaAtEdgeCompat from "next-aws-cloudfront";
 import {
   CloudFrontRequest,
@@ -49,19 +52,23 @@ export const handler = async (
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
-  const manifest = Manifest as OriginRequestDefaultHandlerManifest;
+  const manifest: OriginRequestDefaultHandlerManifest = Manifest;
+  const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const { pages, publicFiles } = manifest;
 
   const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
+  const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
 
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
 
-  if (isStaticPage || isPublicFile) {
-    s3Origin.path = isStaticPage ? "/static-pages" : "/public";
+  const isHTMLPage = isStaticPage || isPrerenderedPage;
 
-    if (isStaticPage) {
+  if (isHTMLPage || isPublicFile) {
+    s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
+
+    if (isHTMLPage) {
       request.uri = uri + ".html";
     }
 

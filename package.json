@@ -40,6 +40,8 @@
     "@babel/preset-typescript": "^7.9.0",
     "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
     "@types/jest": "^25.2.1",
+    "@types/react": "^16.9.35",
+    "@types/react-dom": "^16.9.8",
     "@typescript-eslint/eslint-plugin": "^2.28.0",
     "@typescript-eslint/parser": "^2.28.0",
     "adm-zip": "^0.4.13",

@@ -10,6 +10,14 @@ jest.mock(
   }
 );
 
+jest.mock(
+  "../src/prerender-manifest.json",
+  () => require("./fixtures/prerender-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../src/${mockPagePath}`,
@@ -24,15 +32,16 @@ describe("Lambda@Edge", () => {
   describe("Routing", () => {
     describe("HTML pages routing", () => {
       it.each`
-        path                       | expectedPage
-        ${"/"}                     | ${"/index.html"}
-        ${"/index"}                | ${"/index.html"}
-        ${"/terms"}                | ${"/terms.html"}
-        ${"/users/batman"}         | ${"/users/[user].html"}
-        ${"/users/test/catch/all"} | ${"/users/[...user].html"}
-        ${"/john/123"}             | ${"/[username]/[id].html"}
+        path                                               | expectedPage
+        ${"/"}                                             | ${"/index.html"}
+        ${"/index"}                                        | ${"/index.html"}
+        ${"/terms"}                                        | ${"/terms.html"}
+        ${"/users/batman"}                                 | ${"/users/[user].html"}
+        ${"/users/test/catch/all"}                         | ${"/users/[...user].html"}
+        ${"/john/123"}                                     | ${"/[username]/[id].html"}
+        ${"/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
       `(
-        "serves page $expectedPage for path $path",
+        "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
           const event = createCloudFrontEvent({
             uri: path,

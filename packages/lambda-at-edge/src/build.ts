@@ -136,6 +136,10 @@ class Builder {
             );
           }
         }
+      ),
+      fse.copy(
+        join(this.nextConfigDir, ".next/prerender-manifest.json"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
       )
     ]);
   }
