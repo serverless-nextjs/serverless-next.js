@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.1.3...@sls-next/lambda-at-edge@1.2.0-alpha.0) (2020-05-15)
+
+
+### Bug Fixes
+
+* **lambda-at-edge:** fix routing issue when looking up root / path in prerender-manifest ([7eedd69](https://github.com/danielcondemarin/serverless-next.js/commit/7eedd6931923cb0c5ed87255075a401345505bc7))
+
+
+### Features
+
+* **serverless-component:** implement getStaticProps / getStaticPaths [fallback: false] ([#390](https://github.com/danielcondemarin/serverless-next.js/issues/390)) ([5185649](https://github.com/danielcondemarin/serverless-next.js/commit/518564944435767759fae8ae5978baf3afc49d7a))
+
+
+
+
+
 ## [1.1.3](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.1.2...@sls-next/lambda-at-edge@1.1.3) (2020-05-07)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
