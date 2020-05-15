@@ -135,7 +135,7 @@ To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](http
 myNextApplication:
   component: serverless-next.js
   inputs:
-    cloudfront
+    cloudfront:
       # this is the default cache behaviour of the cloudfront distribution
       # the origin-request edge lambda associated to this cache behaviour does the pages server side rendering
       defaults:
