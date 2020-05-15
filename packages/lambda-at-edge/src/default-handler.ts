@@ -58,7 +58,7 @@ export const handler = async (
 
   const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
-  const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
+  const isPrerenderedPage = prerenderManifest.routes[request.uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
 
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
