@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.2.0-alpha.0...@sls-next/lambda-at-edge@1.2.0-alpha.1) (2020-05-17)
+
+
+### Features
+
+* **lambda-at-edge:** add serverless trace target support ([#405](https://github.com/danielcondemarin/serverless-next.js/issues/405)) ([d800951](https://github.com/danielcondemarin/serverless-next.js/commit/d800951673474965c386ab94b2d8db18790099f7))
+
+
+
+
+
 # [1.2.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.1.3...@sls-next/lambda-at-edge@1.2.0-alpha.0) (2020-05-15)
 
 

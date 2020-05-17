@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.5.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-nextjs-plugin@2.4.11...serverless-nextjs-plugin@2.5.0-alpha.0) (2020-05-17)
+
+
+### Features
+
+* **lambda-at-edge:** add serverless trace target support ([#405](https://github.com/danielcondemarin/serverless-next.js/issues/405)) ([d800951](https://github.com/danielcondemarin/serverless-next.js/commit/d800951673474965c386ab94b2d8db18790099f7))
+
+
+
+
+
 ## [2.4.11](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-nextjs-plugin@2.4.10...serverless-nextjs-plugin@2.4.11) (2020-05-06)
 
 **Note:** Version bump only for package serverless-nextjs-plugin
