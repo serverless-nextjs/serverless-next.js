@@ -1,3 +1,4 @@
+import nodeFileTrace from "@zeit/node-file-trace";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
@@ -17,21 +18,24 @@ export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
 
 type BuildOptions = {
-  args: string[];
-  cwd: string;
-  env: NodeJS.ProcessEnv;
-  cmd: string;
+  args?: string[];
+  cwd?: string;
+  env?: NodeJS.ProcessEnv;
+  cmd?: string;
+};
+
+const defaultBuildOptions = {
+  args: [],
+  cwd: process.cwd(),
+  env: {},
+  cmd: "./node_modules/.bin/next"
 };
 
 class Builder {
   nextConfigDir: string;
+  dotNextDirectory: string;
   outputDir: string;
-  buildOptions: BuildOptions = {
-    args: [],
-    cwd: process.cwd(),
-    env: {},
-    cmd: "./node_modules/.bin/next"
-  };
+  buildOptions: BuildOptions = defaultBuildOptions;
 
   constructor(
     nextConfigDir: string,
@@ -39,6 +43,7 @@ class Builder {
     buildOptions?: BuildOptions
   ) {
     this.nextConfigDir = nextConfigDir;
+    this.dotNextDirectory = path.join(this.nextConfigDir, ".next");
     this.outputDir = outputDir;
     if (buildOptions) {
       this.buildOptions = buildOptions;
@@ -100,10 +105,65 @@ class Builder {
     return sortedPagesManifest;
   }
 
-  buildDefaultLambda(
+  get isServerlessTraceTarget(): boolean {
+    try {
+      // eslint-disable-next-line
+      const nextConfig = require(`${path.resolve(
+        path.join(this.nextConfigDir, "next.config.js")
+      )}`);
+
+      if (nextConfig.target === "experimental-serverless-trace") {
+        return true;
+      }
+    } catch (err) {
+      // ignore error, it just means we can't use the experimental serverless trace
+    }
+
+    return false;
+  }
+
+  async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
+    let copyTraces: Promise<void>[] = [];
+
+    if (this.isServerlessTraceTarget) {
+      const ignoreAppAndDocumentPages = (page: string): boolean => {
+        const basename = path.basename(page);
+        return basename !== "_app.js" && basename !== "_document.js";
+      };
+
+      const allSsrPages = [
+        ...Object.values(buildManifest.pages.ssr.nonDynamic),
+        ...Object.values(buildManifest.pages.ssr.dynamic).map(
+          entry => entry.file
+        )
+      ].filter(ignoreAppAndDocumentPages);
+
+      const ssrPages = Object.values(allSsrPages).map(pageFile =>
+        path.join(this.dotNextDirectory, "serverless", pageFile)
+      );
+
+      const { fileList, reasons } = await nodeFileTrace(ssrPages, {
+        base: path.resolve(this.nextConfigDir)
+      });
+
+      copyTraces = fileList
+        .filter(file => {
+          // exclude "initial" files from lambda artefact. These are just the pages themselves
+          // which are copied over separately
+          return !reasons[file] || reasons[file].type !== "initial";
+        })
+        .map((filePath: string) => {
+          return fse.copy(
+            path.join(path.resolve(this.nextConfigDir), filePath),
+            join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, filePath)
+          );
+        });
+    }
+
     return Promise.all([
+      ...copyTraces,
       fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
@@ -144,10 +204,41 @@ class Builder {
     ]);
   }
 
-  buildApiLambda(
+  async buildApiLambda(
     apiBuildManifest: OriginRequestApiHandlerManifest
   ): Promise<void[]> {
+    let copyTraces: Promise<void>[] = [];
+
+    if (this.isServerlessTraceTarget) {
+      const allApiPages = [
+        ...Object.values(apiBuildManifest.apis.nonDynamic),
+        ...Object.values(apiBuildManifest.apis.dynamic).map(entry => entry.file)
+      ];
+
+      const apiPages = Object.values(allApiPages).map(pageFile =>
+        path.join(this.dotNextDirectory, "serverless", pageFile)
+      );
+
+      const { fileList, reasons } = await nodeFileTrace(apiPages, {
+        base: path.resolve(this.nextConfigDir)
+      });
+
+      copyTraces = fileList
+        .filter(file => {
+          // exclude "initial" files from lambda artefact. These are just the pages themselves
+          // which are copied over separately
+          return !reasons[file] || reasons[file].type !== "initial";
+        })
+        .map((filePath: string) => {
+          return fse.copy(
+            path.join(path.resolve(this.nextConfigDir), filePath),
+            join(this.outputDir, API_LAMBDA_CODE_DIR, filePath)
+          );
+        });
+    }
+
     return Promise.all([
+      ...copyTraces,
       fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
@@ -275,7 +366,10 @@ class Builder {
   }
 
   async build(): Promise<void> {
-    const { cmd, args, cwd, env } = this.buildOptions;
+    const { cmd, args, cwd, env } = Object.assign(
+      defaultBuildOptions,
+      this.buildOptions
+    );
 
     // cleanup .next/ directory except for cache/ folder
     await this.cleanupDotNext();

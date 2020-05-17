@@ -3,10 +3,10 @@ const { promisify } = require("util");
 const getFactoryHandlerCode = require("./getFactoryHandlerCode");
 const logger = require("../utils/logger");
 
-const writeFileAsync = promisify(fs.writeFile);
-const renameAsync = promisify(fs.rename);
-
 const processJsHandler = async (nextPage, customHandler) => {
+  const writeFileAsync = promisify(fs.writeFile);
+  const renameAsync = promisify(fs.rename);
+
   const compatCodeContent = getFactoryHandlerCode(
     nextPage.pagePath,
     customHandler

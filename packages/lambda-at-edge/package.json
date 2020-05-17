@@ -43,6 +43,7 @@
     "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"
   },
   "dependencies": {
+    "@zeit/node-file-trace": "^0.5.1",
     "execa": "^4.0.0",
     "fs-extra": "^9.0.0",
     "path-to-regexp": "^6.1.0"
