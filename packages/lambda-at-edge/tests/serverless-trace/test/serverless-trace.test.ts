@@ -19,9 +19,7 @@ describe("Serverless Trace", () => {
       return;
     });
 
-    const builder = new Builder(fixturePath, outputDir, {
-      serverlessTrace: true
-    });
+    const builder = new Builder(fixturePath, outputDir);
 
     await builder.build();
   });

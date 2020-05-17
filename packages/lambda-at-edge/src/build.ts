@@ -128,12 +128,17 @@ class Builder {
     let copyTraces: Promise<void>[] = [];
 
     if (this.isServerlessTraceTarget) {
+      const ignoreAppAndDocumentPages = (page: string): boolean => {
+        const basename = path.basename(page);
+        return basename !== "_app.js" && basename !== "_document.js";
+      };
+
       const allSsrPages = [
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
         ...Object.values(buildManifest.pages.ssr.dynamic).map(
           entry => entry.file
         )
-      ];
+      ].filter(ignoreAppAndDocumentPages);
 
       const ssrPages = Object.values(allSsrPages).map(pageFile =>
         path.join(this.dotNextDirectory, "serverless", pageFile)
