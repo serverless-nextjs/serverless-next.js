@@ -5,7 +5,6 @@ const getFactoryHandlerCode = require("../getFactoryHandlerCode");
 const NextPage = require("../../classes/NextPage");
 const logger = require("../../utils/logger");
 
-jest.mock("fs");
 jest.mock("../../utils/logger");
 jest.mock("../getFactoryHandlerCode");
 
@@ -13,12 +12,19 @@ describe("rewritePageHandlers", () => {
   describe("when compat layer is injected successfully", () => {
     const pagesDir = "build/serverless/pages";
     let rewritePageHandlersPromise;
+    let fsRenameSpy;
+    let fsWriteFileSpy;
 
     beforeEach(() => {
-      fs.rename.mockImplementation((fileName, newFileName, cb) => cb(null, ""));
-      fs.writeFile.mockImplementation((filePath, data, cb) => {
-        cb(null, undefined);
-      });
+      fsRenameSpy = jest
+        .spyOn(fs, "rename")
+        .mockImplementation((fileName, newFileName, cb) => cb(null, ""));
+
+      fsWriteFileSpy = jest
+        .spyOn(fs, "writeFile")
+        .mockImplementation((filePath, data, cb) => {
+          cb(null, {});
+        });
 
       getFactoryHandlerCode.mockReturnValue("module.exports.render={...}");
 
@@ -28,6 +34,11 @@ describe("rewritePageHandlers", () => {
       ]);
 
       return rewritePageHandlersPromise;
+    });
+
+    afterEach(() => {
+      fsRenameSpy.mockRestore();
+      fsWriteFileSpy.mockRestore();
     });
 
     it("should log", () => {
