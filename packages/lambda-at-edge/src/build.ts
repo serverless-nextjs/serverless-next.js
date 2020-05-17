@@ -22,11 +22,9 @@ type BuildOptions = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   cmd?: string;
-  serverlessTrace?: boolean;
 };
 
 const defaultBuildOptions = {
-  serverlessTrace: false,
   args: [],
   cwd: process.cwd(),
   env: {},
@@ -379,8 +377,6 @@ class Builder {
       cwd,
       env
     });
-
-    // TODO: Check that next.config.js has set target to experimental-serverless-trace
 
     const {
       defaultBuildManifest,
