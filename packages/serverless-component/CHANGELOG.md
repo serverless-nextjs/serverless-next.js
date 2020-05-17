@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0-alpha.4](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.12.0-alpha.3...serverless-next.js@1.12.0-alpha.4) (2020-05-17)
+
+
+### Bug Fixes
+
+* **serverless-next.js:** fix API Lambda description input ([b1b6cdf](https://github.com/danielcondemarin/serverless-next.js/commit/b1b6cdf515f3bb25593c8be9c0a7b2ee4a1ab8bc))
+
+
+
+
+
 # [1.12.0-alpha.3](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.12.0-alpha.2...serverless-next.js@1.12.0-alpha.3) (2020-05-17)
 
 **Note:** Version bump only for package serverless-next.js
