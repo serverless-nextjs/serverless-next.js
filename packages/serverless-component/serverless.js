@@ -259,9 +259,9 @@ class NextjsComponent extends Component {
 
     if (hasAPIPages) {
       const apiEdgeLambdaInput = {
-        description:
-          `${inputs.description} (API)` ||
-          "API Lambda@Edge for Next CloudFront distribution",
+        description: inputs.description
+          ? `${inputs.description} (API)`
+          : "API Lambda@Edge for Next CloudFront distribution",
         handler: "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
