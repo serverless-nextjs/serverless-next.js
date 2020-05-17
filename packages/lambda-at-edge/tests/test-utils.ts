@@ -1,7 +1,7 @@
 import { remove } from "fs-extra";
 import { OriginRequestEvent } from "../src/types";
 
-export const cleanupDir = (dir): Promise<void> => {
+export const cleanupDir = (dir: string): Promise<void> => {
   return remove(dir);
 };
 
