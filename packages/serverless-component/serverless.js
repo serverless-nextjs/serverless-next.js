@@ -29,8 +29,10 @@ class NextjsComponent extends Component {
       throw Error("Duplicate path declared in cloudfront configuration");
     }
 
-    // there wont be a page path for this so we can remove it
+    // there wont be a pages for these paths for this so we can remove them
     stillToMatch.delete("api/*");
+    stillToMatch.delete("static/*");
+    stillToMatch.delete("_next/*");
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
@@ -340,21 +342,25 @@ class NextjsComponent extends Component {
       defaultBuildManifest
     );
 
-    // add any custom cloudfront configuration
+    // Add any custom cloudfront configuration
     // this includes overrides for _next, static and api
     Object.entries(customCloudFrontConfig).map(([path, config]) => {
+      let edgeConfig = {
+        ...(config["lambda@edge"] || {})
+      };
+      if (!["static/*", "_next/*"].includes(path)) {
+        edgeConfig[
+          "origin-request"
+        ] = `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`;
+      }
+
       cloudFrontOrigins[0].pathPatterns[path] = {
         // spread the existing value if there is one
         ...cloudFrontOrigins[0].pathPatterns[path],
         // spread custom config
         ...config,
         "lambda@edge": {
-          ...(config["lambda@edge"] || {}),
-          "origin-request":
-            // dont set if the path is static or _next
-            // spread the supplied overrides
-            !["static/*", "_next/*"].includes(path) &&
-            `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          ...edgeConfig
         }
       };
     });
