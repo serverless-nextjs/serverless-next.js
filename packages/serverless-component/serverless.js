@@ -348,7 +348,15 @@ class NextjsComponent extends Component {
       let edgeConfig = {
         ...(config["lambda@edge"] || {})
       };
-      if (!["static/*", "_next/*"].includes(path)) {
+
+      // here we are removing configs that cannot be overriden
+      if (path === "api/*") {
+        // for "api/*" we need to make sure we arent overriding the predefined lambda handler
+        // delete is idempotent so it's safe
+        delete edgeConfig["origin-request"];
+      } else if (!["static/*", "_next/*"].includes(path)) {
+        // for everything but static/* and _next/* we want to ensure that they are pointing
+        // at our lambda
         edgeConfig[
           "origin-request"
         ] = `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`;
@@ -360,6 +368,10 @@ class NextjsComponent extends Component {
         // spread custom config
         ...config,
         "lambda@edge": {
+          // spread the proivded value
+          ...(cloudFrontOrigins[0].pathPatterns[path] &&
+            cloudFrontOrigins[0].pathPatterns[path]["lambda@edge"]),
+          // then overrides
           ...edgeConfig
         }
       };
