@@ -29,8 +29,10 @@ class NextjsComponent extends Component {
       throw Error("Duplicate path declared in cloudfront configuration");
     }
 
-    // there wont be a page path for this so we can remove it
+    // there wont be pages for these paths for this so we can remove them
     stillToMatch.delete("api/*");
+    stillToMatch.delete("static/*");
+    stillToMatch.delete("_next/*");
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
@@ -340,21 +342,37 @@ class NextjsComponent extends Component {
       defaultBuildManifest
     );
 
-    // add any custom cloudfront configuration
+    // Add any custom cloudfront configuration
     // this includes overrides for _next, static and api
     Object.entries(customCloudFrontConfig).map(([path, config]) => {
+      let edgeConfig = {
+        ...(config["lambda@edge"] || {})
+      };
+
+      // here we are removing configs that cannot be overriden
+      if (path === "api/*") {
+        // for "api/*" we need to make sure we arent overriding the predefined lambda handler
+        // delete is idempotent so it's safe
+        delete edgeConfig["origin-request"];
+      } else if (!["static/*", "_next/*"].includes(path)) {
+        // for everything but static/* and _next/* we want to ensure that they are pointing
+        // at our lambda
+        edgeConfig[
+          "origin-request"
+        ] = `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`;
+      }
+
       cloudFrontOrigins[0].pathPatterns[path] = {
         // spread the existing value if there is one
         ...cloudFrontOrigins[0].pathPatterns[path],
         // spread custom config
         ...config,
         "lambda@edge": {
-          ...(config["lambda@edge"] || {}),
-          "origin-request":
-            // dont set if the path is static or _next
-            // spread the supplied overrides
-            !["static/*", "_next/*"].includes(path) &&
-            `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          // spread the proivded value
+          ...(cloudFrontOrigins[0].pathPatterns[path] &&
+            cloudFrontOrigins[0].pathPatterns[path]["lambda@edge"]),
+          // then overrides
+          ...edgeConfig
         }
       };
     });
