@@ -1,18 +1,18 @@
-import { handler } from "../src/default-handler";
-import { createCloudFrontEvent } from "./test-utils";
+import { handler } from "../../src/default-handler";
+import { createCloudFrontEvent } from "../test-utils";
 import { CloudFrontRequest, CloudFrontResultResponse } from "aws-lambda";
 
 jest.mock(
-  "../src/manifest.json",
-  () => require("./fixtures/default-build-manifest.json"),
+  "../../src/manifest.json",
+  () => require("./default-build-manifest.json"),
   {
     virtual: true
   }
 );
 
 jest.mock(
-  "../src/prerender-manifest.json",
-  () => require("./fixtures/prerender-manifest.json"),
+  "../../src/prerender-manifest.json",
+  () => require("./prerender-manifest.json"),
   {
     virtual: true
   }
@@ -20,8 +20,8 @@ jest.mock(
 
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
-    `../src/${mockPagePath}`,
-    () => require(`./fixtures/built-artifact/${mockPagePath}`),
+    `../../src/${mockPagePath}`,
+    () => require(`../fixtures/built-artifact/${mockPagePath}`),
     {
       virtual: true
     }
