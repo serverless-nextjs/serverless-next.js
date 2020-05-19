@@ -1,4 +1,4 @@
-import nodeFileTrace from "@zeit/node-file-trace";
+import nodeFileTrace, { NodeFileTraceReasons } from "@zeit/node-file-trace";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
@@ -42,7 +42,7 @@ class Builder {
     outputDir: string,
     buildOptions?: BuildOptions
   ) {
-    this.nextConfigDir = nextConfigDir;
+    this.nextConfigDir = path.resolve(nextConfigDir);
     this.dotNextDirectory = path.join(this.nextConfigDir, ".next");
     this.outputDir = outputDir;
     if (buildOptions) {
@@ -108,9 +108,10 @@ class Builder {
   get isServerlessTraceTarget(): boolean {
     try {
       // eslint-disable-next-line
-      const nextConfig = require(`${path.resolve(
-        path.join(this.nextConfigDir, "next.config.js")
-      )}`);
+      const nextConfig = require(path.join(
+        this.nextConfigDir,
+        "next.config.js"
+      ));
 
       if (nextConfig.target === "experimental-serverless-trace") {
         return true;
@@ -120,6 +121,28 @@ class Builder {
     }
 
     return false;
+  }
+
+  copyLambdaHandlerDependencies(
+    fileList: string[],
+    reasons: NodeFileTraceReasons,
+    handlerDirectory: string
+  ): Promise<void>[] {
+    return fileList
+      .filter(file => {
+        // exclude "initial" files from lambda artefact. These are just the pages themselves
+        // which are copied over separately
+        return !reasons[file] || reasons[file].type !== "initial";
+      })
+      .map((filePath: string) => {
+        const resolvedFilePath = path.resolve(filePath);
+        const dst = path.relative(this.nextConfigDir, resolvedFilePath);
+
+        return fse.copy(
+          resolvedFilePath,
+          join(this.outputDir, handlerDirectory, dst)
+        );
+      });
   }
 
   async buildDefaultLambda(
@@ -145,21 +168,14 @@ class Builder {
       );
 
       const { fileList, reasons } = await nodeFileTrace(ssrPages, {
-        base: path.resolve(this.nextConfigDir)
+        base: process.cwd()
       });
 
-      copyTraces = fileList
-        .filter(file => {
-          // exclude "initial" files from lambda artefact. These are just the pages themselves
-          // which are copied over separately
-          return !reasons[file] || reasons[file].type !== "initial";
-        })
-        .map((filePath: string) => {
-          return fse.copy(
-            path.join(path.resolve(this.nextConfigDir), filePath),
-            join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, filePath)
-          );
-        });
+      copyTraces = this.copyLambdaHandlerDependencies(
+        fileList,
+        reasons,
+        DEFAULT_LAMBDA_CODE_DIR
+      );
     }
 
     return Promise.all([
@@ -220,21 +236,14 @@ class Builder {
       );
 
       const { fileList, reasons } = await nodeFileTrace(apiPages, {
-        base: path.resolve(this.nextConfigDir)
+        base: process.cwd()
       });
 
-      copyTraces = fileList
-        .filter(file => {
-          // exclude "initial" files from lambda artefact. These are just the pages themselves
-          // which are copied over separately
-          return !reasons[file] || reasons[file].type !== "initial";
-        })
-        .map((filePath: string) => {
-          return fse.copy(
-            path.join(path.resolve(this.nextConfigDir), filePath),
-            join(this.outputDir, API_LAMBDA_CODE_DIR, filePath)
-          );
-        });
+      copyTraces = this.copyLambdaHandlerDependencies(
+        fileList,
+        reasons,
+        API_LAMBDA_CODE_DIR
+      );
     }
 
     return Promise.all([
@@ -348,7 +357,7 @@ class Builder {
   }
 
   async cleanupDotNext(): Promise<void> {
-    const dotNextDirectory = join(path.resolve(this.nextConfigDir), ".next");
+    const dotNextDirectory = join(this.nextConfigDir, ".next");
 
     const exists = await fse.pathExists(dotNextDirectory);
 
