@@ -1,10 +1,10 @@
-import { createCloudFrontEvent } from "./test-utils";
-import { handler } from "../src/api-handler";
+import { createCloudFrontEvent } from "../test-utils";
+import { handler } from "../../src/api-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
 
 jest.mock(
-  "../src/manifest.json",
-  () => require("./fixtures/api-build-manifest.json"),
+  "../../src/manifest.json",
+  () => require("./api-build-manifest.json"),
   {
     virtual: true
   }
@@ -12,8 +12,8 @@ jest.mock(
 
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
-    `../src/${mockPagePath}`,
-    () => require(`./fixtures/built-artifact/${mockPagePath}`),
+    `../../src/${mockPagePath}`,
+    () => require(`../fixtures/built-artifact/${mockPagePath}`),
     {
       virtual: true
     }
