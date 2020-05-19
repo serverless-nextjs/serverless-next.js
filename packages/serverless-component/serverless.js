@@ -29,7 +29,7 @@ class NextjsComponent extends Component {
       throw Error("Duplicate path declared in cloudfront configuration");
     }
 
-    // there wont be a pages for these paths for this so we can remove them
+    // there wont be pages for these paths for this so we can remove them
     stillToMatch.delete("api/*");
     stillToMatch.delete("static/*");
     stillToMatch.delete("_next/*");
