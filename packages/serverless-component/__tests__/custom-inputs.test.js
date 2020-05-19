@@ -520,10 +520,10 @@ describe("Custom inputs", () => {
         "PATCH"
       ],
       "lambda@edge": {
-        "origin-request":
-          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
         ...(expectedInConfig["api/*"] &&
-          expectedInConfig["api/*"]["lambda@edge"])
+          expectedInConfig["api/*"]["lambda@edge"]),
+        "origin-request":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
       }
     };
 
