@@ -1,13 +1,13 @@
 import { join } from "path";
 import fse, { readJSON } from "fs-extra";
 import execa from "execa";
-import Builder from "../src/build";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/build";
-import { cleanupDir } from "./test-utils";
+import Builder from "../../src/build";
+import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../../src/build";
+import { cleanupDir } from "../test-utils";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest
-} from "../src/types";
+} from "../../src/types";
 
 jest.mock("execa");
 
@@ -16,7 +16,7 @@ describe("Dynamic Routes Precedence", () => {
   let apiBuildManifest: OriginRequestApiHandlerManifest;
   let fseRemoveSpy: jest.SpyInstance;
 
-  const fixturePath = join(__dirname, "./fixtures/dynamic-routes-precedence");
+  const fixturePath = join(__dirname, "./fixture");
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
   beforeEach(async () => {
