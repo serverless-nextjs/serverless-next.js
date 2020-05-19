@@ -39,9 +39,6 @@
     "ts-loader": "^7.0.0",
     "typescript": "^3.8.3"
   },
-  "peerDependencies": {
-    "next-aws-cloudfront": "file:../cloudfront-lambda@edge-compat"
-  },
   "dependencies": {
     "@zeit/node-file-trace": "^0.5.1",
     "execa": "^4.0.0",
