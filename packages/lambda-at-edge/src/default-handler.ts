@@ -69,6 +69,7 @@ export const handler = async (
     s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
 
     if (isHTMLPage) {
+      request.headers["host"] = [{ key: "host", value: s3Origin.domainName }];
       request.uri = uri + ".html";
     }
 
