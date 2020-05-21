@@ -1,0 +1,33 @@
+{
+  "name": "@sls-next/serverless-component",
+  "version": "1.0.0",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Next.js Serverless Component V2",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "directory": "packages/serverless-component-v2"
+  },
+  "keywords": [
+    "AWS",
+    "Serverless",
+    "Next.js",
+    "CloudFront",
+    "Lambda@Edge"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "dependencies": {
+    "@serverless/core": "^1.1.2"
+  }
+}
