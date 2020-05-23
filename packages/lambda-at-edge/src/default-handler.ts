@@ -15,6 +15,13 @@ import {
   OriginRequestDefaultHandlerManifest
 } from "./types";
 
+const addS3HostHeader = (
+  req: CloudFrontRequest,
+  s3DomainName: string
+): void => {
+  req.headers["host"] = [{ key: "host", value: s3DomainName }];
+};
+
 const router = (
   manifest: OriginRequestDefaultHandlerManifest
 ): ((path: string) => string) => {
@@ -69,6 +76,7 @@ export const handler = async (
     s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
 
     if (isHTMLPage) {
+      addS3HostHeader(request, s3Origin.domainName);
       request.uri = uri + ".html";
     }
 
@@ -80,6 +88,7 @@ export const handler = async (
   if (pagePath.endsWith(".html")) {
     s3Origin.path = "/static-pages";
     request.uri = pagePath.replace("pages", "");
+    addS3HostHeader(request, s3Origin.domainName);
     return request;
   }
 
