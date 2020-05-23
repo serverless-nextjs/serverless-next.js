@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.3](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.2.0-alpha.2...@sls-next/lambda-at-edge@1.2.0-alpha.3) (2020-05-23)
+
+
+### Bug Fixes
+
+* **lambda-at-edge:** explicitly set host header for s3 origin ([#412](https://github.com/danielcondemarin/serverless-next.js/issues/412)) ([2f44795](https://github.com/danielcondemarin/serverless-next.js/commit/2f44795aed0579acb5f1fea90370b0066c170bcb))
+
+
+
+
+
 # [1.2.0-alpha.2](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.2.0-alpha.1...@sls-next/lambda-at-edge@1.2.0-alpha.2) (2020-05-19)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
