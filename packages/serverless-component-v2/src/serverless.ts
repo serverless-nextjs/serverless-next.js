@@ -5,3 +5,5 @@ class NextjsComponent extends Component {
     return {};
   }
 }
+
+export default NextjsComponent;
