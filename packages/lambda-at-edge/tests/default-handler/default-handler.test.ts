@@ -55,7 +55,7 @@ describe("Lambda@Edge", () => {
             }
           });
 
-          const request = await handler(event, {});
+          const request = await handler(event);
 
           expect(request.origin).toEqual({
             s3: {
@@ -65,6 +65,10 @@ describe("Lambda@Edge", () => {
             }
           });
           expect(request.uri).toEqual(expectedPage);
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
         }
       );
     });
