@@ -28,7 +28,6 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "dependencies": {
-    "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.683.0"
   }
 }

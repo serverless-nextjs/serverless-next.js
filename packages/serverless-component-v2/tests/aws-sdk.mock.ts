@@ -1,34 +1,26 @@
-type PromisifiedAWSMethod = {
-  mockFunction: jest.Mock;
-  mockPromise: jest.Mock;
-};
+declare module "aws-sdk" {
+  const mockCreateCloudFrontDistribution: jest.Mock;
+  const mockCreateCloudFrontDistributionPromise: jest.Mock;
+}
 
-const promisify = (): PromisifiedAWSMethod => {
-  const mockFunction = jest.fn();
+const promisify = (mockFunction: jest.Mock): jest.Mock => {
   const mockPromise = jest.fn(() => Promise.resolve());
 
   mockFunction.mockReturnValue({
     promise: mockPromise
   });
 
-  return {
-    mockFunction,
-    mockPromise
-  };
+  return mockPromise;
 };
 
-const {
-  mockFunction: mockCreateCloudFrontDistribution,
-  mockPromise: mockCreateCloudFrontDistributionPromise
-} = promisify();
+const mockCreateDistribution = jest.fn();
+export const mockCreateCloudFrontDistributionPromise = promisify(
+  mockCreateDistribution
+);
 
-const MockedCloudFront = jest.fn();
-MockedCloudFront.prototype.createDistribution = mockCreateCloudFrontDistribution;
-
-export {
-  mockCreateCloudFrontDistribution,
-  mockCreateCloudFrontDistributionPromise
-};
+const MockedCloudFront = jest.fn(() => ({
+  createDistribution: mockCreateDistribution
+}));
 
 export default {
   CloudFront: MockedCloudFront

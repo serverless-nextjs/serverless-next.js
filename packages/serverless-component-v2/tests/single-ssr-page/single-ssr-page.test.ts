@@ -1,16 +1,18 @@
-import NextjsComponent from "../../src/serverless.js";
-import AWS, { mockCreateCloudFrontDistributionPromise } from "aws-sdk";
+import NextjsComponent from "../../src/serverless";
+import { mockCreateCloudFrontDistributionPromise } from "aws-sdk";
+import { assertHasDefaultCacheBehaviour } from "../cloudFront-test-utils";
 
 jest.mock("aws-sdk", () => {
   return require("../aws-sdk.mock");
 });
 
 describe("Single SSR Page", () => {
-  it("creates CloudFront distribution with default cache behaviour", () => {
-    console.log(AWS);
-    console.log(mockCreateCloudFrontDistributionPromise);
-    expect(mockCreateCloudFrontDistributionPromise).toBeCalledWith({
-      DistributionConfig: {}
-    });
+  it("creates CloudFront distribution with default cache behaviour", async () => {
+    const component = new NextjsComponent();
+
+    const inputs = {};
+    await component.deploy(inputs);
+
+    assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistributionPromise, {});
   });
 });
