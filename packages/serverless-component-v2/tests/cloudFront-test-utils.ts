@@ -22,7 +22,7 @@ export const assertHasDefaultCacheBehaviour = (
   expect(spy).toBeCalledWith(
     expect.objectContaining({
       DistributionConfig: expect.objectContaining({
-        DefaultCacheBehaviour: expect.objectContaining(defaultCacheBehaviour)
+        DefaultCacheBehavior: expect.objectContaining(defaultCacheBehaviour)
       })
     })
   );

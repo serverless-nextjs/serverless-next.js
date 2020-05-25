@@ -1,6 +1,7 @@
 declare module "aws-sdk" {
   const mockCreateCloudFrontDistribution: jest.Mock;
   const mockCreateCloudFrontDistributionPromise: jest.Mock;
+  const MockedCloudFront: jest.Mock;
 }
 
 const promisify = (mockFunction: jest.Mock): jest.Mock => {
@@ -13,13 +14,13 @@ const promisify = (mockFunction: jest.Mock): jest.Mock => {
   return mockPromise;
 };
 
-const mockCreateDistribution = jest.fn();
+export const mockCreateCloudFrontDistribution = jest.fn();
 export const mockCreateCloudFrontDistributionPromise = promisify(
-  mockCreateDistribution
+  mockCreateCloudFrontDistribution
 );
 
-const MockedCloudFront = jest.fn(() => ({
-  createDistribution: mockCreateDistribution
+export const MockedCloudFront = jest.fn(() => ({
+  createDistribution: mockCreateCloudFrontDistribution
 }));
 
 export default {

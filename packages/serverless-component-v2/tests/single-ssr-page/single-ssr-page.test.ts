@@ -1,5 +1,9 @@
 import NextjsComponent from "../../src/serverless";
-import { mockCreateCloudFrontDistributionPromise } from "aws-sdk";
+import {
+  MockedCloudFront,
+  mockCreateCloudFrontDistribution,
+  mockCreateCloudFrontDistributionPromise
+} from "aws-sdk";
 import { assertHasDefaultCacheBehaviour } from "../cloudFront-test-utils";
 
 jest.mock("aws-sdk", () => {
@@ -13,6 +17,13 @@ describe("Single SSR Page", () => {
     const inputs = {};
     await component.deploy(inputs);
 
-    assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistributionPromise, {});
+    expect(MockedCloudFront).toBeCalledWith({
+      credentials: {
+        accessKeyId: "test-access-key",
+        secretAccessKey: "test-secret-access-key"
+      }
+    });
+    expect(mockCreateCloudFrontDistribution).toBeCalledTimes(1);
+    assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistribution, {});
   });
 });
