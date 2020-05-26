@@ -21,6 +21,10 @@ class NextjsComponent extends Component {
                 Forward: "all"
               },
               QueryString: true
+            },
+            AllowedMethods: {
+              Quantity: 2,
+              Items: ["HEAD", "GET"]
             }
           }
         }
