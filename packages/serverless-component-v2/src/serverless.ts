@@ -14,8 +14,14 @@ class NextjsComponent extends Component {
         DistributionConfig: {
           DefaultCacheBehavior: {
             MinTTL: 0,
-            TTL: 0,
-            MaxTTL: 0
+            DefaultTTL: 0,
+            MaxTTL: 0,
+            ForwardedValues: {
+              Cookies: {
+                Forward: "all"
+              },
+              QueryString: true
+            }
           }
         }
       })

@@ -1,8 +1,9 @@
 import NextjsComponent from "../../src/serverless";
-import {
+import AWS, {
   MockedCloudFront,
   mockCreateCloudFrontDistribution,
-  mockCreateCloudFrontDistributionPromise
+  mockCreateCloudFrontDistributionPromise,
+  CloudFront
 } from "aws-sdk";
 import { assertHasDefaultCacheBehaviour } from "../cloudFront-test-utils";
 
@@ -34,8 +35,23 @@ describe("Single SSR Page", () => {
     await component.deploy(inputs);
     assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistribution, {
       MinTTL: 0,
-      TTL: 0,
+      DefaultTTL: 0,
       MaxTTL: 0
+    });
+  });
+
+  it("forwards all cookies query string", async () => {
+    const component = new NextjsComponent();
+
+    const inputs = {};
+    await component.deploy(inputs);
+    assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistribution, {
+      ForwardedValues: {
+        Cookies: {
+          Forward: "all"
+        },
+        QueryString: true
+      }
     });
   });
 });

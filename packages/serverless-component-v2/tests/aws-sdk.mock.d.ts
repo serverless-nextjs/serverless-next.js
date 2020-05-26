@@ -1,6 +1,6 @@
-import AWS from "aws-sdk";
+import * as AWS from "aws-sdk";
 
 declare module "aws-sdk" {
-  const mockCreateCloudFrontDistribution: jest.Mock;
-  const mockCreateCloudFrontDistributionPromise: jest.Mock;
+  export const mockCreateCloudFrontDistribution: jest.Mock;
+  export const mockCreateCloudFrontDistributionPromise: jest.Mock;
 }
