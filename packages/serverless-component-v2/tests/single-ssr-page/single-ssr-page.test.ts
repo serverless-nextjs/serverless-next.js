@@ -23,7 +23,19 @@ describe("Single SSR Page", () => {
         secretAccessKey: "test-secret-access-key"
       }
     });
-    expect(mockCreateCloudFrontDistribution).toBeCalledTimes(1);
     assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistribution, {});
+    expect(mockCreateCloudFrontDistributionPromise).toBeCalledTimes(1);
+  });
+
+  it("default CacheBehaviour has TTL set to 0", async () => {
+    const component = new NextjsComponent();
+
+    const inputs = {};
+    await component.deploy(inputs);
+    assertHasDefaultCacheBehaviour(mockCreateCloudFrontDistribution, {
+      MinTTL: 0,
+      TTL: 0,
+      MaxTTL: 0
+    });
   });
 });

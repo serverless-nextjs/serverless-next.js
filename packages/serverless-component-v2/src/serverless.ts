@@ -1,8 +1,10 @@
 import { Component } from "@serverless/core";
 import AWS from "aws-sdk";
 
+type NextjsComponentInput = {};
+
 class NextjsComponent extends Component {
-  async deploy(inputs = {}) {
+  async deploy(inputs: NextjsComponentInput): Promise<void> {
     const cloudFront = new AWS.CloudFront({
       credentials: this.credentials.aws
     });
@@ -10,12 +12,14 @@ class NextjsComponent extends Component {
     await cloudFront
       .createDistribution({
         DistributionConfig: {
-          DefaultCacheBehavior: {}
+          DefaultCacheBehavior: {
+            MinTTL: 0,
+            TTL: 0,
+            MaxTTL: 0
+          }
         }
       })
       .promise();
-
-    return {};
   }
 }
 
