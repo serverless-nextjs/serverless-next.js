@@ -13,6 +13,7 @@ import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
+import createServerlessConfig from "./lib/createServerlessConfig";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -386,6 +387,8 @@ class Builder {
     // ensure directories are empty and exist before proceeding
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
+
+    await createServerlessConfig(cwd, path.join(this.nextConfigDir));
 
     await execa(cmd, args, {
       cwd,
