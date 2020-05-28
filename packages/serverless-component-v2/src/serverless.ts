@@ -9,6 +9,10 @@ class NextjsComponent extends Component {
       credentials: this.credentials.aws
     });
 
+    const lambda = new AWS.Lambda({
+      credentials: this.credentials.aws
+    });
+
     await cloudFront
       .createDistribution({
         DistributionConfig: {
@@ -30,6 +34,8 @@ class NextjsComponent extends Component {
         }
       })
       .promise();
+
+    await lambda.createFunction({});
   }
 }
 

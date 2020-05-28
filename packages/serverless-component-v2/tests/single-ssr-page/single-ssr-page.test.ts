@@ -1,8 +1,10 @@
 import NextjsComponent from "../../src/serverless";
 import {
   MockedCloudFront,
+  MockedLambda,
   mockCreateCloudFrontDistribution,
-  mockCreateCloudFrontDistributionPromise
+  mockCreateCloudFrontDistributionPromise,
+  mockCreateFunction
 } from "aws-sdk";
 import { assertHasDefaultCacheBehaviour } from "../cloudFront-test-utils";
 
@@ -11,12 +13,22 @@ jest.mock("aws-sdk", () => {
 });
 
 describe("Single SSR Page", () => {
-  describe("CloudFront: Default Cache Behaviour", () => {
-    beforeEach(async () => {
-      const component = new NextjsComponent();
-      await component.deploy({});
-    });
+  beforeEach(async () => {
+    const component = new NextjsComponent();
+    await component.deploy({});
+  });
 
+  it("creates lambda function", () => {
+    expect(MockedLambda).toBeCalledWith({
+      credentials: {
+        accessKeyId: "test-access-key",
+        secretAccessKey: "test-secret-access-key"
+      }
+    });
+    expect(mockCreateFunction).toBeCalledTimes(1);
+  });
+
+  describe("CloudFront default cache behaviour", () => {
     it("creates default cache behaviour", async () => {
       expect(MockedCloudFront).toBeCalledWith({
         credentials: {
