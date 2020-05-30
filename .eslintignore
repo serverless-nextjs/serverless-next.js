@@ -6,6 +6,7 @@ build
 dist
 sls-next-build
 examples
+fixture
 integration/basic-app
 integration/basic-app-with-nested-next-config
 integration/app-with-serverless-offline
