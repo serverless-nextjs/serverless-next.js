@@ -4,52 +4,45 @@
 import fs from "fs-extra";
 import path from "path";
 
-function getDefaultData(): string {
+function getCustomData(importName: string, target: string): string {
   return `
-     module.exports = { target: "serverless" }
-    `;
+  module.exports = function(...args) {
+  let original = require('./${importName}');
+  const finalConfig = {};
+  const target = { target: '${target}' };
+  if (typeof original === 'function' && original.constructor.name === 'AsyncFunction') {
+  // AsyncFunctions will become promises
+  original = original(...args);
+  }
+  if (original instanceof Promise) {
+  // Special case for promises, as it's currently not supported
+  // and will just error later on
+  return original
+  .then((orignalConfig) => Object.assign(finalConfig, orignalConfig))
+  .then((config) => Object.assign(config, target));
+  } else if (typeof original === 'function') {
+  Object.assign(finalConfig, original(...args));
+  } else if (typeof original === 'object') {
+  Object.assign(finalConfig, original);
+  }
+  Object.assign(finalConfig, target);
+  return finalConfig;
+  }
+`.trim();
 }
-function getCustomData(): string {
-  return `
-     module.exports = { target: "experimental-serverless-trace" }
-    `;
-}
-//function getCustomData(importName: string, target: string): string {
-//return `
-//module.exports = function(...args) {
-//let original = require('./${importName}');
-//const finalConfig = {};
-//const target = { target: '${target}' };
-//if (typeof original === 'function' && original.constructor.name === 'AsyncFunction') {
-//// AsyncFunctions will become promises
-//original = original(...args);
-//}
-//if (original instanceof Promise) {
-//// Special case for promises, as it's currently not supported
-//// and will just error later on
-//return original
-//.then((orignalConfig) => Object.assign(finalConfig, orignalConfig))
-//.then((config) => Object.assign(config, target));
-//} else if (typeof original === 'function') {
-//Object.assign(finalConfig, original(...args));
-//} else if (typeof original === 'object') {
-//Object.assign(finalConfig, original);
-//}
-//Object.assign(finalConfig, target);
-//return finalConfig;
-//}
-//`.trim();
-//}
 
-//function getDefaultData(target: string): string {
-//return `module.exports = { target: '${target}' };`;
-//}
+function getDefaultData(target: string): string {
+  return `module.exports = { target: '${target}' };`;
+}
 
 export default async function createServerlessConfig(
   workPath: string,
-  entryPath: string
+  entryPath: string,
+  useServerlessTraceTarget: boolean
 ): Promise<void> {
-  const target = "experimental-serverless-trace";
+  const target = useServerlessTraceTarget
+    ? "experimental-serverless-trace"
+    : "serverless";
 
   const primaryConfigPath = path.join(entryPath, "next.config.js");
   const secondaryConfigPath = path.join(workPath, "next.config.js");
@@ -76,11 +69,8 @@ export default async function createServerlessConfig(
   }
 
   if (fs.existsSync(configPath)) {
-    await fs.rename(configPath, backupConfigPath);
-    //await fs.writeFile(configPath, getCustomData(backupConfigName, target));
-    await fs.writeFile(configPath, getCustomData());
+    await fs.writeFile(configPath, getCustomData(backupConfigName, target));
   } else {
-    //await fs.writeFile(configPath, getDefaultData(target));
-    await fs.writeFile(configPath, getDefaultData());
+    await fs.writeFile(configPath, getDefaultData(target));
   }
 }

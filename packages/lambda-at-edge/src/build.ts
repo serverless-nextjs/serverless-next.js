@@ -23,13 +23,15 @@ type BuildOptions = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   cmd?: string;
+  useServerlessTraceTarget: boolean;
 };
 
 const defaultBuildOptions = {
   args: [],
   cwd: process.cwd(),
   env: {},
-  cmd: "./node_modules/.bin/next"
+  cmd: "./node_modules/.bin/next",
+  useServerlessTraceTarget: false
 };
 
 class Builder {
@@ -106,24 +108,6 @@ class Builder {
     return sortedPagesManifest;
   }
 
-  get isServerlessTraceTarget(): boolean {
-    try {
-      // eslint-disable-next-line
-      const nextConfig = require(path.join(
-        this.nextConfigDir,
-        "next.config.js"
-      ));
-
-      if (nextConfig.target === "experimental-serverless-trace") {
-        return true;
-      }
-    } catch (err) {
-      // ignore error, it just means we can't use the experimental serverless trace
-    }
-
-    return false;
-  }
-
   copyLambdaHandlerDependencies(
     fileList: string[],
     reasons: NodeFileTraceReasons,
@@ -151,7 +135,7 @@ class Builder {
   ): Promise<void[]> {
     let copyTraces: Promise<void>[] = [];
 
-    if (this.isServerlessTraceTarget) {
+    if (this.buildOptions.useServerlessTraceTarget) {
       const ignoreAppAndDocumentPages = (page: string): boolean => {
         const basename = path.basename(page);
         return basename !== "_app.js" && basename !== "_document.js";
@@ -226,7 +210,7 @@ class Builder {
   ): Promise<void[]> {
     let copyTraces: Promise<void>[] = [];
 
-    if (this.isServerlessTraceTarget) {
+    if (this.buildOptions.useServerlessTraceTarget) {
       const allApiPages = [
         ...Object.values(apiBuildManifest.apis.nonDynamic),
         ...Object.values(apiBuildManifest.apis.dynamic).map(entry => entry.file)
@@ -376,7 +360,7 @@ class Builder {
   }
 
   async build(): Promise<void> {
-    const { cmd, args, cwd, env } = Object.assign(
+    const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
     );
@@ -388,7 +372,11 @@ class Builder {
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
 
-    await createServerlessConfig(cwd, path.join(this.nextConfigDir));
+    await createServerlessConfig(
+      cwd,
+      path.join(this.nextConfigDir),
+      useServerlessTraceTarget
+    );
 
     await execa(cmd, args, {
       cwd,
