@@ -77,8 +77,10 @@ export default async function createServerlessConfig(
 
   if (fs.existsSync(configPath)) {
     await fs.rename(configPath, backupConfigPath);
-    await fs.writeFile(configPath, getCustomData(backupConfigName, target));
+    //await fs.writeFile(configPath, getCustomData(backupConfigName, target));
+    await fs.writeFile(configPath, getCustomData());
   } else {
-    await fs.writeFile(configPath, getDefaultData(target));
+    //await fs.writeFile(configPath, getDefaultData(target));
+    await fs.writeFile(configPath, getDefaultData());
   }
 }
