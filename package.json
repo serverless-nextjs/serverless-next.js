@@ -81,7 +81,8 @@
       "/dist/"
     ],
     "watchPathIgnorePatterns": [
-      "/fixture/"
+      "/fixture/",
+      "/fixtures/"
     ],
     "testPathIgnorePatterns": [
       "/.next/",

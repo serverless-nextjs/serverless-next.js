@@ -365,10 +365,8 @@ class Builder {
       this.buildOptions
     );
 
-    // cleanup .next/ directory except for cache/ folder
     await this.cleanupDotNext();
 
-    // ensure directories are empty and exist before proceeding
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
 
