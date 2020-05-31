@@ -3,7 +3,10 @@ import path from "path";
 import fse from "fs-extra";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { IMMUTABLE_CACHE_CONTROL_HEADER } from "./lib/constants";
+import {
+  IMMUTABLE_CACHE_CONTROL_HEADER,
+  NO_STORE_CACHE_CONTROL_HEADER
+} from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
 import { PrerenderManifest } from "next/dist/build/index";
@@ -66,7 +69,8 @@ const uploadStaticAssets = async (
           /^pages\//,
           ""
         )}`,
-        filePath: pageFilePath
+        filePath: pageFilePath,
+        cacheControl: NO_STORE_CACHE_CONTROL_HEADER
       });
     });
 
@@ -105,7 +109,8 @@ const uploadStaticAssets = async (
 
     return s3.uploadFile({
       s3Key: path.posix.join("static-pages", relativePageFilePath),
-      filePath: pageFilePath
+      filePath: pageFilePath,
+      cacheControl: NO_STORE_CACHE_CONTROL_HEADER
     });
   });
 
