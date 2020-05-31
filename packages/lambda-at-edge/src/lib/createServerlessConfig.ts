@@ -33,7 +33,7 @@ function getDefaultData(target: string): string {
 }
 
 type CreateServerlessConfigResult = {
-  deleteTemporaryFiles: () => Promise<void>;
+  restoreUserConfig: () => Promise<void>;
 };
 
 export default async function createServerlessConfig(
@@ -70,6 +70,7 @@ export default async function createServerlessConfig(
   }
 
   const configPathExists = fs.existsSync(configPath);
+
   if (configPathExists) {
     await fs.rename(configPath, backupConfigPath);
     await fs.writeFile(configPath, getCustomData(backupConfigName, target));
@@ -78,9 +79,12 @@ export default async function createServerlessConfig(
   }
 
   return {
-    deleteTemporaryFiles: async (): Promise<void> => {
-      if (!configPathExists) {
-        await fs.remove(configPath);
+    restoreUserConfig: async (): Promise<void> => {
+      const needToRestoreUserConfig = configPathExists;
+      await fs.remove(configPath);
+
+      if (needToRestoreUserConfig) {
+        await fs.rename(backupConfigPath, configPath);
       }
     }
   };
