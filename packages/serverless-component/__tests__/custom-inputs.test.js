@@ -54,7 +54,7 @@ describe("Custom inputs", () => {
     const realFseRemove = fse.remove.bind({});
     jest.spyOn(fse, "remove").mockImplementation(filePath => {
       // don't delete mocked .next/ files as they're needed for the tests and committed to source control
-      if (!filePath.includes(".next/")) {
+      if (!filePath.includes(".next" + path.sep)) {
         return realFseRemove(filePath);
       }
     });
