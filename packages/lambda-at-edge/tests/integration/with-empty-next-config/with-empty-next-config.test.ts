@@ -34,9 +34,11 @@ describe("With Empty Next Config Build", () => {
   it("keeps user next.config.js intact after build", async () => {
     const nextConfigPath = path.join(fixtureDir, "next.config.js");
     expect(await pathExists(nextConfigPath)).toBe(true);
-    console.log(await readFile(nextConfigPath, "utf-8"));
-    expect(await readFile(nextConfigPath, "utf-8")).toEqual(
-      "module.exports = () => ({});\n"
+    const removeNewLineChars = (text: string): string =>
+      text.replace(/(\r\n|\n|\r)/gm, "");
+
+    expect(removeNewLineChars(await readFile(nextConfigPath, "utf-8"))).toEqual(
+      "module.exports = () => ({});"
     );
   });
 
