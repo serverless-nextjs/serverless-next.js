@@ -6,7 +6,7 @@ import { readFile, remove, pathExists } from "fs-extra";
 
 jest.unmock("execa");
 
-describe("With Empty Next Config Build", () => {
+describe("With Next Build Failure", () => {
   const nextBinary = getNextBinary();
   const fixtureDir = path.join(__dirname, "./fixture");
   let mockDateNow: jest.SpyInstance<number, []>;
@@ -19,7 +19,12 @@ describe("With Empty Next Config Build", () => {
       args: ["build"]
     });
 
-    await builder.build();
+    try {
+      await builder.build();
+    } catch (e) {
+      // ignore error, we expect next build to fail
+      // what matters is the assertions below
+    }
   });
 
   afterAll(() => {
@@ -31,14 +36,14 @@ describe("With Empty Next Config Build", () => {
     );
   });
 
-  it("keeps user next.config.js intact after build", async () => {
+  it("keeps user next.config.js intact after build failure", async () => {
     const nextConfigPath = path.join(fixtureDir, "next.config.js");
     const removeNewLineChars = (text: string): string =>
       text.replace(/(\r\n|\n|\r)/gm, "");
 
     expect(await pathExists(nextConfigPath)).toBe(true);
     expect(removeNewLineChars(await readFile(nextConfigPath, "utf-8"))).toEqual(
-      "module.exports = () => ({});"
+      "module.exports = {};"
     );
   });
 

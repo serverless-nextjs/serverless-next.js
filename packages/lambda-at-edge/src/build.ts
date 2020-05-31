@@ -378,12 +378,14 @@ class Builder {
       useServerlessTraceTarget
     );
 
-    await execa(cmd, args, {
-      cwd,
-      env
-    });
-
-    await restoreUserConfig();
+    try {
+      await execa(cmd, args, {
+        cwd,
+        env
+      });
+    } finally {
+      await restoreUserConfig();
+    }
 
     const {
       defaultBuildManifest,
