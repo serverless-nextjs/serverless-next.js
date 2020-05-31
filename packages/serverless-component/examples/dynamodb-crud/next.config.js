@@ -1,7 +1,6 @@
 module.exports = {
-  target: "serverless",
   env: {
-      TABLE_NAME: 'Todos'
+    TABLE_NAME: "Todos"
   },
   webpack: config => {
     if (!process.env.BUNDLE_AWS_SDK) {

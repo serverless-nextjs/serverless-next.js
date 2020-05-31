@@ -140,7 +140,8 @@ class NextjsComponent extends Component {
           cmd: buildConfig.cmd,
           cwd: buildConfig.cwd,
           env: buildConfig.env,
-          args: buildConfig.args
+          args: buildConfig.args,
+          useServerlessTraceTarget: inputs.useServerlessTraceTarget || false
         }
       );
 
@@ -152,6 +153,7 @@ class NextjsComponent extends Component {
     const nextConfigPath = inputs.nextConfigDir
       ? path.resolve(inputs.nextConfigDir)
       : process.cwd();
+
     const nextStaticPath = inputs.nextStaticDir
       ? path.resolve(inputs.nextStaticDir)
       : nextConfigPath;
