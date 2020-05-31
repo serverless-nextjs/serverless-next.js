@@ -13,6 +13,7 @@ import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
+import createServerlessConfig from "./lib/createServerlessConfig";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -22,13 +23,15 @@ type BuildOptions = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   cmd?: string;
+  useServerlessTraceTarget?: boolean;
 };
 
 const defaultBuildOptions = {
   args: [],
   cwd: process.cwd(),
   env: {},
-  cmd: "./node_modules/.bin/next"
+  cmd: "./node_modules/.bin/next",
+  useServerlessTraceTarget: false
 };
 
 class Builder {
@@ -105,24 +108,6 @@ class Builder {
     return sortedPagesManifest;
   }
 
-  get isServerlessTraceTarget(): boolean {
-    try {
-      // eslint-disable-next-line
-      const nextConfig = require(path.join(
-        this.nextConfigDir,
-        "next.config.js"
-      ));
-
-      if (nextConfig.target === "experimental-serverless-trace") {
-        return true;
-      }
-    } catch (err) {
-      // ignore error, it just means we can't use the experimental serverless trace
-    }
-
-    return false;
-  }
-
   copyLambdaHandlerDependencies(
     fileList: string[],
     reasons: NodeFileTraceReasons,
@@ -150,7 +135,7 @@ class Builder {
   ): Promise<void[]> {
     let copyTraces: Promise<void>[] = [];
 
-    if (this.isServerlessTraceTarget) {
+    if (this.buildOptions.useServerlessTraceTarget) {
       const ignoreAppAndDocumentPages = (page: string): boolean => {
         const basename = path.basename(page);
         return basename !== "_app.js" && basename !== "_document.js";
@@ -225,7 +210,7 @@ class Builder {
   ): Promise<void[]> {
     let copyTraces: Promise<void>[] = [];
 
-    if (this.isServerlessTraceTarget) {
+    if (this.buildOptions.useServerlessTraceTarget) {
       const allApiPages = [
         ...Object.values(apiBuildManifest.apis.nonDynamic),
         ...Object.values(apiBuildManifest.apis.dynamic).map(entry => entry.file)
@@ -375,22 +360,30 @@ class Builder {
   }
 
   async build(): Promise<void> {
-    const { cmd, args, cwd, env } = Object.assign(
+    const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
     );
 
-    // cleanup .next/ directory except for cache/ folder
     await this.cleanupDotNext();
 
-    // ensure directories are empty and exist before proceeding
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
 
-    await execa(cmd, args, {
+    const { restoreUserConfig } = await createServerlessConfig(
       cwd,
-      env
-    });
+      path.join(this.nextConfigDir),
+      useServerlessTraceTarget
+    );
+
+    try {
+      await execa(cmd, args, {
+        cwd,
+        env
+      });
+    } finally {
+      await restoreUserConfig();
+    }
 
     const {
       defaultBuildManifest,

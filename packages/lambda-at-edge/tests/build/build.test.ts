@@ -49,7 +49,6 @@ describe("Builder Tests", () => {
 
   describe("Cleanup", () => {
     it(".next directory is emptied except for cache/ folder", () => {
-      expect(fseRemoveSpy).toBeCalledTimes(2);
       expect(fseRemoveSpy).toBeCalledWith(
         join(fixturePath, ".next/serverless")
       );

@@ -18,8 +18,12 @@ describe("deploy tests", () => {
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
   beforeEach(async () => {
-    jest.spyOn(fse, "remove").mockImplementation(() => {
-      return;
+    const realFseRemove = fse.remove.bind({});
+    jest.spyOn(fse, "remove").mockImplementation(filePath => {
+      // don't delete mocked .next/ files as they're needed for the tests and committed to source control
+      if (!filePath.includes(".next" + path.sep)) {
+        return realFseRemove(filePath);
+      }
     });
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
 
@@ -59,6 +63,7 @@ describe("deploy tests", () => {
 
   afterEach(() => {
     consoleWarnSpy.mockRestore();
+    fse.remove.mockRestore();
     process.chdir(tmpCwd);
   });
 

@@ -51,9 +51,12 @@ describe("Custom inputs", () => {
   let consoleWarnSpy;
 
   beforeEach(() => {
-    // mock out remove to prevent fixture files from being wiped out
-    jest.spyOn(fse, "remove").mockImplementation(() => {
-      return;
+    const realFseRemove = fse.remove.bind({});
+    jest.spyOn(fse, "remove").mockImplementation(filePath => {
+      // don't delete mocked .next/ files as they're needed for the tests and committed to source control
+      if (!filePath.includes(".next" + path.sep)) {
+        return realFseRemove(filePath);
+      }
     });
 
     consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
@@ -635,4 +638,27 @@ describe("Custom inputs", () => {
       });
     }
   );
+
+  describe("Build using serverless trace target", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({});
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("builds correctly", async () => {
+      await createNextComponent().default({
+        useServerlessTraceTarget: true
+      });
+    });
+  });
 });
