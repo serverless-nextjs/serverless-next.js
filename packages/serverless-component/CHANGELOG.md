@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.12.0-alpha.7](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.12.0-alpha.6...serverless-next.js@1.12.0-alpha.7) (2020-05-31)
+
+
+### Features
+
+* **lambda-at-edge:** autogenerate serverless config ([#418](https://github.com/danielcondemarin/serverless-next.js/issues/418)) ([0f9a176](https://github.com/danielcondemarin/serverless-next.js/commit/0f9a176f65207d31d0b66a11d6fbceafe27fade5))
+
+
+
+
+
 # [1.12.0-alpha.6](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.12.0-alpha.5...serverless-next.js@1.12.0-alpha.6) (2020-05-23)
 
 **Note:** Version bump only for package serverless-next.js

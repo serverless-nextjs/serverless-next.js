@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.1.0-alpha.0...@sls-next/s3-static-assets@1.1.0-alpha.1) (2020-05-31)
+
+
+### Bug Fixes
+
+* **s3-static-assets:** prevent client cache of static pages ([#421](https://github.com/danielcondemarin/serverless-next.js/issues/421)) ([647d74a](https://github.com/danielcondemarin/serverless-next.js/commit/647d74a0687f251bb6671d96c0c668b3749db7a1))
+
+
+
+
+
 # [1.1.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.0.4-alpha.0...@sls-next/s3-static-assets@1.1.0-alpha.0) (2020-05-15)
 
 
