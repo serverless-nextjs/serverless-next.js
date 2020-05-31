@@ -23,7 +23,7 @@ type BuildOptions = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   cmd?: string;
-  useServerlessTraceTarget: boolean;
+  useServerlessTraceTarget?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -372,7 +372,7 @@ class Builder {
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
 
-    await createServerlessConfig(
+    const { deleteTemporaryFiles } = await createServerlessConfig(
       cwd,
       path.join(this.nextConfigDir),
       useServerlessTraceTarget
@@ -382,6 +382,8 @@ class Builder {
       cwd,
       env
     });
+
+    await deleteTemporaryFiles();
 
     const {
       defaultBuildManifest,

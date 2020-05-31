@@ -8,35 +8,12 @@ jest.unmock("execa");
 
 jest.setTimeout(15000);
 
-describe("No Next Config Tests", () => {
+describe("No Next Config Build Test", () => {
   const nextBinary = getNextBinary();
   const fixtureDir = path.join(__dirname, "./fixture");
   let mockDateNow: jest.SpyInstance<number, []>;
 
-  beforeEach(() => {
-    mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
-  });
-
-  afterEach(async () => {
-    // cleanup
-    await remove(path.join(fixtureDir, ".next"));
-    await remove(path.join(fixtureDir, "next.config.original.123.js"));
-    mockDateNow.mockRestore();
-  });
-
-  fit("builds correctly", async () => {
-    const outputBuildDir = os.tmpdir();
-
-    const builder = new Builder(fixtureDir, outputBuildDir, {
-      cwd: fixtureDir,
-      cmd: nextBinary,
-      args: ["build"]
-    });
-
-    await builder.build();
-  });
-
-  it("cleans up temporary next.config.js generated", async () => {
+  beforeAll(async () => {
     const builder = new Builder(fixtureDir, os.tmpdir(), {
       cwd: fixtureDir,
       cmd: nextBinary,
@@ -44,15 +21,33 @@ describe("No Next Config Tests", () => {
     });
 
     await builder.build();
+  });
 
-    const nextConfigExists = await pathExists(
-      path.join(fixtureDir, "next.config.js")
+  afterAll(() => {
+    return Promise.all(
+      [".next", "next.config.js", "next.config.original.123.js"].map(file =>
+        remove(path.join(fixtureDir, file))
+      )
     );
-    const tmpNextConfigExists = await pathExists(
-      path.join(fixtureDir, "next.config.original.123.js")
-    );
+  });
 
-    expect(nextConfigExists).toBe(true);
-    expect(tmpNextConfigExists).toBe(false);
+  beforeEach(() => {
+    mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
+  });
+
+  afterEach(() => {
+    mockDateNow.mockRestore();
+  });
+
+  it("deletes temporary next.config.js created", async () => {
+    expect(await pathExists(path.join(fixtureDir, "next.config.js"))).toBe(
+      false
+    );
+  });
+
+  it("cleans up temporary next.config.original.x.js generated", async () => {
+    expect(
+      await pathExists(path.join(fixtureDir, "next.config.original.123.js"))
+    ).toBe(false);
   });
 });

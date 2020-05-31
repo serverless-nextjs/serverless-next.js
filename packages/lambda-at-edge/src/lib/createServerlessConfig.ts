@@ -1,45 +1,46 @@
-// The implementation code below has been copied from vercel/packages/now-next/src/create-serverless-config.ts
-// with minor modifications to strip out logic that isn't needed for the project
-
 import fs from "fs-extra";
 import path from "path";
 
 function getCustomData(importName: string, target: string): string {
   return `
-  module.exports = function(...args) {
+module.exports = function(...args) {
   let original = require('./${importName}');
   const finalConfig = {};
   const target = { target: '${target}' };
   if (typeof original === 'function' && original.constructor.name === 'AsyncFunction') {
-  // AsyncFunctions will become promises
-  original = original(...args);
+    // AsyncFunctions will become promises
+    original = original(...args);
   }
   if (original instanceof Promise) {
-  // Special case for promises, as it's currently not supported
-  // and will just error later on
-  return original
-  .then((orignalConfig) => Object.assign(finalConfig, orignalConfig))
-  .then((config) => Object.assign(config, target));
+    // Special case for promises, as it's currently not supported
+    // and will just error later on
+    return original
+      .then((orignalConfig) => Object.assign(finalConfig, orignalConfig))
+      .then((config) => Object.assign(config, target));
   } else if (typeof original === 'function') {
-  Object.assign(finalConfig, original(...args));
+    Object.assign(finalConfig, original(...args));
   } else if (typeof original === 'object') {
-  Object.assign(finalConfig, original);
+    Object.assign(finalConfig, original);
   }
   Object.assign(finalConfig, target);
   return finalConfig;
-  }
-`.trim();
+}
+  `.trim();
 }
 
 function getDefaultData(target: string): string {
   return `module.exports = { target: '${target}' };`;
 }
 
+type CreateServerlessConfigResult = {
+  deleteTemporaryFiles: () => Promise<void>;
+};
+
 export default async function createServerlessConfig(
   workPath: string,
   entryPath: string,
   useServerlessTraceTarget: boolean
-): Promise<void> {
+): Promise<CreateServerlessConfigResult> {
   const target = useServerlessTraceTarget
     ? "experimental-serverless-trace"
     : "serverless";
@@ -68,9 +69,19 @@ export default async function createServerlessConfig(
     backupConfigPath = path.join(entryPath, backupConfigName);
   }
 
-  if (fs.existsSync(configPath)) {
+  const configPathExists = fs.existsSync(configPath);
+  if (configPathExists) {
+    await fs.rename(configPath, backupConfigPath);
     await fs.writeFile(configPath, getCustomData(backupConfigName, target));
   } else {
     await fs.writeFile(configPath, getDefaultData(target));
   }
+
+  return {
+    deleteTemporaryFiles: async (): Promise<void> => {
+      if (!configPathExists) {
+        await fs.remove(configPath);
+      }
+    }
+  };
 }
