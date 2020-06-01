@@ -332,6 +332,55 @@ describe("Custom inputs", () => {
   });
 
   describe.each`
+    inputRuntime                                                | expectedRuntime
+    ${undefined}                                                | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
+    ${{}}                                                       | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
+    ${"nodejs10.x"}                                             | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
+    ${{ defaultLambda: "nodejs10.x" }}                          | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs12.x" }}
+    ${{ apiLambda: "nodejs10.x" }}                              | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs10.x" }}
+    ${{ defaultLambda: "nodejs10.x", apiLambda: "nodejs10.x" }} | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
+  `("Input runtime options", ({ inputRuntime, expectedRuntime }) => {
+    let tmpCwd;
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({});
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        runtime: inputRuntime
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`sets default lambda runtime to ${expectedRuntime.defaultRuntime} and api lambda runtime to ${expectedRuntime.apiRuntime}`, () => {
+      const { defaultRuntime, apiRuntime } = expectedRuntime;
+
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          runtime: defaultRuntime
+        })
+      );
+
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          runtime: apiRuntime
+        })
+      );
+    });
+  });
+
+  describe.each`
     inputName                                                     | expectedName
     ${undefined}                                                  | ${{ defaultName: undefined, apiName: undefined }}
     ${{}}                                                         | ${{ defaultName: undefined, apiName: undefined }}
