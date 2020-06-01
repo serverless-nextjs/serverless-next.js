@@ -238,6 +238,19 @@ myNextApplication:
       apiLambda: 2048
 ```
 
+The same pattern can be followed for specifying the Node.js runtime (nodejs12.x by default):
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: serverless-next.js
+  inputs:
+    runtime:
+      defaultLambda: "nodejs10.x"
+      apiLambda: "nodejs10.x"
+```
+
 Similarly, the timeout by default is 10 seconds. To customise you can:
 
 ```yml
