@@ -14,6 +14,8 @@ import pathToPosix from "./lib/pathToPosix";
 import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
 import createServerlessConfig from "./lib/createServerlessConfig";
+import isChunk from "./lib/isChunk";
+import pathToFilename from "./lib/pathToFilename";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -123,9 +125,14 @@ class Builder {
         const resolvedFilePath = path.resolve(filePath);
         const dst = path.relative(this.nextConfigDir, resolvedFilePath);
 
+        // chunks are geting copied to root. others remain same
         return fse.copy(
           resolvedFilePath,
-          join(this.outputDir, handlerDirectory, dst)
+          join(
+            this.outputDir,
+            handlerDirectory,
+            isChunk(filePath) ? pathToFilename(dst) : dst
+          )
         );
       });
   }

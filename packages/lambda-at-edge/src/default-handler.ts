@@ -72,6 +72,11 @@ export const handler = async (
 
   const isHTMLPage = isStaticPage || isPrerenderedPage;
 
+  if (uri === "/service-worker.js") {
+    s3Origin.path = "/_next/static";
+    return request;
+  }
+
   if (isHTMLPage || isPublicFile) {
     s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
 
