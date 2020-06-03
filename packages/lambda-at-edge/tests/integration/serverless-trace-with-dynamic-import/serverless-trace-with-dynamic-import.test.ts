@@ -12,7 +12,7 @@ describe("Serverless Trace With Dynamic Import", () => {
   let outputDir: string;
 
   beforeAll(async () => {
-    outputDir = os.tmpdir();
+    outputDir = path.join(os.tmpdir(), "slsnext-test-build");
     const builder = new Builder(fixtureDir, outputDir, {
       cwd: fixtureDir,
       cmd: nextBinary,
