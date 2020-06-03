@@ -13,7 +13,7 @@ import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
-import removeRelativeBasePath from "./lib/removeRelativeBasePath";
+import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
@@ -121,7 +121,7 @@ class Builder {
       })
       .map((filePath: string) => {
         const resolvedFilePath = path.resolve(filePath);
-        const dst = removeRelativeBasePath(
+        const dst = normalizeNodeModules(
           path.relative(this.serverlessDir, resolvedFilePath)
         );
 
