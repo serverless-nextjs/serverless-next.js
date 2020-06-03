@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.5](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.2.0-alpha.4...@sls-next/lambda-at-edge@1.2.0-alpha.5) (2020-06-03)
+
+
+### Bug Fixes
+
+* **lambda-at-edge:** resolve dependencies using .next/serverless as base path ([#425](https://github.com/danielcondemarin/serverless-next.js/issues/425)) ([d60982f](https://github.com/danielcondemarin/serverless-next.js/commit/d60982f10e85f716badd1676c3f89a57a6c04019))
+
+
+
+
+
 # [1.2.0-alpha.4](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.2.0-alpha.3...@sls-next/lambda-at-edge@1.2.0-alpha.4) (2020-05-31)
 
 
