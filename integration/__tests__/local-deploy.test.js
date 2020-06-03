@@ -3,7 +3,7 @@ const path = require("path");
 const serverlessOfflineStart = require("../../packages/serverless-plugin/utils/test/serverlessOfflineStart");
 const httpGet = require("../../packages/serverless-plugin/utils/test/httpGet");
 
-describe("Local Deployment Tests (via serverless-offline)", () => {
+describe.skip("Local Deployment Tests (via serverless-offline)", () => {
   let slsOffline;
 
   beforeAll(() => {

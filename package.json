@@ -23,7 +23,7 @@
     "graduate": "lerna publish --conventional-commits --conventional-graduate",
     "lint": "eslint .",
     "coveralls": "jest --runInBand --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "integration": "jest --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
+    "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "postinstall": "opencollective-postinstall || true"
   },
   "repository": {
@@ -77,6 +77,7 @@
       "<rootDir>/packages/serverless-plugin/utils/test",
       "/.serverless_nextjs/",
       "/fixtures/",
+      "/fixture/",
       "/examples/",
       "/dist/"
     ],

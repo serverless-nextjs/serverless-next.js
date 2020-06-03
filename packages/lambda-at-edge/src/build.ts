@@ -13,6 +13,7 @@ import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
+import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
@@ -36,7 +37,8 @@ const defaultBuildOptions = {
 
 class Builder {
   nextConfigDir: string;
-  dotNextDirectory: string;
+  dotNextDir: string;
+  serverlessDir: string;
   outputDir: string;
   buildOptions: BuildOptions = defaultBuildOptions;
 
@@ -46,7 +48,8 @@ class Builder {
     buildOptions?: BuildOptions
   ) {
     this.nextConfigDir = path.resolve(nextConfigDir);
-    this.dotNextDirectory = path.join(this.nextConfigDir, ".next");
+    this.dotNextDir = path.join(this.nextConfigDir, ".next");
+    this.serverlessDir = path.join(this.dotNextDir, "serverless");
     this.outputDir = outputDir;
     if (buildOptions) {
       this.buildOptions = buildOptions;
@@ -70,10 +73,7 @@ class Builder {
   }
 
   async readPagesManifest(): Promise<{ [key: string]: string }> {
-    const path = join(
-      this.nextConfigDir,
-      ".next/serverless/pages-manifest.json"
-    );
+    const path = join(this.serverlessDir, "pages-manifest.json");
     const hasServerlessPageManifest = await fse.pathExists(path);
 
     if (!hasServerlessPageManifest) {
@@ -121,7 +121,9 @@ class Builder {
       })
       .map((filePath: string) => {
         const resolvedFilePath = path.resolve(filePath);
-        const dst = path.relative(this.nextConfigDir, resolvedFilePath);
+        const dst = normalizeNodeModules(
+          path.relative(this.serverlessDir, resolvedFilePath)
+        );
 
         return fse.copy(
           resolvedFilePath,
@@ -149,7 +151,7 @@ class Builder {
       ].filter(ignoreAppAndDocumentPages);
 
       const ssrPages = Object.values(allSsrPages).map(pageFile =>
-        path.join(this.dotNextDirectory, "serverless", pageFile)
+        path.join(this.serverlessDir, pageFile)
       );
 
       const { fileList, reasons } = await nodeFileTrace(ssrPages, {
@@ -182,7 +184,7 @@ class Builder {
         )
       ),
       fse.copy(
-        join(this.nextConfigDir, ".next/serverless/pages"),
+        join(this.serverlessDir, "pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
           filter: (file: string) => {
@@ -199,7 +201,7 @@ class Builder {
         }
       ),
       fse.copy(
-        join(this.nextConfigDir, ".next/prerender-manifest.json"),
+        join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
       )
     ]);
@@ -217,7 +219,7 @@ class Builder {
       ];
 
       const apiPages = Object.values(allApiPages).map(pageFile =>
-        path.join(this.dotNextDirectory, "serverless", pageFile)
+        path.join(this.serverlessDir, pageFile)
       );
 
       const { fileList, reasons } = await nodeFileTrace(apiPages, {
@@ -246,11 +248,11 @@ class Builder {
         )
       ),
       fse.copy(
-        join(this.nextConfigDir, ".next/serverless/pages/api"),
+        join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
       fse.copy(
-        join(this.nextConfigDir, ".next/serverless/pages/_error.js"),
+        join(this.serverlessDir, "pages/_error.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/_error.js")
       ),
       fse.writeJson(
@@ -342,19 +344,17 @@ class Builder {
   }
 
   async cleanupDotNext(): Promise<void> {
-    const dotNextDirectory = join(this.nextConfigDir, ".next");
-
-    const exists = await fse.pathExists(dotNextDirectory);
+    const exists = await fse.pathExists(this.dotNextDir);
 
     if (exists) {
-      const fileItems = await fse.readdir(dotNextDirectory);
+      const fileItems = await fse.readdir(this.dotNextDir);
 
       await Promise.all(
         fileItems
           .filter(
             fileItem => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
           )
-          .map(fileItem => fse.remove(join(dotNextDirectory, fileItem)))
+          .map(fileItem => fse.remove(join(this.dotNextDir, fileItem)))
       );
     }
   }
