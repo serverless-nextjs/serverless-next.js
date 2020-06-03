@@ -13,6 +13,7 @@ describe("Serverless Trace With Dynamic Import", () => {
 
   beforeAll(async () => {
     outputDir = os.tmpdir();
+    console.log("OUTPUT DIR: ", outputDir);
     const builder = new Builder(fixtureDir, outputDir, {
       cwd: fixtureDir,
       cmd: nextBinary,
@@ -21,6 +22,7 @@ describe("Serverless Trace With Dynamic Import", () => {
     });
 
     await builder.build();
+    console.log(await readdir(outputDir));
   });
 
   afterAll(() => {
@@ -30,6 +32,8 @@ describe("Serverless Trace With Dynamic Import", () => {
   });
 
   it("copies node_modules to default lambda artefact", async () => {
+    console.log(await readdir(outputDir));
+    console.log(await readdir(path.join(outputDir, "default-lambda")));
     const nodeModules = await readdir(
       path.join(outputDir, "default-lambda/node_modules")
     );
@@ -37,6 +41,7 @@ describe("Serverless Trace With Dynamic Import", () => {
   });
 
   it("copies node_modules to api lambda artefact", async () => {
+    console.log(await readdir(path.join(outputDir, "api-lambda")));
     const nodeModules = await readdir(
       path.join(outputDir, "api-lambda/node_modules")
     );
