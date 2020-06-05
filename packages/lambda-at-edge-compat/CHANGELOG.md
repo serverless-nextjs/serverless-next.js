@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0](https://github.com/danielcondemarin/serverless-next.js/compare/next-aws-cloudfront@1.2.0-alpha.1...next-aws-cloudfront@1.2.0) (2020-06-05)
+
+**Note:** Version bump only for package next-aws-cloudfront
+
+
+
+
+
 # [1.2.0-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/next-aws-cloudfront@1.2.0-alpha.0...next-aws-cloudfront@1.2.0-alpha.1) (2020-05-31)
 
 
