@@ -22,25 +22,35 @@ const addS3HostHeader = (
   req.headers["host"] = [{ key: "host", value: s3DomainName }];
 };
 
+const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
+
 const router = (
   manifest: OriginRequestDefaultHandlerManifest
-): ((path: string) => string) => {
+): ((uri: string) => string) => {
   const {
     pages: { ssr, html }
   } = manifest;
 
   const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
 
-  return (path: string): string => {
-    if (ssr.nonDynamic[path]) {
-      return ssr.nonDynamic[path];
+  return (uri: string): string => {
+    let normalisedUri = uri;
+
+    if (isDataRequest(uri)) {
+      normalisedUri = uri
+        .replace(`/_next/data/${manifest.buildId}`, "")
+        .replace(".json", "");
+    }
+
+    if (ssr.nonDynamic[normalisedUri]) {
+      return ssr.nonDynamic[normalisedUri];
     }
 
     for (const route in allDynamicRoutes) {
       const { file, regex } = allDynamicRoutes[route];
 
       const re = new RegExp(regex, "i");
-      const pathMatchesRoute = re.test(path);
+      const pathMatchesRoute = re.test(normalisedUri);
 
       if (pathMatchesRoute) {
         return file;
@@ -92,11 +102,18 @@ export const handler = async (
     return request;
   }
 
-  const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
-
   // eslint-disable-next-line
   const page = require(`./${pagePath}`);
-  page.render(req, res);
+
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
+
+  if (isDataRequest(uri)) {
+    const { renderOpts } = await page.renderReqToHTML(req, res, "passthrough");
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify(renderOpts.pageData));
+  } else {
+    page.render(req, res);
+  }
 
   return responsePromise;
 };

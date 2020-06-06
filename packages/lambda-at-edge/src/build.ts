@@ -268,7 +268,12 @@ class Builder {
   }> {
     const pagesManifest = await this.readPagesManifest();
 
+    const buildId = await fse.readFile(
+      path.join(this.dotNextDir, "BUILD_ID"),
+      "utf-8"
+    );
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
+      buildId,
       pages: {
         ssr: {
           dynamic: {},

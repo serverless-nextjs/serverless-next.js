@@ -386,6 +386,14 @@ class NextjsComponent extends Component {
       };
     });
 
+    cloudFrontOrigins[0].pathPatterns["_next/data/*"] = {
+      ttl: 0,
+      allowedHttpMethods: ["HEAD", "GET"],
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
     // make sure that origin-response is not set.
     // this is reserved for serverless-next.js usage
     let defaultLambdaAtEdgeConfig = {

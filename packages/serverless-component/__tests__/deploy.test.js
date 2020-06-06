@@ -138,6 +138,14 @@ describe("deploy tests", () => {
               "_next/*": {
                 ttl: 86400
               },
+              "_next/data/*": {
+                ttl: 0,
+                allowedHttpMethods: ["HEAD", "GET"],
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
+                }
+              },
               "static/*": {
                 ttl: 86400
               },
