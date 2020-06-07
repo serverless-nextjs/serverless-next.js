@@ -47,8 +47,7 @@ const router = (
       }
     }
 
-    // path didn't match any route, return error page
-    return "pages/_error.js";
+    return "pages/404.html";
   };
 };
 
