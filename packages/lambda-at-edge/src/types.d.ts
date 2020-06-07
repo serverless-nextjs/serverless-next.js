@@ -17,6 +17,7 @@ export type OriginRequestApiHandlerManifest = {
 };
 
 export type OriginRequestDefaultHandlerManifest = {
+  buildId: string;
   pages: {
     ssr: {
       dynamic: DynamicPageKeyValue;

@@ -1,4 +1,4 @@
-import { getNextBinary } from "../../test-utils";
+import { getNextBinary, removeNewLineChars } from "../../test-utils";
 import os from "os";
 import path from "path";
 import Builder from "../../../src/build";
@@ -33,9 +33,6 @@ describe("With Empty Next Config Build", () => {
 
   it("keeps user next.config.js intact after build", async () => {
     const nextConfigPath = path.join(fixtureDir, "next.config.js");
-    const removeNewLineChars = (text: string): string =>
-      text.replace(/(\r\n|\n|\r)/gm, "");
-
     expect(await pathExists(nextConfigPath)).toBe(true);
     expect(removeNewLineChars(await readFile(nextConfigPath, "utf-8"))).toEqual(
       "module.exports = () => ({});"
