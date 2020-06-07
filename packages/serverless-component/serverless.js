@@ -32,7 +32,7 @@ class NextjsComponent extends Component {
     // there wont be pages for these paths for this so we can remove them
     stillToMatch.delete("api/*");
     stillToMatch.delete("static/*");
-    stillToMatch.delete("_next/*");
+    stillToMatch.delete("_next/static/*");
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
@@ -227,7 +227,7 @@ class NextjsComponent extends Component {
         url: bucketUrl,
         private: true,
         pathPatterns: {
-          "_next/*": {
+          "_next/static/*": {
             ttl: 86400
           },
           "static/*": {

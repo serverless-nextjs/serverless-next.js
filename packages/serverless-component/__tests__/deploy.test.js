@@ -135,7 +135,7 @@ describe("deploy tests", () => {
             url: "http://bucket-xyz.s3.amazonaws.com",
             private: true,
             pathPatterns: {
-              "_next/*": {
+              "_next/static/*": {
                 ttl: 86400
               },
               "_next/data/*": {

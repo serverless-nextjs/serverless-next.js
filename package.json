@@ -89,6 +89,7 @@
       "/.next/",
       "/node_modules/",
       "/fixtures/",
+      "/fixture/",
       "/examples/",
       "/integration/"
     ],

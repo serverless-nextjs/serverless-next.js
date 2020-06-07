@@ -605,8 +605,8 @@ describe("Custom inputs", () => {
         {
           pathPatterns: {
             ...customPageCacheBehaviours,
-            "_next/*": {
-              ...customPageCacheBehaviours["_next/*"],
+            "_next/static/*": {
+              ...customPageCacheBehaviours["_next/static/*"],
               ttl: 86400
             },
             "_next/data/*": {
