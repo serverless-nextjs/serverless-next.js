@@ -101,11 +101,12 @@ describe("Lambda@Edge", () => {
       });
     });
 
-    describe("SSR Pages routing", () => {
+    describe("SSR pages routing", () => {
       it.each`
         path                              | expectedPage
         ${"/abc"}                         | ${"pages/[root].js"}
         ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
+        ${"/customers"}                   | ${"pages/customers/index.js"}
         ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -136,6 +137,42 @@ describe("Lambda@Edge", () => {
           expect(cfResponse.status).toEqual(200);
         }
       );
+    });
+
+    describe("Data Requests", () => {
+      it.each`
+        path                                                      | expectedPage
+        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
+        ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+      `("serves json data for path $path", async ({ path, expectedPage }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net",
+          origin: {
+            s3: {
+              domainName: "my-bucket.amazonaws.com"
+            }
+          }
+        });
+
+        mockPageRequire(expectedPage);
+
+        const response = await handler(event);
+
+        const cfResponse = response as CloudFrontResultResponse;
+        const decodedBody = new Buffer(cfResponse.body, "base64").toString(
+          "utf8"
+        );
+
+        expect(cfResponse.headers["content-type"][0].value).toEqual(
+          "application/json"
+        );
+        expect(JSON.parse(decodedBody)).toEqual({
+          page: expectedPage
+        });
+        expect(cfResponse.status).toEqual(200);
+      });
     });
   });
 

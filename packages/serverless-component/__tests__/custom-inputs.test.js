@@ -605,9 +605,17 @@ describe("Custom inputs", () => {
         {
           pathPatterns: {
             ...customPageCacheBehaviours,
-            "_next/*": {
-              ...customPageCacheBehaviours["_next/*"],
+            "_next/static/*": {
+              ...customPageCacheBehaviours["_next/static/*"],
               ttl: 86400
+            },
+            "_next/data/*": {
+              ttl: 0,
+              allowedHttpMethods: ["HEAD", "GET"],
+              "lambda@edge": {
+                "origin-request":
+                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+              }
             },
             "api/*": {
               ttl: 0,

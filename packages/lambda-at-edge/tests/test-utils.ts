@@ -6,6 +6,9 @@ export const cleanupDir = (dir: string): Promise<void> => {
   return remove(dir);
 };
 
+export const removeNewLineChars = (text: string): string =>
+  text.replace(/(\r\n|\n|\r)/gm, "");
+
 export const getNextBinary = (): string =>
   path.join(require.resolve("next"), "../../../../.bin/next");
 
