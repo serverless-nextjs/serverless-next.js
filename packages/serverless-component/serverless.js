@@ -75,7 +75,7 @@ class NextjsComponent extends Component {
     });
 
     // first we check if the path patterns match any of the dynamic page regex.
-    // paths with stars (*) shouldnt cause any issues because the regex will treat these
+    // paths with stars (*) shouldn't cause any issues because the regex will treat these
     // as characters.
     manifestRegex.forEach(re => {
       for (const path of stillToMatch) {
@@ -377,7 +377,7 @@ class NextjsComponent extends Component {
         // spread custom config
         ...config,
         "lambda@edge": {
-          // spread the proivded value
+          // spread the provided value
           ...(cloudFrontOrigins[0].pathPatterns[path] &&
             cloudFrontOrigins[0].pathPatterns[path]["lambda@edge"]),
           // then overrides
@@ -410,7 +410,7 @@ class NextjsComponent extends Component {
           ...defaultCloudfrontInputs.forward
         },
         ...defaultCloudfrontInputs,
-        // everything after here cant be overriden
+        // everything after here cant be overridden
         allowedHttpMethods: ["HEAD", "GET"],
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
