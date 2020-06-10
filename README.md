@@ -77,16 +77,6 @@ AWS_ACCESS_KEY_ID=accesskey
 AWS_SECRET_ACCESS_KEY=sshhh
 ```
 
-Set next.js build target to `serverless`:
-
-```js
-// next.config.js
-
-module.exports = {
-  target: "serverless"
-};
-```
-
 And simply deploy:
 
 ```bash
