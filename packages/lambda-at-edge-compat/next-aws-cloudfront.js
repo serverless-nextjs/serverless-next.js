@@ -164,6 +164,11 @@ const handler = event => {
   const responsePromise = new Promise(resolve => {
     res.end = text => {
       if (text) res.write(text);
+
+      if (!res.statusCode) {
+        res.statusCode = 200;
+      }
+
       res.finished = true;
 
       if (response.body) {

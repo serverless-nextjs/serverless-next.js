@@ -56,6 +56,23 @@ describe("compatLayer.response", () => {
     res.end();
   });
 
+  it("[Promise] statusCode statusCode=200 by default", () => {
+    expect.assertions(1);
+
+    const { res, responsePromise } = create({
+      requestContext: {
+        path: "/"
+      },
+      headers: {}
+    });
+
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.statusCode).toEqual(200);
+    });
+  });
+
   it("[Promise] statusCode statusCode=200", () => {
     expect.assertions(1);
 

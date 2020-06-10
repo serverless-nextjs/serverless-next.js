@@ -38,6 +38,23 @@ describe("Response Tests", () => {
     });
   });
 
+  it("statusCode statusCode=200 by default", () => {
+    expect.assertions(1);
+
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      }
+    });
+
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.status).toEqual(200);
+    });
+  });
+
   it("writeHead headers", () => {
     expect.assertions(1);
 

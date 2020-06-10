@@ -107,6 +107,10 @@ const reqResMapper = (event, callback) => {
 
   const onResEnd = (callback, resolve) => text => {
     if (text) res.write(text);
+    if (!res.statusCode) {
+      res.statusCode = 200;
+    }
+
     if (response.body) {
       response.body = Buffer.from(response.body).toString(
         base64Support ? "base64" : undefined
