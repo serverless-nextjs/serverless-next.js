@@ -324,4 +324,21 @@ describe("Response Tests", () => {
       expect(response.body).toEqual("b2stZ3ppcHBlZA=="); // "ok-gzipped" base64 encoded
     });
   });
+
+  it("response does not have a body if only statusCode is set", () => {
+    const { res, responsePromise } = create({
+      request: {
+        path: "/",
+        headers: {}
+      }
+    });
+
+    res.statusCode = 204;
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.body).not.toBeDefined();
+      expect(response.status).toEqual(204);
+    });
+  });
 });

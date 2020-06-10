@@ -83,10 +83,6 @@ const handler = event => {
   const { request: cfRequest } = event;
 
   const response = {
-    body: Buffer.from(""),
-    bodyEncoding: "base64",
-    status: 200,
-    statusDescription: "OK",
     headers: {}
   };
 
@@ -147,25 +143,35 @@ const handler = event => {
   res.headers = {};
   res.writeHead = (status, headers) => {
     response.status = status;
+
     if (headers) {
       res.headers = Object.assign(res.headers, headers);
     }
   };
   res.write = chunk => {
+    if (!response.body) {
+      response.body = Buffer.from("");
+    }
+
     response.body = Buffer.concat([
       response.body,
       Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
     ]);
   };
+
   let gz = isGzipSupported(headers);
 
   const responsePromise = new Promise(resolve => {
     res.end = text => {
       if (text) res.write(text);
       res.finished = true;
-      response.body = gz
-        ? zlib.gzipSync(response.body).toString("base64")
-        : Buffer.from(response.body).toString("base64");
+
+      if (response.body) {
+        response.body = gz
+          ? zlib.gzipSync(response.body).toString("base64")
+          : Buffer.from(response.body).toString("base64");
+      }
+
       response.headers = toCloudFrontHeaders(res.headers);
 
       if (gz) {

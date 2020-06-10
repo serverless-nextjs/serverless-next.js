@@ -452,4 +452,21 @@ describe("compatLayer.response", () => {
       expect(response.isBase64Encoded).toEqual(true);
     });
   });
+
+  it("response does not have a body if only statusCode is set", () => {
+    const { res, responsePromise } = create({
+      requestContext: {
+        path: "/"
+      },
+      headers: {}
+    });
+
+    res.statusCode = 204;
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.body).not.toBeDefined();
+      expect(response.statusCode).toEqual(204);
+    });
+  });
 });
