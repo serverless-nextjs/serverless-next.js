@@ -283,6 +283,8 @@ describe("Response Tests", () => {
   });
 
   it(`res.write('ok')`, () => {
+    expect.assertions(2);
+
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -300,6 +302,8 @@ describe("Response Tests", () => {
   });
 
   it(`res.end('ok')`, () => {
+    expect.assertions(1);
+
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -315,6 +319,8 @@ describe("Response Tests", () => {
   });
 
   it(`gzips`, () => {
+    expect.assertions(2);
+
     const gzipSpy = jest.spyOn(zlib, "gzipSync");
     gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
 
@@ -345,6 +351,8 @@ describe("Response Tests", () => {
   });
 
   it("response does not have a body if only statusCode is set", () => {
+    expect.assertions(4);
+
     const { res, responsePromise } = create({
       request: {
         path: "/",
