@@ -21,7 +21,7 @@ describe("Response Tests", () => {
   });
 
   it("statusCode statusCode=200", () => {
-    expect.assertions(1);
+    expect.assertions(2);
 
     const { res, responsePromise } = create({
       request: {
@@ -35,6 +35,7 @@ describe("Response Tests", () => {
 
     return responsePromise.then(response => {
       expect(response.status).toEqual(200);
+      expect(response.statusDescription).toEqual("OK");
     });
   });
 
@@ -358,6 +359,7 @@ describe("Response Tests", () => {
       expect(response.body).not.toBeDefined();
       expect(response.bodyEncoding).not.toBeDefined();
       expect(response.status).toEqual(204);
+      expect(response.statusDescription).toEqual("No Content");
     });
   });
 });
