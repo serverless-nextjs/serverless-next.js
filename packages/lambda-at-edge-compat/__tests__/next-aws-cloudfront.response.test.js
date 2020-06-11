@@ -281,7 +281,7 @@ describe("Response Tests", () => {
     expect(res.getHeaders()).toEqual({});
   });
 
-  fit(`res.write('ok')`, () => {
+  it(`res.write('ok')`, () => {
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -356,6 +356,7 @@ describe("Response Tests", () => {
 
     return responsePromise.then(response => {
       expect(response.body).not.toBeDefined();
+      expect(response.bodyEncoding).not.toBeDefined();
       expect(response.status).toEqual(204);
     });
   });
