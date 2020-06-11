@@ -56,6 +56,23 @@ describe("compatLayer.response", () => {
     res.end();
   });
 
+  it("[Promise] statusCode statusCode=200 by default", () => {
+    expect.assertions(1);
+
+    const { res, responsePromise } = create({
+      requestContext: {
+        path: "/"
+      },
+      headers: {}
+    });
+
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.statusCode).toEqual(200);
+    });
+  });
+
   it("[Promise] statusCode statusCode=200", () => {
     expect.assertions(1);
 
@@ -450,6 +467,23 @@ describe("compatLayer.response", () => {
     return responsePromise.then(response => {
       expect(response.body).toEqual(Buffer.from("ok").toString("base64"));
       expect(response.isBase64Encoded).toEqual(true);
+    });
+  });
+
+  it("response does not have a body if only statusCode is set", () => {
+    const { res, responsePromise } = create({
+      requestContext: {
+        path: "/"
+      },
+      headers: {}
+    });
+
+    res.statusCode = 204;
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.body).not.toBeDefined();
+      expect(response.statusCode).toEqual(204);
     });
   });
 });

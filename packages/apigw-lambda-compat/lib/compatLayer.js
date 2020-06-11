@@ -5,9 +5,7 @@ const http = require("http");
 const reqResMapper = (event, callback) => {
   const base64Support = process.env.BINARY_SUPPORT === "yes";
   const response = {
-    body: Buffer.from(""),
     isBase64Encoded: base64Support,
-    statusCode: 200,
     multiValueHeaders: {}
   };
   let responsePromise;
@@ -80,6 +78,10 @@ const reqResMapper = (event, callback) => {
     if (headers) res.headers = Object.assign(res.headers, headers);
   };
   res.write = chunk => {
+    if (!response.body) {
+      response.body = Buffer.from("");
+    }
+
     response.body = Buffer.concat([
       Buffer.isBuffer(response.body)
         ? response.body
@@ -105,9 +107,15 @@ const reqResMapper = (event, callback) => {
 
   const onResEnd = (callback, resolve) => text => {
     if (text) res.write(text);
-    response.body = Buffer.from(response.body).toString(
-      base64Support ? "base64" : undefined
-    );
+    if (!res.statusCode) {
+      res.statusCode = 200;
+    }
+
+    if (response.body) {
+      response.body = Buffer.from(response.body).toString(
+        base64Support ? "base64" : undefined
+      );
+    }
     response.multiValueHeaders = res.headers;
     res.writeHead(response.statusCode);
     fixApiGatewayMultipleHeaders();

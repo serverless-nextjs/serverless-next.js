@@ -21,7 +21,7 @@ describe("Response Tests", () => {
   });
 
   it("statusCode statusCode=200", () => {
-    expect.assertions(1);
+    expect.assertions(2);
 
     const { res, responsePromise } = create({
       request: {
@@ -31,6 +31,24 @@ describe("Response Tests", () => {
     });
 
     res.statusCode = 200;
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.status).toEqual(200);
+      expect(response.statusDescription).toEqual("OK");
+    });
+  });
+
+  it("statusCode statusCode=200 by default", () => {
+    expect.assertions(1);
+
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      }
+    });
+
     res.end();
 
     return responsePromise.then(response => {
@@ -265,6 +283,8 @@ describe("Response Tests", () => {
   });
 
   it(`res.write('ok')`, () => {
+    expect.assertions(2);
+
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -277,10 +297,13 @@ describe("Response Tests", () => {
 
     return responsePromise.then(response => {
       expect(response.body).toEqual("b2s=");
+      expect(response.bodyEncoding).toEqual("base64");
     });
   });
 
   it(`res.end('ok')`, () => {
+    expect.assertions(1);
+
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -296,6 +319,8 @@ describe("Response Tests", () => {
   });
 
   it(`gzips`, () => {
+    expect.assertions(2);
+
     const gzipSpy = jest.spyOn(zlib, "gzipSync");
     gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
 
@@ -322,6 +347,27 @@ describe("Response Tests", () => {
         { key: "Content-Encoding", value: "gzip" }
       ]);
       expect(response.body).toEqual("b2stZ3ppcHBlZA=="); // "ok-gzipped" base64 encoded
+    });
+  });
+
+  it("response does not have a body if only statusCode is set", () => {
+    expect.assertions(4);
+
+    const { res, responsePromise } = create({
+      request: {
+        path: "/",
+        headers: {}
+      }
+    });
+
+    res.statusCode = 204;
+    res.end();
+
+    return responsePromise.then(response => {
+      expect(response.body).not.toBeDefined();
+      expect(response.bodyEncoding).not.toBeDefined();
+      expect(response.status).toEqual(204);
+      expect(response.statusDescription).toEqual("No Content");
     });
   });
 });
