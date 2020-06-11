@@ -281,7 +281,7 @@ describe("Response Tests", () => {
     expect(res.getHeaders()).toEqual({});
   });
 
-  it(`res.write('ok')`, () => {
+  fit(`res.write('ok')`, () => {
     const { res, responsePromise } = create({
       request: {
         path: "/",
@@ -294,6 +294,7 @@ describe("Response Tests", () => {
 
     return responsePromise.then(response => {
       expect(response.body).toEqual("b2s=");
+      expect(response.bodyEncoding).toEqual("base64");
     });
   });
 

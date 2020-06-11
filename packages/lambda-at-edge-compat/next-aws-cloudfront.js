@@ -172,6 +172,7 @@ const handler = event => {
       res.finished = true;
 
       if (response.body) {
+        response.bodyEncoding = "base64";
         response.body = gz
           ? zlib.gzipSync(response.body).toString("base64")
           : Buffer.from(response.body).toString("base64");
