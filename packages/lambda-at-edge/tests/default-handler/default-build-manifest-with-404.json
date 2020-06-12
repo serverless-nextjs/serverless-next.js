@@ -1,12 +1,5 @@
 {
-  "cloudFrontOrigins": {
-    "ssrApi": {
-      "domainName": "ssr-api.execute-api.us-east-1.amazonaws.com"
-    },
-    "staticOrigin": {
-      "domainName": "my-bucket.s3.amazonaws.com"
-    }
-  },
+  "buildId": "build-id2",
   "pages": {
     "ssr": {
       "dynamic": {
@@ -48,7 +41,8 @@
       "nonDynamic": {
         "/": "pages/index.html",
         "/index": "pages/index.html",
-        "/terms": "pages/terms.html"
+        "/terms": "pages/terms.html",
+        "/404": "pages/404.html"
       },
       "dynamic": {
         "/users/:user": {

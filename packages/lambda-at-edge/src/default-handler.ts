@@ -57,7 +57,11 @@ const router = (
       }
     }
 
-    // path didn't match any route, return error page
+    // only use the 404 page if the project exports it
+    if (html.nonDynamic["/404"] !== undefined) {
+      return "pages/404.html";
+    }
+
     return "pages/_error.js";
   };
 };

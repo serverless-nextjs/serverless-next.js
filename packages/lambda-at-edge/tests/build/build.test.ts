@@ -107,12 +107,12 @@ describe("Builder Tests", () => {
         "/customers/new": "pages/customers/new.js",
         "/": "pages/index.js",
         "/_app": "pages/_app.js",
-        "/_document": "pages/_document.js",
-        "/404": "pages/404.js"
+        "/_document": "pages/_document.js"
       });
 
       expect(html).toEqual({
         nonDynamic: {
+          "/404": "pages/404.html",
           "/terms": "pages/terms.html",
           "/about": "pages/about.html"
         },

@@ -359,9 +359,9 @@ class NextjsComponent extends Component {
         ...(config["lambda@edge"] || {})
       };
 
-      // here we are removing configs that cannot be overriden
+      // here we are removing configs that cannot be overridden
       if (path === "api/*") {
-        // for "api/*" we need to make sure we arent overriding the predefined lambda handler
+        // for "api/*" we need to make sure we aren't overriding the predefined lambda handler
         // delete is idempotent so it's safe
         delete edgeConfig["origin-request"];
       } else if (!["static/*", "_next/*"].includes(path)) {
