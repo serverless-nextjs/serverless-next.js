@@ -4,6 +4,7 @@ const NextjsComponent = require("../serverless");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
+const mockCreateInvalidation = require("@sls-next/cloudfront");
 const {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR
@@ -45,6 +46,7 @@ describe("deploy tests", () => {
       version: "v1"
     });
     mockCloudFront.mockResolvedValueOnce({
+      id: "cloudfrontdistrib",
       url: "https://cloudfrontdistrib.amazonaws.com"
     });
 
@@ -160,6 +162,16 @@ describe("deploy tests", () => {
             }
           }
         ]
+      });
+    });
+
+    it("invalidates distribution cache", () => {
+      expect(mockCreateInvalidation.default).toBeCalledWith({
+        credentials: {
+          accessKeyId: "123",
+          secretAccessKey: "456"
+        },
+        distributionId: "cloudfrontdistrib"
       });
     });
   });

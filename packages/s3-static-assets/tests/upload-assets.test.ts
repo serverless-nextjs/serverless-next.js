@@ -3,7 +3,7 @@ import uploadStaticAssets from "../src/index";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
   DEFAULT_PUBLIC_DIR_CACHE_CONTROL,
-  NO_STORE_CACHE_CONTROL_HEADER
+  SERVER_CACHE_CONTROL_HEADER
 } from "../src/lib/constants";
 import AWS, {
   mockGetBucketAccelerateConfigurationPromise,
@@ -137,7 +137,7 @@ describe.each`
         expect.objectContaining({
           Key: "static-pages/todos/terms.html",
           ContentType: "text/html",
-          CacheControl: NO_STORE_CACHE_CONTROL_HEADER
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
 
@@ -145,7 +145,7 @@ describe.each`
         expect.objectContaining({
           Key: "static-pages/todos/terms/[section].html",
           ContentType: "text/html",
-          CacheControl: NO_STORE_CACHE_CONTROL_HEADER
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
     });
@@ -185,7 +185,7 @@ describe.each`
         expect.objectContaining({
           Key: "static-pages/todos/terms/a.html",
           ContentType: "text/html",
-          CacheControl: NO_STORE_CACHE_CONTROL_HEADER
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
 
@@ -193,7 +193,7 @@ describe.each`
         expect.objectContaining({
           Key: "static-pages/todos/terms/b.html",
           ContentType: "text/html",
-          CacheControl: NO_STORE_CACHE_CONTROL_HEADER
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
     });
