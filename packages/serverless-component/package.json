@@ -28,6 +28,7 @@
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.0.0",
     "@serverless/domain": "^6.1.0",
+    "@sls-next/cloudfront": "file:../cloudfront",
     "@sls-next/lambda-at-edge": "file:../lambda-at-edge",
     "@sls-next/s3-static-assets": "file:../s3-static-assets",
     "fs-extra": "^8.1.0",
