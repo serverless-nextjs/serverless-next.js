@@ -3,6 +3,7 @@ const fse = require("fs-extra");
 const path = require("path");
 const { Builder } = require("@sls-next/lambda-at-edge");
 const uploadAssetsToS3 = require("@sls-next/s3-static-assets");
+const createInvalidation = require("@sls-next/cloudfront");
 
 const obtainDomains = require("./lib/obtainDomains");
 const { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } = require("./constants");
@@ -421,6 +422,12 @@ class NextjsComponent extends Component {
     });
 
     let appUrl = cloudFrontOutputs.url;
+
+    // create invalidation
+    await createInvalidation.default({
+      distributionId: cloudFrontOutputs.id,
+      credentials: this.context.credentials.aws
+    });
 
     // create domain
     const { domain, subdomain } = obtainDomains(inputs.domain);

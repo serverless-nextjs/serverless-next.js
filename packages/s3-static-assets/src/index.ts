@@ -5,7 +5,7 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
-  NO_STORE_CACHE_CONTROL_HEADER
+  SERVER_CACHE_CONTROL_HEADER
 } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
@@ -70,7 +70,7 @@ const uploadStaticAssets = async (
           ""
         )}`,
         filePath: pageFilePath,
-        cacheControl: NO_STORE_CACHE_CONTROL_HEADER
+        cacheControl: SERVER_CACHE_CONTROL_HEADER
       });
     });
 
@@ -110,7 +110,7 @@ const uploadStaticAssets = async (
     return s3.uploadFile({
       s3Key: path.posix.join("static-pages", relativePageFilePath),
       filePath: pageFilePath,
-      cacheControl: NO_STORE_CACHE_CONTROL_HEADER
+      cacheControl: SERVER_CACHE_CONTROL_HEADER
     });
   });
 
