@@ -222,7 +222,7 @@ describe("Builder Tests", () => {
         "node_modules",
         "pages"
       ]);
-      expect(pages).toEqual(["api"]);
+      expect(pages).toEqual(["_error.js", "api"]);
     });
   });
 });

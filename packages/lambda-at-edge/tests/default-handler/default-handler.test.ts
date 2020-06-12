@@ -187,10 +187,13 @@ describe("Lambda@Edge", () => {
       }
     });
 
-    mockPageRequire("pages/404.html");
+    mockPageRequire("pages/_error.js");
 
     const response = (await handler(event)) as CloudFrontResultResponse;
 
-    expect(response.uri).toEqual("/404.html");
+    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+
+    expect(decodedBody).toEqual("pages/_error.js");
+    expect(response.status).toEqual(200);
   });
 });
