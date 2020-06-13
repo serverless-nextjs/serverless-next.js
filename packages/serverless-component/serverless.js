@@ -159,6 +159,13 @@ class NextjsComponent extends Component {
       ? path.resolve(inputs.nextStaticDir)
       : nextConfigPath;
 
+    const accelerated =
+      typeof inputs.accelerated !== "undefined"
+        ? typeof inputs.accelerated === "boolean"
+          ? inputs.accelerated
+          : inputs.accelerated === "true"
+        : true;
+
     const customCloudFrontConfig = inputs.cloudfront || {};
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
@@ -179,7 +186,7 @@ class NextjsComponent extends Component {
     ]);
 
     const bucketOutputs = await bucket({
-      accelerated: true,
+      accelerated,
       name: inputs.bucketName
     });
 
