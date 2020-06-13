@@ -57,10 +57,10 @@ With a simplified architecture and no use of CloudFormation, there are no limits
       Nextjs build assets `/_next/*` served from CloudFront.
 - [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
-- [x] Opt-in to static generation (SSG) via `getStaticProps`.
-- [x] Opt-in to server-side rendering (SSR) via `getServerSideProps`.
-- [x] Statically generate a set of routes from dynamic sources via `getStaticPaths`.
-- [ ] Statically generate a set of routes from dynamic sources via `getStaticPaths` using fallback page. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
+- [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
+- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
+- [ ] `getStaticPaths` using fallback page. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
 - [ ] Preview mode. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
 
 ### Getting started
