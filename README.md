@@ -388,7 +388,8 @@ See `examples/dynamodb-crud` for an example Todo application that interacts with
 
 #### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
-You need to commit your application state in source control. That is the files under the `.serverless` directory.
+You need to commit your application state in source control. That is the files under the `.serverless` directory. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f)
+
 The serverless team is currently working on remote state storage so this won't be necessary in the future.
 
 #### My lambda is deployed to `us-east-1`. How can I deploy it to another region?
