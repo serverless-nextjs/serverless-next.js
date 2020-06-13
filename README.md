@@ -19,6 +19,7 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Lambda@Edge configuration](#lambda-at-edge-configuration)
 - [Custom domain name](#custom-domain-name)
 - [Custom CloudFront configuration](#custom-cloudfront-configuration)
+- [Static pages caching](#static-pages-caching)
 - [Public directory caching](#public-directory-caching)
 - [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
@@ -56,8 +57,11 @@ With a simplified architecture and no use of CloudFormation, there are no limits
       Nextjs build assets `/_next/*` served from CloudFront.
 - [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
-- [ ] [getStaticProps / getStaticPaths / getServerSideProps](https://nextjs.org/blog/next-9-3#next-gen-static-site-generation-ssg-support).
-      Currently in progress. See [this RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [x] Opt-in to static generation (SSG) via `getStaticProps`.
+- [x] Opt-in to server-side rendering (SSR) via `getServerSideProps`.
+- [x] Statically generate a set of routes from dynamic sources via `getStaticPaths`.
+- [ ] Statically generate a set of routes from dynamic sources via `getStaticPaths` using fallback page. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [ ] Preview mode. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
 
 ### Getting started
 
@@ -161,6 +165,17 @@ myNextApplication:
 ```
 
 This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+
+### Static pages caching
+
+Statically rendered pages (i.e. HTML pages that are uploaded to S3) have the following Cache-Control set:
+
+```
+cache-control: public, max-age=0, s-maxage=2678400, must-revalidate
+```
+
+`s-maxage` allows Cloudfront to cache the pages at the edge locations for 31 days.
+`max-age=0` in combination with `must-revalidate` ensure browsers never cache the static pages. This allows Cloudfront to be in full control of caching TTLs. On every deployment an invalidation`/\*` is created to ensure users get fresh content.
 
 ### Public directory caching
 
