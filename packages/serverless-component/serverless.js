@@ -174,8 +174,8 @@ class NextjsComponent extends Component {
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@serverless/aws-cloudfront"),
-      this.load("@serverless/aws-lambda", "defaultEdgeLambda"),
-      this.load("@serverless/aws-lambda", "apiEdgeLambda")
+      this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
+      this.load("@sls-next/aws-lambda", "apiEdgeLambda")
     ]);
 
     const bucketOutputs = await bucket({
