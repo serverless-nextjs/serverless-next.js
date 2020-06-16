@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.5.1](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-nextjs-plugin@2.5.1-alpha.0...serverless-nextjs-plugin@2.5.1) (2020-06-16)
+
+**Note:** Version bump only for package serverless-nextjs-plugin
+
 ## [2.5.1-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-nextjs-plugin@2.5.0...serverless-nextjs-plugin@2.5.1-alpha.0) (2020-06-12)
 
 **Note:** Version bump only for package serverless-nextjs-plugin
