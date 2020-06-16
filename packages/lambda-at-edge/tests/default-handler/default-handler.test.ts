@@ -36,6 +36,7 @@ describe("Lambda@Edge", () => {
         ${"/"}                                             | ${"/index.html"}
         ${"/index"}                                        | ${"/index.html"}
         ${"/terms"}                                        | ${"/terms.html"}
+        ${"/terms/"}                                       | ${"/terms.html"}
         ${"/users/batman"}                                 | ${"/users/[user].html"}
         ${"/users/test/catch/all"}                         | ${"/users/[...user].html"}
         ${"/john/123"}                                     | ${"/[username]/[id].html"}
@@ -106,6 +107,7 @@ describe("Lambda@Edge", () => {
         path                              | expectedPage
         ${"/abc"}                         | ${"pages/[root].js"}
         ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
+        ${"/blog/foo/"}                   | ${"pages/blog/[id].js"}
         ${"/customers"}                   | ${"pages/customers/index.js"}
         ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}

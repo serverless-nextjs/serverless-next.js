@@ -66,7 +66,15 @@ const router = (
   };
 };
 
-const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
+const normaliseUri = (uri: string): string => {
+  if (uri === "/") {
+    return "/index";
+  }
+  if (uri.endsWith("/")) {
+    return uri.slice(0, -1);
+  }
+  return uri;
+};
 
 export const handler = async (
   event: OriginRequestEvent
