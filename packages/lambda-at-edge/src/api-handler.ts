@@ -8,12 +8,12 @@ const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
 
 const router = (
   manifest: OriginRequestApiHandlerManifest
-): ((path: string) => string) => {
+): ((path: string) => string | null) => {
   const {
     apis: { dynamic, nonDynamic }
   } = manifest;
 
-  return (path: string): string => {
+  return (path: string): string | null => {
     if (nonDynamic[path]) {
       return nonDynamic[path];
     }
@@ -29,7 +29,7 @@ const router = (
       }
     }
 
-    return "pages/_error.js";
+    return null;
   };
 };
 
@@ -40,6 +40,12 @@ export const handler = async (
   const uri = normaliseUri(request.uri);
 
   const pagePath = router(manifest)(uri);
+
+  if (!pagePath) {
+    return {
+      status: "404"
+    };
+  }
 
   // eslint-disable-next-line
   const page = require(`./${pagePath}`);
