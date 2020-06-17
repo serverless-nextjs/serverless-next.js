@@ -251,10 +251,6 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
-      fse.copy(
-        join(this.serverlessDir, "pages/_error.js"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/_error.js")
-      ),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest

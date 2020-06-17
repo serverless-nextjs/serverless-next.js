@@ -41,4 +41,22 @@ describe("API lambda handler", () => {
     expect(decodedBody).toEqual("pages/api/getCustomers");
     expect(response.status).toEqual(200);
   });
+
+  it("returns 404 for not-found api routes", async () => {
+    const event = createCloudFrontEvent({
+      uri: "/foo/bar",
+      host: "mydistribution.cloudfront.net",
+      origin: {
+        s3: {
+          domainName: "my-bucket.amazonaws.com"
+        }
+      }
+    });
+
+    mockPageRequire("pages/api/getCustomers.js");
+
+    const response = (await handler(event)) as CloudFrontResponseResult;
+
+    expect(response.status).toEqual("404");
+  });
 });
