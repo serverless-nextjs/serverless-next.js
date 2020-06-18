@@ -84,7 +84,7 @@ describe("Custom inputs", () => {
       const component = createNextComponent();
 
       componentOutputs = await component.default({
-        s3BucketRegion: inputRegion
+        bucketRegion: inputRegion
       });
     });
 
