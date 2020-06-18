@@ -69,7 +69,7 @@
     "clearMocks": true,
     "collectCoverage": true,
     "collectCoverageFrom": [
-      "<rootDir>/packages/**/*.js"
+      "<rootDir>/packages/**/*.{js,ts}"
     ],
     "moduleNameMapper": {
       "fs-extra": "<rootDir>/node_modules/fs-extra"
@@ -82,7 +82,8 @@
       "/fixtures/",
       "/fixture/",
       "/examples/",
-      "/dist/"
+      "/dist/",
+      "/tests/"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",

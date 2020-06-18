@@ -9,6 +9,8 @@ const {
   mockUpdateFunctionConfigurationPromise
 } = require("aws-sdk");
 
+jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
+
 const mockIamRole = jest.fn();
 jest.mock("@serverless/aws-iam-role", () =>
   jest.fn(() => {

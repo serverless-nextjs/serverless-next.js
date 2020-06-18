@@ -3,7 +3,7 @@ const fse = require("fs-extra");
 const NextjsComponent = require("../serverless");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockCloudFront } = require("@serverless/aws-cloudfront");
-const { mockLambda, mockLambdaPublish } = require("@serverless/aws-lambda");
+const { mockLambda, mockLambdaPublish } = require("@sls-next/aws-lambda");
 const mockCreateInvalidation = require("@sls-next/cloudfront");
 const {
   DEFAULT_LAMBDA_CODE_DIR,
