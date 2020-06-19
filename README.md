@@ -255,6 +255,7 @@ The exhaustive list of AWS actions required for a deployment:
   "route53:ListResourceRecordSets",   // only for custom domains
   "s3:CreateBucket",
   "s3:GetAccelerateConfiguration",
+  "s3:GetObject",                     // only if persisting state to S3 for CI/CD
   "s3:HeadBucket",
   "s3:ListBucket",
   "s3:PutAccelerateConfiguration",
