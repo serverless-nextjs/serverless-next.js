@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.14.0...serverless-next.js@1.15.0-alpha.0) (2020-06-21)
+
+### Features
+
+- **serverless-component:** add support for custom s3 region ([#451](https://github.com/danielcondemarin/serverless-next.js/issues/451)) ([ffef4ad](https://github.com/danielcondemarin/serverless-next.js/commit/ffef4ad21525d54489a158f98b638f9c2b00c57a))
+
 # [1.14.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.14.0-alpha.0...serverless-next.js@1.14.0) (2020-06-16)
 
 **Note:** Version bump only for package serverless-next.js
