@@ -9,4 +9,4 @@ declare function lambdaAtEdgeCompat(event: {
   res: ServerResponse;
 };
 
-export = lambdaAtEdgeCompat;
+export default lambdaAtEdgeCompat;

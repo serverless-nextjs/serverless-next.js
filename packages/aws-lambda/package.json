@@ -1,0 +1,31 @@
+{
+  "name": "@sls-next/aws-lambda",
+  "version": "1.0.0-alpha.0",
+  "main": "serverless.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "keywords": [
+    "AWS",
+    "Lambda",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "dependencies": {
+    "@serverless/aws-iam-role": "^1.0.0",
+    "@serverless/aws-lambda-layer": "^1.0.0",
+    "@serverless/aws-s3": "^4.2.0",
+    "@serverless/core": "^1.0.0",
+    "archiver": "^3.0.0",
+    "aws-sdk": "^2.699.0",
+    "fs-extra": "^7.0.0",
+    "globby": "^9.2.0",
+    "ramda": "^0.26.0"
+  }
+}
