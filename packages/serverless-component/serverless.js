@@ -180,7 +180,8 @@ class NextjsComponent extends Component {
 
     const bucketOutputs = await bucket({
       accelerated: true,
-      name: inputs.bucketName
+      name: inputs.bucketName,
+      region: inputs.bucketRegion || "us-east-1"
     });
 
     await uploadAssetsToS3.default({

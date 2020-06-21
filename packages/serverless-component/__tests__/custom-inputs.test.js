@@ -68,6 +68,41 @@ describe("Custom inputs", () => {
   });
 
   describe.each`
+    inputRegion    | expectedRegion
+    ${undefined}   | ${"us-east-1"}
+    ${"eu-west-2"} | ${"eu-west-2"}
+  `(`When input region is $inputRegion`, ({ inputRegion, expectedRegion }) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({});
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        bucketRegion: inputRegion
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`passes the ${expectedRegion} region to s3 component`, () => {
+      expect(mockS3).toBeCalledWith(
+        expect.objectContaining({
+          region: expectedRegion
+        })
+      );
+    });
+  });
+
+  describe.each`
     inputDomains                  | expectedDomain
     ${["dev", "example.com"]}     | ${"https://dev.example.com"}
     ${["www", "example.com"]}     | ${"https://www.example.com"}
@@ -216,7 +251,7 @@ describe("Custom inputs", () => {
         return cleanupFixtureDirectory(fixturePath);
       });
 
-      it(`sets the ${expected} Cache-Control header on ${publicDirectoryCache}`, () => {
+      it(`sets the ${expected} Cache - Control header on ${publicDirectoryCache} `, () => {
         expect(mockUpload).toBeCalledWith(
           expect.objectContaining({
             Key: expect.stringMatching("public/favicon.ico"),
@@ -261,7 +296,7 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it(`sets default lambda memory to ${expectedMemory.defaultMemory} and api lambda memory to ${expectedMemory.apiMemory}`, () => {
+    it(`sets default lambda memory to ${expectedMemory.defaultMemory} and api lambda memory to ${expectedMemory.apiMemory} `, () => {
       const { defaultMemory, apiMemory } = expectedMemory;
 
       // default Lambda
@@ -312,7 +347,7 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it(`sets default lambda timeout to ${expectedTimeout.defaultTimeout} and api lambda timeout to ${expectedTimeout.apiTimeout}`, () => {
+    it(`sets default lambda timeout to ${expectedTimeout.defaultTimeout} and api lambda timeout to ${expectedTimeout.apiTimeout} `, () => {
       const { defaultTimeout, apiTimeout } = expectedTimeout;
 
       expect(mockLambda).toBeCalledWith(
@@ -361,7 +396,7 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it(`sets default lambda runtime to ${expectedRuntime.defaultRuntime} and api lambda runtime to ${expectedRuntime.apiRuntime}`, () => {
+    it(`sets default lambda runtime to ${expectedRuntime.defaultRuntime} and api lambda runtime to ${expectedRuntime.apiRuntime} `, () => {
       const { defaultRuntime, apiRuntime } = expectedRuntime;
 
       expect(mockLambda).toBeCalledWith(
@@ -410,7 +445,7 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it(`sets default lambda name to ${expectedName.defaultName} and api lambda name to ${expectedName.apiName}`, () => {
+    it(`sets default lambda name to ${expectedName.defaultName} and api lambda name to ${expectedName.apiName} `, () => {
       const { defaultName, apiName } = expectedName;
 
       const expectedDefaultObject = {
