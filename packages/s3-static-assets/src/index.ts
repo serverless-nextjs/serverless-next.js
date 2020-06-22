@@ -39,7 +39,7 @@ const uploadStaticAssets = async (
 
   const buildStaticFileUploads = buildStaticFiles
     .filter(filterOutDirectories)
-    .map(async fileItem => {
+    .map(async (fileItem) => {
       const s3Key = pathToPosix(
         path
           .relative(path.resolve(nextConfigDir), fileItem.path)
@@ -58,8 +58,8 @@ const uploadStaticAssets = async (
   );
 
   const htmlPageUploads = Object.values(pagesManifest)
-    .filter(pageFile => (pageFile as string).endsWith(".html"))
-    .map(relativePageFilePath => {
+    .filter((pageFile) => (pageFile as string).endsWith(".html"))
+    .map((relativePageFilePath) => {
       const pageFilePath = pathToPosix(
         path.join(dotNextDirectory, `serverless/${relativePageFilePath}`)
       );
@@ -80,7 +80,7 @@ const uploadStaticAssets = async (
 
   const prerenderManifestJSONPropFileUploads = Object.keys(
     prerenderManifest.routes
-  ).map(key => {
+  ).map((key) => {
     const pageFilePath = pathToPosix(
       path.join(
         dotNextDirectory,
@@ -98,7 +98,7 @@ const uploadStaticAssets = async (
 
   const prerenderManifestHTMLPageUploads = Object.keys(
     prerenderManifest.routes
-  ).map(key => {
+  ).map((key) => {
     const relativePageFilePath = key.endsWith("/")
       ? path.posix.join(key, "index.html")
       : key + ".html";
@@ -125,7 +125,7 @@ const uploadStaticAssets = async (
 
     const files = await readDirectoryFiles(directoryPath);
 
-    return files.filter(filterOutDirectories).map(fileItem =>
+    return files.filter(filterOutDirectories).map((fileItem) =>
       s3.uploadFile({
         filePath: fileItem.path,
         s3Key: pathToPosix(

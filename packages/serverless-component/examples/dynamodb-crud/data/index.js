@@ -1,1 +1,1 @@
-module.exports = require('./dynamodb')
+module.exports = require("./dynamodb");

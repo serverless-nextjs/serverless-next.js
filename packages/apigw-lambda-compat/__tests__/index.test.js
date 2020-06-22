@@ -72,7 +72,7 @@ describe("next-aws-lambda", () => {
 
     const responsePromise = compat(page)(event, context);
 
-    return responsePromise.then(result => {
+    return responsePromise.then((result) => {
       expect(result).toEqual(response);
     });
   });

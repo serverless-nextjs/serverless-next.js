@@ -15,7 +15,7 @@ describe("Response Tests", () => {
     res.writeHead(404);
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.status).toEqual(404);
     });
   });
@@ -33,7 +33,7 @@ describe("Response Tests", () => {
     res.statusCode = 200;
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.status).toEqual(200);
       expect(response.statusDescription).toEqual("OK");
     });
@@ -51,7 +51,7 @@ describe("Response Tests", () => {
 
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.status).toEqual(200);
     });
   });
@@ -72,7 +72,7 @@ describe("Response Tests", () => {
     });
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers).toEqual({
         "x-custom-1": [
           {
@@ -114,7 +114,7 @@ describe("Response Tests", () => {
     res.writeHead(200, cloudFrontReadOnlyHeaders);
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers).toEqual({});
     });
   });
@@ -130,7 +130,7 @@ describe("Response Tests", () => {
     res.setHeader("set-cookie", ["1", "2"]);
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers).toEqual({
         "set-cookie": [
           {
@@ -158,7 +158,7 @@ describe("Response Tests", () => {
     res.setHeader("x-custom-2", "2");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers).toEqual({
         "x-custom-1": [
           {
@@ -188,7 +188,7 @@ describe("Response Tests", () => {
     res.setHeader("x-custom-2", "2");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers).toEqual({
         "x-custom-2": [
           {
@@ -213,7 +213,7 @@ describe("Response Tests", () => {
     res.removeHeader("x-custom-1");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers).toEqual({
         "x-custom-2": [
           {
@@ -295,7 +295,7 @@ describe("Response Tests", () => {
     res.write("ok");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.body).toEqual("b2s=");
       expect(response.bodyEncoding).toEqual("base64");
     });
@@ -313,7 +313,7 @@ describe("Response Tests", () => {
 
     res.end("ok");
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.body).toEqual("b2s=");
     });
   });
@@ -342,7 +342,7 @@ describe("Response Tests", () => {
 
     gzipSpy.mockRestore();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.headers["content-encoding"]).toEqual([
         { key: "Content-Encoding", value: "gzip" }
       ]);
@@ -363,7 +363,7 @@ describe("Response Tests", () => {
     res.statusCode = 204;
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.body).not.toBeDefined();
       expect(response.bodyEncoding).not.toBeDefined();
       expect(response.status).toEqual(204);

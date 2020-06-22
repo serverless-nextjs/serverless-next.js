@@ -1,6 +1,6 @@
 const getAssetsBucketName = require("./getAssetsBucketName");
 
-module.exports = function() {
+module.exports = function () {
   const bucketName = getAssetsBucketName.call(this);
   const uploadBuildAssets = this.getPluginConfigValue("uploadBuildAssets");
 
@@ -13,7 +13,7 @@ module.exports = function() {
       Bucket: bucketName,
       MaxKeys: 1
     })
-    .catch(err => {
+    .catch((err) => {
       if (!err.message.includes("The specified bucket does not exist")) {
         throw err;
       }

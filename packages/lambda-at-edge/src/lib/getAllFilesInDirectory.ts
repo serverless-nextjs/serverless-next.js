@@ -7,7 +7,7 @@ const getAllFilesRecursively = (
 ): string[] => {
   const files = fs.readdirSync(dirPath);
 
-  files.forEach(function(file) {
+  files.forEach(function (file) {
     if (fs.statSync(dirPath + path.sep + file).isDirectory()) {
       arrayOfFiles = getAllFilesRecursively(
         path.join(dirPath, file),

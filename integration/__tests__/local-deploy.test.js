@@ -8,7 +8,7 @@ describe.skip("Local Deployment Tests (via serverless-offline)", () => {
 
   beforeAll(() => {
     process.chdir(path.join(__dirname, "../app-with-serverless-offline"));
-    return serverlessOfflineStart().then(serverlessOffline => {
+    return serverlessOfflineStart().then((serverlessOffline) => {
       slsOffline = serverlessOffline;
     });
   });

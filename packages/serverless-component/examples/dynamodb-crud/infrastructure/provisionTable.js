@@ -23,7 +23,7 @@ let params = {
   BillingMode: "PAY_PER_REQUEST"
 };
 
-(async function() {
+(async function () {
   await dynamodb.createTable(params).promise();
 
   console.log("Created table in us-west-2");

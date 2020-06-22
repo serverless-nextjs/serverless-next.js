@@ -25,7 +25,7 @@ describe("No Next Config Build Test", () => {
 
   afterAll(() => {
     return Promise.all(
-      [".next", "next.config.js", "next.config.original.123.js"].map(file =>
+      [".next", "next.config.js", "next.config.original.123.js"].map((file) =>
         remove(path.join(fixtureDir, file))
       )
     );

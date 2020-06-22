@@ -90,10 +90,10 @@ const HttpStatusCodes = {
   305: "Use Proxy"
 };
 
-const toCloudFrontHeaders = headers => {
+const toCloudFrontHeaders = (headers) => {
   const result = {};
 
-  Object.keys(headers).forEach(headerName => {
+  Object.keys(headers).forEach((headerName) => {
     const lowerCaseHeaderName = headerName.toLowerCase();
     const headerValue = headers[headerName];
 
@@ -104,7 +104,7 @@ const toCloudFrontHeaders = headers => {
     result[lowerCaseHeaderName] = [];
 
     if (headerValue instanceof Array) {
-      headerValue.forEach(val => {
+      headerValue.forEach((val) => {
         result[lowerCaseHeaderName].push({
           key: headerName,
           value: val.toString()
@@ -121,13 +121,13 @@ const toCloudFrontHeaders = headers => {
   return result;
 };
 
-const isGzipSupported = headers => {
+const isGzipSupported = (headers) => {
   let gz = false;
   const ae = headers["accept-encoding"];
   if (ae) {
     for (let i = 0; i < ae.length; i++) {
       const { value } = ae[i];
-      const bits = value.split(",").map(x => x.split(";")[0].trim());
+      const bits = value.split(",").map((x) => x.split(";")[0].trim());
       if (bits.indexOf("gzip") !== -1) {
         gz = true;
       }
@@ -136,7 +136,7 @@ const isGzipSupported = headers => {
   return gz;
 };
 
-const handler = event => {
+const handler = (event) => {
   const { request: cfRequest } = event;
 
   const response = {
@@ -160,7 +160,7 @@ const handler = event => {
   for (const lowercaseKey of Object.keys(headers)) {
     const headerKeyValPairs = headers[lowercaseKey];
 
-    headerKeyValPairs.forEach(keyVal => {
+    headerKeyValPairs.forEach((keyVal) => {
       req.rawHeaders.push(keyVal.key);
       req.rawHeaders.push(keyVal.value);
     });
@@ -168,7 +168,7 @@ const handler = event => {
     req.headers[lowercaseKey] = headerKeyValPairs[0].value;
   }
 
-  req.getHeader = name => {
+  req.getHeader = (name) => {
     return req.headers[name.toLowerCase()];
   };
 
@@ -206,7 +206,7 @@ const handler = event => {
       res.headers = Object.assign(res.headers, headers);
     }
   };
-  res.write = chunk => {
+  res.write = (chunk) => {
     if (!response.body) {
       response.body = Buffer.from("");
     }
@@ -219,8 +219,8 @@ const handler = event => {
 
   let gz = isGzipSupported(headers);
 
-  const responsePromise = new Promise(resolve => {
-    res.end = text => {
+  const responsePromise = new Promise((resolve) => {
+    res.end = (text) => {
       if (text) res.write(text);
 
       if (!res.statusCode) {
@@ -250,16 +250,16 @@ const handler = event => {
   res.setHeader = (name, value) => {
     res.headers[name.toLowerCase()] = value;
   };
-  res.removeHeader = name => {
+  res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()];
   };
-  res.getHeader = name => {
+  res.getHeader = (name) => {
     return res.headers[name.toLowerCase()];
   };
   res.getHeaders = () => {
     return res.headers;
   };
-  res.hasHeader = name => {
+  res.hasHeader = (name) => {
     return !!res.getHeader(name);
   };
 

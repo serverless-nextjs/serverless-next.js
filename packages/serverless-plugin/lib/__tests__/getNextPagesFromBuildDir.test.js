@@ -26,7 +26,7 @@ describe("getNextPagesFromBuildDir", () => {
     const buildDir = path.normalize(`path/to/${PluginBuildDir.BUILD_DIR_NAME}`);
 
     const getPagesPromise = getNextPagesFromBuildDir(buildDir).then(
-      nextPages => {
+      (nextPages) => {
         expect(nextPages).toEqual([]);
       }
     );
@@ -42,7 +42,7 @@ describe("getNextPagesFromBuildDir", () => {
     const buildDir = PluginBuildDir.BUILD_DIR_NAME;
     const resolvedBuildDir = path.resolve(buildDir);
 
-    const promise = getNextPagesFromBuildDir(buildDir).then(nextPages => {
+    const promise = getNextPagesFromBuildDir(buildDir).then((nextPages) => {
       expect(nextPages).toHaveLength(2);
       expect(nextPages[0].pageName).toEqual("index");
       expect(nextPages[0].pagePath).toEqual(path.join(buildDir, "index.js"));
@@ -77,7 +77,7 @@ describe("getNextPagesFromBuildDir", () => {
     );
 
     const promise = getNextPagesFromBuildDir(buildDir, { pageConfig }).then(
-      nextPages => {
+      (nextPages) => {
         expect(nextPages[0].serverlessFunctionOverrides).toEqual(
           indexPageConfigOverride
         );
@@ -112,7 +112,7 @@ describe("getNextPagesFromBuildDir", () => {
     const promise = getNextPagesFromBuildDir(buildDir, {
       pageConfig: undefined,
       routes
-    }).then(nextPages => {
+    }).then((nextPages) => {
       const [indexPage, fooPage, fooBarPage, bazBarPage] = nextPages;
 
       expect(indexPage.routes).toEqual([{ path: "home" }]);
@@ -147,7 +147,7 @@ describe("getNextPagesFromBuildDir", () => {
     );
 
     const promise = getNextPagesFromBuildDir(buildDir, { pageConfig }).then(
-      nextPages => {
+      (nextPages) => {
         expect(nextPages[0].serverlessFunctionOverrides).toEqual(
           asteriskPageConfigOverride
         );
@@ -185,7 +185,7 @@ describe("getNextPagesFromBuildDir", () => {
     const buildDir = path.normalize(`./${PluginBuildDir.BUILD_DIR_NAME}`);
     const resolvedBuildDir = path.resolve(buildDir);
 
-    const promise = getNextPagesFromBuildDir(buildDir).then(nextPages => {
+    const promise = getNextPagesFromBuildDir(buildDir).then((nextPages) => {
       expect(nextPages).toHaveLength(1);
       expect(nextPages[0].pageName).toEqual("_error");
     });
@@ -209,7 +209,7 @@ describe("getNextPagesFromBuildDir", () => {
       `/path/to/${PluginBuildDir.BUILD_DIR_NAME}`
     );
 
-    const promise = getNextPagesFromBuildDir(buildDir).then(nextPages => {
+    const promise = getNextPagesFromBuildDir(buildDir).then((nextPages) => {
       expect(nextPages).toHaveLength(1);
       expect(nextPages[0].pageName).toEqual("home");
     });
@@ -228,7 +228,7 @@ describe("getNextPagesFromBuildDir", () => {
       `/path/to/${PluginBuildDir.BUILD_DIR_NAME}`
     );
 
-    const promise = getNextPagesFromBuildDir(buildDir).then(nextPages => {
+    const promise = getNextPagesFromBuildDir(buildDir).then((nextPages) => {
       expect(nextPages).toHaveLength(1);
       expect(nextPages[0].pageName).toEqual("home");
     });
@@ -246,7 +246,7 @@ describe("getNextPagesFromBuildDir", () => {
     const buildDir = path.normalize(`./${PluginBuildDir.BUILD_DIR_NAME}`);
     const resolvedBuildDir = path.resolve(buildDir);
 
-    const promise = getNextPagesFromBuildDir(buildDir).then(nextPages => {
+    const promise = getNextPagesFromBuildDir(buildDir).then((nextPages) => {
       expect(nextPages).toHaveLength(2);
       expect(nextPages[0].pageName).toEqual("hello-world");
       expect(nextPages[0].pagePath).toEqual(
@@ -276,7 +276,7 @@ describe("getNextPagesFromBuildDir", () => {
     const resolvedBuildDir = path.resolve(buildDir);
     fs.lstatSync.mockReturnValue({ isDirectory: () => true });
 
-    const promise = getNextPagesFromBuildDir(buildDir).then(nextPages => {
+    const promise = getNextPagesFromBuildDir(buildDir).then((nextPages) => {
       expect(nextPages).toHaveLength(0);
     });
 

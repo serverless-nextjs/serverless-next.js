@@ -3,10 +3,12 @@ const fse = require("fs-extra");
 const path = require("path");
 const uploadDirToS3Factory = require("../utils/s3/upload");
 
-module.exports = async function() {
+module.exports = async function () {
   let { nextConfiguration, staticAssetsBucket } = this.configuration;
   const buildId = nextConfiguration.distDir // eslint-disable-next-line prettier/prettier
-    ? fs.readFileSync(path.join(this.nextConfigDir, nextConfiguration.distDir, "BUILD_ID"))
+    ? fs.readFileSync(
+        path.join(this.nextConfigDir, nextConfiguration.distDir, "BUILD_ID")
+      )
     : null;
 
   const uploadDirToS3 = uploadDirToS3Factory(this.providerRequest, buildId);
@@ -26,7 +28,7 @@ module.exports = async function() {
 
   const uploadPromises = [];
 
-  const uploadStaticOrPublicDirectory = async dirName => {
+  const uploadStaticOrPublicDirectory = async (dirName) => {
     const dir = path.join(this.nextConfigDir, dirName);
     const dirExists = await fse.pathExists(dir);
 

@@ -17,7 +17,7 @@ describe("checkForChanges", () => {
       .fn()
       .mockRejectedValueOnce(new Error("The specified bucket does not exist"));
 
-    return checkForChanges.call(plugin).catch(err => {
+    return checkForChanges.call(plugin).catch((err) => {
       expect(plugin.provider.request).toBeCalledWith("S3", "listObjectsV2", {
         Bucket: bucketName,
         MaxKeys: 1
@@ -42,7 +42,7 @@ describe("checkForChanges", () => {
       .fn()
       .mockRejectedValueOnce(new Error("Blew up"));
 
-    return checkForChanges.call(plugin).catch(err => {
+    return checkForChanges.call(plugin).catch((err) => {
       expect(err.message).toEqual(`Blew up`);
     });
   });

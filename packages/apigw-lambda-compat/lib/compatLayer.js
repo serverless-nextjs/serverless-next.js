@@ -54,7 +54,7 @@ const reqResMapper = (event, callback) => {
     req.headers[key.toLowerCase()] = headers[key].toString();
   }
 
-  req.getHeader = name => {
+  req.getHeader = (name) => {
     return req.headers[name.toLowerCase()];
   };
   req.getHeaders = () => {
@@ -77,7 +77,7 @@ const reqResMapper = (event, callback) => {
     response.statusCode = status;
     if (headers) res.headers = Object.assign(res.headers, headers);
   };
-  res.write = chunk => {
+  res.write = (chunk) => {
     if (!response.body) {
       response.body = Buffer.from("");
     }
@@ -92,20 +92,20 @@ const reqResMapper = (event, callback) => {
   res.setHeader = (name, value) => {
     res.headers[name.toLowerCase()] = value;
   };
-  res.removeHeader = name => {
+  res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()];
   };
-  res.getHeader = name => {
+  res.getHeader = (name) => {
     return res.headers[name.toLowerCase()];
   };
   res.getHeaders = () => {
     return res.headers;
   };
-  res.hasHeader = name => {
+  res.hasHeader = (name) => {
     return !!res.getHeader(name);
   };
 
-  const onResEnd = (callback, resolve) => text => {
+  const onResEnd = (callback, resolve) => (text) => {
     if (text) res.write(text);
     if (!res.statusCode) {
       res.statusCode = 200;
@@ -130,7 +130,7 @@ const reqResMapper = (event, callback) => {
   if (typeof callback === "function") {
     res.end = onResEnd(callback);
   } else {
-    responsePromise = new Promise(resolve => {
+    responsePromise = new Promise((resolve) => {
       res.end = onResEnd(null, resolve);
     });
   }

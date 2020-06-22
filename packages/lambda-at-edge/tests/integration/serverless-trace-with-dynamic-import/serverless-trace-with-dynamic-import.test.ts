@@ -25,7 +25,7 @@ describe("Serverless Trace With Dynamic Import", () => {
 
   afterAll(() => {
     return Promise.all(
-      [".next"].map(file => remove(path.join(fixtureDir, file)))
+      [".next"].map((file) => remove(path.join(fixtureDir, file)))
     );
   });
 
@@ -46,7 +46,7 @@ describe("Serverless Trace With Dynamic Import", () => {
   it("copies dynamic chunk to default lambda artefact", async () => {
     const chunkFileName = (
       await readdir(path.join(fixtureDir, ".next/serverless"))
-    ).find(file => {
+    ).find((file) => {
       return /^[\d]+\.+[\w,\s-]+\.(js)$/.test(file);
     });
 

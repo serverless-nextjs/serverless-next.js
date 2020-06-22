@@ -15,7 +15,7 @@ resources:
       Properties:
         ParentId:
           Ref: StaticAssetsProxyParentResource
-        PathPart: '{proxy+}' # the endpoint in your API that is set as proxy
+        PathPart: "{proxy+}" # the endpoint in your API that is set as proxy
         RestApiId:
           Ref: ApiGatewayRestApi
     StaticAssetsProxyMethod:

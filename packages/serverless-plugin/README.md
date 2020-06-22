@@ -337,7 +337,7 @@ The custom handler needs to look something like this:
 ```js
 const compat = require("next-aws-lambda");
 
-module.exports = page => {
+module.exports = (page) => {
   const handler = (event, context) => {
     // do any stuff you like
 

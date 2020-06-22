@@ -86,13 +86,15 @@ class ServerlessNextJsPlugin {
   }
 
   getPluginConfigValues(...params) {
-    return params.map(p => this.getPluginConfigValue(p));
+    return params.map((p) => this.getPluginConfigValue(p));
   }
 
   printStackOutput() {
-    const awsInfo = this.serverless.pluginManager.getPlugins().find(plugin => {
-      return plugin.constructor.name === "AwsInfo";
-    });
+    const awsInfo = this.serverless.pluginManager
+      .getPlugins()
+      .find((plugin) => {
+        return plugin.constructor.name === "AwsInfo";
+      });
 
     return displayServiceInfo(awsInfo);
   }

@@ -7,7 +7,7 @@ const { readFile, createReadStream, createWriteStream } = require("fs-extra");
 const { utils } = require("@serverless/core");
 
 const VALID_FORMATS = ["zip", "tar"];
-const isValidFormat = format => contains(format, VALID_FORMATS);
+const isValidFormat = (format) => contains(format, VALID_FORMATS);
 
 const packDir = async (
   inputDirPath,
@@ -25,12 +25,12 @@ const packDir = async (
   const patterns = ["**/*"];
 
   if (!isNil(exclude)) {
-    exclude.forEach(excludedItem => patterns.push(`!${excludedItem}`));
+    exclude.forEach((excludedItem) => patterns.push(`!${excludedItem}`));
   }
 
   const files = (await globby(patterns, { cwd: inputDirPath, dot: true }))
     .sort() // we must sort to ensure correct hash
-    .map(file => ({
+    .map((file) => ({
       input: path.join(inputDirPath, file),
       output: prefix ? path.join(prefix, file) : file
     }));
@@ -45,7 +45,7 @@ const packDir = async (
       archive.pipe(output);
 
       // we must set the date to ensure correct hash
-      files.forEach(file =>
+      files.forEach((file) =>
         archive.append(createReadStream(file.input), {
           name: file.output,
           date: new Date(0)
@@ -53,7 +53,7 @@ const packDir = async (
       );
 
       if (!isNil(include)) {
-        include.forEach(file => {
+        include.forEach((file) => {
           const stream = createReadStream(file);
           archive.append(stream, {
             name: path.basename(file),
@@ -65,12 +65,12 @@ const packDir = async (
       archive.finalize();
     });
 
-    archive.on("error", err => reject(err));
+    archive.on("error", (err) => reject(err));
     output.on("close", () => resolve(outputFilePath));
   });
 };
 
-const getAccountId = async aws => {
+const getAccountId = async (aws) => {
   const STS = new aws.STS();
   const res = await STS.getCallerIdentity({}).promise();
   return res.Account;
@@ -267,9 +267,7 @@ const pack = async (code, shims = [], packDeps = true) => {
 
   const outputFilePath = path.join(
     tmpdir(),
-    `${Math.random()
-      .toString(36)
-      .substring(6)}.zip`
+    `${Math.random().toString(36).substring(6)}.zip`
   );
 
   return packDir(code, outputFilePath, shims, exclude);

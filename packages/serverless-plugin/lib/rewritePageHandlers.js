@@ -24,6 +24,8 @@ const processJsHandler = async (nextPage, customHandler) => {
 };
 
 module.exports = (nextPages, customHandler) => {
-  const promises = nextPages.map(page => processJsHandler(page, customHandler));
+  const promises = nextPages.map((page) =>
+    processJsHandler(page, customHandler)
+  );
   return Promise.all(promises);
 };

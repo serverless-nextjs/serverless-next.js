@@ -60,13 +60,8 @@ class Builder {
     const dirExists = await fse.pathExists(join(this.nextConfigDir, "public"));
     if (dirExists) {
       return getAllFiles(join(this.nextConfigDir, "public"))
-        .map(e => e.replace(this.nextConfigDir, ""))
-        .map(e =>
-          e
-            .split(path.sep)
-            .slice(2)
-            .join("/")
-        );
+        .map((e) => e.replace(this.nextConfigDir, ""))
+        .map((e) => e.split(path.sep).slice(2).join("/"));
     } else {
       return [];
     }
@@ -101,7 +96,7 @@ class Builder {
     const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
     const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
 
-    sortedDynamicRoutedPages.forEach(route => {
+    sortedDynamicRoutedPages.forEach((route) => {
       sortedPagesManifest[route] = pagesManifest[route];
     });
 
@@ -114,7 +109,7 @@ class Builder {
     handlerDirectory: string
   ): Promise<void>[] {
     return fileList
-      .filter(file => {
+      .filter((file) => {
         // exclude "initial" files from lambda artefact. These are just the pages themselves
         // which are copied over separately
         return !reasons[file] || reasons[file].type !== "initial";
@@ -146,11 +141,11 @@ class Builder {
       const allSsrPages = [
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
         ...Object.values(buildManifest.pages.ssr.dynamic).map(
-          entry => entry.file
+          (entry) => entry.file
         )
       ].filter(ignoreAppAndDocumentPages);
 
-      const ssrPages = Object.values(allSsrPages).map(pageFile =>
+      const ssrPages = Object.values(allSsrPages).map((pageFile) =>
         path.join(this.serverlessDir, pageFile)
       );
 
@@ -215,10 +210,12 @@ class Builder {
     if (this.buildOptions.useServerlessTraceTarget) {
       const allApiPages = [
         ...Object.values(apiBuildManifest.apis.nonDynamic),
-        ...Object.values(apiBuildManifest.apis.dynamic).map(entry => entry.file)
+        ...Object.values(apiBuildManifest.apis.dynamic).map(
+          (entry) => entry.file
+        )
       ];
 
-      const apiPages = Object.values(allApiPages).map(pageFile =>
+      const apiPages = Object.values(allApiPages).map((pageFile) =>
         path.join(this.serverlessDir, pageFile)
       );
 
@@ -334,7 +331,7 @@ class Builder {
 
     const publicFiles = await this.readPublicFiles();
 
-    publicFiles.forEach(pf => {
+    publicFiles.forEach((pf) => {
       defaultBuildManifest.publicFiles["/" + pf] = pf;
     });
 
@@ -353,9 +350,9 @@ class Builder {
       await Promise.all(
         fileItems
           .filter(
-            fileItem => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
+            (fileItem) => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
           )
-          .map(fileItem => fse.remove(join(this.dotNextDir, fileItem)))
+          .map((fileItem) => fse.remove(join(this.dotNextDir, fileItem)))
       );
     }
   }

@@ -25,7 +25,7 @@ describe("s3 get", () => {
       ]
     });
 
-    return get(key, bucket).then(object => {
+    return get(key, bucket).then((object) => {
       expect(object.Key).toEqual(key);
       expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
         Bucket: bucket,
@@ -50,7 +50,7 @@ describe("s3 get", () => {
 
     return get(key, bucket)
       .then(() => get(key, bucket))
-      .then(object => {
+      .then((object) => {
         expect(object.Key).toEqual(key);
         expect(awsProvider).toBeCalledTimes(1);
         expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
@@ -73,7 +73,7 @@ describe("s3 get", () => {
       NextContinuationToken: continuationToken
     });
 
-    return get(key, bucket).then(object => {
+    return get(key, bucket).then((object) => {
       expect(object).toEqual(undefined);
       expect(awsProvider).toBeCalledTimes(2);
       expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {
@@ -102,7 +102,7 @@ describe("s3 get", () => {
 
     return get(key, bucket)
       .then(() => get(key, bucket))
-      .then(object => {
+      .then((object) => {
         expect(object.Key).toEqual(key);
         expect(awsProvider).toBeCalledTimes(2);
         expect(awsProvider).toBeCalledWith("S3", "listObjectsV2", {

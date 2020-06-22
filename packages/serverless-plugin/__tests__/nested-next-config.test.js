@@ -105,7 +105,7 @@ describe("nested next config", () => {
         `${fixturePath}/.serverless/nested-next-config-fixture.zip`
       );
       const zipEntries = zip.getEntries();
-      zipEntryNames = zipEntries.map(ze => ze.entryName);
+      zipEntryNames = zipEntries.map((ze) => ze.entryName);
     });
 
     it("contains next compiled page", () => {

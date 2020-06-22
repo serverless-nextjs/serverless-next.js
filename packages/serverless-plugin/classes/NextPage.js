@@ -115,14 +115,14 @@ class NextPage {
     if (this.routes && this.routes.length > 0) {
       configuration.events = [];
 
-      this.routes.forEach(r => {
+      this.routes.forEach((r) => {
         const httpEvent = this.getHttpEventForRoute(r);
         configuration.events.push(httpEvent);
       });
     }
 
     const httpHeadEvents = this.getMatchingHttpHeadEvents(
-      configuration.events.filter(e => e.http.method === "get")
+      configuration.events.filter((e) => e.http.method === "get")
     );
 
     configuration.events = configuration.events.concat(httpHeadEvents);
@@ -133,7 +133,7 @@ class NextPage {
   }
 
   getMatchingHttpHeadEvents(httpGetEvents) {
-    return httpGetEvents.map(e => {
+    return httpGetEvents.map((e) => {
       const headEvent = clone(e);
       headEvent.http.method = "head";
       return headEvent;

@@ -1,6 +1,6 @@
 const parseNextConfiguration = require("./parseNextConfiguration");
 
-module.exports = function() {
+module.exports = function () {
   const nextConfigDir = this.getPluginConfigValue("nextConfigDir");
   const staticDir = this.getPluginConfigValue("staticDir");
 

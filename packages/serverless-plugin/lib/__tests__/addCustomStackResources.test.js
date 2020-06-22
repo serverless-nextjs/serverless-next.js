@@ -67,9 +67,7 @@ describe("addCustomStackResources", () => {
         "static"
       );
 
-      when(fse.pathExists)
-        .calledWith(staticDir)
-        .mockResolvedValue(true);
+      when(fse.pathExists).calledWith(staticDir).mockResolvedValue(true);
 
       return addCustomStackResources.call(plugin).then(() => {
         const resources = plugin.serverless.service.resources.Resources;
@@ -115,9 +113,7 @@ describe("addCustomStackResources", () => {
         "public"
       );
 
-      when(fse.pathExists)
-        .calledWith(publicDir)
-        .mockResolvedValue(true);
+      when(fse.pathExists).calledWith(publicDir).mockResolvedValue(true);
 
       when(fse.readdir)
         .calledWith(publicDir)
@@ -171,13 +167,9 @@ describe("addCustomStackResources", () => {
         "public"
       );
 
-      when(fse.pathExists)
-        .calledWith(publicDir)
-        .mockResolvedValue(true);
+      when(fse.pathExists).calledWith(publicDir).mockResolvedValue(true);
 
-      when(fse.readdir)
-        .calledWith(publicDir)
-        .mockResolvedValue(["robots.txt"]);
+      when(fse.readdir).calledWith(publicDir).mockResolvedValue(["robots.txt"]);
 
       plugin.provider.getRegion = getRegion;
 
@@ -196,7 +188,7 @@ describe("addCustomStackResources", () => {
 
   describe("when cloudfront is enabled and S3 bucket is configured", () => {
     const findOrigin = (distribution, originId) =>
-      distribution.Origins.find(o => o.Id === originId);
+      distribution.Origins.find((o) => o.Id === originId);
 
     let assetsBucketName = "foo.bar";
     let resources;
@@ -215,9 +207,7 @@ describe("addCustomStackResources", () => {
 
       getAssetsBucketName.mockReturnValue(assetsBucketName);
 
-      when(fse.pathExists)
-        .calledWith(publicDir)
-        .mockResolvedValue(false);
+      when(fse.pathExists).calledWith(publicDir).mockResolvedValue(false);
 
       return addCustomStackResources.call(plugin).then(() => {
         resources = plugin.serverless.service.resources;
@@ -292,9 +282,7 @@ describe("addCustomStackResources", () => {
           "public"
         );
 
-        when(fse.pathExists)
-          .calledWith(publicDir)
-          .mockResolvedValue(true);
+        when(fse.pathExists).calledWith(publicDir).mockResolvedValue(true);
 
         when(fse.readdir)
           .calledWith(publicDir)

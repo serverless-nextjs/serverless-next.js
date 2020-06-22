@@ -4,8 +4,8 @@ const fs = require("fs");
 const logger = require("../utils/logger");
 const NextPage = require("../classes/NextPage");
 
-const logPages = nextPages => {
-  const pageNames = nextPages.map(p => p.pageName);
+const logPages = (nextPages) => {
+  const pageNames = nextPages.map((p) => p.pageName);
   logger.log(`Found ${pageNames.length} next page(s)`);
 };
 
@@ -17,12 +17,12 @@ const excludeBuildFiles = [
 ];
 const SOURCE_MAP_EXT = ".map";
 
-const getBuildFiles = buildDir => {
+const getBuildFiles = (buildDir) => {
   const buildFiles = [];
-  return new Promise(resolve => {
+  return new Promise((resolve) => {
     const stream = walkDir(buildDir);
     stream
-      .on("data", item => {
+      .on("data", (item) => {
         const isFile = !fs.lstatSync(item.path).isDirectory();
 
         if (isFile) {
@@ -52,14 +52,14 @@ module.exports = async (buildDir, options = {}) => {
         pathSegments.slice(buildDirIndex, pathSegments.length)
       );
     })
-    .filter(bf => !exclude.includes(path.basename(bf)))
-    .filter(bf => !bf.endsWith(SOURCE_MAP_EXT))
-    .map(normalisedFilePath => {
+    .filter((bf) => !exclude.includes(path.basename(bf)))
+    .filter((bf) => !bf.endsWith(SOURCE_MAP_EXT))
+    .map((normalisedFilePath) => {
       const nextPage = new NextPage(normalisedFilePath);
 
       nextPage.routes = routes
-        .filter(r => r.src === nextPage.pageId)
-        .map(r => {
+        .filter((r) => r.src === nextPage.pageId)
+        .map((r) => {
           const { src, ...routeParams } = r;
           return routeParams;
         });

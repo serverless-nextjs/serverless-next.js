@@ -1,1 +1,1 @@
-module.exports = path => path.replace(/\\/g, "/");
+module.exports = (path) => path.replace(/\\/g, "/");

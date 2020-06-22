@@ -1,14 +1,14 @@
 const http = require("http");
 
-module.exports = url => {
+module.exports = (url) => {
   return new Promise((resolve, reject) => {
     http
-      .get(url, res => {
+      .get(url, (res) => {
         const { statusCode } = res;
 
         res.setEncoding("utf8");
         let rawData = "";
-        res.on("data", chunk => {
+        res.on("data", (chunk) => {
           rawData += chunk;
         });
 
@@ -19,6 +19,6 @@ module.exports = url => {
           });
         });
       })
-      .on("err", e => reject(e));
+      .on("err", (e) => reject(e));
   });
 };

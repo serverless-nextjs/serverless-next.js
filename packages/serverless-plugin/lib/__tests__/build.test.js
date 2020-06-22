@@ -269,7 +269,7 @@ describe("build", () => {
       })
       .build();
 
-    return build.call(plugin).then(nextPages => {
+    return build.call(plugin).then((nextPages) => {
       expect(getNextPagesFromBuildDir).toBeCalledWith(
         new PluginBuildDir(nextConfigDir).buildDir,
         { pageConfig, routes, additionalExcludes: customHandler }
