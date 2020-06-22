@@ -2,7 +2,6 @@
 import PrerenderManifest from "./prerender-manifest.json";
 // @ts-ignore
 import Manifest from "./manifest.json";
-import { PrerenderManifest as PrerenderManifestType } from "next/dist/build/index";
 import lambdaAtEdgeCompat from "next-aws-cloudfront";
 import {
   CloudFrontRequest,
@@ -12,7 +11,8 @@ import {
 } from "aws-lambda";
 import {
   OriginRequestEvent,
-  OriginRequestDefaultHandlerManifest
+  OriginRequestDefaultHandlerManifest,
+  PreRenderedManifest as PrerenderManifestType
 } from "./types";
 
 const addS3HostHeader = (
@@ -91,7 +91,7 @@ export const handler = async (
 
     if (isHTMLPage) {
       addS3HostHeader(request, s3Origin.domainName);
-      request.uri = uri + ".html";
+      request.uri = `${uri}.html`;
     }
 
     return request;

@@ -13,7 +13,7 @@ const {
 } = require("../constants");
 const { cleanupFixtureDirectory } = require("../lib/test-utils");
 
-const createNextComponent = inputs => {
+const createNextComponent = (inputs) => {
   const component = new NextjsComponent(inputs);
   component.context.credentials = {
     aws: {
@@ -52,7 +52,7 @@ describe("Custom inputs", () => {
 
   beforeEach(() => {
     const realFseRemove = fse.remove.bind({});
-    jest.spyOn(fse, "remove").mockImplementation(filePath => {
+    jest.spyOn(fse, "remove").mockImplementation((filePath) => {
       // don't delete mocked .next/ files as they're needed for the tests and committed to source control
       if (!filePath.includes(".next" + path.sep)) {
         return realFseRemove(filePath);
@@ -504,8 +504,16 @@ describe("Custom inputs", () => {
       }
     ],
     [
-      { defaults: { forward: { headers: "X" } } },
-      { defaults: { forward: { headers: "X" } } }
+      {
+        defaults: {
+          forward: { cookies: "all", headers: "X", queryString: true }
+        }
+      },
+      {
+        defaults: {
+          forward: { cookies: "all", headers: "X", queryString: true }
+        }
+      }
     ],
     // ignore custom lambda@edge origin-request trigger set on the api cache behaviour
     [

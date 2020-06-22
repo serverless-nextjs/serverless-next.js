@@ -31,18 +31,18 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.50",
+    "@types/aws-lambda": "^8.10.56",
     "@types/execa": "^2.0.0",
-    "@types/fs-extra": "^8.1.0",
-    "@types/node": "^13.13.0",
+    "@types/fs-extra": "^9.0.1",
+    "@types/node": "^14.0.13",
     "@types/path-to-regexp": "^1.7.0",
-    "ts-loader": "^7.0.0",
-    "typescript": "^3.8.3"
+    "ts-loader": "^7.0.5",
+    "typescript": "^3.9.5"
   },
   "dependencies": {
-    "@zeit/node-file-trace": "^0.5.1",
-    "execa": "^4.0.0",
-    "fs-extra": "^9.0.0",
+    "@zeit/node-file-trace": "^0.6.5",
+    "execa": "^4.0.2",
+    "fs-extra": "^9.0.1",
     "path-to-regexp": "^6.1.0"
   }
 }

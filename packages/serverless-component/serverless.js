@@ -78,7 +78,7 @@ class NextjsComponent extends Component {
     // first we check if the path patterns match any of the dynamic page regex.
     // paths with stars (*) shouldn't cause any issues because the regex will treat these
     // as characters.
-    manifestRegex.forEach(re => {
+    manifestRegex.forEach((re) => {
       for (const path of stillToMatch) {
         if (re.test(path)) {
           stillToMatch.delete(path);
@@ -202,7 +202,7 @@ class NextjsComponent extends Component {
 
     // If origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
-    const expandRelativeUrls = origin => {
+    const expandRelativeUrls = (origin) => {
       const originUrl = typeof origin === "string" ? origin : origin.url;
       const fullOriginUrl =
         originUrl.charAt(0) === "/" ? `${bucketUrl}${originUrl}` : originUrl;
@@ -240,30 +240,27 @@ class NextjsComponent extends Component {
       ...inputOrigins
     ];
 
-    let apiEdgeLambdaOutputs;
-    let apiEdgeLambdaPublishOutputs;
-
     const hasAPIPages =
       apiBuildManifest &&
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
-    const getLambdaMemory = lambdaType =>
+    const getLambdaMemory = (lambdaType) =>
       typeof inputs.memory === "number"
         ? inputs.memory
         : (inputs.memory && inputs.memory[lambdaType]) || 512;
 
-    const getLambdaTimeout = lambdaType =>
+    const getLambdaTimeout = (lambdaType) =>
       typeof inputs.timeout === "number"
         ? inputs.timeout
         : (inputs.timeout && inputs.timeout[lambdaType]) || 10;
 
-    const getLambdaName = lambdaType =>
+    const getLambdaName = (lambdaType) =>
       typeof inputs.name === "string"
         ? inputs.name
         : inputs.name && inputs.name[lambdaType];
 
-    const getLambdaRuntime = lambdaType =>
+    const getLambdaRuntime = (lambdaType) =>
       typeof inputs.runtime === "string"
         ? inputs.runtime
         : (inputs.runtime && inputs.runtime[lambdaType]) || "nodejs12.x";
@@ -290,9 +287,9 @@ class NextjsComponent extends Component {
       const apiLambdaName = getLambdaName("apiLambda");
       if (apiLambdaName) apiEdgeLambdaInput.name = apiLambdaName;
 
-      apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
+      const apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
 
-      apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
+      const apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
 
       cloudFrontOrigins[0].pathPatterns["api/*"] = {
         ttl: 0,
@@ -406,12 +403,12 @@ class NextjsComponent extends Component {
     const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 0,
+        ...defaultCloudfrontInputs,
         forward: {
           cookies: "all",
           queryString: true,
           ...defaultCloudfrontInputs.forward
         },
-        ...defaultCloudfrontInputs,
         // everything after here cant be overridden
         allowedHttpMethods: ["HEAD", "GET"],
         "lambda@edge": {

@@ -40,3 +40,25 @@ export type OriginRequestDefaultHandlerManifest = {
 export type OriginRequestEvent = {
   Records: [{ cf: { request: CloudFrontRequest } }];
 };
+
+export type PreRenderedManifest = {
+  version: 2;
+  routes: {
+    [route: string]: {
+      initialRevalidateSeconds: number | false;
+      srcRoute: string | null;
+      dataRoute: string;
+    };
+  };
+  dynamicRoutes: {
+    [route: string]: {
+      routeRegex: string;
+      fallback: string | false;
+      dataRoute: string;
+      dataRouteRegex: string;
+    };
+  };
+  preview: {
+    previewModeId: string;
+  };
+};
