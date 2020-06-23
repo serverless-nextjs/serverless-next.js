@@ -1,6 +1,6 @@
 const displayServiceInfo = require("../displayServiceInfo");
 
-const serviceInfo = additionalOutputs => ({
+const serviceInfo = (additionalOutputs) => ({
   gatheredData: {
     outputs: [
       // there should always be one API Gateway

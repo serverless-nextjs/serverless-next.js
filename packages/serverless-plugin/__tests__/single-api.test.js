@@ -86,7 +86,7 @@ describe("single api", () => {
         `${fixturePath}/.serverless/single-api-fixture.zip`
       );
       const zipEntries = zip.getEntries();
-      zipEntryNames = zipEntries.map(ze => ze.entryName);
+      zipEntryNames = zipEntries.map((ze) => ze.entryName);
     });
 
     it("contains next compiled page", () => {

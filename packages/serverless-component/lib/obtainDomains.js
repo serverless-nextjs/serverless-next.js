@@ -1,6 +1,6 @@
 // Determine domain and subdomain assuming either a string representing a domain
 // or an array representing both a domain and subdomain
-module.exports = domains => {
+module.exports = (domains) => {
   if (typeof domains === "string") {
     return { domain: domains, subdomain: "www" };
   }

@@ -1,6 +1,6 @@
 const compat = require("next-aws-lambda");
 
-module.exports = page => {
+module.exports = (page) => {
   const handler = (event, context, callback) => {
     // let's add some logging
     console.log("URL: ", event.path);

@@ -1,10 +1,10 @@
 const chalk = require("chalk");
 
-const outputFinder = outputs => key => {
-  return outputs.find(o => o.OutputKey === key);
+const outputFinder = (outputs) => (key) => {
+  return outputs.find((o) => o.OutputKey === key);
 };
 
-const displayStackOutput = awsInfo => {
+const displayStackOutput = (awsInfo) => {
   // remove this check after deploy mocks are correctly setup
   if (awsInfo.gatheredData.outputs.length === 0) {
     return;

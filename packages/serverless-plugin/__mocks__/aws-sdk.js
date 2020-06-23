@@ -1,4 +1,4 @@
-const promisify = mockFunction => {
+const promisify = (mockFunction) => {
   const mockPromise = jest.fn(() => Promise.resolve());
   mockFunction.mockReturnValue({
     promise: mockPromise
@@ -10,7 +10,7 @@ const promisify = mockFunction => {
   };
 };
 
-const MockCloudWatchLogs = function() {};
+const MockCloudWatchLogs = function () {};
 function MockEnvironmentCredentials() {}
 function MockCloudFormation() {}
 
@@ -64,23 +64,23 @@ const {
 
 const S3MockUpload = promisify(jest.fn());
 
-const MockSTS = function() {};
+const MockSTS = function () {};
 const {
   mockFunction: mockGetCallerIdentity,
   mockPromise: mockGetCallerIdentityPromise
 } = promisify(jest.fn());
 MockSTS.prototype.getCallerIdentity = mockGetCallerIdentity;
 
-const MockAPIGateway = function() {};
+const MockAPIGateway = function () {};
 const {
   mockFunction: mockGetRestApis,
   mockPromise: mockGetRestApisPromise
 } = promisify(jest.fn());
 MockAPIGateway.prototype.getRestApis = mockGetRestApis;
 
-const MockSharedIniFileCredentials = function() {};
+const MockSharedIniFileCredentials = function () {};
 
-const MockMetadataService = function() {};
+const MockMetadataService = function () {};
 const mockMetadataRequest = jest
   .fn()
   .mockImplementation((path, cb) => cb(null, {}));

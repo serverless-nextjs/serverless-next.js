@@ -202,7 +202,7 @@ describe("compatLayer.request", () => {
     ]);
   });
 
-  it("text body", done => {
+  it("text body", (done) => {
     const { req } = create({
       requestContext: {
         path: ""
@@ -213,7 +213,7 @@ describe("compatLayer.request", () => {
 
     let data = "";
 
-    req.on("data", chunk => {
+    req.on("data", (chunk) => {
       data += chunk;
     });
 
@@ -223,7 +223,7 @@ describe("compatLayer.request", () => {
     });
   });
 
-  it("text base64 body", done => {
+  it("text base64 body", (done) => {
     const { req } = create({
       requestContext: {
         path: ""
@@ -235,7 +235,7 @@ describe("compatLayer.request", () => {
 
     let data = "";
 
-    req.on("data", chunk => {
+    req.on("data", (chunk) => {
       data += chunk;
     });
 
@@ -245,7 +245,7 @@ describe("compatLayer.request", () => {
     });
   });
 
-  it("text body with encoding", done => {
+  it("text body with encoding", (done) => {
     const { req } = create({
       requestContext: {
         path: ""
@@ -256,7 +256,7 @@ describe("compatLayer.request", () => {
 
     let data = "";
 
-    req.on("data", chunk => {
+    req.on("data", (chunk) => {
       data += chunk;
     });
 
@@ -266,7 +266,7 @@ describe("compatLayer.request", () => {
     });
   });
 
-  it("connection", done => {
+  it("connection", (done) => {
     const { req } = create({
       requestContext: {
         path: ""
@@ -292,7 +292,7 @@ describe("compatLayer.request", () => {
   });
 
   it("request preserve http.IncomingMessage.prototype function", () => {
-    const exampleFunction = function() {
+    const exampleFunction = function () {
       return "I'm an example function.";
     };
     http.IncomingMessage.prototype.exampleFunction = exampleFunction;

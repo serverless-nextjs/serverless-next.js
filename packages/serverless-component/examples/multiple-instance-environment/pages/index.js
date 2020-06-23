@@ -1,9 +1,5 @@
-import React from 'react'
+import React from "react";
 
-const Home = () => (
-  <div>
-    NextJs Component
-  </div>
-)
+const Home = () => <div>NextJs Component</div>;
 
-export default Home
+export default Home;

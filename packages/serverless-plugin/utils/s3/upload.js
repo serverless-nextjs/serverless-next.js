@@ -53,7 +53,7 @@ const cacheHeaderFactory = (buildId = "", rootPrefix) => {
     `.*(?:chunk|runtime${buildIdRegex})`
   );
 
-  return item => {
+  return (item) => {
     let CacheControl = undefined;
     if (
       rootPrefix === "_next" &&
@@ -78,8 +78,8 @@ module.exports = (awsProvider, buildId) => (
 
   return new Promise((resolve, reject) => {
     walkDir(dir)
-      .on("data", item => {
-        const p = fse.lstat(item.path).then(async stats => {
+      .on("data", (item) => {
+        const p = fse.lstat(item.path).then(async (stats) => {
           if (!stats.isDirectory()) {
             const CacheControl = getCacheHeader(item);
             const uploadParams = getUploadParameters(

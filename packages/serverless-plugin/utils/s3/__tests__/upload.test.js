@@ -53,7 +53,7 @@ describe("s3Upload", () => {
     const r = upload("/path/to/dir", {
       bucket,
       rootPrefix: "_next"
-    }).then(result => {
+    }).then((result) => {
       expect(logger.log).toBeCalledWith(
         `Uploading /path/to/dir to ${bucket} ...`
       );
@@ -112,7 +112,7 @@ describe("s3Upload", () => {
 
     const r = upload("/path/to/dir", {
       bucket
-    }).then(result => {
+    }).then((result) => {
       expect(logger.log).toBeCalledWith(
         `Uploading /path/to/dir to ${bucket} ...`
       );
@@ -221,7 +221,7 @@ describe("s3Upload", () => {
 
     const promise = upload("/path/to/dir", {
       bucket: "my-bucket"
-    }).catch(err => {
+    }).catch((err) => {
       expect(err.message).toContain("Boom");
     });
 
@@ -246,7 +246,7 @@ describe("s3Upload", () => {
         bucket: "my-bucket",
         truncate: truncate
       }).then(() => {
-        [1, 2].forEach(i => {
+        [1, 2].forEach((i) => {
           expect(awsProvider).toHaveBeenNthCalledWith(
             i,
             "S3",

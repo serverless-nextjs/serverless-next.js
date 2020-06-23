@@ -84,7 +84,7 @@ module.exports = async (servicePath, command) => {
     serverless.invocationId = "test-run";
 
     jest.useFakeTimers();
-    setTimeout.mockImplementation(cb => cb());
+    setTimeout.mockImplementation((cb) => cb());
 
     await serverless.init();
     await serverless.run();

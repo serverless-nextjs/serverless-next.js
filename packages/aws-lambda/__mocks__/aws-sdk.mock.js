@@ -1,4 +1,4 @@
-const promisifyMock = mockFn => {
+const promisifyMock = (mockFn) => {
   const promise = jest.fn();
   mockFn.mockImplementation(() => ({
     promise

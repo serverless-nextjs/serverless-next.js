@@ -16,7 +16,7 @@ try {
 const s3Urls = require("@mapbox/s3urls");
 const createError = require("../utils/createError");
 
-module.exports = nextConfigDir => {
+module.exports = (nextConfigDir) => {
   if (typeof nextConfigDir !== "string") {
     throw createError("Provide a valid next.config file path");
   }

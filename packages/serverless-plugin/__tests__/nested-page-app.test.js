@@ -98,7 +98,7 @@ describe("nested page app", () => {
         `${fixturePath}/.serverless/nested-page-app-fixture.zip`
       );
       const zipEntries = zip.getEntries();
-      zipEntryNames = zipEntries.map(ze => ze.entryName);
+      zipEntryNames = zipEntries.map((ze) => ze.entryName);
     });
 
     it("contains next compiled page", () => {

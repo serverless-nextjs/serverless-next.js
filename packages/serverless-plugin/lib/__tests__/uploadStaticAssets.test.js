@@ -87,9 +87,7 @@ describe("uploadStaticAssets", () => {
     const plugin = new ServerlessPluginBuilder().build();
     const staticDir = path.join(plugin.nextConfigDir, "static");
 
-    when(fse.pathExists)
-      .calledWith(staticDir)
-      .mockResolvedValueOnce(true);
+    when(fse.pathExists).calledWith(staticDir).mockResolvedValueOnce(true);
 
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()
@@ -107,9 +105,7 @@ describe("uploadStaticAssets", () => {
     const plugin = new ServerlessPluginBuilder().build();
     const publicDir = path.join(plugin.nextConfigDir, "public");
 
-    when(fse.pathExists)
-      .calledWith(publicDir)
-      .mockResolvedValueOnce(true);
+    when(fse.pathExists).calledWith(publicDir).mockResolvedValueOnce(true);
 
     parseNextConfiguration.mockReturnValueOnce(
       parsedNextConfigurationFactory()

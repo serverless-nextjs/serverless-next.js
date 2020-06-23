@@ -38,18 +38,18 @@ module.exports = {
 
     return Items;
   },
-  getTodo: async todoId => {
+  getTodo: async (todoId) => {
     const { Items } = await getDynamoDBClient()
       .scan({
         TableName
       })
       .promise();
 
-    const todo = Items.find(todo => todo.todoId == todoId);
+    const todo = Items.find((todo) => todo.todoId == todoId);
 
     return todo;
   },
-  createTodo: async todoDescription => {
+  createTodo: async (todoDescription) => {
     await getDynamoDBClient()
       .put({
         TableName,

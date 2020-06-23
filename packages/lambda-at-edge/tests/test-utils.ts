@@ -1,5 +1,6 @@
 import path from "path";
 import { remove } from "fs-extra";
+import { CloudFrontOrigin } from "aws-lambda";
 import { OriginRequestEvent } from "../src/types";
 
 export const cleanupDir = (dir: string): Promise<void> => {
@@ -16,6 +17,10 @@ export const createCloudFrontEvent = ({
   uri,
   host,
   origin
+}: {
+  uri: string;
+  host: string;
+  origin: CloudFrontOrigin;
 }): OriginRequestEvent => ({
   Records: [
     {

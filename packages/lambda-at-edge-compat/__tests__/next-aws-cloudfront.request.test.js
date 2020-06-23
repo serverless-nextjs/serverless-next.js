@@ -76,7 +76,7 @@ describe("Request Tests", () => {
   });
 
   it("duplicates of special request headers are discarded", () => {
-    SPECIAL_NODE_HEADERS.forEach(headerName => {
+    SPECIAL_NODE_HEADERS.forEach((headerName) => {
       // user-agent -> uSER-AGENT
       const duplicateHeaderName =
         headerName.charAt(0) + headerName.substring(1).toUpperCase();
@@ -115,7 +115,7 @@ describe("Request Tests", () => {
     });
   });
 
-  it("text body", done => {
+  it("text body", (done) => {
     const { req } = create({
       request: {
         uri: "",
@@ -127,7 +127,7 @@ describe("Request Tests", () => {
 
     let data = "";
 
-    req.on("data", chunk => {
+    req.on("data", (chunk) => {
       data += chunk;
     });
 
@@ -137,7 +137,7 @@ describe("Request Tests", () => {
     });
   });
 
-  it("text base64 body", done => {
+  it("text base64 body", (done) => {
     const { req } = create({
       request: {
         uri: "",
@@ -151,7 +151,7 @@ describe("Request Tests", () => {
 
     let data = "";
 
-    req.on("data", chunk => {
+    req.on("data", (chunk) => {
       data += chunk;
     });
 
@@ -161,7 +161,7 @@ describe("Request Tests", () => {
     });
   });
 
-  it("text body with encoding", done => {
+  it("text body with encoding", (done) => {
     const { req } = create({
       request: {
         uri: "",
@@ -174,7 +174,7 @@ describe("Request Tests", () => {
 
     let data = "";
 
-    req.on("data", chunk => {
+    req.on("data", (chunk) => {
       data += chunk;
     });
 
@@ -184,7 +184,7 @@ describe("Request Tests", () => {
     });
   });
 
-  it("connection", done => {
+  it("connection", (done) => {
     const { req } = create({
       request: {
         uri: "",
@@ -210,7 +210,7 @@ describe("Request Tests", () => {
   });
 
   it("request preserve http.IncomingMessage.prototype function", () => {
-    const exampleFunction = function() {
+    const exampleFunction = function () {
       return "I'm an example function.";
     };
     http.IncomingMessage.prototype.exampleFunction = exampleFunction;

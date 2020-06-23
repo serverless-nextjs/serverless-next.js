@@ -1,13 +1,13 @@
 const { spawn } = require("child_process");
 const serverlessExec = require("./getServerlessExec");
 
-const bufferToStr = buffer => Buffer.from(buffer).toString("utf8");
+const bufferToStr = (buffer) => Buffer.from(buffer).toString("utf8");
 
 module.exports = () => {
   const serverlessOffline = spawn(serverlessExec, ["offline"]);
 
   return new Promise((resolve, reject) => {
-    serverlessOffline.stdout.on("data", data => {
+    serverlessOffline.stdout.on("data", (data) => {
       const stdoutStr = bufferToStr(data);
 
       process.stdout.write(stdoutStr);
@@ -17,11 +17,11 @@ module.exports = () => {
       }
     });
 
-    serverlessOffline.stderr.on("data", data => {
+    serverlessOffline.stderr.on("data", (data) => {
       const err = bufferToStr(data);
       process.stdout.write(err);
     });
 
-    serverlessOffline.on("error", err => reject(err));
+    serverlessOffline.on("error", (err) => reject(err));
   });
 };

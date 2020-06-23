@@ -17,5 +17,5 @@ Install example project deps:
 
 Rename `.env.sample` to `.env` and set your aws credentials.
 
- 1. To install a *staging* instance: `npm run deployStaging`.
- 2. To install a *prod* instance: `npm run deployProd`.
+1.  To install a _staging_ instance: `npm run deployStaging`.
+2.  To install a _prod_ instance: `npm run deployProd`.

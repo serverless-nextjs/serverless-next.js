@@ -5,7 +5,7 @@ function NewTodo() {
   const router = useRouter();
   const [todoDescription, setTodoDescription] = useState("");
 
-  const handleSubmit = async event => {
+  const handleSubmit = async (event) => {
     event.preventDefault();
 
     await fetch("/api/todos/new", {
@@ -23,7 +23,7 @@ function NewTodo() {
       <textarea
         name="todo-description"
         value={todoDescription}
-        onChange={e => setTodoDescription(e.target.value)}
+        onChange={(e) => setTodoDescription(e.target.value)}
       ></textarea>
       <br />
       <input type="submit" />

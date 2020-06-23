@@ -25,7 +25,7 @@ describe("With Empty Next Config Build", () => {
   afterAll(() => {
     mockDateNow.mockRestore();
     return Promise.all(
-      [".next", "next.config.original.123.js"].map(file =>
+      [".next", "next.config.original.123.js"].map((file) =>
         remove(path.join(fixtureDir, file))
       )
     );

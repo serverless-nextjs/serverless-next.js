@@ -1,19 +1,19 @@
 const path = require("path");
 const debug = require("debug")("sls-next:s3");
 
-module.exports = awsProvider => {
+module.exports = (awsProvider) => {
   const cache = {};
 
   const addPrefixToCache = (prefix, listPromise) => {
-    const updateCache = prefixCache =>
+    const updateCache = (prefixCache) =>
       listPromise.then(({ Contents }) => {
-        Contents.forEach(x => (prefixCache[x.Key] = x));
+        Contents.forEach((x) => (prefixCache[x.Key] = x));
         return prefixCache;
       });
 
     if (cache[prefix]) {
       // already objects have been cached for this prefix
-      cache[prefix] = cache[prefix].then(prefixCache =>
+      cache[prefix] = cache[prefix].then((prefixCache) =>
         updateCache(prefixCache)
       );
     } else {

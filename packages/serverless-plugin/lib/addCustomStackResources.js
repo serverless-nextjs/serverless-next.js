@@ -6,7 +6,7 @@ const logger = require("../utils/logger");
 const loadYml = require("../utils/yml/load");
 const fse = require("fs-extra");
 
-const dirInfo = async dir => {
+const dirInfo = async (dir) => {
   const exists = await fse.pathExists(dir);
 
   if (!exists) {
@@ -16,22 +16,23 @@ const dirInfo = async dir => {
   return [true, await fse.readdir(dir)];
 };
 
-const capitaliseFirstLetter = str => str.charAt(0).toUpperCase() + str.slice(1);
+const capitaliseFirstLetter = (str) =>
+  str.charAt(0).toUpperCase() + str.slice(1);
 
 // removes non-alphanumeric characters to adhere to AWS naming requirements
-const normaliseResourceName = str => str.replace(/[^0-9a-zA-Z]/g, "");
+const normaliseResourceName = (str) => str.replace(/[^0-9a-zA-Z]/g, "");
 
 // converts file path to a string which can be used in CF resource keys
 // ./static/bar.js -> Bar
 // ./static/foo/bar.js -> FooBar
-const normaliseFilePathForCloudFrontResourceKey = filePath =>
+const normaliseFilePathForCloudFrontResourceKey = (filePath) =>
   filePath
     .split(path.sep)
-    .filter(s => s !== "." && s !== "..")
+    .filter((s) => s !== "." && s !== "..")
     .map(capitaliseFirstLetter)
     .join("");
 
-const cacheBehaviour = fileName => ({
+const cacheBehaviour = (fileName) => ({
   AllowedMethods: ["GET", "HEAD", "OPTIONS"],
   TargetOriginId: "S3PublicOrigin",
   Compress: true,
@@ -44,7 +45,7 @@ const cacheBehaviour = fileName => ({
   PathPattern: path.basename(fileName)
 });
 
-const getNextRouteProxyResources = async function({
+const getNextRouteProxyResources = async function ({
   bucketBaseUrl,
   bucketName
 }) {
@@ -71,7 +72,7 @@ const getNextRouteProxyResources = async function({
   return Resources;
 };
 
-const getStaticRouteProxyResources = async function({
+const getStaticRouteProxyResources = async function ({
   bucketBaseUrl,
   bucketName
 }) {
@@ -103,7 +104,7 @@ const getStaticRouteProxyResources = async function({
   return Resources;
 };
 
-const getPublicRouteProxyResources = async function({
+const getPublicRouteProxyResources = async function ({
   bucketBaseUrl,
   bucketName
 }) {
@@ -123,7 +124,7 @@ const getPublicRouteProxyResources = async function({
     Resources: {}
   };
 
-  publicDirFiles.forEach(file => {
+  publicDirFiles.forEach((file) => {
     const bucketUrl = `${bucketBaseUrl}/${path.posix.join(
       bucketName,
       "public",
@@ -152,7 +153,7 @@ const getPublicRouteProxyResources = async function({
   return result.Resources;
 };
 
-const addCustomStackResources = async function() {
+const addCustomStackResources = async function () {
   const region = this.provider.getRegion();
   const stage = this.provider.getStage();
 
@@ -207,8 +208,8 @@ const addCustomStackResources = async function() {
       DistributionConfig
     } = cloudFrontResource.Resources.NextjsCloudFront.Properties;
 
-    const findOrigin = originId =>
-      DistributionConfig.Origins.find(o => o.Id === originId);
+    const findOrigin = (originId) =>
+      DistributionConfig.Origins.find((o) => o.Id === originId);
 
     const apiGatewayOrigin = findOrigin("ApiGatewayOrigin");
     apiGatewayOrigin.OriginPath = `/${stage}`;
@@ -229,7 +230,7 @@ const addCustomStackResources = async function() {
     );
 
     if (publicDirExists) {
-      publicDirFiles.forEach(f => {
+      publicDirFiles.forEach((f) => {
         DistributionConfig.CacheBehaviors.push(cacheBehaviour(f));
       });
     }

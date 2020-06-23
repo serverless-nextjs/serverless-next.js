@@ -1,7 +1,7 @@
 const create = require("../compatLayer");
 
 describe("compatLayer.response", () => {
-  it("statusCode writeHead 404", done => {
+  it("statusCode writeHead 404", (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -33,12 +33,12 @@ describe("compatLayer.response", () => {
     res.writeHead(404);
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.statusCode).toEqual(404);
     });
   });
 
-  it("statusCode statusCode=200", done => {
+  it("statusCode statusCode=200", (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -68,7 +68,7 @@ describe("compatLayer.response", () => {
 
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.statusCode).toEqual(200);
     });
   });
@@ -86,12 +86,12 @@ describe("compatLayer.response", () => {
     res.statusCode = 200;
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.statusCode).toEqual(200);
     });
   });
 
-  it("writeHead headers", done => {
+  it("writeHead headers", (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -131,7 +131,7 @@ describe("compatLayer.response", () => {
     });
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.multiValueHeaders).toEqual({
         "x-custom-1": ["1"],
         "x-custom-2": ["2"]
@@ -139,7 +139,7 @@ describe("compatLayer.response", () => {
     });
   });
 
-  it("setHeader", done => {
+  it("setHeader", (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -175,7 +175,7 @@ describe("compatLayer.response", () => {
     res.setHeader("x-custom-2", "2");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.multiValueHeaders).toEqual({
         "x-custom-1": ["1"],
         "x-custom-2": ["2"]
@@ -183,7 +183,7 @@ describe("compatLayer.response", () => {
     });
   });
 
-  it("multi header support for api gateway", done => {
+  it("multi header support for api gateway", (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -215,14 +215,14 @@ describe("compatLayer.response", () => {
     res.setHeader("x-custom-1", ["1", "1"]);
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.multiValueHeaders).toEqual({
         "x-custom-1": ["1", "1"]
       });
     });
   });
 
-  it("setHeader + removeHeader", done => {
+  it("setHeader + removeHeader", (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -258,7 +258,7 @@ describe("compatLayer.response", () => {
     res.removeHeader("x-custom-1");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.multiValueHeaders).toEqual({
         "x-custom-2": ["2"]
       });
@@ -323,7 +323,7 @@ describe("compatLayer.response", () => {
     expect(res.getHeaders()).toEqual({});
   });
 
-  it(`res.write('ok')`, done => {
+  it(`res.write('ok')`, (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -354,13 +354,13 @@ describe("compatLayer.response", () => {
     res.write("ok");
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.isBase64Encoded).toEqual(false);
       expect(response.body).toEqual("ok");
     });
   });
 
-  it(`res.end('ok')`, done => {
+  it(`res.end('ok')`, (done) => {
     const { res } = create(
       {
         requestContext: {
@@ -389,13 +389,13 @@ describe("compatLayer.response", () => {
     });
     res.end("ok");
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.isBase64Encoded).toEqual(false);
       expect(response.body).toEqual("ok");
     });
   });
 
-  it("req.pipe(res)", done => {
+  it("req.pipe(res)", (done) => {
     const { req, res } = create(
       {
         requestContext: {
@@ -426,13 +426,13 @@ describe("compatLayer.response", () => {
 
     res.end("ok");
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.isBase64Encoded).toEqual(false);
       expect(response.body).toEqual("ok");
     });
   });
 
-  it("base64 support", done => {
+  it("base64 support", (done) => {
     process.env.BINARY_SUPPORT = "yes";
     const { res } = create(
       {
@@ -464,7 +464,7 @@ describe("compatLayer.response", () => {
 
     res.end("ok");
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.body).toEqual(Buffer.from("ok").toString("base64"));
       expect(response.isBase64Encoded).toEqual(true);
     });
@@ -481,7 +481,7 @@ describe("compatLayer.response", () => {
     res.statusCode = 204;
     res.end();
 
-    return responsePromise.then(response => {
+    return responsePromise.then((response) => {
       expect(response.body).not.toBeDefined();
       expect(response.statusCode).toEqual(204);
     });

@@ -1,1 +1,5 @@
-export default (req, res) => {{ test: 'test' }}
+export default (req, res) => {
+  {
+    test: "test";
+  }
+};

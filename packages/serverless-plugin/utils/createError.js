@@ -1,4 +1,4 @@
-const createError = message => {
+const createError = (message) => {
   return new Error(`Serverless Nextjs: ${message}`);
 };
 

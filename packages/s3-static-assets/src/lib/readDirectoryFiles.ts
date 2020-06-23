@@ -4,7 +4,7 @@ const readDirectoryFiles = (directory: string): Promise<Array<Item>> => {
   const items: Item[] = [];
   return new Promise((resolve, reject) => {
     klaw(directory.trim())
-      .on("data", item => items.push(item))
+      .on("data", (item) => items.push(item))
       .on("end", () => {
         resolve(items);
       })

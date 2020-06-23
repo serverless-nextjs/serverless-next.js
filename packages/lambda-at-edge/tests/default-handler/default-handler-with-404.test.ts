@@ -18,16 +18,6 @@ jest.mock(
   }
 );
 
-const mockPageRequire = (mockPagePath: string): void => {
-  jest.mock(
-    `../../src/${mockPagePath}`,
-    () => require(`../shared-fixtures/built-artifact/${mockPagePath}`),
-    {
-      virtual: true
-    }
-  );
-};
-
 describe("Lambda@Edge", () => {
   it("renders a static 404 page if request path can't be matched to any page / api routes and a 404.html was generated", async () => {
     const event = createCloudFrontEvent({
