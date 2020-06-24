@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.15.0-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.15.0-alpha.0...serverless-next.js@1.15.0-alpha.1) (2020-06-24)
+
+### Bug Fixes
+
+- **serverless-component:** don't overwrite the cloudfront default.forward config ([#460](https://github.com/danielcondemarin/serverless-next.js/issues/460)) ([12da1de](https://github.com/danielcondemarin/serverless-next.js/commit/12da1de31855b68b9addef801ec21dffd3202a21))
+- **serverless-component:** enforce compression for the default cloudfront behaviour ([#462](https://github.com/danielcondemarin/serverless-next.js/issues/462)) ([7e8f0d4](https://github.com/danielcondemarin/serverless-next.js/commit/7e8f0d486ac07f56e97500e48f9b54ed14038b16))
+
 # [1.15.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.14.0...serverless-next.js@1.15.0-alpha.0) (2020-06-21)
 
 ### Features

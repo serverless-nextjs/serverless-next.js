@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.1-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.2.0...@sls-next/s3-static-assets@1.2.1-alpha.0) (2020-06-24)
+
+### Bug Fixes
+
+- **serverless-component:** don't overwrite the cloudfront default.forward config ([#460](https://github.com/danielcondemarin/serverless-next.js/issues/460)) ([12da1de](https://github.com/danielcondemarin/serverless-next.js/commit/12da1de31855b68b9addef801ec21dffd3202a21))
+
 # [1.2.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.2.0-alpha.0...@sls-next/s3-static-assets@1.2.0) (2020-06-16)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
