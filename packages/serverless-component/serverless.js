@@ -363,8 +363,7 @@ class NextjsComponent extends Component {
         // delete is idempotent so it's safe
         delete edgeConfig["origin-request"];
       } else if (!["static/*", "_next/*"].includes(path)) {
-        // for everything but static/* and _next/* we want to ensure that they are pointing
-        // at our lambda
+        // for everything but static/* and _next/* we want to ensure that they are pointing at our lambda
         edgeConfig[
           "origin-request"
         ] = `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`;
@@ -414,7 +413,8 @@ class NextjsComponent extends Component {
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-        }
+        },
+        compress: true
       },
       origins: cloudFrontOrigins
     });
