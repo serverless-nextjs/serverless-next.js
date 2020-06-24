@@ -130,7 +130,8 @@ describe("deploy tests", () => {
           "lambda@edge": {
             "origin-request":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
-          }
+          },
+          compress: true
         },
         origins: [
           {

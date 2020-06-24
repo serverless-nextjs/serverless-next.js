@@ -642,6 +642,7 @@ describe("Custom inputs", () => {
           cookies: "all",
           queryString: true
         },
+        compress: true,
         ...expectedDefaultCacheBehaviour
       },
       origins: [
