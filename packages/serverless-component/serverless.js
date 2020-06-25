@@ -432,11 +432,13 @@ class NextjsComponent extends Component {
     if (domain) {
       const domainComponent = await this.load("@sls-next/domain");
       const domainOutputs = await domainComponent({
+        distributionDefaults: inputs.domainInputs,
         privateZone: false,
         domain,
         subdomains: {
           [subdomain]: cloudFrontOutputs
-        }
+        },
+        domainType: inputs.domainType
       });
       appUrl = domainOutputs.domains[0];
     }

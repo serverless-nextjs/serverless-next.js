@@ -24,10 +24,6 @@ const {
 } = require("./utils");
 
 class Domain extends Component {
-  /**
-   * Remove
-   */
-
   async default(inputs = {}) {
     this.context.status("Deploying");
     this.context.debug(`Starting Domain component deployment.`);
@@ -35,6 +31,8 @@ class Domain extends Component {
     this.context.debug(`Validating inputs.`);
     inputs.region = inputs.region || "us-east-1";
     inputs.privateZone = inputs.privateZone || false;
+    inputs.distributionDefaults = inputs.distributionDefaults || {};
+    inputs.domainType = inputs.domainType || "both";
 
     if (!inputs.domain) {
       throw Error(`"domain" is a required input.`);
@@ -54,6 +52,8 @@ class Domain extends Component {
     this.state.privateZone = JSON.parse(inputs.privateZone);
     this.state.domain = inputs.domain;
     this.state.subdomains = subdomains;
+    this.state.distributionDefaults = inputs.distributionDefaults;
+
     await this.save();
 
     this.context.debug(
@@ -138,7 +138,9 @@ class Domain extends Component {
           distribution = await createCloudfrontDistribution(
             clients.cf,
             subdomain,
-            certificate.CertificateArn
+            certificate.CertificateArn,
+            inputs.distributionDefaults,
+            inputs.domainType
           );
         } else if (
           !distribution.origins.includes(
@@ -150,7 +152,8 @@ class Domain extends Component {
           distribution = await updateCloudfrontDistribution(
             clients.cf,
             subdomain,
-            distribution.id
+            distribution.id,
+            inputs.distributionDefaults
           );
         }
 
@@ -162,7 +165,8 @@ class Domain extends Component {
           clients.route53,
           subdomain,
           domainHostedZoneId,
-          distribution.url
+          distribution.url,
+          inputs.domainType
         );
 
         this.context.debug(
@@ -192,7 +196,8 @@ class Domain extends Component {
         await addDomainToCloudfrontDistribution(
           clients.cf,
           subdomain,
-          certificate.CertificateArn
+          certificate.CertificateArn,
+          inputs.distributionDefaults
         );
 
         this.context.debug(
@@ -202,7 +207,8 @@ class Domain extends Component {
           clients.route53,
           subdomain,
           domainHostedZoneId,
-          subdomain.url.replace("https://", "")
+          subdomain.url.replace("https://", ""),
+          inputs.domainType
         );
       } else if (subdomain.type === "awsAppSync") {
         this.context.debug(
@@ -223,14 +229,16 @@ class Domain extends Component {
           distribution = await createCloudfrontDistributionForAppSync(
             clients.cf,
             subdomain,
-            certificate.CertificateArn
+            certificate.CertificateArn,
+            inputs.distributionDefaults
           );
         } else if (!distribution.origins.includes(subdomain.url)) {
           this.context.debug(`Updating distribution "${distribution.url}".`);
           distribution = await updateCloudfrontDistributionForAppSync(
             clients.cf,
             subdomain,
-            distribution.id
+            distribution.id,
+            inputs.distributionDefaults
           );
         }
 
@@ -242,7 +250,8 @@ class Domain extends Component {
           clients.route53,
           subdomain,
           domainHostedZoneId,
-          distribution.url
+          distribution.url,
+          inputs.domainType
         );
 
         this.context.debug(
@@ -273,10 +282,6 @@ class Domain extends Component {
     }
     return outputs;
   }
-
-  /**
-   * Remove
-   */
 
   async remove() {
     this.context.status("Deploying");
@@ -360,7 +365,11 @@ class Domain extends Component {
         this.context.debug(
           `Removing domain ${domainState.domain} from CloudFront.`
         );
-        await removeDomainFromCloudFrontDistribution(clients.cf, domainState);
+        await removeDomainFromCloudFrontDistribution(
+          clients.cf,
+          domainState,
+          this.state.distributionDefaults
+        );
 
         this.context.debug(
           `Removing CloudFront DNS records for domain ${domainState.domain}`

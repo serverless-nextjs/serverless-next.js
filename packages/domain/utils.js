@@ -1,6 +1,8 @@
 const aws = require("aws-sdk");
 const { utils } = require("@serverless/core");
 
+const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2018";
+
 /**
  * Get Clients
  * - Gets AWS SDK clients to use within this Component
@@ -70,7 +72,7 @@ const prepareSubdomains = (inputs) => {
         .split("//")[1];
       domainObj.url = inputs.subdomains[subdomain].url
         .replace("https://", "") // distribution origin does not expect https
-        .replace("/graphql", ""); // distribution lrigin does not expect /graphql
+        .replace("/graphql", ""); // distribution origin does not expect /graphql
       domainObj.type = "awsAppSync";
     }
 
@@ -456,7 +458,8 @@ const configureDnsForCloudFrontDistribution = async (
   route53,
   subdomain,
   domainHostedZoneId,
-  distributionUrl
+  distributionUrl,
+  domainType
 ) => {
   const dnsRecordParams = {
     HostedZoneId: domainHostedZoneId,
@@ -499,7 +502,8 @@ const configureDnsForCloudFrontDistribution = async (
 const createCloudfrontDistributionForAppSync = async (
   cf,
   subdomain,
-  certificateArn
+  certificateArn,
+  { ViewerCertificate, ...distributionDefaults }
 ) => {
   const params = {
     DistributionConfig: {
@@ -572,16 +576,18 @@ const createCloudfrontDistributionForAppSync = async (
       Comment: `app-sync-${subdomain.apiId}`,
       PriceClass: "PriceClass_All",
       Enabled: true,
+      WebACLId: "",
+      HttpVersion: "http2",
+      IsIPV6Enabled: true,
+      ...distributionDefaults,
       ViewerCertificate: {
         ACMCertificateArn: certificateArn,
         SSLSupportMethod: "sni-only",
-        MinimumProtocolVersion: "TLSv1.1_2016",
+        MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
         Certificate: certificateArn,
-        CertificateSource: "acm"
-      },
-      WebACLId: "",
-      HttpVersion: "http2",
-      IsIPV6Enabled: true
+        CertificateSource: "acm",
+        ...ViewerCertificate
+      }
     }
   };
 
@@ -597,7 +603,13 @@ const createCloudfrontDistributionForAppSync = async (
 /**
  * Create Cloudfront Distribution
  */
-const createCloudfrontDistribution = async (cf, subdomain, certificateArn) => {
+const createCloudfrontDistribution = async (
+  cf,
+  subdomain,
+  certificateArn,
+  { ViewerCertificate, ...distributionDefaults },
+  domainType
+) => {
   const params = {
     DistributionConfig: {
       CallerReference: String(Date.now()),
@@ -698,13 +710,6 @@ const createCloudfrontDistribution = async (cf, subdomain, certificateArn) => {
       },
       PriceClass: "PriceClass_All",
       Enabled: true,
-      ViewerCertificate: {
-        ACMCertificateArn: certificateArn,
-        SSLSupportMethod: "sni-only",
-        MinimumProtocolVersion: "TLSv1.1_2016",
-        Certificate: certificateArn,
-        CertificateSource: "acm"
-      },
       Restrictions: {
         GeoRestriction: {
           RestrictionType: "none",
@@ -714,7 +719,16 @@ const createCloudfrontDistribution = async (cf, subdomain, certificateArn) => {
       },
       WebACLId: "",
       HttpVersion: "http2",
-      IsIPV6Enabled: true
+      IsIPV6Enabled: true,
+      ...distributionDefaults,
+      ViewerCertificate: {
+        ACMCertificateArn: certificateArn,
+        SSLSupportMethod: "sni-only",
+        MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
+        Certificate: certificateArn,
+        CertificateSource: "acm",
+        ...ViewerCertificate
+      }
     }
   };
 
@@ -737,7 +751,8 @@ const createCloudfrontDistribution = async (cf, subdomain, certificateArn) => {
 const updateCloudfrontDistributionForAppSync = async (
   cf,
   subdomain,
-  distributionId
+  distributionId,
+  { ...distributionDefaults }
 ) => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
@@ -782,6 +797,11 @@ const updateCloudfrontDistributionForAppSync = async (
 
   params.DistributionConfig.DefaultCacheBehavior.TargetOriginId = `app-sync-${subdomain.apiId}`;
 
+  params.DistributionConfig = {
+    ...params.DistributionConfig,
+    ...distributionDefaults
+  };
+
   // 6. then finally update!
   const res = await cf.updateDistribution(params).promise();
 
@@ -795,7 +815,12 @@ const updateCloudfrontDistributionForAppSync = async (
 /*
  * Updates a distribution's origins
  */
-const updateCloudfrontDistribution = async (cf, subdomain, distributionId) => {
+const updateCloudfrontDistribution = async (
+  cf,
+  subdomain,
+  distributionId,
+  distributionDefaults
+) => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
 
@@ -848,6 +873,11 @@ const updateCloudfrontDistribution = async (cf, subdomain, distributionId) => {
   ];
 
   params.DistributionConfig.DefaultCacheBehavior.TargetOriginId = `S3-${subdomain.s3BucketName}`;
+
+  params.DistributionConfig = {
+    ...params.DistributionConfig,
+    ...distributionDefaults
+  };
 
   // 6. then finally update!
   const res = await cf.updateDistribution(params).promise();
@@ -993,7 +1023,9 @@ const getApiDomainName = async (apig, domain) => {
 const addDomainToCloudfrontDistribution = async (
   cf,
   subdomain,
-  certificateArn
+  certificateArn,
+  { ViewerCertificate, ...distributionDefaults },
+  domainType
 ) => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
@@ -1025,12 +1057,18 @@ const addDomainToCloudfrontDistribution = async (
     );
   }
 
+  params.DistributionConfig = {
+    ...params.DistributionConfig,
+    ...distributionDefaults
+  };
+
   params.DistributionConfig.ViewerCertificate = {
     ACMCertificateArn: certificateArn,
     SSLSupportMethod: "sni-only",
-    MinimumProtocolVersion: "TLSv1.1_2016",
+    MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
     Certificate: certificateArn,
-    CertificateSource: "acm"
+    CertificateSource: "acm",
+    ...ViewerCertificate
   };
 
   // 6. then finally update!
@@ -1043,7 +1081,11 @@ const addDomainToCloudfrontDistribution = async (
   };
 };
 
-const removeDomainFromCloudFrontDistribution = async (cf, subdomain) => {
+const removeDomainFromCloudFrontDistribution = async (
+  cf,
+  subdomain,
+  { ViewerCertificate = {} }
+) => {
   const params = await cf
     .getDistributionConfig({ Id: subdomain.distributionId })
     .promise();
@@ -1060,8 +1102,10 @@ const removeDomainFromCloudFrontDistribution = async (cf, subdomain) => {
   };
 
   params.DistributionConfig.ViewerCertificate = {
-    SSLSupportMethod: "sni-only",
-    MinimumProtocolVersion: "TLSv1.1_2016"
+    SSLSupportMethod: ViewerCertificate.SSLSupportMethod || "sni-only",
+    MinimumProtocolVersion:
+      ViewerCertificate.MinimumProtocolVersion ||
+      DEFAULT_MINIMUM_PROTOCOL_VERSION
   };
 
   const res = await cf.updateDistribution(params).promise();
