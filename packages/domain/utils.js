@@ -62,6 +62,7 @@ const prepareSubdomains = (inputs) => {
       domainObj.apiId = inputs.subdomains[subdomain].url
         .split(".")[0]
         .split("//")[1];
+      domainObj.stage = inputs.subdomains[subdomain].url.split("/")[3];
       domainObj.type = "awsApiGateway";
     }
 
@@ -150,12 +151,28 @@ const describeCertificateByArn = async (acm, certificateArn) => {
  */
 const getCertificateArnByDomain = async (acm, domain) => {
   const listRes = await acm.listCertificates().promise();
-  const certificate = listRes.CertificateSummaryList.find(
-    (cert) => cert.DomainName === domain
-  );
-  return certificate && certificate.CertificateArn
-    ? certificate.CertificateArn
-    : null;
+
+  for (const certificate of listRes.CertificateSummaryList) {
+    if (certificate.DomainName === domain && certificate.CertificateArn) {
+      if (domain.startsWith("www.")) {
+        const nakedDomain = domain.replace("wwww.", "");
+        // check whether certificate support naked domain
+        const certDetail = await describeCertificateByArn(
+          acm,
+          certificate.CertificateArn
+        );
+        const nakedDomainCert = certDetail.DomainValidationOptions.find(
+          (option) => option.DomainName === nakedDomain
+        );
+        if (!nakedDomainCert) {
+          continue;
+        }
+      }
+      return certificate.certificateArn;
+    }
+  }
+
+  return null;
 };
 
 /**
@@ -350,20 +367,20 @@ const configureDnsForApigDomain = async (
 /**
  * Map API Gateway API to the created API Gateway Domain
  */
-const mapDomainToApi = async (apig, domain, apiId) => {
+const mapDomainToApi = async (apig, domain, apiId, stage) => {
   try {
     const params = {
       domainName: domain,
       restApiId: apiId,
       basePath: "(none)",
-      stage: "production"
+      stage
     };
     // todo what if it already exists but for a different apiId
     return apig.createBasePathMapping(params).promise();
   } catch (e) {
     if (e.code === "TooManyRequestsException") {
       await utils.sleep(2000);
-      return mapDomainToApi(apig, domain, apiId);
+      return mapDomainToApi(apig, domain, apiId, stage);
     }
     throw e;
   }
@@ -381,7 +398,12 @@ const deployApiDomain = async (
     that.context.debug(
       `Mapping domain ${subdomain.domain} to API ID ${subdomain.apiId}`
     );
-    await mapDomainToApi(apig, subdomain.domain, subdomain.apiId);
+    await mapDomainToApi(
+      apig,
+      subdomain.domain,
+      subdomain.apiId,
+      subdomain.stage
+    );
   } catch (e) {
     if (e.message === "Invalid domain name identifier specified") {
       that.context.debug(
@@ -481,7 +503,7 @@ const configureDnsForCloudFrontDistribution = async (
     }
   };
 
-  if (subdomain.domain.startsWith("www")) {
+  if (subdomain.domain.startsWith("www.")) {
     dnsRecordParams.ChangeBatch.Changes.push({
       Action: "UPSERT",
       ResourceRecordSet: {
@@ -732,7 +754,7 @@ const createCloudfrontDistribution = async (
     }
   };
 
-  if (subdomain.domain.startsWith("www")) {
+  if (subdomain.domain.startsWith("www.")) {
     params.DistributionConfig.Aliases.Quantity = 2;
     params.DistributionConfig.Aliases.Items.push(
       `${subdomain.domain.replace("www.", "")}`
@@ -1050,7 +1072,7 @@ const addDomainToCloudfrontDistribution = async (
     Items: [subdomain.domain]
   };
 
-  if (subdomain.domain.startsWith("www")) {
+  if (subdomain.domain.startsWith("www.")) {
     params.DistributionConfig.Aliases.Quantity = 2;
     params.DistributionConfig.Aliases.Items.push(
       `${subdomain.domain.replace("www.", "")}`
