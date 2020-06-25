@@ -6,7 +6,7 @@ module.exports = (domains) => {
   }
 
   // Assumes an array of size 1 or 2. If size 1, then first element is domain
-  // and subdomain is hardcoded to "www" (which @serverless/domain will "unshift" to root).
+  // and subdomain is hardcoded to "www" (which @sls-next/domain will "unshift" to root).
   // if size 2, then first element is subdomain, second element is domain
   if (domains instanceof Array && domains.length) {
     return {
