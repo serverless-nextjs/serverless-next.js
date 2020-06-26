@@ -2,6 +2,7 @@ const aws = require("aws-sdk");
 const { utils } = require("@serverless/core");
 
 const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2018";
+const HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"; // this is a constant that you can get from here https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 
 /**
  * Get Clients
@@ -162,13 +163,15 @@ const getCertificateArnByDomain = async (acm, domain) => {
           certificate.CertificateArn
         );
         const nakedDomainCert = certDetail.DomainValidationOptions.find(
-          (option) => option.DomainName === nakedDomain
+          ({ DomainName }) => DomainName === nakedDomain
         );
+
         if (!nakedDomainCert) {
           continue;
         }
       }
-      return certificate.certificateArn;
+
+      return certificate.CertificateArn;
     }
   }
 
@@ -486,37 +489,73 @@ const configureDnsForCloudFrontDistribution = async (
   const dnsRecordParams = {
     HostedZoneId: domainHostedZoneId,
     ChangeBatch: {
-      Changes: [
-        {
-          Action: "UPSERT",
-          ResourceRecordSet: {
-            Name: subdomain.domain,
-            Type: "A",
-            AliasTarget: {
-              HostedZoneId: "Z2FDTNDATAQYW2", // this is a constant that you can get from here https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
-              DNSName: distributionUrl,
-              EvaluateTargetHealth: false
-            }
-          }
-        }
-      ]
+      Changes: []
     }
   };
 
-  if (subdomain.domain.startsWith("www.")) {
+  // don't create www records for apex mode
+  if (!subdomain.domain.startsWith("www.") || domainType !== "apex") {
     dnsRecordParams.ChangeBatch.Changes.push({
       Action: "UPSERT",
       ResourceRecordSet: {
-        Name: subdomain.domain.replace("www.", ""),
+        Name: subdomain.domain,
         Type: "A",
         AliasTarget: {
-          HostedZoneId: "Z2FDTNDATAQYW2", // this is a constant that you can get from here https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
+          HostedZoneId: HOSTED_ZONE_ID,
           DNSName: distributionUrl,
           EvaluateTargetHealth: false
         }
       }
     });
   }
+
+  // don't create apex records for www mode
+  if (subdomain.domain.startsWith("www.") && domainType !== "www") {
+    dnsRecordParams.ChangeBatch.Changes.push({
+      Action: "UPSERT",
+      ResourceRecordSet: {
+        Name: subdomain.domain.replace("www.", ""),
+        Type: "A",
+        AliasTarget: {
+          HostedZoneId: HOSTED_ZONE_ID,
+          DNSName: distributionUrl,
+          EvaluateTargetHealth: false
+        }
+      }
+    });
+  }
+
+  // clean up any previously created www records for apex mode
+  // if (subdomain.domain.startsWith("www.") && domainType === "apex") {
+  //   dnsRecordParams.ChangeBatch.Changes.push({
+  //     Action: "DELETE",
+  //     ResourceRecordSet: {
+  //       Name: subdomain.domain,
+  //       Type: "A",
+  //       AliasTarget: {
+  //         HostedZoneId: HOSTED_ZONE_ID,
+  //         DNSName: distributionUrl,
+  //         EvaluateTargetHealth: false
+  //       }
+  //     }
+  //   });
+  // }
+
+  // clean up any previously created apex records for www mode
+  // if (subdomain.domain.startsWith("www.") && domainType === "www") {
+  //   dnsRecordParams.ChangeBatch.Changes.push({
+  //     Action: "DELETE",
+  //     ResourceRecordSet: {
+  //       Name: subdomain.domain.replace("www.", ""),
+  //       Type: "A",
+  //       AliasTarget: {
+  //         HostedZoneId: HOSTED_ZONE_ID,
+  //         DNSName: distributionUrl,
+  //         EvaluateTargetHealth: false
+  //       }
+  //     }
+  //   });
+  // }
 
   return route53.changeResourceRecordSets(dnsRecordParams).promise();
 };
@@ -755,10 +794,16 @@ const createCloudfrontDistribution = async (
   };
 
   if (subdomain.domain.startsWith("www.")) {
-    params.DistributionConfig.Aliases.Quantity = 2;
-    params.DistributionConfig.Aliases.Items.push(
-      `${subdomain.domain.replace("www.", "")}`
-    );
+    if (domainType === "apex") {
+      params.DistributionConfig.Aliases.Items = [
+        `${subdomain.domain.replace("www.", "")}`
+      ];
+    } else if (domainType !== "www") {
+      params.DistributionConfig.Aliases.Quantity = 2;
+      params.DistributionConfig.Aliases.Items.push(
+        `${subdomain.domain.replace("www.", "")}`
+      );
+    }
   }
 
   const res = await cf.createDistribution(params).promise();
@@ -947,7 +992,7 @@ const removeCloudFrontDomainDnsRecords = async (
             Name: domain,
             Type: "A",
             AliasTarget: {
-              HostedZoneId: "Z2FDTNDATAQYW2", // this is a constant that you can get from here https://docs.aws.amazon.com/general/latest/gr/rande.html#s3_region
+              HostedZoneId: HOSTED_ZONE_ID,
               DNSName: distributionUrl,
               EvaluateTargetHealth: false
             }
@@ -956,6 +1001,9 @@ const removeCloudFrontDomainDnsRecords = async (
       ]
     }
   };
+
+  // TODO: should the CNAME records be removed too?
+
   try {
     await route53.changeResourceRecordSets(params).promise();
   } catch (e) {
@@ -1071,12 +1119,18 @@ const addDomainToCloudfrontDistribution = async (
     Quantity: 1,
     Items: [subdomain.domain]
   };
-
+  debugger;
   if (subdomain.domain.startsWith("www.")) {
-    params.DistributionConfig.Aliases.Quantity = 2;
-    params.DistributionConfig.Aliases.Items.push(
-      `${subdomain.domain.replace("www.", "")}`
-    );
+    if (domainType === "apex") {
+      params.DistributionConfig.Aliases.Items = [
+        `${subdomain.domain.replace("www.", "")}`
+      ];
+    } else if (domainType !== "www") {
+      params.DistributionConfig.Aliases.Quantity = 2;
+      params.DistributionConfig.Aliases.Items.push(
+        `${subdomain.domain.replace("www.", "")}`
+      );
+    }
   }
 
   params.DistributionConfig = {

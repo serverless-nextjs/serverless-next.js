@@ -26,9 +26,13 @@ const {
 class Domain extends Component {
   async default(inputs = {}) {
     this.context.status("Deploying");
+
+    this.context.debug = inputs.verbose ? console.log : this.context.debug;
+
     this.context.debug(`Starting Domain component deployment.`);
 
     this.context.debug(`Validating inputs.`);
+
     inputs.region = inputs.region || "us-east-1";
     inputs.privateZone = inputs.privateZone || false;
     inputs.distributionDefaults = inputs.distributionDefaults || {};
@@ -197,7 +201,8 @@ class Domain extends Component {
           clients.cf,
           subdomain,
           certificate.CertificateArn,
-          inputs.distributionDefaults
+          inputs.distributionDefaults,
+          inputs.domainType
         );
 
         this.context.debug(
@@ -277,9 +282,10 @@ class Domain extends Component {
       return `https://${subdomain.domain}`;
     });
 
-    if (hasRoot) {
+    if (hasRoot && inputs.domainType !== "www") {
       outputs.domains.unshift(`https://${inputs.domain.replace("www.", "")}`);
     }
+
     return outputs;
   }
 
