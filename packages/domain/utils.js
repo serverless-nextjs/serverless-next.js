@@ -1120,7 +1120,7 @@ const addDomainToCloudfrontDistribution = async (
     Quantity: 1,
     Items: [subdomain.domain]
   };
-  debugger;
+
   if (subdomain.domain.startsWith("www.")) {
     if (domainType === "apex") {
       params.DistributionConfig.Aliases.Items = [

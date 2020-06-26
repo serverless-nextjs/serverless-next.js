@@ -34,4 +34,6 @@ nextApp:
 
 Then from the app simply run `serverless` or `npx serverless` if you don't have the serverless cli installed.
 
+For interactive debugging of the deployment you may launch serverless through node like `NODE_OPTIONS='--inspect' node ${which serverless}`. From there you may attach and debug as any other Node.js app.
+
 Note: If you are working with a Typescript package make sure you build it (`npm run build`) before deploying ;)
