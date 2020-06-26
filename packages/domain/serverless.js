@@ -107,7 +107,7 @@ class Domain extends Component {
         domainHostedZoneId
       );
       this.context.log(
-        "Your AWS ACM Certificate has been created and is being validated via DNS.  This could take up to 30 minutes since it depends on DNS propagation.  Continuining deployment, but you may have to wait for DNS propagation."
+        "Your AWS ACM Certificate has been created and is being validated via DNS.  This could take up to 30 minutes since it depends on DNS propagation. Continuing deployment, but you may have to wait for DNS propagation."
       );
     }
 

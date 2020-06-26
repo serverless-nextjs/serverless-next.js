@@ -525,6 +525,7 @@ const configureDnsForCloudFrontDistribution = async (
     });
   }
 
+  // TODO: clean up the other records when switching types
   // clean up any previously created www records for apex mode
   // if (subdomain.domain.startsWith("www.") && domainType === "apex") {
   //   dnsRecordParams.ChangeBatch.Changes.push({
