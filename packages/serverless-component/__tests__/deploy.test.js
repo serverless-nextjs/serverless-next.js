@@ -141,7 +141,12 @@ describe("deploy tests", () => {
             private: true,
             pathPatterns: {
               "_next/static/*": {
-                ttl: 86400
+                ttl: 86400,
+                forward: {
+                  headers: "none",
+                  cookies: "none",
+                  queryString: false
+                }
               },
               "_next/data/*": {
                 ttl: 0,
@@ -152,7 +157,12 @@ describe("deploy tests", () => {
                 }
               },
               "static/*": {
-                ttl: 86400
+                ttl: 86400,
+                forward: {
+                  headers: "none",
+                  cookies: "none",
+                  queryString: false
+                }
               },
               "api/*": {
                 ttl: 0,

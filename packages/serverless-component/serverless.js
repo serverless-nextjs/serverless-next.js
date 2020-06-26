@@ -230,10 +230,20 @@ class NextjsComponent extends Component {
         private: true,
         pathPatterns: {
           "_next/static/*": {
-            ttl: 86400
+            ttl: 86400,
+            forward: {
+              headers: "none",
+              cookies: "none",
+              queryString: false
+            }
           },
           "static/*": {
-            ttl: 86400
+            ttl: 86400,
+            forward: {
+              headers: "none",
+              cookies: "none",
+              queryString: false
+            }
           }
         }
       },

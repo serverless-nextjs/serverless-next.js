@@ -654,7 +654,12 @@ describe("Custom inputs", () => {
             ...customPageCacheBehaviours,
             "_next/static/*": {
               ...customPageCacheBehaviours["_next/static/*"],
-              ttl: 86400
+              ttl: 86400,
+              forward: {
+                headers: "none",
+                cookies: "none",
+                queryString: false
+              }
             },
             "_next/data/*": {
               ttl: 0,
@@ -670,7 +675,12 @@ describe("Custom inputs", () => {
             },
             "static/*": {
               ...customPageCacheBehaviours["static/*"],
-              ttl: 86400
+              ttl: 86400,
+              forward: {
+                headers: "none",
+                cookies: "none",
+                queryString: false
+              }
             }
           },
           private: true,
