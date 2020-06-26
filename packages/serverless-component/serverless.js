@@ -146,7 +146,7 @@ class NextjsComponent extends Component {
         }
       );
 
-      await builder.build(inputs.verbose);
+      await builder.build(!!inputs.verbose);
     }
   }
 
@@ -283,7 +283,7 @@ class NextjsComponent extends Component {
         memory: getLambdaMemory("apiLambda"),
         timeout: getLambdaTimeout("apiLambda"),
         runtime: getLambdaRuntime("apiLambda"),
-        verbose: inputs.verbose
+        verbose: !!inputs.verbose
       };
       const apiLambdaName = getLambdaName("apiLambda");
       if (apiLambdaName) apiEdgeLambdaInput.name = apiLambdaName;
@@ -327,7 +327,7 @@ class NextjsComponent extends Component {
       memory: getLambdaMemory("defaultLambda"),
       timeout: getLambdaTimeout("defaultLambda"),
       runtime: getLambdaRuntime("defaultLambda"),
-      verbose: inputs.verbose
+      verbose: !!inputs.verbose
     };
     const defaultLambdaName = getLambdaName("defaultLambda");
     if (defaultLambdaName) defaultEdgeLambdaInput.name = defaultLambdaName;
@@ -434,14 +434,14 @@ class NextjsComponent extends Component {
     if (domain) {
       const domainComponent = await this.load("@sls-next/domain");
       const domainOutputs = await domainComponent({
-        distributionDefaults: inputs.domainInputs,
         privateZone: false,
-        verbose: inputs.verbose,
+        verbose: !!inputs.verbose,
         domain,
         subdomains: {
           [subdomain]: cloudFrontOutputs
         },
-        domainType: inputs.domainType
+        domainType: inputs.domainType || "both",
+        defaultCloudfrontInputs
       });
       appUrl = domainOutputs.domains[0];
     }

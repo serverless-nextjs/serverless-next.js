@@ -7,20 +7,10 @@ const {
   getCertificateArnByDomain,
   createCertificate,
   validateCertificate,
-  createCloudfrontDistribution,
-  updateCloudfrontDistribution,
-  getCloudFrontDistributionByDomain,
-  invalidateCloudfrontDistribution,
-  deployApiDomain,
-  removeApiDomain,
-  removeApiDomainDnsRecords,
   configureDnsForCloudFrontDistribution,
-  getApiDomainName,
   removeCloudFrontDomainDnsRecords,
   addDomainToCloudfrontDistribution,
-  removeDomainFromCloudFrontDistribution,
-  createCloudfrontDistributionForAppSync,
-  updateCloudfrontDistributionForAppSync
+  removeDomainFromCloudFrontDistribution
 } = require("./utils");
 
 class Domain extends Component {
@@ -35,8 +25,8 @@ class Domain extends Component {
 
     inputs.region = inputs.region || "us-east-1";
     inputs.privateZone = inputs.privateZone || false;
-    inputs.distributionDefaults = inputs.distributionDefaults || {};
     inputs.domainType = inputs.domainType || "both";
+    inputs.defaultCloudfrontInputs = inputs.defaultCloudfrontInputs || {};
 
     if (!inputs.domain) {
       throw Error(`"domain" is a required input.`);
@@ -56,7 +46,6 @@ class Domain extends Component {
     this.state.privateZone = JSON.parse(inputs.privateZone);
     this.state.domain = inputs.domain;
     this.state.subdomains = subdomains;
-    this.state.distributionDefaults = inputs.distributionDefaults;
 
     await this.save();
 
@@ -124,75 +113,9 @@ class Domain extends Component {
     // Setting up domains for different services
     for (const subdomain of subdomains) {
       if (subdomain.type === "awsS3Website") {
-        this.context.debug(
-          `Configuring domain "${subdomain.domain}" for S3 Bucket Website`
-        );
-
-        this.context.debug(
-          `Checking CloudFront distribution for domain "${subdomain.domain}"`
-        );
-        let distribution = await getCloudFrontDistributionByDomain(
-          clients.cf,
-          subdomain.domain
-        );
-        if (!distribution) {
-          this.context.debug(
-            `CloudFront distribution for domain "${subdomain.domain}" not found. Creating...`
-          );
-          distribution = await createCloudfrontDistribution(
-            clients.cf,
-            subdomain,
-            certificate.CertificateArn,
-            inputs.distributionDefaults,
-            inputs.domainType
-          );
-        } else if (
-          !distribution.origins.includes(
-            `${subdomain.s3BucketName}.s3.amazonaws.com`
-          ) ||
-          !distribution.errorPages
-        ) {
-          this.context.debug(`Updating distribution "${distribution.url}".`);
-          distribution = await updateCloudfrontDistribution(
-            clients.cf,
-            subdomain,
-            distribution.id,
-            inputs.distributionDefaults
-          );
-        }
-
-        this.context.debug(
-          `Configuring DNS for distribution "${distribution.url}".`
-        );
-
-        await configureDnsForCloudFrontDistribution(
-          clients.route53,
-          subdomain,
-          domainHostedZoneId,
-          distribution.url,
-          inputs.domainType
-        );
-
-        this.context.debug(
-          `Invalidating CloudFront distribution ${distribution.url}`
-        );
-
-        await invalidateCloudfrontDistribution(clients.cf, distribution.id);
-
-        this.context.debug(
-          `Using AWS Cloudfront Distribution with URL: "${subdomain.domain}"`
-        );
+        throw new Error(`Unsupported subdomain type ${awsS3Website}`);
       } else if (subdomain.type === "awsApiGateway") {
-        // Map APIG domain to API ID and recursively retry
-        // if APIG domain need to be created first, or TooManyRequests error is thrown
-        await deployApiDomain(
-          clients.apig,
-          clients.route53,
-          subdomain,
-          certificate.CertificateArn,
-          domainHostedZoneId,
-          this // passing instance for helpful logs during the process
-        );
+        throw new Error(`Unsupported subdomain type ${awsS3Website}`);
       } else if (subdomain.type === "awsCloudFront") {
         this.context.debug(
           `Adding ${subdomain.domain} domain to CloudFront distribution with URL "${subdomain.url}"`
@@ -201,8 +124,8 @@ class Domain extends Component {
           clients.cf,
           subdomain,
           certificate.CertificateArn,
-          inputs.distributionDefaults,
-          inputs.domainType
+          inputs.domainType,
+          inputs.defaultCloudfrontInputs
         );
 
         this.context.debug(
@@ -213,64 +136,12 @@ class Domain extends Component {
           subdomain,
           domainHostedZoneId,
           subdomain.url.replace("https://", ""),
-          inputs.domainType
+          inputs.domainType,
+          this
         );
       } else if (subdomain.type === "awsAppSync") {
-        this.context.debug(
-          `Configuring domain "${subdomain.domain}" for AppSync API`
-        );
-
-        this.context.debug(
-          `Checking CloudFront distribution for domain "${subdomain.domain}"`
-        );
-        let distribution = await getCloudFrontDistributionByDomain(
-          clients.cf,
-          subdomain.domain
-        );
-        if (!distribution) {
-          this.context.debug(
-            `CloudFront distribution for domain "${subdomain.domain}" not found. Creating...`
-          );
-          distribution = await createCloudfrontDistributionForAppSync(
-            clients.cf,
-            subdomain,
-            certificate.CertificateArn,
-            inputs.distributionDefaults
-          );
-        } else if (!distribution.origins.includes(subdomain.url)) {
-          this.context.debug(`Updating distribution "${distribution.url}".`);
-          distribution = await updateCloudfrontDistributionForAppSync(
-            clients.cf,
-            subdomain,
-            distribution.id,
-            inputs.distributionDefaults
-          );
-        }
-
-        this.context.debug(
-          `Configuring DNS for distribution "${distribution.url}".`
-        );
-
-        await configureDnsForCloudFrontDistribution(
-          clients.route53,
-          subdomain,
-          domainHostedZoneId,
-          distribution.url,
-          inputs.domainType
-        );
-
-        this.context.debug(
-          `Invalidating CloudFront distribution ${distribution.url}`
-        );
-
-        await invalidateCloudfrontDistribution(clients.cf, distribution.id);
-
-        this.context.debug(
-          `Using AWS Cloudfront Distribution with URL: "${subdomain.domain}"`
-        );
+        throw new Error(`Unsupported subdomain type ${awsS3Website}`);
       }
-
-      // TODO: Remove unused domains that are kept in state
     }
 
     const outputs = {};
@@ -313,69 +184,14 @@ class Domain extends Component {
     for (const subdomain in this.state.subdomains) {
       const domainState = this.state.subdomains[subdomain];
       if (domainState.type === "awsS3Website") {
-        this.context.debug(
-          `Fetching CloudFront distribution info for removal for domain ${domainState.domain}.`
-        );
-        const distribution = await getCloudFrontDistributionByDomain(
-          clients.cf,
-          domainState.domain
-        );
-
-        if (distribution) {
-          this.context.debug(
-            `Removing DNS records for website domain ${domainState.domain}.`
-          );
-          await removeCloudFrontDomainDnsRecords(
-            clients.route53,
-            domainState.domain,
-            domainHostedZoneId,
-            distribution.url
-          );
-
-          if (domainState.domain.startsWith("www")) {
-            await removeCloudFrontDomainDnsRecords(
-              clients.route53,
-              domainState.domain.replace("www.", ""), // it'll move on if it doesn't exist
-              domainHostedZoneId,
-              distribution.url
-            );
-          }
-        }
+        this.context.debug(`Unsupported subdomain type ${awsS3Website}`);
       } else if (domainState.type === "awsApiGateway") {
-        this.context.debug(
-          `Fetching API Gateway domain ${domainState.domain} information for removal.`
-        );
-        const domainRes = await getApiDomainName(
-          clients.apig,
-          domainState.domain
-        );
-
-        if (domainRes) {
-          this.context.debug(
-            `Removing API Gateway domain ${domainState.domain}.`
-          );
-          await removeApiDomain(clients.apig, domainState.domain);
-
-          this.context.debug(
-            `Removing DNS records for API Gateway domain ${domainState.domain}.`
-          );
-          await removeApiDomainDnsRecords(
-            clients.route53,
-            domainState.domain,
-            domainHostedZoneId,
-            domainRes.distributionHostedZoneId,
-            domainRes.distributionDomainName
-          );
-        }
+        this.context.debug(`Unsupported subdomain type ${awsS3Website}`);
       } else if (domainState.type === "awsCloudFront") {
         this.context.debug(
           `Removing domain ${domainState.domain} from CloudFront.`
         );
-        await removeDomainFromCloudFrontDistribution(
-          clients.cf,
-          domainState,
-          this.state.distributionDefaults
-        );
+        await removeDomainFromCloudFrontDistribution(clients.cf, domainState);
 
         this.context.debug(
           `Removing CloudFront DNS records for domain ${domainState.domain}`
@@ -387,22 +203,7 @@ class Domain extends Component {
           domainState.url.replace("https://", "")
         );
       } else if (domainState.type === "awsAppSync") {
-        const distribution = await getCloudFrontDistributionByDomain(
-          clients.cf,
-          domainState.domain
-        );
-
-        if (distribution) {
-          this.context.debug(
-            `Removing DNS records for AppSync domain ${domainState.domain}.`
-          );
-          await removeCloudFrontDomainDnsRecords(
-            clients.route53,
-            domainState.domain,
-            domainHostedZoneId,
-            distribution.url
-          );
-        }
+        this.context.debug(`Unsupported subdomain type ${awsS3Website}`);
       }
     }
     this.state = {};

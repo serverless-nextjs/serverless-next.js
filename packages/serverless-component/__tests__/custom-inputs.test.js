@@ -140,6 +140,9 @@ describe("Custom inputs", () => {
       const { domain, subdomain } = obtainDomains(inputDomains);
 
       expect(mockDomain).toBeCalledWith({
+        defaultCloudfrontInputs: {},
+        domainType: "both",
+        verbose: false,
         privateZone: false,
         domain,
         subdomains: {

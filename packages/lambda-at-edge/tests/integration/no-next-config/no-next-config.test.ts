@@ -40,11 +40,11 @@ describe("No Next Config Build Test", () => {
   });
 
   // TODO: flaky test
-  it.skip("deletes temporary next.config.js created", async () => {
-    expect(await pathExists(path.join(fixtureDir, "next.config.js"))).toBe(
-      false
-    );
-  });
+  // it("deletes temporary next.config.js created", async () => {
+  //   expect(await pathExists(path.join(fixtureDir, "next.config.js"))).toBe(
+  //     false
+  //   );
+  // });
 
   it("cleans up temporary next.config.original.x.js generated", async () => {
     expect(

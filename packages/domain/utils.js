@@ -24,16 +24,10 @@ const getClients = (credentials, region = "us-east-1") => {
     region
   });
 
-  const apig = new aws.APIGateway({
-    credentials,
-    region
-  });
-
   return {
     route53,
     acm,
-    cf,
-    apig
+    cf
   };
 };
 
@@ -48,35 +42,6 @@ const prepareSubdomains = (inputs) => {
     const domainObj = {};
 
     domainObj.domain = `${subdomain}.${inputs.domain}`;
-
-    if (inputs.subdomains[subdomain].url.includes("s3")) {
-      domainObj.type = "awsS3Website";
-      // Get S3 static hosting endpoint of existing bucket to use w/ CloudFront.
-      // todo this doesn't work with bucket names with periods
-      domainObj.s3BucketName = inputs.subdomains[subdomain].url
-        .replace("http://", "")
-        .split(".")[0];
-    }
-
-    // Check if referenced Component is using AWS API Gateway...
-    if (inputs.subdomains[subdomain].url.includes("execute-api")) {
-      domainObj.apiId = inputs.subdomains[subdomain].url
-        .split(".")[0]
-        .split("//")[1];
-      domainObj.stage = inputs.subdomains[subdomain].url.split("/")[3];
-      domainObj.type = "awsApiGateway";
-    }
-
-    // Check if referenced Component is using AppSync...
-    if (inputs.subdomains[subdomain].url.includes("appsync")) {
-      domainObj.apiId = inputs.subdomains[subdomain].url
-        .split(".")[0]
-        .split("//")[1];
-      domainObj.url = inputs.subdomains[subdomain].url
-        .replace("https://", "") // distribution origin does not expect https
-        .replace("/graphql", ""); // distribution origin does not expect /graphql
-      domainObj.type = "awsAppSync";
-    }
 
     if (inputs.subdomains[subdomain].url.includes("cloudfront")) {
       domainObj.distributionId = inputs.subdomains[subdomain].id;
@@ -311,172 +276,6 @@ const validateCertificate = async (
 };
 
 /**
- * Create AWS API Gateway Domain
- */
-const createDomainInApig = async (apig, domain, certificateArn) => {
-  try {
-    const params = {
-      domainName: domain,
-      certificateArn: certificateArn,
-      securityPolicy: "TLS_1_2",
-      endpointConfiguration: {
-        types: ["EDGE"]
-      }
-    };
-    const res = await apig.createDomainName(params).promise();
-    return res;
-  } catch (e) {
-    if (e.code === "TooManyRequestsException") {
-      await utils.sleep(2000);
-      return createDomainInApig(apig, domain, certificateArn);
-    }
-    throw e;
-  }
-};
-
-/**
- * Configure DNS for the created API Gateway domain
- */
-const configureDnsForApigDomain = async (
-  route53,
-  domain,
-  hostedZoneId,
-  distributionHostedZoneId,
-  distributionDomainName
-) => {
-  const dnsRecord = {
-    HostedZoneId: hostedZoneId,
-    ChangeBatch: {
-      Changes: [
-        {
-          Action: "UPSERT",
-          ResourceRecordSet: {
-            Name: domain,
-            Type: "A",
-            AliasTarget: {
-              HostedZoneId: distributionHostedZoneId,
-              DNSName: distributionDomainName,
-              EvaluateTargetHealth: false
-            }
-          }
-        }
-      ]
-    }
-  };
-
-  return route53.changeResourceRecordSets(dnsRecord).promise();
-};
-
-/**
- * Map API Gateway API to the created API Gateway Domain
- */
-const mapDomainToApi = async (apig, domain, apiId, stage) => {
-  try {
-    const params = {
-      domainName: domain,
-      restApiId: apiId,
-      basePath: "(none)",
-      stage
-    };
-    // todo what if it already exists but for a different apiId
-    return apig.createBasePathMapping(params).promise();
-  } catch (e) {
-    if (e.code === "TooManyRequestsException") {
-      await utils.sleep(2000);
-      return mapDomainToApi(apig, domain, apiId, stage);
-    }
-    throw e;
-  }
-};
-
-const deployApiDomain = async (
-  apig,
-  route53,
-  subdomain,
-  certificateArn,
-  domainHostedZoneId,
-  that
-) => {
-  try {
-    that.context.debug(
-      `Mapping domain ${subdomain.domain} to API ID ${subdomain.apiId}`
-    );
-    await mapDomainToApi(
-      apig,
-      subdomain.domain,
-      subdomain.apiId,
-      subdomain.stage
-    );
-  } catch (e) {
-    if (e.message === "Invalid domain name identifier specified") {
-      that.context.debug(
-        `Domain ${subdomain.domain} not found in API Gateway. Creating...`
-      );
-
-      const res = await createDomainInApig(
-        apig,
-        subdomain.domain,
-        certificateArn
-      );
-
-      that.context.debug(
-        `Configuring DNS for API Gateway domain ${subdomain.domain}.`
-      );
-
-      await configureDnsForApigDomain(
-        route53,
-        subdomain.domain,
-        domainHostedZoneId,
-        res.distributionHostedZoneId,
-        res.distributionDomainName
-      );
-
-      // retry domain deployment now that domain is created
-      return deployApiDomain(
-        apig,
-        route53,
-        subdomain,
-        certificateArn,
-        domainHostedZoneId,
-        that
-      );
-    }
-
-    if (e.message === "Base path already exists for this domain name") {
-      that.context.debug(
-        `Domain ${subdomain.domain} is already mapped to API ID ${subdomain.apiId}.`
-      );
-      return;
-    }
-    throw new Error(e);
-  }
-};
-
-/**
- * Get CloudFront Distribution using a domain name
- */
-const getCloudFrontDistributionByDomain = async (cf, domain) => {
-  const listRes = await cf.listDistributions({}).promise();
-
-  const distribution = listRes.DistributionList.Items.find((dist) =>
-    dist.Aliases.Items.includes(domain)
-  );
-
-  if (distribution) {
-    return {
-      arn: distribution.ARN,
-      id: distribution.Id,
-      url: distribution.DomainName,
-      origins: distribution.Origins.Items.map((origin) => origin.DomainName),
-      errorPages:
-        distribution.CustomErrorResponses.Quantity === 2 ? true : false
-    };
-  }
-
-  return null;
-};
-
-/**
  * Configure DNS records for a distribution domain
  */
 const configureDnsForCloudFrontDistribution = async (
@@ -484,7 +283,8 @@ const configureDnsForCloudFrontDistribution = async (
   subdomain,
   domainHostedZoneId,
   distributionUrl,
-  domainType
+  domainType,
+  that
 ) => {
   const dnsRecordParams = {
     HostedZoneId: domainHostedZoneId,
@@ -525,457 +325,69 @@ const configureDnsForCloudFrontDistribution = async (
     });
   }
 
-  // TODO: clean up the other records when switching types
   // clean up any previously created www records for apex mode
-  // if (subdomain.domain.startsWith("www.") && domainType === "apex") {
-  //   dnsRecordParams.ChangeBatch.Changes.push({
-  //     Action: "DELETE",
-  //     ResourceRecordSet: {
-  //       Name: subdomain.domain,
-  //       Type: "A",
-  //       AliasTarget: {
-  //         HostedZoneId: HOSTED_ZONE_ID,
-  //         DNSName: distributionUrl,
-  //         EvaluateTargetHealth: false
-  //       }
-  //     }
-  //   });
-  // }
+  if (subdomain.domain.startsWith("www.") && domainType === "apex") {
+    try {
+      await route53
+        .changeResourceRecordSets({
+          HostedZoneId: domainHostedZoneId,
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "DELETE",
+                ResourceRecordSet: {
+                  Name: subdomain.domain,
+                  Type: "A",
+                  AliasTarget: {
+                    HostedZoneId: HOSTED_ZONE_ID,
+                    DNSName: distributionUrl,
+                    EvaluateTargetHealth: false
+                  }
+                }
+              }
+            ]
+          }
+        })
+        .promise();
+    } catch (e) {
+      that.context.debug(e.message);
+    }
+  }
 
   // clean up any previously created apex records for www mode
-  // if (subdomain.domain.startsWith("www.") && domainType === "www") {
-  //   dnsRecordParams.ChangeBatch.Changes.push({
-  //     Action: "DELETE",
-  //     ResourceRecordSet: {
-  //       Name: subdomain.domain.replace("www.", ""),
-  //       Type: "A",
-  //       AliasTarget: {
-  //         HostedZoneId: HOSTED_ZONE_ID,
-  //         DNSName: distributionUrl,
-  //         EvaluateTargetHealth: false
-  //       }
-  //     }
-  //   });
-  // }
+  if (subdomain.domain.startsWith("www.") && domainType === "www") {
+    try {
+      await route53
+        .changeResourceRecordSets({
+          HostedZoneId: domainHostedZoneId,
+          ChangeBatch: {
+            Changes: [
+              {
+                Action: "DELETE",
+                ResourceRecordSet: {
+                  Name: subdomain.domain.replace("www.", ""),
+                  Type: "A",
+                  AliasTarget: {
+                    HostedZoneId: HOSTED_ZONE_ID,
+                    DNSName: distributionUrl,
+                    EvaluateTargetHealth: false
+                  }
+                }
+              }
+            ]
+          }
+        })
+        .promise();
+    } catch (e) {
+      that.context.debug(e.message);
+    }
+  }
 
   return route53.changeResourceRecordSets(dnsRecordParams).promise();
 };
 
-const createCloudfrontDistributionForAppSync = async (
-  cf,
-  subdomain,
-  certificateArn,
-  { ViewerCertificate, ...distributionDefaults }
-) => {
-  const params = {
-    DistributionConfig: {
-      CallerReference: String(Date.now()),
-      Aliases: {
-        Quantity: 1,
-        Items: [subdomain.domain]
-      },
-      Origins: {
-        Quantity: 1,
-        Items: [
-          {
-            Id: `app-sync-${subdomain.apiId}`,
-            DomainName: subdomain.url,
-            CustomOriginConfig: {
-              HTTPPort: 80,
-              HTTPSPort: 443,
-              OriginKeepaliveTimeout: 5,
-              OriginProtocolPolicy: "https-only",
-              OriginReadTimeout: 30,
-              OriginSslProtocols: {
-                Items: ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"],
-                Quantity: 4
-              }
-            }
-          }
-        ]
-      },
-      OriginGroups: {
-        Quantity: 0,
-        Items: []
-      },
-      DefaultCacheBehavior: {
-        TargetOriginId: `app-sync-${subdomain.apiId}`,
-        ForwardedValues: {
-          QueryString: false,
-          Cookies: {
-            Forward: "none"
-          }
-        },
-        TrustedSigners: {
-          Enabled: false,
-          Quantity: 0,
-          Items: []
-        },
-        ViewerProtocolPolicy: "redirect-to-https",
-        MinTTL: 0,
-        AllowedMethods: {
-          Quantity: 7,
-          Items: ["HEAD", "GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"]
-        },
-        SmoothStreaming: false,
-        DefaultTTL: 86400,
-        MaxTTL: 31536000,
-        Compress: false,
-        LambdaFunctionAssociations: {
-          Quantity: 0,
-          Items: []
-        },
-        FieldLevelEncryptionId: ""
-      },
-      CacheBehaviors: {
-        Quantity: 0,
-        Items: []
-      },
-      CustomErrorResponses: {
-        Quantity: 0,
-        Items: []
-      },
-      Comment: `app-sync-${subdomain.apiId}`,
-      PriceClass: "PriceClass_All",
-      Enabled: true,
-      WebACLId: "",
-      HttpVersion: "http2",
-      IsIPV6Enabled: true,
-      ...distributionDefaults,
-      ViewerCertificate: {
-        ACMCertificateArn: certificateArn,
-        SSLSupportMethod: "sni-only",
-        MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
-        Certificate: certificateArn,
-        CertificateSource: "acm",
-        ...ViewerCertificate
-      }
-    }
-  };
-
-  const res = await cf.createDistribution(params).promise();
-
-  return {
-    id: res.Distribution.Id,
-    arn: res.Distribution.ARN,
-    url: res.Distribution.DomainName
-  };
-};
-
 /**
- * Create Cloudfront Distribution
- */
-const createCloudfrontDistribution = async (
-  cf,
-  subdomain,
-  certificateArn,
-  { ViewerCertificate, ...distributionDefaults },
-  domainType
-) => {
-  const params = {
-    DistributionConfig: {
-      CallerReference: String(Date.now()),
-      Aliases: {
-        Quantity: 1,
-        Items: [subdomain.domain]
-      },
-      DefaultRootObject: "index.html",
-      Origins: {
-        Quantity: 1,
-        Items: [
-          {
-            Id: `S3-${subdomain.s3BucketName}`,
-            DomainName: `${subdomain.s3BucketName}.s3.amazonaws.com`,
-            OriginPath: "",
-            CustomHeaders: {
-              Quantity: 0,
-              Items: []
-            },
-            S3OriginConfig: {
-              OriginAccessIdentity: ""
-            }
-          }
-        ]
-      },
-      OriginGroups: {
-        Quantity: 0,
-        Items: []
-      },
-      DefaultCacheBehavior: {
-        TargetOriginId: `S3-${subdomain.s3BucketName}`,
-        ForwardedValues: {
-          QueryString: false,
-          Cookies: {
-            Forward: "none"
-          },
-          Headers: {
-            Quantity: 0,
-            Items: []
-          },
-          QueryStringCacheKeys: {
-            Quantity: 0,
-            Items: []
-          }
-        },
-        TrustedSigners: {
-          Enabled: false,
-          Quantity: 0,
-          Items: []
-        },
-        ViewerProtocolPolicy: "redirect-to-https",
-        MinTTL: 0,
-        AllowedMethods: {
-          Quantity: 2,
-          Items: ["HEAD", "GET"],
-          CachedMethods: {
-            Quantity: 2,
-            Items: ["HEAD", "GET"]
-          }
-        },
-        SmoothStreaming: false,
-        DefaultTTL: 86400,
-        MaxTTL: 31536000,
-        Compress: false,
-        LambdaFunctionAssociations: {
-          Quantity: 0,
-          Items: []
-        },
-        FieldLevelEncryptionId: ""
-      },
-      CacheBehaviors: {
-        Quantity: 0,
-        Items: []
-      },
-      CustomErrorResponses: {
-        Quantity: 2,
-        Items: [
-          {
-            ErrorCode: 404,
-            ErrorCachingMinTTL: 300,
-            ResponseCode: "200",
-            ResponsePagePath: "/index.html"
-          },
-          {
-            ErrorCode: 403,
-            ErrorCachingMinTTL: 300,
-            ResponseCode: "200",
-            ResponsePagePath: "/index.html"
-          }
-        ]
-      },
-      Comment: "",
-      Logging: {
-        Enabled: false,
-        IncludeCookies: false,
-        Bucket: "",
-        Prefix: ""
-      },
-      PriceClass: "PriceClass_All",
-      Enabled: true,
-      Restrictions: {
-        GeoRestriction: {
-          RestrictionType: "none",
-          Quantity: 0,
-          Items: []
-        }
-      },
-      WebACLId: "",
-      HttpVersion: "http2",
-      IsIPV6Enabled: true,
-      ...distributionDefaults,
-      ViewerCertificate: {
-        ACMCertificateArn: certificateArn,
-        SSLSupportMethod: "sni-only",
-        MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
-        Certificate: certificateArn,
-        CertificateSource: "acm",
-        ...ViewerCertificate
-      }
-    }
-  };
-
-  if (subdomain.domain.startsWith("www.")) {
-    if (domainType === "apex") {
-      params.DistributionConfig.Aliases.Items = [
-        `${subdomain.domain.replace("www.", "")}`
-      ];
-    } else if (domainType !== "www") {
-      params.DistributionConfig.Aliases.Quantity = 2;
-      params.DistributionConfig.Aliases.Items.push(
-        `${subdomain.domain.replace("www.", "")}`
-      );
-    }
-  }
-
-  const res = await cf.createDistribution(params).promise();
-
-  return {
-    id: res.Distribution.Id,
-    arn: res.Distribution.ARN,
-    url: res.Distribution.DomainName
-  };
-};
-
-const updateCloudfrontDistributionForAppSync = async (
-  cf,
-  subdomain,
-  distributionId,
-  { ...distributionDefaults }
-) => {
-  // Update logic is a bit weird...
-  // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
-
-  // 1. we gotta get the config first...
-  const params = await cf
-    .getDistributionConfig({ Id: distributionId })
-    .promise();
-
-  // 2. then add this property
-  params.IfMatch = params.ETag;
-
-  // 3. then delete this property
-  delete params.ETag;
-
-  // 4. then set this property
-  params.Id = distributionId;
-
-  // 5. then make our changes
-  params.DistributionConfig.Origins.Items = [
-    {
-      Id: `app-sync-${subdomain.apiId}`,
-      DomainName: subdomain.url,
-      OriginPath: "",
-      CustomHeaders: {
-        Quantity: 0,
-        Items: []
-      },
-      CustomOriginConfig: {
-        HTTPPort: 80,
-        HTTPSPort: 443,
-        OriginKeepaliveTimeout: 5,
-        OriginProtocolPolicy: "https-only",
-        OriginReadTimeout: 30,
-        OriginSslProtocols: {
-          Items: ["SSLv3", "TLSv1", "TLSv1.1", "TLSv1.2"],
-          Quantity: 4
-        }
-      }
-    }
-  ];
-
-  params.DistributionConfig.DefaultCacheBehavior.TargetOriginId = `app-sync-${subdomain.apiId}`;
-
-  params.DistributionConfig = {
-    ...params.DistributionConfig,
-    ...distributionDefaults
-  };
-
-  // 6. then finally update!
-  const res = await cf.updateDistribution(params).promise();
-
-  return {
-    id: res.Distribution.Id,
-    arn: res.Distribution.ARN,
-    url: res.Distribution.DomainName
-  };
-};
-
-/*
- * Updates a distribution's origins
- */
-const updateCloudfrontDistribution = async (
-  cf,
-  subdomain,
-  distributionId,
-  distributionDefaults
-) => {
-  // Update logic is a bit weird...
-  // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
-
-  // 1. we gotta get the config first...
-  const params = await cf
-    .getDistributionConfig({ Id: distributionId })
-    .promise();
-
-  // 2. then add this property
-  params.IfMatch = params.ETag;
-
-  // 3. then delete this property
-  delete params.ETag;
-
-  // 4. then set this property
-  params.Id = distributionId;
-
-  // 5. then make our changes
-  // todo maybe we should add ALL error codes returned from CloudFront/S3?!
-  params.DistributionConfig.CustomErrorResponses = {
-    Quantity: 2,
-    Items: [
-      {
-        ErrorCode: 404,
-        ErrorCachingMinTTL: 300,
-        ResponseCode: "200",
-        ResponsePagePath: "/index.html"
-      },
-      {
-        ErrorCode: 403,
-        ErrorCachingMinTTL: 300,
-        ResponseCode: "200",
-        ResponsePagePath: "/index.html"
-      }
-    ]
-  };
-  params.DistributionConfig.Origins.Items = [
-    {
-      Id: `S3-${subdomain.s3BucketName}`,
-      DomainName: `${subdomain.s3BucketName}.s3.amazonaws.com`,
-      OriginPath: "",
-      CustomHeaders: {
-        Quantity: 0,
-        Items: []
-      },
-      S3OriginConfig: {
-        OriginAccessIdentity: ""
-      }
-    }
-  ];
-
-  params.DistributionConfig.DefaultCacheBehavior.TargetOriginId = `S3-${subdomain.s3BucketName}`;
-
-  params.DistributionConfig = {
-    ...params.DistributionConfig,
-    ...distributionDefaults
-  };
-
-  // 6. then finally update!
-  const res = await cf.updateDistribution(params).promise();
-
-  return {
-    id: res.Distribution.Id,
-    arn: res.Distribution.ARN,
-    url: res.Distribution.DomainName
-  };
-};
-
-/**
- * Invalidate Cloudfront Distribution
- */
-const invalidateCloudfrontDistribution = async (cf, distributionId) => {
-  const params = {
-    DistributionId: distributionId,
-    InvalidationBatch: {
-      CallerReference: String(Date.now()),
-      Paths: {
-        Quantity: 1,
-        Items: ["/*"]
-      }
-    }
-  };
-  await cf.createInvalidation(params).promise();
-};
-
-/**
- * Remove AWS S3 Website DNS Records
+ * Remove AWS CloudFront Website DNS Records
  */
 const removeCloudFrontDomainDnsRecords = async (
   route53,
@@ -1014,89 +426,12 @@ const removeCloudFrontDomainDnsRecords = async (
   }
 };
 
-/**
- * Remove API Gateway Domain
- */
-const removeApiDomain = async (apig, domain) => {
-  const params = {
-    domainName: domain
-  };
-
-  return apig.deleteDomainName(params).promise();
-};
-
-/**
- * Remove API Gateway Domain DNS Records
- */
-const removeApiDomainDnsRecords = async (
-  route53,
-  domain,
-  domainHostedZoneId,
-  distributionHostedZoneId,
-  distributionDomainName
-) => {
-  const dnsRecord = {
-    HostedZoneId: domainHostedZoneId,
-    ChangeBatch: {
-      Changes: [
-        {
-          Action: "DELETE",
-          ResourceRecordSet: {
-            Name: domain,
-            Type: "A",
-            AliasTarget: {
-              HostedZoneId: distributionHostedZoneId,
-              DNSName: distributionDomainName,
-              EvaluateTargetHealth: false
-            }
-          }
-        }
-      ]
-    }
-  };
-
-  return route53.changeResourceRecordSets(dnsRecord).promise();
-};
-
-/**
- * Fetch API Gateway Domain Information
- */
-const getApiDomainName = async (apig, domain) => {
-  try {
-    return apig.getDomainName({ domainName: domain }).promise();
-  } catch (e) {
-    if (e.code === "NotFoundException:") {
-      return null;
-    }
-  }
-};
-
-// const getCloudFrontDistributionByUrl = async (cf, distributionUrl) => {
-//   const listRes = await cf.listDistributions({}).promise()
-
-//   const distribution = listRes.DistributionList.Items.find(
-//     (dist) => dist.DomainName === distributionUrl
-//   )
-
-//   if (distribution) {
-//     return {
-//       arn: distribution.ARN,
-//       id: distribution.Id,
-//       url: distribution.DomainName,
-//       origins: distribution.Origins.Items.map((origin) => origin.DomainName),
-//       errorPages: distribution.CustomErrorResponses.Quantity === 2 ? true : false
-//     }
-//   }
-
-//   return null
-// }
-
 const addDomainToCloudfrontDistribution = async (
   cf,
   subdomain,
   certificateArn,
-  { ViewerCertificate, ...distributionDefaults },
-  domainType
+  domainType,
+  defaultCloudfrontInputs
 ) => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
@@ -1134,18 +469,13 @@ const addDomainToCloudfrontDistribution = async (
     }
   }
 
-  params.DistributionConfig = {
-    ...params.DistributionConfig,
-    ...distributionDefaults
-  };
-
   params.DistributionConfig.ViewerCertificate = {
     ACMCertificateArn: certificateArn,
     SSLSupportMethod: "sni-only",
     MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
     Certificate: certificateArn,
     CertificateSource: "acm",
-    ...ViewerCertificate
+    ...defaultCloudfrontInputs.viewerCertificate
   };
 
   // 6. then finally update!
@@ -1158,11 +488,7 @@ const addDomainToCloudfrontDistribution = async (
   };
 };
 
-const removeDomainFromCloudFrontDistribution = async (
-  cf,
-  subdomain,
-  { ViewerCertificate = {} }
-) => {
+const removeDomainFromCloudFrontDistribution = async (cf, subdomain) => {
   const params = await cf
     .getDistributionConfig({ Id: subdomain.distributionId })
     .promise();
@@ -1179,10 +505,8 @@ const removeDomainFromCloudFrontDistribution = async (
   };
 
   params.DistributionConfig.ViewerCertificate = {
-    SSLSupportMethod: ViewerCertificate.SSLSupportMethod || "sni-only",
-    MinimumProtocolVersion:
-      ViewerCertificate.MinimumProtocolVersion ||
-      DEFAULT_MINIMUM_PROTOCOL_VERSION
+    SSLSupportMethod: "sni-only",
+    MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION
   };
 
   const res = await cf.updateDistribution(params).promise();
@@ -1203,21 +527,8 @@ module.exports = {
   createCertificate,
   validateCertificate,
   getDomainHostedZoneId,
-  createCloudfrontDistribution,
-  updateCloudfrontDistribution,
-  invalidateCloudfrontDistribution,
-  mapDomainToApi,
-  createDomainInApig,
-  configureDnsForApigDomain,
-  deployApiDomain,
-  removeApiDomain,
-  removeApiDomainDnsRecords,
-  getCloudFrontDistributionByDomain,
   configureDnsForCloudFrontDistribution,
-  getApiDomainName,
   removeCloudFrontDomainDnsRecords,
   addDomainToCloudfrontDistribution,
-  removeDomainFromCloudFrontDistribution,
-  createCloudfrontDistributionForAppSync,
-  updateCloudfrontDistributionForAppSync
+  removeDomainFromCloudFrontDistribution
 };
