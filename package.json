@@ -15,9 +15,9 @@
   ],
   "scripts": {
     "test": "jest --runInBand",
-    "packages-install": "lerna exec -- npm install",
+    "packages-install": "lerna exec yarn",
     "packages-build": "lerna run build",
-    "test:watch": "npm run test -- --watch --collect-coverage=false",
+    "test:watch": "yarn test -- --watch --collect-coverage=false",
     "publish": "lerna publish --conventional-commits",
     "prerelease": "lerna publish --conventional-commits --conventional-prerelease",
     "graduate": "lerna publish --conventional-commits --conventional-graduate",
