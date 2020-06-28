@@ -180,7 +180,7 @@ class AwsLambda extends Component {
       }
     }
 
-    // todo we probably don't need this logic now thatt we auto generate names
+    // todo we probably don't need this logic now that we auto generate names
     if (this.state.name && this.state.name !== config.name) {
       this.context.status(`Replacing`);
       await deleteLambda({ lambda, name: this.state.name });

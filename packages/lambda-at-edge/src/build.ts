@@ -357,7 +357,7 @@ class Builder {
     }
   }
 
-  async build(): Promise<void> {
+  async build(debugMode: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
@@ -375,10 +375,17 @@ class Builder {
     );
 
     try {
-      await execa(cmd, args, {
+      const subprocess = execa(cmd, args, {
         cwd,
         env
       });
+
+      if (debugMode) {
+        // @ts-ignore
+        subprocess.stdout.pipe(process.stdout);
+      }
+
+      await subprocess;
     } finally {
       await restoreUserConfig();
     }

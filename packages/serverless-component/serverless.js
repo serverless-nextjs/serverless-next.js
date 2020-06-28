@@ -146,7 +146,7 @@ class NextjsComponent extends Component {
         }
       );
 
-      await builder.build();
+      await builder.build(this.context.instance.debugMode);
     }
   }
 
@@ -440,13 +440,15 @@ class NextjsComponent extends Component {
     // create domain
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain) {
-      const domainComponent = await this.load("@serverless/domain");
+      const domainComponent = await this.load("@sls-next/domain");
       const domainOutputs = await domainComponent({
         privateZone: false,
         domain,
         subdomains: {
           [subdomain]: cloudFrontOutputs
-        }
+        },
+        domainType: inputs.domainType || "both",
+        defaultCloudfrontInputs
       });
       appUrl = domainOutputs.domains[0];
     }
@@ -461,7 +463,7 @@ class NextjsComponent extends Component {
     const [bucket, cloudfront, domain] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@serverless/aws-cloudfront"),
-      this.load("@serverless/domain")
+      this.load("@sls-next/domain")
     ]);
 
     await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
