@@ -17,8 +17,6 @@ class Domain extends Component {
   async default(inputs = {}) {
     this.context.status("Deploying");
 
-    this.context.debug = inputs.verbose ? console.log : this.context.debug;
-
     this.context.debug(`Starting Domain component deployment.`);
 
     this.context.debug(`Validating inputs.`);

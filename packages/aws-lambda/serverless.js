@@ -52,7 +52,6 @@ class AwsLambda extends Component {
 
     config.name = inputs.name || this.state.name || this.context.resourceId();
 
-    this.context.debug = inputs.verbose ? console.log : this.context.debug;
     this.context.debug(
       `Starting deployment of lambda ${config.name} to the ${config.region} region.`
     );

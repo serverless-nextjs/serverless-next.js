@@ -357,7 +357,7 @@ class Builder {
     }
   }
 
-  async build(verbose: boolean): Promise<void> {
+  async build(debugMode: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
@@ -380,7 +380,7 @@ class Builder {
         env
       });
 
-      if (verbose) {
+      if (debugMode) {
         // @ts-ignore
         subprocess.stdout.pipe(process.stdout);
       }
