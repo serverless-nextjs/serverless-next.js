@@ -115,5 +115,8 @@
   },
   "lint-staged": {
     "*.{js,ts,md,yml}": "prettier --write"
+  },
+  "resolutions": {
+    "which": "^2.0.1"
   }
 }
