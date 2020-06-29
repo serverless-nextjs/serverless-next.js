@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/serverless-plugin",
-  "version": "2.5.2-alpha.0",
+  "version": "2.6.0-alpha.0",
   "description": "A serverless plugin for nextjs 8 serverless target",
   "main": "index.js",
   "keywords": [

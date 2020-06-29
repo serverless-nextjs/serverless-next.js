@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 2.6.0-alpha.0 (2020-06-29)
+
+### Bug Fixes
+
+- **serverless-component:** don't overwrite the cloudfront default.forward config ([#460](https://github.com/danielcondemarin/serverless-next.js/issues/460)) ([12da1de](https://github.com/danielcondemarin/serverless-next.js/commit/12da1de31855b68b9addef801ec21dffd3202a21))
+
+### Features
+
+- **lambda-at-edge:** add serverless trace target support ([#405](https://github.com/danielcondemarin/serverless-next.js/issues/405)) ([d800951](https://github.com/danielcondemarin/serverless-next.js/commit/d800951673474965c386ab94b2d8db18790099f7))
+
 ## [2.5.2-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-nextjs-plugin@2.5.1...serverless-nextjs-plugin@2.5.2-alpha.0) (2020-06-24)
 
 ### Bug Fixes
