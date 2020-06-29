@@ -8,6 +8,8 @@ const testableServerless = require("../utils/test/testableServerless");
 
 jest.mock("next/dist/build");
 
+jest.setTimeout(10000);
+
 describe("nested next config", () => {
   const fixturePath = path.join(__dirname, "./fixtures/nested-next-config");
 
