@@ -38,7 +38,7 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.10.1",
-    "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
+    "@sls-next/lambda-at-edge": "link:./packages/lambda-at-edge",
     "@types/jest": "^26.0.3",
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
@@ -57,7 +57,7 @@
     "lerna": "^3.22.1",
     "lint-staged": "^10.2.11",
     "next": "^9.4.4",
-    "next-aws-cloudfront": "file:packages/lambda-at-edge-compat",
+    "next-aws-cloudfront": "link:./packages/lambda-at-edge-compat",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
