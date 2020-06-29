@@ -16,7 +16,7 @@
     "directory": "packages/s3-static-assets"
   },
   "scripts": {
-    "prepare": "npm run build",
+    "prepare": "yarn build",
     "build": "tsc -p tsconfig.build.json"
   },
   "keywords": [

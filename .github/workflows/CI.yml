@@ -5,13 +5,12 @@ name: CI
 
 on:
   push:
-    branches: [ master ]
+    branches: [master]
   pull_request:
-    branches: [ master ]
+    branches: [master]
 
 jobs:
   build:
-
     runs-on: [ubuntu-latest]
 
     strategy:
@@ -19,14 +18,13 @@ jobs:
         node-version: [10.x, 12.x]
 
     steps:
-    - uses: actions/checkout@v2
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v1
-      with:
-        node-version: ${{ matrix.node-version }}
-    - run: npm ci
-    - run: npm run packages-install
-    - run: cd integration/app-with-serverless-offline && npm ci && cd ../../
-    - run: npm test
-    - run: npm run integration
-   
+      - uses: actions/checkout@v2
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: yarn --frozen-lockfile
+      - run: yarn packages-install
+      - run: cd integration/app-with-serverless-offline && yarn --frozen-lockfile && cd ../../
+      - run: yarn test
+      - run: yarn integration

@@ -15,9 +15,9 @@
   ],
   "scripts": {
     "test": "jest --runInBand",
-    "packages-install": "lerna exec -- npm install",
+    "packages-install": "lerna exec -- yarn",
     "packages-build": "lerna run build",
-    "test:watch": "npm run test -- --watch --collect-coverage=false",
+    "test:watch": "yarn test -- --watch --collect-coverage=false",
     "publish": "lerna publish --conventional-commits",
     "prerelease": "lerna publish --conventional-commits --conventional-prerelease",
     "graduate": "lerna publish --conventional-commits --conventional-graduate",
@@ -38,7 +38,7 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.10.1",
-    "@sls-next/lambda-at-edge": "file:packages/lambda-at-edge",
+    "@sls-next/lambda-at-edge": "link:./packages/lambda-at-edge",
     "@types/jest": "^26.0.3",
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
@@ -57,7 +57,7 @@
     "lerna": "^3.22.1",
     "lint-staged": "^10.2.11",
     "next": "^9.4.4",
-    "next-aws-cloudfront": "file:packages/lambda-at-edge-compat",
+    "next-aws-cloudfront": "link:./packages/lambda-at-edge-compat",
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
@@ -114,6 +114,9 @@
     }
   },
   "lint-staged": {
-    "*.{js,ts,md}": "prettier --write"
+    "*.{js,ts,md,yml}": "prettier --write"
+  },
+  "resolutions": {
+    "which": "^2.0.1"
   }
 }
