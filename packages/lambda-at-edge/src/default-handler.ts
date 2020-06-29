@@ -67,6 +67,20 @@ const router = (
 };
 
 const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
+const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
+  if (s3Origin.region === "us-east-1" || !s3Origin.region) {
+    return s3Origin.domainName;
+  }
+
+  if (!s3Origin.domainName.includes(s3Origin.region)) {
+    return s3Origin.domainName.replace(
+      "s3.amazonaws.com",
+      `s3-${s3Origin.region}.amazonaws.com`
+    );
+  }
+
+  return s3Origin.domainName;
+};
 
 export const handler = async (
   event: OriginRequestEvent
@@ -83,14 +97,17 @@ export const handler = async (
 
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
+  const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
 
   const isHTMLPage = isStaticPage || isPrerenderedPage;
+
+  s3Origin.domainName = normalisedS3DomainName;
 
   if (isHTMLPage || isPublicFile) {
     s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
 
     if (isHTMLPage) {
-      addS3HostHeader(request, s3Origin.domainName);
+      addS3HostHeader(request, normalisedS3DomainName);
       request.uri = `${uri}.html`;
     }
 
@@ -102,7 +119,7 @@ export const handler = async (
   if (pagePath.endsWith(".html")) {
     s3Origin.path = "/static-pages";
     request.uri = pagePath.replace("pages", "");
-    addS3HostHeader(request, s3Origin.domainName);
+    addS3HostHeader(request, normalisedS3DomainName);
     return request;
   }
 

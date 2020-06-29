@@ -119,7 +119,7 @@ describe("Lambda@Edge", () => {
             host: "mydistribution.cloudfront.net",
             origin: {
               s3: {
-                domainName: "my-bucket.amazonaws.com"
+                domainName: "my-bucket.s3.amazonaws.com"
               }
             }
           });
@@ -151,7 +151,7 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net",
           origin: {
             s3: {
-              domainName: "my-bucket.amazonaws.com"
+              domainName: "my-bucket.s3.amazonaws.com"
             }
           }
         });
@@ -174,6 +174,63 @@ describe("Lambda@Edge", () => {
         expect(cfResponse.status).toEqual(200);
       });
     });
+
+    it("uses default s3 endpoint when bucket region is us-east-1", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/terms",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "",
+            region: "us-east-1"
+          }
+        }
+      });
+
+      const request = await handler(event);
+
+      expect(request.origin.s3).toEqual(
+        expect.objectContaining({
+          domainName: "my-bucket.s3.amazonaws.com"
+        })
+      );
+      expect(request.headers.host[0].key).toEqual("host");
+      expect(request.headers.host[0].value).toEqual(
+        "my-bucket.s3.amazonaws.com"
+      );
+    });
+    it("uses regional endpoint when bucket region is not us-east-1", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/terms",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "",
+            region: "eu-west-1"
+          }
+        }
+      });
+
+      const request = await handler(event);
+
+      expect(request.origin).toEqual({
+        s3: {
+          authMethod: "origin-access-identity",
+          domainName: "my-bucket.s3-eu-west-1.amazonaws.com",
+          path: "/static-pages",
+          region: "eu-west-1"
+        }
+      });
+      expect(request.uri).toEqual("/terms.html");
+      expect(request.headers.host[0].key).toEqual("host");
+      expect(request.headers.host[0].value).toEqual(
+        "my-bucket.s3-eu-west-1.amazonaws.com"
+      );
+    });
   });
 
   it("renders 404 page if request path can't be matched to any page / api routes", async () => {
@@ -182,7 +239,7 @@ describe("Lambda@Edge", () => {
       host: "mydistribution.cloudfront.net",
       origin: {
         s3: {
-          domainName: "my-bucket.amazonaws.com"
+          domainName: "my-bucket.s3.amazonaws.com"
         }
       }
     });
