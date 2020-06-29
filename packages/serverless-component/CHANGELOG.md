@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# 1.15.0-alpha.2 (2020-06-29)
+
+### Bug Fixes
+
+- **serverless-component:** bump aws-lambda with fix for catch all routes ([a09b469](https://github.com/danielcondemarin/serverless-next.js/commit/a09b469ffb70f07ff255067a7b4975b2d69eefa8))
+- **serverless-component:** custom cloudfront configuration bug fixes ([#407](https://github.com/danielcondemarin/serverless-next.js/issues/407)) ([093edec](https://github.com/danielcondemarin/serverless-next.js/commit/093edecfb242a013024418725cd68a6981b87dea))
+- **serverless-component:** don't overwrite the cloudfront default.forward config ([#460](https://github.com/danielcondemarin/serverless-next.js/issues/460)) ([12da1de](https://github.com/danielcondemarin/serverless-next.js/commit/12da1de31855b68b9addef801ec21dffd3202a21))
+- **serverless-component:** enforce compression for the default cloudfront behaviour ([#462](https://github.com/danielcondemarin/serverless-next.js/issues/462)) ([7e8f0d4](https://github.com/danielcondemarin/serverless-next.js/commit/7e8f0d486ac07f56e97500e48f9b54ed14038b16))
+- **serverless-component:** upload whole .next/static folder and dont clear cache between builds ([4406ebb](https://github.com/danielcondemarin/serverless-next.js/commit/4406ebbb8937c75dfbc5644913b7c0d05ff3a52f))
+- **serverless-next.js:** fix API Lambda description input ([b1b6cdf](https://github.com/danielcondemarin/serverless-next.js/commit/b1b6cdf515f3bb25593c8be9c0a7b2ee4a1ab8bc))
+
+### Features
+
+- **lambda-at-edge:** autogenerate serverless config ([#418](https://github.com/danielcondemarin/serverless-next.js/issues/418)) ([0f9a176](https://github.com/danielcondemarin/serverless-next.js/commit/0f9a176f65207d31d0b66a11d6fbceafe27fade5))
+- **lambda-at-edge:** create new package with Lambda@Edge builder and handlers ([94f0a29](https://github.com/danielcondemarin/serverless-next.js/commit/94f0a29f0654f51d60653c8218c15802b2abb476))
+- **serverless-component:** add support for custom s3 region ([#451](https://github.com/danielcondemarin/serverless-next.js/issues/451)) ([ffef4ad](https://github.com/danielcondemarin/serverless-next.js/commit/ffef4ad21525d54489a158f98b638f9c2b00c57a))
+- **serverless-component:** allow custom configuration for Cloudfront ([#282](https://github.com/danielcondemarin/serverless-next.js/issues/282)) ([e7bed6a](https://github.com/danielcondemarin/serverless-next.js/commit/e7bed6aa8d0a8f7fd332e1d0c37d8dc67ec3aa65))
+- **serverless-component:** allow users to set the node.js runtime for the lambda functions ([#422](https://github.com/danielcondemarin/serverless-next.js/issues/422)) ([a0534ab](https://github.com/danielcondemarin/serverless-next.js/commit/a0534ab7db8d4ebcdbad7719c16ad8eaee96eb71))
+- **serverless-component:** cache static pages and invalidate distribution after deploy ([#435](https://github.com/danielcondemarin/serverless-next.js/issues/435)) ([5d75936](https://github.com/danielcondemarin/serverless-next.js/commit/5d759367be5a1c835b093f2713bc0b8cf1d92a82))
+- **serverless-component:** custom cloudfront.origins input ([#376](https://github.com/danielcondemarin/serverless-next.js/issues/376)) ([69beb5a](https://github.com/danielcondemarin/serverless-next.js/commit/69beb5af20c5c3b4435b3b7a3de08265848c3692))
+- **serverless-component:** implement getStaticProps / getStaticPaths [fallback: false](<[#390](https://github.com/danielcondemarin/serverless-next.js/issues/390)>) ([5185649](https://github.com/danielcondemarin/serverless-next.js/commit/518564944435767759fae8ae5978baf3afc49d7a))
+- **serverless-component, lambda-at-edge:** add support for static 404.html page ([#432](https://github.com/danielcondemarin/serverless-next.js/issues/432)) ([0ba8931](https://github.com/danielcondemarin/serverless-next.js/commit/0ba8931807258de58eeaccf449a7b714fc66e15c))
+- **serverless-component,lambda-at-edge:** getServerSideProps support ([#429](https://github.com/danielcondemarin/serverless-next.js/issues/429)) ([7aeb26e](https://github.com/danielcondemarin/serverless-next.js/commit/7aeb26e5052498c580baf7db38e63fefafc38ea4))
+
 # [1.15.0-alpha.2](https://github.com/danielcondemarin/serverless-next.js/compare/serverless-next.js@1.15.0-alpha.1...serverless-next.js@1.15.0-alpha.2) (2020-06-28)
 
 **Note:** Version bump only for package serverless-next.js
