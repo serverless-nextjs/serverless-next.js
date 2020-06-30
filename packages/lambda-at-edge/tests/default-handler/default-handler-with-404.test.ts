@@ -25,7 +25,7 @@ describe("Lambda@Edge", () => {
       host: "mydistribution.cloudfront.net",
       origin: {
         s3: {
-          domainName: "my-bucket.amazonaws.com"
+          domainName: "my-bucket.s3.amazonaws.com"
         }
       }
     });

@@ -1,6 +1,11 @@
 import { handler } from "../../src/default-handler";
 import { createCloudFrontEvent } from "../test-utils";
-import { CloudFrontRequest, CloudFrontResultResponse } from "aws-lambda";
+import {
+  CloudFrontRequest,
+  CloudFrontResultResponse,
+  CloudFrontHeaders,
+  CloudFrontOrigin
+} from "aws-lambda";
 
 jest.mock(
   "../../src/manifest.json",
@@ -45,23 +50,19 @@ describe("Lambda@Edge", () => {
         async ({ path, expectedPage }) => {
           const event = createCloudFrontEvent({
             uri: path,
-            host: "mydistribution.cloudfront.net",
-            origin: {
-              s3: {
-                authMethod: "origin-access-identity",
-                domainName: "my-bucket.s3.amazonaws.com",
-                path: ""
-              }
-            }
+            host: "mydistribution.cloudfront.net"
           });
 
-          const request = await handler(event);
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
 
           expect(request.origin).toEqual({
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/static-pages"
+              path: "/static-pages",
+              region: "us-east-1"
             }
           });
           expect(request.uri).toEqual(expectedPage);
@@ -77,27 +78,22 @@ describe("Lambda@Edge", () => {
       it("serves public file from S3 /public folder", async () => {
         const event = createCloudFrontEvent({
           uri: "/manifest.json",
-          host: "mydistribution.cloudfront.net",
-          origin: {
-            s3: {
-              authMethod: "origin-access-identity",
-              domainName: "my-bucket.s3.amazonaws.com",
-              path: ""
-            }
-          }
+          host: "mydistribution.cloudfront.net"
         });
 
-        const request = await handler(event);
+        const result = await handler(event);
 
-        const cfRequest = request as CloudFrontRequest;
-        expect(cfRequest.origin).toEqual({
+        const request = result as CloudFrontRequest;
+
+        expect(request.origin).toEqual({
           s3: {
             authMethod: "origin-access-identity",
             domainName: "my-bucket.s3.amazonaws.com",
-            path: "/public"
+            path: "/public",
+            region: "us-east-1"
           }
         });
-        expect(cfRequest.uri).toEqual("/manifest.json");
+        expect(request.uri).toEqual("/manifest.json");
       });
     });
 
@@ -116,12 +112,7 @@ describe("Lambda@Edge", () => {
         async ({ path, expectedPage }) => {
           const event = createCloudFrontEvent({
             uri: path,
-            host: "mydistribution.cloudfront.net",
-            origin: {
-              s3: {
-                domainName: "my-bucket.amazonaws.com"
-              }
-            }
+            host: "mydistribution.cloudfront.net"
           });
 
           mockPageRequire(expectedPage);
@@ -129,9 +120,10 @@ describe("Lambda@Edge", () => {
           const response = await handler(event);
 
           const cfResponse = response as CloudFrontResultResponse;
-          const decodedBody = new Buffer(cfResponse.body, "base64").toString(
-            "utf8"
-          );
+          const decodedBody = new Buffer(
+            cfResponse.body as string,
+            "base64"
+          ).toString("utf8");
 
           expect(decodedBody).toEqual(expectedPage);
           expect(cfResponse.status).toEqual(200);
@@ -148,50 +140,91 @@ describe("Lambda@Edge", () => {
       `("serves json data for path $path", async ({ path, expectedPage }) => {
         const event = createCloudFrontEvent({
           uri: path,
-          host: "mydistribution.cloudfront.net",
-          origin: {
-            s3: {
-              domainName: "my-bucket.amazonaws.com"
-            }
-          }
+          host: "mydistribution.cloudfront.net"
         });
 
         mockPageRequire(expectedPage);
 
-        const response = await handler(event);
+        const result = await handler(event);
 
-        const cfResponse = response as CloudFrontResultResponse;
-        const decodedBody = new Buffer(cfResponse.body, "base64").toString(
-          "utf8"
-        );
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = new Buffer(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
 
-        expect(cfResponse.headers["content-type"][0].value).toEqual(
-          "application/json"
-        );
+        const headers = response.headers as CloudFrontHeaders;
+        expect(headers["content-type"][0].value).toEqual("application/json");
         expect(JSON.parse(decodedBody)).toEqual({
           page: expectedPage
         });
-        expect(cfResponse.status).toEqual(200);
+        expect(response.status).toEqual(200);
       });
+    });
+
+    it("uses default s3 endpoint when bucket region is us-east-1", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/terms",
+        host: "mydistribution.cloudfront.net",
+        s3Region: "us-east-1"
+      });
+
+      const result = await handler(event);
+
+      const request = result as CloudFrontRequest;
+      const origin = request.origin as CloudFrontOrigin;
+
+      expect(origin.s3).toEqual(
+        expect.objectContaining({
+          domainName: "my-bucket.s3.amazonaws.com"
+        })
+      );
+      expect(request.headers.host[0].key).toEqual("host");
+      expect(request.headers.host[0].value).toEqual(
+        "my-bucket.s3.amazonaws.com"
+      );
+    });
+
+    it("uses regional endpoint when bucket region is not us-east-1", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/terms",
+        host: "mydistribution.cloudfront.net",
+        s3DomainName: "my-bucket.s3.amazonaws.com",
+        s3Region: "eu-west-1"
+      });
+
+      const result = await handler(event);
+
+      const request = result as CloudFrontRequest;
+      const origin = request.origin as CloudFrontOrigin;
+
+      expect(origin).toEqual({
+        s3: {
+          authMethod: "origin-access-identity",
+          domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
+          path: "/static-pages",
+          region: "eu-west-1"
+        }
+      });
+      expect(request.uri).toEqual("/terms.html");
+      expect(request.headers.host[0].key).toEqual("host");
+      expect(request.headers.host[0].value).toEqual(
+        "my-bucket.s3.eu-west-1.amazonaws.com"
+      );
     });
   });
 
   it("renders 404 page if request path can't be matched to any page / api routes", async () => {
     const event = createCloudFrontEvent({
       uri: "/page/does/not/exist",
-      host: "mydistribution.cloudfront.net",
-      origin: {
-        s3: {
-          domainName: "my-bucket.amazonaws.com"
-        }
-      }
+      host: "mydistribution.cloudfront.net"
     });
 
     mockPageRequire("pages/_error.js");
 
     const response = (await handler(event)) as CloudFrontResultResponse;
-
-    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+    const body = response.body as string;
+    const decodedBody = new Buffer(body, "base64").toString("utf8");
 
     expect(decodedBody).toEqual("pages/_error.js");
     expect(response.status).toEqual(200);

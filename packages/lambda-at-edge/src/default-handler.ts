@@ -24,6 +24,24 @@ const addS3HostHeader = (
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
+const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
+
+const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
+  if (s3Origin.region === "us-east-1") {
+    return s3Origin.domainName;
+  }
+
+  if (!s3Origin.domainName.includes(s3Origin.region)) {
+    const regionalEndpoint = s3Origin.domainName.replace(
+      "s3.amazonaws.com",
+      `s3.${s3Origin.region}.amazonaws.com`
+    );
+    return regionalEndpoint;
+  }
+
+  return s3Origin.domainName;
+};
+
 const router = (
   manifest: OriginRequestDefaultHandlerManifest
 ): ((uri: string) => string) => {
@@ -66,8 +84,6 @@ const router = (
   };
 };
 
-const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
-
 export const handler = async (
   event: OriginRequestEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
@@ -76,21 +92,21 @@ export const handler = async (
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const { pages, publicFiles } = manifest;
-
   const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
   const isPrerenderedPage = prerenderManifest.routes[request.uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
-
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
-
   const isHTMLPage = isStaticPage || isPrerenderedPage;
+  const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
+
+  s3Origin.domainName = normalisedS3DomainName;
 
   if (isHTMLPage || isPublicFile) {
     s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
 
     if (isHTMLPage) {
-      addS3HostHeader(request, s3Origin.domainName);
+      addS3HostHeader(request, normalisedS3DomainName);
       request.uri = `${uri}.html`;
     }
 
@@ -102,7 +118,7 @@ export const handler = async (
   if (pagePath.endsWith(".html")) {
     s3Origin.path = "/static-pages";
     request.uri = pagePath.replace("pages", "");
-    addS3HostHeader(request, s3Origin.domainName);
+    addS3HostHeader(request, normalisedS3DomainName);
     return request;
   }
 

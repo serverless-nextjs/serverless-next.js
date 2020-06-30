@@ -13,15 +13,19 @@ export const removeNewLineChars = (text: string): string =>
 export const getNextBinary = (): string =>
   path.join(require.resolve("next"), "../../../../.bin/next");
 
+type CloudFrontEventOptions = {
+  uri: string;
+  host: string;
+  s3DomainName?: string;
+  s3Region?: string;
+};
+
 export const createCloudFrontEvent = ({
   uri,
   host,
-  origin
-}: {
-  uri: string;
-  host: string;
-  origin: CloudFrontOrigin;
-}): OriginRequestEvent => ({
+  s3DomainName,
+  s3Region
+}: CloudFrontEventOptions): OriginRequestEvent => ({
   Records: [
     {
       cf: {
@@ -38,7 +42,14 @@ export const createCloudFrontEvent = ({
               }
             ]
           },
-          origin
+          origin: {
+            s3: {
+              path: "",
+              region: s3Region || "us-east-1",
+              authMethod: "origin-access-identity",
+              domainName: s3DomainName || "my-bucket.s3.amazonaws.com"
+            }
+          }
         }
       }
     }
