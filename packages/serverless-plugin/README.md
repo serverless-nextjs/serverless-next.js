@@ -55,7 +55,7 @@ exports.handler = function(event, context, callback) {...}
 A compat layer between the nextjs page bundles and AWS Lambda is added at build time:
 
 ```js
-const compat = require("next-aws-lambda");
+const compat = require("@sls-next/next-aws-lambda");
 const page = require(".next/serverless/pages/somePage.js");
 
 module.exports.render = (event, context, callback) => {
@@ -67,7 +67,7 @@ module.exports.render = (event, context, callback) => {
 
 ### Installing
 
-`npm install --save-dev serverless-nextjs-plugin`
+`npm install --save-dev @sls-next/serverless-plugin`
 
 Out of the box, the plugin won't require any configuration. If you need to override any defaults check [this](#all-plugin-configuration-options).
 
@@ -335,7 +335,7 @@ custom:
 The custom handler needs to look something like this:
 
 ```js
-const compat = require("next-aws-lambda");
+const compat = require("@sls-next/next-aws-lambda");
 
 module.exports = (page) => {
   const handler = (event, context) => {

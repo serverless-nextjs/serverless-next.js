@@ -86,7 +86,7 @@ describe("build", () => {
     const nextConfigDir = "path/to/next-app";
     const nextAwsLambdaRelativePath = path.relative(
       nextConfigDir,
-      path.dirname(require.resolve("next-aws-lambda"))
+      path.dirname(require.resolve("@sls-next/next-aws-lambda"))
     );
 
     const parsedNextConfig = parsedNextConfigurationFactory();

@@ -6,12 +6,12 @@ Lambda Proxy Integration event structure documentation can be found [here](https
 
 ## Installation
 
-`npm install next-aws-lambda`
+`npm install @sls-next/next-aws-lambda`
 
 ## Usage
 
 ```js
-const compat = require("next-aws-lambda");
+const compat = require("@sls-next/next-aws-lambda");
 const page = require(".next/serverless/pages/somePage.js");
 
 // using callback

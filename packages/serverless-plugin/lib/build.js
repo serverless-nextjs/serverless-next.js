@@ -30,7 +30,7 @@ module.exports = async function () {
   const servicePackage = this.serverless.service.package;
   const nextAwsLambdaPath = path.relative(
     nextConfigDir,
-    path.dirname(require.resolve("next-aws-lambda"))
+    path.dirname(require.resolve("@sls-next/next-aws-lambda"))
   );
   servicePackage.include = servicePackage.include || [];
   servicePackage.include.push(

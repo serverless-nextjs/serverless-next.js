@@ -2,14 +2,14 @@ service: basic-next-serverless-app
 
 provider:
   name: aws
-  runtime: nodejs8.10
+  runtime: nodejs12.x
   memorySize: 512
 
 stage: dev
 region: eu-west-1
 
 plugins:
-  - serverless-nextjs-plugin
+  - "@sls-next/serverless-plugin"
   - serverless-offline
 
 custom:

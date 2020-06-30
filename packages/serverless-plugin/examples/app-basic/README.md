@@ -10,7 +10,7 @@ cd serverless-nextjs-plugin/examples/basic-next-serverless-app
 #### Install dependencies
 
 ```shell
-npm install
+yarn
 ```
 
 Configure nextjs to use a CDN to host the static assets in the bucket:
