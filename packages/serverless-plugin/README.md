@@ -67,7 +67,7 @@ module.exports.render = (event, context, callback) => {
 
 ### Installing
 
-`npm install --save-dev serverless-nextjs-plugin`
+`npm install --save-dev @sls-next/serverless-plugin`
 
 Out of the box, the plugin won't require any configuration. If you need to override any defaults check [this](#all-plugin-configuration-options).
 

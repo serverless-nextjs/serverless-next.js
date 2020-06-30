@@ -32,6 +32,6 @@
   "devDependencies": {
     "eslint-plugin-react": "^7.12.4",
     "serverless": "^1.39.1",
-    "serverless-nextjs-plugin": "^1.2.0"
+    "@sls-next/serverless-plugin": "^2.6.0-alpha.2"
   }
 }
