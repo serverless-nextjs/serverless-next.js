@@ -2,5 +2,6 @@
 # yarn lockfile v1
 
 
-"next-aws-lambda@file:../../packages/apigw-lambda-compat":
-  version "2.5.1-alpha.0"
+"@sls-next/next-aws-lambda@link:../../packages/apigw-lambda-compat":
+  version "0.0.0"
+  uid ""
