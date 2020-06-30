@@ -33,7 +33,7 @@
     "lodash.clonedeep": "^4.5.0",
     "lodash.merge": "^4.6.1",
     "mime": "^2.4.0",
-    "next-aws-lambda": "file:../apigw-lambda-compat"
+    "@sls-next/next-aws-lambda": "link:../apigw-lambda-compat"
   },
   "engines": {
     "node": ">=8.5.0"

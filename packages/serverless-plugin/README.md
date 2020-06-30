@@ -55,7 +55,7 @@ exports.handler = function(event, context, callback) {...}
 A compat layer between the nextjs page bundles and AWS Lambda is added at build time:
 
 ```js
-const compat = require("next-aws-lambda");
+const compat = require("@sls-next/next-aws-lambda");
 const page = require(".next/serverless/pages/somePage.js");
 
 module.exports.render = (event, context, callback) => {
@@ -335,7 +335,7 @@ custom:
 The custom handler needs to look something like this:
 
 ```js
-const compat = require("next-aws-lambda");
+const compat = require("@sls-next/next-aws-lambda");
 
 module.exports = (page) => {
   const handler = (event, context) => {

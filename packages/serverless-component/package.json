@@ -29,12 +29,12 @@
     "@serverless/aws-cloudfront": "^6.0.0",
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
-    "@sls-next/aws-lambda": "file:../aws-lambda",
-    "@sls-next/cloudfront": "file:../cloudfront",
-    "@sls-next/domain": "file:../domain",
-    "@sls-next/lambda-at-edge": "file:../lambda-at-edge",
-    "@sls-next/s3-static-assets": "file:../s3-static-assets",
-    "fs-extra": "^9.0.1",
-    "next-aws-cloudfront": "file:../lambda-at-edge-compat"
+    "@sls-next/aws-lambda": "link:../aws-lambda",
+    "@sls-next/cloudfront": "link:../cloudfront",
+    "@sls-next/domain": "link:../domain",
+    "@sls-next/lambda-at-edge": "link:../lambda-at-edge",
+    "@sls-next/s3-static-assets": "link:../s3-static-assets",
+    "@sls-next/next-aws-cloudfront": "link:../lambda-at-edge-compat",
+    "fs-extra": "^9.0.1"
   }
 }

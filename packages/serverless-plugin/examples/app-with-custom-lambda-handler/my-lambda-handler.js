@@ -1,4 +1,4 @@
-const compat = require("next-aws-lambda");
+const compat = require("@sls-next/next-aws-lambda");
 
 module.exports = (page) => {
   const handler = (event, context, callback) => {

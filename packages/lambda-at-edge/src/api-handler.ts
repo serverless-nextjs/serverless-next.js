@@ -1,6 +1,6 @@
 // @ts-ignore
 import manifest from "./manifest.json";
-import cloudFrontCompat from "next-aws-cloudfront";
+import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
 import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "./types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 

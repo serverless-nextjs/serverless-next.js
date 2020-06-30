@@ -8,6 +8,6 @@
   "license": "MIT",
   "devDependencies": {},
   "dependencies": {
-    "next-aws-lambda": "file:../../packages/apigw-lambda-compat"
+    "@sls-next/next-aws-lambda": "link:../../packages/apigw-lambda-compat"
   }
 }

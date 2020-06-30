@@ -171,11 +171,11 @@ class Builder {
         buildManifest
       ),
       fse.copy(
-        require.resolve("next-aws-cloudfront"),
+        require.resolve("@sls-next/next-aws-cloudfront"),
         join(
           this.outputDir,
           DEFAULT_LAMBDA_CODE_DIR,
-          "node_modules/next-aws-cloudfront/index.js"
+          "node_modules/@sls-next/next-aws-cloudfront/index.js"
         )
       ),
       fse.copy(
@@ -237,11 +237,11 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
       ),
       fse.copy(
-        require.resolve("next-aws-cloudfront"),
+        require.resolve("@sls-next/next-aws-cloudfront"),
         join(
           this.outputDir,
           API_LAMBDA_CODE_DIR,
-          "node_modules/next-aws-cloudfront/index.js"
+          "node_modules/@sls-next/next-aws-cloudfront/index.js"
         )
       ),
       fse.copy(

@@ -170,7 +170,7 @@ describe("Builder Tests", () => {
       const compatLayerIncluded = await fse.pathExists(
         join(
           outputDir,
-          `${DEFAULT_LAMBDA_CODE_DIR}/node_modules/next-aws-cloudfront/index.js`
+          `${DEFAULT_LAMBDA_CODE_DIR}/node_modules/@sls-next/next-aws-cloudfront/index.js`
         )
       );
 
@@ -211,7 +211,7 @@ describe("Builder Tests", () => {
       const compatLayerIncluded = await fse.pathExists(
         join(
           outputDir,
-          `${API_LAMBDA_CODE_DIR}/node_modules/next-aws-cloudfront/index.js`
+          `${API_LAMBDA_CODE_DIR}/node_modules/@sls-next/next-aws-cloudfront/index.js`
         )
       );
 

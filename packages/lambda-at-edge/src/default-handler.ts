@@ -2,7 +2,7 @@
 import PrerenderManifest from "./prerender-manifest.json";
 // @ts-ignore
 import Manifest from "./manifest.json";
-import lambdaAtEdgeCompat from "next-aws-cloudfront";
+import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   CloudFrontRequest,
   CloudFrontS3Origin,
