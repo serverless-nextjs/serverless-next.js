@@ -1,7 +1,7 @@
 import { PublicDirectoryCache } from "@sls-next/s3-static-assets/src/lib/getPublicAssetCacheControl";
 
 export type ServerlessComponentInputs = {
-  build?: BuildOptions;
+  build?: BuildOptions; // TODO: figure out a way to properly type this as "BuildOptions | boolean" doesn't work correctly
   nextConfigDir?: string;
   useServerlessTraceTarget?: boolean;
   nextStaticDir?: string;
@@ -21,9 +21,12 @@ export type ServerlessComponentInputs = {
 
 type CloudfrontOptions = Record<string, any>;
 
-type BuildOptions = {
+export type BuildOptions = {
   cwd?: string;
   enabled?: boolean;
+  cmd: string;
+  args: string[];
+  env?: Record<string, string>;
 };
 
 export type LambdaType = "defaultLambda" | "apiLambda";

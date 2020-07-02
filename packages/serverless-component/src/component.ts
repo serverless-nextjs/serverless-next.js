@@ -9,6 +9,7 @@ import createInvalidation from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
 import type {
+  BuildOptions,
   ServerlessComponentInputs,
   LambdaType,
   LambdaInput
@@ -16,6 +17,7 @@ import type {
 
 class NextjsComponent extends Component {
   async default(inputs: ServerlessComponentInputs = {}): Promise<any> {
+    // @ts-ignore
     if (inputs.build !== false) {
       await this.build(inputs);
     }
@@ -123,14 +125,15 @@ class NextjsComponent extends Component {
     return (await exists(path)) ? readJSON(path) : Promise.resolve(undefined);
   }
 
-  async build(inputs: ServerlessComponentInputs = {}) {
+  async build(inputs: ServerlessComponentInputs = {}): Promise<void> {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
 
-    const buildConfig = {
+    const buildConfig: BuildOptions = {
       enabled: inputs.build
-        ? inputs.build !== false && inputs.build.enabled !== false
+        ? // @ts-ignore
+          inputs.build !== false && inputs.build.enabled !== false
         : true,
       cmd: "node_modules/.bin/next",
       args: ["build"],
@@ -148,6 +151,7 @@ class NextjsComponent extends Component {
         {
           cmd: buildConfig.cmd,
           cwd: buildConfig.cwd,
+          env: buildConfig.env,
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false
         }
@@ -157,7 +161,12 @@ class NextjsComponent extends Component {
     }
   }
 
-  async deploy(inputs: ServerlessComponentInputs = {}) {
+  async deploy(
+    inputs: ServerlessComponentInputs = {}
+  ): Promise<{
+    appUrl: string;
+    bucketName: string;
+  }> {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -468,7 +477,7 @@ class NextjsComponent extends Component {
     };
   }
 
-  async remove(): Promise<any> {
+  async remove(): Promise<void> {
     const [bucket, cloudfront, domain] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),

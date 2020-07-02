@@ -4,7 +4,7 @@ import { mockDomain } from "@sls-next/domain";
 import { mockS3 } from "@serverless/aws-s3";
 import { mockUpload } from "aws-sdk";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import { mockCloudFront } from "@serverless/aws-cloudfront";
+import { mockCloudFront } from "@sls-next/aws-cloudfront";
 
 import NextjsComponent from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
