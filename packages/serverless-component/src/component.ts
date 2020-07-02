@@ -123,7 +123,7 @@ class NextjsComponent extends Component {
     return (await exists(path)) ? readJSON(path) : Promise.resolve(undefined);
   }
 
-  async build(inputs: ServerlessComponentInput = {}) {
+  async build(inputs: ServerlessComponentInputs = {}) {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -157,7 +157,7 @@ class NextjsComponent extends Component {
     }
   }
 
-  async deploy(inputs: ServerlessComponentInput = {}) {
+  async deploy(inputs: ServerlessComponentInputs = {}) {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
