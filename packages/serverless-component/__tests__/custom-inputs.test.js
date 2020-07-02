@@ -4,7 +4,7 @@ const { mockDomain } = require("@sls-next/domain");
 const { mockS3 } = require("@serverless/aws-s3");
 const { mockUpload } = require("aws-sdk");
 const { mockLambda, mockLambdaPublish } = require("@sls-next/aws-lambda");
-const { mockCloudFront } = require("@serverless/aws-cloudfront");
+const { mockCloudFront } = require("@sls-next/aws-cloudfront");
 const NextjsComponent = require("../serverless");
 const obtainDomains = require("../lib/obtainDomains");
 const {

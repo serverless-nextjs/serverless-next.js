@@ -2,7 +2,7 @@ const path = require("path");
 const fse = require("fs-extra");
 const NextjsComponent = require("../serverless");
 const { mockS3 } = require("@serverless/aws-s3");
-const { mockCloudFront } = require("@serverless/aws-cloudfront");
+const { mockCloudFront } = require("@sls-next/aws-cloudfront");
 const { mockLambda, mockLambdaPublish } = require("@sls-next/aws-lambda");
 const mockCreateInvalidation = require("@sls-next/cloudfront");
 const {
