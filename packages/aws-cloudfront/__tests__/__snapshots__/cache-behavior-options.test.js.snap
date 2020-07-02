@@ -1,0 +1,255 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Input origin as a custom url creates distribution with custom behavior options 1`] = `
+Object {
+  "DistributionConfig": Object {
+    "Aliases": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
+    "CacheBehaviors": Object {
+      "Items": Array [
+        Object {
+          "AllowedMethods": Object {
+            "CachedMethods": Object {
+              "Items": Array [
+                "GET",
+                "HEAD",
+              ],
+              "Quantity": 2,
+            },
+            "Items": Array [
+              "GET",
+              "HEAD",
+            ],
+            "Quantity": 2,
+          },
+          "Compress": false,
+          "DefaultTTL": 0,
+          "FieldLevelEncryptionId": "321",
+          "ForwardedValues": Object {
+            "Cookies": Object {
+              "Forward": "whitelist",
+              "WhitelistedNames": Object {
+                "Items": Array [
+                  "auth-token",
+                ],
+                "Quantity": 1,
+              },
+            },
+            "Headers": Object {
+              "Items": Array [
+                "*",
+              ],
+              "Quantity": 1,
+            },
+            "QueryString": true,
+            "QueryStringCacheKeys": Object {
+              "Items": Array [],
+              "Quantity": 0,
+            },
+          },
+          "LambdaFunctionAssociations": Object {
+            "Items": Array [],
+            "Quantity": 0,
+          },
+          "MaxTTL": 0,
+          "MinTTL": 0,
+          "PathPattern": "/sample/path",
+          "SmoothStreaming": false,
+          "TargetOriginId": "mycustomorigin.com",
+          "TrustedSigners": Object {
+            "Enabled": false,
+            "Quantity": 0,
+          },
+          "ViewerProtocolPolicy": "redirect-to-https",
+        },
+      ],
+      "Quantity": 1,
+    },
+    "CallerReference": "1566599541192",
+    "Comment": "",
+    "DefaultCacheBehavior": Object {
+      "AllowedMethods": Object {
+        "CachedMethods": Object {
+          "Items": Array [
+            "HEAD",
+            "GET",
+          ],
+          "Quantity": 2,
+        },
+        "Items": Array [
+          "HEAD",
+          "GET",
+        ],
+        "Quantity": 2,
+      },
+      "Compress": false,
+      "DefaultTTL": 0,
+      "FieldLevelEncryptionId": "",
+      "ForwardedValues": Object {
+        "Cookies": Object {
+          "Forward": "none",
+        },
+        "Headers": Object {
+          "Items": Array [],
+          "Quantity": 0,
+        },
+        "QueryString": false,
+        "QueryStringCacheKeys": Object {
+          "Items": Array [],
+          "Quantity": 0,
+        },
+      },
+      "LambdaFunctionAssociations": Object {
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "MaxTTL": 31536000,
+      "MinTTL": 0,
+      "SmoothStreaming": false,
+      "TargetOriginId": "mycustomorigin.com",
+      "TrustedSigners": Object {
+        "Enabled": false,
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "ViewerProtocolPolicy": "redirect-to-https",
+    },
+    "Enabled": true,
+    "HttpVersion": "http2",
+    "Origins": Object {
+      "Items": Array [
+        Object {
+          "CustomHeaders": Object {
+            "Items": Array [],
+            "Quantity": 0,
+          },
+          "CustomOriginConfig": Object {
+            "HTTPPort": 80,
+            "HTTPSPort": 443,
+            "OriginKeepaliveTimeout": 5,
+            "OriginProtocolPolicy": "https-only",
+            "OriginReadTimeout": 30,
+            "OriginSslProtocols": Object {
+              "Items": Array [
+                "TLSv1.2",
+              ],
+              "Quantity": 1,
+            },
+          },
+          "DomainName": "mycustomorigin.com",
+          "Id": "mycustomorigin.com",
+          "OriginPath": "",
+        },
+      ],
+      "Quantity": 1,
+    },
+    "PriceClass": "PriceClass_All",
+  },
+}
+`;
+
+exports[`Input origin as a custom url creates distribution with custom default behavior options 1`] = `
+Object {
+  "DistributionConfig": Object {
+    "Aliases": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
+    "CacheBehaviors": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
+    "CallerReference": "1566599541192",
+    "Comment": "",
+    "DefaultCacheBehavior": Object {
+      "AllowedMethods": Object {
+        "CachedMethods": Object {
+          "Items": Array [
+            "HEAD",
+            "GET",
+          ],
+          "Quantity": 2,
+        },
+        "Items": Array [
+          "GET",
+          "HEAD",
+          "OPTIONS",
+          "PUT",
+          "POST",
+          "PATCH",
+          "DELETE",
+        ],
+        "Quantity": 7,
+      },
+      "Compress": true,
+      "DefaultTTL": 0,
+      "FieldLevelEncryptionId": "123",
+      "ForwardedValues": Object {
+        "Cookies": Object {
+          "Forward": "all",
+        },
+        "Headers": Object {
+          "Items": Array [
+            "Accept",
+            "Accept-Language",
+          ],
+          "Quantity": 2,
+        },
+        "QueryString": true,
+        "QueryStringCacheKeys": Object {
+          "Items": Array [
+            "query",
+          ],
+          "Quantity": 1,
+        },
+      },
+      "LambdaFunctionAssociations": Object {
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "MaxTTL": 31536000,
+      "MinTTL": 0,
+      "SmoothStreaming": true,
+      "TargetOriginId": "mycustomorigin.com",
+      "TrustedSigners": Object {
+        "Enabled": false,
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "ViewerProtocolPolicy": "https-only",
+    },
+    "Enabled": true,
+    "HttpVersion": "http2",
+    "Origins": Object {
+      "Items": Array [
+        Object {
+          "CustomHeaders": Object {
+            "Items": Array [],
+            "Quantity": 0,
+          },
+          "CustomOriginConfig": Object {
+            "HTTPPort": 80,
+            "HTTPSPort": 443,
+            "OriginKeepaliveTimeout": 5,
+            "OriginProtocolPolicy": "https-only",
+            "OriginReadTimeout": 30,
+            "OriginSslProtocols": Object {
+              "Items": Array [
+                "TLSv1.2",
+              ],
+              "Quantity": 1,
+            },
+          },
+          "DomainName": "mycustomorigin.com",
+          "Id": "mycustomorigin.com",
+          "OriginPath": "",
+        },
+      ],
+      "Quantity": 1,
+    },
+    "PriceClass": "PriceClass_All",
+  },
+}
+`;

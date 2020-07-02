@@ -36,15 +36,6 @@
     "@nodelib/fs.scandir" "2.1.3"
     fastq "^1.6.0"
 
-"@serverless/aws-cloudfront@^6.0.0":
-  version "6.0.0"
-  resolved "https://registry.yarnpkg.com/@serverless/aws-cloudfront/-/aws-cloudfront-6.0.0.tgz#d6b203e4ff32506b3632717dda6e0d6af3983c7e"
-  integrity sha512-WBaozIIugBWGct3OfDQnNHQ0BexTX8+uWNHqLqg0G2Qgj8GE9kyxrMi+FYUuDC+vOt8u+6WnCBrdhwuPrljuDg==
-  dependencies:
-    "@serverless/core" "^1.0.0"
-    aws-sdk "^2.499.0"
-    ramda "^0.26.1"
-
 "@serverless/aws-iam-role@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@serverless/aws-iam-role/-/aws-iam-role-1.0.0.tgz#bab4ee9dd82f3f05b875daa9bb4b27f28038dc51"
@@ -110,6 +101,10 @@
   version "0.14.0"
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
+
+"@sls-next/aws-cloudfront@link:../aws-cloudfront":
+  version "0.0.0"
+  uid ""
 
 "@sls-next/aws-lambda@link:../aws-lambda":
   version "0.0.0"
