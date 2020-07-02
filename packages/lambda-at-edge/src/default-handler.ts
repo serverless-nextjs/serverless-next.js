@@ -13,7 +13,7 @@ import {
   OriginRequestEvent,
   OriginRequestDefaultHandlerManifest,
   PreRenderedManifest as PrerenderManifestType
-} from "./types";
+} from "../types";
 
 const addS3HostHeader = (
   req: CloudFrontRequest,

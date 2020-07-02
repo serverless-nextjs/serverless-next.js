@@ -14,4 +14,4 @@ dist
 .vscode
 .env
 .package-lock.json
-/yarn-error.log
+yarn-error.log

@@ -5,6 +5,7 @@
     "declaration": true,
     "target": "ES2015",
     "module": "CommonJS",
+    "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "dist",
     "sourceMap": true,

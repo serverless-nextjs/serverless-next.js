@@ -1,7 +1,7 @@
 // @ts-ignore
 import manifest from "./manifest.json";
 import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
-import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "./types";
+import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 
 const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);

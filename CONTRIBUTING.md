@@ -3,7 +3,7 @@
 ### Getting started
 
 1. First, [fork](https://help.github.com/en/articles/fork-a-repo) the repo to your own github account and clone it.
-2. Install dependencies: `yarn && yarn packages-install`
+2. Install dependencies: `yarn`
 
 ### Running the tests
 

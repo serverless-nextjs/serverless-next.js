@@ -39,9 +39,8 @@
     "regex-parser": "^2.2.10"
   },
   "devDependencies": {
-    "@types/fs-extra": "^9.0.1",
     "@types/klaw": "^3.0.1",
     "@types/mime-types": "^2.1.0",
-    "typescript": "^3.9.5"
+    "typescript": "^3.9.6"
   }
 }

@@ -7,7 +7,7 @@ import { cleanupDir, removeNewLineChars } from "../test-utils";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest
-} from "../../src/types";
+} from "../../types";
 
 jest.mock("execa");
 
