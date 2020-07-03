@@ -1,4 +1,3 @@
-// @ts-ignore
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 import { IncomingMessage, ServerResponse } from "http";
 

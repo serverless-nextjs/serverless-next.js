@@ -8,7 +8,7 @@ import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest
-} from "./types";
+} from "../types";
 import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";

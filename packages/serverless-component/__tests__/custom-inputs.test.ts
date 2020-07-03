@@ -1,17 +1,15 @@
-const fse = require("fs-extra");
-const path = require("path");
-const { mockDomain } = require("@sls-next/domain");
-const { mockS3 } = require("@serverless/aws-s3");
-const { mockUpload } = require("aws-sdk");
-const { mockLambda, mockLambdaPublish } = require("@sls-next/aws-lambda");
-const { mockCloudFront } = require("@sls-next/aws-cloudfront");
-const NextjsComponent = require("../serverless");
-const obtainDomains = require("../lib/obtainDomains");
-const {
-  DEFAULT_LAMBDA_CODE_DIR,
-  API_LAMBDA_CODE_DIR
-} = require("../constants");
-const { cleanupFixtureDirectory } = require("../lib/test-utils");
+import fse from "fs-extra";
+import path from "path";
+import { mockDomain } from "@sls-next/domain";
+import { mockS3 } from "@serverless/aws-s3";
+import { mockUpload } from "aws-sdk";
+import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
+import { mockCloudFront } from "@sls-next/aws-cloudfront";
+
+import NextjsComponent from "../src/component";
+import obtainDomains from "../src/lib/obtainDomains";
+import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
+import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
 const createNextComponent = (inputs) => {
   const component = new NextjsComponent(inputs);
@@ -81,9 +79,9 @@ describe("Custom inputs", () => {
 
       mockServerlessComponentDependencies({});
 
-      const component = createNextComponent();
+      const component = createNextComponent({});
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         bucketRegion: inputRegion
       });
     });
@@ -121,9 +119,9 @@ describe("Custom inputs", () => {
         expectedDomain
       });
 
-      const component = createNextComponent();
+      const component = createNextComponent({});
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         policy: "arn:aws:iam::aws:policy/CustomRole",
         domain: inputDomains,
         description: "Custom description",
@@ -145,7 +143,7 @@ describe("Custom inputs", () => {
         privateZone: false,
         domain,
         subdomains: {
-          [subdomain]: {
+          [subdomain as string]: {
             url: "https://cloudfrontdistrib.amazonaws.com"
           }
         }
@@ -184,9 +182,9 @@ describe("Custom inputs", () => {
 
         mockServerlessComponentDependencies({});
 
-        const component = createNextComponent();
+        const component = createNextComponent({});
 
-        componentOutputs = await component.default({
+        componentOutputs = await component({
           nextConfigDir: inputs.nextConfigDir,
           nextStaticDir: inputs.nextStaticDir
         });
@@ -233,7 +231,7 @@ describe("Custom inputs", () => {
     "input=inputPublicDirectoryCache, expected=$expectedPublicDirectoryCache",
     ({ publicDirectoryCache, expected }) => {
       let tmpCwd;
-      let fixturePath = path.join(__dirname, "./fixtures/simple-app");
+      const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
       beforeEach(async () => {
         tmpCwd = process.cwd();
@@ -241,9 +239,9 @@ describe("Custom inputs", () => {
 
         mockServerlessComponentDependencies({});
 
-        const component = createNextComponent();
+        const component = createNextComponent({});
 
-        componentOutputs = await component.default({
+        componentOutputs = await component({
           publicDirectoryCache
         });
       });
@@ -288,7 +286,7 @@ describe("Custom inputs", () => {
         memory: inputMemory
       });
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         memory: inputMemory
       });
     });
@@ -337,9 +335,9 @@ describe("Custom inputs", () => {
 
       mockServerlessComponentDependencies({});
 
-      const component = createNextComponent();
+      const component = createNextComponent({});
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         timeout: inputTimeout
       });
     });
@@ -386,9 +384,9 @@ describe("Custom inputs", () => {
 
       mockServerlessComponentDependencies({});
 
-      const component = createNextComponent();
+      const component = createNextComponent({});
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         runtime: inputRuntime
       });
     });
@@ -435,9 +433,9 @@ describe("Custom inputs", () => {
 
       mockServerlessComponentDependencies({});
 
-      const component = createNextComponent();
+      const component = createNextComponent({});
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         name: inputName
       });
     });
@@ -624,7 +622,7 @@ describe("Custom inputs", () => {
       }
     };
 
-    let customPageCacheBehaviours = {};
+    const customPageCacheBehaviours = {};
     Object.entries(other).forEach(([path, cacheBehaviour]) => {
       customPageCacheBehaviours[path] = {
         ...cacheBehaviour,
@@ -695,9 +693,9 @@ describe("Custom inputs", () => {
 
       mockServerlessComponentDependencies({});
 
-      const component = createNextComponent();
+      const component = createNextComponent({});
 
-      componentOutputs = await component.default({
+      componentOutputs = await component({
         cloudfront: inputCloudfrontConfig
       });
     });
@@ -742,7 +740,7 @@ describe("Custom inputs", () => {
         expect.assertions(1);
 
         try {
-          await createNextComponent().default({
+          await createNextComponent({})({
             cloudfront: cloudFrontInput
           });
         } catch (err) {
@@ -769,7 +767,7 @@ describe("Custom inputs", () => {
     });
 
     it("builds correctly", async () => {
-      await createNextComponent().default({
+      await createNextComponent({})({
         useServerlessTraceTarget: true
       });
     });

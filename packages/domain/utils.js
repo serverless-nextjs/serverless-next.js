@@ -325,64 +325,6 @@ const configureDnsForCloudFrontDistribution = async (
     });
   }
 
-  // clean up any previously created www records for apex mode
-  if (subdomain.domain.startsWith("www.") && domainType === "apex") {
-    try {
-      await route53
-        .changeResourceRecordSets({
-          HostedZoneId: domainHostedZoneId,
-          ChangeBatch: {
-            Changes: [
-              {
-                Action: "DELETE",
-                ResourceRecordSet: {
-                  Name: subdomain.domain,
-                  Type: "A",
-                  AliasTarget: {
-                    HostedZoneId: HOSTED_ZONE_ID,
-                    DNSName: distributionUrl,
-                    EvaluateTargetHealth: false
-                  }
-                }
-              }
-            ]
-          }
-        })
-        .promise();
-    } catch (e) {
-      that.context.debug(e.message);
-    }
-  }
-
-  // clean up any previously created apex records for www mode
-  if (subdomain.domain.startsWith("www.") && domainType === "www") {
-    try {
-      await route53
-        .changeResourceRecordSets({
-          HostedZoneId: domainHostedZoneId,
-          ChangeBatch: {
-            Changes: [
-              {
-                Action: "DELETE",
-                ResourceRecordSet: {
-                  Name: subdomain.domain.replace("www.", ""),
-                  Type: "A",
-                  AliasTarget: {
-                    HostedZoneId: HOSTED_ZONE_ID,
-                    DNSName: distributionUrl,
-                    EvaluateTargetHealth: false
-                  }
-                }
-              }
-            ]
-          }
-        })
-        .promise();
-    } catch (e) {
-      that.context.debug(e.message);
-    }
-  }
-
   return route53.changeResourceRecordSets(dnsRecordParams).promise();
 };
 

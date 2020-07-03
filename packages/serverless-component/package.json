@@ -5,11 +5,16 @@
   },
   "version": "1.15.0-alpha.4",
   "description": "Serverless nextjs powered by Serverless Components",
-  "main": "serverless.js",
+  "main": "dist/src/component.js",
+  "types": "dist/src/component.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
     "directory": "packages/serverless-component"
+  },
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc -p tsconfig.build.json"
   },
   "keywords": [
     "serverless",
@@ -35,6 +40,7 @@
     "@sls-next/lambda-at-edge": "link:../lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:../lambda-at-edge-compat",
     "@sls-next/s3-static-assets": "link:../s3-static-assets",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^9.0.1",
+    "typescript": "^3.9.6"
   }
 }

@@ -4,7 +4,7 @@ import fse, { readJSON } from "fs-extra";
 import { join } from "path";
 import { DEFAULT_LAMBDA_CODE_DIR } from "../../src/build";
 import { cleanupDir } from "../test-utils";
-import { OriginRequestDefaultHandlerManifest } from "../../src/types";
+import { OriginRequestDefaultHandlerManifest } from "../../types";
 
 jest.mock("execa");
 

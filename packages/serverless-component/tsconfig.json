@@ -6,12 +6,11 @@
     "target": "ES2015",
     "module": "CommonJS",
     "moduleResolution": "node",
-    "noImplicitAny": true,
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
     "allowJs": true
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", ".d.ts"]
 }

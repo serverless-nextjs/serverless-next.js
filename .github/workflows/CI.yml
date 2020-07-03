@@ -24,7 +24,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - run: yarn --frozen-lockfile
-      - run: yarn packages-install
       - run: cd integration/app-with-serverless-offline && yarn --frozen-lockfile && cd ../../
       - run: yarn test
       - run: yarn integration

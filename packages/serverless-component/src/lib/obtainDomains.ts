@@ -1,6 +1,10 @@
-// Determine domain and subdomain assuming either a string representing a domain
-// or an array representing both a domain and subdomain
-module.exports = (domains) => {
+/**
+ * Determine domain and subdomain assuming either a string representing a domain or an array representing both a domain and subdomain.
+ *
+ */
+const obtainDomains = (
+  domains: string | string[] | undefined
+): { domain?: string; subdomain?: string } => {
   if (typeof domains === "string") {
     return { domain: domains, subdomain: "www" };
   }
@@ -17,3 +21,5 @@ module.exports = (domains) => {
 
   return { domain: undefined, subdomain: undefined };
 };
+
+export default obtainDomains;

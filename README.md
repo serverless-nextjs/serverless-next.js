@@ -4,9 +4,9 @@
 
 A zero configuration Nextjs 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
 
-[![serverless](http://public.serverless.com/badges/v3.svg)](http://www.serverless.com)
+[![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
-[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/serverless-next.js)
+[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/app/danielcondemarin/serverless-nextjs-plugin?utm_source=github.com&utm_medium=referral&utm_content=danielcondemarin/serverless-nextjs-plugin&utm_campaign=Badge_Grade)
 [![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-next.js?branch=master)
 
@@ -461,6 +461,11 @@ myNextApp:
     env:
       DATABASE_URL: ${myDatabase.databaseUrl}
 ```
+
+#### I was expecting for automatic subdomain redirection when using the domainType: www/apex input
+
+The redirection is not currently implemented, but there is a manual workaround outlined [here](https://simonecarletti.com/blog/2016/08/redirect-domain-https-amazon-cloudfront/#configuring-the-amazon-s3-static-site-with-redirect).
+In summary, you will have to create a new S3 bucket and set it up with static website hosting to redirect requests to your supported subdomain type (ex. "www.example.com" or "example.com"). To be able to support HTTPS redirects, you'll need to set up a CloudFront distribution with the S3 redirect bucket as the origin. Finally, you'll need to create an "A" record in Route 53 with your newly created CloudFront distribution as the alias target.
 
 ## Contributing
 
