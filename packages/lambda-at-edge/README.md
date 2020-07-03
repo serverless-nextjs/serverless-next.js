@@ -9,7 +9,7 @@ const path = require('path');
 const { Builder } = require("@sls-next/lambda-at-edge");
 
 const nextConfigDir = '/dir/to/my/nextapp';
-const outputDir = path.join(nextConfigDir, ".serverless_nextjs"),
+const outputDir = path.join(nextConfigDir, ".serverless_nextjs");
 
 const builder = new Builder(
   nextConfigDir,
