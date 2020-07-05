@@ -14,9 +14,8 @@
     "api gateway"
   ],
   "scripts": {
-    "prepare": "yarn packages-install",
     "test": "jest --runInBand",
-    "packages-install": "lerna exec yarn",
+    "packages-install": "lerna exec -- yarn install --frozen-lockfile",
     "packages-build": "lerna run build",
     "test:watch": "yarn test --watch --collect-coverage=false",
     "publish": "lerna publish --conventional-commits",
@@ -25,7 +24,7 @@
     "lint": "eslint .",
     "coveralls": "jest --runInBand --coverage && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "postinstall": "opencollective-postinstall || true"
+    "postinstall": "yarn packages-install && opencollective-postinstall || true"
   },
   "repository": {
     "type": "git",
