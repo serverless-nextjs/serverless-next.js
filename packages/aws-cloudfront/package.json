@@ -9,8 +9,8 @@
     "test": "jest",
     "lint": "eslint . --fix --cache"
   },
-  "author": "Serverless, Inc.",
-  "license": "Apache",
+  "author": "Daniel Conde <danielconde9@gmail.com>",
+  "license": "MIT",
   "dependencies": {
     "@serverless/core": "^1.0.0",
     "aws-sdk": "^2.499.0",
