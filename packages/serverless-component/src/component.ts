@@ -145,9 +145,11 @@ class NextjsComponent extends Component {
       : process.cwd();
 
     const buildCwd =
-      typeof inputs.build === "boolean" || typeof inputs.build === "undefined"
+      typeof inputs.build === "boolean" ||
+      typeof inputs.build === "undefined" ||
+      !inputs.build.cwd
         ? nextConfigPath
-        : inputs.build.cwd;
+        : resolve(inputs.build.cwd);
 
     const buildConfig: BuildOptions = {
       enabled: inputs.build
