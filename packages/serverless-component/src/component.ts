@@ -1,11 +1,14 @@
 import { Component } from "@serverless/core";
-import { exists, readJSON } from "fs-extra";
+import { readJSON, pathExists } from "fs-extra";
 import { resolve, join } from "path";
 import { Builder } from "@sls-next/lambda-at-edge";
-import { OriginRequestDefaultHandlerManifest as BuildManifest } from "@sls-next/lambda-at-edge/types";
+import {
+  OriginRequestDefaultHandlerManifest as BuildManifest,
+  OriginRequestDefaultHandlerManifest,
+  OriginRequestApiHandlerManifest
+} from "@sls-next/lambda-at-edge/types";
 import uploadAssetsToS3 from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
-
 import obtainDomains from "./lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
 import type {
@@ -15,9 +18,15 @@ import type {
   LambdaInput
 } from "../types";
 
+type DeploymentResult = {
+  appUrl: string;
+  bucketName: string;
+};
+
 class NextjsComponent extends Component {
-  async default(inputs: ServerlessComponentInputs = {}): Promise<any> {
-    // @ts-ignore
+  async default(
+    inputs: ServerlessComponentInputs = {}
+  ): Promise<DeploymentResult> {
     if (inputs.build !== false) {
       await this.build(inputs);
     }
@@ -25,7 +34,9 @@ class NextjsComponent extends Component {
     return this.deploy(inputs);
   }
 
-  readDefaultBuildManifest(nextConfigPath: string): Promise<any> {
+  readDefaultBuildManifest(
+    nextConfigPath: string
+  ): Promise<OriginRequestDefaultHandlerManifest> {
     return readJSON(
       join(nextConfigPath, ".serverless_nextjs/default-lambda/manifest.json")
     );
@@ -115,20 +126,28 @@ class NextjsComponent extends Component {
     }
   }
 
-  async readApiBuildManifest(nextConfigPath: string) {
+  async readApiBuildManifest(
+    nextConfigPath: string
+  ): Promise<OriginRequestApiHandlerManifest> {
     const path = join(
       nextConfigPath,
       ".serverless_nextjs/api-lambda/manifest.json"
     );
 
-    // @ts-ignore
-    return (await exists(path)) ? readJSON(path) : Promise.resolve(undefined);
+    return (await pathExists(path))
+      ? readJSON(path)
+      : Promise.resolve(undefined);
   }
 
   async build(inputs: ServerlessComponentInputs = {}): Promise<void> {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
+
+    const buildCwd =
+      typeof inputs.build === "boolean" || typeof inputs.build === "undefined"
+        ? nextConfigPath
+        : inputs.build.cwd;
 
     const buildConfig: BuildOptions = {
       enabled: inputs.build
@@ -138,10 +157,7 @@ class NextjsComponent extends Component {
       cmd: "node_modules/.bin/next",
       args: ["build"],
       ...(typeof inputs.build === "object" ? inputs.build : {}),
-      cwd:
-        inputs.build && inputs.build.cwd
-          ? resolve(inputs.build.cwd)
-          : nextConfigPath
+      cwd: buildCwd
     };
 
     if (buildConfig.enabled) {
@@ -163,10 +179,7 @@ class NextjsComponent extends Component {
 
   async deploy(
     inputs: ServerlessComponentInputs = {}
-  ): Promise<{
-    appUrl: string;
-    bucketName: string;
-  }> {
+  ): Promise<DeploymentResult> {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -207,12 +220,6 @@ class NextjsComponent extends Component {
       credentials: this.context.credentials.aws,
       publicDirectoryCache: inputs.publicDirectoryCache
     });
-
-    defaultBuildManifest.cloudFrontOrigins = {
-      staticOrigin: {
-        domainName: `${bucketOutputs.name}.s3.amazonaws.com`
-      }
-    };
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
 
@@ -273,25 +280,23 @@ class NextjsComponent extends Component {
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
-    const getLambdaMemory = (lambdaType: LambdaType) =>
-      typeof inputs.memory === "number"
-        ? inputs.memory
-        : (inputs.memory && inputs.memory[lambdaType]) || 512;
+    const readLambdaInputValue = (
+      inputKey: "memory" | "timeout" | "name" | "runtime",
+      lambdaType: LambdaType,
+      defaultValue: string | number | undefined
+    ): string | number | undefined => {
+      const inputValue = inputs[inputKey];
 
-    const getLambdaTimeout = (lambdaType: LambdaType) =>
-      typeof inputs.timeout === "number"
-        ? inputs.timeout
-        : (inputs.timeout && inputs.timeout[lambdaType]) || 10;
+      if (typeof inputValue === "string" || typeof inputValue === "number") {
+        return inputValue;
+      }
 
-    const getLambdaName = (lambdaType: LambdaType) =>
-      typeof inputs.name === "string"
-        ? inputs.name
-        : inputs.name && inputs.name[lambdaType];
+      if (!inputValue) {
+        return defaultValue;
+      }
 
-    const getLambdaRuntime = (lambdaType: LambdaType) =>
-      typeof inputs.runtime === "string"
-        ? inputs.runtime
-        : (inputs.runtime && inputs.runtime[lambdaType]) || "nodejs12.x";
+      return inputValue[lambdaType] || defaultValue;
+    };
 
     if (hasAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {
@@ -308,12 +313,17 @@ class NextjsComponent extends Component {
               "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
           }
         },
-        memory: getLambdaMemory("apiLambda"),
-        timeout: getLambdaTimeout("apiLambda"),
-        runtime: getLambdaRuntime("apiLambda")
+        memory: readLambdaInputValue("memory", "apiLambda", 512) as number,
+        timeout: readLambdaInputValue("timeout", "apiLambda", 10) as number,
+        runtime: readLambdaInputValue(
+          "runtime",
+          "apiLambda",
+          "nodejs12.x"
+        ) as string,
+        name: readLambdaInputValue("name", "apiLambda", undefined) as
+          | string
+          | undefined
       };
-      const apiLambdaName = getLambdaName("apiLambda");
-      if (apiLambdaName) apiEdgeLambdaInput.name = apiLambdaName;
 
       const apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
 
@@ -351,12 +361,17 @@ class NextjsComponent extends Component {
             "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         }
       },
-      memory: getLambdaMemory("defaultLambda"),
-      timeout: getLambdaTimeout("defaultLambda"),
-      runtime: getLambdaRuntime("defaultLambda")
+      memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
+      timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
+      runtime: readLambdaInputValue(
+        "runtime",
+        "defaultLambda",
+        "nodejs12.x"
+      ) as string,
+      name: readLambdaInputValue("name", "defaultLambda", undefined) as
+        | string
+        | undefined
     };
-    const defaultLambdaName = getLambdaName("defaultLambda");
-    if (defaultLambdaName) defaultEdgeLambdaInput.name = defaultLambdaName;
 
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda(
       defaultEdgeLambdaInput

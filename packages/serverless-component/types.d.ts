@@ -1,7 +1,7 @@
 import { PublicDirectoryCache } from "@sls-next/s3-static-assets/src/lib/getPublicAssetCacheControl";
 
 export type ServerlessComponentInputs = {
-  build?: BuildOptions; // TODO: figure out a way to properly type this as "BuildOptions | boolean" doesn't work correctly
+  build?: BuildOptions | boolean;
   nextConfigDir?: string;
   useServerlessTraceTarget?: boolean;
   nextStaticDir?: string;

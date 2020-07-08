@@ -1,12 +1,4 @@
 {
-  "cloudFrontOrigins": {
-    "ssrApi": {
-      "domainName": "ssr-api.execute-api.us-east-1.amazonaws.com"
-    },
-    "staticOrigin": {
-      "domainName": "my-bucket.s3.amazonaws.com"
-    }
-  },
   "pages": {
     "ssr": {
       "dynamic": {
