@@ -20,6 +20,7 @@ class CloudFront extends Component {
     this.context.status("Deploying");
 
     inputs.region = inputs.region || "us-east-1";
+    inputs.originRegion = inputs.originRegion || "us-east-1";
     inputs.enabled = inputs.enabled === false ? false : true;
     inputs.comment =
       inputs.comment === null || inputs.comment === undefined

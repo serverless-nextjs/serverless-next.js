@@ -183,4 +183,61 @@ describe("S3 origins", () => {
       expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
     });
   });
+
+  describe("When origin region is outside us-east-1 and origin is an S3 bucket URL", () => {
+    it("creates distribution", async () => {
+      await component.default({
+        originRegion: "eu-west-1",
+        origins: ["https://mybucket.s3.amazonaws.com"]
+      });
+
+      assertHasOrigin(mockCreateDistribution, {
+        Id: "mybucket",
+        DomainName: "mybucket.s3.eu-west-1.amazonaws.com",
+        S3OriginConfig: {
+          OriginAccessIdentity: ""
+        },
+        CustomHeaders: {
+          Quantity: 0,
+          Items: []
+        },
+        OriginPath: ""
+      });
+
+      expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    });
+
+    it("updates distribution", async () => {
+      mockGetDistributionConfigPromise.mockResolvedValueOnce({
+        ETag: "etag",
+        DistributionConfig: {
+          Origins: {
+            Items: []
+          }
+        }
+      });
+      mockUpdateDistributionPromise.mockResolvedValueOnce({
+        Distribution: {
+          Id: "distributionwithS3originupdated"
+        }
+      });
+
+      await component.default({
+        originRegion: "eu-west-1",
+        origins: ["https://mybucket.s3.amazonaws.com"]
+      });
+
+      await component.default({
+        originRegion: "eu-west-1",
+        origins: ["https://anotherbucket.s3.amazonaws.com"]
+      });
+
+      assertHasOrigin(mockUpdateDistribution, {
+        Id: "anotherbucket",
+        DomainName: "anotherbucket.s3.eu-west-1.amazonaws.com"
+      });
+
+      expect(mockUpdateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    });
+  });
 });
