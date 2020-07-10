@@ -191,6 +191,7 @@ class NextjsComponent extends Component {
       : nextConfigPath;
 
     const customCloudFrontConfig = inputs.cloudfront || {};
+    const bucketRegion = inputs.bucketRegion || "us-east-1";
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -212,7 +213,7 @@ class NextjsComponent extends Component {
     const bucketOutputs = await bucket({
       accelerated: true,
       name: inputs.bucketName,
-      region: inputs.bucketRegion || "us-east-1"
+      region: bucketRegion
     });
 
     await uploadAssetsToS3({
@@ -461,7 +462,8 @@ class NextjsComponent extends Component {
         },
         compress: true
       },
-      origins: cloudFrontOrigins
+      origins: cloudFrontOrigins,
+      originRegion: bucketRegion
     });
 
     let appUrl = cloudFrontOutputs.url;

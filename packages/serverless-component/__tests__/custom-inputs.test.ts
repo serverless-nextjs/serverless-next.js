@@ -91,10 +91,15 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it(`passes the ${expectedRegion} region to s3 component`, () => {
+    it(`passes the ${expectedRegion} region to the s3 and cloudFront components`, () => {
       expect(mockS3).toBeCalledWith(
         expect.objectContaining({
           region: expectedRegion
+        })
+      );
+      expect(mockCloudFront).toBeCalledWith(
+        expect.objectContaining({
+          originRegion: expectedRegion
         })
       );
     });
