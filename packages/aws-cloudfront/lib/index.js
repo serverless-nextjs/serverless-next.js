@@ -52,8 +52,11 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     } = await createOriginAccessIdentity(cf));
   }
 
+  const originRegion = inputs.originRegion;
+
   const { Origins, CacheBehaviors } = parseInputOrigins(inputs.origins, {
-    originAccessIdentityId
+    originAccessIdentityId,
+    originRegion
   });
 
   if (s3CanonicalUserId) {
@@ -118,8 +121,11 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     } = await createOriginAccessIdentity(cf));
   }
 
+  const originRegion = inputs.originRegion;
+
   const { Origins, CacheBehaviors } = parseInputOrigins(inputs.origins, {
-    originAccessIdentityId
+    originAccessIdentityId,
+    originRegion
   });
 
   if (s3CanonicalUserId) {
