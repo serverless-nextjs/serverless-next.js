@@ -23,7 +23,7 @@
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
     "archiver": "^4.0.1",
-    "aws-sdk": "^2.702.0",
+    "aws-sdk": "^2.713.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
     "ramda": "^0.27.0"

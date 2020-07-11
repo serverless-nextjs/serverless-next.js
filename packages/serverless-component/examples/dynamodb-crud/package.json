@@ -11,7 +11,7 @@
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "aws-sdk": "^2.521.0",
+    "aws-sdk": "^2.713.0",
     "next": "^9.2.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0"
