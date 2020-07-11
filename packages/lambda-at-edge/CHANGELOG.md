@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.5.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.5.0...@sls-next/lambda-at-edge@1.5.1) (2020-07-11)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix s3 bucket not being normalized for public assets ([#497](https://github.com/danielcondemarin/serverless-next.js/issues/497)) ([7e39902](https://github.com/danielcondemarin/serverless-next.js/commit/7e399022ebf9c45aa782c6bc9104c55192bb3af7))
+
 # [1.5.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.5.0-alpha.0...@sls-next/lambda-at-edge@1.5.0) (2020-07-11)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge

@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.15.0",
+  "version": "1.15.1",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "dist/src/component.js",
   "types": "dist/src/component.d.ts",
