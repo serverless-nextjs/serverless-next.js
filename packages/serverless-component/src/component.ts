@@ -224,7 +224,7 @@ class NextjsComponent extends Component {
       publicDirectoryCache: inputs.publicDirectoryCache
     });
 
-    const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
+    const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
     // If origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
@@ -462,8 +462,7 @@ class NextjsComponent extends Component {
         },
         compress: true
       },
-      origins: cloudFrontOrigins,
-      originRegion: bucketRegion
+      origins: cloudFrontOrigins
     });
 
     let appUrl = cloudFrontOutputs.url;
