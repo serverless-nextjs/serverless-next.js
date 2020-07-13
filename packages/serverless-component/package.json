@@ -40,7 +40,10 @@
     "@sls-next/lambda-at-edge": "link:../lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:../lambda-at-edge-compat",
     "@sls-next/s3-static-assets": "link:../s3-static-assets",
-    "fs-extra": "^9.0.1",
+    "fs-extra": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.1",
     "typescript": "^3.9.6"
   }
 }
