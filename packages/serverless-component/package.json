@@ -5,8 +5,8 @@
   },
   "version": "1.15.1",
   "description": "Serverless nextjs powered by Serverless Components",
-  "main": "dist/src/component.js",
-  "types": "dist/src/component.d.ts",
+  "main": "dist/component.js",
+  "types": "dist/component.d.ts",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
