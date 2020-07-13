@@ -1,9 +1,6 @@
 const url = require("url");
 
-module.exports = (
-  origin,
-  { originAccessIdentityId = "", originRegion = "us-east-1" }
-) => {
+module.exports = (origin, { originAccessIdentityId = "" }) => {
   const originUrl = typeof origin === "string" ? origin : origin.url;
 
   const { hostname, pathname } = url.parse(originUrl);
@@ -21,10 +18,7 @@ module.exports = (
   if (originUrl.includes("s3")) {
     const bucketName = hostname.split(".")[0];
     originConfig.Id = bucketName;
-    originConfig.DomainName =
-      originRegion !== "us-east-1"
-        ? `${bucketName}.s3.${originRegion}.amazonaws.com`
-        : `${bucketName}.s3.amazonaws.com`;
+    originConfig.DomainName = hostname;
     originConfig.S3OriginConfig = {
       OriginAccessIdentity: originAccessIdentityId
         ? `origin-access-identity/cloudfront/${originAccessIdentityId}`

@@ -52,7 +52,6 @@ distribution:
   component: '@serverless/aws-cloudfront'
   inputs:
     region: us-east-1
-    originRegion: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional
     defaults: # optional
