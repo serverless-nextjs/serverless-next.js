@@ -191,6 +191,7 @@ class NextjsComponent extends Component {
       : nextConfigPath;
 
     const customCloudFrontConfig = inputs.cloudfront || {};
+    const bucketRegion = inputs.bucketRegion || "us-east-1";
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
@@ -212,7 +213,7 @@ class NextjsComponent extends Component {
     const bucketOutputs = await bucket({
       accelerated: true,
       name: inputs.bucketName,
-      region: inputs.bucketRegion || "us-east-1"
+      region: bucketRegion
     });
 
     await uploadAssetsToS3({
@@ -223,7 +224,7 @@ class NextjsComponent extends Component {
       publicDirectoryCache: inputs.publicDirectoryCache
     });
 
-    const bucketUrl = `http://${bucketOutputs.name}.s3.amazonaws.com`;
+    const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
     // If origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
