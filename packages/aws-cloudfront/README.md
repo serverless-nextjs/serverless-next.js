@@ -51,6 +51,7 @@ AWS_SECRET_ACCESS_KEY=XXX
 distribution:
   component: '@serverless/aws-cloudfront'
   inputs:
+    distributionId: XYZEXAMPLE
     region: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional

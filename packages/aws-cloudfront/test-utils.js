@@ -37,7 +37,7 @@ module.exports = {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           Origins: expect.objectContaining({
-            Items: [expect.objectContaining(origin)]
+            Items: expect.arrayContaining([expect.objectContaining(origin)])
           })
         })
       })

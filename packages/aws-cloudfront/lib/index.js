@@ -130,7 +130,19 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     Origins.Items[0].Id,
     inputs.defaults
   );
-  params.DistributionConfig.Origins = Origins;
+
+  const origins = params.DistributionConfig.Origins;
+  const inputOrigins = Origins;
+  const existingOriginIds = origins.Items.map((origin) => origin.Id);
+
+  inputOrigins.Items.forEach((inputOrigin, index) => {
+    if (existingOriginIds.includes(inputOrigin.Id)) {
+      // replace origin with new input configuration
+      origins.Items.splice(index, 1, inputOrigin);
+    } else {
+      origins.Items.push(inputOrigin);
+    }
+  });
 
   if (CacheBehaviors) {
     params.DistributionConfig.CacheBehaviors = CacheBehaviors;
