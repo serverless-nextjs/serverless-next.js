@@ -130,10 +130,9 @@ describe("deploy tests", () => {
           },
           compress: true
         },
-        originRegion: "us-east-1",
         origins: [
           {
-            url: "http://bucket-xyz.s3.amazonaws.com",
+            url: "http://bucket-xyz.s3.us-east-1.amazonaws.com",
             private: true,
             pathPatterns: {
               "_next/static/*": {

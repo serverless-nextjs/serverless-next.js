@@ -184,11 +184,10 @@ describe("S3 origins", () => {
     });
   });
 
-  describe("When origin region is outside us-east-1 and origin is an S3 bucket URL", () => {
-    it("creates distribution", async () => {
+  describe("when origin is outside of us-east-1", () => {
+    it("should use the origin's host at the DomainName", async () => {
       await component.default({
-        originRegion: "eu-west-1",
-        origins: ["https://mybucket.s3.amazonaws.com"]
+        origins: ["https://mybucket.s3.eu-west-1.amazonaws.com"]
       });
 
       assertHasOrigin(mockCreateDistribution, {
@@ -223,13 +222,11 @@ describe("S3 origins", () => {
       });
 
       await component.default({
-        originRegion: "eu-west-1",
-        origins: ["https://mybucket.s3.amazonaws.com"]
+        origins: ["https://mybucket.s3.eu-west-1.amazonaws.com"]
       });
 
       await component.default({
-        originRegion: "eu-west-1",
-        origins: ["https://anotherbucket.s3.amazonaws.com"]
+        origins: ["https://anotherbucket.s3.eu-west-1.amazonaws.com"]
       });
 
       assertHasOrigin(mockUpdateDistribution, {

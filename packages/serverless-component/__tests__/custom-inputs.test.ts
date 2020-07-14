@@ -99,7 +99,11 @@ describe("Custom inputs", () => {
       );
       expect(mockCloudFront).toBeCalledWith(
         expect.objectContaining({
-          originRegion: expectedRegion
+          origins: expect.arrayContaining([
+            expect.objectContaining({
+              url: `http://bucket-xyz.s3.${expectedRegion}.amazonaws.com`
+            })
+          ])
         })
       );
     });
@@ -558,9 +562,9 @@ describe("Custom inputs", () => {
       {
         origins: [
           "http://some-origin",
-          "http://bucket-xyz.s3.amazonaws.com/relative",
+          "http://bucket-xyz.s3.us-east-1.amazonaws.com/relative",
           { url: "http://diff-origin" },
-          { url: "http://bucket-xyz.s3.amazonaws.com/diff-relative" }
+          { url: "http://bucket-xyz.s3.us-east-1.amazonaws.com/diff-relative" }
         ]
       }
     ],
@@ -686,7 +690,7 @@ describe("Custom inputs", () => {
             }
           },
           private: true,
-          url: "http://bucket-xyz.s3.amazonaws.com"
+          url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
         },
         ...origins
       ]

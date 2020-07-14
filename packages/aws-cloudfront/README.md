@@ -52,7 +52,6 @@ distribution:
   component: '@serverless/aws-cloudfront'
   inputs:
     region: us-east-1
-    originRegion: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional
     defaults: # optional
@@ -141,8 +140,7 @@ This is documented in more detail here: https://docs.aws.amazon.com/AmazonCloudF
 $ serverless
 ```
 
-&nbsp;
+### Credits
 
-### New to Components?
-
-Checkout the [Serverless Components](https://github.com/serverless/components) repo for more information.
+This package was originally implemented by the [serverless framework team](https://github.com/serverless-components/domain).
+I decided to fork it and bring it into this monorepo because it wasn't being maintained anymore

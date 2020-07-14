@@ -185,7 +185,7 @@ describe("Lambda@Edge", () => {
       );
     });
 
-    it("uses regional endpoint when bucket region is not us-east-1", async () => {
+    it("uses regional endpoint for static page when bucket region is not us-east-1", async () => {
       const event = createCloudFrontEvent({
         uri: "/terms",
         host: "mydistribution.cloudfront.net",
@@ -207,6 +207,34 @@ describe("Lambda@Edge", () => {
         }
       });
       expect(request.uri).toEqual("/terms.html");
+      expect(request.headers.host[0].key).toEqual("host");
+      expect(request.headers.host[0].value).toEqual(
+        "my-bucket.s3.eu-west-1.amazonaws.com"
+      );
+    });
+
+    it("uses regional endpoint for public asset when bucket region is not us-east-1", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/favicon.ico",
+        host: "mydistribution.cloudfront.net",
+        s3DomainName: "my-bucket.s3.amazonaws.com",
+        s3Region: "eu-west-1"
+      });
+
+      const result = await handler(event);
+
+      const request = result as CloudFrontRequest;
+      const origin = request.origin as CloudFrontOrigin;
+
+      expect(origin).toEqual({
+        s3: {
+          authMethod: "origin-access-identity",
+          domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
+          path: "/public",
+          region: "eu-west-1"
+        }
+      });
+      expect(request.uri).toEqual("/favicon.ico");
       expect(request.headers.host[0].key).toEqual("host");
       expect(request.headers.host[0].value).toEqual(
         "my-bucket.s3.eu-west-1.amazonaws.com"
