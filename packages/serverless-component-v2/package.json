@@ -1,0 +1,24 @@
+{
+  "name": "@sls-next/serverless-component-v2",
+  "private": true,
+  "version": "1.0.0",
+  "description": "",
+  "main": "dist/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
+    "directory": "packages/serverless-component-v2"
+  },
+  "keywords": [
+    "AWS",
+    "Serverless",
+    "CloudFront",
+    "Lambda@Edge"
+  ],
+  "author": "Daniel Conde <danielconde9@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme"
+}
