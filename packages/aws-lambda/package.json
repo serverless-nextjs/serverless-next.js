@@ -21,11 +21,13 @@
     "@serverless/aws-iam-role": "^1.0.0",
     "@serverless/aws-lambda-layer": "^1.0.0",
     "@serverless/aws-s3": "^4.2.0",
-    "@serverless/core": "^1.1.2",
     "archiver": "^4.0.1",
-    "aws-sdk": "^2.702.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
     "ramda": "^0.27.0"
+  },
+  "peerDependencies": {
+    "@serverless/core": "^1.1.2",
+    "aws-sdk": "^2.702.0"
   }
 }
