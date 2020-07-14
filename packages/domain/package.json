@@ -17,7 +17,7 @@
     "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
   },
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
-  "dependencies": {
+  "peerDependencies": {
     "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.702.0"
   }

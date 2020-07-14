@@ -12,9 +12,11 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@serverless/core": "^1.0.0",
-    "aws-sdk": "^2.499.0",
     "ramda": "^0.26.1"
+  },
+  "peerDependencies": {
+    "@serverless/core": "^1.0.0",
+    "aws-sdk": "^2.499.0"
   },
   "devDependencies": {
     "babel-eslint": "9.0.0",
