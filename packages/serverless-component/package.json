@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.15.2-alpha.0",
+  "version": "1.15.2-alpha.1",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "dist/component.js",
   "types": "dist/component.d.ts",
@@ -40,8 +40,8 @@
     "@sls-next/lambda-at-edge": "link:../lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:../lambda-at-edge-compat",
     "@sls-next/s3-static-assets": "link:../s3-static-assets",
-    "fs-extra": "^9.0.1",
-    "aws-sdk": "^2.702.0"
+    "aws-sdk": "^2.702.0",
+    "fs-extra": "^9.0.1"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
