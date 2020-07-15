@@ -220,7 +220,8 @@ describe("Builder Tests", () => {
         "index.js",
         "manifest.json",
         "node_modules",
-        "pages"
+        "pages",
+        "routes-manifest.json"
       ]);
       expect(pages).toEqual(["api"]);
     });

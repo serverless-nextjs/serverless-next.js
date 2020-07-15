@@ -5,7 +5,8 @@ import { Builder } from "@sls-next/lambda-at-edge";
 import {
   OriginRequestDefaultHandlerManifest as BuildManifest,
   OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
+  OriginRequestApiHandlerManifest,
+  RoutesManifest
 } from "@sls-next/lambda-at-edge/types";
 import uploadAssetsToS3 from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
@@ -21,10 +22,6 @@ import type {
 type DeploymentResult = {
   appUrl: string;
   bucketName: string;
-};
-
-type RoutesManifest = {
-  basePath: string;
 };
 
 class NextjsComponent extends Component {

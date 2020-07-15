@@ -251,6 +251,10 @@ class Builder {
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
+      ),
+      fse.copy(
+        join(this.dotNextDir, "routes-manifest.json"),
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
   }

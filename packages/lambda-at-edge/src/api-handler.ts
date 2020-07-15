@@ -1,5 +1,7 @@
 // @ts-ignore
 import manifest from "./manifest.json";
+// @ts-ignore
+import { basePath } from "./routes-manifest.json";
 import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
 import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
@@ -14,6 +16,9 @@ const router = (
   } = manifest;
 
   return (path: string): string | null => {
+    if (basePath && path.startsWith(basePath))
+      path = path.slice(basePath.length);
+
     if (nonDynamic[path]) {
       return nonDynamic[path];
     }
