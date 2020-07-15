@@ -23,6 +23,10 @@ type DeploymentResult = {
   bucketName: string;
 };
 
+type RoutesManifest = {
+  basePath: string;
+};
+
 class NextjsComponent extends Component {
   async default(
     inputs: ServerlessComponentInputs = {}
@@ -42,9 +46,26 @@ class NextjsComponent extends Component {
     );
   }
 
+  readRoutesManifest(nextConfigPath: string): Promise<RoutesManifest> {
+    return readJSON(join(nextConfigPath, ".next/routes-manifest.json"));
+  }
+
+  pathPattern(pattern: string, routesManifest: RoutesManifest): string {
+    const basePath = routesManifest.basePath;
+    if (basePath.length === 0) {
+      return pattern;
+    }
+
+    const basePathPattern =
+      basePath.charAt(0) === "/" ? basePath.slice(1) : basePath;
+
+    return `${basePathPattern}/${pattern}`;
+  }
+
   validatePathPatterns(
     pathPatterns: string[],
-    buildManifest: BuildManifest
+    buildManifest: BuildManifest,
+    routesManifest: RoutesManifest
   ): void {
     const stillToMatch = new Set(pathPatterns);
 
@@ -53,9 +74,9 @@ class NextjsComponent extends Component {
     }
 
     // there wont be pages for these paths for this so we can remove them
-    stillToMatch.delete("api/*");
-    stillToMatch.delete("static/*");
-    stillToMatch.delete("_next/static/*");
+    stillToMatch.delete(this.pathPattern("api/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("static/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
@@ -199,9 +220,14 @@ class NextjsComponent extends Component {
 
     const bucketRegion = inputs.bucketRegion || "us-east-1";
 
-    const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
+    const [
+      defaultBuildManifest,
+      apiBuildManifest,
+      routesManifest
+    ] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
-      this.readApiBuildManifest(nextConfigPath)
+      this.readApiBuildManifest(nextConfigPath),
+      this.readRoutesManifest(nextConfigPath)
     ]);
 
     const [
@@ -261,27 +287,32 @@ class NextjsComponent extends Component {
       {
         url: bucketUrl,
         private: true,
-        pathPatterns: {
-          "_next/static/*": {
-            ttl: 86400,
-            forward: {
-              headers: "none",
-              cookies: "none",
-              queryString: false
-            }
-          },
-          "static/*": {
-            ttl: 86400,
-            forward: {
-              headers: "none",
-              cookies: "none",
-              queryString: false
-            }
-          }
-        }
+        pathPatterns: {}
       },
       ...inputOrigins
     ];
+
+    cloudFrontOrigins[0].pathPatterns[
+      this.pathPattern("_next/static/*", routesManifest)
+    ] = {
+      ttl: 86400,
+      forward: {
+        headers: "none",
+        cookies: "none",
+        queryString: false
+      }
+    };
+
+    cloudFrontOrigins[0].pathPatterns[
+      this.pathPattern("static/*", routesManifest)
+    ] = {
+      ttl: 86400,
+      forward: {
+        headers: "none",
+        cookies: "none",
+        queryString: false
+      }
+    };
 
     const hasAPIPages =
       apiBuildManifest &&
@@ -337,7 +368,9 @@ class NextjsComponent extends Component {
 
       const apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
 
-      cloudFrontOrigins[0].pathPatterns["api/*"] = {
+      cloudFrontOrigins[0].pathPatterns[
+        this.pathPattern("api/*", routesManifest)
+      ] = {
         ttl: 0,
         allowedHttpMethods: [
           "HEAD",
@@ -390,7 +423,8 @@ class NextjsComponent extends Component {
     // validate that the custom config paths match generated paths in the manifest
     this.validatePathPatterns(
       Object.keys(cloudFrontOtherInputs),
-      defaultBuildManifest
+      defaultBuildManifest,
+      routesManifest
     );
 
     // Add any custom cloudfront configuration
@@ -401,7 +435,7 @@ class NextjsComponent extends Component {
       };
 
       // here we are removing configs that cannot be overridden
-      if (path === "api/*") {
+      if (path === this.pathPattern("api/*", routesManifest)) {
         // for "api/*" we need to make sure we aren't overriding the predefined lambda handler
         // delete is idempotent so it's safe
         delete edgeConfig["origin-request"];
@@ -427,7 +461,9 @@ class NextjsComponent extends Component {
       };
     });
 
-    cloudFrontOrigins[0].pathPatterns["_next/data/*"] = {
+    cloudFrontOrigins[0].pathPatterns[
+      this.pathPattern("_next/data/*", routesManifest)
+    ] = {
       ttl: 0,
       allowedHttpMethods: ["HEAD", "GET"],
       "lambda@edge": {
