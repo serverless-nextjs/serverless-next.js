@@ -186,6 +186,7 @@ Object {
           "OriginPath": "",
         },
       ],
+      "Quantity": 1,
     },
   },
   "Id": "distribution123",

@@ -1,6 +1,7 @@
 const {
   createComponent,
   assertHasOrigin,
+  assertHasOriginCount,
   assertHasCacheBehavior
 } = require("../test-utils");
 
@@ -21,6 +22,7 @@ describe("Working with an existing distribution", () => {
       ETag: "etag",
       DistributionConfig: {
         Origins: {
+          Quantity: 0,
           Items: []
         }
       }
@@ -84,6 +86,7 @@ describe("Working with an existing distribution", () => {
       Id: "neworigin.com",
       DomainName: "neworigin.com"
     });
+    assertHasOriginCount(mockUpdateDistribution, 2);
   });
 
   it("should modify the existing origin by adding a new cache behavior", async () => {
