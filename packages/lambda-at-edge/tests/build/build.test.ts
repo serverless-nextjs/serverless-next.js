@@ -105,7 +105,11 @@ describe("Builder Tests", () => {
 
       expect(nonDynamic).toEqual({
         "/customers/new": "pages/customers/new.js",
+        "/fr/customers/new": "pages/customers/new.js",
+        "/en/customers/new": "pages/customers/new.js",
         "/": "pages/index.js",
+        "/fr": "pages/index.js",
+        "/en": "pages/index.js",
         "/_app": "pages/_app.js",
         "/_document": "pages/_document.js"
       });

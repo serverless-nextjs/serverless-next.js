@@ -7,7 +7,8 @@ import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
+  OriginRequestApiHandlerManifest,
+  OriginRequestCustomRoutesManifest
 } from "../types";
 import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -65,6 +66,19 @@ class Builder {
     } else {
       return [];
     }
+  }
+
+  async readCustomRoutesManifest(): Promise<OriginRequestCustomRoutesManifest> {
+    const path = join(this.dotNextDir, "routes-manifest.json");
+    const hasCustomRoutesManifest = await fse.pathExists(path);
+    if (!hasCustomRoutesManifest) {
+      return Promise.resolve({
+        rewrites: []
+      });
+    }
+    const routesManifest = await fse.readJSON(path);
+
+    return routesManifest;
   }
 
   async readPagesManifest(): Promise<{ [key: string]: string }> {
@@ -259,12 +273,14 @@ class Builder {
     defaultBuildManifest: OriginRequestDefaultHandlerManifest;
     apiBuildManifest: OriginRequestApiHandlerManifest;
   }> {
+    const customRoutesManifest = await this.readCustomRoutesManifest();
     const pagesManifest = await this.readPagesManifest();
 
     const buildId = await fse.readFile(
       path.join(this.dotNextDir, "BUILD_ID"),
       "utf-8"
     );
+
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
       pages: {
@@ -326,6 +342,15 @@ class Builder {
         };
       } else {
         ssrPages.nonDynamic[route] = pageFile;
+        if (!/^((\/(_app|_document)))$/.test(route)) {
+          customRoutesManifest.rewrites
+            .filter(({ source }) => !/:path\*$/.test(source))
+            .map(({ source }) => {
+              ssrPages.nonDynamic[
+                `${source}${/^\/$/.test(route) ? "" : route}`
+              ] = pageFile;
+            });
+        }
       }
     });
 

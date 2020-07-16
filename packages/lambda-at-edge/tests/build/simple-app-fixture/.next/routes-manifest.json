@@ -1,0 +1,30 @@
+{
+  "version": 1,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [],
+  "rewrites": [
+    {
+      "source": "/fr/:path*",
+      "destination": "/:path*",
+      "regex": "^\\/fr(?:\\/((?:[^\\/]+?)(?:\\/(?:[^\\/]+?))*))?$"
+    },
+    {
+      "source": "/fr",
+      "destination": "/",
+      "regex": "^\\/fr$"
+    },
+    {
+      "source": "/en/:path*",
+      "destination": "/:path*",
+      "regex": "^\\/en(?:\\/((?:[^\\/]+?)(?:\\/(?:[^\\/]+?))*))?$"
+    },
+    {
+      "source": "/en",
+      "destination": "/",
+      "regex": "^\\/en$"
+    }
+  ],
+  "headers": [],
+  "dynamicRoutes": []
+}

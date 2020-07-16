@@ -7,6 +7,16 @@ export type DynamicPageKeyValue = {
   };
 };
 
+export type Route = {
+  source: string;
+  destination: string;
+  regex: string;
+};
+
+export type OriginRequestCustomRoutesManifest = {
+  rewrites: Route[];
+};
+
 export type OriginRequestApiHandlerManifest = {
   apis: {
     dynamic: DynamicPageKeyValue;
