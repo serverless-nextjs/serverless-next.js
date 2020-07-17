@@ -11,7 +11,7 @@
     "Next.js",
     "Serverless"
   ],
-  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "author": "Serverless, Inc.",
   "license": "ISC",
   "bugs": {
     "url": "https://github.com/danielcondemarin/serverless-next.js/issues"

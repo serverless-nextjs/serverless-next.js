@@ -9,7 +9,7 @@
     "test": "jest",
     "lint": "eslint . --fix --cache"
   },
-  "author": "Daniel Conde <danielconde9@gmail.com>",
+  "author": "Serverless, Inc.",
   "license": "MIT",
   "dependencies": {
     "ramda": "^0.26.1"
