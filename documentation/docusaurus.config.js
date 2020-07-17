@@ -81,7 +81,7 @@ module.exports = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Serverless-Nextjs component. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} Serverless-Nextjs component.`,
     },
   },
   presets: [
