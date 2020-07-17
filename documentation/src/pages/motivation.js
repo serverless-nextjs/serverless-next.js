@@ -1,3 +1,9 @@
+/** 
+ * Not used right now.
+ * You can create a React component based page
+ * Or you can create a Page as a .md file inside docs
+*/
+
 import React from 'react';
 import Layout from '@theme/Layout';
 import styles from './styles.module.css';

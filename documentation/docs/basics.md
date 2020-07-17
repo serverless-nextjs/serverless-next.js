@@ -1,6 +1,6 @@
 ---
 id: basics
-title: Serverless-Nextjs
+title: Serverless-Nextjs Component
 sidebar_label: Basics
 ---
 

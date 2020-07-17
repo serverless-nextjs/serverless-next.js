@@ -21,7 +21,7 @@ module.exports = {
           position: 'left',
         },
         {to: 'blog', label: 'Blog', position: 'left'},
-        {to: 'motivation', label: 'Motivation', position: 'left'},
+        // {to: 'motivation', label: 'Motivation', position: 'left'},
         {
           href: 'https://github.com/serverless-nextjs/serverless-next.js',
           label: 'GitHub',
@@ -90,17 +90,17 @@ module.exports = {
       {
         docs: {
           // It is recommended to set document id as docs home page (`docs/` path).
-          homePageId: 'doc1',
+          homePageId: 'basics',
           sidebarPath: require.resolve('./sidebars.js'),
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/',
+            'https://github.com/serverless-nextjs/serverless-next.js/documentation/docs/',
         },
         blog: {
           showReadingTime: true,
           // Please change this to your repo.
           editUrl:
-            'https://github.com/facebook/docusaurus/edit/master/website/blog/',
+            'https://github.com/serverless-nextjs/serverless-next.js/documentation/blog/',
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
