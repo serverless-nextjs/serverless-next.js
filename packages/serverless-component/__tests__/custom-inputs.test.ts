@@ -91,10 +91,19 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it(`passes the ${expectedRegion} region to s3 component`, () => {
+    it(`passes the ${expectedRegion} region to the s3 and cloudFront components`, () => {
       expect(mockS3).toBeCalledWith(
         expect.objectContaining({
           region: expectedRegion
+        })
+      );
+      expect(mockCloudFront).toBeCalledWith(
+        expect.objectContaining({
+          origins: expect.arrayContaining([
+            expect.objectContaining({
+              url: `http://bucket-xyz.s3.${expectedRegion}.amazonaws.com`
+            })
+          ])
         })
       );
     });
@@ -553,9 +562,9 @@ describe("Custom inputs", () => {
       {
         origins: [
           "http://some-origin",
-          "http://bucket-xyz.s3.amazonaws.com/relative",
+          "http://bucket-xyz.s3.us-east-1.amazonaws.com/relative",
           { url: "http://diff-origin" },
-          { url: "http://bucket-xyz.s3.amazonaws.com/diff-relative" }
+          { url: "http://bucket-xyz.s3.us-east-1.amazonaws.com/diff-relative" }
         ]
       }
     ],
@@ -681,7 +690,7 @@ describe("Custom inputs", () => {
             }
           },
           private: true,
-          url: "http://bucket-xyz.s3.amazonaws.com"
+          url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
         },
         ...origins
       ]
