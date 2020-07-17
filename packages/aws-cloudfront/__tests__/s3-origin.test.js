@@ -52,6 +52,7 @@ describe("S3 origins", () => {
         ETag: "etag",
         DistributionConfig: {
           Origins: {
+            Quantity: 0,
             Items: []
           }
         }
@@ -133,6 +134,7 @@ describe("S3 origins", () => {
         ETag: "etag",
         DistributionConfig: {
           Origins: {
+            Quantity: 0,
             Items: []
           }
         }
@@ -211,6 +213,7 @@ describe("S3 origins", () => {
         ETag: "etag",
         DistributionConfig: {
           Origins: {
+            Quantity: 0,
             Items: []
           }
         }

@@ -141,6 +141,7 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
       origins.Items.splice(index, 1, inputOrigin);
     } else {
       origins.Items.push(inputOrigin);
+      origins.Quantity += 1;
     }
   });
 
