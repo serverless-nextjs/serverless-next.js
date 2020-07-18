@@ -32,12 +32,24 @@ module.exports = {
     );
   },
 
+  assertHasOriginCount: (spy, expectedCount) => {
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Quantity: expectedCount
+          })
+        })
+      })
+    );
+  },
+
   assertHasOrigin: (spy, origin) => {
     expect(spy).toBeCalledWith(
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           Origins: expect.objectContaining({
-            Items: [expect.objectContaining(origin)]
+            Items: expect.arrayContaining([expect.objectContaining(origin)])
           })
         })
       })
