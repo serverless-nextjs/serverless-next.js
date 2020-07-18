@@ -60,7 +60,7 @@ class AwsLambda extends Component {
     });
 
     const awsIamRole = await this.load("@serverless/aws-iam-role");
-    outputsAwsIamRole = await awsIamRole(config.role);
+    const outputsAwsIamRole = await awsIamRole(config.role);
     config.role = { arn: outputsAwsIamRole.arn };
 
     this.context.status("Packaging");
