@@ -82,10 +82,12 @@ describe("Working with an existing distribution", () => {
       Id: "existingorigin.com",
       DomainName: "existingorigin.com"
     });
+
     assertHasOrigin(mockUpdateDistribution, {
       Id: "neworigin.com",
       DomainName: "neworigin.com"
     });
+
     assertHasOriginCount(mockUpdateDistribution, 2);
   });
 
@@ -97,7 +99,8 @@ describe("Working with an existing distribution", () => {
         Origins: {
           Quantity: 1,
           Items: [
-            { Id: "existingorigin.com", DomainName: "existingorigin.com" }
+            { Id: "existingorigin1.com", DomainName: "existingorigin1.com" },
+            { Id: "existingorigin2.com", DomainName: "existingorigin2.com" }
           ]
         }
       }
@@ -107,7 +110,7 @@ describe("Working with an existing distribution", () => {
       distributionId: "fake-distribution-id",
       origins: [
         {
-          url: "https://existingorigin.com",
+          url: "https://existingorigin2.com",
           pathPatterns: {
             "/some/path": {
               ttl: 10
@@ -117,15 +120,20 @@ describe("Working with an existing distribution", () => {
       ]
     });
 
-    // any existing origins are kept
     assertHasOrigin(mockUpdateDistribution, {
-      Id: "existingorigin.com",
-      DomainName: "existingorigin.com"
+      Id: "existingorigin1.com",
+      DomainName: "existingorigin1.com"
     });
+
+    assertHasOrigin(mockUpdateDistribution, {
+      Id: "existingorigin2.com",
+      DomainName: "existingorigin2.com"
+    });
+
     assertHasCacheBehavior(mockUpdateDistribution, {
       PathPattern: "/some/path",
       MinTTL: 10,
-      TargetOriginId: "existingorigin.com"
+      TargetOriginId: "existingorigin2.com"
     });
   });
 });
