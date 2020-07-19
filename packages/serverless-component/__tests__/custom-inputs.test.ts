@@ -568,6 +568,15 @@ describe("Custom inputs", () => {
         ]
       }
     ],
+    // custom priceClass
+    [
+      {
+        priceClass: "PriceClass_100"
+      },
+      {
+        priceClass: "PriceClass_100"
+      }
+    ],
     // custom page cache behaviours
     [
       {
@@ -601,7 +610,12 @@ describe("Custom inputs", () => {
   ])("Custom cloudfront inputs", (inputCloudfrontConfig, expectedInConfig) => {
     let tmpCwd;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-    const { origins = [], defaults = {}, ...other } = expectedInConfig;
+    const {
+      origins = [],
+      defaults = {},
+      priceClass = undefined,
+      ...other
+    } = expectedInConfig;
 
     const expectedDefaultCacheBehaviour = {
       ...defaults,
@@ -693,7 +707,8 @@ describe("Custom inputs", () => {
           url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
         },
         ...origins
-      ]
+      ],
+      ...(priceClass && { priceClass })
     };
 
     beforeEach(async () => {
