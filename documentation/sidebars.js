@@ -1,6 +1,6 @@
 module.exports = {
   someSidebar: {
-    Introduction: ['basics', 'motivation', 'design', 'features'],
+    Introduction: ['basics', 'motivation', 'design', 'features', 'contributing'],
     'Getting Started': [
       'installation', 
       'customdomain', 
@@ -8,7 +8,11 @@ module.exports = {
       'staticpagecache', 
       'publicdirectorycache', 
       'awspermissions',
-      'architecture'
+      'lambdaatedgeconfig',
+      'architecture',
+      'inputs',
+      'faq',
+      'examples'
     ]
   },
 };

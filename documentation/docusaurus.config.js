@@ -5,12 +5,21 @@ module.exports = {
   baseUrl: '/',
   favicon: 'img/favicon.ico',
   organizationName: 'serverless-nextjs', // Usually your GitHub org/user name.
-  projectName: 'NextJS Serverless Component', // Usually your repo name.
+  projectName: 'Serverless NextJS Component', // Usually your repo name.
   themeConfig: {
+    disableDarkMode: true,
+    sidebarCollapsible: false,
+    announcementBar: {
+      id: 'work_in_progress', // Any value that will identify this message.
+      content:
+        'Alpha Release',
+      backgroundColor: 'yellow', // Defaults to `#fff`.
+      textColor: '#091E42', // Defaults to `#000`.
+    },
     navbar: {
       title: 'Serverless-Nextjs',
       logo: {
-        alt: 'My Site Logo',
+        alt: 'Serverless Nextjs component',
         src: 'img/logo.svg',
       },
       links: [
@@ -41,13 +50,17 @@ module.exports = {
           title: 'Docs',
           items: [
             {
-              label: 'Style Guide',
-              to: 'docs/',
+              label: 'Getting Started',
+              to: 'docs/installation/',
             },
             {
-              label: 'Second Doc',
-              to: 'docs/doc2/',
+              label: 'FAQs',
+              to: 'docs/faq/',
             },
+            {
+              label: 'Contributing',
+              to: '/docs/contributing/'
+            }
           ],
         },
         {
@@ -76,7 +89,11 @@ module.exports = {
             },
             {
               label: 'GitHub',
-              href: 'https://github.com/facebook/docusaurus',
+              href: 'https://github.com/serverless-nextjs/serverless-next.js',
+            },
+            {
+              label: 'Examples',
+              href: 'https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-component/examples',
             },
           ],
         },
