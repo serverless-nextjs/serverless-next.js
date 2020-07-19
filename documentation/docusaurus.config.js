@@ -12,7 +12,7 @@ module.exports = {
     announcementBar: {
       id: 'work_in_progress', // Any value that will identify this message.
       content:
-        'Alpha Release',
+        'Alpha Release v1.0.0',
       backgroundColor: 'yellow', // Defaults to `#fff`.
       textColor: '#091E42', // Defaults to `#000`.
     },
