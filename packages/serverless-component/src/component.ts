@@ -190,7 +190,13 @@ class NextjsComponent extends Component {
       ? resolve(inputs.nextStaticDir)
       : nextConfigPath;
 
-    const customCloudFrontConfig = inputs.cloudfront || {};
+    const {
+      defaults: cloudFrontDefaultsInputs,
+      origins: cloudFrontOriginsInputs,
+      priceClass: cloudFrontPriceClassInputs,
+      ...cloudFrontOtherInputs
+    } = inputs.cloudfront || {};
+
     const bucketRegion = inputs.bucketRegion || "us-east-1";
 
     const [defaultBuildManifest, apiBuildManifest] = await Promise.all([
@@ -246,10 +252,9 @@ class NextjsComponent extends Component {
 
     // parse origins from inputs
     let inputOrigins: any[] = [];
-    if (inputs.cloudfront && inputs.cloudfront.origins) {
-      const origins = inputs.cloudfront.origins as string[];
+    if (cloudFrontOriginsInputs) {
+      const origins = cloudFrontOriginsInputs as string[];
       inputOrigins = origins.map(expandRelativeUrls);
-      delete inputs.cloudfront.origins;
     }
 
     const cloudFrontOrigins = [
@@ -382,23 +387,15 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
-    let defaultCloudfrontInputs;
-    if (inputs.cloudfront && inputs.cloudfront.defaults) {
-      defaultCloudfrontInputs = inputs.cloudfront.defaults;
-      delete inputs.cloudfront.defaults;
-    } else {
-      defaultCloudfrontInputs = {};
-    }
-
     // validate that the custom config paths match generated paths in the manifest
     this.validatePathPatterns(
-      Object.keys(customCloudFrontConfig),
+      Object.keys(cloudFrontOtherInputs),
       defaultBuildManifest
     );
 
     // Add any custom cloudfront configuration
     // this includes overrides for _next, static and api
-    Object.entries(customCloudFrontConfig).map(([path, config]) => {
+    Object.entries(cloudFrontOtherInputs).map(([path, config]) => {
       const edgeConfig = {
         ...(config["lambda@edge"] || {})
       };
@@ -440,19 +437,21 @@ class NextjsComponent extends Component {
 
     // make sure that origin-response is not set.
     // this is reserved for serverless-next.js usage
+    const cloudFrontDefaults = cloudFrontDefaultsInputs || {};
+
     const defaultLambdaAtEdgeConfig = {
-      ...(defaultCloudfrontInputs["lambda@edge"] || {})
+      ...(cloudFrontDefaults["lambda@edge"] || {})
     };
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
       defaults: {
         ttl: 0,
-        ...defaultCloudfrontInputs,
+        ...cloudFrontDefaults,
         forward: {
           cookies: "all",
           queryString: true,
-          ...defaultCloudfrontInputs.forward
+          ...cloudFrontDefaults.forward
         },
         // everything after here cant be overridden
         allowedHttpMethods: ["HEAD", "GET"],
@@ -462,7 +461,10 @@ class NextjsComponent extends Component {
         },
         compress: true
       },
-      origins: cloudFrontOrigins
+      origins: cloudFrontOrigins,
+      ...(cloudFrontPriceClassInputs && {
+        priceClass: cloudFrontPriceClassInputs
+      })
     });
 
     let appUrl = cloudFrontOutputs.url;
@@ -484,7 +486,7 @@ class NextjsComponent extends Component {
           [subdomain]: cloudFrontOutputs
         },
         domainType: inputs.domainType || "both",
-        defaultCloudfrontInputs
+        defaultCloudfrontInputs: cloudFrontDefaults
       });
       appUrl = domainOutputs.domains[0];
     }
