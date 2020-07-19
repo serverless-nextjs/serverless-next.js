@@ -274,6 +274,7 @@ Object {
       ],
       "Quantity": 1,
     },
+    "PriceClass": "PriceClass_All",
   },
   "Id": "xyz",
   "IfMatch": "etag",
