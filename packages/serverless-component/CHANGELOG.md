@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.16.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.15.2-alpha.1...@sls-next/serverless-component@1.16.0-alpha.0) (2020-07-20)
+
+### Features
+
+- **serverless-component:** allow CloudFront PriceClass to be set ([#515](https://github.com/danielcondemarin/serverless-next.js/issues/515)) ([943958a](https://github.com/danielcondemarin/serverless-next.js/commit/943958a823d602db35ca2b789e6d8b455ef5f499))
+
 ## [1.15.2-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.15.2-alpha.0...@sls-next/serverless-component@1.15.2-alpha.1) (2020-07-14)
 
 **Note:** Version bump only for package @sls-next/serverless-component
