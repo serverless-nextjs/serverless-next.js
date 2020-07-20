@@ -55,6 +55,7 @@ distribution:
     region: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional
+    priceClass: 'PriceClass_All' # optional
     defaults: # optional
       ttl: 15
       allowedHttpMethods: ['HEAD', 'GET']
