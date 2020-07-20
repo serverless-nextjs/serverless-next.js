@@ -1,0 +1,25 @@
+name: Deploy docs
+on: 
+  push:
+    paths:
+      - 'docs/**'
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 🛎️
+        uses: actions/checkout@v2.3.1 # If you're using actions/checkout@v2 you must set persist-credentials to false in most cases for the deployment to work correctly.
+        with:
+          persist-credentials: false
+
+      - name: Install and Build 🔧 # This example project is built using npm and outputs the result to the 'build' folder. Replace with the commands required to build your project, or remove this step entirely if your site is pre-built.
+        run: |
+          yarn docs
+
+      - name: Deploy 🚀
+        uses: JamesIves/github-pages-deploy-action@3.5.7
+        with:
+          GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
+          BRANCH: gh-pages # The branch the action should deploy to.
+          FOLDER: documentation/build # The folder the action should deploy.
