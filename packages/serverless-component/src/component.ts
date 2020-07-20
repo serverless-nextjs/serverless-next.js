@@ -49,14 +49,7 @@ class NextjsComponent extends Component {
 
   pathPattern(pattern: string, routesManifest: RoutesManifest): string {
     const basePath = routesManifest.basePath;
-    if (basePath.length === 0) {
-      return pattern;
-    }
-
-    const basePathPattern =
-      basePath.charAt(0) === "/" ? basePath.slice(1) : basePath;
-
-    return `${basePathPattern}/${pattern}`;
+    return basePath.length === 0 ? pattern : `${basePath.slice(1)}/${pattern}`;
   }
 
   validatePathPatterns(
