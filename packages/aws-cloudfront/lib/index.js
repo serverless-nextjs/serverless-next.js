@@ -34,7 +34,7 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
         Quantity: 0,
         Items: []
       },
-      PriceClass: "PriceClass_All",
+      PriceClass: inputs.priceClass,
       Enabled: inputs.enabled,
       HttpVersion: "http2"
     }
@@ -104,6 +104,7 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
 
   params.DistributionConfig.Enabled = inputs.enabled;
   params.DistributionConfig.Comment = inputs.comment;
+  params.DistributionConfig.PriceClass = inputs.priceClass;
 
   let s3CanonicalUserId;
   let originAccessIdentityId;
