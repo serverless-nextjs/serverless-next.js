@@ -1,8 +1,8 @@
 name: Deploy docs
-on: 
+on:
   push:
     paths:
-      - 'docs/**'
+      - "documentation/**"
 
 jobs:
   build-and-deploy:
