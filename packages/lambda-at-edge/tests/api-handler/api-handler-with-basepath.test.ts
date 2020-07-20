@@ -12,7 +12,7 @@ jest.mock(
 
 jest.mock(
   "../../src/routes-manifest.json",
-  () => require("./api-routes-basepath-manifest.json"),
+  () => require("./api-basepath-routes-manifest.json"),
   {
     virtual: true
   }

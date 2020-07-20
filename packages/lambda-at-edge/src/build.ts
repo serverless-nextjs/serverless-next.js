@@ -198,6 +198,10 @@ class Builder {
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
+      ),
+      fse.copy(
+        join(this.dotNextDir, "routes-manifest.json"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
   }

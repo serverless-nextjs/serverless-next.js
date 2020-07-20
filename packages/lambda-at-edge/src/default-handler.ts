@@ -2,6 +2,8 @@
 import PrerenderManifest from "./prerender-manifest.json";
 // @ts-ignore
 import Manifest from "./manifest.json";
+// @ts-ignore
+import { basePath } from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   CloudFrontRequest,
@@ -23,6 +25,11 @@ const addS3HostHeader = (
 };
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
+
+const normaliseUri = (uri: string): string => {
+  if (basePath && uri.startsWith(basePath)) uri = uri.slice(basePath.length);
+  return uri === "/" || uri === "" ? "/index" : uri;
+};
 
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   if (s3Origin.region === "us-east-1") {
@@ -101,7 +108,9 @@ export const handler = async (
   s3Origin.domainName = normalisedS3DomainName;
 
   if (isHTMLPage || isPublicFile) {
-    s3Origin.path = isHTMLPage ? "/static-pages" : "/public";
+    s3Origin.path = isHTMLPage
+      ? `${basePath}/static-pages`
+      : `${basePath}/public`;
 
     addS3HostHeader(request, normalisedS3DomainName);
 
@@ -116,7 +125,7 @@ export const handler = async (
   const pagePath = router(manifest)(uri);
 
   if (pagePath.endsWith(".html")) {
-    s3Origin.path = "/static-pages";
+    s3Origin.path = `${basePath}/static-pages`;
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
     return request;

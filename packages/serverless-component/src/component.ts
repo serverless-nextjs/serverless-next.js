@@ -240,6 +240,7 @@ class NextjsComponent extends Component {
 
     await uploadAssetsToS3({
       bucketName: bucketOutputs.name,
+      basePath: routesManifest.basePath,
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,
       credentials: this.context.credentials.aws,
