@@ -51,6 +51,7 @@ AWS_SECRET_ACCESS_KEY=XXX
 distribution:
   component: '@serverless/aws-cloudfront'
   inputs:
+    distributionId: XYZEXAMPLE #optional
     region: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional
@@ -133,6 +134,44 @@ distribution:
 A bucket policy will be added that grants CloudFront with access to the bucket objects. Note that it doesn't remove any existing permissions on the bucket. If users currently have permission to access the files in your bucket using Amazon S3 URLs you will need to manually remove those.
 
 This is documented in more detail here: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-restricting-access-to-s3.html
+
+#### Updating an existing CloudFront distribution
+
+To update an existing CloudFront distribution you can add the optional `distributionId` to your config:
+
+```yml
+distribution:
+  component: "@serverless/aws-cloudfront"
+  inputs:
+    distributionId: SomeDistributionId
+```
+
+To update an existing origin with a new cache behavior the component uses the origin's `url` value to find and update with the specified config:
+
+```yml
+distribution:
+  component: "@serverless/aws-cloudfront"
+  inputs:
+    distributionId: SomeDistributionId
+    origins:
+      - url: https://some-existing-origin.com
+        pathPatterns:
+          /some/new/path:
+            ttl: 10
+```
+
+To add a new origin to the existing CloudFront distribution just specify the new origin as you would normally:
+
+```yml
+distribution:
+  component: "@serverless/aws-cloudfront"
+  inputs:
+    distributionId: SomeDistributionId
+    origins:
+      - url: https://some-new-origin.com
+```
+
+This will create the new origin and add any defined cache behaviors to that origin.
 
 ### 4. Deploy
 

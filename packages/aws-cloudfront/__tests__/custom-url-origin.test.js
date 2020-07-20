@@ -72,6 +72,7 @@ describe("Input origin as a custom url", () => {
       ETag: "etag",
       DistributionConfig: {
         Origins: {
+          Quantity: 0,
           Items: []
         }
       }

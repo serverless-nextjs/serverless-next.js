@@ -61,6 +61,7 @@ describe("Input origin with path pattern", () => {
       ETag: "etag",
       DistributionConfig: {
         Origins: {
+          Quantity: 0,
           Items: []
         }
       }

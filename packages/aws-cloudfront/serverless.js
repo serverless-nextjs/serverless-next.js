@@ -40,6 +40,8 @@ class CloudFront extends Component {
       region: inputs.region
     });
 
+    this.state.id = inputs.distributionId || this.state.id;
+
     if (this.state.id) {
       if (
         !equals(this.state.origins, inputs.origins) ||
