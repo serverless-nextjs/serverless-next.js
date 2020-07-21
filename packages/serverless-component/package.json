@@ -5,7 +5,7 @@
   },
   "version": "1.16.0-alpha.0",
   "description": "Serverless nextjs powered by Serverless Components",
-  "main": "dist/component.js",
+  "main": "./serverless.js",
   "types": "dist/component.d.ts",
   "repository": {
     "type": "git",
