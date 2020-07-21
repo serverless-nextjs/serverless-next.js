@@ -15,3 +15,4 @@ dist
 .env
 .package-lock.json
 yarn-error.log
+instructions.txt

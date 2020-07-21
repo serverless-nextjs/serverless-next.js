@@ -188,6 +188,7 @@ Object {
       ],
       "Quantity": 1,
     },
+    "PriceClass": "PriceClass_All",
   },
   "Id": "distribution123",
   "IfMatch": "etag",

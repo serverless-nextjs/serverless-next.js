@@ -95,4 +95,32 @@ describe("General options propagation", () => {
       })
     );
   });
+
+  it("create distribution with priceClass and update it", async () => {
+    await component.default({
+      priceClass: "PriceClass_All",
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          PriceClass: "PriceClass_All"
+        })
+      })
+    );
+
+    await component.default({
+      priceClass: "PriceClass_100",
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          PriceClass: "PriceClass_100"
+        })
+      })
+    );
+  });
 });
