@@ -12,7 +12,7 @@ The first two `_next/*` and `static/*` forward the requests to S3.
 
 The third is associated to a lambda function which is responsible for handling three types of requests.
 
-1. Server side rendered page. Any page that defines getInitialProps (`** Correction - getServerSideProps, getStaticProps`) method will be rendered at this level and the response is returned immediately to the user.
+1. Server side rendered page. Any page that defines `getInitialProps` or `getServerSideProps` method will be rendered at this level and the response is returned immediately to the user.
 
 2. Statically optimised page. Requests to pages that were pre-compiled by next to HTML are forwarded to S3.
 
