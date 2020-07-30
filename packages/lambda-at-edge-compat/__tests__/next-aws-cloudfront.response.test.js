@@ -318,6 +318,24 @@ describe("Response Tests", () => {
     });
   });
 
+  it("res.end() ignores any calls after the first one", () => {
+    expect.assertions(1);
+
+    const { res, responsePromise } = create({
+      request: {
+        path: "/",
+        headers: {}
+      }
+    });
+
+    res.end("ok");
+    res.end();
+
+    return responsePromise.then((response) => {
+      expect(response.body).toEqual("b2s=");
+    });
+  });
+
   it(`gzips`, () => {
     expect.assertions(2);
 
