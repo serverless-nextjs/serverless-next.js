@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.1-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/next-aws-lambda@2.6.0...@sls-next/next-aws-lambda@2.6.1-alpha.0) (2020-07-30)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
 # [2.6.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/next-aws-lambda@2.6.0-alpha.1...@sls-next/next-aws-lambda@2.6.0) (2020-07-11)
 
 **Note:** Version bump only for package @sls-next/next-aws-lambda
