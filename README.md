@@ -65,6 +65,12 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Getting started
 
+Install the component:
+
+```
+npm i @sls-next/serverless-component -D
+```
+
 Add your next application to the serverless.yml:
 
 ```yml
@@ -72,6 +78,7 @@ Add your next application to the serverless.yml:
 
 myNextApplication:
   component: "@sls-next/serverless-component@{version_here}" # it is recommended you pin the latest stable version of serverless-next.js
+  # replace {version_here} with the one from package.json
 ```
 
 Set your AWS credentials as environment variables:
