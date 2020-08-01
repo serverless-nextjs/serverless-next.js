@@ -77,8 +77,9 @@ Add your next application to the serverless.yml:
 # serverless.yml
 
 myNextApplication:
-  component: "@sls-next/serverless-component@{version_here}" # it is recommended you pin the latest stable version of serverless-next.js
-  # replace {version_here} with the one from package.json
+  # it is recommended you pin the latest stable version of serverless-next.js
+  # replace {version_here} with a stable npm version available
+  component: "@sls-next/serverless-component@{version_here}" 
 ```
 
 Set your AWS credentials as environment variables:
