@@ -24,8 +24,6 @@ const addS3HostHeader = (
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
-const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
-
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   if (s3Origin.region === "us-east-1") {
     return s3Origin.domainName;
@@ -88,13 +86,13 @@ export const handler = async (
   event: OriginRequestEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
-  const uri = normaliseUri(request.uri);
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const { pages, publicFiles } = manifest;
+  const uri = request.uri;
   const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
-  const isPrerenderedPage = prerenderManifest.routes[request.uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
+  const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
@@ -108,7 +106,8 @@ export const handler = async (
     addS3HostHeader(request, normalisedS3DomainName);
 
     if (isHTMLPage) {
-      request.uri = `${uri}.html`;
+      let pageName = uri === "/" ? "/index" : uri;
+      request.uri = `${pageName}.html`;
     }
 
     return request;
