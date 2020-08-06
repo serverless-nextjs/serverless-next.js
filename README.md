@@ -87,7 +87,7 @@ And simply deploy:
 $ serverless
 ```
 
-:x: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
+:no_entry_sign: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
 
 ### Custom domain name
 
@@ -410,7 +410,7 @@ myTable:
 # other components
 ```
 
-:x: **Don't**
+:no_entry_sign: **Don't**
 
 ```yml
 # serverless.yml
