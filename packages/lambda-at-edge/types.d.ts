@@ -62,3 +62,7 @@ export type PreRenderedManifest = {
     previewModeId: string;
   };
 };
+
+export type RoutesManifest = {
+  basePath: string;
+};

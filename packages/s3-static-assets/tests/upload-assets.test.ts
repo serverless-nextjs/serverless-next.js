@@ -19,6 +19,7 @@ jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 const upload = (
   nextConfigDir: string,
   nextStaticDir?: string,
+  basePath?: string,
   publicAssetCache?:
     | boolean
     | {
@@ -34,6 +35,7 @@ const upload = (
 
   return uploadStaticAssets({
     bucketName: "test-bucket-name",
+    basePath: basePath || "",
     nextConfigDir: path.join(__dirname, nextConfigDir),
     nextStaticDir: staticDir,
     credentials: {
@@ -237,6 +239,18 @@ describe.each`
         })
       );
     });
+
+    it("supports basePath", async () => {
+      await upload(nextConfigDir, nextStaticDir, "/basepath");
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "basepath/static/robots.txt",
+          ContentType: "text/plain",
+          CacheControl: undefined
+        })
+      );
+    });
   }
 );
 
@@ -253,6 +267,7 @@ describe.each`
     beforeEach(async () => {
       await upload(
         "./fixtures/app-with-images",
+        undefined,
         undefined,
         publicDirectoryCache
       );

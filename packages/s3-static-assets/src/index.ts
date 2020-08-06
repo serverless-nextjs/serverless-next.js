@@ -16,6 +16,7 @@ import getPublicAssetCacheControl, {
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
+  basePath: string;
   nextConfigDir: string;
   nextStaticDir?: string;
   credentials: Credentials;
@@ -25,7 +26,12 @@ type UploadStaticAssetsOptions = {
 const uploadStaticAssets = async (
   options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
-  const { bucketName, nextConfigDir, nextStaticDir = nextConfigDir } = options;
+  const {
+    bucketName,
+    basePath,
+    nextConfigDir,
+    nextStaticDir = nextConfigDir
+  } = options;
   const s3 = await S3ClientFactory({
     bucketName,
     credentials: options.credentials
@@ -33,17 +39,23 @@ const uploadStaticAssets = async (
 
   const dotNextDirectory = path.join(nextConfigDir, ".next");
 
+  const s3BasePath = basePath ? basePath.slice(1) : "";
+
   const buildStaticFiles = await readDirectoryFiles(
     path.join(dotNextDirectory, "static")
   );
+
+  const withBasePath = (key: string): string => path.join(s3BasePath, key);
 
   const buildStaticFileUploads = buildStaticFiles
     .filter(filterOutDirectories)
     .map(async (fileItem) => {
       const s3Key = pathToPosix(
-        path
-          .relative(path.resolve(nextConfigDir), fileItem.path)
-          .replace(/^.next/, "_next")
+        withBasePath(
+          path
+            .relative(path.resolve(nextConfigDir), fileItem.path)
+            .replace(/^.next/, "_next")
+        )
       );
 
       return s3.uploadFile({
@@ -65,10 +77,12 @@ const uploadStaticAssets = async (
       );
 
       return s3.uploadFile({
-        s3Key: `static-pages/${(relativePageFilePath as string).replace(
-          /^pages\//,
-          ""
-        )}`,
+        s3Key: withBasePath(
+          `static-pages/${(relativePageFilePath as string).replace(
+            /^pages\//,
+            ""
+          )}`
+        ),
         filePath: pageFilePath,
         cacheControl: SERVER_CACHE_CONTROL_HEADER
       });
@@ -91,7 +105,7 @@ const uploadStaticAssets = async (
     );
 
     return s3.uploadFile({
-      s3Key: prerenderManifest.routes[key].dataRoute.slice(1),
+      s3Key: withBasePath(prerenderManifest.routes[key].dataRoute.slice(1)),
       filePath: pageFilePath
     });
   });
@@ -108,7 +122,9 @@ const uploadStaticAssets = async (
     );
 
     return s3.uploadFile({
-      s3Key: path.posix.join("static-pages", relativePageFilePath),
+      s3Key: withBasePath(
+        path.posix.join("static-pages", relativePageFilePath)
+      ),
       filePath: pageFilePath,
       cacheControl: SERVER_CACHE_CONTROL_HEADER
     });
@@ -129,7 +145,9 @@ const uploadStaticAssets = async (
       s3.uploadFile({
         filePath: fileItem.path,
         s3Key: pathToPosix(
-          path.relative(path.resolve(nextStaticDir), fileItem.path)
+          withBasePath(
+            path.relative(path.resolve(nextStaticDir), fileItem.path)
+          )
         ),
         cacheControl: getPublicAssetCacheControl(
           fileItem.path,
