@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.5.2...@sls-next/lambda-at-edge@1.6.0-alpha.0) (2020-08-06)
+
+### Features
+
+- **lambda-at-edge,serverless-component:** basePath support ([#510](https://github.com/danielcondemarin/serverless-next.js/issues/510)) ([b17ce30](https://github.com/danielcondemarin/serverless-next.js/commit/b17ce30b1f18f994f1d2e9ebfe833a74aae6676b))
+
 ## [1.5.2](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.5.2-alpha.1...@sls-next/lambda-at-edge@1.5.2) (2020-08-01)
 
 ### Bug Fixes
