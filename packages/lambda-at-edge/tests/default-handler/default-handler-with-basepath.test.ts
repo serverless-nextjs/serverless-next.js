@@ -86,7 +86,7 @@ describe("Lambda@Edge", () => {
     describe("Public files routing", () => {
       it("serves public file from S3 /public folder", async () => {
         const event = createCloudFrontEvent({
-          uri: "/manifest.json",
+          uri: "/basepath/manifest.json",
           host: "mydistribution.cloudfront.net"
         });
 
@@ -243,7 +243,7 @@ describe("Lambda@Edge", () => {
           region: "eu-west-1"
         }
       });
-      expect(request.uri).toEqual("/basepath/favicon.ico");
+      expect(request.uri).toEqual("/favicon.ico");
       expect(request.headers.host[0].key).toEqual("host");
       expect(request.headers.host[0].value).toEqual(
         "my-bucket.s3.eu-west-1.amazonaws.com"

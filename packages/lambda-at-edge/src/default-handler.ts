@@ -119,6 +119,12 @@ export const handler = async (
       request.uri = `${pageName}.html`;
     }
 
+    if (isPublicFile) {
+      if (basePath) {
+        request.uri = request.uri.replace(basePath, "");
+      }
+    }
+
     return request;
   }
 
