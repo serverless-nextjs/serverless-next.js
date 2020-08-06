@@ -86,7 +86,8 @@ And simply deploy:
 ```bash
 $ serverless
 ```
-❌ **Don't attempt to deploy by running `serverless deploy`, use only `serverless`** 
+
+❌ Don't attempt to deploy by running `serverless deploy`, use only `serverless`
 
 ### Custom domain name
 
