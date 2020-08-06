@@ -1,0 +1,34 @@
+{
+  "name": "@sls-next/cdk",
+  "version": "1.0.0",
+  "description": "CDK Construct for deploying serverless Next.js applications",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git"
+  },
+  "keywords": [
+    "AWS",
+    "CDK",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Conde <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@aws-cdk/aws-cloudfront": "^1.56.0",
+    "@aws-cdk/aws-lambda": "^1.56.0",
+    "@aws-cdk/aws-s3": "^1.56.0",
+    "@aws-cdk/core": "^1.56.0"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "^1.56.0"
+  }
+}
