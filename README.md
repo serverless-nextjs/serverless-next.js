@@ -87,7 +87,7 @@ And simply deploy:
 $ serverless
 ```
 
-❌ Don't attempt to deploy by running `serverless deploy`, use only `serverless`
+:x: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
 
 ### Custom domain name
 
@@ -396,7 +396,7 @@ myNextApp:
 
 Make sure your `serverless.yml` uses the `serverless-components` format. [serverless components](https://serverless.com/blog/what-are-serverless-components-how-use/) differ from the original serverless framework, even though they are both accessible via the same CLI.
 
-✅ **Do**
+:white_check_mark: **Do**
 
 ```yml
 # serverless.yml
@@ -410,7 +410,7 @@ myTable:
 # other components
 ```
 
-❌ **Don't**
+:x: **Don't**
 
 ```yml
 # serverless.yml
