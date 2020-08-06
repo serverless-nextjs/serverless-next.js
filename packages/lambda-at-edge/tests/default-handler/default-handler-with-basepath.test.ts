@@ -25,7 +25,7 @@ jest.mock(
 
 jest.mock(
   "../../src/routes-manifest.json",
-  () => require("./default-routes-manifest.json"),
+  () => require("./default-basepath-routes-manifest.json"),
   {
     virtual: true
   }
@@ -45,14 +45,15 @@ describe("Lambda@Edge", () => {
   describe("Routing", () => {
     describe("HTML pages routing", () => {
       it.each`
-        path                                               | expectedPage
-        ${"/"}                                             | ${"/index.html"}
-        ${"/index"}                                        | ${"/index.html"}
-        ${"/terms"}                                        | ${"/terms.html"}
-        ${"/users/batman"}                                 | ${"/users/[user].html"}
-        ${"/users/test/catch/all"}                         | ${"/users/[...user].html"}
-        ${"/john/123"}                                     | ${"/[username]/[id].html"}
-        ${"/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
+        path                                                        | expectedPage
+        ${"/basepath"}                                              | ${"/index.html"}
+        ${"/basepath/"}                                             | ${"/index.html"}
+        ${"/basepath/index"}                                        | ${"/index.html"}
+        ${"/basepath/terms"}                                        | ${"/terms.html"}
+        ${"/basepath/users/batman"}                                 | ${"/users/[user].html"}
+        ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
+        ${"/basepath/john/123"}                                     | ${"/[username]/[id].html"}
+        ${"/basepath/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -69,7 +70,7 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/static-pages",
+              path: "/basepath/static-pages",
               region: "us-east-1"
             }
           });
@@ -85,7 +86,7 @@ describe("Lambda@Edge", () => {
     describe("Public files routing", () => {
       it("serves public file from S3 /public folder", async () => {
         const event = createCloudFrontEvent({
-          uri: "/manifest.json",
+          uri: "/basepath/manifest.json",
           host: "mydistribution.cloudfront.net"
         });
 
@@ -97,7 +98,7 @@ describe("Lambda@Edge", () => {
           s3: {
             authMethod: "origin-access-identity",
             domainName: "my-bucket.s3.amazonaws.com",
-            path: "/public",
+            path: "/basepath/public",
             region: "us-east-1"
           }
         });
@@ -107,14 +108,14 @@ describe("Lambda@Edge", () => {
 
     describe("SSR pages routing", () => {
       it.each`
-        path                              | expectedPage
-        ${"/abc"}                         | ${"pages/[root].js"}
-        ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/customers"}                   | ${"pages/customers/index.js"}
-        ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
-        ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
-        ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
-        ${"/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
+        path                                       | expectedPage
+        ${"/basepath/abc"}                         | ${"pages/[root].js"}
+        ${"/basepath/blog/foo"}                    | ${"pages/blog/[id].js"}
+        ${"/basepath/customers"}                   | ${"pages/customers/index.js"}
+        ${"/basepath/customers/superman"}          | ${"pages/customers/[customer].js"}
+        ${"/basepath/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
+        ${"/basepath/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
+        ${"/basepath/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
       `(
         "renders page $expectedPage for path $path",
         async ({ path, expectedPage }) => {
@@ -141,10 +142,10 @@ describe("Lambda@Edge", () => {
 
     describe("Data Requests", () => {
       it.each`
-        path                                                      | expectedPage
-        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
-        ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
-        ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+        path                                                               | expectedPage
+        ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/basepath/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
+        ${"/basepath/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `("serves json data for path $path", async ({ path, expectedPage }) => {
         const event = createCloudFrontEvent({
           uri: path,
@@ -172,7 +173,7 @@ describe("Lambda@Edge", () => {
 
     it("uses default s3 endpoint when bucket region is us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: "/terms",
+        uri: "/basepath/terms",
         host: "mydistribution.cloudfront.net",
         s3Region: "us-east-1"
       });
@@ -195,7 +196,7 @@ describe("Lambda@Edge", () => {
 
     it("uses regional endpoint for static page when bucket region is not us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: "/terms",
+        uri: "/basepath/terms",
         host: "mydistribution.cloudfront.net",
         s3DomainName: "my-bucket.s3.amazonaws.com",
         s3Region: "eu-west-1"
@@ -210,7 +211,7 @@ describe("Lambda@Edge", () => {
         s3: {
           authMethod: "origin-access-identity",
           domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
-          path: "/static-pages",
+          path: "/basepath/static-pages",
           region: "eu-west-1"
         }
       });
@@ -223,7 +224,7 @@ describe("Lambda@Edge", () => {
 
     it("uses regional endpoint for public asset when bucket region is not us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: "/favicon.ico",
+        uri: "/basepath/favicon.ico",
         host: "mydistribution.cloudfront.net",
         s3DomainName: "my-bucket.s3.amazonaws.com",
         s3Region: "eu-west-1"
@@ -238,7 +239,7 @@ describe("Lambda@Edge", () => {
         s3: {
           authMethod: "origin-access-identity",
           domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
-          path: "/public",
+          path: "/basepath/public",
           region: "eu-west-1"
         }
       });
@@ -252,7 +253,7 @@ describe("Lambda@Edge", () => {
 
   it("renders 404 page if request path can't be matched to any page / api routes", async () => {
     const event = createCloudFrontEvent({
-      uri: "/page/does/not/exist",
+      uri: "/basepath/page/does/not/exist",
       host: "mydistribution.cloudfront.net"
     });
 

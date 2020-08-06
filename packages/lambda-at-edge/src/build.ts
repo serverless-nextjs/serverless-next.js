@@ -198,6 +198,10 @@ class Builder {
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
+      ),
+      fse.copy(
+        join(this.dotNextDir, "routes-manifest.json"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
   }
@@ -251,6 +255,10 @@ class Builder {
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
+      ),
+      fse.copy(
+        join(this.dotNextDir, "routes-manifest.json"),
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
   }

@@ -179,7 +179,8 @@ describe("Builder Tests", () => {
         "manifest.json",
         "node_modules",
         "pages",
-        "prerender-manifest.json"
+        "prerender-manifest.json",
+        "routes-manifest.json"
       ]);
 
       expect(compatLayerIncluded).toEqual(true);
@@ -220,7 +221,8 @@ describe("Builder Tests", () => {
         "index.js",
         "manifest.json",
         "node_modules",
-        "pages"
+        "pages",
+        "routes-manifest.json"
       ]);
       expect(pages).toEqual(["api"]);
     });

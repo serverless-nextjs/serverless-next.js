@@ -12,7 +12,7 @@ jest.mock(
 
 jest.mock(
   "../../src/routes-manifest.json",
-  () => require("./api-routes-manifest.json"),
+  () => require("./api-basepath-routes-manifest.json"),
   {
     virtual: true
   }
@@ -28,10 +28,10 @@ const mockPageRequire = (mockPagePath: string): void => {
   );
 };
 
-describe("API lambda handler", () => {
+describe("API lambda handler with basePath configured", () => {
   it("serves api request", async () => {
     const event = createCloudFrontEvent({
-      uri: "/api/getCustomers",
+      uri: "/basepath/api/getCustomers",
       host: "mydistribution.cloudfront.net",
       origin: {
         s3: {
