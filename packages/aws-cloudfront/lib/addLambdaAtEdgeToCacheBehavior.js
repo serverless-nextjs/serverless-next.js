@@ -19,7 +19,7 @@ module.exports = (cacheBehavior, lambdaAtEdgeConfig = {}) => {
     cacheBehavior.LambdaFunctionAssociations.Items.push({
       EventType: eventType,
       LambdaFunctionARN: lambdaAtEdgeConfig[eventType],
-      IncludeBody: true
+      IncludeBody: eventType.includes("request") ? true : undefined
     });
   });
 };
