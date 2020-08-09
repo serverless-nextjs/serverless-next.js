@@ -1,0 +1,41 @@
+{
+  "name": "@sls-next/cloudfront",
+  "version": "1.0.2",
+  "description": "Handles CloudFront invalidation",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "directories": {
+    "dist": "dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "directory": "packages/libs/cloudfront"
+  },
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "keywords": [
+    "AWS",
+    "CloudFront",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "dependencies": {
+    "aws-sdk": "2.728.0"
+  },
+  "devDependencies": {
+    "@types/node": "^14.0.27",
+    "typescript": "^3.9.7"
+  }
+}

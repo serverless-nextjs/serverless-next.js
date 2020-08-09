@@ -39,8 +39,8 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.10.4",
-    "@sls-next/lambda-at-edge": "link:./packages/lambda-at-edge",
-    "@sls-next/next-aws-cloudfront": "link:./packages/lambda-at-edge-compat",
+    "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
+    "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.3",
     "@types/react": "^16.9.41",
@@ -78,8 +78,8 @@
     },
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
-      "<rootDir>/packages/serverless-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/serverless-plugin/utils/test",
+      "<rootDir>/packages/deprecated/serverless-plugin/utils/yml/cfSchema.js",
+      "<rootDir>/packages/deprecated/serverless-plugin/utils/test",
       "/.serverless_nextjs/",
       "/fixtures/",
       "/fixture/",
@@ -92,6 +92,7 @@
       "/fixtures/"
     ],
     "testPathIgnorePatterns": [
+      "<rootDir>/packages/deprecated/serverless-plugin/*",
       "/.next/",
       "/node_modules/",
       "/fixtures/",

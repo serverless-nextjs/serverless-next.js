@@ -1,0 +1,50 @@
+{
+  "name": "@sls-next/serverless-component",
+  "publishConfig": {
+    "access": "public"
+  },
+  "version": "1.17.0-alpha.1",
+  "description": "Serverless nextjs powered by Serverless Components",
+  "main": "./serverless.js",
+  "types": "dist/component.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "directory": "packages/serverless-components/nextjs-component"
+  },
+  "scripts": {
+    "prepare": "yarn build",
+    "build": "tsc -p tsconfig.build.json"
+  },
+  "keywords": [
+    "serverless",
+    "component",
+    "nextjs"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "engines": {
+    "node": ">=10.11.0"
+  },
+  "dependencies": {
+    "@serverless/aws-s3": "^4.2.0",
+    "@serverless/core": "^1.1.2",
+    "@sls-next/aws-cloudfront": "link:../aws-cloudfront",
+    "@sls-next/aws-lambda": "link:../aws-lambda",
+    "@sls-next/domain": "link:../domain",
+    "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
+    "@sls-next/lambda-at-edge": "link:../..libs/lambda-at-edge",
+    "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
+    "@sls-next/cloudfront": "link:../../libs/cloudfront",
+    "aws-sdk": "^2.702.0",
+    "fs-extra": "^9.0.1"
+  },
+  "devDependencies": {
+    "@types/fs-extra": "^9.0.1",
+    "typescript": "^3.9.6"
+  }
+}
