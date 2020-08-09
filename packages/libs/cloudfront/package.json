@@ -32,9 +32,10 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "^2.702.0"
+    "aws-sdk": "2.728.0"
   },
   "devDependencies": {
-    "typescript": "^3.9.6"
+    "@types/node": "^14.0.27",
+    "typescript": "^3.9.7"
   }
 }
