@@ -10,7 +10,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
-    "directory": "packages/serverless-component"
+    "directory": "packages/serverless-components/nextjs-component"
   },
   "scripts": {
     "prepare": "yarn build",
@@ -35,11 +35,11 @@
     "@serverless/core": "^1.1.2",
     "@sls-next/aws-cloudfront": "link:../aws-cloudfront",
     "@sls-next/aws-lambda": "link:../aws-lambda",
-    "@sls-next/cloudfront": "link:../cloudfront",
     "@sls-next/domain": "link:../domain",
-    "@sls-next/lambda-at-edge": "link:../lambda-at-edge",
-    "@sls-next/next-aws-cloudfront": "link:../lambda-at-edge-compat",
-    "@sls-next/s3-static-assets": "link:../s3-static-assets",
+    "@sls-next/next-aws-cloudfront": "link:../compat-layers/lambda-at-edge-compat",
+    "@sls-next/lambda-at-edge": "link:../libs/lambda-at-edge",
+    "@sls-next/s3-static-assets": "link:../libs/s3-static-assets",
+    "@sls-next/cloudfront": "link:../libs/cloudfront",
     "aws-sdk": "^2.702.0",
     "fs-extra": "^9.0.1"
   },

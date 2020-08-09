@@ -17,7 +17,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
-    "directory": "packages/lambda-at-edge"
+    "directory": "packages/libs/lambda-at-edge"
   },
   "keywords": [
     "AWS",
