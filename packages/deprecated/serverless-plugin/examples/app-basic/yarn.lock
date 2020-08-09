@@ -1085,7 +1085,12 @@
   resolved "https://registry.yarnpkg.com/@sindresorhus/is/-/is-0.7.0.tgz#9a06f4f137ee84d7df0460c1fdb1135ffa6c50fd"
   integrity sha512-ONhaKPIufzzrlNbqtWFFd+jlnemX6lJAgq9ZeiZtS7I1PIf/la7CW4m83rTXRnVnsMbW2k56pGYu7AUFJD9Pow==
 
-"@sls-next/next-aws-lambda@^2.0.5-alpha.0", "@sls-next/next-aws-lambda@^2.6.0-alpha.1":
+"@sls-next/next-aws-lambda@^2.0.5-alpha.0":
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/@sls-next/next-aws-lambda/-/next-aws-lambda-2.6.1.tgz#3bb898429af6bc330424d92dd80727210ea4be79"
+  integrity sha512-5t5LtIEhYoK87Ng9X+FH5mfgqkbnJJeCKzVpOOrUoaTIW8Oo7xFt96vcfkiMACsQ3VZBR+qzPZWzZcLRXtBf+A==
+
+"@sls-next/next-aws-lambda@^2.6.0-alpha.1":
   version "2.6.0-alpha.1"
   resolved "https://registry.yarnpkg.com/@sls-next/next-aws-lambda/-/next-aws-lambda-2.6.0-alpha.1.tgz#53ba5d8b8f9bb805afc2d39039afd9528786135f"
   integrity sha512-p3EzfHMsn9Z11CDRvQJ5f15WIDjXkSwZuJtQVYRNFgVhMLTXre8SmFYpSq9DU0fjM4xaEBUc3ar2VKgdVvZAYg==
@@ -5448,9 +5453,9 @@ lodash.union@^4.6.0:
   integrity sha1-SLtQiECfFvGCFmZkHETdGqrjzYg=
 
 lodash@4.17.x, lodash@^4.17.10, lodash@^4.17.11, lodash@^4.17.12, lodash@^4.17.13, lodash@^4.17.14, lodash@^4.17.15, lodash@^4.17.4:
-  version "4.17.15"
-  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.15.tgz#b447f6670a0455bbfeedd11392eff330ea097548"
-  integrity sha512-8xOcRHvCjnocdS5cpwXQXVzmmh5e5+saE2QGoeQmbKmRS6J3VQppPOIt0MnmE+4xlZoumy0GPG0D0MVIQbNA1A==
+  version "4.17.19"
+  resolved "https://registry.yarnpkg.com/lodash/-/lodash-4.17.19.tgz#e48ddedbe30b3321783c5b4301fbd353bc1e4a4b"
+  integrity sha512-JNvd8XER9GQX0v2qJgsaN/mzFCNA5BRe/j8JN9d+tWyGLSodKQHKFicdwNYzWwI3wjRnaKPsGj1XkBjx/F96DQ==
 
 log@^6.0.0:
   version "6.0.0"
