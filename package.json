@@ -39,8 +39,8 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.10.4",
-    "@sls-next/lambda-at-edge": "link:./packages/lambda-at-edge",
-    "@sls-next/next-aws-cloudfront": "link:./packages/lambda-at-edge-compat",
+    "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
+    "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/aws-sdk": "^2.7.0",
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.3",
