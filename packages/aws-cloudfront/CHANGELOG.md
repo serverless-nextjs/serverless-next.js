@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.1.0...@sls-next/aws-cloudfront@1.1.1-alpha.0) (2020-08-09)
+
+### Bug Fixes
+
+- **aws-cloudfront:** IncludeBody option only with viewer-request or origin-request ([#533](https://github.com/serverless-nextjs/serverless-next.js/issues/533)) ([5c4b2c4](https://github.com/serverless-nextjs/serverless-next.js/commit/5c4b2c47ae235014dc723bf0515f3d025c67d726))
+
 # [1.1.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.1.0-alpha.1...@sls-next/aws-cloudfront@1.1.0) (2020-08-01)
 
 **Note:** Version bump only for package @sls-next/aws-cloudfront
