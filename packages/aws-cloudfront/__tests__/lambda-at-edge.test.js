@@ -64,14 +64,12 @@ describe("Input origin as a custom url", () => {
           {
             EventType: "origin-response",
             LambdaFunctionARN:
-              "arn:aws:lambda:us-east-1:123:function:originResponseFunction",
-            IncludeBody: true
+              "arn:aws:lambda:us-east-1:123:function:originResponseFunction"
           },
           {
             EventType: "viewer-response",
             LambdaFunctionARN:
-              "arn:aws:lambda:us-east-1:123:function:viewerResponseFunction",
-            IncludeBody: true
+              "arn:aws:lambda:us-east-1:123:function:viewerResponseFunction"
           }
         ]
       }
