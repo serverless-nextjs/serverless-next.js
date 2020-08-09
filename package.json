@@ -92,6 +92,7 @@
       "/fixtures/"
     ],
     "testPathIgnorePatterns": [
+      "<rootDir>/packages/deprecated/serverless-plugin/*",
       "/.next/",
       "/node_modules/",
       "/fixtures/",
