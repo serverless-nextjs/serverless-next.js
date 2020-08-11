@@ -14,8 +14,10 @@ import {
 import {
   OriginRequestEvent,
   OriginRequestDefaultHandlerManifest,
-  PreRenderedManifest as PrerenderManifestType
+  PreRenderedManifest as PrerenderManifestType,
+  OriginResponseEvent
 } from "../types";
+import S3 from "aws-sdk/clients/s3";
 
 const addS3HostHeader = (
   req: CloudFrontRequest,
@@ -90,13 +92,29 @@ const router = (
 };
 
 export const handler = async (
-  event: OriginRequestEvent
+  event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
-  const request = event.Records[0].cf.request;
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
-  const { pages, publicFiles } = manifest;
+  if (isOriginResponse(event)) {
+    return await handleOriginResponse({ event, manifest, prerenderManifest });
+  } else {
+    return await handleOriginRequest({ event, manifest, prerenderManifest });
+  }
+};
+
+const handleOriginRequest = async ({
+  event,
+  manifest,
+  prerenderManifest
+}: {
+  event: OriginRequestEvent;
+  manifest: OriginRequestDefaultHandlerManifest;
+  prerenderManifest: PrerenderManifestType;
+}) => {
+  const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
+  const { pages, publicFiles } = manifest;
   const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
   const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
@@ -104,27 +122,25 @@ export const handler = async (
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
+  const hasFallback = hasFallbackForUri(uri, prerenderManifest);
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  if (isHTMLPage || isPublicFile) {
-    s3Origin.path = isHTMLPage
-      ? `${basePath}/static-pages`
-      : `${basePath}/public`;
-
-    addS3HostHeader(request, normalisedS3DomainName);
-
-    if (isHTMLPage) {
+  if (isHTMLPage || isPublicFile || hasFallback || isDataRequest(uri)) {
+    if (isHTMLPage || hasFallback) {
+      s3Origin.path = `${basePath}/static-pages`;
       let pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
     }
 
     if (isPublicFile) {
+      s3Origin.path = `${basePath}/public`;
       if (basePath) {
         request.uri = request.uri.replace(basePath, "");
       }
     }
 
+    addS3HostHeader(request, normalisedS3DomainName);
     return request;
   }
 
@@ -139,16 +155,105 @@ export const handler = async (
 
   // eslint-disable-next-line
   const page = require(`./${pagePath}`);
-
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
-
-  if (isDataRequest(uri)) {
-    const { renderOpts } = await page.renderReqToHTML(req, res, "passthrough");
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(renderOpts.pageData));
-  } else {
-    page.render(req, res);
-  }
+  page.render(req, res);
 
   return responsePromise;
+};
+
+const handleOriginResponse = async ({
+  event,
+  manifest,
+  prerenderManifest
+}: {
+  event: OriginResponseEvent;
+  manifest: OriginRequestDefaultHandlerManifest;
+  prerenderManifest: PrerenderManifestType;
+}) => {
+  const response = event.Records[0].cf.response;
+  const request = event.Records[0].cf.request;
+  const uri = normaliseUri(request.uri);
+  const { status } = response;
+  if (status !== "403") return response;
+  const { domainName, region } = request.origin!.s3!;
+  const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+  // It's usually better to do this outside the handler, but we need to know the bucket region
+  const s3 = new S3({ region: request.origin?.s3?.region });
+  if (isDataRequest(uri)) {
+    const pagePath = router(manifest)(uri);
+    // eslint-disable-next-line
+    const page = require(`./${pagePath}`);
+    const { req, res, responsePromise } = lambdaAtEdgeCompat(
+      event.Records[0].cf
+    );
+    const isSSG = !!page.getStaticProps;
+    const { renderOpts, html } = await page.renderReqToHTML(
+      req,
+      res,
+      "passthrough"
+    );
+    if (isSSG) {
+      const s3JsonParams = {
+        Bucket: bucketName,
+        Key: uri.replace(/^\//, ""),
+        Body: JSON.stringify(renderOpts.pageData),
+        ContentType: "application/json"
+      };
+      const s3HtmlParams = {
+        Bucket: bucketName,
+        Key: `static-pages/${request.uri
+          .replace(`/_next/data/${manifest.buildId}/`, "")
+          .replace(".json", ".html")}`,
+        Body: html,
+        ContentType: "text/html",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      };
+      await Promise.all([
+        s3.putObject(s3JsonParams).promise(),
+        s3.putObject(s3HtmlParams).promise()
+      ]);
+    }
+    res.writeHead(200, response.headers as any);
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify(renderOpts.pageData));
+    return responsePromise;
+  } else {
+    const hasFallback = hasFallbackForUri(uri, prerenderManifest);
+    if (!hasFallback) return response;
+    const s3Params = {
+      Bucket: bucketName,
+      Key: `static-pages${hasFallback.fallback}`
+    };
+    const { Body } = await s3.getObject(s3Params).promise();
+    return {
+      status: "200",
+      statusDescription: "OK",
+      headers: {
+        ...response.headers,
+        "content-type": [
+          {
+            key: "Content-Type",
+            value: "text/html"
+          }
+        ]
+      },
+      body: Body?.toString("utf-8")
+    };
+  }
+};
+
+const isOriginResponse = (
+  event: OriginRequestEvent | OriginResponseEvent
+): event is OriginResponseEvent => {
+  return event.Records[0].cf.config.eventType === "origin-response";
+};
+
+const hasFallbackForUri = (
+  uri: string,
+  prerenderManifest: PrerenderManifestType
+) => {
+  return Object.values(prerenderManifest.dynamicRoutes).find((routeConfig) => {
+    const re = new RegExp(routeConfig.routeRegex);
+    return re.test(uri);
+  });
 };

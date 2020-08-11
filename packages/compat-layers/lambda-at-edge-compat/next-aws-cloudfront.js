@@ -90,14 +90,22 @@ const HttpStatusCodes = {
   305: "Use Proxy"
 };
 
-const toCloudFrontHeaders = (headers) => {
+const toCloudFrontHeaders = (headers, originalHeaders) => {
   const result = {};
+  const lowerCaseOriginalHeaders = {};
+  Object.entries(originalHeaders).forEach(([header, value]) => {
+    lowerCaseOriginalHeaders[header.toLowerCase()] = value;
+  });
 
   Object.keys(headers).forEach((headerName) => {
     const lowerCaseHeaderName = headerName.toLowerCase();
     const headerValue = headers[headerName];
 
     if (readOnlyCloudFrontHeaders[lowerCaseHeaderName]) {
+      if (lowerCaseOriginalHeaders[lowerCaseHeaderName]) {
+        result[lowerCaseHeaderName] =
+          lowerCaseOriginalHeaders[lowerCaseHeaderName];
+      }
       return;
     }
 
@@ -137,7 +145,7 @@ const isGzipSupported = (headers) => {
 };
 
 const handler = (event) => {
-  const { request: cfRequest } = event;
+  const { request: cfRequest, response: cfResponse = { headers: {} } } = event;
 
   const response = {
     headers: {}
@@ -240,7 +248,7 @@ const handler = (event) => {
           : Buffer.from(response.body).toString("base64");
       }
 
-      response.headers = toCloudFrontHeaders(res.headers);
+      response.headers = toCloudFrontHeaders(res.headers, cfResponse.headers);
 
       if (gz) {
         response.headers["content-encoding"] = [

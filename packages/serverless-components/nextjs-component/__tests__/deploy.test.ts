@@ -80,7 +80,7 @@ describe("deploy tests", () => {
 
   describe("cloudfront", () => {
     it("provisions default lambda", () => {
-      expect(mockLambda).toBeCalledWith({
+      expect(mockLambda).toHaveBeenNthCalledWith(2, {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -90,15 +90,30 @@ describe("deploy tests", () => {
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn:
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Resource: "*",
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ]
+              },
+              {
+                Effect: "Allow",
+                Resource: `arn:aws:s3:::bucket-xyz/*`,
+                Action: ["s3:GetObject", "s3:PutObject"]
+              }
+            ]
           }
         }
       });
     });
 
     it("provisions api lambda", () => {
-      expect(mockLambda).toBeCalledWith({
+      expect(mockLambda).toHaveBeenNthCalledWith(1, {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
@@ -126,6 +141,8 @@ describe("deploy tests", () => {
           ttl: 0,
           "lambda@edge": {
             "origin-request":
+              "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
+            "origin-response":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
           },
           compress: true
@@ -148,6 +165,8 @@ describe("deploy tests", () => {
                 allowedHttpMethods: ["HEAD", "GET"],
                 "lambda@edge": {
                   "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
+                  "origin-response":
                     "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
                 }
               },

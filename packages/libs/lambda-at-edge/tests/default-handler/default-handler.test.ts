@@ -45,14 +45,15 @@ describe("Lambda@Edge", () => {
   describe("Routing", () => {
     describe("HTML pages routing", () => {
       it.each`
-        path                                               | expectedPage
-        ${"/"}                                             | ${"/index.html"}
-        ${"/index"}                                        | ${"/index.html"}
-        ${"/terms"}                                        | ${"/terms.html"}
-        ${"/users/batman"}                                 | ${"/users/[user].html"}
-        ${"/users/test/catch/all"}                         | ${"/users/[...user].html"}
-        ${"/john/123"}                                     | ${"/[username]/[id].html"}
-        ${"/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
+        path                                                  | expectedPage
+        ${"/"}                                                | ${"/index.html"}
+        ${"/index"}                                           | ${"/index.html"}
+        ${"/terms"}                                           | ${"/terms.html"}
+        ${"/users/batman"}                                    | ${"/users/[user].html"}
+        ${"/users/test/catch/all"}                            | ${"/users/[...user].html"}
+        ${"/john/123"}                                        | ${"/[username]/[id].html"}
+        ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
+        ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -155,18 +156,17 @@ describe("Lambda@Edge", () => {
 
         const result = await handler(event);
 
-        const response = result as CloudFrontResultResponse;
-        const decodedBody = new Buffer(
-          response.body as string,
-          "base64"
-        ).toString("utf8");
+        const request = result as CloudFrontRequest;
 
-        const headers = response.headers as CloudFrontHeaders;
-        expect(headers["content-type"][0].value).toEqual("application/json");
-        expect(JSON.parse(decodedBody)).toEqual({
-          page: expectedPage
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "",
+            region: "us-east-1"
+          }
         });
-        expect(response.status).toEqual(200);
+        expect(request.uri).toEqual(path);
       });
     });
 

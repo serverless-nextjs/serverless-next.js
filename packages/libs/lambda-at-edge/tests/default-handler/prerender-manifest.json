@@ -13,6 +13,12 @@
       "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest/[staticPageName].json",
       "fallback": false,
       "dataRouteRegex": "^/_next/data/test-build-id/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+    },
+    "/tests/prerender-manifest-fallback/[fallback]": {
+      "routeRegex": "^/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
+      "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest-fallback/[staticPageName].json",
+      "fallback": "/tests/prerender-manifest-fallback/[fallback].html",
+      "dataRouteRegex": "^/_next/data/test-build-id/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
     }
   },
   "preview": {

@@ -622,6 +622,8 @@ describe("Custom inputs", () => {
       "lambda@edge": {
         "origin-request":
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+        "origin-response":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
         ...defaults["lambda@edge"]
       }
     };
@@ -686,6 +688,8 @@ describe("Custom inputs", () => {
               allowedHttpMethods: ["HEAD", "GET"],
               "lambda@edge": {
                 "origin-request":
+                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                "origin-response":
                   "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
               }
             },

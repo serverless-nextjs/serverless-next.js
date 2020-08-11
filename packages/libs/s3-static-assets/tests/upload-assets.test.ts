@@ -100,6 +100,18 @@ describe("Upload tests shared", () => {
     expect(AWS.S3).toBeCalledTimes(1);
   });
 
+  it("uploads fallback pages for prerendered HTML pages specified in prerender manifest", async () => {
+    await upload("./fixtures/app-with-fallback");
+
+    expect(mockUpload).toBeCalledWith(
+      expect.objectContaining({
+        Key: "static-pages/fallback/[slug].html",
+        ContentType: "text/html",
+        CacheControl: SERVER_CACHE_CONTROL_HEADER
+      })
+    );
+  });
+
   describe("when no public or static directory exists", () => {
     it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
   });

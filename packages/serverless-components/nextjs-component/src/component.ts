@@ -389,11 +389,27 @@ class NextjsComponent extends Component {
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-        policy: {
-          arn:
-            inputs.policy ||
-            "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        }
+        policy: inputs.policy
+          ? { arn: inputs.policy }
+          : {
+              Version: "2012-10-17",
+              Statement: [
+                {
+                  Effect: "Allow",
+                  Resource: "*",
+                  Action: [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
+                  Action: ["s3:GetObject", "s3:PutObject"]
+                }
+              ]
+            }
       },
       memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
       timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
@@ -460,6 +476,7 @@ class NextjsComponent extends Component {
       ttl: 0,
       allowedHttpMethods: ["HEAD", "GET"],
       "lambda@edge": {
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
         "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
       }
     };
@@ -486,7 +503,8 @@ class NextjsComponent extends Component {
         allowedHttpMethods: ["HEAD", "GET"],
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+          "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         },
         compress: true
       },

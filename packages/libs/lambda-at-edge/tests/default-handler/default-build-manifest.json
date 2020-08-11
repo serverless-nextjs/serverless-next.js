@@ -52,6 +52,10 @@
           "file": "pages/users/[...user].html",
           "regex": "^/users(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
         },
+        "/fallback/:slug": {
+          "file": "pages/fallback/[slug].js",
+          "regex": "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
         "/:username/:id": {
           "file": "pages/[username]/[id].html",
           "regex": "^/([^/]+?)/([^/]+?)(?:/)?$"
