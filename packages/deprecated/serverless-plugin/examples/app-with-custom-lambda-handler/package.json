@@ -19,7 +19,7 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-nextjs-plugin#readme",
   "dependencies": {
-    "next": "^8.0.3",
+    "next": "^9.5.2",
     "react": "^16.8.4",
     "react-dom": "^16.8.4"
   },
