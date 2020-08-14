@@ -23,7 +23,7 @@
   },
   "dependencies": {
     "@zeit/next-css": "^1.0.1",
-    "next": "^8.0.3",
+    "next": "^9.5.1",
     "@sls-next/next-aws-lambda": "^2.0.5-alpha.0",
     "react": "^16.8.4",
     "react-dom": "^16.8.4",
