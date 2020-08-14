@@ -69,6 +69,7 @@ class NextjsComponent extends Component {
     stillToMatch.delete(this.pathPattern("api/*", routesManifest));
     stillToMatch.delete(this.pathPattern("static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
+
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
