@@ -38,7 +38,7 @@ There is no configuration needed. You can extend defaults based on your applicat
 
 2. Feature parity with nextjs
 
-Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love.
+Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
 
 3. Fast deployments / no CloudFormation resource limits.
 
@@ -51,6 +51,7 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 - [x] [API Routes](https://nextjs.org/docs#api-routes).
       Similarly to the server side rendered pages, API requests are also served from the CloudFront edge locations using Lambda@Edge.
 - [x] [Dynamic pages / route segments](https://github.com/zeit/next.js/#dynamic-routing).
+- [x] [Catch all routes](https://nextjs.org/docs/routing/dynamic-routes).
 - [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
       Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
 - [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
@@ -60,7 +61,9 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
 - [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
-- [ ] `getStaticPaths` using fallback page. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath) available on current `alpha` release.
+- [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
+- [ ] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites)
 - [ ] Preview mode. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
 
 ### Getting started
