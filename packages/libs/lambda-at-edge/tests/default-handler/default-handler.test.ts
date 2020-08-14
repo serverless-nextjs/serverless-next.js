@@ -3,7 +3,6 @@ import { createCloudFrontEvent } from "../test-utils";
 import {
   CloudFrontRequest,
   CloudFrontResultResponse,
-  CloudFrontHeaders,
   CloudFrontOrigin
 } from "aws-lambda";
 

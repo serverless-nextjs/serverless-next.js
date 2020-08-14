@@ -1,10 +1,8 @@
 import { handler } from "../../src/default-handler";
 import { createCloudFrontEvent } from "../test-utils";
 import {
-  CloudFrontRequest,
   CloudFrontResultResponse,
   CloudFrontHeaders,
-  CloudFrontOrigin,
   CloudFrontResponse
 } from "aws-lambda";
 import S3 from "aws-sdk/clients/s3";
