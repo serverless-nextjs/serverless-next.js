@@ -1,4 +1,8 @@
-import { CloudFrontRequest } from "aws-lambda";
+import {
+  CloudFrontRequest,
+  CloudFrontEvent,
+  CloudFrontResponse
+} from "aws-lambda";
 
 export type DynamicPageKeyValue = {
   [key: string]: {
@@ -38,7 +42,21 @@ export type OriginRequestDefaultHandlerManifest = {
 };
 
 export type OriginRequestEvent = {
-  Records: [{ cf: { request: CloudFrontRequest } }];
+  Records: [
+    { cf: { request: CloudFrontRequest; config: CloudFrontEvent["config"] } }
+  ];
+};
+
+export type OriginResponseEvent = {
+  Records: [
+    {
+      cf: {
+        request: CloudFrontRequest;
+        response: CloudFrontResponse;
+        config: CloudFrontEvent["config"];
+      };
+    }
+  ];
 };
 
 export type PreRenderedManifest = {

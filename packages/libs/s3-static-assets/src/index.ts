@@ -130,6 +130,24 @@ const uploadStaticAssets = async (
     });
   });
 
+  const fallbackHTMLPageUploads = Object.values(
+    prerenderManifest.dynamicRoutes || {}
+  )
+    .filter(({ fallback }) => {
+      return !!fallback;
+    })
+    .map((routeConfig) => {
+      const fallback = routeConfig.fallback as string;
+      const pageFilePath = pathToPosix(
+        path.join(dotNextDirectory, `serverless/pages/${fallback}`)
+      );
+      return s3.uploadFile({
+        s3Key: withBasePath(path.posix.join("static-pages", fallback)),
+        filePath: pageFilePath,
+        cacheControl: SERVER_CACHE_CONTROL_HEADER
+      });
+    });
+
   const uploadPublicOrStaticDirectory = async (
     directory: "public" | "static",
     publicDirectoryCache?: PublicDirectoryCache
@@ -171,6 +189,7 @@ const uploadStaticAssets = async (
     ...htmlPageUploads, // prerendered HTML pages
     ...prerenderManifestJSONPropFileUploads, // SSG JSON files
     ...prerenderManifestHTMLPageUploads, // SSG HTML files
+    ...fallbackHTMLPageUploads, // Fallback files
     ...publicDirUploads, // app public dir
     ...staticDirUploads // app static dir
   ];

@@ -156,18 +156,17 @@ describe("Lambda@Edge", () => {
 
         const result = await handler(event);
 
-        const response = result as CloudFrontResultResponse;
-        const decodedBody = new Buffer(
-          response.body as string,
-          "base64"
-        ).toString("utf8");
+        const request = result as CloudFrontRequest;
 
-        const headers = response.headers as CloudFrontHeaders;
-        expect(headers["content-type"][0].value).toEqual("application/json");
-        expect(JSON.parse(decodedBody)).toEqual({
-          page: expectedPage
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "",
+            region: "us-east-1"
+          }
         });
-        expect(response.status).toEqual(200);
+        expect(request.uri).toEqual(path);
       });
     });
 

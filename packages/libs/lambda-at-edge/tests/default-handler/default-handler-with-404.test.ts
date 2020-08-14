@@ -35,7 +35,8 @@ describe("Lambda@Edge", () => {
         s3: {
           domainName: "my-bucket.s3.amazonaws.com"
         }
-      }
+      },
+      config: { eventType: "origin-request" } as any
     });
 
     const response = (await handler(event)) as CloudFrontResultResponse;

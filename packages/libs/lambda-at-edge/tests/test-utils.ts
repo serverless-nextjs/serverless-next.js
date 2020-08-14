@@ -1,6 +1,10 @@
 import path from "path";
 import { remove } from "fs-extra";
-import { CloudFrontOrigin } from "aws-lambda";
+import {
+  CloudFrontOrigin,
+  CloudFrontEvent,
+  CloudFrontResponse
+} from "aws-lambda";
 import { OriginRequestEvent } from "../types";
 
 export const cleanupDir = (dir: string): Promise<void> => {
@@ -18,17 +22,23 @@ type CloudFrontEventOptions = {
   host: string;
   s3DomainName?: string;
   s3Region?: string;
+  origin?: CloudFrontOrigin;
+  config?: CloudFrontEvent["config"];
+  response?: CloudFrontResponse;
 };
 
 export const createCloudFrontEvent = ({
   uri,
   host,
   s3DomainName,
-  s3Region
+  s3Region,
+  config = {} as any,
+  response
 }: CloudFrontEventOptions): OriginRequestEvent => ({
   Records: [
     {
       cf: {
+        config,
         request: {
           method: "GET",
           uri,
@@ -50,7 +60,8 @@ export const createCloudFrontEvent = ({
               domainName: s3DomainName || "my-bucket.s3.amazonaws.com"
             }
           }
-        }
+        },
+        response
       }
     }
   ]

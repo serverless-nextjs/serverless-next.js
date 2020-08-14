@@ -1,0 +1,18 @@
+{
+  "version": 2,
+  "routes": {
+    "/": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/index.json"
+    }
+  },
+  "dynamicRoutes": {
+    "/fallback/[slug]": {
+      "routeRegex": "^/fallback/([^/]+?)(?:/)?$",
+      "dataRoute": "/_next/data/build-id/fallback/[slug].json",
+      "fallback": "/fallback/[slug].html",
+      "dataRouteRegex": "^/_next/data/build-id/fallback/([^/]+?)\\.json$"
+    }
+  }
+}
