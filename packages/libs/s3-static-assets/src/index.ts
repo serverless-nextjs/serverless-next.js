@@ -186,12 +186,12 @@ const uploadStaticAssets = async (
 
   const allUploads = [
     ...buildStaticFileUploads, // .next/static
-    ...htmlPageUploads, // prerendered HTML pages
-    ...prerenderManifestJSONPropFileUploads, // SSG JSON files
-    ...prerenderManifestHTMLPageUploads, // SSG HTML files
-    ...fallbackHTMLPageUploads, // Fallback files
-    ...publicDirUploads, // app public dir
-    ...staticDirUploads // app static dir
+    ...htmlPageUploads, // prerendered html pages
+    ...prerenderManifestJSONPropFileUploads, // SSG json files
+    ...prerenderManifestHTMLPageUploads, // SSG html files
+    ...fallbackHTMLPageUploads, // fallback files
+    ...publicDirUploads, // public dir
+    ...staticDirUploads // static dir
   ];
 
   return Promise.all(allUploads);

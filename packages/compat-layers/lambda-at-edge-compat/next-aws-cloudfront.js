@@ -152,6 +152,7 @@ const handler = (event) => {
   };
 
   const newStream = new Stream.Readable();
+
   const req = Object.assign(newStream, http.IncomingMessage.prototype);
   req.url = cfRequest.uri;
   req.method = cfRequest.method;
