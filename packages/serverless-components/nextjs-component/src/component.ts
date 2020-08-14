@@ -78,8 +78,6 @@ class NextjsComponent extends Component {
       }
     }
 
-    // theres a lot of n^2 code running below but n is small and it only runs once so we can accept it
-
     // setup containers for the paths we're going to be matching against
 
     // for dynamic routes
@@ -516,13 +514,11 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
-    // create invalidation
     await createInvalidation({
       distributionId: cloudFrontOutputs.id,
       credentials: this.context.credentials.aws
     });
 
-    // create domain
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain && subdomain) {
       const domainComponent = await this.load("@sls-next/domain");
