@@ -83,6 +83,7 @@ class NextjsComponent extends Component {
 
     // for dynamic routes
     const manifestRegex: RegExp[] = [];
+
     // for static routes
     const manifestPaths = new Set();
 

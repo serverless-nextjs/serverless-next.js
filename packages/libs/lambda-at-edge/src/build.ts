@@ -358,7 +358,7 @@ class Builder {
       await Promise.all(
         fileItems
           .filter(
-            (fileItem) => fileItem !== "cache" // avoid deleting the cache folder as that would lead to slow builds!
+            (fileItem) => fileItem !== "cache" // avoid deleting the cache folder as that leads to slow next builds!
           )
           .map((fileItem) => fse.remove(join(this.dotNextDir, fileItem)))
       );
