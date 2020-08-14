@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.3.0-alpha.0...@sls-next/s3-static-assets@1.3.0-alpha.1) (2020-08-14)
+
+### Features
+
+- **serverless-component, lambda-at-edge, lambda-at-edge-compat, s3-static-assets:** add support for getStaticPaths fallback true ([#544](https://github.com/danielcondemarin/serverless-next.js/issues/544)) ([a08217b](https://github.com/danielcondemarin/serverless-next.js/commit/a08217ba26ea90f67c562fe4ae9510b617d14d08))
+
 # [1.3.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.2.2...@sls-next/s3-static-assets@1.3.0-alpha.0) (2020-08-06)
 
 ### Features

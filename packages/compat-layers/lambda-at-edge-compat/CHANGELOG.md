@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.4.1...@sls-next/next-aws-cloudfront@1.5.0-alpha.0) (2020-08-14)
+
+### Features
+
+- **serverless-component, lambda-at-edge, lambda-at-edge-compat, s3-static-assets:** add support for getStaticPaths fallback true ([#544](https://github.com/danielcondemarin/serverless-next.js/issues/544)) ([a08217b](https://github.com/danielcondemarin/serverless-next.js/commit/a08217ba26ea90f67c562fe4ae9510b617d14d08))
+
 ## [1.4.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.4.1-alpha.1...@sls-next/next-aws-cloudfront@1.4.1) (2020-08-01)
 
 **Note:** Version bump only for package @sls-next/next-aws-cloudfront
