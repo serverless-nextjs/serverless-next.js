@@ -15,9 +15,28 @@ import {
   OriginRequestEvent,
   OriginRequestDefaultHandlerManifest,
   PreRenderedManifest as PrerenderManifestType,
-  OriginResponseEvent
+  OriginResponseEvent,
+  PerfLogger
 } from "../types";
 import S3 from "aws-sdk/clients/s3";
+import { performance } from "perf_hooks";
+
+const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
+  if (logLambdaExecutionTimes) {
+    return {
+      now: () => performance.now(),
+      log: (metricDescription: string, t1?: number, t2?: number): void => {
+        if (!t1 || !t2) return;
+        console.log(`${metricDescription}: ${t2 - t1} (ms)`);
+      }
+    };
+  }
+  return {
+    now: () => undefined,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
+    log: (metricDescription: string, t2?: number, t1?: number) => {}
+  };
+};
 
 const addS3HostHeader = (
   req: CloudFrontRequest,
@@ -96,11 +115,28 @@ export const handler = async (
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
+
+  const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
+
+  const tHanlderBegin = now();
+  let response: CloudFrontResultResponse | CloudFrontRequest;
   if (isOriginResponse(event)) {
-    return await handleOriginResponse({ event, manifest, prerenderManifest });
+    response = await handleOriginResponse({
+      event,
+      manifest,
+      prerenderManifest
+    });
   } else {
-    return await handleOriginRequest({ event, manifest, prerenderManifest });
+    response = await handleOriginRequest({
+      event,
+      manifest,
+      prerenderManifest
+    });
   }
+  const tHanlderEnd = now();
+  log("handler execution time", tHanlderBegin, tHanlderEnd);
+
+  return response;
 };
 
 const handleOriginRequest = async ({
@@ -123,13 +159,14 @@ const handleOriginRequest = async ({
   const isHTMLPage = isStaticPage || isPrerenderedPage;
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest);
+  const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
 
   s3Origin.domainName = normalisedS3DomainName;
 
   if (isHTMLPage || isPublicFile || hasFallback || isDataRequest(uri)) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
-      let pageName = uri === "/" ? "/index" : uri;
+      const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
     }
 
@@ -153,10 +190,18 @@ const handleOriginRequest = async ({
     return request;
   }
 
+  const tBeforeRequireJs = now();
   // eslint-disable-next-line
   const page = require(`./${pagePath}`);
+  const tAfterRequireJs = now();
+  log("require JS execution time", tBeforeRequireJs, tAfterRequireJs);
+
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
+
+  const tBeforeSsrRender = now();
   page.render(req, res);
+  const tAfterSsrRender = now();
+  log("page render execution time", tBeforeSsrRender, tAfterSsrRender);
 
   return responsePromise;
 };
