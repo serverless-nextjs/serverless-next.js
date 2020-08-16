@@ -34,7 +34,7 @@ const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   return {
     now: () => undefined,
     // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-    log: (metricDescription: string, t2?: number, t1?: number) => {}
+    log: (metricDescription: string, t1?: number, t2?: number) => {}
   };
 };
 
@@ -198,10 +198,10 @@ const handleOriginRequest = async ({
 
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
 
-  const tBeforeSsrRender = now();
+  const tBeforeRenderPage = now();
   page.render(req, res);
-  const tAfterSsrRender = now();
-  log("page render execution time", tBeforeSsrRender, tAfterSsrRender);
+  const tAfterRenderPage = now();
+  log("page render execution time", tBeforeRenderPage, tAfterRenderPage);
 
   return responsePromise;
 };
