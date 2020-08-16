@@ -196,6 +196,7 @@ const handleOriginRequest = async ({
   const tAfterRequireJs = now();
   log("require JS execution time", tBeforeRequireJs, tAfterRequireJs);
 
+  const tBeforeLambdaCompatPromise = now();
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
 
   const tBeforeRenderPage = now();
@@ -203,7 +204,15 @@ const handleOriginRequest = async ({
   const tAfterRenderPage = now();
   log("page render execution time", tBeforeRenderPage, tAfterRenderPage);
 
-  return responsePromise;
+  const response = await responsePromise;
+  const tAfterLambdaCompatPromise = now();
+  log(
+    "lambda compat execution time (including page render)",
+    tBeforeLambdaCompatPromise,
+    tAfterLambdaCompatPromise
+  );
+
+  return response;
 };
 
 const handleOriginResponse = async ({
