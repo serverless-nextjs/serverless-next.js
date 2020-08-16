@@ -200,7 +200,7 @@ const handleOriginRequest = async ({
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
 
   const tBeforeRenderPage = now();
-  page.render(req, res);
+  await page.render(req, res);
   const tAfterRenderPage = now();
   log("page render execution time", tBeforeRenderPage, tAfterRenderPage);
 
