@@ -112,7 +112,7 @@ class Builder {
       .filter((file) => {
         // exclude "initial" files from lambda artefact. These are just the pages themselves
         // which are copied over separately
-        return !reasons[file] || reasons[file].type !== "initial";
+        return (!reasons[file] || reasons[file].type !== "initial") && file !== "package.json";
       })
       .map((filePath: string) => {
         const resolvedFilePath = path.resolve(filePath);
