@@ -72,16 +72,19 @@ const uploadStaticAssets = async (
   const htmlPageUploads = Object.values(pagesManifest)
     .filter((pageFile) => (pageFile as string).endsWith(".html"))
     .map((relativePageFilePath) => {
-      const pageFilePath = pathToPosix(
-        path.join(dotNextDirectory, `serverless/${relativePageFilePath}`)
+      const pageFilePath = path.join(
+        dotNextDirectory,
+        `serverless/${relativePageFilePath}`
       );
 
       return s3.uploadFile({
-        s3Key: withBasePath(
-          `static-pages/${(relativePageFilePath as string).replace(
-            /^pages\//,
-            ""
-          )}`
+        s3Key: pathToPosix(
+          withBasePath(
+            `static-pages/${(relativePageFilePath as string).replace(
+              /^pages\//,
+              ""
+            )}`
+          )
         ),
         filePath: pageFilePath,
         cacheControl: SERVER_CACHE_CONTROL_HEADER
@@ -105,7 +108,9 @@ const uploadStaticAssets = async (
     );
 
     return s3.uploadFile({
-      s3Key: withBasePath(prerenderManifest.routes[key].dataRoute.slice(1)),
+      s3Key: pathToPosix(
+        withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
+      ),
       filePath: pageFilePath
     });
   });
@@ -122,8 +127,8 @@ const uploadStaticAssets = async (
     );
 
     return s3.uploadFile({
-      s3Key: withBasePath(
-        path.posix.join("static-pages", relativePageFilePath)
+      s3Key: pathToPosix(
+        withBasePath(path.posix.join("static-pages", relativePageFilePath))
       ),
       filePath: pageFilePath,
       cacheControl: SERVER_CACHE_CONTROL_HEADER
@@ -142,7 +147,9 @@ const uploadStaticAssets = async (
         path.join(dotNextDirectory, `serverless/pages/${fallback}`)
       );
       return s3.uploadFile({
-        s3Key: withBasePath(path.posix.join("static-pages", fallback)),
+        s3Key: pathToPosix(
+          withBasePath(path.posix.join("static-pages", fallback))
+        ),
         filePath: pageFilePath,
         cacheControl: SERVER_CACHE_CONTROL_HEADER
       });
