@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0-alpha.6](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.17.0-alpha.5...@sls-next/serverless-component@1.17.0-alpha.6) (2020-08-19)
+
+### Features
+
+- **lambda-at-edge:** add opt in lambda execution times logging ([#549](https://github.com/danielcondemarin/serverless-next.js/issues/549)) ([066bd27](https://github.com/danielcondemarin/serverless-next.js/commit/066bd270ce8b8f915298b7bac51c2aeb3ab27126))
+
 # [1.17.0-alpha.5](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.17.0-alpha.4...@sls-next/serverless-component@1.17.0-alpha.5) (2020-08-14)
 
 **Note:** Version bump only for package @sls-next/serverless-component

@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.4](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.3...@sls-next/lambda-at-edge@1.6.0-alpha.4) (2020-08-19)
+
+### Bug Fixes
+
+- **lambda-at-edge:** ignore package.json during serverless-trace ([#552](https://github.com/danielcondemarin/serverless-next.js/issues/552)) ([d21f1d5](https://github.com/danielcondemarin/serverless-next.js/commit/d21f1d56b8b21bad38b86ec91ae5f26c8c9472bc))
+
+### Features
+
+- **lambda-at-edge:** add opt in lambda execution times logging ([#549](https://github.com/danielcondemarin/serverless-next.js/issues/549)) ([066bd27](https://github.com/danielcondemarin/serverless-next.js/commit/066bd270ce8b8f915298b7bac51c2aeb3ab27126))
+
 # [1.6.0-alpha.3](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.2...@sls-next/lambda-at-edge@1.6.0-alpha.3) (2020-08-14)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge

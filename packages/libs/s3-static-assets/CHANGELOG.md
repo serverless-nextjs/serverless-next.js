@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.3](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.3.0-alpha.2...@sls-next/s3-static-assets@1.3.0-alpha.3) (2020-08-19)
+
+### Bug Fixes
+
+- **s3-static-assets:** Fixed missing posix conversion in s3 uploads. ([#551](https://github.com/danielcondemarin/serverless-next.js/issues/551)) ([296d1b0](https://github.com/danielcondemarin/serverless-next.js/commit/296d1b087999610f025928e77f3c4b2d6b461c1b))
+
 # [1.3.0-alpha.2](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/s3-static-assets@1.3.0-alpha.1...@sls-next/s3-static-assets@1.3.0-alpha.2) (2020-08-14)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
