@@ -32,9 +32,8 @@ const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
     };
   }
   return {
-    now: () => undefined,
-    // eslint-disable-next-line @typescript-eslint/no-empty-function, @typescript-eslint/no-unused-vars
-    log: (metricDescription: string, t1?: number, t2?: number) => {}
+    now: () => 0,
+    log: () => {}
   };
 };
 
@@ -114,12 +113,13 @@ export const handler = async (
   event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
+  let response: CloudFrontResultResponse | CloudFrontRequest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
 
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
 
-  const tHanlderBegin = now();
-  let response: CloudFrontResultResponse | CloudFrontRequest;
+  const tHandlerBegin = now();
+
   if (isOriginResponse(event)) {
     response = await handleOriginResponse({
       event,
@@ -133,8 +133,10 @@ export const handler = async (
       prerenderManifest
     });
   }
-  const tHanlderEnd = now();
-  log("handler execution time", tHanlderBegin, tHanlderEnd);
+
+  const tHandlerEnd = now();
+
+  log("handler execution time", tHandlerBegin, tHandlerEnd);
 
   return response;
 };
@@ -190,27 +192,19 @@ const handleOriginRequest = async ({
     return request;
   }
 
-  const tBeforeRequireJs = now();
-  // eslint-disable-next-line
-  const page = require(`./${pagePath}`);
-  const tAfterRequireJs = now();
-  log("require JS execution time", tBeforeRequireJs, tAfterRequireJs);
+  const tBeforePageRequire = now();
+  const page = require(`./${pagePath}`); // eslint-disable-line
+  const tAfterPageRequire = now();
 
-  const tBeforeLambdaCompatPromise = now();
+  log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
+
+  const tBeforeSSR = now();
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
-
-  const tBeforeRenderPage = now();
-  await page.render(req, res);
-  const tAfterRenderPage = now();
-  log("page render execution time", tBeforeRenderPage, tAfterRenderPage);
-
+  page.render(req, res);
   const response = await responsePromise;
-  const tAfterLambdaCompatPromise = now();
-  log(
-    "lambda compat execution time (including page render)",
-    tBeforeLambdaCompatPromise,
-    tAfterLambdaCompatPromise
-  );
+  const tAfterSSR = now();
+
+  log("SSR execution time", tBeforeSSR, tAfterSSR);
 
   return response;
 };
