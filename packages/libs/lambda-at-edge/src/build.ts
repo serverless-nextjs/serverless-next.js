@@ -25,6 +25,7 @@ type BuildOptions = {
   env?: NodeJS.ProcessEnv;
   cmd?: string;
   useServerlessTraceTarget?: boolean;
+  logLambdaExecutionTimes?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -32,7 +33,8 @@ const defaultBuildOptions = {
   cwd: process.cwd(),
   env: {},
   cmd: "./node_modules/.bin/next",
-  useServerlessTraceTarget: false
+  useServerlessTraceTarget: false,
+  logLambdaExecutionTimes: false
 };
 
 class Builder {
@@ -273,8 +275,11 @@ class Builder {
       path.join(this.dotNextDir, "BUILD_ID"),
       "utf-8"
     );
+    const { logLambdaExecutionTimes = false } = this.buildOptions;
+
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
+      logLambdaExecutionTimes,
       pages: {
         ssr: {
           dynamic: {},

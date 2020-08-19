@@ -22,6 +22,7 @@ export type OriginRequestApiHandlerManifest = {
 
 export type OriginRequestDefaultHandlerManifest = {
   buildId: string;
+  logLambdaExecutionTimes: boolean;
   pages: {
     ssr: {
       dynamic: DynamicPageKeyValue;
@@ -83,4 +84,9 @@ export type PreRenderedManifest = {
 
 export type RoutesManifest = {
   basePath: string;
+};
+
+export type PerfLogger = {
+  now: () => number | undefined;
+  log: (metricDescription: string, t1?: number, t2?: number) => void;
 };

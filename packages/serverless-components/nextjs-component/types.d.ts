@@ -4,6 +4,7 @@ export type ServerlessComponentInputs = {
   build?: BuildOptions | boolean;
   nextConfigDir?: string;
   useServerlessTraceTarget?: boolean;
+  logLambdaExecutionTimes?: boolean;
   nextStaticDir?: string;
   bucketName?: string;
   bucketRegion?: string;
