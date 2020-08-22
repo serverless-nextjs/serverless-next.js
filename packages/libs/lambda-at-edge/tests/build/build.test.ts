@@ -76,7 +76,8 @@ describe("Builder Tests", () => {
         pages: {
           ssr: { dynamic, nonDynamic },
           html
-        }
+        },
+        trailingSlash
       } = defaultBuildManifest;
 
       expect(removeNewLineChars(buildId)).toEqual("test-build-id");
@@ -129,6 +130,8 @@ describe("Builder Tests", () => {
         "/sub/image.png": "sub/image.png",
         "/sw.js": "sw.js"
       });
+
+      expect(trailingSlash).toBe(false);
     });
   });
 

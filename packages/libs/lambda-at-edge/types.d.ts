@@ -40,6 +40,7 @@ export type OriginRequestDefaultHandlerManifest = {
   publicFiles: {
     [key: string]: string;
   };
+  trailingSlash: boolean;
 };
 
 export type OriginRequestEvent = {
