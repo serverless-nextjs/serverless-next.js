@@ -28,7 +28,7 @@ First, create your own test serverless component app and in the `serverless.yml`
 ```yml
 # serverless.yml
 nextApp:
-  component: "/path/to/your/fork/serverless-next.js/packages/serverless-component"
+  component: "/path/to/your/fork/serverless-next.js/packages/serverless-components/nextjs-component"
   inputs: ...
 ```
 
