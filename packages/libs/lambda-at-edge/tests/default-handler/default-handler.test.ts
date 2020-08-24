@@ -4,7 +4,6 @@ import {
   CloudFrontResultResponse,
   CloudFrontOrigin
 } from "aws-lambda";
-import exp from "constants";
 
 jest.mock(
   "../../src/prerender-manifest.json",

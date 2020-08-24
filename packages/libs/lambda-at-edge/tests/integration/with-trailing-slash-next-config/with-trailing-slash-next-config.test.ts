@@ -23,7 +23,7 @@ describe("With Trailing Slash Config Build", () => {
       args: ["build"]
     });
 
-    await builder.build();
+    await builder.build(false);
 
     defaultBuildManifest = await fse.readJSON(
       join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
