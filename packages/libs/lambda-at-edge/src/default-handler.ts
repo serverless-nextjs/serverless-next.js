@@ -339,6 +339,7 @@ const hasFallbackForUri = (
 };
 
 const createRedirectResponse = (uri: string, querystring: string) => {
+  const location = querystring ? `${uri}?${querystring}` : uri;
   return {
     status: "308",
     statusDescription: "Permanent Redirect",
@@ -347,6 +348,12 @@ const createRedirectResponse = (uri: string, querystring: string) => {
         {
           key: "Location",
           value: querystring ? `${uri}?${querystring}` : uri
+        }
+      ],
+      refresh: [
+        {
+          key: "Refresh",
+          value: `0;url=${location}`
         }
       ]
     }

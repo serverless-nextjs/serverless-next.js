@@ -23,7 +23,7 @@ describe("With Trailing Slash Config Build", () => {
       args: ["build"]
     });
 
-    await builder.build(false);
+    await builder.build();
 
     defaultBuildManifest = await fse.readJSON(
       join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
@@ -43,7 +43,7 @@ describe("With Trailing Slash Config Build", () => {
     const nextConfigPath = path.join(fixtureDir, "next.config.js");
     expect(await pathExists(nextConfigPath)).toBe(true);
     expect(removeNewLineChars(await readFile(nextConfigPath, "utf-8"))).toEqual(
-      'module.exports = () => ({ target: "serverless", trailingSlash: true });'
+      'module.exports = { target: "serverless", trailingSlash: true };'
     );
   });
 

@@ -89,6 +89,12 @@ describe("Lambda@Edge", () => {
               key: "Location",
               value: expectedRedirect
             }
+          ],
+          refresh: [
+            {
+              key: "Refresh",
+              value: `0;url=${expectedRedirect}`
+            }
           ]
         });
         expect(response.status).toEqual("308");

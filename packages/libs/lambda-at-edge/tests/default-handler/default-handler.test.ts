@@ -4,6 +4,7 @@ import {
   CloudFrontResultResponse,
   CloudFrontOrigin
 } from "aws-lambda";
+import exp from "constants";
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -88,6 +89,12 @@ describe("Lambda@Edge", () => {
             {
               key: "Location",
               value: expectedRedirect
+            }
+          ],
+          refresh: [
+            {
+              key: "Refresh",
+              value: `0;url=${expectedRedirect}`
             }
           ]
         });
