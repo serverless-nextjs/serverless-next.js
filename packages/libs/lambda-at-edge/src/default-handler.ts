@@ -22,6 +22,24 @@ import S3 from "aws-sdk/clients/s3";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 
+const parseCookieValue = (cookie: string) => {
+  return cookie.split(";").reduce<{ [key: string]: string }>((acc, curr) => {
+    const [key, value] = curr.split("=");
+    acc[key.trim()] = value.trim();
+    return acc;
+  }, {});
+};
+
+const checkPreviewRequest = (request: CloudFrontRequest) => {
+  const targetCookie = request.headers.cookie || [];
+  return targetCookie.some((cookieObj) => {
+    const cookieValue = parseCookieValue(cookieObj.value);
+    return (
+      cookieValue["__next_preview_data"] && cookieValue["__prerender_bypass"]
+    );
+  });
+};
+
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
     return {
@@ -211,11 +229,16 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
+  const isPreviewRequest = checkPreviewRequest(request);
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  // Check if we can serve request from S3
-  S3Check: if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
+  S3Check: if (
+    isPublicFile ||
+    (isHTMLPage && !isPreviewRequest) ||
+    (hasFallback && !isPreviewRequest) ||
+    (isDataReq && !isPreviewRequest)
+  ) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
       const pageName = uri === "/" ? "/index" : uri;
@@ -249,7 +272,7 @@ const handleOriginRequest = async ({
 
   const pagePath = router(manifest)(uri);
 
-  if (pagePath.endsWith(".html")) {
+  if (pagePath.endsWith(".html") && !isPreviewRequest) {
     s3Origin.path = `${basePath}/static-pages`;
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
@@ -272,7 +295,17 @@ const handleOriginRequest = async ({
     }
 
     // Render page
-    await page.render(req, res);
+    if (isDataRequest(uri)) {
+      const { renderOpts } = await page.renderReqToHTML(
+        req,
+        res,
+        "passthrough"
+      );
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(renderOpts.pageData));
+    } else {
+      await page.render(req, res);
+    }
   } catch (error) {
     // Set status to 500 so _error.js will render a 500 page
     console.error(

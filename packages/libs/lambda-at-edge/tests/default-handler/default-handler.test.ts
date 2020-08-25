@@ -186,6 +186,31 @@ describe("Lambda@Edge", () => {
 
         expect(response.status).toEqual("200");
       });
+      
+      it("handles preview mode", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/preview",
+          host: "mydistribution.cloudfront.net",
+          requestHeaders: {
+            cookie: [
+              {
+                key: "Cookie",
+                value: "__next_preview_data=abc; __prerender_bypass=def"
+              }
+            ]
+          }
+        });
+
+        mockPageRequire("pages/preview.js");
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = new Buffer(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
+        expect(decodedBody).toBe("pages/preview.js");
+        expect(response.status).toBe(200);
+      });
     });
 
     describe("Public files routing", () => {
@@ -369,6 +394,35 @@ describe("Lambda@Edge", () => {
           await runRedirectTest(path, expectedRedirect);
         }
       );
+
+      it("handles preview mode", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/_next/data/build-id/preview.json",
+          host: "mydistribution.cloudfront.net",
+          requestHeaders: {
+            cookie: [
+              {
+                key: "Cookie",
+                value: "__next_preview_data=abc; __prerender_bypass=def"
+              }
+            ]
+          }
+        });
+
+        mockPageRequire("/pages/preview.js");
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = new Buffer(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
+        expect(decodedBody).toBe(
+          JSON.stringify({
+            page: "pages/preview.js"
+          })
+        );
+        expect(response.status).toBe(200);
+      });
     });
 
     it("uses default s3 endpoint when bucket region is us-east-1", async () => {
