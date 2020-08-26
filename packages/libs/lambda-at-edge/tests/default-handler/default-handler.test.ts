@@ -1,18 +1,9 @@
-import { handler } from "../../src/default-handler";
 import { createCloudFrontEvent } from "../test-utils";
 import {
   CloudFrontRequest,
   CloudFrontResultResponse,
   CloudFrontOrigin
 } from "aws-lambda";
-
-jest.mock(
-  "../../src/manifest.json",
-  () => require("./default-build-manifest.json"),
-  {
-    virtual: true
-  }
-);
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -41,7 +32,79 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 describe("Lambda@Edge", () => {
-  describe("Routing", () => {
+  describe.each`
+    trailingSlash
+    ${false}
+    ${true}
+  `("Routing with trailingSlash = $trailingSlash", ({ trailingSlash }) => {
+    let handler: any;
+    let runRedirectTest: (
+      path: string,
+      expectedRedirect: string,
+      querystring?: string
+    ) => Promise<void>;
+    beforeEach(() => {
+      jest.resetModules();
+
+      if (trailingSlash) {
+        jest.mock(
+          "../../src/manifest.json",
+          () => require("./default-build-manifest-with-trailing-slash.json"),
+          {
+            virtual: true
+          }
+        );
+      } else {
+        jest.mock(
+          "../../src/manifest.json",
+          () => require("./default-build-manifest.json"),
+          {
+            virtual: true
+          }
+        );
+      }
+
+      // Handler needs to be dynamically required to use above mocked manifests
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      handler = require("../../src/default-handler").handler;
+
+      runRedirectTest = async (
+        path: string,
+        expectedRedirect: string,
+        querystring?: string
+      ): Promise<void> => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-request" } as any,
+          querystring: querystring
+        });
+
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+
+        expect(response.headers).toEqual({
+          location: [
+            {
+              key: "Location",
+              value: expectedRedirect
+            }
+          ],
+          refresh: [
+            {
+              key: "Refresh",
+              value: `0;url=${expectedRedirect}`
+            }
+          ]
+        });
+        expect(response.status).toEqual("308");
+      };
+    });
+
+    afterEach(() => {
+      jest.unmock("../../src/manifest.json");
+    });
+
     describe("HTML pages routing", () => {
       it.each`
         path                                                  | expectedPage
@@ -56,6 +119,11 @@ describe("Lambda@Edge", () => {
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net"
@@ -78,6 +146,30 @@ describe("Lambda@Edge", () => {
           expect(request.headers.host[0].value).toEqual(
             "my-bucket.s3.amazonaws.com"
           );
+        }
+      );
+
+      it.each`
+        path
+        ${"/terms"}
+        ${"/users/batman"}
+        ${"/users/test/catch/all"}
+        ${"/john/123"}
+        ${"/tests/prerender-manifest/example-static-page"}
+        ${"/tests/prerender-manifest-fallback/not-yet-built"}
+      `(
+        `path $path redirects if it ${
+          trailingSlash ? "does not have" : "has"
+        } a trailing slash`,
+        async ({ path }) => {
+          let expectedRedirect;
+          if (trailingSlash) {
+            expectedRedirect = path + "/";
+          } else {
+            expectedRedirect = path;
+            path += "/";
+          }
+          await runRedirectTest(path, expectedRedirect);
         }
       );
     });
@@ -103,6 +195,17 @@ describe("Lambda@Edge", () => {
         });
         expect(request.uri).toEqual("/manifest.json");
       });
+
+      it.each`
+        path                 | expectedRedirect
+        ${"/favicon.ico/"}   | ${"/favicon.ico"}
+        ${"/manifest.json/"} | ${"/manifest.json"}
+      `(
+        "public files always redirect to path without trailing slash: $path -> $expectedRedirect",
+        async ({ path, expectedRedirect }) => {
+          await runRedirectTest(path, expectedRedirect);
+        }
+      );
     });
 
     describe("SSR pages routing", () => {
@@ -118,6 +221,11 @@ describe("Lambda@Edge", () => {
       `(
         "renders page $expectedPage for path $path",
         async ({ path, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net"
@@ -137,6 +245,54 @@ describe("Lambda@Edge", () => {
           expect(cfResponse.status).toEqual(200);
         }
       );
+
+      it.each`
+        path
+        ${"/abc"}
+        ${"/blog/foo"}
+        ${"/customers"}
+        ${"/customers/superman"}
+        ${"/customers/superman/howtofly"}
+        ${"/customers/superman/profile"}
+        ${"/customers/test/catch/all"}
+      `(
+        `path $path redirects if it ${
+          trailingSlash ? "does not have" : "has"
+        } trailing slash`,
+        async ({ path }) => {
+          let expectedRedirect;
+          if (trailingSlash) {
+            expectedRedirect = path + "/";
+          } else {
+            expectedRedirect = path;
+            path += "/";
+          }
+          await runRedirectTest(path, expectedRedirect);
+        }
+      );
+
+      it.each`
+        path
+        ${"/abc"}
+        ${"/blog/foo"}
+        ${"/customers"}
+        ${"/customers/superman"}
+        ${"/customers/superman/howtofly"}
+        ${"/customers/superman/profile"}
+        ${"/customers/test/catch/all"}
+      `("path $path passes querystring to redirected URL", async ({ path }) => {
+        const querystring = "a=1&b=2";
+
+        let expectedRedirect;
+        if (trailingSlash) {
+          expectedRedirect = `${path}/?${querystring}`;
+        } else {
+          expectedRedirect = `${path}?${querystring}`;
+          path += "/";
+        }
+
+        await runRedirectTest(path, expectedRedirect, querystring);
+      });
     });
 
     describe("Data Requests", () => {
@@ -167,11 +323,23 @@ describe("Lambda@Edge", () => {
         });
         expect(request.uri).toEqual(path);
       });
+
+      it.each`
+        path                                                       | expectedRedirect
+        ${"/_next/data/build-id/customers.json/"}                  | ${"/_next/data/build-id/customers.json"}
+        ${"/_next/data/build-id/customers/superman.json/"}         | ${"/_next/data/build-id/customers/superman.json"}
+        ${"/_next/data/build-id/customers/superman/profile.json/"} | ${"/_next/data/build-id/customers/superman/profile.json"}
+      `(
+        "data requests always redirect to path without trailing slash: $path -> $expectedRedirect",
+        async ({ path, expectedRedirect }) => {
+          await runRedirectTest(path, expectedRedirect);
+        }
+      );
     });
 
     it("uses default s3 endpoint when bucket region is us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: "/terms",
+        uri: trailingSlash ? "/terms/" : "/terms",
         host: "mydistribution.cloudfront.net",
         s3Region: "us-east-1"
       });
@@ -194,7 +362,7 @@ describe("Lambda@Edge", () => {
 
     it("uses regional endpoint for static page when bucket region is not us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: "/terms",
+        uri: trailingSlash ? "/terms/" : "/terms",
         host: "mydistribution.cloudfront.net",
         s3DomainName: "my-bucket.s3.amazonaws.com",
         s3Region: "eu-west-1"
@@ -247,21 +415,35 @@ describe("Lambda@Edge", () => {
         "my-bucket.s3.eu-west-1.amazonaws.com"
       );
     });
-  });
 
-  it("renders 404 page if request path can't be matched to any page / api routes", async () => {
-    const event = createCloudFrontEvent({
-      uri: "/page/does/not/exist",
-      host: "mydistribution.cloudfront.net"
+    describe("404 page", () => {
+      it("renders 404 page if request path can't be matched to any page / api routes", async () => {
+        const event = createCloudFrontEvent({
+          uri: trailingSlash ? "/page/does/not/exist/" : "/page/does/not/exist",
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockPageRequire("pages/_error.js");
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+        const body = response.body as string;
+        const decodedBody = new Buffer(body, "base64").toString("utf8");
+
+        expect(decodedBody).toEqual("pages/_error.js");
+        expect(response.status).toEqual(200);
+      });
+
+      it("redirects unmatched request path", async () => {
+        let path = "/page/does/not/exist";
+        let expectedRedirect;
+        if (trailingSlash) {
+          expectedRedirect = path + "/";
+        } else {
+          expectedRedirect = path;
+          path += "/";
+        }
+        await runRedirectTest(path, expectedRedirect);
+      });
     });
-
-    mockPageRequire("pages/_error.js");
-
-    const response = (await handler(event)) as CloudFrontResultResponse;
-    const body = response.body as string;
-    const decodedBody = new Buffer(body, "base64").toString("utf8");
-
-    expect(decodedBody).toEqual("pages/_error.js");
-    expect(response.status).toEqual(200);
   });
 });

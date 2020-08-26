@@ -114,7 +114,10 @@ class Builder {
       .filter((file) => {
         // exclude "initial" files from lambda artefact. These are just the pages themselves
         // which are copied over separately
-        return (!reasons[file] || reasons[file].type !== "initial") && file !== "package.json";
+        return (
+          (!reasons[file] || reasons[file].type !== "initial") &&
+          file !== "package.json"
+        );
       })
       .map((filePath: string) => {
         const resolvedFilePath = path.resolve(filePath);
@@ -290,7 +293,8 @@ class Builder {
           nonDynamic: {}
         }
       },
-      publicFiles: {}
+      publicFiles: {},
+      trailingSlash: false
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
@@ -347,6 +351,20 @@ class Builder {
     publicFiles.forEach((pf) => {
       defaultBuildManifest.publicFiles["/" + pf] = pf;
     });
+
+    // Support trailing slash: https://nextjs.org/docs/api-reference/next.config.js/trailing-slash
+    const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
+
+    if (await fse.pathExists(nextConfigPath)) {
+      const nextConfig = await require(nextConfigPath);
+
+      if (typeof nextConfig === "object") {
+        defaultBuildManifest.trailingSlash = nextConfig.trailingSlash ?? false;
+      } else if (typeof nextConfig === "function") {
+        defaultBuildManifest.trailingSlash =
+          nextConfig().trailingSlash ?? false;
+      }
+    }
 
     return {
       defaultBuildManifest,
