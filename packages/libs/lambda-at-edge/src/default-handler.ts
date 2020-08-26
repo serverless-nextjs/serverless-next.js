@@ -347,7 +347,7 @@ const createRedirectResponse = (uri: string, querystring: string) => {
       location: [
         {
           key: "Location",
-          value: querystring ? `${uri}?${querystring}` : uri
+          value: location
         }
       ],
       refresh: [

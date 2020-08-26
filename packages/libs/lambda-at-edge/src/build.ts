@@ -15,6 +15,7 @@ import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
+import { inspect } from "util";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -356,10 +357,13 @@ class Builder {
     const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
 
     if (await fse.pathExists(nextConfigPath)) {
-      const nextConfig = await import(nextConfigPath);
+      const nextConfig = await require(nextConfigPath);
 
-      if (nextConfig.trailingSlash) {
-        defaultBuildManifest.trailingSlash = nextConfig.trailingSlash;
+      if (typeof nextConfig === "object") {
+        defaultBuildManifest.trailingSlash = nextConfig.trailingSlash ?? false;
+      } else if (typeof nextConfig === "function") {
+        defaultBuildManifest.trailingSlash =
+          nextConfig().trailingSlash ?? false;
       }
     }
 
