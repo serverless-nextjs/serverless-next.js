@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.5](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.4...@sls-next/lambda-at-edge@1.6.0-alpha.5) (2020-08-27)
+
+### Features
+
+- **lambda-at-edge:** support trailing slash / non-trailing slash redirects ([#556](https://github.com/danielcondemarin/serverless-next.js/issues/556)) ([ca63b80](https://github.com/danielcondemarin/serverless-next.js/commit/ca63b80d4bf784ebfdc5a32352a53dde85b4b4d9))
+
 # [1.6.0-alpha.4](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.3...@sls-next/lambda-at-edge@1.6.0-alpha.4) (2020-08-19)
 
 ### Bug Fixes
