@@ -208,6 +208,7 @@ class NextjsComponent extends Component {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
       priceClass: cloudFrontPriceClassInputs,
+      distributionId: cloudFrontDistributionId,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -492,6 +493,7 @@ class NextjsComponent extends Component {
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
+      distributionId: cloudFrontDistributionId || null,
       defaults: {
         ttl: 0,
         ...cloudFrontDefaults,
