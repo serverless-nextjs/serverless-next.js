@@ -48,7 +48,7 @@ const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string): string => {
   if (basePath) uri = uri.slice(basePath.length);
-  return uri === "" ? "/index" : uri;
+  return uri === "" ? "/" : uri;
 };
 
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {

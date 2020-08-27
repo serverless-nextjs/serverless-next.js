@@ -127,13 +127,16 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     await updateBucketsPolicies(s3, Origins, s3CanonicalUserId);
   }
 
-  params.DistributionConfig.DefaultCacheBehavior = getDefaultCacheBehavior(
-    Origins.Items[0].Id,
-    inputs.defaults
-  );
+  if(inputs.defaults) {
+    params.DistributionConfig.DefaultCacheBehavior = getDefaultCacheBehavior(
+      Origins.Items[0].Id,
+      inputs.defaults
+    );
+  }
 
   const origins = params.DistributionConfig.Origins;
   const inputOrigins = Origins;
+  const inputOriginIds = inputOrigins.Items.map((origin) => origin.Id);
   const existingOriginIds = origins.Items.map((origin) => origin.Id);
 
   inputOrigins.Items.forEach((inputOrigin) => {
@@ -149,7 +152,12 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   });
 
   if (CacheBehaviors) {
-    params.DistributionConfig.CacheBehaviors = CacheBehaviors;
+    const existingCacheBehaviors = params.DistributionConfig.CacheBehaviors ? params.DistributionConfig.CacheBehaviors.Items.filter((behavior) => !inputOriginIds.includes(behavior.TargetOriginId)) : [];
+    const inputCacheBehaviours = CacheBehaviors.Items.concat(existingCacheBehaviors);
+    params.DistributionConfig.CacheBehaviors = {
+      Quantity: inputCacheBehaviours.length,
+      Items: inputCacheBehaviours
+    };
   }
 
   // 6. then finally update!
