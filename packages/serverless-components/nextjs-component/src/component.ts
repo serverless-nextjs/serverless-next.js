@@ -208,7 +208,7 @@ class NextjsComponent extends Component {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
       priceClass: cloudFrontPriceClassInputs,
-      distributionId: cloudFrontDistributionId,
+      distributionId: cloudFrontDistributionId = null,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
