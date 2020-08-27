@@ -67,5 +67,5 @@
     "/favicon.ico": "favicon.ico",
     "/manifest.json": "manifest.json"
   },
-  "trailingSlash": false
+  "trailingSlash": true
 }

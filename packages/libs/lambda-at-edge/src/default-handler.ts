@@ -48,6 +48,12 @@ const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string): string => {
   if (basePath) uri = uri.slice(basePath.length);
+
+  // Remove trailing slash for all paths except "/"
+  if (uri.length > 1 && uri.endsWith("/")) {
+    uri = uri.slice(0, -1);
+  }
+
   return uri === "" ? "/index" : uri;
 };
 
@@ -153,8 +159,34 @@ const handleOriginRequest = async ({
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
-  const isStaticPage = pages.html.nonDynamic[uri];
   const isPublicFile = publicFiles[uri];
+  const isDataReq = isDataRequest(uri);
+
+  // Handle any redirects
+  let newUri = request.uri;
+  if (isDataReq || isPublicFile) {
+    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL
+    if (newUri.endsWith("/")) {
+      newUri = newUri.slice(0, -1);
+    }
+  } else if (uri !== "/index" && uri !== "/") {
+    // HTML/SSR pages get redirected based on trailingSlash in next.config.js, except for index page
+    const trailingSlash = manifest.trailingSlash;
+
+    if (!trailingSlash && newUri.endsWith("/")) {
+      newUri = newUri.slice(0, -1);
+    }
+
+    if (trailingSlash && !newUri.endsWith("/")) {
+      newUri += "/";
+    }
+  }
+
+  if (newUri !== request.uri) {
+    return createRedirectResponse(newUri, request.querystring);
+  }
+
+  const isStaticPage = pages.html.nonDynamic[uri];
   const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
@@ -165,7 +197,7 @@ const handleOriginRequest = async ({
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  if (isHTMLPage || isPublicFile || hasFallback || isDataRequest(uri)) {
+  if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
       const pageName = uri === "/" ? "/index" : uri;
@@ -304,4 +336,26 @@ const hasFallbackForUri = (
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);
   });
+};
+
+const createRedirectResponse = (uri: string, querystring: string) => {
+  const location = querystring ? `${uri}?${querystring}` : uri;
+  return {
+    status: "308",
+    statusDescription: "Permanent Redirect",
+    headers: {
+      location: [
+        {
+          key: "Location",
+          value: location
+        }
+      ],
+      refresh: [
+        {
+          key: "Refresh",
+          value: `0;url=${location}`
+        }
+      ]
+    }
+  };
 };
