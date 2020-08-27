@@ -201,15 +201,19 @@ describe("Lambda@Edge", () => {
           }
         });
 
-        mockPageRequire("pages/preview.js");
-        const result = await handler(event);
-        const response = result as CloudFrontResultResponse;
-        const decodedBody = new Buffer(
-          response.body as string,
-          "base64"
-        ).toString("utf8");
-        expect(decodedBody).toBe("pages/preview.js");
-        expect(response.status).toBe(200);
+        if (trailingSlash) {
+          await runRedirectTest("/preview", "/preview/");
+        } else {
+          mockPageRequire("pages/preview.js");
+          const result = await handler(event);
+          const response = result as CloudFrontResultResponse;
+          const decodedBody = new Buffer(
+            response.body as string,
+            "base64"
+          ).toString("utf8");
+          expect(decodedBody).toBe("pages/preview.js");
+          expect(response.status).toBe(200);
+        }
       });
     });
 
