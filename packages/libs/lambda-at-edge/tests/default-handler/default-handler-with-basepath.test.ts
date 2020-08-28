@@ -109,8 +109,6 @@ describe("Lambda@Edge", () => {
       it.each`
         path                                                        | expectedPage
         ${"/basepath"}                                              | ${"/index.html"}
-        ${"/basepath/"}                                             | ${"/index.html"}
-        ${"/basepath/index"}                                        | ${"/index.html"}
         ${"/basepath/terms"}                                        | ${"/terms.html"}
         ${"/basepath/users/batman"}                                 | ${"/users/[user].html"}
         ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
@@ -150,6 +148,7 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path
+        ${"/basepath"}
         ${"/basepath/terms"}
         ${"/basepath/users/batman"}
         ${"/basepath/users/test/catch/all"}
