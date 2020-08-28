@@ -47,9 +47,13 @@ const addS3HostHeader = (
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string): string => {
-  // Remove basePath prefix
-  if (basePath && uri.startsWith(basePath)) {
-    uri = uri.slice(basePath.length);
+  if (basePath) {
+    if (uri.startsWith(basePath)) {
+      uri = uri.slice(basePath.length);
+    } else {
+      // basePath set but URI does not start with basePath, return 404
+      return "/404";
+    }
   }
 
   // Remove trailing slash for all paths
@@ -173,10 +177,11 @@ const handleOriginRequest = async ({
     if (newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
-  } else if (request.uri !== "/" && request.uri !== "") {
+  } else if (request.uri !== "/" && request.uri !== "" && uri !== "/404") {
     // HTML/SSR pages get redirected based on trailingSlash in next.config.js
-    // We should never redirect unnormalised URI "/" or "" as this could cause a redirect loop due to browsers appending trailing slash
-    // to root page requests
+    // We do not redirect:
+    // 1. Unnormalised URI is"/" or "" as this could cause a redirect loop due to browsers appending trailing slash
+    // 2. "/404" pages due to basePath normalisation
     const trailingSlash = manifest.trailingSlash;
 
     if (!trailingSlash && newUri.endsWith("/")) {
