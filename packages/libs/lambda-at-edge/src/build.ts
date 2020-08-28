@@ -352,18 +352,23 @@ class Builder {
       defaultBuildManifest.publicFiles["/" + pf] = pf;
     });
 
-    // Support trailing slash: https://nextjs.org/docs/api-reference/next.config.js/trailing-slash
+    // Read next.config.js
     const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
 
     if (await fse.pathExists(nextConfigPath)) {
       const nextConfig = await require(nextConfigPath);
 
+      let normalisedNextConfig;
       if (typeof nextConfig === "object") {
-        defaultBuildManifest.trailingSlash = nextConfig.trailingSlash ?? false;
+        normalisedNextConfig = nextConfig;
       } else if (typeof nextConfig === "function") {
-        defaultBuildManifest.trailingSlash =
-          nextConfig().trailingSlash ?? false;
+        // Execute using phase based on: https://github.com/vercel/next.js/blob/8a489e24bcb6141ad706e1527b77f3ff38940b6d/packages/next/next-server/lib/constants.ts#L1-L4
+        normalisedNextConfig = nextConfig("phase-production-server", {});
       }
+
+      // Support trailing slash: https://nextjs.org/docs/api-reference/next.config.js/trailing-slash
+      defaultBuildManifest.trailingSlash =
+        normalisedNextConfig?.trailingSlash ?? false;
     }
 
     return {
