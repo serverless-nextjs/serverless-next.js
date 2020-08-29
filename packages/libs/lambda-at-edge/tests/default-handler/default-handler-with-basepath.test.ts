@@ -447,7 +447,7 @@ describe("Lambda@Edge", () => {
     });
 
     describe("500 page", () => {
-      xit("renders 500 page if page render has an error", async () => {
+      it("renders 500 page if page render has an error", async () => {
         const event = createCloudFrontEvent({
           uri: trailingSlash
             ? "/basepath/erroredPage/"
