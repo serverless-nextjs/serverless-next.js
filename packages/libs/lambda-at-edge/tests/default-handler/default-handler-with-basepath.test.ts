@@ -109,8 +109,6 @@ describe("Lambda@Edge", () => {
       it.each`
         path                                                        | expectedPage
         ${"/basepath"}                                              | ${"/index.html"}
-        ${"/basepath/"}                                             | ${"/index.html"}
-        ${"/basepath/index"}                                        | ${"/index.html"}
         ${"/basepath/terms"}                                        | ${"/terms.html"}
         ${"/basepath/users/batman"}                                 | ${"/users/[user].html"}
         ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
@@ -150,6 +148,7 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path
+        ${"/basepath"}
         ${"/basepath/terms"}
         ${"/basepath/users/batman"}
         ${"/basepath/users/test/catch/all"}
@@ -429,12 +428,12 @@ describe("Lambda@Edge", () => {
         const body = response.body as string;
         const decodedBody = new Buffer(body, "base64").toString("utf8");
 
-        expect(decodedBody).toEqual("pages/_error.js");
-        expect(response.status).toEqual(200);
+        expect(decodedBody).toEqual("pages/_error.js - 404");
+        expect(response.status).toEqual("404");
       });
 
       it("redirects unmatched request path", async () => {
-        let path = "/page/does/not/exist";
+        let path = "/basepath/page/does/not/exist";
         let expectedRedirect;
         if (trailingSlash) {
           expectedRedirect = path + "/";
@@ -443,6 +442,64 @@ describe("Lambda@Edge", () => {
           path += "/";
         }
         await runRedirectTest(path, expectedRedirect);
+      });
+
+      // Next.js serves 404 on pages that do not have basepath prefix. It doesn't redirect whether there is trailing slash or not.
+      it.each`
+        path
+        ${"/terms"}
+        ${"/not/found"}
+        ${"/manifest.json"}
+        ${"/terms/"}
+        ${"/not/found/"}
+        ${"/manifest.json/"}
+      `(
+        "serves 404 page from S3 for path without basepath prefix: $path",
+        async ({ path, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/basepath/static-pages",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual("/404.html");
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
+        }
+      );
+    });
+
+    describe("500 page", () => {
+      it("renders 500 page if page render has an error", async () => {
+        const event = createCloudFrontEvent({
+          uri: trailingSlash
+            ? "/basepath/erroredPage/"
+            : "/basepath/erroredPage",
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockPageRequire("pages/_error.js");
+        mockPageRequire("pages/erroredPage.js");
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+        const body = response.body as string;
+        const decodedBody = new Buffer(body, "base64").toString("utf8");
+
+        expect(decodedBody).toEqual("pages/_error.js - 500");
+        expect(response.status).toEqual("500");
       });
     });
   });

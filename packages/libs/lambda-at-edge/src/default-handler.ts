@@ -20,6 +20,7 @@ import {
 } from "../types";
 import S3 from "aws-sdk/clients/s3";
 import { performance } from "perf_hooks";
+import { ServerResponse } from "http";
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -47,14 +48,22 @@ const addS3HostHeader = (
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string): string => {
-  if (basePath) uri = uri.slice(basePath.length);
+  if (basePath) {
+    if (uri.startsWith(basePath)) {
+      uri = uri.slice(basePath.length);
+    } else {
+      // basePath set but URI does not start with basePath, return 404
+      return "/404";
+    }
+  }
 
-  // Remove trailing slash for all paths except "/"
-  if (uri.length > 1 && uri.endsWith("/")) {
+  // Remove trailing slash for all paths
+  if (uri.endsWith("/")) {
     uri = uri.slice(0, -1);
   }
 
-  return uri === "" ? "/index" : uri;
+  // Empty path should be normalised to "/" as there is no Next.js route for ""
+  return uri === "" ? "/" : uri;
 };
 
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
@@ -172,8 +181,11 @@ const handleOriginRequest = async ({
     if (uri !== "/" && newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
-  } else if (uri !== "/index" && uri !== "/") {
-    // HTML/SSR pages get redirected based on trailingSlash in next.config.js, except for index page
+  } else if (request.uri !== "/" && request.uri !== "" && uri !== "/404") {
+    // HTML/SSR pages get redirected based on trailingSlash in next.config.js
+    // We do not redirect:
+    // 1. Unnormalised URI is"/" or "" as this could cause a redirect loop due to browsers appending trailing slash
+    // 2. "/404" pages due to basePath normalisation
     const trailingSlash = manifest.trailingSlash;
 
     if (!trailingSlash && newUri.endsWith("/")) {
@@ -224,22 +236,41 @@ const handleOriginRequest = async ({
     s3Origin.path = `${basePath}/static-pages`;
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
+
     return request;
   }
 
   const tBeforePageRequire = now();
-  const page = require(`./${pagePath}`); // eslint-disable-line
+  let page = require(`./${pagePath}`); // eslint-disable-line
   const tAfterPageRequire = now();
 
   log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
 
   const tBeforeSSR = now();
   const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
-  page.render(req, res);
+  try {
+    // If page is _error.js, set status to 404 so _error.js will render a 404 page
+    if (pagePath === "pages/_error.js") {
+      res.statusCode = 404;
+    }
+
+    // Render page
+    await page.render(req, res);
+  } catch (error) {
+    // Set status to 500 so _error.js will render a 500 page
+    console.error(
+      `Error rendering page: ${pagePath}. Error:\n${error}\nRendering Next.js error page.`
+    );
+    res.statusCode = 500;
+    page = require("./pages/_error.js"); // eslint-disable-line
+    await page.render(req, res);
+  }
   const response = await responsePromise;
   const tAfterSSR = now();
 
   log("SSR execution time", tBeforeSSR, tAfterSSR);
+
+  setCloudFrontResponseStatus(response, res);
 
   return response;
 };
@@ -257,7 +288,14 @@ const handleOriginResponse = async ({
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
   const { status } = response;
-  if (status !== "403") return response;
+  if (status !== "403") {
+    const pagePath = router(manifest)(uri);
+    if (pagePath === "pages/404.html") {
+      response.status = "404";
+      response.statusDescription = "Not Found";
+    }
+    return response;
+  }
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
   // It's usually better to do this outside the handler, but we need to know the bucket region
@@ -361,4 +399,18 @@ const createRedirectResponse = (uri: string, querystring: string) => {
       ]
     }
   };
+};
+
+// This sets CloudFront response for 404 or 500 statuses
+const setCloudFrontResponseStatus = (
+  response: CloudFrontResultResponse,
+  res: ServerResponse
+): void => {
+  if (res.statusCode == 404) {
+    response.status = "404";
+    response.statusDescription = "Not Found";
+  } else if (res.statusCode == 500) {
+    response.status = "500";
+    response.statusDescription = "Internal Server Error";
+  }
 };

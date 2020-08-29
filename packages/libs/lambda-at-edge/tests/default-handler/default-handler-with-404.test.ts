@@ -1,6 +1,6 @@
 import { handler } from "../../src/default-handler";
 import { createCloudFrontEvent } from "../test-utils";
-import { CloudFrontResultResponse } from "aws-lambda";
+import { CloudFrontRequest, CloudFrontResultResponse } from "aws-lambda";
 
 jest.mock(
   "../../src/manifest.json",
@@ -39,8 +39,23 @@ describe("Lambda@Edge", () => {
       config: { eventType: "origin-request" } as any
     });
 
+    const request = (await handler(event)) as CloudFrontRequest;
+
+    expect(request.uri).toEqual("/404.html");
+  });
+
+  it("static 404 page should return CloudFront 404 status code after successful S3 origin response", async () => {
+    const event = createCloudFrontEvent({
+      uri: "/page/does/not/exist",
+      host: "mydistribution.cloudfront.net",
+      config: { eventType: "origin-response" } as any,
+      response: {
+        status: "200"
+      } as any
+    });
+
     const response = (await handler(event)) as CloudFrontResultResponse;
 
-    expect(response.uri).toEqual("/404.html");
+    expect(response.status).toEqual("404");
   });
 });
