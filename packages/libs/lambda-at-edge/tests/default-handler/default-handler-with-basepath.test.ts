@@ -109,8 +109,6 @@ describe("Lambda@Edge", () => {
       it.each`
         path                                                        | expectedPage
         ${"/basepath"}                                              | ${"/index.html"}
-        ${"/basepath/"}                                             | ${"/index.html"}
-        ${"/basepath/index"}                                        | ${"/index.html"}
         ${"/basepath/terms"}                                        | ${"/terms.html"}
         ${"/basepath/users/batman"}                                 | ${"/users/[user].html"}
         ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
@@ -150,6 +148,7 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path
+        ${"/basepath"}
         ${"/basepath/terms"}
         ${"/basepath/users/batman"}
         ${"/basepath/users/test/catch/all"}
@@ -434,7 +433,7 @@ describe("Lambda@Edge", () => {
       });
 
       it("redirects unmatched request path", async () => {
-        let path = "/page/does/not/exist";
+        let path = "/basepath/page/does/not/exist";
         let expectedRedirect;
         if (trailingSlash) {
           expectedRedirect = path + "/";
@@ -444,6 +443,43 @@ describe("Lambda@Edge", () => {
         }
         await runRedirectTest(path, expectedRedirect);
       });
+
+      // Next.js serves 404 on pages that do not have basepath prefix. It doesn't redirect whether there is trailing slash or not.
+      it.each`
+        path
+        ${"/terms"}
+        ${"/not/found"}
+        ${"/manifest.json"}
+        ${"/terms/"}
+        ${"/not/found/"}
+        ${"/manifest.json/"}
+      `(
+        "serves 404 page from S3 for path without basepath prefix: $path",
+        async ({ path, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/basepath/static-pages",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual("/404.html");
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
+        }
+      );
     });
   });
 });
