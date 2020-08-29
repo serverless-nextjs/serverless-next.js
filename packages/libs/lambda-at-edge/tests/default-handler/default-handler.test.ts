@@ -298,13 +298,15 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                      | expectedPage
+        ${"/_next/data/build-id/index.json"}                      | ${"pages/index.js"}
         ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `("serves json data for path $path", async ({ path, expectedPage }) => {
         const event = createCloudFrontEvent({
           uri: path,
-          host: "mydistribution.cloudfront.net"
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-request" } as any
         });
 
         mockPageRequire(expectedPage);
@@ -326,6 +328,7 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path                                                       | expectedRedirect
+        ${"/_next/data/build-id/index.json/"}                      | ${"/_next/data/build-id/index.json"}
         ${"/_next/data/build-id/customers.json/"}                  | ${"/_next/data/build-id/customers.json"}
         ${"/_next/data/build-id/customers/superman.json/"}         | ${"/_next/data/build-id/customers/superman.json"}
         ${"/_next/data/build-id/customers/superman/profile.json/"} | ${"/_next/data/build-id/customers/superman/profile.json"}

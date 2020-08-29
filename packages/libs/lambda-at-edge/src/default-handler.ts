@@ -89,6 +89,9 @@ const router = (
       normalisedUri = uri
         .replace(`/_next/data/${manifest.buildId}`, "")
         .replace(".json", "");
+
+      // Index has a special path of "/" instead of "/index"
+      normalisedUri = normalisedUri === "/index" ? "/" : normalisedUri;
     }
 
     if (ssr.nonDynamic[normalisedUri]) {
@@ -165,8 +168,8 @@ const handleOriginRequest = async ({
   // Handle any redirects
   let newUri = request.uri;
   if (isDataReq || isPublicFile) {
-    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL
-    if (newUri.endsWith("/")) {
+    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL, except for index requests
+    if (uri !== "/" && newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
   } else if (uri !== "/index" && uri !== "/") {
@@ -296,7 +299,7 @@ const handleOriginResponse = async ({
     res.writeHead(200, response.headers as any);
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(renderOpts.pageData));
-    return responsePromise;
+    return await responsePromise;
   } else {
     const hasFallback = hasFallbackForUri(uri, prerenderManifest);
     if (!hasFallback) return response;
