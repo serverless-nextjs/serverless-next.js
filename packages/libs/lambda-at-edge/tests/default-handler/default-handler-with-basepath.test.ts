@@ -428,8 +428,8 @@ describe("Lambda@Edge", () => {
         const body = response.body as string;
         const decodedBody = new Buffer(body, "base64").toString("utf8");
 
-        expect(decodedBody).toEqual("pages/_error.js");
-        expect(response.status).toEqual(200);
+        expect(decodedBody).toEqual("pages/_error.js - 404");
+        expect(response.status).toEqual("404");
       });
 
       it("redirects unmatched request path", async () => {
@@ -480,6 +480,27 @@ describe("Lambda@Edge", () => {
           );
         }
       );
+    });
+
+    describe("500 page", () => {
+      it("renders 500 page if page render has an error", async () => {
+        const event = createCloudFrontEvent({
+          uri: trailingSlash
+            ? "/basepath/erroredPage/"
+            : "/basepath/erroredPage",
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockPageRequire("pages/_error.js");
+        mockPageRequire("pages/erroredPage.js");
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+        const body = response.body as string;
+        const decodedBody = new Buffer(body, "base64").toString("utf8");
+
+        expect(decodedBody).toEqual("pages/_error.js - 500");
+        expect(response.status).toEqual("500");
+      });
     });
   });
 });
