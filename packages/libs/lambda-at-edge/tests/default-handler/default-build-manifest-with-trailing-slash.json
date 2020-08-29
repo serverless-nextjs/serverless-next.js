@@ -41,7 +41,6 @@
     "html": {
       "nonDynamic": {
         "/": "pages/index.html",
-        "/index": "pages/index.html",
         "/terms": "pages/terms.html"
       },
       "dynamic": {
