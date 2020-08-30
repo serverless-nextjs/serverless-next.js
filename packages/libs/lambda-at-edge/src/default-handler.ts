@@ -179,7 +179,7 @@ const handleOriginRequest = async ({
   // Handle any redirects
   let newUri = request.uri;
   if (isDataReq || isPublicFile) {
-    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL, except for index data requests
+    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL
     if (newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
