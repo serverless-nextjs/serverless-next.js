@@ -332,7 +332,7 @@ class NextjsComponent extends Component {
     };
 
     // default policy
-    let policy: Record<string, unknown> | string = {
+    let policy: Record<string, unknown> = {
       Version: "2012-10-17",
       Statement: [
         {
