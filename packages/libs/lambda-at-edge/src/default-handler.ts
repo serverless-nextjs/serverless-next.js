@@ -99,8 +99,10 @@ const router = (
         .replace(`/_next/data/${manifest.buildId}`, "")
         .replace(".json", "");
 
-      // Index has a special path of "/" instead of "/index"
-      normalisedUri = normalisedUri === "/index" ? "/" : normalisedUri;
+      // Normalise to "/" for index data request
+      normalisedUri = ["/index", ""].includes(normalisedUri)
+        ? "/"
+        : normalisedUri;
     }
 
     if (ssr.nonDynamic[normalisedUri]) {
@@ -177,8 +179,8 @@ const handleOriginRequest = async ({
   // Handle any redirects
   let newUri = request.uri;
   if (isDataReq || isPublicFile) {
-    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL, except for index requests
-    if (uri !== "/" && newUri.endsWith("/")) {
+    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL, except for index data requests
+    if (newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
   } else if (request.uri !== "/" && request.uri !== "" && uri !== "/404") {
@@ -212,7 +214,8 @@ const handleOriginRequest = async ({
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
+  // Check if data can be retrieved from S3
+  S3DataCheck: if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
       const pageName = uri === "/" ? "/index" : uri;
@@ -223,6 +226,20 @@ const handleOriginRequest = async ({
       s3Origin.path = `${basePath}/public`;
       if (basePath) {
         request.uri = request.uri.replace(basePath, "");
+      }
+    }
+
+    if (isDataReq) {
+      // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
+      const pagePath = router(manifest)(uri);
+
+      if (pagePath === "pages/404.html") {
+        // Request static page from s3
+        s3Origin.path = `${basePath}/static-pages`;
+        request.uri = pagePath.replace("pages", "");
+      } else if (pagePath === "pages/_error.js") {
+        // Break to continue to SSR render _error.js
+        break S3DataCheck;
       }
     }
 
@@ -300,8 +317,11 @@ const handleOriginResponse = async ({
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
   // It's usually better to do this outside the handler, but we need to know the bucket region
   const s3 = new S3({ region: request.origin?.s3?.region });
-  if (isDataRequest(uri)) {
-    const pagePath = router(manifest)(uri);
+  let pagePath;
+  if (
+    isDataRequest(uri) &&
+    !(pagePath = router(manifest)(uri)).endsWith(".html")
+  ) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
     const { req, res, responsePromise } = lambdaAtEdgeCompat(

@@ -297,6 +297,7 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                      | expectedPage
+        ${"/_next/data/build-id"}                                 | ${"pages/index.js"}
         ${"/_next/data/build-id/index.json"}                      | ${"pages/index.js"}
         ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
@@ -327,6 +328,7 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path                                                       | expectedRedirect
+        ${"/_next/data/build-id/"}                                 | ${"/_next/data/build-id"}
         ${"/_next/data/build-id/index.json/"}                      | ${"/_next/data/build-id/index.json"}
         ${"/_next/data/build-id/customers.json/"}                  | ${"/_next/data/build-id/customers.json"}
         ${"/_next/data/build-id/customers/superman.json/"}         | ${"/_next/data/build-id/customers/superman.json"}
@@ -446,6 +448,33 @@ describe("Lambda@Edge", () => {
         }
         await runRedirectTest(path, expectedRedirect);
       });
+
+      it.each`
+        path
+        ${"/_next/data/unmatched"}
+      `(
+        "renders 404 page if data request can't be matched for path: $path",
+        async ({ path }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            origin: {
+              s3: {
+                domainName: "my-bucket.s3.amazonaws.com"
+              }
+            },
+            config: { eventType: "origin-request" } as any
+          });
+
+          mockPageRequire("./pages/_error.js");
+
+          const response = (await handler(event)) as CloudFrontResultResponse;
+          const body = response.body as string;
+          const decodedBody = new Buffer(body, "base64").toString("utf8");
+
+          expect(decodedBody).toEqual("pages/_error.js - 404");
+          expect(response.status).toEqual("404");
+        }
+      );
     });
 
     describe("500 page", () => {
