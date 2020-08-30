@@ -214,8 +214,8 @@ const handleOriginRequest = async ({
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  // Check if data can be retrieved from S3
-  S3DataCheck: if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
+  // Check if we can serve request from S3
+  S3Check: if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
       const pageName = uri === "/" ? "/index" : uri;
@@ -239,7 +239,7 @@ const handleOriginRequest = async ({
         request.uri = pagePath.replace("pages", "");
       } else if (pagePath === "pages/_error.js") {
         // Break to continue to SSR render _error.js
-        break S3DataCheck;
+        break S3Check;
       }
     }
 
