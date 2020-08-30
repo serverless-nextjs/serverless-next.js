@@ -5,6 +5,7 @@ import Manifest from "./manifest.json";
 // @ts-ignore
 import { basePath } from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import cookie from "cookie";
 import {
   CloudFrontRequest,
   CloudFrontS3Origin,
@@ -21,23 +22,26 @@ import {
 import S3 from "aws-sdk/clients/s3";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
+import jsonwebtoken from "jsonwebtoken";
 
-const parseCookieValue = (cookie: string) => {
-  return cookie.split(";").reduce<{ [key: string]: string }>((acc, curr) => {
-    const [key, value] = curr.split("=");
-    acc[key.trim()] = value.trim();
-    return acc;
-  }, {});
-};
+const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
+const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
 
-const checkPreviewRequest = (request: CloudFrontRequest) => {
+const getPreviewCookies = (request: CloudFrontRequest) => {
   const targetCookie = request.headers.cookie || [];
-  return targetCookie.some((cookieObj) => {
-    const cookieValue = parseCookieValue(cookieObj.value);
+  const previewCookie = targetCookie.find((cookieObj) => {
+    const cookieValue = cookie.parse(cookieObj.value);
     return (
-      cookieValue["__next_preview_data"] && cookieValue["__prerender_bypass"]
+      cookieValue[NEXT_PREVIEW_DATA_COOKIE] &&
+      cookieValue[NEXT_PRERENDER_BYPASS_COOKIE]
     );
   });
+  if (previewCookie) {
+    return cookie.parse(previewCookie.value) as {
+      [NEXT_PREVIEW_DATA_COOKIE]: string;
+      [NEXT_PRERENDER_BYPASS_COOKIE]: string;
+    };
+  }
 };
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
@@ -229,7 +233,21 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const isPreviewRequest = checkPreviewRequest(request);
+  const isPreviewRequest = getPreviewCookies(request);
+
+  if (isPreviewRequest) {
+    try {
+      jsonwebtoken.verify(
+        isPreviewRequest[NEXT_PREVIEW_DATA_COOKIE],
+        prerenderManifest.preview.previewModeSigningKey
+      );
+    } catch (e) {
+      return {
+        status: "403",
+        statusDescription: "Forbidden"
+      };
+    }
+  }
 
   s3Origin.domainName = normalisedS3DomainName;
 
@@ -295,7 +313,7 @@ const handleOriginRequest = async ({
     }
 
     // Render page
-    if (isDataRequest(uri)) {
+    if (isDataReq) {
       const { renderOpts } = await page.renderReqToHTML(
         req,
         res,

@@ -5,6 +5,10 @@ import {
   CloudFrontOrigin
 } from "aws-lambda";
 
+jest.mock("jsonwebtoken", () => ({
+  verify: jest.fn()
+}));
+
 jest.mock(
   "../../src/prerender-manifest.json",
   () => require("./prerender-manifest.json"),

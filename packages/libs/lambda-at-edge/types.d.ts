@@ -80,6 +80,8 @@ export type PreRenderedManifest = {
   };
   preview: {
     previewModeId: string;
+    previewModeSigningKey: string;
+    previewModeEncryptionKey: string;
   };
 };
 

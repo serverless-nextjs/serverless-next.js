@@ -4,5 +4,6 @@
     "sourceMap": false,
     "removeComments": true
   },
-  "include": ["./src/"]
+  "include": ["./src/"],
+  "exclude": ["node_modules", "./src/default-handler.ts"]
 }
