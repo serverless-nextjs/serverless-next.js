@@ -306,8 +306,8 @@ const handleOriginResponse = async ({
   const uri = normaliseUri(request.uri);
   const { status } = response;
   if (status !== "403") {
-    const pagePath = router(manifest)(uri);
-    if (pagePath === "pages/404.html") {
+    const { publicFiles } = manifest;
+    if (!publicFiles[uri] && router(manifest)(uri) === "pages/404.html") {
       response.status = "404";
       response.statusDescription = "Not Found";
     }

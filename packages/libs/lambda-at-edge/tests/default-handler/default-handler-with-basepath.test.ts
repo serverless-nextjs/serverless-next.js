@@ -194,6 +194,21 @@ describe("Lambda@Edge", () => {
         expect(request.uri).toEqual("/manifest.json");
       });
 
+      it("public file should return 200 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/basepath/manifest.json",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("200");
+      });
+
       it.each`
         path                          | expectedRedirect
         ${"/basepath/favicon.ico/"}   | ${"/basepath/favicon.ico"}
