@@ -295,6 +295,8 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                               | expectedPage
+        ${"/basepath/_next/data/build-id"}                                 | ${"pages/index.js"}
+        ${"/basepath/_next/data/build-id/index.json"}                      | ${"pages/index.js"}
         ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
         ${"/basepath/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/basepath/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
@@ -323,6 +325,8 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path                                                                | expectedRedirect
+        ${"/basepath/_next/data/build-id/"}                                 | ${"/basepath/_next/data/build-id"}
+        ${"/basepath/_next/data/build-id/index.json/"}                      | ${"/basepath/_next/data/build-id/index.json"}
         ${"/basepath/_next/data/build-id/customers.json/"}                  | ${"/basepath/_next/data/build-id/customers.json"}
         ${"/basepath/_next/data/build-id/customers/superman.json/"}         | ${"/basepath/_next/data/build-id/customers/superman.json"}
         ${"/basepath/_next/data/build-id/customers/superman/profile.json/"} | ${"/basepath/_next/data/build-id/customers/superman/profile.json"}
@@ -478,6 +482,33 @@ describe("Lambda@Edge", () => {
           expect(request.headers.host[0].value).toEqual(
             "my-bucket.s3.amazonaws.com"
           );
+        }
+      );
+
+      it.each`
+        path
+        ${"/basepath/_next/data/unmatched"}
+      `(
+        "renders 404 page if data request can't be matched for path: $path",
+        async ({ path }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            origin: {
+              s3: {
+                domainName: "my-bucket.s3.amazonaws.com"
+              }
+            },
+            config: { eventType: "origin-request" } as any
+          });
+
+          mockPageRequire("./pages/_error.js");
+
+          const response = (await handler(event)) as CloudFrontResultResponse;
+          const body = response.body as string;
+          const decodedBody = new Buffer(body, "base64").toString("utf8");
+
+          expect(decodedBody).toEqual("pages/_error.js - 404");
+          expect(response.status).toEqual("404");
         }
       );
     });
