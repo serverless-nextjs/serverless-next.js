@@ -98,6 +98,11 @@ const router = (
       normalisedUri = uri
         .replace(`/_next/data/${manifest.buildId}`, "")
         .replace(".json", "");
+
+      // Normalise to "/" for index data request
+      normalisedUri = ["/index", ""].includes(normalisedUri)
+        ? "/"
+        : normalisedUri;
     }
 
     if (ssr.nonDynamic[normalisedUri]) {
@@ -209,7 +214,8 @@ const handleOriginRequest = async ({
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
+  // Check if we can serve request from S3
+  S3Check: if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
       const pageName = uri === "/" ? "/index" : uri;
@@ -220,6 +226,20 @@ const handleOriginRequest = async ({
       s3Origin.path = `${basePath}/public`;
       if (basePath) {
         request.uri = request.uri.replace(basePath, "");
+      }
+    }
+
+    if (isDataReq) {
+      // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
+      const pagePath = router(manifest)(uri);
+
+      if (pagePath === "pages/404.html") {
+        // Request static page from s3
+        s3Origin.path = `${basePath}/static-pages`;
+        request.uri = pagePath.replace("pages", "");
+      } else if (pagePath === "pages/_error.js") {
+        // Break to continue to SSR render _error.js
+        break S3Check;
       }
     }
 
@@ -297,8 +317,11 @@ const handleOriginResponse = async ({
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
   // It's usually better to do this outside the handler, but we need to know the bucket region
   const s3 = new S3({ region: request.origin?.s3?.region });
-  if (isDataRequest(uri)) {
-    const pagePath = router(manifest)(uri);
+  let pagePath;
+  if (
+    isDataRequest(uri) &&
+    !(pagePath = router(manifest)(uri)).endsWith(".html")
+  ) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
@@ -334,7 +357,7 @@ const handleOriginResponse = async ({
     res.writeHead(200, response.headers as any);
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(renderOpts.pageData));
-    return responsePromise;
+    return await responsePromise;
   } else {
     const hasFallback = hasFallbackForUri(uri, prerenderManifest);
     if (!hasFallback) return response;

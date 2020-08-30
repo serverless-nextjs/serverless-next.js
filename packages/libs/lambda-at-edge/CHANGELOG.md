@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.6](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.5...@sls-next/lambda-at-edge@1.6.0-alpha.6) (2020-08-29)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix reading next.config.js in build step when it exports a function ([#569](https://github.com/danielcondemarin/serverless-next.js/issues/569)) ([16272b4](https://github.com/danielcondemarin/serverless-next.js/commit/16272b43b8d1cfcdebe1eddad91a8bae7bcc890c))
+- **lambda-at-edge:** fix routing for pages with basePath ([#572](https://github.com/danielcondemarin/serverless-next.js/issues/572)) ([b185a7a](https://github.com/danielcondemarin/serverless-next.js/commit/b185a7a088b58651780542d1539660c951cd63a6))
+- **lambda-at-edge:** render Next 500 page when SSR render fails, and ensure 404 pages return 404 status codes ([#570](https://github.com/danielcondemarin/serverless-next.js/issues/570)) ([bdd1e3f](https://github.com/danielcondemarin/serverless-next.js/commit/bdd1e3f9feb7e0c9eec42de7298882dce084aa67))
+
 # [1.6.0-alpha.5](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.4...@sls-next/lambda-at-edge@1.6.0-alpha.5) (2020-08-27)
 
 ### Features
