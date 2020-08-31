@@ -537,7 +537,11 @@ describe("Lambda@Edge", () => {
           const body = response.body as string;
           const decodedBody = new Buffer(body, "base64").toString("utf8");
 
-          expect(decodedBody).toEqual("pages/_error.js - 404");
+          expect(decodedBody).toEqual(
+            JSON.stringify({
+              page: "pages/_error.js - 404"
+            })
+          );
           expect(response.status).toEqual("404");
         }
       );
