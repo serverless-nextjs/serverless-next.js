@@ -172,26 +172,20 @@ describe("Lambda@Edge", () => {
         }
       );
 
-      it.each`
-        path
-        ${"/terms.html"}
-      `(
-        `path $path returns 200 status after a successful S3 Origin response`,
-        async ({ path }) => {
-          const event = createCloudFrontEvent({
-            uri: path,
-            host: "mydistribution.cloudfront.net",
-            config: { eventType: "origin-response" } as any,
-            response: {
-              status: "200"
-            } as any
-          });
+      it("terms.html should return 200 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/terms.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
 
-          const response = (await handler(event)) as CloudFrontResultResponse;
+        const response = (await handler(event)) as CloudFrontResultResponse;
 
-          expect(response.status).toEqual("200");
-        }
-      );
+        expect(response.status).toEqual("200");
+      });
     });
 
     describe("Public files routing", () => {
@@ -512,26 +506,20 @@ describe("Lambda@Edge", () => {
         }
       );
 
-      it.each`
-        path
-        ${"/404.html"}
-      `(
-        `path $path returns 404 status after a successful S3 Origin response`,
-        async ({ path }) => {
-          const event = createCloudFrontEvent({
-            uri: path,
-            host: "mydistribution.cloudfront.net",
-            config: { eventType: "origin-response" } as any,
-            response: {
-              status: "200"
-            } as any
-          });
+      it("404.html should return 404 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/404.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
 
-          const response = (await handler(event)) as CloudFrontResultResponse;
+        const response = (await handler(event)) as CloudFrontResultResponse;
 
-          expect(response.status).toEqual("404");
-        }
-      );
+        expect(response.status).toEqual("404");
+      });
     });
 
     describe("500 page", () => {
