@@ -68,7 +68,7 @@ describe("Lambda@Edge", () => {
 
   it("static 404 page should return CloudFront 404 status code after successful S3 origin response", async () => {
     const event = createCloudFrontEvent({
-      uri: "/page/does/not/exist",
+      uri: "/404.html",
       host: "mydistribution.cloudfront.net",
       config: { eventType: "origin-response" } as any,
       response: {
