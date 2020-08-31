@@ -6,7 +6,9 @@ type IndexPageProps = {
 };
 
 export default function IndexPage(props: IndexPageProps): JSX.Element {
-  return <React.Fragment>{`Hello ${props.name}`}</React.Fragment>;
+  return (
+    <React.Fragment>{`Hello ${props.name}. This is an SSR page using getServerSideProps().`}</React.Fragment>
+  );
 }
 
 export async function getServerSideProps(

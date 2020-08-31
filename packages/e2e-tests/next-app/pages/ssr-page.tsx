@@ -8,7 +8,7 @@ type SSRPageProps = {
 export default function SSRPage(props: SSRPageProps): JSX.Element {
   return (
     <React.Fragment>
-      {`Hello ${props.name}! This is an SSR Page using getStaticProps().`}
+      {`Hello ${props.name}! This is an SSR Page using getInitialProps().`}
     </React.Fragment>
   );
 }
