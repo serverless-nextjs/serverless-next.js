@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.7](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.6...@sls-next/lambda-at-edge@1.6.0-alpha.7) (2020-08-31)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix data request routing / client-side navigation for SSR index page ([#574](https://github.com/danielcondemarin/serverless-next.js/issues/574)) ([f580786](https://github.com/danielcondemarin/serverless-next.js/commit/f580786e5859f217e5ce79824cdaa0ef17ef0e42))
+- **lambda-at-edge:** fix for 404s on public files ([#577](https://github.com/danielcondemarin/serverless-next.js/issues/577)) ([a854139](https://github.com/danielcondemarin/serverless-next.js/commit/a854139f4344530de1a42268828231a4d38c7c91))
+
 # [1.6.0-alpha.6](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.5...@sls-next/lambda-at-edge@1.6.0-alpha.6) (2020-08-29)
 
 ### Bug Fixes
