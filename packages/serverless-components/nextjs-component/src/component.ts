@@ -22,6 +22,7 @@ import type {
 type DeploymentResult = {
   appUrl: string;
   bucketName: string;
+  distributionId: unknown;
 };
 
 class NextjsComponent extends Component {
@@ -389,30 +390,33 @@ class NextjsComponent extends Component {
         "Default Lambda@Edge for Next CloudFront distribution",
       handler: "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
-      role: {
-        service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-        policy: inputs.policy
-          ? { arn: inputs.policy }
+      role:
+        inputs.role && inputs.role.defaultArn
+          ? inputs.role
           : {
-              Version: "2012-10-17",
-              Statement: [
-                {
-                  Effect: "Allow",
-                  Resource: "*",
-                  Action: [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents"
-                  ]
-                },
-                {
-                  Effect: "Allow",
-                  Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
-                  Action: ["s3:GetObject", "s3:PutObject"]
-                }
-              ]
-            }
-      },
+              service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+              policy: inputs.policy
+                ? { arn: inputs.policy }
+                : {
+                    Version: "2012-10-17",
+                    Statement: [
+                      {
+                        Effect: "Allow",
+                        Resource: "*",
+                        Action: [
+                          "logs:CreateLogGroup",
+                          "logs:CreateLogStream",
+                          "logs:PutLogEvents"
+                        ]
+                      },
+                      {
+                        Effect: "Allow",
+                        Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
+                        Action: ["s3:GetObject", "s3:PutObject"]
+                      }
+                    ]
+                  }
+            },
       memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
       timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
       runtime: readLambdaInputValue(
@@ -541,7 +545,8 @@ class NextjsComponent extends Component {
 
     return {
       appUrl,
-      bucketName: bucketOutputs.name
+      bucketName: bucketOutputs.name,
+      distributionId: cloudFrontOutputs.id
     };
   }
 
@@ -551,8 +556,10 @@ class NextjsComponent extends Component {
       this.load("@sls-next/aws-cloudfront"),
       this.load("@sls-next/domain")
     ]);
-
-    await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
+    await bucket.remove();
+    await cloudfront.remove();
+    await domain.remove();
+    // await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
   }
 }
 
