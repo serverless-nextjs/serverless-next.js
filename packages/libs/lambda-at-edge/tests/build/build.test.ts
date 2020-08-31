@@ -194,7 +194,7 @@ describe("Builder Tests", () => {
 
   describe("API Handler Artefact Files", () => {
     it("copies build files", async () => {
-      expect.assertions(3);
+      expect.assertions(2);
 
       const files = await fse.readdir(
         join(outputDir, `${API_LAMBDA_CODE_DIR}`)
@@ -203,18 +203,9 @@ describe("Builder Tests", () => {
         join(outputDir, `${API_LAMBDA_CODE_DIR}/pages`)
       );
 
-      const compatLayerIncluded = await fse.pathExists(
-        join(
-          outputDir,
-          `${API_LAMBDA_CODE_DIR}/node_modules/@sls-next/next-aws-cloudfront/index.js`
-        )
-      );
-
-      expect(compatLayerIncluded).toEqual(true);
       expect(files).toEqual([
         "index.js",
         "manifest.json",
-        "node_modules",
         "pages",
         "routes-manifest.json"
       ]);

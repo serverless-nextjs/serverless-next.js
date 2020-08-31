@@ -6,9 +6,9 @@
     "target": "es2019",
     "moduleResolution": "node",
     "noImplicitAny": true,
-    "sourceMap": true,
+    "sourceMap": false,
     "strict": true,
     "allowJs": true
   },
-  "include": ["./src/default-handler.ts"]
+  "include": ["./src/default-handler.ts", "./src/api-handler.ts"]
 }

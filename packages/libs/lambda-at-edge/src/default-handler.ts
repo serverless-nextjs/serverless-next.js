@@ -108,10 +108,12 @@ const router = (
   manifest: OriginRequestDefaultHandlerManifest
 ): ((uri: string) => string) => {
   const {
-    pages: { ssr, html }
+    pages: { ssr, html },
+    publicFiles
   } = manifest;
 
   const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
+  const allNonDynamicRoutes = { ...ssr.nonDynamic, ...html.nonDynamic };
 
   return (uri: string): string => {
     let normalisedUri = uri;
@@ -120,15 +122,18 @@ const router = (
       normalisedUri = uri
         .replace(`/_next/data/${manifest.buildId}`, "")
         .replace(".json", "");
+    }
+    // Normalise to "/" for index
+    normalisedUri = ["/index", ""].includes(normalisedUri)
+      ? "/"
+      : normalisedUri;
 
-      // Normalise to "/" for index data request
-      normalisedUri = ["/index", ""].includes(normalisedUri)
-        ? "/"
-        : normalisedUri;
+    if (allNonDynamicRoutes[normalisedUri]) {
+      return allNonDynamicRoutes[normalisedUri];
     }
 
-    if (ssr.nonDynamic[normalisedUri]) {
-      return ssr.nonDynamic[normalisedUri];
+    if (publicFiles[normalisedUri]) {
+      return publicFiles[normalisedUri];
     }
 
     for (const route in allDynamicRoutes) {

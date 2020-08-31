@@ -238,14 +238,6 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
       ),
       fse.copy(
-        require.resolve("@sls-next/next-aws-cloudfront"),
-        join(
-          this.outputDir,
-          API_LAMBDA_CODE_DIR,
-          "node_modules/@sls-next/next-aws-cloudfront/index.js"
-        )
-      ),
-      fse.copy(
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),

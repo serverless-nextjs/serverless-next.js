@@ -32,6 +32,15 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 describe("Lambda@Edge", () => {
+  let consoleWarnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "error").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
   describe.each`
     trailingSlash
     ${false}

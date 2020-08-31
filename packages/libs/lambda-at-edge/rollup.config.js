@@ -1,26 +1,32 @@
 import commonjs from "@rollup/plugin-commonjs";
 import typescript from "@rollup/plugin-typescript";
 import { nodeResolve } from "@rollup/plugin-node-resolve";
+import externals from "rollup-plugin-node-externals";
 
-export default {
-  input: "./src/default-handler.ts",
+const LOCAL_EXTERNALS = [
+  "./manifest.json",
+  "./routes-manifest.json",
+  "./prerender-manifest.json"
+];
+const NPM_EXTERNALS = ["aws-lambda", "aws-sdk/clients/s3"];
+
+const generateConfig = (filename) => ({
+  input: `./src/${filename}.ts`,
   output: {
-    file: "dist/default-handler.js",
+    file: `./dist/${filename}.js`,
     format: "cjs"
   },
   plugins: [
     commonjs(),
+    externals({
+      exclude: "@sls-next/next-aws-cloudfront"
+    }),
     nodeResolve(),
     typescript({
       tsconfig: "tsconfig.bundle.json"
     })
   ],
-  external: [
-    "util",
-    "aws-lambda",
-    "./manifest.json",
-    "aws-sdk/clients/s3",
-    "./routes-manifest.json",
-    "./prerender-manifest.json"
-  ]
-};
+  external: [...NPM_EXTERNALS, ...LOCAL_EXTERNALS]
+});
+
+export default ["default-handler", "api-handler"].map(generateConfig);
