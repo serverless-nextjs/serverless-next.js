@@ -171,6 +171,27 @@ describe("Lambda@Edge", () => {
           await runRedirectTest(path, expectedRedirect);
         }
       );
+
+      it.each`
+        path
+        ${"/terms.html"}
+      `(
+        `path $path returns 200 status after a successful S3 Origin response`,
+        async ({ path }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net",
+            config: { eventType: "origin-response" } as any,
+            response: {
+              status: "200"
+            } as any
+          });
+
+          const response = (await handler(event)) as CloudFrontResultResponse;
+
+          expect(response.status).toEqual("200");
+        }
+      );
     });
 
     describe("Public files routing", () => {
@@ -487,6 +508,27 @@ describe("Lambda@Edge", () => {
           const decodedBody = new Buffer(body, "base64").toString("utf8");
 
           expect(decodedBody).toEqual("pages/_error.js - 404");
+          expect(response.status).toEqual("404");
+        }
+      );
+
+      it.each`
+        path
+        ${"/404.html"}
+      `(
+        `path $path returns 404 status after a successful S3 Origin response`,
+        async ({ path }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net",
+            config: { eventType: "origin-response" } as any,
+            response: {
+              status: "200"
+            } as any
+          });
+
+          const response = (await handler(event)) as CloudFrontResultResponse;
+
           expect(response.status).toEqual("404");
         }
       );
