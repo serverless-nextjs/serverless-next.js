@@ -171,6 +171,21 @@ describe("Lambda@Edge", () => {
           await runRedirectTest(path, expectedRedirect);
         }
       );
+
+      it("terms.html should return 200 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/terms.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("200");
+      });
     });
 
     describe("Public files routing", () => {
@@ -193,6 +208,21 @@ describe("Lambda@Edge", () => {
           }
         });
         expect(request.uri).toEqual("/manifest.json");
+      });
+
+      it("public file should return 200 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/manifest.json",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("200");
       });
 
       it.each`
@@ -475,6 +505,21 @@ describe("Lambda@Edge", () => {
           expect(response.status).toEqual("404");
         }
       );
+
+      it("404.html should return 404 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/404.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("404");
+      });
     });
 
     describe("500 page", () => {
