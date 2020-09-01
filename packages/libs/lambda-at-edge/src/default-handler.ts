@@ -250,6 +250,7 @@ const handleOriginRequest = async ({
         prerenderManifest.preview.previewModeSigningKey
       );
     } catch (e) {
+      console.error("Failed preview mode verification for URI:", request.uri);
       return {
         status: "403",
         statusDescription: "Forbidden"
