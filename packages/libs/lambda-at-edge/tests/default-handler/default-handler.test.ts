@@ -170,6 +170,7 @@ describe("Lambda@Edge", () => {
         ${"/john/123"}
         ${"/tests/prerender-manifest/example-static-page"}
         ${"/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/preview"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
