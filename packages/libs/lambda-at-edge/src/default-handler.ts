@@ -41,6 +41,11 @@ const getPreviewCookies = (request: CloudFrontRequest) => {
       [NEXT_PREVIEW_DATA_COOKIE]: string;
       [NEXT_PRERENDER_BYPASS_COOKIE]: string;
     };
+  } else {
+    return {
+      [NEXT_PRERENDER_BYPASS_COOKIE]: "",
+      [NEXT_PREVIEW_DATA_COOKIE]: ""
+    };
   }
 };
 
@@ -233,12 +238,15 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const isPreviewRequest = getPreviewCookies(request);
+  const previewCookies = getPreviewCookies(request);
+  const isPreviewRequest =
+    previewCookies[NEXT_PREVIEW_DATA_COOKIE] &&
+    previewCookies[NEXT_PRERENDER_BYPASS_COOKIE];
 
   if (isPreviewRequest) {
     try {
       jsonwebtoken.verify(
-        isPreviewRequest[NEXT_PREVIEW_DATA_COOKIE],
+        previewCookies[NEXT_PREVIEW_DATA_COOKIE],
         prerenderManifest.preview.previewModeSigningKey
       );
     } catch (e) {
