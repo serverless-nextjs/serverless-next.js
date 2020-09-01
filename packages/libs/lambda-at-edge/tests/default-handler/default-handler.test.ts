@@ -128,6 +128,7 @@ describe("Lambda@Edge", () => {
         ${"/john/123"}                                        | ${"/[username]/[id].html"}
         ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
         ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
+        ${"/preview"}                                         | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -199,10 +200,10 @@ describe("Lambda@Edge", () => {
 
         expect(response.status).toEqual("200");
       });
-      
+
       it("handles preview mode", async () => {
         const event = createCloudFrontEvent({
-          uri: "/preview",
+          uri: `/preview${trailingSlash ? "/" : ""}`,
           host: "mydistribution.cloudfront.net",
           requestHeaders: {
             cookie: [
@@ -214,19 +215,15 @@ describe("Lambda@Edge", () => {
           }
         });
 
-        if (trailingSlash) {
-          await runRedirectTest("/preview", "/preview/");
-        } else {
-          mockPageRequire("pages/preview.js");
-          const result = await handler(event);
-          const response = result as CloudFrontResultResponse;
-          const decodedBody = new Buffer(
-            response.body as string,
-            "base64"
-          ).toString("utf8");
-          expect(decodedBody).toBe("pages/preview.js");
-          expect(response.status).toBe(200);
-        }
+        mockPageRequire("pages/preview.js");
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = new Buffer(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
+        expect(decodedBody).toBe("pages/preview.js");
+        expect(response.status).toBe(200);
       });
     });
 
