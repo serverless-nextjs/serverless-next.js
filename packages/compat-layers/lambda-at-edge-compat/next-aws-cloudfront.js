@@ -214,6 +214,7 @@ const handler = (event) => {
     if (headers) {
       res.headers = Object.assign(res.headers, headers);
     }
+    return res;
   };
   res.write = (chunk) => {
     if (!response.body) {
