@@ -26,27 +26,24 @@ import jsonwebtoken from "jsonwebtoken";
 
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
+const defaultPreviewCookies = {
+  [NEXT_PRERENDER_BYPASS_COOKIE]: "",
+  [NEXT_PREVIEW_DATA_COOKIE]: ""
+};
 
 const getPreviewCookies = (request: CloudFrontRequest) => {
   const targetCookie = request.headers.cookie || [];
-  const previewCookie = targetCookie.find((cookieObj) => {
+  return targetCookie.reduce((previewCookies, cookieObj) => {
     const cookieValue = cookie.parse(cookieObj.value);
-    return (
+    if (
       cookieValue[NEXT_PREVIEW_DATA_COOKIE] &&
       cookieValue[NEXT_PRERENDER_BYPASS_COOKIE]
-    );
-  });
-  if (previewCookie) {
-    return cookie.parse(previewCookie.value) as {
-      [NEXT_PREVIEW_DATA_COOKIE]: string;
-      [NEXT_PRERENDER_BYPASS_COOKIE]: string;
-    };
-  } else {
-    return {
-      [NEXT_PRERENDER_BYPASS_COOKIE]: "",
-      [NEXT_PREVIEW_DATA_COOKIE]: ""
-    };
-  }
+    ) {
+      return cookieValue as typeof defaultPreviewCookies;
+    } else {
+      return previewCookies;
+    }
+  }, defaultPreviewCookies);
 };
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
