@@ -35,7 +35,8 @@
         "/api/getCustomers": "pages/api/getCustomers.js",
         "/_error": "pages/_error.js",
         "/erroredPage": "pages/erroredPage.js",
-        "/404": "pages/404.html"
+        "/404": "pages/404.html",
+        "/preview": "pages/preview.js"
       }
     },
     "html": {

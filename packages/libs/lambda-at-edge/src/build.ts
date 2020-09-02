@@ -176,14 +176,6 @@ class Builder {
         buildManifest
       ),
       fse.copy(
-        require.resolve("@sls-next/next-aws-cloudfront"),
-        join(
-          this.outputDir,
-          DEFAULT_LAMBDA_CODE_DIR,
-          "node_modules/@sls-next/next-aws-cloudfront/index.js"
-        )
-      ),
-      fse.copy(
         join(this.serverlessDir, "pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
@@ -244,14 +236,6 @@ class Builder {
       fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
-      ),
-      fse.copy(
-        require.resolve("@sls-next/next-aws-cloudfront"),
-        join(
-          this.outputDir,
-          API_LAMBDA_CODE_DIR,
-          "node_modules/@sls-next/next-aws-cloudfront/index.js"
-        )
       ),
       fse.copy(
         join(this.serverlessDir, "pages/api"),

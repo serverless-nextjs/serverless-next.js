@@ -32,6 +32,15 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 describe("Lambda@Edge", () => {
+  let consoleWarnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "error").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
   describe.each`
     trailingSlash
     ${false}
@@ -537,7 +546,11 @@ describe("Lambda@Edge", () => {
           const body = response.body as string;
           const decodedBody = new Buffer(body, "base64").toString("utf8");
 
-          expect(decodedBody).toEqual("pages/_error.js - 404");
+          expect(decodedBody).toEqual(
+            JSON.stringify({
+              page: "pages/_error.js - 404"
+            })
+          );
           expect(response.status).toEqual("404");
         }
       );

@@ -144,6 +144,16 @@ describe("Response Tests", () => {
     });
   });
 
+  it("writeHead can be chained", () => {
+    const { res, responsePromise } = create({
+      request: { uri: "/", headers: {} }
+    });
+
+    res.writeHead(200, { "Content-Length": "1234" }).end();
+
+    return responsePromise;
+  });
+
   it("setHeader (multiple headers with same name)", () => {
     const { res, responsePromise } = create({
       request: {
