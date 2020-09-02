@@ -303,16 +303,16 @@ const handleOriginResponse = async ({
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
-  const uri = normaliseUri(request.uri);
   const { status } = response;
   if (status !== "403") {
-    const pagePath = router(manifest)(uri);
-    if (pagePath === "pages/404.html") {
+    // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
+    if (request.uri === "/404.html") {
       response.status = "404";
       response.statusDescription = "Not Found";
     }
     return response;
   }
+  const uri = normaliseUri(request.uri);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
   // It's usually better to do this outside the handler, but we need to know the bucket region
