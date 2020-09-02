@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "target": "es2019",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "strict": true,
+    "allowJs": true
+  },
+  "include": ["./src/default-handler.ts", "./src/api-handler.ts"]
+}
