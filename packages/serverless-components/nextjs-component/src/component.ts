@@ -331,6 +331,35 @@ class NextjsComponent extends Component {
       return inputValue[lambdaType] || defaultValue;
     };
 
+    // default policy
+    let policy: Record<string, unknown> = {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Resource: "*",
+          Action: [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ]
+        },
+        {
+          Effect: "Allow",
+          Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
+          Action: ["s3:GetObject", "s3:PutObject"]
+        }
+      ]
+    };
+
+    if (inputs.policy) {
+      if (typeof inputs.policy === "string") {
+        policy = { arn: inputs.policy };
+      } else {
+        policy = inputs.policy;
+      }
+    }
+
     if (hasAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {
         description: inputs.description
@@ -340,11 +369,7 @@ class NextjsComponent extends Component {
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            arn:
-              inputs.policy ||
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-          }
+          policy
         },
         memory: readLambdaInputValue("memory", "apiLambda", 512) as number,
         timeout: readLambdaInputValue("timeout", "apiLambda", 10) as number,
@@ -390,27 +415,7 @@ class NextjsComponent extends Component {
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-        policy: inputs.policy
-          ? { arn: inputs.policy }
-          : {
-              Version: "2012-10-17",
-              Statement: [
-                {
-                  Effect: "Allow",
-                  Resource: "*",
-                  Action: [
-                    "logs:CreateLogGroup",
-                    "logs:CreateLogStream",
-                    "logs:PutLogEvents"
-                  ]
-                },
-                {
-                  Effect: "Allow",
-                  Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
-                  Action: ["s3:GetObject", "s3:PutObject"]
-                }
-              ]
-            }
+        policy
       },
       memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
       timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
