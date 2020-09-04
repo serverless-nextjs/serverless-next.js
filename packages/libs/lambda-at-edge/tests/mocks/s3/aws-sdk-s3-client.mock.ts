@@ -1,5 +1,3 @@
-import { inspect } from "util";
-
 declare module "@aws-sdk/client-s3/S3Client" {
   const mockSend: jest.Mock;
 }
