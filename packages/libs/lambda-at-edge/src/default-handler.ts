@@ -22,7 +22,7 @@ import {
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
-import { Readable } from "stream";
+import type { Readable } from "stream";
 
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
@@ -156,10 +156,8 @@ const router = (
 export const handler = async (
   event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
-  // @ts-ignore
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   let response: CloudFrontResultResponse | CloudFrontRequest;
-  // @ts-ignore
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
 
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
