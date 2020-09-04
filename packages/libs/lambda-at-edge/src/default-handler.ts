@@ -22,6 +22,7 @@ import {
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
+import { Readable } from "stream";
 
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
@@ -432,6 +433,10 @@ const handleOriginResponse = async ({
       "@aws-sdk/client-s3/commands/GetObjectCommand"
     );
     const { Body } = await s3.send(new GetObjectCommand(s3Params));
+
+    // Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+    const getStream = await import("get-stream");
+    const bodyString = await getStream.default(Body as Readable);
     return {
       status: "200",
       statusDescription: "OK",
@@ -444,7 +449,7 @@ const handleOriginResponse = async ({
           }
         ]
       },
-      body: Body?.toString()
+      body: bodyString
     };
   }
 };

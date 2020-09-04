@@ -54,6 +54,7 @@
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
     "fs-extra": "^9.0.1",
+    "get-stream": "^6.0.0",
     "jsonwebtoken": "^8.5.1"
   }
 }

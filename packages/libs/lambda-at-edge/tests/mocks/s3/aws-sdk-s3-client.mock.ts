@@ -1,9 +1,9 @@
+import { Readable } from "stream";
+
 export const mockSend = jest.fn((input) => {
   if (input.Command === "GetObjectCommand") {
     return {
-      Body: {
-        toString: jest.fn(() => "S3Body")
-      }
+      Body: Readable.from(["S3Body"])
     };
   } else {
     return {};
