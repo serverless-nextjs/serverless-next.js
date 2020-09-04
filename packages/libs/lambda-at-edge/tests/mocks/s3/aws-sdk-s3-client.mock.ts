@@ -1,23 +1,20 @@
-import { GetObjectCommand, PutObjectCommand } from "@aws-sdk/client-s3";
+import { inspect } from "util";
 
 declare module "@aws-sdk/client-s3/S3Client" {
   const mockSend: jest.Mock;
 }
 
-export const mockSend = jest.fn(
-  (input: GetObjectCommand | PutObjectCommand) => {
-    if (input instanceof GetObjectCommand) {
-      return;
-      {
-        Body: {
-          toString: jest.fn();
-        }
+export const mockSend = jest.fn((input) => {
+  if (input.Command === "GetObjectCommand") {
+    return {
+      Body: {
+        toString: jest.fn(() => "S3Body")
       }
-    } else {
-      return {};
-    }
+    };
+  } else {
+    return {};
   }
-);
+});
 
 const MockS3Client = jest.fn(() => ({
   constructor: () => {},

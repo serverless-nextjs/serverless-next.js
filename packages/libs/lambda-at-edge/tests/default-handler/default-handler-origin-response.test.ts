@@ -78,20 +78,19 @@ describe("Lambda@Edge origin response", () => {
         Key: "static-pages/tests/prerender-manifest-fallback/[fallback].html"
       });
 
-      expect(response).toEqual(
-        expect.objectContaining({
-          status: "200",
-          statusDescription: "OK",
-          headers: {
-            "content-type": [
-              {
-                key: "Content-Type",
-                value: "text/html"
-              }
-            ]
-          }
-        })
-      );
+      expect(response).toEqual({
+        status: "200",
+        statusDescription: "OK",
+        headers: {
+          "content-type": [
+            {
+              key: "Content-Type",
+              value: "text/html"
+            }
+          ]
+        },
+        body: "S3Body"
+      });
     });
     it("renders and uploads HTML and JSON for fallback SSG data requests", async () => {
       const event = createCloudFrontEvent({
