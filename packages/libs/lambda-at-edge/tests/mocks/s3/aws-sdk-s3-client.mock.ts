@@ -1,7 +1,3 @@
-declare module "@aws-sdk/client-s3/S3Client" {
-  const mockSend: jest.Mock;
-}
-
 export const mockSend = jest.fn((input) => {
   if (input.Command === "GetObjectCommand") {
     return {
