@@ -5,6 +5,7 @@ import Manifest from "./manifest.json";
 // @ts-ignore
 import { basePath } from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import cookie from "cookie";
 import {
   CloudFrontRequest,
   CloudFrontS3Origin,
@@ -21,6 +22,29 @@ import {
 import S3 from "aws-sdk/clients/s3";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
+import jsonwebtoken from "jsonwebtoken";
+
+const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
+const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
+const defaultPreviewCookies = {
+  [NEXT_PRERENDER_BYPASS_COOKIE]: "",
+  [NEXT_PREVIEW_DATA_COOKIE]: ""
+};
+
+const getPreviewCookies = (request: CloudFrontRequest) => {
+  const targetCookie = request.headers.cookie || [];
+  return targetCookie.reduce((previewCookies, cookieObj) => {
+    const cookieValue = cookie.parse(cookieObj.value);
+    if (
+      cookieValue[NEXT_PREVIEW_DATA_COOKIE] &&
+      cookieValue[NEXT_PRERENDER_BYPASS_COOKIE]
+    ) {
+      return cookieValue as typeof defaultPreviewCookies;
+    } else {
+      return previewCookies;
+    }
+  }, defaultPreviewCookies);
+};
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -211,11 +235,34 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
+  const previewCookies = getPreviewCookies(request);
+  const isPreviewRequest =
+    previewCookies[NEXT_PREVIEW_DATA_COOKIE] &&
+    previewCookies[NEXT_PRERENDER_BYPASS_COOKIE];
+
+  if (isPreviewRequest) {
+    try {
+      jsonwebtoken.verify(
+        previewCookies[NEXT_PREVIEW_DATA_COOKIE],
+        prerenderManifest.preview.previewModeSigningKey
+      );
+    } catch (e) {
+      console.error("Failed preview mode verification for URI:", request.uri);
+      return {
+        status: "403",
+        statusDescription: "Forbidden"
+      };
+    }
+  }
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  // Check if we can serve request from S3
-  S3Check: if (isHTMLPage || isPublicFile || hasFallback || isDataReq) {
+  S3Check: if (
+    isPublicFile ||
+    (isHTMLPage && !isPreviewRequest) ||
+    (hasFallback && !isPreviewRequest) ||
+    (isDataReq && !isPreviewRequest)
+  ) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages`;
       const pageName = uri === "/" ? "/index" : uri;
@@ -249,7 +296,7 @@ const handleOriginRequest = async ({
 
   const pagePath = router(manifest)(uri);
 
-  if (pagePath.endsWith(".html")) {
+  if (pagePath.endsWith(".html") && !isPreviewRequest) {
     s3Origin.path = `${basePath}/static-pages`;
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
@@ -272,7 +319,17 @@ const handleOriginRequest = async ({
     }
 
     // Render page
-    await page.render(req, res);
+    if (isDataReq) {
+      const { renderOpts } = await page.renderReqToHTML(
+        req,
+        res,
+        "passthrough"
+      );
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(renderOpts.pageData));
+    } else {
+      await page.render(req, res);
+    }
   } catch (error) {
     // Set status to 500 so _error.js will render a 500 page
     console.error(

@@ -123,8 +123,23 @@ describe("deploy tests", () => {
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn:
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Resource: "*",
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ]
+              },
+              {
+                Effect: "Allow",
+                Resource: `arn:aws:s3:::bucket-xyz/*`,
+                Action: ["s3:GetObject", "s3:PutObject"]
+              }
+            ]
           }
         }
       });

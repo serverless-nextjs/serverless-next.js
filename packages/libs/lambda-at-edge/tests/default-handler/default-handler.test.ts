@@ -5,6 +5,10 @@ import {
   CloudFrontOrigin
 } from "aws-lambda";
 
+jest.mock("jsonwebtoken", () => ({
+  verify: jest.fn()
+}));
+
 jest.mock(
   "../../src/prerender-manifest.json",
   () => require("./prerender-manifest.json"),
@@ -32,6 +36,15 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 describe("Lambda@Edge", () => {
+  let consoleWarnSpy: jest.SpyInstance;
+
+  beforeEach(() => {
+    consoleWarnSpy = jest.spyOn(console, "error").mockReturnValue();
+  });
+
+  afterEach(() => {
+    consoleWarnSpy.mockRestore();
+  });
   describe.each`
     trailingSlash
     ${false}
@@ -115,6 +128,7 @@ describe("Lambda@Edge", () => {
         ${"/john/123"}                                        | ${"/[username]/[id].html"}
         ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
         ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
+        ${"/preview"}                                         | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -156,6 +170,7 @@ describe("Lambda@Edge", () => {
         ${"/john/123"}
         ${"/tests/prerender-manifest/example-static-page"}
         ${"/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/preview"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
@@ -185,6 +200,31 @@ describe("Lambda@Edge", () => {
         const response = (await handler(event)) as CloudFrontResultResponse;
 
         expect(response.status).toEqual("200");
+      });
+
+      it("handles preview mode", async () => {
+        const event = createCloudFrontEvent({
+          uri: `/preview${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net",
+          requestHeaders: {
+            cookie: [
+              {
+                key: "Cookie",
+                value: "__next_preview_data=abc; __prerender_bypass=def"
+              }
+            ]
+          }
+        });
+
+        mockPageRequire("pages/preview.js");
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = new Buffer(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
+        expect(decodedBody).toBe("pages/preview.js");
+        expect(response.status).toBe(200);
       });
     });
 
@@ -369,6 +409,35 @@ describe("Lambda@Edge", () => {
           await runRedirectTest(path, expectedRedirect);
         }
       );
+
+      it("handles preview mode", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/_next/data/build-id/preview.json",
+          host: "mydistribution.cloudfront.net",
+          requestHeaders: {
+            cookie: [
+              {
+                key: "Cookie",
+                value: "__next_preview_data=abc; __prerender_bypass=def"
+              }
+            ]
+          }
+        });
+
+        mockPageRequire("/pages/preview.js");
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = new Buffer(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
+        expect(decodedBody).toBe(
+          JSON.stringify({
+            page: "pages/preview.js"
+          })
+        );
+        expect(response.status).toBe(200);
+      });
     });
 
     it("uses default s3 endpoint when bucket region is us-east-1", async () => {
@@ -501,7 +570,11 @@ describe("Lambda@Edge", () => {
           const body = response.body as string;
           const decodedBody = new Buffer(body, "base64").toString("utf8");
 
-          expect(decodedBody).toEqual("pages/_error.js - 404");
+          expect(decodedBody).toEqual(
+            JSON.stringify({
+              page: "pages/_error.js - 404"
+            })
+          );
           expect(response.status).toEqual("404");
         }
       );

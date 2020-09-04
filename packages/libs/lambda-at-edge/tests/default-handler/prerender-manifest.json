@@ -5,6 +5,11 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/tests/prerender-manifest/[staticPageName]",
       "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest/example-static-page.json"
+    },
+    "/preview": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/build-id/preview.json"
     }
   },
   "dynamicRoutes": {

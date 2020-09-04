@@ -1,0 +1,46 @@
+{
+  "name": "next-app",
+  "version": "1.0.0",
+  "description": "Test Next.js app for running serverless-next.js end-to-end tests",
+  "scripts": {
+    "dev": "next",
+    "build": "next build",
+    "start": "next start -p $PORT",
+    "serverless": "serverless",
+    "e2e": "cypress run"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-next.js/serverless-next.js"
+  },
+  "keywords": [],
+  "author": "Daniel Phang",
+  "license": "MIT",
+  "homepage": "https://github.com/serverless-next.js/serverless-next.js",
+  "dependencies": {
+    "isomorphic-fetch": "2.2.1",
+    "next": "9.5.2",
+    "react": "16.13.1",
+    "react-dom": "16.13.1"
+  },
+  "devDependencies": {
+    "@bahmutov/print-env": "2.1.2",
+    "@cypress/code-coverage": "3.8.1",
+    "@cypress/skip-test": "2.5.0",
+    "@types/mocha": "8.0.3",
+    "@types/node": "14.6.2",
+    "@types/node-fetch": "2.5.7",
+    "@types/react": "16.9.48",
+    "babel-plugin-istanbul": "6.0.0",
+    "babel-plugin-transform-class-properties": "6.24.1",
+    "cypress": "5.0.0",
+    "istanbul-lib-coverage": "3.0.0",
+    "nyc": "15.1.0",
+    "ts-node": "9.0.0",
+    "typescript": "4.0.2"
+  },
+  "nyc": {
+    "report-dir": "cypress-coverage"
+  },
+  "private": true
+}
