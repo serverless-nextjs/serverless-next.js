@@ -5,9 +5,19 @@ import {
   CloudFrontHeaders,
   CloudFrontResponse
 } from "aws-lambda";
-import S3 from "aws-sdk/clients/s3";
+import { S3Client } from "@aws-sdk/client-s3/S3Client";
 
-jest.mock("aws-sdk/clients/s3", () => require("../aws-sdk-s3.mock"));
+jest.mock("@aws-sdk/client-s3/S3Client", () =>
+  require("../mocks/s3/aws-sdk-s3-client.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-put-object-command.mock")
+);
 
 jest.mock(
   "../../src/manifest.json",
@@ -44,11 +54,9 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 describe("Lambda@Edge origin response", () => {
-  let s3Client: S3;
+  let s3Client: S3Client;
   beforeEach(() => {
-    s3Client = new S3();
-    (s3Client.getObject as jest.Mock).mockClear();
-    (s3Client.putObject as jest.Mock).mockClear();
+    s3Client = new S3Client({});
   });
   describe("Fallback pages", () => {
     it("serves fallback page from S3", async () => {
@@ -64,26 +72,25 @@ describe("Lambda@Edge origin response", () => {
       const result = await handler(event);
       const response = result as CloudFrontResponse;
 
-      expect(s3Client.getObject).toHaveBeenCalledWith(
-        expect.objectContaining({
-          Key: "static-pages/tests/prerender-manifest-fallback/[fallback].html"
-        })
-      );
+      expect(s3Client.send).toHaveBeenCalledWith({
+        Command: "GetObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "static-pages/tests/prerender-manifest-fallback/[fallback].html"
+      });
 
-      expect(response).toEqual(
-        expect.objectContaining({
-          status: "200",
-          statusDescription: "OK",
-          headers: {
-            "content-type": [
-              {
-                key: "Content-Type",
-                value: "text/html"
-              }
-            ]
-          }
-        })
-      );
+      expect(response).toEqual({
+        status: "200",
+        statusDescription: "OK",
+        headers: {
+          "content-type": [
+            {
+              key: "Content-Type",
+              value: "text/html"
+            }
+          ]
+        },
+        body: "S3Body"
+      });
     });
     it("renders and uploads HTML and JSON for fallback SSG data requests", async () => {
       const event = createCloudFrontEvent({
@@ -113,25 +120,23 @@ describe("Lambda@Edge origin response", () => {
       });
       expect(cfResponse.status).toEqual(200);
 
-      expect(s3Client.putObject).toHaveBeenNthCalledWith(
-        1,
-        expect.objectContaining({
-          Key: "_next/data/build-id/fallback/not-yet-built.json",
-          Body: JSON.stringify({
-            page: "pages/fallback/[slug].js"
-          }),
-          ContentType: "application/json"
-        })
-      );
-      expect(s3Client.putObject).toHaveBeenNthCalledWith(
-        2,
-        expect.objectContaining({
-          Key: "static-pages/fallback/not-yet-built.html",
-          Body: "<div>Rendered Page</div>",
-          ContentType: "text/html",
-          CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-        })
-      );
+      expect(s3Client.send).toHaveBeenNthCalledWith(1, {
+        Command: "PutObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "_next/data/build-id/fallback/not-yet-built.json",
+        Body: JSON.stringify({
+          page: "pages/fallback/[slug].js"
+        }),
+        ContentType: "application/json"
+      });
+      expect(s3Client.send).toHaveBeenNthCalledWith(2, {
+        Command: "PutObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "static-pages/fallback/not-yet-built.html",
+        Body: "<div>Rendered Page</div>",
+        ContentType: "text/html",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      });
     });
   });
 
@@ -163,7 +168,7 @@ describe("Lambda@Edge origin response", () => {
         page: "pages/customers/[customer].js"
       });
       expect(cfResponse.status).toEqual(200);
-      expect(s3Client.putObject).not.toHaveBeenCalled();
+      expect(s3Client.send).not.toHaveBeenCalled();
     });
   });
 });
