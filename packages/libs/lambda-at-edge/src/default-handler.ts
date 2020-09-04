@@ -19,7 +19,6 @@ import {
   OriginResponseEvent,
   PerfLogger
 } from "../types";
-import S3 from "aws-sdk/clients/s3";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
@@ -156,8 +155,10 @@ const router = (
 export const handler = async (
   event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
+  // @ts-ignore
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   let response: CloudFrontResultResponse | CloudFrontRequest;
+  // @ts-ignore
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
 
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
@@ -372,8 +373,10 @@ const handleOriginResponse = async ({
   const uri = normaliseUri(request.uri);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
-  // It's usually better to do this outside the handler, but we need to know the bucket region
-  const s3 = new S3({ region: request.origin?.s3?.region });
+
+  // Lazily import only S3Client to reduce init times until actually needed
+  const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+  const s3 = new S3Client({ region: request.origin?.s3?.region });
   let pagePath;
   if (
     isDataRequest(uri) &&
@@ -406,9 +409,12 @@ const handleOriginResponse = async ({
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
+      const { PutObjectCommand } = await import(
+        "@aws-sdk/client-s3/commands/PutObjectCommand"
+      );
       await Promise.all([
-        s3.putObject(s3JsonParams).promise(),
-        s3.putObject(s3HtmlParams).promise()
+        s3.send(new PutObjectCommand(s3JsonParams)),
+        s3.send(new PutObjectCommand(s3HtmlParams))
       ]);
     }
     res.writeHead(200, response.headers as any);
@@ -422,7 +428,10 @@ const handleOriginResponse = async ({
       Bucket: bucketName,
       Key: `static-pages${hasFallback.fallback}`
     };
-    const { Body } = await s3.getObject(s3Params).promise();
+    const { GetObjectCommand } = await import(
+      "@aws-sdk/client-s3/commands/GetObjectCommand"
+    );
+    const { Body } = await s3.send(new GetObjectCommand(s3Params));
     return {
       status: "200",
       statusDescription: "OK",
@@ -435,7 +444,7 @@ const handleOriginResponse = async ({
           }
         ]
       },
-      body: Body?.toString("utf-8")
+      body: Body?.toString()
     };
   }
 };
