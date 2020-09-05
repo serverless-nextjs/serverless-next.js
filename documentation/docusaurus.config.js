@@ -38,7 +38,7 @@ module.exports = {
         },
         {
           href:
-            "https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-component/examples",
+            "https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples",
           label: "Examples",
           position: "right"
         }
@@ -74,7 +74,7 @@ module.exports = {
             {
               label: "Examples",
               href:
-                "https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-component/examples"
+                "https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples"
             }
           ]
         }
