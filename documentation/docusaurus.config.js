@@ -8,7 +8,9 @@ module.exports = {
   organizationName: "serverless-nextjs",
   projectName: "Serverless NextJS",
   themeConfig: {
-    disableDarkMode: true,
+    colorMode: {
+      disableSwitch: true
+    },
     sidebarCollapsible: false,
     announcementBar: {
       id: "work_in_progress", // Any value that will identify this message.
@@ -22,7 +24,7 @@ module.exports = {
         alt: "Serverless Nextjs",
         src: "img/logo.svg"
       },
-      links: [
+      items: [
         {
           to: "docs/",
           activeBasePath: "docs",
