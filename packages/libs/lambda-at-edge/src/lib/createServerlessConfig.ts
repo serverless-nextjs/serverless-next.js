@@ -15,7 +15,7 @@ module.exports = function(...args) {
     // Special case for promises, as it's currently not supported
     // and will just error later on
     return original
-      .then((orignalConfig) => Object.assign(finalConfig, orignalConfig))
+      .then((originalConfig) => Object.assign(finalConfig, originalConfig))
       .then((config) => Object.assign(config, target));
   } else if (typeof original === 'function') {
     Object.assign(finalConfig, original(...args));
