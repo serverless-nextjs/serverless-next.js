@@ -208,6 +208,7 @@ class NextjsComponent extends Component {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
       priceClass: cloudFrontPriceClassInputs,
+      errorPages: cloudFrontErrorPagesInputs,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -517,6 +518,9 @@ class NextjsComponent extends Component {
       origins: cloudFrontOrigins,
       ...(cloudFrontPriceClassInputs && {
         priceClass: cloudFrontPriceClassInputs
+      }),
+      ...(cloudFrontErrorPagesInputs && {
+        errorPages: cloudFrontErrorPagesInputs
       })
     });
 
