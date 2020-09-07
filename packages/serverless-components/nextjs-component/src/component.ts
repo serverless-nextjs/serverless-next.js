@@ -22,7 +22,7 @@ import type {
 type DeploymentResult = {
   appUrl: string;
   bucketName: string;
-  distributionId: unknown;
+  distributionId: string;
 };
 
 class NextjsComponent extends Component {
