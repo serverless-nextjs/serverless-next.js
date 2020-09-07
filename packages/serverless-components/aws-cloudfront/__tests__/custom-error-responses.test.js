@@ -2,10 +2,7 @@ const { createComponent } = require("../test-utils");
 
 const {
   mockCreateDistribution,
-  mockUpdateDistribution,
-  mockCreateDistributionPromise,
-  mockGetDistributionConfigPromise,
-  mockUpdateDistributionPromise
+  mockCreateDistributionPromise
 } = require("aws-sdk");
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
