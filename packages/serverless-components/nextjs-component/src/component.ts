@@ -499,7 +499,7 @@ class NextjsComponent extends Component {
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
-      distributionId: cloudFrontDistributionId || null,
+      distributionId: cloudFrontDistributionId,
       defaults: {
         ttl: 0,
         ...cloudFrontDefaults,
