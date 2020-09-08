@@ -4,7 +4,7 @@ import PrerenderManifest from "./prerender-manifest.json";
 import Manifest from "./manifest.json";
 // @ts-ignore
 import { basePath } from "./routes-manifest.json";
-import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import lambdaAtEdgeCompat from "@getjerry/next-aws-cloudfront";
 import cookie from "cookie";
 import {
   CloudFrontRequest,
@@ -72,7 +72,6 @@ const addS3HostHeader = (
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string): string => {
-
   if (basePath) uri = uri.slice(basePath.length);
   return uri === "" ? "/" : uri;
 };

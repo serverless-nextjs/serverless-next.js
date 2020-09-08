@@ -1,5 +1,5 @@
 {
-  "name": "@sls-next/aws-lambda",
+  "name": "@getjerry/aws-lambda",
   "version": "1.0.2-alpha.1",
   "main": "serverless.js",
   "publishConfig": {
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "dependencies": {
-    "@serverless/aws-iam-role": "^1.0.0",
+    "@getjerry/aws-iam-role": "link:../aws-iam-role",
     "@serverless/aws-lambda-layer": "^1.0.0",
     "@serverless/aws-s3": "^4.2.0",
     "archiver": "^4.0.1",

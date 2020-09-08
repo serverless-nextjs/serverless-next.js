@@ -1,5 +1,5 @@
 {
-  "name": "@sls-next/serverless-component",
+  "name": "@getjerry/serverless-component",
   "publishConfig": {
     "access": "public"
   },
@@ -9,7 +9,7 @@
   "types": "dist/component.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "url": "git+https://github.com/getjerry/serverless-next.js.git",
     "directory": "packages/serverless-components/nextjs-component"
   },
   "scripts": {
@@ -33,13 +33,13 @@
   "dependencies": {
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
-    "@sls-next/aws-cloudfront": "link:../aws-cloudfront",
-    "@sls-next/aws-lambda": "link:../aws-lambda",
-    "@sls-next/cloudfront": "link:../../libs/cloudfront",
-    "@sls-next/domain": "link:../domain",
-    "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
-    "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
-    "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
+    "@getjerry/aws-cloudfront": "link:../aws-cloudfront",
+    "@getjerry/aws-lambda": "link:../aws-lambda",
+    "@getjerry/cloudfront": "link:../../libs/cloudfront",
+    "@getjerry/domain": "link:../domain",
+    "@getjerry/lambda-at-edge": "link:../../libs/lambda-at-edge",
+    "@getjerry/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
+    "@getjerry/s3-static-assets": "link:../../libs/s3-static-assets",
     "aws-sdk": "^2.702.0",
     "fs-extra": "^9.0.1"
   },
