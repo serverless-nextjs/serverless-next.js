@@ -3,7 +3,9 @@ const { getForwardedValues } = require("./cacheBahaviorUtils");
 module.exports = (pathPattern, pathPatternConfig, originId) => {
   const {
     allowedHttpMethods = ["GET", "HEAD"],
-    ttl,
+    minTTL,
+    defaultTTL,
+    maxTTL,
     compress = true,
     smoothStreaming = false,
     viewerProtocolPolicy = "https-only",
@@ -15,7 +17,7 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
       cookies: "all",
       queryString: true
     }),
-    MinTTL: ttl,
+    MinTTL: minTTL,
     PathPattern: pathPattern,
     TargetOriginId: originId,
     TrustedSigners: {
@@ -33,8 +35,8 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
     },
     Compress: compress,
     SmoothStreaming: smoothStreaming,
-    DefaultTTL: ttl,
-    MaxTTL: ttl,
+    DefaultTTL: defaultTTL,
+    MaxTTL: maxTTL,
     FieldLevelEncryptionId: fieldLevelEncryptionId,
     LambdaFunctionAssociations: {
       Quantity: 0,

@@ -486,20 +486,24 @@ describe("Custom inputs", () => {
     [
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "origin-request": "ignored",
             "origin-response": "also ignored"
           }
         }
       },
-      { defaults: { ttl: 500 } }
+      { defaults: { minTTL: 0, defaultTTL: 0, maxTTL: 31536000 } }
     ],
     // allow lamdba@edge triggers other than origin-request and origin-response
     [
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "viewer-request": "used value"
           }
@@ -507,7 +511,9 @@ describe("Custom inputs", () => {
       },
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": { "viewer-request": "used value" }
         }
       }
@@ -528,23 +534,29 @@ describe("Custom inputs", () => {
     [
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-request": "ignored value" }
         }
       },
-      { "api/*": { ttl: 500 } }
+      { "api/*": { minTTL: 500, defaultTTL: 500, maxTTL: 500 } }
     ],
     // allow other lambda@edge triggers on the api cache behaviour
     [
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-response": "used value" }
         }
       },
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-response": "used value" }
         }
       }
@@ -581,7 +593,9 @@ describe("Custom inputs", () => {
     [
       {
         "/terms": {
-          ttl: 5500,
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500,
           "misc-param": "misc-value",
           "lambda@edge": {
             "origin-request": "ignored value"
@@ -590,7 +604,9 @@ describe("Custom inputs", () => {
       },
       {
         "/terms": {
-          ttl: 5500,
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500,
           "misc-param": "misc-value"
         }
       }
@@ -598,12 +614,16 @@ describe("Custom inputs", () => {
     [
       {
         "/customers/stan-sack": {
-          ttl: 5500
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500
         }
       },
       {
         "/customers/stan-sack": {
-          ttl: 5500
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500
         }
       }
     ]
@@ -661,7 +681,9 @@ describe("Custom inputs", () => {
 
     const cloudfrontConfig = {
       defaults: {
-        ttl: 0,
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
         allowedHttpMethods: ["HEAD", "GET"],
         forward: {
           cookies: "all",
@@ -676,7 +698,9 @@ describe("Custom inputs", () => {
             ...customPageCacheBehaviours,
             "_next/static/*": {
               ...customPageCacheBehaviours["_next/static/*"],
-              ttl: 86400,
+              minTTL: 0,
+              defaultTTL: 86400,
+              maxTTL: 31536000,
               forward: {
                 headers: "none",
                 cookies: "none",
@@ -684,7 +708,9 @@ describe("Custom inputs", () => {
               }
             },
             "_next/data/*": {
-              ttl: 0,
+              minTTL: 0,
+              defaultTTL: 0,
+              maxTTL: 31536000,
               allowedHttpMethods: ["HEAD", "GET"],
               "lambda@edge": {
                 "origin-request":
@@ -694,12 +720,16 @@ describe("Custom inputs", () => {
               }
             },
             "api/*": {
-              ttl: 0,
+              minTTL: 0,
+              defaultTTL: 0,
+              maxTTL: 31536000,
               ...expectedApiCacheBehaviour
             },
             "static/*": {
               ...customPageCacheBehaviours["static/*"],
-              ttl: 86400,
+              minTTL: 0,
+              defaultTTL: 86400,
+              maxTTL: 31536000,
               forward: {
                 headers: "none",
                 cookies: "none",
