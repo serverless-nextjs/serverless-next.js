@@ -55,6 +55,6 @@
     "fs-extra": "^9.0.1",
     "get-stream": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
-    "path-to-regexp": "^6.1.0"
+    "path-to-regexp": "6.1.0"
   }
 }
