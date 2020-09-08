@@ -19,10 +19,10 @@ import {
   OriginResponseEvent,
   PerfLogger
 } from "../types";
-import S3 from "aws-sdk/clients/s3";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
+import type { Readable } from "stream";
 
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
@@ -372,8 +372,10 @@ const handleOriginResponse = async ({
   const uri = normaliseUri(request.uri);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
-  // It's usually better to do this outside the handler, but we need to know the bucket region
-  const s3 = new S3({ region: request.origin?.s3?.region });
+
+  // Lazily import only S3Client to reduce init times until actually needed
+  const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+  const s3 = new S3Client({ region: request.origin?.s3?.region });
   let pagePath;
   if (
     isDataRequest(uri) &&
@@ -406,9 +408,12 @@ const handleOriginResponse = async ({
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
+      const { PutObjectCommand } = await import(
+        "@aws-sdk/client-s3/commands/PutObjectCommand"
+      );
       await Promise.all([
-        s3.putObject(s3JsonParams).promise(),
-        s3.putObject(s3HtmlParams).promise()
+        s3.send(new PutObjectCommand(s3JsonParams)),
+        s3.send(new PutObjectCommand(s3HtmlParams))
       ]);
     }
     res.writeHead(200, response.headers as any);
@@ -422,7 +427,14 @@ const handleOriginResponse = async ({
       Bucket: bucketName,
       Key: `static-pages${hasFallback.fallback}`
     };
-    const { Body } = await s3.getObject(s3Params).promise();
+    const { GetObjectCommand } = await import(
+      "@aws-sdk/client-s3/commands/GetObjectCommand"
+    );
+    const { Body } = await s3.send(new GetObjectCommand(s3Params));
+
+    // Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+    const getStream = await import("get-stream");
+    const bodyString = await getStream.default(Body as Readable);
     return {
       status: "200",
       statusDescription: "OK",
@@ -435,7 +447,7 @@ const handleOriginResponse = async ({
           }
         ]
       },
-      body: Body?.toString("utf-8")
+      body: bodyString
     };
   }
 };
