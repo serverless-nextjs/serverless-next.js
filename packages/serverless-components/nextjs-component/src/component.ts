@@ -555,7 +555,9 @@ class NextjsComponent extends Component {
       this.load("@sls-next/domain")
     ]);
 
-    await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
+    await bucket.remove();
+    await cloudfront.remove();
+    await domain.remove();
   }
 }
 
