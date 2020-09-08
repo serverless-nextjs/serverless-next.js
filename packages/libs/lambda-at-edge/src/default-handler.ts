@@ -72,21 +72,8 @@ const addS3HostHeader = (
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string): string => {
-  if (basePath) {
-    if (uri.startsWith(basePath)) {
-      uri = uri.slice(basePath.length);
-    } else {
-      // basePath set but URI does not start with basePath, return 404
-      return "/404";
-    }
-  }
 
-  // Remove trailing slash for all paths
-  if (uri.endsWith("/")) {
-    uri = uri.slice(0, -1);
-  }
-
-  // Empty path should be normalised to "/" as there is no Next.js route for ""
+  if (basePath) uri = uri.slice(basePath.length);
   return uri === "" ? "/" : uri;
 };
 

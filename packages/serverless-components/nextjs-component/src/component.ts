@@ -208,6 +208,7 @@ class NextjsComponent extends Component {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
       priceClass: cloudFrontPriceClassInputs,
+      distributionId: cloudFrontDistributionIdInput,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -496,24 +497,37 @@ class NextjsComponent extends Component {
     };
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
-    const cloudFrontOutputs = await cloudFront({
-      defaults: {
-        ttl: 0,
-        ...cloudFrontDefaults,
-        forward: {
-          cookies: "all",
-          queryString: true,
-          ...cloudFrontDefaults.forward
-        },
-        // everything after here cant be overridden
-        allowedHttpMethods: ["HEAD", "GET"],
-        "lambda@edge": {
-          ...defaultLambdaAtEdgeConfig,
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-          "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-        },
-        compress: true
+    const defaultBehaviour = {
+      ttl: 86400,
+      ...cloudFrontDefaults,
+      forward: {
+        cookies: "all",
+        queryString: true,
+        ...cloudFrontDefaults.forward
       },
+      // everything after here cant be overridden
+      allowedHttpMethods: ["HEAD", "GET"],
+      "lambda@edge": {
+        ...defaultLambdaAtEdgeConfig,
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      },
+      compress: true,
+      smoothStreaming: false,
+      viewerProtocolPolicy: "redirect-to-https"
+    };
+
+    const defaults = !routesManifest.basePath && defaultBehaviour;
+
+    if (!defaults) {
+      cloudFrontOrigins[0].pathPatterns[
+        `${routesManifest.basePath.substr(1)}*`
+      ] = defaultBehaviour;
+    }
+
+    const cloudFrontOutputs = await cloudFront({
+      distributionId: cloudFrontDistributionIdInput,
+      defaults,
       origins: cloudFrontOrigins,
       ...(cloudFrontPriceClassInputs && {
         priceClass: cloudFrontPriceClassInputs
