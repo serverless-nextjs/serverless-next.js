@@ -50,7 +50,7 @@ describe("Pages Tests", () => {
     [{ path: "/unmatched" }, { path: "/unmatched/nested" }].forEach(
       ({ path }) => {
         it(`serves 404 page ${path}`, () => {
-          cy.ensureRouteIsStatusCode(path, 404);
+          cy.ensureRouteHasStatusCode(path, 404);
           cy.visit(path, { failOnStatusCode: false });
 
           // Default Next.js 404 page
@@ -64,7 +64,7 @@ describe("Pages Tests", () => {
     [{ path: "/errored-page" }, { path: "/errored-page-new-ssr" }].forEach(
       ({ path }) => {
         it(`serves 500 page ${path}`, () => {
-          cy.ensureRouteIsStatusCode(path, 500);
+          cy.ensureRouteHasStatusCode(path, 500);
           cy.visit(path, { failOnStatusCode: false });
 
           // Default Next.js error page

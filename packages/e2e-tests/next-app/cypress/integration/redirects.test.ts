@@ -8,10 +8,11 @@ describe("Redirects Tests", () => {
       { path: "/ssr-page/" },
       { path: "/ssg-page/" },
       { path: "/errored-page/" },
-      { path: "/errored-page-new-ssr/" }
+      { path: "/errored-page-new-ssr/" },
+      { path: "/unmatched/" }
     ].forEach(({ path }) => {
-      it(`redirects ${path}`, () => {
-        cy.ensureRouteIsStatusCode(path, 308);
+      it(`redirects page ${path}`, () => {
+        cy.ensureRouteHasStatusCode(path, 308);
 
         const redirectedPath = path.slice(0, -1);
 
@@ -27,7 +28,7 @@ describe("Redirects Tests", () => {
 
   describe("Public files always redirect to non-trailing slash path", () => {
     [{ path: "/app-store-badge.png/" }].forEach(({ path }) => {
-      it(`redirects ${path}`, () => {
+      it(`redirects file ${path}`, () => {
         const redirectedPath = path.slice(0, -1);
 
         // Verify redirect response

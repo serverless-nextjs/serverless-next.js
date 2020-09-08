@@ -31,7 +31,7 @@ declare namespace Cypress {
     ensureRouteNotCached: (path: string | RegExp) => Cypress.Chainable<JQuery>;
     ensureRouteNotErrored: (path: string | RegExp) => Cypress.Chainable<JQuery>;
     ensureAllRoutesNotErrored: () => Cypress.Chainable<JQuery>;
-    ensureRouteIsStatusCode: (
+    ensureRouteHasStatusCode: (
       path: string | RegExp,
       status: number
     ) => Cypress.Chainable<JQuery>;
@@ -91,7 +91,7 @@ Cypress.Commands.add("ensureRouteNotErrored", (path: string | RegExp) => {
 });
 
 Cypress.Commands.add(
-  "ensureRouteIsStatusCode",
+  "ensureRouteHasStatusCode",
   (path: string | RegExp, status: number) => {
     cy.route2(path, (req) => {
       req.reply((res) => {

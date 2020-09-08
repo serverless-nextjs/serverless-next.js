@@ -5,7 +5,7 @@ describe("Caching Tests", () => {
 
   describe("all static file requests for a page are cached", () => {
     [{ path: "/" }].forEach(({ path }) => {
-      it(`serves and caches all static files for ${path}`, () => {
+      it(`serves and caches all static files for page ${path}`, () => {
         // Visit page once to ensure files are cached in CloudFront
         cy.visit(path);
 
@@ -19,7 +19,7 @@ describe("Caching Tests", () => {
 
   describe("public files are cached", () => {
     [{ path: "/app-store-badge.png" }].forEach(({ path }) => {
-      it(`serves and caches ${path}`, () => {
+      it(`serves and caches file ${path}`, () => {
         // Request once to ensure cached
         cy.request(path);
         cy.request(path).then((response) => {
