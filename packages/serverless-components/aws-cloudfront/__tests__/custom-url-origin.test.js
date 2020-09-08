@@ -35,7 +35,9 @@ describe("Input origin as a custom url", () => {
           "PUT",
           "PATCH"
         ],
-        ttl: 10,
+        minTTL: 0,
+        defaultTTL: 10,
+        maxTTL: 31536000,
         "lambda@edge": {
           "origin-request":
             "arn:aws:lambda:us-east-1:123:function:originRequestFunction"
