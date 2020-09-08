@@ -147,26 +147,36 @@ myNextApplication:
             ]
       # this is the cache behaviour for next.js api pages
       api:
-        ttl: 10
+        minTTL: 10
+        maxTTL: 10
+        defaultTTL: 10
       # you can set other cache behaviours like "defaults" above that can handle server side rendering
       # but more specific for a subset of your next.js pages
       /blog/*:
-        ttl: 1000
+        minTTL: 1000
+        maxTTL: 1000
+        defaultTTL: 1000
         forward:
           cookies: "all"
           queryString: false
       /about:
-        ttl: 3000
+        minTTL: 3000
+        maxTTL: 3000
+        defaultTTL: 3000
       # you can add custom origins to the cloudfront distribution
       origins:
         - url: /static
           pathPatterns:
             /wp-content/*:
-              ttl: 10
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
         - url: https://old-static.com
           pathPatterns:
             /old-static/*:
-              ttl: 10
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
       priceClass: "PriceClass_100"
 ```
 
