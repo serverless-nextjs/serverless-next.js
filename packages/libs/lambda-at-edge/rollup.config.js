@@ -21,7 +21,7 @@ const generateConfig = (filename) => ({
     json(),
     commonjs(),
     externals({
-      exclude: "@sls-next/next-aws-cloudfront"
+      exclude: "@getjerry/next-aws-cloudfront"
     }),
     nodeResolve(),
     typescript({

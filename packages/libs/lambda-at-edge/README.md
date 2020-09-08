@@ -6,7 +6,7 @@ This library was created to decouple the core logic of deploying serverless rend
 
 ```
 const path = require('path');
-const { Builder } = require("@sls-next/lambda-at-edge");
+const { Builder } = require("@getjerry/lambda-at-edge");
 
 const nextConfigDir = '/dir/to/my/nextapp';
 const outputDir = path.join(nextConfigDir, ".serverless_nextjs");

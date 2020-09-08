@@ -2,7 +2,7 @@
 import manifest from "./manifest.json";
 // @ts-ignore
 import { basePath } from "./routes-manifest.json";
-import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
+import cloudFrontCompat from "@getjerry/next-aws-cloudfront";
 import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 

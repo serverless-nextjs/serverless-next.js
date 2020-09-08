@@ -102,31 +102,31 @@
   resolved "https://registry.npmjs.org/@sindresorhus/is/-/is-0.14.0.tgz#9fb3a3cf3132328151f353de4632e01e52102bea"
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
-"@sls-next/aws-cloudfront@link:../aws-cloudfront":
+"@getjerry/aws-cloudfront@link:../aws-cloudfront":
   version "0.0.0"
   uid ""
 
-"@sls-next/aws-lambda@link:../aws-lambda":
+"@getjerry/aws-lambda@link:../aws-lambda":
   version "0.0.0"
   uid ""
 
-"@sls-next/cloudfront@link:../../libs/cloudfront":
+"@getjerry/cloudfront@link:../../libs/cloudfront":
   version "0.0.0"
   uid ""
 
-"@sls-next/domain@link:../domain":
+"@getjerry/domain@link:../domain":
   version "0.0.0"
   uid ""
 
-"@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
+"@getjerry/lambda-at-edge@link:../../libs/lambda-at-edge":
   version "0.0.0"
   uid ""
 
-"@sls-next/next-aws-cloudfront@link:../../compat-layers/lambda-at-edge-compat":
+"@getjerry/next-aws-cloudfront@link:../../compat-layers/lambda-at-edge-compat":
   version "0.0.0"
   uid ""
 
-"@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
+"@getjerry/s3-static-assets@link:../../libs/s3-static-assets":
   version "0.0.0"
   uid ""
 

@@ -1,10 +1,10 @@
 import fse from "fs-extra";
 import path from "path";
-import { mockDomain } from "@sls-next/domain";
+import { mockDomain } from "@getjerry/domain";
 import { mockS3 } from "@serverless/aws-s3";
 import { mockUpload } from "aws-sdk";
-import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
+import { mockCloudFront } from "@getjerry/aws-cloudfront";
 
 import NextjsComponent from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
@@ -143,7 +143,7 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it("uses @sls-next/domain to provision custom domain", () => {
+    it("uses @getjerry/domain to provision custom domain", () => {
       const { domain, subdomain } = obtainDomains(inputDomains);
 
       expect(mockDomain).toBeCalledWith({

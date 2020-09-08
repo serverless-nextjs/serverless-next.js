@@ -168,7 +168,7 @@ class Builder {
     return Promise.all([
       ...copyTraces,
       fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
+        require.resolve("@getjerry/lambda-at-edge/dist/default-handler.js"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
       fse.writeJson(
@@ -234,7 +234,7 @@ class Builder {
     return Promise.all([
       ...copyTraces,
       fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
+        require.resolve("@getjerry/lambda-at-edge/dist/api-handler.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
       ),
       fse.copy(

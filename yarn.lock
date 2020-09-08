@@ -3472,11 +3472,11 @@
   dependencies:
     "@sinonjs/commons" "^1.7.0"
 
-"@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
+"@getjerry/lambda-at-edge@link:./packages/libs/lambda-at-edge":
   version "0.0.0"
   uid ""
 
-"@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
+"@getjerry/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
   version "0.0.0"
   uid ""
 
@@ -7792,6 +7792,11 @@ get-stream@^5.0.0, get-stream@^5.1.0:
   integrity sha512-nBF+F1rAZVCu/p7rjzgA+Yb4lfYXrpl7a6VmJrU8wF9I1CKvP/QwPNZHnOlwbTkY6dvtFIzFMSyQXbLoTQPRpA==
   dependencies:
     pump "^3.0.0"
+
+get-stream@^6.0.0:
+  version "6.0.0"
+  resolved "https://registry.yarnpkg.com/get-stream/-/get-stream-6.0.0.tgz#3e0012cb6827319da2706e601a1583e8629a6718"
+  integrity sha512-A1B3Bh1UmL0bidM/YX2NsCOTnGJePL9rO/M+Mw3m9f2gUpfokS0hi5Eah0WSUEWZdZhIZtMjkIYS7mDfOqNHbg==
 
 get-value@^2.0.3, get-value@^2.0.6:
   version "2.0.6"
