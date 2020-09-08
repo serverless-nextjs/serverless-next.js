@@ -126,7 +126,7 @@ myNextApplication:
 
 ### Custom CloudFront configuration
 
-To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
+To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
 
 ```yml
 # serverless.yml
@@ -135,6 +135,8 @@ myNextApplication:
   component: serverless-next.js
   inputs:
     cloudfront:
+      # if you want to use an existing cloudfront distribution, provide it here
+      distributionId: XYZEXAMPLE #optional
       # this is the default cache behaviour of the cloudfront distribution
       # the origin-request edge lambda associated to this cache behaviour does the pages server side rendering
       defaults:
@@ -181,6 +183,7 @@ myNextApplication:
 ```
 
 This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+You can also [update an existing cloudfront distribution](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#updating-an-existing-cloudfront-distribution) using custom cloudfront inputs.
 
 ### Static pages caching
 
