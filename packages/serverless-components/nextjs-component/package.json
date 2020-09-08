@@ -1,5 +1,5 @@
 {
-  "name": "@getjerry/serverless-component",
+  "name": "@getjerry/serverless-next",
   "publishConfig": {
     "access": "public"
   },
