@@ -32,8 +32,8 @@
   "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.0.0",
+    "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^9.0.0",
-    "@rollup/plugin-typescript": "^5.0.2",
     "@types/aws-lambda": "^8.10.57",
     "@types/cookie": "^0.4.0",
     "@types/execa": "^2.0.0",
@@ -44,14 +44,17 @@
     "path-to-regexp": "^6.1.0",
     "rollup": "^2.26.6",
     "rollup-plugin-node-externals": "^2.2.0",
+    "rollup-plugin-typescript2": "^0.27.2",
     "ts-loader": "^7.0.5",
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "1.0.0-gamma.8",
     "@zeit/node-file-trace": "^0.6.5",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
     "fs-extra": "^9.0.1",
+    "get-stream": "^6.0.0",
     "jsonwebtoken": "^8.5.1"
   }
 }
