@@ -1,11 +1,34 @@
+// https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/custom-error-pages.html
+const CF_ALLOWED_ERROR_CODES = [
+  400,
+  403,
+  404,
+  405,
+  414,
+  416,
+  500,
+  501,
+  502,
+  503,
+  504
+];
+
+const errorResponse = (errorPage) => {
+  if (!CF_ALLOWED_ERROR_CODES.includes(errorPage.code)) {
+    throw Error(`CloudFront error code "${errorPage.code}" is not supported`);
+  }
+
+  return {
+    ErrorCode: `${errorPage.code}`,
+    ErrorCachingMinTTL: `${errorPage.ttl || 10}`,
+    ResponseCode: `${errorPage.responseCode || errorPage.code}`,
+    ResponsePagePath: errorPage.path
+  };
+};
+
 module.exports = (errorPages = []) => {
   return {
     Quantity: errorPages.length,
-    Items: errorPages.map((errorPage) => ({
-      ErrorCode: `${errorPage.code}`,
-      ErrorCachingMinTTL: `${errorPage.ttl || 10}`,
-      ResponseCode: `${errorPage.responseCode || errorPage.code}`,
-      ResponsePagePath: errorPage.path
-    }))
+    Items: errorPages.map(errorResponse)
   };
 };
