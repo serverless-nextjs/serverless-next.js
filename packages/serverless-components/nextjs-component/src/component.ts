@@ -22,6 +22,7 @@ import type {
 type DeploymentResult = {
   appUrl: string;
   bucketName: string;
+  distributionId: string;
 };
 
 class NextjsComponent extends Component {
@@ -208,6 +209,7 @@ class NextjsComponent extends Component {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
       priceClass: cloudFrontPriceClassInputs,
+      distributionId: cloudFrontDistributionId = null,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -505,6 +507,7 @@ class NextjsComponent extends Component {
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
+      distributionId: cloudFrontDistributionId,
       defaults: {
         minTTL: 0,
         defaultTTL: 0,
@@ -554,7 +557,8 @@ class NextjsComponent extends Component {
 
     return {
       appUrl,
-      bucketName: bucketOutputs.name
+      bucketName: bucketOutputs.name,
+      distributionId: cloudFrontOutputs.id
     };
   }
 
