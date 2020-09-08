@@ -1,3 +1,4 @@
+const getBucketNameFromUrl = require("./getBucketNameFromUrl");
 const url = require("url");
 
 module.exports = (origin, { originAccessIdentityId = "" }) => {
@@ -16,7 +17,7 @@ module.exports = (origin, { originAccessIdentityId = "" }) => {
   };
 
   if (originUrl.includes("s3")) {
-    const bucketName = hostname.split(".")[0];
+    const bucketName = getBucketNameFromUrl(hostname);
     originConfig.Id = bucketName;
     originConfig.DomainName = hostname;
     originConfig.S3OriginConfig = {
