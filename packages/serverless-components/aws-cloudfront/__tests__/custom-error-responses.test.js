@@ -71,18 +71,22 @@ describe("Configures custom error responses", () => {
   });
 
   it("only allows certain error codes", async () => {
-    const failing = async () => {
+    const failing = async (code, responseCode) => {
       await component.default({
         origins,
         errorPages: [
           {
-            code: 401,
+            code,
+            responseCode,
             path: "/404.html"
           }
         ]
       });
     };
-    await expect(failing()).rejects.toThrow(
+    await expect(failing(401)).rejects.toThrow(
+      'CloudFront error code "401" is not supported'
+    );
+    await expect(failing(400, 401)).rejects.toThrow(
       'CloudFront error code "401" is not supported'
     );
   });

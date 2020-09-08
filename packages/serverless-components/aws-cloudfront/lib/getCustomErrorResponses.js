@@ -14,14 +14,21 @@ const CF_ALLOWED_ERROR_CODES = [
 ];
 
 const errorResponse = (errorPage) => {
+  errorPage.responseCode = errorPage.responseCode || errorPage.code;
+
   if (!CF_ALLOWED_ERROR_CODES.includes(errorPage.code)) {
     throw Error(`CloudFront error code "${errorPage.code}" is not supported`);
+  }
+  if (!CF_ALLOWED_ERROR_CODES.includes(errorPage.responseCode)) {
+    throw Error(
+      `CloudFront error code "${errorPage.responseCode}" is not supported`
+    );
   }
 
   return {
     ErrorCode: `${errorPage.code}`,
     ErrorCachingMinTTL: `${errorPage.ttl || 10}`,
-    ResponseCode: `${errorPage.responseCode || errorPage.code}`,
+    ResponseCode: `${errorPage.responseCode}`,
     ResponsePagePath: errorPage.path
   };
 };
