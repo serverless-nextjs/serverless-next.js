@@ -32,6 +32,7 @@ class CloudFront extends Component {
     ].includes(inputs.priceClass)
       ? inputs.priceClass
       : "PriceClass_All";
+    inputs.errorPages = inputs.errorPages || [];
 
     this.context.debug(
       `Starting deployment of CloudFront distribution to the ${inputs.region} region.`
@@ -55,7 +56,8 @@ class CloudFront extends Component {
         !equals(this.state.defaults, inputs.defaults) ||
         !equals(this.state.enabled, inputs.enabled) ||
         !equals(this.state.comment, inputs.comment) ||
-        !equals(this.state.priceClass, inputs.priceClass)
+        !equals(this.state.priceClass, inputs.priceClass) ||
+        !equals(this.state.errorPages, inputs.errorPages)
       ) {
         this.context.debug(
           `Updating CloudFront distribution of ID ${this.state.id}.`
@@ -79,6 +81,7 @@ class CloudFront extends Component {
     this.state.comment = inputs.comment;
     this.state.priceClass = inputs.priceClass;
     this.state.origins = inputs.origins;
+    this.state.errorPages = inputs.errorPages;
     this.state.defaults = inputs.defaults;
     await this.save();
 
