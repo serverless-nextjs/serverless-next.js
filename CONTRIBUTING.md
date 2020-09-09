@@ -21,6 +21,25 @@ In watch mode:
 yarn test --watch lambda-at-edge/
 ```
 
+#### Integration tests
+
+To run local integration tests, run the following command:
+
+`yarn integration`
+
+### End-to-end tests
+
+The end-to-end tests will automatically verify a real deployment to AWS. The test app may also be useful for you to manually verify your changes.
+
+1. First, change directory to the test [Next.js app](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/e2e-tests/next-app). Run `yarn install` to install dependencies.
+2. Follow the section on deploying to your own AWS account.
+3. Save the CloudFront distribution URL somewhere.
+4. Run the Cypress tests by running the following command, replacing `CYPRESS_BASE_URL` with your CloudFront distribution:
+
+`CYPRESS_BASE_URL=https://dxxxxxxxxxxxx.cloudfront.net yarn e2e`
+
+This will run the tests in headless mode using the [Electron](https://www.electronjs.org/) browser, which is based on Chromium. You can also run it in Chrome using `--browser chrome`.
+
 ### Deploying to AWS and testing your changes
 
 First, create your own test serverless component app and in the `serverless.yml` point the `component` field to your fork:
