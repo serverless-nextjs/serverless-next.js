@@ -213,7 +213,8 @@ describe("deploy tests", () => {
               }
             }
           }
-        ]
+        ],
+        distributionId: null
       });
     });
 
