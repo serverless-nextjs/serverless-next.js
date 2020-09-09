@@ -111,7 +111,8 @@ const uploadStaticAssets = async (
       s3Key: pathToPosix(
         withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
       ),
-      filePath: pageFilePath
+      filePath: pageFilePath,
+      cacheControl: SERVER_CACHE_CONTROL_HEADER
     });
   });
 
