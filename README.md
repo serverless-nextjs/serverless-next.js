@@ -126,7 +126,7 @@ myNextApplication:
 
 ### Custom CloudFront configuration
 
-To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
+To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
 
 ```yml
 # serverless.yml
@@ -135,6 +135,8 @@ myNextApplication:
   component: serverless-next.js
   inputs:
     cloudfront:
+      # if you want to use an existing cloudfront distribution, provide it here
+      distributionId: XYZEXAMPLE #optional
       # this is the default cache behaviour of the cloudfront distribution
       # the origin-request edge lambda associated to this cache behaviour does the pages server side rendering
       defaults:
@@ -147,26 +149,36 @@ myNextApplication:
             ]
       # this is the cache behaviour for next.js api pages
       api:
-        ttl: 10
+        minTTL: 10
+        maxTTL: 10
+        defaultTTL: 10
       # you can set other cache behaviours like "defaults" above that can handle server side rendering
       # but more specific for a subset of your next.js pages
       /blog/*:
-        ttl: 1000
+        minTTL: 1000
+        maxTTL: 1000
+        defaultTTL: 1000
         forward:
           cookies: "all"
           queryString: false
       /about:
-        ttl: 3000
+        minTTL: 3000
+        maxTTL: 3000
+        defaultTTL: 3000
       # you can add custom origins to the cloudfront distribution
       origins:
         - url: /static
           pathPatterns:
             /wp-content/*:
-              ttl: 10
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
         - url: https://old-static.com
           pathPatterns:
             /old-static/*:
-              ttl: 10
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
       priceClass: "PriceClass_100"
       # You can add custom error responses
       errorPages:
@@ -177,6 +189,7 @@ myNextApplication:
 ```
 
 This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+You can also [update an existing cloudfront distribution](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#updating-an-existing-cloudfront-distribution) using custom cloudfront inputs.
 
 ### Static pages caching
 

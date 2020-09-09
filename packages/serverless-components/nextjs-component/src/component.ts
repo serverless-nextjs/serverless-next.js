@@ -22,6 +22,7 @@ import type {
 type DeploymentResult = {
   appUrl: string;
   bucketName: string;
+  distributionId: string;
 };
 
 class NextjsComponent extends Component {
@@ -209,6 +210,7 @@ class NextjsComponent extends Component {
       origins: cloudFrontOriginsInputs,
       priceClass: cloudFrontPriceClassInputs,
       errorPages: cloudFrontErrorPagesInputs,
+      distributionId: cloudFrontDistributionId = null,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -290,7 +292,9 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/static/*", routesManifest)
     ] = {
-      ttl: 86400,
+      minTTL: 0,
+      defaultTTL: 86400,
+      maxTTL: 31536000,
       forward: {
         headers: "none",
         cookies: "none",
@@ -301,7 +305,9 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("static/*", routesManifest)
     ] = {
-      ttl: 86400,
+      minTTL: 0,
+      defaultTTL: 86400,
+      maxTTL: 31536000,
       forward: {
         headers: "none",
         cookies: "none",
@@ -391,7 +397,9 @@ class NextjsComponent extends Component {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
-        ttl: 0,
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
         allowedHttpMethods: [
           "HEAD",
           "DELETE",
@@ -480,7 +488,9 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
     ] = {
-      ttl: 0,
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 31536000,
       allowedHttpMethods: ["HEAD", "GET"],
       "lambda@edge": {
         "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
@@ -498,8 +508,11 @@ class NextjsComponent extends Component {
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
+      distributionId: cloudFrontDistributionId,
       defaults: {
-        ttl: 0,
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
         ...cloudFrontDefaults,
         forward: {
           cookies: "all",
@@ -548,7 +561,8 @@ class NextjsComponent extends Component {
 
     return {
       appUrl,
-      bucketName: bucketOutputs.name
+      bucketName: bucketOutputs.name,
+      distributionId: cloudFrontOutputs.id
     };
   }
 
@@ -559,7 +573,9 @@ class NextjsComponent extends Component {
       this.load("@sls-next/domain")
     ]);
 
-    await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
+    await bucket.remove();
+    await cloudfront.remove();
+    await domain.remove();
   }
 }
 

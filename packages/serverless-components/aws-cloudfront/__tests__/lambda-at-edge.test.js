@@ -27,7 +27,9 @@ describe("Input origin as a custom url", () => {
           url: "https://exampleorigin.com",
           pathPatterns: {
             "/some/path": {
-              ttl: 10,
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10,
               "lambda@edge": {
                 "viewer-request":
                   "arn:aws:lambda:us-east-1:123:function:viewerRequestFunction",
@@ -88,7 +90,9 @@ describe("Input origin as a custom url", () => {
             url: "https://exampleorigin.com",
             pathPatterns: {
               "/some/path": {
-                ttl: 10,
+                minTTL: 10,
+                defaultTTL: 10,
+                maxTTL: 10,
                 "lambda@edge": {
                   "invalid-eventtype":
                     "arn:aws:lambda:us-east-1:123:function:viewerRequestFunction"

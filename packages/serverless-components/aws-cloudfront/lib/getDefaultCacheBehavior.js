@@ -5,7 +5,9 @@ module.exports = (originId, defaults = {}) => {
   const {
     allowedHttpMethods = ["HEAD", "GET"],
     forward = {},
-    ttl = 86400,
+    minTTL = 0,
+    defaultTTL = 86400,
+    maxTTL = 31536000,
     compress = false,
     smoothStreaming = false,
     viewerProtocolPolicy = "redirect-to-https",
@@ -21,7 +23,7 @@ module.exports = (originId, defaults = {}) => {
       Items: []
     },
     ViewerProtocolPolicy: viewerProtocolPolicy,
-    MinTTL: 0,
+    MinTTL: minTTL,
     AllowedMethods: {
       Quantity: allowedHttpMethods.length,
       Items: allowedHttpMethods,
@@ -31,8 +33,8 @@ module.exports = (originId, defaults = {}) => {
       }
     },
     SmoothStreaming: smoothStreaming,
-    DefaultTTL: ttl,
-    MaxTTL: 31536000,
+    DefaultTTL: defaultTTL,
+    MaxTTL: maxTTL,
     Compress: compress,
     LambdaFunctionAssociations: {
       Quantity: 0,
