@@ -27,7 +27,7 @@ const errorResponse = (errorPage) => {
 
   return {
     ErrorCode: `${errorPage.code}`,
-    ErrorCachingMinTTL: `${errorPage.ttl || 10}`,
+    ErrorCachingMinTTL: `${errorPage.minTTL || 10}`,
     ResponseCode: `${errorPage.responseCode}`,
     ResponsePagePath: errorPage.path
   };

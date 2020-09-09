@@ -172,7 +172,7 @@ myNextApplication:
       errorPages:
         - code: 503
           path: "/503.html"
-          ttl: 5 # optional, minimum ttl the error is cached (default 10)
+          minTTL: 5 # optional, minimum ttl the error is cached (default 10)
           responseCode: 500 # optional, alters the response code
 ```
 
