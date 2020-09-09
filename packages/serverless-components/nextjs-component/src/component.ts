@@ -536,9 +536,14 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
+    const paths = routesManifest.basePath
+      ? [`${routesManifest.basePath}*`]
+      : undefined;
+
     await createInvalidation({
       distributionId: cloudFrontOutputs.id,
-      credentials: this.context.credentials.aws
+      credentials: this.context.credentials.aws,
+      paths
     });
 
     const { domain, subdomain } = obtainDomains(inputs.domain);

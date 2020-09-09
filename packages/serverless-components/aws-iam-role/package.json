@@ -1,18 +1,11 @@
 {
   "name": "@getjerry/aws-iam-role",
-  "version": "1.0.1",
+  "version": "1.0.3",
   "description": "Custom IAM role component",
   "author": "Denis Grankin <denis@getjerry.com>",
   "homepage": "https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-components/aws-iam-role#readme",
   "license": "ISC",
   "main": "serverless.js",
-  "directories": {
-    "lib": "lib",
-    "test": "__tests__"
-  },
-  "files": [
-    "lib"
-  ],
   "publishConfig": {
     "access": "public"
   },
