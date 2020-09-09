@@ -180,6 +180,12 @@ myNextApplication:
               maxTTL: 10
               defaultTTL: 10
       priceClass: "PriceClass_100"
+      # You can add custom error responses
+      errorPages:
+        - code: 503
+          path: "/503.html"
+          minTTL: 5 # optional, minimum ttl the error is cached (default 10)
+          responseCode: 500 # optional, alters the response code
 ```
 
 This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.

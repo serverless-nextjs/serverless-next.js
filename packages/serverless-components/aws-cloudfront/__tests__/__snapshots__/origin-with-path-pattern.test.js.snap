@@ -62,6 +62,10 @@ Object {
     },
     "CallerReference": "1566599541192",
     "Comment": "",
+    "CustomErrorResponses": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
     "DefaultCacheBehavior": Object {
       "AllowedMethods": Object {
         "CachedMethods": Object {
@@ -199,6 +203,10 @@ Object {
       "Quantity": 1,
     },
     "Comment": "",
+    "CustomErrorResponses": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
     "DefaultCacheBehavior": Object {
       "AllowedMethods": Object {
         "CachedMethods": Object {
