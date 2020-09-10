@@ -31,10 +31,12 @@ To run local integration tests, run the following command:
 
 The end-to-end tests will automatically verify a real deployment to AWS using a test app. The test app may also be useful for you to manually verify your changes.
 
-1. First, change directory to the test [Next.js app](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/e2e-tests/next-app). Run `yarn install` to install dependencies.
-2. Follow the section on deploying to your own AWS account.
-3. Save the CloudFront distribution URL somewhere.
-4. Run the Cypress tests by running the following command, replacing `CYPRESS_BASE_URL` with your CloudFront distribution URL:
+1. Ensure you have built all your changes by running `yarn` in the root directory of `serverless-next.js` repository.
+2. Change directory to the test [Next.js app](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/e2e-tests/next-app).
+3. Run `yarn install` to ensure dependencies such as Cypress are installed.
+4. Run `AWS_ACCESS_KEY_ID=xxx AWS_SECRET_ACCESS_KEY=xxx serverless` (or `npx serverless`) to deploy your changes to your AWS account.
+5. Save the output CloudFront distribution URL somewhere.
+6. Run the Cypress tests using the following command, replacing `CYPRESS_BASE_URL` with your CloudFront distribution URL:
 
 `CYPRESS_BASE_URL=https://dxxxxxxxxxxxx.cloudfront.net yarn e2e`
 
