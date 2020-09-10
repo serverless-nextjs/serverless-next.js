@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0-alpha.10](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.17.0-alpha.9...@sls-next/serverless-component@1.17.0-alpha.10) (2020-09-10)
+
+### Bug Fixes
+
+- **serverless-component:** wait sequentially for resources to be removed, so as to avoid race conditions ([#588](https://github.com/danielcondemarin/serverless-next.js/issues/588)) ([7bcb032](https://github.com/danielcondemarin/serverless-next.js/commit/7bcb032f3199f245643fab91e8b671083a857cc3))
+
+### Features
+
+- **aws-cloudfront, s3-static-assets:** support setting individual min, max, default CloudFront TTLs, update Cache-Control headers and TTLs for \_next/data files ([#593](https://github.com/danielcondemarin/serverless-next.js/issues/593)) ([fb8e61d](https://github.com/danielcondemarin/serverless-next.js/commit/fb8e61dc50b11c0e5966548a8c84b58e495ea748))
+- **aws-cloudfront, serverless-component:** add cloudfront custom error responses ([#590](https://github.com/danielcondemarin/serverless-next.js/issues/590)) ([f3d2a17](https://github.com/danielcondemarin/serverless-next.js/commit/f3d2a17b2fac5e9bb67b1f6ed5201c8128600314))
+- **serverless-component:** allow passing an inline policy ([#575](https://github.com/danielcondemarin/serverless-next.js/issues/575)) ([05ddcc9](https://github.com/danielcondemarin/serverless-next.js/commit/05ddcc98c03e642b8ab9fda3e20334215a8cb017))
+
 # [1.17.0-alpha.9](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.17.0-alpha.8...@sls-next/serverless-component@1.17.0-alpha.9) (2020-08-31)
 
 **Note:** Version bump only for package @sls-next/serverless-component

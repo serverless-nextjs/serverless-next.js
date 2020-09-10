@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.8](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.7...@sls-next/lambda-at-edge@1.6.0-alpha.8) (2020-09-10)
+
+### Features
+
+- **lambda-at-edge:** use new aws s3 client for faster require time ([#583](https://github.com/danielcondemarin/serverless-next.js/issues/583)) ([f9eef45](https://github.com/danielcondemarin/serverless-next.js/commit/f9eef458552e5ff5ee60e9b43df7ccf221a2ec0c))
+- **lambda-at-edge, next-aws-cloudfront:** support Preview Mode ([#562](https://github.com/danielcondemarin/serverless-next.js/issues/562)) ([5e1ea38](https://github.com/danielcondemarin/serverless-next.js/commit/5e1ea3891e48d75de5973902a014b67f14c8380a))
+
 # [1.6.0-alpha.7](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.6...@sls-next/lambda-at-edge@1.6.0-alpha.7) (2020-08-31)
 
 ### Bug Fixes
