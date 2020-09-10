@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.6.0-alpha.8",
+  "version": "1.6.0-alpha.9",
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -48,13 +48,13 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
-    "path-to-regexp": "^6.1.0",
     "@aws-sdk/client-s3": "1.0.0-gamma.8",
     "@zeit/node-file-trace": "^0.6.5",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
     "fs-extra": "^9.0.1",
     "get-stream": "^6.0.0",
-    "jsonwebtoken": "^8.5.1"
+    "jsonwebtoken": "^8.5.1",
+    "path-to-regexp": "^6.1.0"
   }
 }

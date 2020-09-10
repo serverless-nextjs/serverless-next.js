@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.9](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.8...@sls-next/lambda-at-edge@1.6.0-alpha.9) (2020-09-10)
+
+### Bug Fixes
+
+- **lambda-at-edge:** move path-to-regexp to prod deps ([e4d9dbd](https://github.com/danielcondemarin/serverless-next.js/commit/e4d9dbd3f12b12cd5f10936d0daf511134c70ae7))
+
 # [1.6.0-alpha.8](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.7...@sls-next/lambda-at-edge@1.6.0-alpha.8) (2020-09-10)
 
 ### Features
