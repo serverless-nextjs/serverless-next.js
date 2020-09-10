@@ -41,7 +41,6 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/node": "^14.0.14",
     "@types/path-to-regexp": "^1.7.0",
-    "path-to-regexp": "^6.1.0",
     "rollup": "^2.26.6",
     "rollup-plugin-node-externals": "^2.2.0",
     "rollup-plugin-typescript2": "^0.27.2",
@@ -49,6 +48,7 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
+    "path-to-regexp": "^6.1.0",
     "@aws-sdk/client-s3": "1.0.0-gamma.8",
     "@zeit/node-file-trace": "^0.6.5",
     "cookie": "^0.4.1",
