@@ -33,7 +33,7 @@
     "@types/react": "16.9.48",
     "babel-plugin-istanbul": "6.0.0",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "cypress": "5.0.0",
+    "cypress": "5.1.0",
     "istanbul-lib-coverage": "3.0.0",
     "nyc": "15.1.0",
     "ts-node": "9.0.0",

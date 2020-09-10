@@ -98,7 +98,8 @@
       "/fixtures/",
       "/fixture/",
       "/examples/",
-      "/integration/"
+      "/integration/",
+      "/cypress/"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
