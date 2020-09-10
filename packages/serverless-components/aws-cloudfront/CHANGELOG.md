@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.1.1-alpha.2...@sls-next/aws-cloudfront@1.2.0-alpha.0) (2020-09-10)
+
+### Features
+
+- **aws-cloudfront, s3-static-assets:** support setting individual min, max, default CloudFront TTLs, update Cache-Control headers and TTLs for \_next/data files ([#593](https://github.com/serverless-nextjs/serverless-next.js/issues/593)) ([fb8e61d](https://github.com/serverless-nextjs/serverless-next.js/commit/fb8e61dc50b11c0e5966548a8c84b58e495ea748))
+- **aws-cloudfront, serverless-component:** add cloudfront custom error responses ([#590](https://github.com/serverless-nextjs/serverless-next.js/issues/590)) ([f3d2a17](https://github.com/serverless-nextjs/serverless-next.js/commit/f3d2a17b2fac5e9bb67b1f6ed5201c8128600314))
+
 ## [1.1.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.1.1-alpha.1...@sls-next/aws-cloudfront@1.1.1-alpha.2) (2020-08-14)
 
 **Note:** Version bump only for package @sls-next/aws-cloudfront

@@ -255,7 +255,7 @@ class NextjsComponent extends Component {
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
-    // If origin is relative path then prepend the bucketUrl
+    // if origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
     const expandRelativeUrls = (origin: string | Record<string, unknown>) => {
       const originUrl =
