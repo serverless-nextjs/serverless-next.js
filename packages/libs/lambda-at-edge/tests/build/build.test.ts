@@ -156,7 +156,7 @@ describe("Builder Tests", () => {
 
   describe("Default Handler Artefact Files", () => {
     it("copies build files", async () => {
-      expect.assertions(6);
+      expect.assertions(7);
 
       const files = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
@@ -184,8 +184,16 @@ describe("Builder Tests", () => {
 
       // HTML Prerendered pages or JSON static props files
       // should not be included in the default lambda
-      expect(pages).not.toContain(["blog.json"]);
-      expect(pages).not.toContain(["about.html", "terms.html"]);
+      expect(pages).not.toContain(["blog.json", "index.json", "contact.json"]);
+      expect(pages).not.toContain([
+        "about.html",
+        "terms.html",
+        "contact.html",
+        "index.html"
+      ]);
+
+      // JS files used only for prerendering should not be included in default lambda
+      expect(pages).not.toContain(["contact.js", "index.js"]);
 
       expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
       expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);

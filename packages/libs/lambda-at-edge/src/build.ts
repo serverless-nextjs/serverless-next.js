@@ -132,6 +132,23 @@ class Builder {
       });
   }
 
+  isPrerenderedJSFile(prerenderManifest: any, relativeFile: string): boolean {
+    if (path.extname(relativeFile) === ".js") {
+      // Page route is without .js extension
+      let pageRoute = relativeFile.slice(0, -3);
+
+      // Prepend "/"
+      pageRoute = pageRoute.startsWith("/") ? pageRoute : `/${pageRoute}`;
+
+      // Normalise index route
+      pageRoute = pageRoute === "/index" ? "/" : pageRoute;
+
+      return prerenderManifest.routes && !!prerenderManifest.routes[pageRoute];
+    }
+
+    return false;
+  }
+
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
@@ -165,6 +182,11 @@ class Builder {
       );
     }
 
+    let prerenderManifest = require(join(
+      this.dotNextDir,
+      "prerender-manifest.json"
+    ));
+
     return Promise.all([
       ...copyTraces,
       fse.copy(
@@ -184,10 +206,17 @@ class Builder {
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
 
+            // Filter out JS files that are only meant for prerendering, e.g pages with getStaticProps()
+            const isNotPrerenderedJSFile = !this.isPrerenderedJSFile(
+              prerenderManifest,
+              path.relative(join(this.serverlessDir, "pages"), file)
+            );
+
             return (
               isNotApiPage &&
               isNotPrerenderedHTMLPage &&
-              isNotStaticPropsJSONFile
+              isNotStaticPropsJSONFile &&
+              isNotPrerenderedJSFile
             );
           }
         }

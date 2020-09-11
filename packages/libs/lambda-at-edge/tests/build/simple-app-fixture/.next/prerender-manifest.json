@@ -5,6 +5,11 @@
       "initialRevalidateSeconds": false,
       "srcRoute": null,
       "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/index.json"
+    },
+    "/contact": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/contact.json"
     }
   }
 }
