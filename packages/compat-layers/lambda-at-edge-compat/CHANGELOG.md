@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0-alpha.3](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.5.0-alpha.2...@sls-next/next-aws-cloudfront@1.5.0-alpha.3) (2020-09-10)
+
+### Features
+
+- **lambda-at-edge, next-aws-cloudfront:** support Preview Mode ([#562](https://github.com/danielcondemarin/serverless-next.js/issues/562)) ([5e1ea38](https://github.com/danielcondemarin/serverless-next.js/commit/5e1ea3891e48d75de5973902a014b67f14c8380a))
+
 # [1.5.0-alpha.2](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.5.0-alpha.1...@sls-next/next-aws-cloudfront@1.5.0-alpha.2) (2020-08-14)
 
 **Note:** Version bump only for package @sls-next/next-aws-cloudfront

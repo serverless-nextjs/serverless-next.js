@@ -7,7 +7,12 @@ type IndexPageProps = {
 
 export default function IndexPage(props: IndexPageProps): JSX.Element {
   return (
-    <React.Fragment>{`Hello ${props.name}. This is an SSR page using getServerSideProps().`}</React.Fragment>
+    <React.Fragment>
+      <div>
+        {`Hello ${props.name}. This is an SSR page using getServerSideProps(). It also has an image.`}
+      </div>
+      <img src={"/app-store-badge.png"} alt={"An image"} />
+    </React.Fragment>
   );
 }
 

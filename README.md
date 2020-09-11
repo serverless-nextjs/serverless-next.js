@@ -26,6 +26,8 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Inputs](#inputs)
 - [FAQ](#faq)
 
+> :warning: This README may reference new or changed functionality that is not yet published to npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information.
+
 ### Motivation
 
 Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
@@ -126,7 +128,7 @@ myNextApplication:
 
 ### Custom CloudFront configuration
 
-To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
+To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#3-configure) under `cloudfront`:
 
 ```yml
 # serverless.yml
@@ -135,6 +137,8 @@ myNextApplication:
   component: serverless-next.js
   inputs:
     cloudfront:
+      # if you want to use an existing cloudfront distribution, provide it here
+      distributionId: XYZEXAMPLE #optional
       # this is the default cache behaviour of the cloudfront distribution
       # the origin-request edge lambda associated to this cache behaviour does the pages server side rendering
       defaults:
@@ -147,30 +151,47 @@ myNextApplication:
             ]
       # this is the cache behaviour for next.js api pages
       api:
-        ttl: 10
+        minTTL: 10
+        maxTTL: 10
+        defaultTTL: 10
       # you can set other cache behaviours like "defaults" above that can handle server side rendering
       # but more specific for a subset of your next.js pages
       /blog/*:
-        ttl: 1000
+        minTTL: 1000
+        maxTTL: 1000
+        defaultTTL: 1000
         forward:
           cookies: "all"
           queryString: false
       /about:
-        ttl: 3000
+        minTTL: 3000
+        maxTTL: 3000
+        defaultTTL: 3000
       # you can add custom origins to the cloudfront distribution
       origins:
         - url: /static
           pathPatterns:
             /wp-content/*:
-              ttl: 10
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
         - url: https://old-static.com
           pathPatterns:
             /old-static/*:
-              ttl: 10
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
       priceClass: "PriceClass_100"
+      # You can add custom error responses
+      errorPages:
+        - code: 503
+          path: "/503.html"
+          minTTL: 5 # optional, minimum ttl the error is cached (default 10)
+          responseCode: 500 # optional, alters the response code
 ```
 
 This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+You can also [update an existing cloudfront distribution](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#updating-an-existing-cloudfront-distribution) using custom cloudfront inputs.
 
 ### Static pages caching
 
@@ -367,7 +388,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | nextConfigDir            | `string`          | `./`                                                               | Directory where your application `next.config.js` file is. This input is useful when the `serverless.yml` is not in the same directory as the next app. <br>**Note:** `nextConfigDir` should be set if `next.config.js` `distDir` is used                            |
 | nextStaticDir            | `string`          | `./`                                                               | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed                                                                                                                                                                       |
 | description              | `string`          | `*lambda-type*@Edge for Next CloudFront distribution`              | The description that will be used for both lambdas. Note that "(API)" will be appended to the API lambda description.                                                                                                                                                |
-| policy                   | `string`          | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole` | The arn policy that will be assigned to both lambdas.                                                                                                                                                                                                                |
+| policy                   | `string\|object`          | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole` | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                                |
 | runtime                  | `string\|object`  | `nodejs12.x`                                                       | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                              |  |
 | memory                   | `number\|object`  | `512`                                                              | When assigned a number, both the default and api lambdas will be assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                         |  |
 | timeout                  | `number\|object`  | `10`                                                               | Same as above                                                                                                                                                                                                                                                        |

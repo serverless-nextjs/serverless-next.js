@@ -8,7 +8,8 @@
     "noImplicitAny": true,
     "sourceMap": false,
     "strict": true,
-    "allowJs": true
+    "allowJs": true,
+    "resolveJsonModule": true
   },
   "include": ["./src/default-handler.ts", "./src/api-handler.ts"]
 }

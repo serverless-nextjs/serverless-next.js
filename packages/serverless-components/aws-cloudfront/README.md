@@ -56,6 +56,11 @@ distribution:
     enabled: true # optional
     comment: 'My distribution' # optional
     priceClass: 'PriceClass_All' # optional
+    errorPages: # optional
+      - code: 503
+        path: "/503.html"
+        minTTL: 5 # optional, minimum ttl the error is cached (default 10)
+        responseCode: 500 # optional, alters the response code
     defaults: # optional
       ttl: 15
       allowedHttpMethods: ['HEAD', 'GET']
