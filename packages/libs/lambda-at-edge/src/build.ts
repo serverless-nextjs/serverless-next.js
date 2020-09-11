@@ -143,7 +143,9 @@ class Builder {
       // Normalise index route
       pageRoute = pageRoute === "/index" ? "/" : pageRoute;
 
-      return prerenderManifest.routes && !!prerenderManifest.routes[pageRoute];
+      return (
+        !!prerenderManifest.routes && !!prerenderManifest.routes[pageRoute]
+      );
     }
 
     return false;
