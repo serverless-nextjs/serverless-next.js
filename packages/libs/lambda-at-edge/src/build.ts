@@ -197,7 +197,9 @@ class Builder {
       "prerender-manifest.json"
     ));
 
-    const hasAPIRoutes = fse.existsSync(join(this.serverlessDir, "pages/api"));
+    const hasAPIRoutes = await fse.pathExists(
+      join(this.serverlessDir, "pages/api")
+    );
 
     return Promise.all([
       ...copyTraces,
