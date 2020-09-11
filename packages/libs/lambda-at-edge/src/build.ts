@@ -132,10 +132,18 @@ class Builder {
       });
   }
 
-  isPrerenderedJSFile(prerenderManifest: any, relativeFile: string): boolean {
-    if (path.extname(relativeFile) === ".js") {
+  /**
+   * Check whether this .next/serverless/pages file is a JS file used only for prerendering at build time.
+   * @param prerenderManifest
+   * @param relativePageFile
+   */
+  isPrerenderedJSFile(
+    prerenderManifest: any,
+    relativePageFile: string
+  ): boolean {
+    if (path.extname(relativePageFile) === ".js") {
       // Page route is without .js extension
-      let pageRoute = relativeFile.slice(0, -3);
+      let pageRoute = relativePageFile.slice(0, -3);
 
       // Prepend "/"
       pageRoute = pageRoute.startsWith("/") ? pageRoute : `/${pageRoute}`;
@@ -189,6 +197,8 @@ class Builder {
       "prerender-manifest.json"
     ));
 
+    const hasAPIRoutes = fse.existsSync(join(this.serverlessDir, "pages/api"));
+
     return Promise.all([
       ...copyTraces,
       fse.copy(
@@ -208,17 +218,23 @@ class Builder {
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
 
-            // Filter out JS files that are only meant for prerendering, e.g pages with getStaticProps()
-            const isNotPrerenderedJSFile = !this.isPrerenderedJSFile(
-              prerenderManifest,
-              path.relative(join(this.serverlessDir, "pages"), file)
-            );
+            // If there are API routes, include all JS files.
+            // If there are no API routes, exclude all JS files that used only for prerendering at build time.
+            // We do this because if there are API routes, preview mode is possible which may use these JS files.
+            // This is what Vercel does: https://github.com/vercel/next.js/discussions/15631#discussioncomment-44289
+            // TODO: possibly optimize bundle further for those apps using API routes.
+            const isNotExcludedJSFile =
+              hasAPIRoutes ||
+              !this.isPrerenderedJSFile(
+                prerenderManifest,
+                path.relative(join(this.serverlessDir, "pages"), file)
+              );
 
             return (
               isNotApiPage &&
               isNotPrerenderedHTMLPage &&
               isNotStaticPropsJSONFile &&
-              isNotPrerenderedJSFile
+              isNotExcludedJSFile
             );
           }
         }
