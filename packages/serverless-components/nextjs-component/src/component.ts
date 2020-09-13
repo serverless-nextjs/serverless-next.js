@@ -250,6 +250,7 @@ class NextjsComponent extends Component {
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,
       credentials: this.context.credentials.aws,
+      paths: cloudfrontPaths,
       publicDirectoryCache: inputs.publicDirectoryCache
     });
 
@@ -541,7 +542,7 @@ class NextjsComponent extends Component {
 
     await createInvalidation({
       distributionId: cloudFrontOutputs.id,
-      paths: inputs.cloudfront.paths,
+      paths: cloudfrontPaths,
       credentials: this.context.credentials.aws
     });
 
