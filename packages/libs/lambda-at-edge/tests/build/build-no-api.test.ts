@@ -11,13 +11,12 @@ import {
 
 jest.mock("execa");
 
-describe("Builder Tests", () => {
+describe("Builder Tests (no API routes)", () => {
   let fseRemoveSpy: jest.SpyInstance;
   let fseEmptyDirSpy: jest.SpyInstance;
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
-  let apiBuildManifest: OriginRequestApiHandlerManifest;
 
-  const fixturePath = join(__dirname, "./simple-app-fixture");
+  const fixturePath = join(__dirname, "./simple-app-fixture-no-api");
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
   beforeEach(async () => {
@@ -34,10 +33,6 @@ describe("Builder Tests", () => {
 
     defaultBuildManifest = await fse.readJSON(
       join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
-    );
-
-    apiBuildManifest = await fse.readJSON(
-      join(outputDir, `${API_LAMBDA_CODE_DIR}/manifest.json`)
     );
   });
 
@@ -135,28 +130,21 @@ describe("Builder Tests", () => {
     });
   });
 
-  describe("API Handler Manifest", () => {
-    it("adds full api manifest", () => {
-      const {
-        apis: { dynamic, nonDynamic }
-      } = apiBuildManifest;
+  describe("API Handler", () => {
+    it("has empty API handler directory", async () => {
+      expect.assertions(1);
 
-      expect(nonDynamic).toEqual({
-        "/api/customers": "pages/api/customers.js",
-        "/api/customers/new": "pages/api/customers/new.js"
-      });
-      expect(dynamic).toEqual({
-        "/api/customers/:id": {
-          file: "pages/api/customers/[id].js",
-          regex: expect.any(String)
-        }
-      });
+      const apiDir = await fse.readdir(
+        join(outputDir, `${API_LAMBDA_CODE_DIR}`)
+      );
+
+      expect(apiDir).toEqual([]);
     });
   });
 
   describe("Default Handler Artefact Files", () => {
     it("copies build files", async () => {
-      expect.assertions(6);
+      expect.assertions(7);
 
       const files = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
@@ -192,36 +180,11 @@ describe("Builder Tests", () => {
         "index.html"
       ]);
 
-      // Note: JS files used only for prerendering at build time (contact.js, index.js) are included since there are API routes
-      expect(pages).toEqual([
-        "_error.js",
-        "blog.js",
-        "contact.js",
-        "customers",
-        "index.js"
-      ]);
+      // JS files used only for prerendering at build time (contact.js, index.js) are not included since there are no API routes
+      expect(pages).not.toContain(["contact.js", "index.js"]);
+
+      expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
       expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
-    });
-  });
-
-  describe("API Handler Artefact Files", () => {
-    it("copies build files", async () => {
-      expect.assertions(2);
-
-      const files = await fse.readdir(
-        join(outputDir, `${API_LAMBDA_CODE_DIR}`)
-      );
-      const pages = await fse.readdir(
-        join(outputDir, `${API_LAMBDA_CODE_DIR}/pages`)
-      );
-
-      expect(files).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "routes-manifest.json"
-      ]);
-      expect(pages).toEqual(["api"]);
     });
   });
 });
