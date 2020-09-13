@@ -541,6 +541,7 @@ class NextjsComponent extends Component {
 
     await createInvalidation({
       distributionId: cloudFrontOutputs.id,
+      paths: inputs.cloudfront.paths,
       credentials: this.context.credentials.aws
     });
 
