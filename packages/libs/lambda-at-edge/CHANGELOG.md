@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.10](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.9...@sls-next/lambda-at-edge@1.6.0-alpha.10) (2020-09-16)
+
+### Bug Fixes
+
+- **lambda-at-edge:** exclude prerender js files from default handler if no API routes are used ([#600](https://github.com/danielcondemarin/serverless-next.js/issues/600)) ([73d0f48](https://github.com/danielcondemarin/serverless-next.js/commit/73d0f4821212ae7b3d0a46d3ca34fef6425277ab))
+
 # [1.6.0-alpha.9](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.8...@sls-next/lambda-at-edge@1.6.0-alpha.9) (2020-09-10)
 
 ### Bug Fixes
