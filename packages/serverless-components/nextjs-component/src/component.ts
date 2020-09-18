@@ -520,7 +520,15 @@ class NextjsComponent extends Component {
           ...cloudFrontDefaults.forward
         },
         // everything after here cant be overridden
-        allowedHttpMethods: ["HEAD", "GET"],
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,

@@ -13,6 +13,16 @@ describe("Pages Tests", () => {
 
         cy.visit(path);
       });
+
+      ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
+        (method) => {
+          it(`allows HTTP method: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              expect(response.status).to.equal(200);
+            });
+          });
+        }
+      );
     });
   });
 
@@ -31,6 +41,16 @@ describe("Pages Tests", () => {
 
         cy.visit(path);
       });
+
+      ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
+        (method) => {
+          it(`allows HTTP method: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              expect(response.status).to.equal(200);
+            });
+          });
+        }
+      );
     });
   });
 
@@ -42,6 +62,27 @@ describe("Pages Tests", () => {
 
         cy.ensureRouteCached(path);
         cy.visit(path);
+      });
+
+      ["HEAD", "GET"].forEach((method) => {
+        it(`allows HTTP method: ${method}`, () => {
+          cy.request({ url: path, method: method }).then((response) => {
+            expect(response.status).to.equal(200);
+          });
+        });
+      });
+
+      ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+        it(`disallows HTTP method with 4xx error: ${method}`, () => {
+          cy.request({
+            url: path,
+            method: method,
+            failOnStatusCode: false
+          }).then((response) => {
+            expect(response.status).to.be.at.least(400);
+            expect(response.status).to.be.lessThan(500);
+          });
+        });
       });
     });
   });
