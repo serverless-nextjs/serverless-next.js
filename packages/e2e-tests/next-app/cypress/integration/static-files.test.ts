@@ -1,4 +1,4 @@
-describe("Caching Tests", () => {
+describe("Static Files Tests", () => {
   before(() => {
     cy.ensureAllRoutesNotErrored();
   });
@@ -17,7 +17,7 @@ describe("Caching Tests", () => {
     });
   });
 
-  describe("public files are cached", () => {
+  describe("public files", () => {
     [{ path: "/app-store-badge.png" }].forEach(({ path }) => {
       it(`serves and caches file ${path}`, () => {
         // Request once to ensure cached
@@ -25,6 +25,27 @@ describe("Caching Tests", () => {
         cy.request(path).then((response) => {
           expect(response.status).to.equal(200);
           expect(response.headers["x-cache"]).to.equal("Hit from cloudfront");
+        });
+      });
+
+      ["HEAD", "GET"].forEach((method) => {
+        it(`allows HTTP method: ${method}`, () => {
+          cy.request({ url: path, method: method }).then((response) => {
+            expect(response.status).to.equal(200);
+          });
+        });
+      });
+
+      ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+        it(`disallows HTTP method with 4xx error: ${method}`, () => {
+          cy.request({
+            url: path,
+            method: method,
+            failOnStatusCode: false
+          }).then((response) => {
+            expect(response.status).to.be.at.least(400);
+            expect(response.status).to.be.lessThan(500);
+          });
         });
       });
     });
