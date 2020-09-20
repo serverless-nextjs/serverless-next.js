@@ -684,7 +684,15 @@ describe("Custom inputs", () => {
         minTTL: 0,
         defaultTTL: 0,
         maxTTL: 31536000,
-        allowedHttpMethods: ["HEAD", "GET"],
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         forward: {
           cookies: "all",
           queryString: true

@@ -184,10 +184,22 @@ describe("Builder Tests", () => {
 
       // HTML Prerendered pages or JSON static props files
       // should not be included in the default lambda
-      expect(pages).not.toContain(["blog.json"]);
-      expect(pages).not.toContain(["about.html", "terms.html"]);
+      expect(pages).not.toContain(["blog.json", "index.json", "contact.json"]);
+      expect(pages).not.toContain([
+        "about.html",
+        "terms.html",
+        "contact.html",
+        "index.html"
+      ]);
 
-      expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
+      // Note: JS files used only for prerendering at build time (contact.js, index.js) are included since there are API routes
+      expect(pages).toEqual([
+        "_error.js",
+        "blog.js",
+        "contact.js",
+        "customers",
+        "index.js"
+      ]);
       expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
     });
   });

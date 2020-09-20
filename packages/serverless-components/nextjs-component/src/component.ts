@@ -256,7 +256,7 @@ class NextjsComponent extends Component {
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
-    // If origin is relative path then prepend the bucketUrl
+    // if origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
     const expandRelativeUrls = (origin: string | Record<string, unknown>) => {
       const originUrl =
@@ -521,7 +521,15 @@ class NextjsComponent extends Component {
           ...cloudFrontDefaults.forward
         },
         // everything after here cant be overridden
-        allowedHttpMethods: ["HEAD", "GET"],
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
