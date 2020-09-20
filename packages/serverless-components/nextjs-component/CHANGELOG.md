@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.17.0-alpha.14](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.17.0-alpha.13...@sls-next/serverless-component@1.17.0-alpha.14) (2020-09-20)
+
+### Bug Fixes
+
+- **nextjs-component:** allow all CloudFront HTTP methods for default caching behavior ([#609](https://github.com/danielcondemarin/serverless-next.js/issues/609)) ([6066fa1](https://github.com/danielcondemarin/serverless-next.js/commit/6066fa1bf4e1fb823039108158a42f7af69a90d6))
+
 # [1.17.0-alpha.13](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/serverless-component@1.17.0-alpha.12...@sls-next/serverless-component@1.17.0-alpha.13) (2020-09-16)
 
 **Note:** Version bump only for package @sls-next/serverless-component
