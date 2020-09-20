@@ -211,6 +211,7 @@ class NextjsComponent extends Component {
       priceClass: cloudFrontPriceClassInputs,
       errorPages: cloudFrontErrorPagesInputs,
       distributionId: cloudFrontDistributionId = null,
+      paths: cloudfrontPaths,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -250,7 +251,6 @@ class NextjsComponent extends Component {
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,
       credentials: this.context.credentials.aws,
-      paths: cloudfrontPaths,
       publicDirectoryCache: inputs.publicDirectoryCache
     });
 
