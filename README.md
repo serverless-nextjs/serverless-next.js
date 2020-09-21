@@ -455,6 +455,54 @@ For deploying, don't run `serverless deploy`. Simply run `serverless` and that d
 
 For more information about serverless components go [here](https://serverless.com/blog/what-are-serverless-components-how-use/).
 
+#### The Lambda@Edge code size is too large.
+
+The API handler and default handler packages are deployed separately, but each has a limit of 50 MB zipped or 250 MB uncompressed per AWS - see [here](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) and [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html). By design, there is currently only one Lambda@Edge for all page routes and one Lambda@Edge for all API routes. This could lead to code size issues especially if you have many API routes, SSR pages, etc.
+
+If you are encountering code size issues, please try the following:
+
+* Optimize your code size: reduce # dependencies in your SSR pages and API routes, have fewer SSR pages (i.e don't use `getInitialProps()` or `getServerSideProps()`).
+
+* Minify/minimize your server-side code using Terser by adding the following Webpack configuration to your `next.config.js`. It uses `NEXT_MINIMIZE` environment variable to tell it to minimize the SSR code. Note that this will increase build times, and minify the code so it could be harder to debug CloudWatch errors.
+
+First, add `terser-webpack-plugin` to your dependencies. Then update `next.config.js`:
+
+```js
+const TerserPlugin = require("terser-webpack-plugin");
+```
+
+```js
+webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  if (isServer && !dev && process.env.NEXT_MINIMIZE === "true") {
+  config.optimization = {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          parallel: true,
+          cache: true, 
+          terserOptions: {
+            output: { comments: false },
+            mangle: true,
+            compress: true,
+          },
+          extractComments: false,
+        }),
+      ],
+    };
+  }
+
+  return config;
+}
+```
+
+* Use the `useServerlessTraceTarget` option in `serverless.yml`. This will cause Next.js to not bundle dependencies into each page (instead creating lightweight pages) and then `serverless-next.js` will reference a single set of dependencies in `node_modules`.
+
+#### Serverless deployment takes a long time and times out with a message like "TimeoutError: Connection timed out after 120000ms"
+
+This is likely either because of a Lambda@Edge code size issue (see above for potential solutions. Related [GitHub Issue](https://github.com/serverless-nextjs/serverless-next.js/issues/611)) or if you have a slow network upload speed and/or are trying to deploy a large Lambda package.
+
+In the second case, the `aws-sdk` npm package used has a default timeout of 120 seconds. Right now this is not configurable, but we may support longer timeouts in the near future (similar to https://github.com/serverless/serverless/pull/937, which only applies to Serverless Framework, not Serverless Components).
+
 #### Should I use the [serverless-plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-plugin) or this component?
 
 Users are encouraged to use this component instead of the `serverless-plugin`. This component was built and designed using lessons learned from the serverless plugin.
