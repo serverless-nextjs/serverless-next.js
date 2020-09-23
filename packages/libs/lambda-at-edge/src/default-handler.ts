@@ -106,6 +106,20 @@ const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   return s3Origin.domainName;
 };
 
+const normaliseDataRequestUri = (
+  uri: string,
+  manifest: OriginRequestDefaultHandlerManifest
+): string => {
+  let normalisedUri = uri
+    .replace(`/_next/data/${manifest.buildId}`, "")
+    .replace(".json", "");
+
+  // Normalise to "/" for index data request
+  normalisedUri = ["/index", ""].includes(normalisedUri) ? "/" : normalisedUri;
+
+  return normalisedUri;
+};
+
 const router = (
   manifest: OriginRequestDefaultHandlerManifest
 ): ((uri: string) => string) => {
@@ -119,14 +133,7 @@ const router = (
     let normalisedUri = uri;
 
     if (isDataRequest(uri)) {
-      normalisedUri = uri
-        .replace(`/_next/data/${manifest.buildId}`, "")
-        .replace(".json", "");
-
-      // Normalise to "/" for index data request
-      normalisedUri = ["/index", ""].includes(normalisedUri)
-        ? "/"
-        : normalisedUri;
+      normalisedUri = normaliseDataRequestUri(normalisedUri, manifest);
     }
 
     if (ssr.nonDynamic[normalisedUri]) {
@@ -278,16 +285,24 @@ const handleOriginRequest = async ({
 
     if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
-      const pagePath = router(manifest)(uri);
+      const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
+      const pagePath = router(manifest)(normalisedDataRequestUri);
 
       if (pagePath === "pages/404.html") {
-        // Request static page from s3
+        // Request static 404 page from s3
         s3Origin.path = `${basePath}/static-pages`;
         request.uri = pagePath.replace("pages", "");
-      } else if (pagePath === "pages/_error.js") {
-        // Break to continue to SSR render _error.js
+      } else if (
+        pagePath === "pages/_error.js" ||
+        !prerenderManifest.routes[normalisedDataRequestUri]
+      ) {
+        // Break to continue to SSR render in two cases:
+        // 1. URI routes to _error.js
+        // 2. URI is not unmatched, but it's not in prerendered routes, i.e this is an SSR data request, we need to SSR render the JSON
         break S3Check;
       }
+
+      // Otherwise, this is an SSG data request, so continue to get the JSON from S3
     }
 
     addS3HostHeader(request, normalisedS3DomainName);

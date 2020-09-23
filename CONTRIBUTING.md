@@ -25,7 +25,9 @@ yarn test --watch lambda-at-edge/
 
 To run local integration tests, run the following command:
 
-`yarn integration`
+```bash
+yarn integration
+```
 
 #### End-to-end tests
 
@@ -36,9 +38,11 @@ The end-to-end tests will automatically verify a real deployment to AWS using a 
 3. Run `yarn install` to ensure dependencies such as Cypress are installed.
 4. Run `AWS_ACCESS_KEY_ID=xxx AWS_SECRET_ACCESS_KEY=xxx serverless` (or `npx serverless`) to deploy your changes to your AWS account.
 5. Save the output CloudFront distribution URL somewhere.
-6. Run the Cypress tests using the following command, replacing `CYPRESS_BASE_URL` with your CloudFront distribution URL:
+6. Run the Cypress tests using the following command, replacing `CYPRESS_BASE_URL` with your CloudFront distribution URL, and `CYPRESS_NEXT_BUILD_ID` with the Next.js build ID:
 
-`CYPRESS_BASE_URL=https://dxxxxxxxxxxxx.cloudfront.net yarn e2e`
+```bash
+CYPRESS_NEXT_BUILD_ID=123 CYPRESS_BASE_URL=https://dxxxxxxxxxxxx.cloudfront.net yarn e2e
+```
 
 This will run the tests in headless mode using the [Electron](https://www.electronjs.org/) browser, which is based on Chromium. You can also run it in Chrome by adding arguments `--browser chrome`.
 
@@ -66,13 +70,13 @@ If you would like to add new package dependencies, please be mindful of increasi
 For example, importing the built-in AWS SDK JS v2 at the top of `default-handler.ts` (outside of the handler) via the below:
 
 ```ts
-import AWS from 'aws-sdk';
+import AWS from "aws-sdk";
 ```
 
 or even just the S3 client:
 
 ```ts
-import S3 from 'aws-sdk/clients/s3';
+import S3 from "aws-sdk/clients/s3";
 ```
 
 could incur **100 ms** or more cold start times on every handler invocation, even when it's not needed. This is because even though `aws-sdk` (AWS SDK JS v2) is built into AWS Lambda's Node.js runtime, it is not modularized and will `require` a bunch of unused code. Even if using just the S3 client, it also takes close to 100 ms. In traditional server-based environments, we do not have to worry about this, but since Lambda is a serverless environment, containers will get re-initialized and this becomes a performance problem.
@@ -83,7 +87,9 @@ Instead, consider dynamically importing only when needed. For example, for S3:
 
 ```ts
 const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
-const { PutObjectCommand } = await import("@aws-sdk/client-s3/commands/PutObjectCommand");
+const { PutObjectCommand } = await import(
+  "@aws-sdk/client-s3/commands/PutObjectCommand"
+);
 ```
 
 We have configured Rollup to be able to bundle dynamic imports into `default-handler` or `api-handler`.

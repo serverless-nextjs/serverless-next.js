@@ -1,4 +1,6 @@
 describe("Redirects Tests", () => {
+  const buildId = Cypress.env("NEXT_BUILD_ID");
+
   before(() => {
     cy.ensureAllRoutesNotErrored();
   });
@@ -36,6 +38,28 @@ describe("Redirects Tests", () => {
 
         // We can't use visit to follow redirect as it expects HTML content, not files.
         cy.request(path).then((response) => {
+          expect(response.status).to.equal(200);
+        });
+      });
+    });
+  });
+
+  describe("Data requests always redirect to non-trailing slash path", () => {
+    [
+      { path: "/" },
+      { path: "/index.json/" },
+      { path: "/ssg-page.json/" }
+    ].forEach(({ path }) => {
+      const fullPath = `/_next/data/${buildId}${path}`;
+
+      it(`redirects data request ${fullPath}`, () => {
+        const redirectedPath = fullPath.slice(0, -1);
+
+        // Verify redirect response
+        cy.verifyPermanentRedirect(fullPath, redirectedPath);
+
+        // We can't use visit to follow redirect as it expects HTML content, not files.
+        cy.request(fullPath).then((response) => {
           expect(response.status).to.equal(200);
         });
       });

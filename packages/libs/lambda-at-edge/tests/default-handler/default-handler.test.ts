@@ -367,34 +367,63 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                      | expectedPage
-        ${"/_next/data/build-id"}                                 | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                      | ${"pages/index.js"}
         ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
-      `("serves json data for path $path", async ({ path, expectedPage }) => {
-        const event = createCloudFrontEvent({
-          uri: path,
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-request" } as any
-        });
+      `(
+        "serves json data via SSR for SSR path $path",
+        async ({ path, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net",
+            config: { eventType: "origin-request" } as any
+          });
 
-        mockPageRequire(expectedPage);
+          mockPageRequire(expectedPage);
 
-        const result = await handler(event);
+          const result = await handler(event);
 
-        const request = result as CloudFrontRequest;
+          const cfResponse = result as CloudFrontResultResponse;
+          const decodedBody = new Buffer(
+            cfResponse.body as string,
+            "base64"
+          ).toString("utf8");
 
-        expect(request.origin).toEqual({
-          s3: {
-            authMethod: "origin-access-identity",
-            domainName: "my-bucket.s3.amazonaws.com",
-            path: "",
-            region: "us-east-1"
-          }
-        });
-        expect(request.uri).toEqual(path);
-      });
+          expect(decodedBody).toEqual(JSON.stringify({ page: expectedPage }));
+          expect(cfResponse.status).toEqual(200);
+        }
+      );
+
+      it.each`
+        path                                 | expectedPage
+        ${"/_next/data/build-id"}            | ${"pages/index.js"}
+        ${"/_next/data/build-id/index.json"} | ${"pages/index.js"}
+      `(
+        "serves json data via S3 for SSG path $path",
+        async ({ path, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net",
+            config: { eventType: "origin-request" } as any
+          });
+
+          mockPageRequire(expectedPage);
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual(path);
+        }
+      );
 
       it.each`
         path                                                       | expectedRedirect

@@ -29,7 +29,7 @@ describe("Static Files Tests", () => {
       });
 
       ["HEAD", "GET"].forEach((method) => {
-        it(`allows HTTP method: ${method}`, () => {
+        it(`allows HTTP method for path ${path}: ${method}`, () => {
           cy.request({ url: path, method: method }).then((response) => {
             expect(response.status).to.equal(200);
           });
@@ -37,7 +37,7 @@ describe("Static Files Tests", () => {
       });
 
       ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
-        it(`disallows HTTP method with 4xx error: ${method}`, () => {
+        it(`disallows HTTP method for path ${path} with 4xx error: ${method}`, () => {
           cy.request({
             url: path,
             method: method,
