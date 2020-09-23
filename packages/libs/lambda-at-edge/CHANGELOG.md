@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0-alpha.11](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.10...@sls-next/lambda-at-edge@1.6.0-alpha.11) (2020-09-23)
+
+### Bug Fixes
+
+- **lambda-at-edge, e2e-tests:** fix issue where SSR data request should be directly rendered in Lambda, not retrieved from S3 ([2fa8910](https://github.com/danielcondemarin/serverless-next.js/commit/2fa8910aea85626a5ae37efd4c8a2e6ece86c4ce))
+
 # [1.6.0-alpha.10](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.9...@sls-next/lambda-at-edge@1.6.0-alpha.10) (2020-09-16)
 
 ### Bug Fixes
