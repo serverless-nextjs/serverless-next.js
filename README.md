@@ -7,8 +7,8 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
 [![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/app/danielcondemarin/serverless-nextjs-plugin?utm_source=github.com&utm_medium=referral&utm_content=danielcondemarin/serverless-nextjs-plugin&utm_campaign=Badge_Grade)
-[![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-next.js?branch=master)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
+[![Coverage Status](https://coveralls.io/repos/github/serverless-nextjs/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/serverless-nextjs/serverless-next.js?branch=master)
 
 ## Contents
 
@@ -388,7 +388,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | nextConfigDir            | `string`          | `./`                                                               | Directory where your application `next.config.js` file is. This input is useful when the `serverless.yml` is not in the same directory as the next app. <br>**Note:** `nextConfigDir` should be set if `next.config.js` `distDir` is used                            |
 | nextStaticDir            | `string`          | `./`                                                               | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed                                                                                                                                                                       |
 | description              | `string`          | `*lambda-type*@Edge for Next CloudFront distribution`              | The description that will be used for both lambdas. Note that "(API)" will be appended to the API lambda description.                                                                                                                                                |
-| policy                   | `string\|object`          | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole` | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                                |
+| policy                   | `string\|object`  | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole` | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                      |
 | runtime                  | `string\|object`  | `nodejs12.x`                                                       | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                              |  |
 | memory                   | `number\|object`  | `512`                                                              | When assigned a number, both the default and api lambdas will be assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                         |  |
 | timeout                  | `number\|object`  | `10`                                                               | Same as above                                                                                                                                                                                                                                                        |
@@ -461,9 +461,9 @@ The API handler and default handler packages are deployed separately, but each h
 
 If you are encountering code size issues, please try the following:
 
-* Optimize your code size: reduce # dependencies in your SSR pages and API routes, have fewer SSR pages (i.e don't use `getInitialProps()` or `getServerSideProps()`).
+- Optimize your code size: reduce # dependencies in your SSR pages and API routes, have fewer SSR pages (i.e don't use `getInitialProps()` or `getServerSideProps()`).
 
-* Minify/minimize your server-side code using Terser by adding the following Webpack configuration to your `next.config.js`. It uses `NEXT_MINIMIZE` environment variable to tell it to minimize the SSR code. Note that this will increase build times, and minify the code so it could be harder to debug CloudWatch errors.
+- Minify/minimize your server-side code using Terser by adding the following Webpack configuration to your `next.config.js`. It uses `NEXT_MINIMIZE` environment variable to tell it to minimize the SSR code. Note that this will increase build times, and minify the code so it could be harder to debug CloudWatch errors.
 
 First, add `terser-webpack-plugin` to your dependencies. Then update `next.config.js`:
 
@@ -474,28 +474,28 @@ const TerserPlugin = require("terser-webpack-plugin");
 ```js
 webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
   if (isServer && !dev && process.env.NEXT_MINIMIZE === "true") {
-  config.optimization = {
+    config.optimization = {
       minimize: true,
       minimizer: [
         new TerserPlugin({
           parallel: true,
-          cache: true, 
+          cache: true,
           terserOptions: {
             output: { comments: false },
             mangle: true,
-            compress: true,
+            compress: true
           },
-          extractComments: false,
-        }),
-      ],
+          extractComments: false
+        })
+      ]
     };
   }
 
   return config;
-}
+};
 ```
 
-* Use the `useServerlessTraceTarget` option in `serverless.yml`. This will cause Next.js to not bundle dependencies into each page (instead creating lightweight pages) and then `serverless-next.js` will reference a single set of dependencies in `node_modules`.
+- Use the `useServerlessTraceTarget` option in `serverless.yml`. This will cause Next.js to not bundle dependencies into each page (instead creating lightweight pages) and then `serverless-next.js` will reference a single set of dependencies in `node_modules`.
 
 #### Serverless deployment takes a long time and times out with a message like "TimeoutError: Connection timed out after 120000ms"
 
