@@ -74,9 +74,7 @@ class NextjsComponent extends Component {
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
-        throw Error(
-          `Setting custom cache behaviour for api/ route "${path}" is not supported`
-        );
+        stillToMatch.delete(path);
       }
     }
 
