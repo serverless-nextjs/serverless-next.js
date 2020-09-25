@@ -36,7 +36,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
-          WAIT_TIMEOUT: 3600 # For initial deployment, CF distribution takes some time. Can remove for subsequent deployments.
+          WAIT_TIMEOUT: 600
         run: |
           cd packages/e2e-tests/next-app
           yarn --frozen-lockfile
