@@ -25,7 +25,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: yarn --frozen-lockfile
       - run: yarn test
-      - run: yarn coveralls
       - run: yarn integration
       - name: Wait for existing workflow to complete before e2e tests
         if: ${{ matrix.node-version == '12.x' }}
