@@ -23,16 +23,9 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      #- name: Restore Node Modules
-      #id: cache-lerna
-      #uses: actions/cache@master
-      #with:
-      #path: |
-      #node_modules
-      #*/*/node_modules
-      #key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
       - run: yarn --frozen-lockfile
       - run: yarn test
+      - run: yarn coveralls
       - run: yarn integration
       - name: Wait for existing workflow to complete before e2e tests
         if: ${{ matrix.node-version == '12.x' }}
