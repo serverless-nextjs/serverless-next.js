@@ -781,9 +781,6 @@ describe("Custom inputs", () => {
   describe.each`
     cloudFrontInput                                | expectedErrorMessage
     ${{ "some-invalid-page-route": { ttl: 100 } }} | ${'Could not find next.js pages for "some-invalid-page-route"'}
-    ${{ "/api": { ttl: 100 } }}                    | ${'route "/api" is not supported'}
-    ${{ api: { ttl: 100 } }}                       | ${'route "api" is not supported'}
-    ${{ "api/test": { ttl: 100 } }}                | ${'route "api/test" is not supported'}
   `(
     "Invalid cloudfront inputs",
     ({ cloudFrontInput, expectedErrorMessage }) => {
@@ -815,6 +812,122 @@ describe("Custom inputs", () => {
       });
     }
   );
+
+  describe.each`
+    cloudFrontInput                                                  | pathName
+    ${{ api: { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}        | ${"api"}
+    ${{ "api/test": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }} | ${"api/test"}
+    ${{ "api/*": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}    | ${"api/*"}
+  `("API cloudfront inputs", ({ cloudFrontInput, pathName }) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({});
+
+      const component = createNextComponent({});
+
+      componentOutputs = await component({
+        cloudfront: cloudFrontInput
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`allows setting custom cache behavior: ${JSON.stringify(
+      cloudFrontInput
+    )}`, async () => {
+      cloudFrontInput[pathName]["lambda@edge"] = {
+        "origin-request":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+      };
+
+      // If path is api/*, then it has allowed HTTP methods by default
+      if (pathName === "api/*") {
+        cloudFrontInput[pathName]["allowedHttpMethods"] = [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ];
+      }
+
+      const expectedInput = {
+        origins: [
+          {
+            pathPatterns: {
+              "_next/data/*": {
+                allowedHttpMethods: ["HEAD", "GET"],
+                defaultTTL: 0,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                  "origin-response":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "_next/static/*": {
+                defaultTTL: 86400,
+                forward: {
+                  cookies: "none",
+                  headers: "none",
+                  queryString: false
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "api/*": {
+                allowedHttpMethods: [
+                  "HEAD",
+                  "DELETE",
+                  "POST",
+                  "GET",
+                  "OPTIONS",
+                  "PUT",
+                  "PATCH"
+                ],
+                defaultTTL: 0,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "static/*": {
+                defaultTTL: 86400,
+                forward: {
+                  cookies: "none",
+                  headers: "none",
+                  queryString: false
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              ...cloudFrontInput
+            },
+            private: true,
+            url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
+          }
+        ]
+      };
+
+      expect(mockCloudFront).toBeCalledWith(
+        expect.objectContaining(expectedInput)
+      );
+    });
+  });
 
   describe("Build using serverless trace target", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
