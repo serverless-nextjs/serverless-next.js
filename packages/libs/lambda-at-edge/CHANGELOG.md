@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.11...@sls-next/lambda-at-edge@1.6.0) (2020-09-26)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
 # [1.6.0-alpha.11](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0-alpha.10...@sls-next/lambda-at-edge@1.6.0-alpha.11) (2020-09-23)
 
 ### Bug Fixes
