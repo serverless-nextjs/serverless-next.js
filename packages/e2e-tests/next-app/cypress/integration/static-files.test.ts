@@ -24,7 +24,7 @@ describe("Static Files Tests", () => {
         cy.request(path);
         cy.request(path).then((response) => {
           expect(response.status).to.equal(200);
-          expect(response.headers["x-cache"]).to.equal("Hit from cloudfront");
+          cy.verifyResponseCacheStatus(response, true);
         });
       });
 

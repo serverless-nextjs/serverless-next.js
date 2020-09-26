@@ -13,14 +13,12 @@ describe("Data Requests", () => {
             expect(response.headers["cache-control"]).to.not.be.undefined;
 
             if (i === 1) {
-              expect(response.headers["x-cache"]).to.equal(
-                "Hit from cloudfront"
-              );
+              cy.verifyResponseCacheStatus(response, true);
             } else {
-              expect([
+              expect(response.headers["x-cache"]).to.be.oneOf([
                 "Miss from cloudfront",
                 "Hit from cloudfront"
-              ]).to.contain(response.headers["x-cache"]);
+              ]);
             }
           });
         }
@@ -58,10 +56,7 @@ describe("Data Requests", () => {
         for (let i = 0; i < 2; i++) {
           cy.request(fullPath).then((response) => {
             expect(response.status).to.equal(200);
-            expect([
-              "Miss from cloudfront",
-              "LambdaGeneratedResponse from cloudfront"
-            ]).to.contain(response.headers["x-cache"]);
+            cy.verifyResponseCacheStatus(response, false);
             expect(response.headers["cache-control"]).to.be.undefined;
           });
         }

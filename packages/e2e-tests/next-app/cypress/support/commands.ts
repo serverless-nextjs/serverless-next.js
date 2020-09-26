@@ -39,6 +39,10 @@ declare namespace Cypress {
       path: string,
       redirectedPath: string
     ) => Cypress.Chainable<JQuery>;
+    verifyResponseCacheStatus: (
+      response: Cypress.Response,
+      shouldBeCached: boolean
+    ) => Cypress.Chainable<JQuery>;
   }
 }
 
@@ -113,5 +117,19 @@ Cypress.Commands.add(
       expect(response.headers["location"]).to.equal(redirectedPath);
       expect(response.headers["refresh"]).to.equal(`0;url=${redirectedPath}`);
     });
+  }
+);
+
+Cypress.Commands.add(
+  "verifyResponseCacheStatus",
+  (response: Cypress.Response, shouldBeCached: boolean) => {
+    if (shouldBeCached) {
+      expect(response.headers["x-cache"]).to.equal("Hit from cloudfront");
+    } else {
+      expect(response.headers["x-cache"]).to.be.oneOf([
+        "Miss from cloudfront",
+        "LambdaGeneratedResponse from cloudfront"
+      ]);
+    }
   }
 );
