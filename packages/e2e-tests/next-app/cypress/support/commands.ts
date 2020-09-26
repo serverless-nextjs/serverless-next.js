@@ -35,9 +35,10 @@ declare namespace Cypress {
       path: string | RegExp,
       status: number
     ) => Cypress.Chainable<JQuery>;
-    verifyPermanentRedirect: (
+    verifyRedirect: (
       path: string,
-      redirectedPath: string
+      redirectedPath: string,
+      redirectStatusCode: number
     ) => Cypress.Chainable<JQuery>;
     verifyResponseCacheStatus: (
       response: Cypress.Response,
@@ -110,12 +111,18 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
-  "verifyPermanentRedirect",
-  (path: string, redirectedPath: string) => {
+  "verifyRedirect",
+  (path: string, redirectedPath: string, redirectStatusCode: number) => {
     cy.request({ url: path, followRedirect: false }).then((response) => {
-      expect(response.status).to.equal(308);
+      expect(response.status).to.equal(redirectStatusCode);
       expect(response.headers["location"]).to.equal(redirectedPath);
-      expect(response.headers["refresh"]).to.equal(`0;url=${redirectedPath}`);
+
+      if (redirectStatusCode === 308) {
+        // IE11 compatibility
+        expect(response.headers["refresh"]).to.equal(`0;url=${redirectedPath}`);
+      } else {
+        expect(response.headers["refresh"]).to.be.undefined;
+      }
     });
   }
 );
