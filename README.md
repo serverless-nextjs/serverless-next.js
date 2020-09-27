@@ -224,7 +224,7 @@ If you don't want browsers to cache assets from the public directory, you can di
 
 ```yaml
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     publicDirectoryCache: false
 ```
