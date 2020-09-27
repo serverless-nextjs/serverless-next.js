@@ -660,7 +660,7 @@ describe("Lambda@Edge", () => {
           ${"/old-blog/abc"}   | ${"/news/abc"}   | ${308}
           ${"/old-users/1234"} | ${"/users/1234"} | ${307}
         `(
-          "redirects path $path to $expectedRedirect, permanent: $permanent, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
             await runRedirectTest(
               path,
