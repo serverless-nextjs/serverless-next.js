@@ -1,5 +1,1 @@
-module.exports = {
-  basePath: "/basepath",
-  target: "serverless",
-  trailingSlash: true
-};
+module.exports = { basePath: "/basepath", target: "serverless", trailingSlash: true };
