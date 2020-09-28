@@ -13,12 +13,6 @@ describe("Redirector Tests", () => {
         basePath: "",
         redirects: [
           {
-            source: "/:path+/",
-            destination: "/:path+",
-            statusCode: 308,
-            regex: "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
-          },
-          {
             source: "/old-blog/:slug",
             destination: "/news/:slug",
             statusCode: 308,
