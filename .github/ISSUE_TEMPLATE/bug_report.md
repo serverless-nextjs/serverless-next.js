@@ -6,27 +6,34 @@ labels: ""
 assignees: ""
 ---
 
-**Describe the bug**
-A clear and concise description of what the bug is.
+<!-- Thank you for submitting a bug report! Please use the below template to help structure your report. -->
 
-**To Reproduce**
-Steps to reproduce the behavior:
+### Describe the bug
+<!-- A clear and concise description of what the bug is. -->
 
-1. Go to '...'
-2. Click on '....'
-3. Scroll down to '....'
-4. See error
+### Actual behavior
+<!-- A clear and concise description of what actually happened. -->
 
-**Expected behavior**
-A clear and concise description of what you expected to happen.
+### Expected behavior
+<!-- A clear and concise description of what you expected to happen. -->
 
-**Screenshots**
-If applicable, add screenshots to help explain your problem.
+### Steps to reproduce
+<!-- Add steps to reproduce the actual behavior. -->
 
-**Desktop (please complete the following information):**
+### Screenshots/Code
+<!-- If applicable, add screenshots or a minimal repro (e.g code snippet or repository) to help explain your problem. -->
 
-- OS: [e.g. iOS]
-- Version [e.g. 22]
+### Versions
+<!-- Please add your OS and @sls-next/serverless-component versions below. -->
 
-**Additional context**
-Add any other context about the problem here.
+- OS/Environment:
+- @sls-next/serverless-component version: 
+
+### Additional context
+<!-- Add any other context about the problem here. -->
+
+### Checklist
+<!-- Please review the following checklist before submitting the issue. -->
+
+- [ ] You have reviewed the README and [FAQs](https://github.com/serverless-nextjs/serverless-next.js#faq), which answers several common questions.
+- [ ] Consider using the latest [release version](https://github.com/serverless-nextjs/serverless-next.js/releases), which may have already fixed your issue.
