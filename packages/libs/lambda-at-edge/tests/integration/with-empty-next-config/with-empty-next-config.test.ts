@@ -1,9 +1,8 @@
 import { getNextBinary, removeNewLineChars } from "../../test-utils";
 import os from "os";
-import path, { join } from "path";
-import Builder, { DEFAULT_LAMBDA_CODE_DIR } from "../../../src/build";
-import fse, { readFile, remove, pathExists } from "fs-extra";
-import { RoutesManifest } from "types";
+import path from "path";
+import Builder from "../../../src/build";
+import { readFile, remove, pathExists } from "fs-extra";
 
 jest.unmock("execa");
 
@@ -44,9 +43,5 @@ describe("With Empty Next Config Build", () => {
     expect(
       await pathExists(path.join(fixtureDir, "next.config.original.123.js"))
     ).toBe(false);
-  });
-
-  it(`default redirects in routes-manifest.json are removed`, () => {
-    expect(routesManifest.redirects).toEqual([]);
   });
 });
