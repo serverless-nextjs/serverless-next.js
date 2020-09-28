@@ -3,7 +3,10 @@ import os from "os";
 import path, { join } from "path";
 import Builder, { DEFAULT_LAMBDA_CODE_DIR } from "../../../src/build";
 import fse, { readFile, remove, pathExists } from "fs-extra";
-import { OriginRequestDefaultHandlerManifest } from "../../../types";
+import {
+  OriginRequestDefaultHandlerManifest,
+  RoutesManifest
+} from "../../../types";
 
 jest.unmock("execa");
 
@@ -12,17 +15,25 @@ describe("With Trailing Slash Config Build", () => {
   let outputDir: string;
   let mockDateNow: jest.SpyInstance<number, []>;
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
+  let routesManifest: RoutesManifest;
 
   describe.each`
-    fixture                                            | expectedTrailingSlash | expectedOriginalNextConfig
-    ${"fixture-next-config-as-obj"}                    | ${true}               | ${'module.exports = { target: "serverless", trailingSlash: true };'}
-    ${"fixture-next-config-as-func"}                   | ${true}               | ${'module.exports = () => ({ target: "serverless", trailingSlash: true });'}
-    ${"fixture-next-config-as-obj-no-trailing-slash"}  | ${false}              | ${'module.exports = { target: "serverless" };'}
-    ${"fixture-next-config-as-func-no-trailing-slash"} | ${false}              | ${'module.exports = () => ({ target: "serverless" });'}
-    ${"fixture-no-next-config"}                        | ${false}              | ${undefined}
+    fixture                                                    | expectedTrailingSlash | expectedBasePath | expectedOriginalNextConfig
+    ${"fixture-next-config-as-obj"}                            | ${true}               | ${""}            | ${'module.exports = { target: "serverless", trailingSlash: true };'}
+    ${"fixture-next-config-as-func"}                           | ${true}               | ${""}            | ${'module.exports = () => ({ target: "serverless", trailingSlash: true });'}
+    ${"fixture-next-config-as-obj-no-trailing-slash"}          | ${false}              | ${""}            | ${'module.exports = { target: "serverless" };'}
+    ${"fixture-next-config-as-func-no-trailing-slash"}         | ${false}              | ${""}            | ${'module.exports = () => ({ target: "serverless" });'}
+    ${"fixture-no-next-config"}                                | ${false}              | ${""}            | ${undefined}
+    ${"fixture-next-config-as-obj-basepath"}                   | ${true}               | ${"/basepath"}   | ${'module.exports = { basePath: "/basepath", target: "serverless", trailingSlash: true };'}
+    ${"fixture-next-config-as-obj-basepath-no-trailing-slash"} | ${false}              | ${"/basepath"}   | ${'module.exports = { basePath: "/basepath", target: "serverless" };'}
   `(
     "with fixture: $fixture",
-    ({ fixture, expectedTrailingSlash, expectedOriginalNextConfig }) => {
+    ({
+      fixture,
+      expectedTrailingSlash,
+      expectedBasePath,
+      expectedOriginalNextConfig
+    }) => {
       const fixtureDir = path.join(__dirname, `./${fixture}`);
 
       beforeAll(async () => {
@@ -38,6 +49,10 @@ describe("With Trailing Slash Config Build", () => {
 
         defaultBuildManifest = await fse.readJSON(
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
+        );
+
+        routesManifest = await fse.readJSON(
+          join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/routes-manifest.json`)
         );
       });
 
@@ -72,6 +87,12 @@ describe("With Trailing Slash Config Build", () => {
       it(`sets trailingSlash in defaultBuildManifest to ${expectedTrailingSlash}`, async () => {
         const { trailingSlash } = defaultBuildManifest;
         expect(trailingSlash).toBe(expectedTrailingSlash);
+      });
+
+      it(`default trailing slash redirects in routes-manifest.json are removed`, () => {
+        // Default trailing slash redirects are removed since they are handled in non-regex solution
+        expect(routesManifest.redirects).toEqual([]);
+        expect(routesManifest.basePath).toEqual(expectedBasePath);
       });
     }
   );
