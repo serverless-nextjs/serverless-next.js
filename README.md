@@ -503,7 +503,7 @@ This is likely either because of a Lambda@Edge code size issue (see above for po
 
 In the second case, the `aws-sdk` npm package used has a default timeout of 120 seconds. Right now this is not configurable, but we may support longer timeouts in the near future (similar to https://github.com/serverless/serverless/pull/937, which only applies to Serverless Framework, not Serverless Components).
 
-### When accessing the Host header in my SSR pages or APIs, I get an S3 domain instead of the CloudFront distribution or my domain name
+#### When accessing the Host header in my SSR pages or APIs, I get an S3 domain instead of the CloudFront distribution or my domain name
 
 By default, CloudFront sets the `Host` header to the S3 origin host name. You need to forward the `Host` header to the origin. See the example below for forwarding it for your `api/*` cache behavior:
 
