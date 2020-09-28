@@ -4,12 +4,12 @@
     "access": "public"
   },
   "version": "1.17.0",
-  "description": "Serverless nextjs powered by Serverless Components",
+  "description": "Serverless Next.js powered by Serverless Components",
   "main": "./serverless.js",
   "types": "dist/component.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
     "directory": "packages/serverless-components/nextjs-component"
   },
   "scripts": {
@@ -24,9 +24,9 @@
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "engines": {
     "node": ">=10.11.0"
   },
