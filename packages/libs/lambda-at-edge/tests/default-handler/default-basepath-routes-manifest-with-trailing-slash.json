@@ -4,25 +4,6 @@
   "basePath": "/basepath",
   "redirects": [
     {
-      "source": "/basepath",
-      "destination": "/basepath/",
-      "basePath": false,
-      "statusCode": 308,
-      "regex": "^/basepath$"
-    },
-    {
-      "source": "/basepath/:file((?:[^/]+/)*[^/]+\\.\\w+)/",
-      "destination": "/basepath/:file",
-      "statusCode": 308,
-      "regex": "^/basepath(?:/((?:[^/]+/)*[^/]+\\.\\w+))/$"
-    },
-    {
-      "source": "/basepath/:notfile((?:[^/]+/)*[^/\\.]+)",
-      "destination": "/basepath/:notfile/",
-      "statusCode": 308,
-      "regex": "^/basepath(?:/((?:[^/]+/)*[^/\\.]+))$"
-    },
-    {
       "source": "/basepath/old-blog/:slug/",
       "destination": "/basepath/news/:slug/",
       "statusCode": 308,

@@ -4,19 +4,6 @@
   "basePath": "/basepath",
   "redirects": [
     {
-      "source": "/basepath/",
-      "destination": "/basepath",
-      "basePath": false,
-      "statusCode": 308,
-      "regex": "^/basepath/$"
-    },
-    {
-      "source": "/basepath/:path+/",
-      "destination": "/basepath/:path+",
-      "statusCode": 308,
-      "regex": "^/basepath(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))/$"
-    },
-    {
       "source": "/basepath/old-blog/:slug",
       "destination": "/basepath/news/:slug",
       "statusCode": 308,

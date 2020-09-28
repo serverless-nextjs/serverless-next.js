@@ -62,6 +62,7 @@ describe("Lambda@Edge", () => {
           }
         );
 
+        // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
           () => require("./default-routes-manifest-with-trailing-slash.json"),
@@ -78,6 +79,7 @@ describe("Lambda@Edge", () => {
           }
         );
 
+        // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
           () => require("./default-routes-manifest.json"),
@@ -644,7 +646,7 @@ describe("Lambda@Edge", () => {
           ${"/old-blog/abc/"}   | ${"/news/abc/"}   | ${308}
           ${"/old-users/1234/"} | ${"/users/1234/"} | ${307}
         `(
-          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: expectedRedirectStatusCode",
+          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
             await runRedirectTest(
               path,

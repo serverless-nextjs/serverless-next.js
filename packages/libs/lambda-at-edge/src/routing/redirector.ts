@@ -4,10 +4,14 @@ import * as http from "http";
 
 /**
  * Whether this is the default trailing slash redirect.
+ * This should only be used during build step to remove unneeded redirect paths.
  * @param redirect
  * @param basePath
  */
-function isTrailingSlashRedirect(redirect: RedirectData, basePath: string) {
+export function isTrailingSlashRedirect(
+  redirect: RedirectData,
+  basePath: string
+) {
   if (basePath !== "") {
     return (
       redirect.statusCode === 308 &&
@@ -48,11 +52,6 @@ export function getRedirectPath(
   const redirects: RedirectData[] = routesManifest.redirects;
 
   for (const redirect of redirects) {
-    // Skip default trailing slash redirects as it already handled without using regex
-    if (isTrailingSlashRedirect(redirect, routesManifest.basePath)) {
-      continue;
-    }
-
     const match = matchPath(path, redirect.source);
 
     if (match) {

@@ -4,18 +4,6 @@
   "basePath": "",
   "redirects": [
     {
-      "source": "/:file((?:[^/]+/)*[^/]+\\.\\w+)/",
-      "destination": "/:file",
-      "statusCode": 308,
-      "regex": "^(?:/((?:[^/]+/)*[^/]+\\.\\w+))/$"
-    },
-    {
-      "source": "/:notfile((?:[^/]+/)*[^/\\.]+)",
-      "destination": "/:notfile/",
-      "statusCode": 308,
-      "regex": "^(?:/((?:[^/]+/)*[^/\\.]+))$"
-    },
-    {
       "source": "/old-blog/:slug/",
       "destination": "/news/:slug/",
       "statusCode": 308,

@@ -58,6 +58,7 @@ describe("Lambda@Edge", () => {
           }
         );
 
+        // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
           () =>
@@ -75,6 +76,7 @@ describe("Lambda@Edge", () => {
           }
         );
 
+        // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
           () => require("./default-basepath-routes-manifest.json"),
