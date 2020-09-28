@@ -1,3 +1,5 @@
-# Serverless Nextjs Component
+# Serverless Next.js Component
 
-See [main README page](../../README.md)
+## Usage
+
+To get started, refer to the documentation [here](https://github.com/serverless-nextjs/serverless-next.js#readme).
