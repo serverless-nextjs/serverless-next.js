@@ -1,0 +1,28 @@
+{
+  "version": 1,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/old-blog/:slug/",
+      "destination": "/news/:slug/",
+      "statusCode": 308,
+      "regex": "^/old-blog(?:/([^/]+?))/$"
+    },
+    {
+      "source": "/terms-new/",
+      "destination": "/terms/",
+      "statusCode": 308,
+      "regex": "^/terms/$"
+    },
+    {
+      "source": "/old-users/:id(\\d{1,})/",
+      "destination": "/users/:id/",
+      "statusCode": 307,
+      "regex": "^/old-users(?:/(\\d{1,}))/$"
+    }
+  ],
+  "rewrites": [],
+  "headers": [],
+  "dynamicRoutes": []
+}

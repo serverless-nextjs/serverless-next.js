@@ -3,7 +3,7 @@ import PrerenderManifest from "./prerender-manifest.json";
 // @ts-ignore
 import Manifest from "./manifest.json";
 // @ts-ignore
-import { basePath } from "./routes-manifest.json";
+import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import cookie from "cookie";
 import {
@@ -17,13 +17,16 @@ import {
   OriginRequestDefaultHandlerManifest,
   PreRenderedManifest as PrerenderManifestType,
   OriginResponseEvent,
-  PerfLogger
+  PerfLogger,
+  RoutesManifest
 } from "../types";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
 import type { Readable } from "stream";
+import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
 
+const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
 const defaultPreviewCookies = {
@@ -166,6 +169,7 @@ export const handler = async (
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   let response: CloudFrontResultResponse | CloudFrontRequest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
+  const routesManifest: RoutesManifest = RoutesManifestJson;
 
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
 
@@ -181,7 +185,8 @@ export const handler = async (
     response = await handleOriginRequest({
       event,
       manifest,
-      prerenderManifest
+      prerenderManifest,
+      routesManifest
     });
   }
 
@@ -195,19 +200,25 @@ export const handler = async (
 const handleOriginRequest = async ({
   event,
   manifest,
-  prerenderManifest
+  prerenderManifest,
+  routesManifest
 }: {
   event: OriginRequestEvent;
   manifest: OriginRequestDefaultHandlerManifest;
   prerenderManifest: PrerenderManifestType;
+  routesManifest: RoutesManifest;
 }) => {
+  const basePath = routesManifest.basePath;
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
   const isPublicFile = publicFiles[uri];
   const isDataReq = isDataRequest(uri);
 
-  // Handle any redirects
+  // Handle redirects
+  // TODO: refactor redirect logic to another file since this is getting quite large
+
+  // Handle any trailing slash redirects
   let newUri = request.uri;
   if (isDataReq || isPublicFile) {
     // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL
@@ -217,7 +228,7 @@ const handleOriginRequest = async ({
   } else if (request.uri !== "/" && request.uri !== "" && uri !== "/404") {
     // HTML/SSR pages get redirected based on trailingSlash in next.config.js
     // We do not redirect:
-    // 1. Unnormalised URI is"/" or "" as this could cause a redirect loop due to browsers appending trailing slash
+    // 1. Unnormalised URI is "/" or "" as this could cause a redirect loop due to browsers appending trailing slash
     // 2. "/404" pages due to basePath normalisation
     const trailingSlash = manifest.trailingSlash;
 
@@ -231,7 +242,17 @@ const handleOriginRequest = async ({
   }
 
   if (newUri !== request.uri) {
-    return createRedirectResponse(newUri, request.querystring);
+    return createRedirectResponse(newUri, request.querystring, 308);
+  }
+
+  // Handle other custom redirects on the original URI
+  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  if (customRedirect) {
+    return createRedirectResponse(
+      customRedirect.redirectPath,
+      request.querystring,
+      customRedirect.statusCode
+    );
   }
 
   const isStaticPage = pages.html.nonDynamic[uri];
@@ -481,28 +502,6 @@ const hasFallbackForUri = (
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);
   });
-};
-
-const createRedirectResponse = (uri: string, querystring: string) => {
-  const location = querystring ? `${uri}?${querystring}` : uri;
-  return {
-    status: "308",
-    statusDescription: "Permanent Redirect",
-    headers: {
-      location: [
-        {
-          key: "Location",
-          value: location
-        }
-      ],
-      refresh: [
-        {
-          key: "Refresh",
-          value: `0;url=${location}`
-        }
-      ]
-    }
-  };
 };
 
 // This sets CloudFront response for 404 or 500 statuses

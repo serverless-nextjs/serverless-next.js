@@ -7,7 +7,8 @@ import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
+  OriginRequestApiHandlerManifest,
+  RoutesManifest
 } from "../types";
 import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -15,6 +16,7 @@ import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
+import { isTrailingSlashRedirect } from "./routing/redirector";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -159,6 +161,22 @@ class Builder {
     return false;
   }
 
+  /**
+   * Process and copy RoutesManifest.
+   * @param source
+   * @param destination
+   */
+  async processAndCopyRoutesManifest(source: string, destination: string) {
+    const routesManifest = require(source) as RoutesManifest;
+
+    // Remove default trailing slash redirects as they are already handled without regex matching.
+    routesManifest.redirects = routesManifest.redirects.filter((redirect) => {
+      return !isTrailingSlashRedirect(redirect, routesManifest.basePath);
+    });
+
+    await fse.writeFile(destination, JSON.stringify(routesManifest));
+  }
+
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
@@ -245,7 +263,7 @@ class Builder {
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
       ),
-      fse.copy(
+      this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
       )

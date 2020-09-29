@@ -7,19 +7,28 @@ describe("Redirects Tests", () => {
 
   describe("Pages redirect to non-trailing slash path", () => {
     [
-      { path: "/ssr-page/" },
-      { path: "/ssg-page/" },
-      { path: "/errored-page/" },
-      { path: "/errored-page-new-ssr/" },
-      { path: "/unmatched/" }
-    ].forEach(({ path }) => {
+      { path: "/ssr-page/", expectedStatus: 200 },
+      { path: "/ssg-page/", expectedStatus: 200 },
+      { path: "/errored-page/", expectedStatus: 500 },
+      { path: "/errored-page-new-ssr/", expectedStatus: 500 },
+      { path: "/unmatched/", expectedStatus: 404 }
+    ].forEach(({ path, expectedStatus }) => {
       it(`redirects page ${path}`, () => {
         cy.ensureRouteHasStatusCode(path, 308);
 
         const redirectedPath = path.slice(0, -1);
 
         // Verify redirect response
-        cy.verifyPermanentRedirect(path, redirectedPath);
+        cy.verifyRedirect(path, redirectedPath, 308);
+
+        // Verify status after following redirect
+        cy.request({
+          url: path,
+          followRedirect: true,
+          failOnStatusCode: false
+        }).then((response) => {
+          expect(response.status).to.equal(expectedStatus);
+        });
 
         // Visit to follow redirect
         cy.visit(path, { failOnStatusCode: false });
@@ -34,7 +43,7 @@ describe("Redirects Tests", () => {
         const redirectedPath = path.slice(0, -1);
 
         // Verify redirect response
-        cy.verifyPermanentRedirect(path, redirectedPath);
+        cy.verifyRedirect(path, redirectedPath, 308);
 
         // We can't use visit to follow redirect as it expects HTML content, not files.
         cy.request(path).then((response) => {
@@ -56,7 +65,7 @@ describe("Redirects Tests", () => {
         const redirectedPath = fullPath.slice(0, -1);
 
         // Verify redirect response
-        cy.verifyPermanentRedirect(fullPath, redirectedPath);
+        cy.verifyRedirect(fullPath, redirectedPath, 308);
 
         // We can't use visit to follow redirect as it expects HTML content, not files.
         cy.request(fullPath).then((response) => {
@@ -64,5 +73,97 @@ describe("Redirects Tests", () => {
         });
       });
     });
+  });
+
+  describe("Custom redirects defined in next.config.js", () => {
+    [
+      {
+        path: "/permanent-redirect",
+        expectedRedirect: "/ssr-page",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/permanent-redirect?a=123",
+        expectedRedirect: "/ssr-page?a=123",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/temporary-redirect",
+        expectedRedirect: "/ssg-page",
+        expectedStatus: 200,
+        expectedRedirectStatus: 307
+      },
+      {
+        path: "/wildcard-redirect-1/a/b/c/d",
+        expectedRedirect: "/ssg-page",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/wildcard-redirect-1/a",
+        expectedRedirect: "/ssg-page",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/wildcard-redirect-2/a", // Redirects but the destination serves a 404
+        expectedRedirect: "/wildcard-redirect-2-dest/a",
+        expectedStatus: 404,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/regex-redirect-1/1234",
+        expectedRedirect: "/ssg-page",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/regex-redirect-1/abcd", // Not a redirect as the regex is for numbers only
+        expectedRedirect: null,
+        expectedStatus: null,
+        expectedRedirectStatus: null
+      },
+      {
+        path: "/regex-redirect-2/12345", // Redirects but the destination serves a 404
+        expectedRedirect: "/regex-redirect-2-dest/12345",
+        expectedStatus: 404,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/custom-status-code-redirect",
+        expectedRedirect: "/ssr-page",
+        expectedStatus: 200,
+        expectedRedirectStatus: 302
+      }
+    ].forEach(
+      ({ path, expectedRedirect, expectedStatus, expectedRedirectStatus }) => {
+        it(`redirects path ${path} to ${expectedRedirect}, redirect status: ${expectedRedirectStatus}`, () => {
+          if (expectedRedirect) {
+            // Verify redirect response
+            cy.verifyRedirect(path, expectedRedirect, expectedRedirectStatus);
+
+            // Follow redirect without failing on status code
+            cy.request({
+              url: path,
+              followRedirect: true,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.equal(expectedStatus);
+            });
+          } else {
+            // If no redirect is expected, expect a 404 instead
+            cy.request({
+              url: path,
+              followRedirect: false,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.equal(404);
+            });
+          }
+        });
+      }
+    );
   });
 });

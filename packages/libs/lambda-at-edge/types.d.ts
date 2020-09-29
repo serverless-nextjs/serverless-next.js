@@ -85,8 +85,16 @@ export type PreRenderedManifest = {
   };
 };
 
+export type RedirectData = {
+  statusCode: number;
+  source: string;
+  destination: string;
+  regex: string;
+};
+
 export type RoutesManifest = {
   basePath: string;
+  redirects: RedirectData[];
 };
 
 export type PerfLogger = {

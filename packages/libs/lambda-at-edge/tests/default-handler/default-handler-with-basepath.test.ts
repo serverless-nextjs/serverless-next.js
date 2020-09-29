@@ -4,18 +4,11 @@ import {
   CloudFrontResultResponse,
   CloudFrontOrigin
 } from "aws-lambda";
+import { runRedirectTestWithHandler } from "./utils/runRedirectTest";
 
 jest.mock(
   "../../src/prerender-manifest.json",
   () => require("./prerender-manifest.json"),
-  {
-    virtual: true
-  }
-);
-
-jest.mock(
-  "../../src/routes-manifest.json",
-  () => require("./default-basepath-routes-manifest.json"),
   {
     virtual: true
   }
@@ -50,6 +43,7 @@ describe("Lambda@Edge", () => {
     let runRedirectTest: (
       path: string,
       expectedRedirect: string,
+      statusCode: number,
       querystring?: string
     ) => Promise<void>;
     beforeEach(() => {
@@ -63,10 +57,29 @@ describe("Lambda@Edge", () => {
             virtual: true
           }
         );
+
+        // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
+        jest.mock(
+          "../../src/routes-manifest.json",
+          () =>
+            require("./default-basepath-routes-manifest-with-trailing-slash.json"),
+          {
+            virtual: true
+          }
+        );
       } else {
         jest.mock(
           "../../src/manifest.json",
           () => require("./default-build-manifest.json"),
+          {
+            virtual: true
+          }
+        );
+
+        // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
+        jest.mock(
+          "../../src/routes-manifest.json",
+          () => require("./default-basepath-routes-manifest.json"),
           {
             virtual: true
           }
@@ -80,33 +93,16 @@ describe("Lambda@Edge", () => {
       runRedirectTest = async (
         path: string,
         expectedRedirect: string,
+        statusCode: number,
         querystring?: string
       ): Promise<void> => {
-        const event = createCloudFrontEvent({
-          uri: path,
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-request" } as any,
-          querystring: querystring
-        });
-
-        const result = await handler(event);
-        const response = result as CloudFrontResultResponse;
-
-        expect(response.headers).toEqual({
-          location: [
-            {
-              key: "Location",
-              value: expectedRedirect
-            }
-          ],
-          refresh: [
-            {
-              key: "Refresh",
-              value: `0;url=${expectedRedirect}`
-            }
-          ]
-        });
-        expect(response.status).toEqual("308");
+        await runRedirectTestWithHandler(
+          handler,
+          path,
+          expectedRedirect,
+          statusCode,
+          querystring
+        );
       };
     });
 
@@ -176,7 +172,7 @@ describe("Lambda@Edge", () => {
             expectedRedirect = path;
             path += "/";
           }
-          await runRedirectTest(path, expectedRedirect);
+          await runRedirectTest(path, expectedRedirect, 308);
         }
       );
 
@@ -240,7 +236,7 @@ describe("Lambda@Edge", () => {
       `(
         "public files always redirect to path without trailing slash: $path -> $expectedRedirect",
         async ({ path, expectedRedirect }) => {
-          await runRedirectTest(path, expectedRedirect);
+          await runRedirectTest(path, expectedRedirect, 308);
         }
       );
     });
@@ -303,7 +299,7 @@ describe("Lambda@Edge", () => {
             expectedRedirect = path;
             path += "/";
           }
-          await runRedirectTest(path, expectedRedirect);
+          await runRedirectTest(path, expectedRedirect, 308);
         }
       );
 
@@ -327,7 +323,7 @@ describe("Lambda@Edge", () => {
           path += "/";
         }
 
-        await runRedirectTest(path, expectedRedirect, querystring);
+        await runRedirectTest(path, expectedRedirect, 308, querystring);
       });
     });
 
@@ -402,7 +398,7 @@ describe("Lambda@Edge", () => {
       `(
         "data requests always redirect to path without trailing slash: $path -> $expectedRedirect",
         async ({ path, expectedRedirect }) => {
-          await runRedirectTest(path, expectedRedirect);
+          await runRedirectTest(path, expectedRedirect, 308);
         }
       );
     });
@@ -514,7 +510,7 @@ describe("Lambda@Edge", () => {
           expectedRedirect = path;
           path += "/";
         }
-        await runRedirectTest(path, expectedRedirect);
+        await runRedirectTest(path, expectedRedirect, 308);
       });
 
       // Next.js serves 404 on pages that do not have basepath prefix. It doesn't redirect whether there is trailing slash or not.
@@ -620,6 +616,42 @@ describe("Lambda@Edge", () => {
         expect(decodedBody).toEqual("pages/_error.js - 500");
         expect(response.status).toEqual("500");
       });
+    });
+
+    describe("Custom Redirects", () => {
+      if (trailingSlash) {
+        it.each`
+          path                           | expectedRedirect           | expectedRedirectStatusCode
+          ${"/basepath/terms-new/"}      | ${"/basepath/terms/"}      | ${308}
+          ${"/basepath/old-blog/abc/"}   | ${"/basepath/news/abc/"}   | ${308}
+          ${"/basepath/old-users/1234/"} | ${"/basepath/users/1234/"} | ${307}
+        `(
+          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
+            await runRedirectTest(
+              path,
+              expectedRedirect,
+              expectedRedirectStatusCode
+            );
+          }
+        );
+      } else {
+        it.each`
+          path                          | expectedRedirect          | expectedRedirectStatusCode
+          ${"/basepath/terms-new"}      | ${"/basepath/terms"}      | ${308}
+          ${"/basepath/old-blog/abc"}   | ${"/basepath/news/abc"}   | ${308}
+          ${"/basepath/old-users/1234"} | ${"/basepath/users/1234"} | ${307}
+        `(
+          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
+            await runRedirectTest(
+              path,
+              expectedRedirect,
+              expectedRedirectStatusCode
+            );
+          }
+        );
+      }
     });
   });
 });
