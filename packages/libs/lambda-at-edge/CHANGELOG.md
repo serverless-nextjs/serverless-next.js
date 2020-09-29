@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.1](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0...@sls-next/lambda-at-edge@1.7.0-alpha.1) (2020-09-29)
+
+### Features
+
+- **lambda-at-edge:** support custom redirects ([#627](https://github.com/danielcondemarin/serverless-next.js/issues/627)) ([d2f9679](https://github.com/danielcondemarin/serverless-next.js/commit/d2f9679a5074285cb8a5111d4c1e34f8bbde0b0f))
+
 # [1.7.0-alpha.0](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.6.0...@sls-next/lambda-at-edge@1.7.0-alpha.0) (2020-09-29)
 
 ### Features
