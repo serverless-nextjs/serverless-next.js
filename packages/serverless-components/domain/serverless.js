@@ -140,7 +140,7 @@ class Domain extends Component {
           );
         } else {
           this.context.debug(
-            `DNS records for domain "${subdomain.domain}" were not configured because the domain was not found in your account. Please configure the DNS records manually`
+            `DNS records for domain ${subdomain.domain} were not configured because the domain was not found in your account. Please configure the DNS records manually`
           );
         }
       } else if (subdomain.type === "awsAppSync") {
@@ -206,6 +206,10 @@ class Domain extends Component {
             domainState.domain,
             domainHostedZoneId,
             domainState.url.replace("https://", "")
+          );
+        } else {
+          this.context.debug(
+            `Could not remove the DNS records for domain ${domainState.domain} because the domain was not found in your account. Please remove the DNS records manually`
           );
         }
       } else if (domainState.type === "awsAppSync") {
