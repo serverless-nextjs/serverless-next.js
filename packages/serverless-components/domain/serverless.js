@@ -129,14 +129,20 @@ class Domain extends Component {
         this.context.debug(
           `Configuring DNS for distribution "${subdomain.url}".`
         );
-        await configureDnsForCloudFrontDistribution(
-          clients.route53,
-          subdomain,
-          domainHostedZoneId,
-          subdomain.url.replace("https://", ""),
-          inputs.domainType,
-          this
-        );
+        if (domainHostedZoneId) {
+          await configureDnsForCloudFrontDistribution(
+            clients.route53,
+            subdomain,
+            domainHostedZoneId,
+            subdomain.url.replace("https://", ""),
+            inputs.domainType,
+            this
+          );
+        } else {
+          this.context.debug(
+            `DNS records for domain ${subdomain.domain} were not configured because the domain was not found in your account. Please configure the DNS records manually`
+          );
+        }
       } else if (subdomain.type === "awsAppSync") {
         throw new Error(`Unsupported subdomain type ${awsS3Website}`);
       }
@@ -191,15 +197,21 @@ class Domain extends Component {
         );
         await removeDomainFromCloudFrontDistribution(clients.cf, domainState);
 
-        this.context.debug(
-          `Removing CloudFront DNS records for domain ${domainState.domain}`
-        );
-        await removeCloudFrontDomainDnsRecords(
-          clients.route53,
-          domainState.domain,
-          domainHostedZoneId,
-          domainState.url.replace("https://", "")
-        );
+        if (domainHostedZoneId) {
+          this.context.debug(
+            `Removing CloudFront DNS records for domain ${domainState.domain}`
+          );
+          await removeCloudFrontDomainDnsRecords(
+            clients.route53,
+            domainState.domain,
+            domainHostedZoneId,
+            domainState.url.replace("https://", "")
+          );
+        } else {
+          this.context.debug(
+            `Could not remove the DNS records for domain ${domainState.domain} because the domain was not found in your account. Please remove the DNS records manually`
+          );
+        }
       } else if (domainState.type === "awsAppSync") {
         this.context.debug(`Unsupported subdomain type ${awsS3Website}`);
       }
