@@ -140,7 +140,7 @@ class Domain extends Component {
           );
         } else {
           this.context.debug(
-            `DNS recods for domain "${subdomain.domain}" were not configured because the domain was not found in your account. Please configure the DNS records manually`
+            `DNS records for domain "${subdomain.domain}" were not configured because the domain was not found in your account. Please configure the DNS records manually`
           );
         }
       } else if (subdomain.type === "awsAppSync") {
