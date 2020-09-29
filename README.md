@@ -66,9 +66,9 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 - [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
 - [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
-- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release now (caveat: redirects from `/api/*` routes are not yet supported). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/pull/627/commits/1765158ae75c6c91a560d3fd9151bebbea2f7c48) for updates.
-- [ ] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/pull/627/commits/1765158ae75c6c91a560d3fd9151bebbea2f7c48) for updates.
-- [ ] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/pull/627/commits/1765158ae75c6c91a560d3fd9151bebbea2f7c48) for updates.
+- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release now (caveat: redirects from `/api/*` routes are not yet supported). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [ ] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [ ] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
 
 ### Getting started
 
