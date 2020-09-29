@@ -2,7 +2,7 @@
 
 ![logo](./logo.gif)
 
-A zero configuration Nextjs 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
+A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
@@ -63,10 +63,12 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
 - [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
-- [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath) available on current `alpha` release.
+- [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
+- [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
-- [ ] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites)
-- [ ] Preview mode. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [ ] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/pull/627/commits/1765158ae75c6c91a560d3fd9151bebbea2f7c48) for updates.
+- [ ] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/pull/627/commits/1765158ae75c6c91a560d3fd9151bebbea2f7c48) for updates.
+- [ ] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/pull/627/commits/1765158ae75c6c91a560d3fd9151bebbea2f7c48) for updates.
 
 ### Getting started
 
