@@ -51,5 +51,32 @@ describe("Matcher Tests", () => {
       const match = compileDestination("/about/:a/:b", { a: "123", b: "456" });
       expect(match).toEqual("/about/123/456");
     });
+
+    it("compiles http URL", () => {
+      const match = compileDestination("http://example.com", {});
+      expect(match).toEqual("http://example.com");
+    });
+
+    it("compiles https URL", () => {
+      const match = compileDestination("https://example.com", {});
+      expect(match).toEqual("https://example.com");
+    });
+
+    it("compiles https URL with trailing slash", () => {
+      const match = compileDestination("https://example.com/", {});
+      expect(match).toEqual("https://example.com/");
+    });
+
+    it("compiles parameterized https URL", () => {
+      const match = compileDestination("https://example.com/:id", {
+        id: "123"
+      });
+      expect(match).toEqual("https://example.com/123");
+    });
+
+    it("invalid destination returns null", () => {
+      const match = compileDestination("abc://123", {});
+      expect(match).toBeNull();
+    });
   });
 });
