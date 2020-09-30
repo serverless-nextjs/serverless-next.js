@@ -27,12 +27,12 @@ jobs:
       - run: yarn test
       - run: yarn integration
       - name: Wait for existing workflow to complete before e2e tests
-        if: ${{ matrix.node-version == '12.x' }}
+        if: ${{ matrix.node-version == '12.x' && github.repository == 'serverless-nextjs/serverless-next.js' }}
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: Run e2e tests
-        if: ${{ matrix.node-version == '12.x' }}
+        if: ${{ matrix.node-version == '12.x' && github.repository == 'serverless-nextjs/serverless-next.js' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
