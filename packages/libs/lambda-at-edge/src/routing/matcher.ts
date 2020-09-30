@@ -23,7 +23,11 @@ export function compileDestination(
   destination: string,
   params: object
 ): string {
-  if (destination.startsWith("https://") || destination.startsWith("http://")) {
+  const destinationLowerCase = destination.toLowerCase();
+  if (
+    destinationLowerCase.startsWith("https://") ||
+    destinationLowerCase.startsWith("http://")
+  ) {
     // Handle external URLs
     const { origin, pathname } = new URL(destination);
     const toPath = compile(pathname, { encode: encodeURIComponent });
