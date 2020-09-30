@@ -1,10 +1,17 @@
 // @ts-ignore
 import manifest from "./manifest.json";
 // @ts-ignore
-import { basePath } from "./routes-manifest.json";
+import RoutesManifestJson from "./routes-manifest.json";
 import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
-import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
+import {
+  OriginRequestApiHandlerManifest,
+  OriginRequestEvent,
+  RoutesManifest
+} from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
+import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
+
+const basePath = RoutesManifestJson.basePath;
 
 const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
 
@@ -42,6 +49,18 @@ export const handler = async (
   event: OriginRequestEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
+  const routesManifest: RoutesManifest = RoutesManifestJson;
+
+  // Handle custom redirects
+  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  if (customRedirect) {
+    return createRedirectResponse(
+      customRedirect.redirectPath,
+      request.querystring,
+      customRedirect.statusCode
+    );
+  }
+
   const uri = normaliseUri(request.uri);
 
   const pagePath = router(manifest)(uri);

@@ -4,7 +4,7 @@ import {
   CloudFrontResultResponse,
   CloudFrontOrigin
 } from "aws-lambda";
-import { runRedirectTestWithHandler } from "./utils/runRedirectTest";
+import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 
 jest.mock(
   "../../src/prerender-manifest.json",

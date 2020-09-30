@@ -138,6 +138,12 @@ describe("Redirects Tests", () => {
         expectedRedirectStatus: 302
       },
       {
+        path: "/api/deprecated-basic-api",
+        expectedRedirect: "/api/basic-api",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
         path: "/external-redirect-1",
         expectedRedirect: "https://api.github.com",
         expectedStatus: 200,
