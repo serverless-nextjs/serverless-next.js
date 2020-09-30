@@ -3,7 +3,11 @@ import manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
 import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
-import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
+import {
+  OriginRequestApiHandlerManifest,
+  OriginRequestEvent,
+  RoutesManifest
+} from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
 
@@ -45,7 +49,7 @@ export const handler = async (
   event: OriginRequestEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
-  const routesManifest = RoutesManifestJson as RoutesManifestJson;
+  const routesManifest = RoutesManifestJson as RoutesManifest;
 
   // Handle custom redirects
   const customRedirect = getRedirectPath(request.uri, routesManifest);
