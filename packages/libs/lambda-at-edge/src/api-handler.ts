@@ -49,7 +49,7 @@ export const handler = async (
   event: OriginRequestEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
-  const routesManifest = RoutesManifestJson as RoutesManifest;
+  const routesManifest: RoutesManifest = RoutesManifestJson;
 
   // Handle custom redirects
   const customRedirect = getRedirectPath(request.uri, routesManifest);
