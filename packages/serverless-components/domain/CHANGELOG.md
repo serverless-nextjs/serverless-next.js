@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.3-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.0.2...@sls-next/domain@1.0.3-alpha.0) (2020-09-30)
+
+### Bug Fixes
+
+- **serverless-component:** create the DNS record only when hosted zone exists ([#635](https://github.com/serverless-nextjs/serverless-next.js/issues/635)) ([3bbac6b](https://github.com/serverless-nextjs/serverless-next.js/commit/3bbac6bee43b64a062a4c095199c4baa16d44f4e))
+
 ## [1.0.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.0.2-alpha.0...@sls-next/domain@1.0.2) (2020-09-26)
 
 **Note:** Version bump only for package @sls-next/domain
