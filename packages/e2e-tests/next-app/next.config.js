@@ -35,6 +35,11 @@ module.exports = {
         source: "/regex-redirect-2/:slug(\\d{1,})",
         destination: "/regex-redirect-2-dest/:slug",
         permanent: true
+      },
+      {
+        source: "/api/deprecated-basic-api",
+        destination: "/api/basic-api",
+        permanent: true
       }
     ];
   }

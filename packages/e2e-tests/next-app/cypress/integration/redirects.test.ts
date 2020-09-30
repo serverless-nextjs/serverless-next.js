@@ -136,6 +136,12 @@ describe("Redirects Tests", () => {
         expectedRedirect: "/ssr-page",
         expectedStatus: 200,
         expectedRedirectStatus: 302
+      },
+      {
+        path: "/api/deprecated-basic-api",
+        expectedRedirect: "/api/basic-api",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
       }
     ].forEach(
       ({ path, expectedRedirect, expectedStatus, expectedRedirectStatus }) => {

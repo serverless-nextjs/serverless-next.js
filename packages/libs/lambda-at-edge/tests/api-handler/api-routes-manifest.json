@@ -1,1 +1,16 @@
-{"version":1,"pages404":true,"basePath":"","redirects":[],"rewrites":[],"headers":[],"dynamicRoutes":[]}
+{
+  "version": 1,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/api/deprecated/getCustomers",
+      "destination": "/api/getCustomers",
+      "statusCode": 308,
+      "regex": "^/api/deprecated/getCustomers$"
+    }
+  ],
+  "rewrites": [],
+  "headers": [],
+  "dynamicRoutes": []
+}
