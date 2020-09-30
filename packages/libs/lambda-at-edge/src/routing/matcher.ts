@@ -22,7 +22,7 @@ export function matchPath(path: string, source: string): Match {
 export function compileDestination(
   destination: string,
   params: object
-): string {
+): string | null {
   const destinationLowerCase = destination.toLowerCase();
   if (
     destinationLowerCase.startsWith("https://") ||
@@ -43,7 +43,14 @@ export function compileDestination(
     }
   } else {
     // Handle all other paths
-    const toPath = compile(destination, { encode: encodeURIComponent });
-    return toPath(params);
+    try {
+      const toPath = compile(destination, { encode: encodeURIComponent });
+      return toPath(params);
+    } catch (error) {
+      console.error(
+        `Could not compile destination ${destination}, returning null instead. Error: ${error}`
+      );
+      return null;
+    }
   }
 }

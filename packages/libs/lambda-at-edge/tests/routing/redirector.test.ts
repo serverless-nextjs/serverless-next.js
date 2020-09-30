@@ -31,19 +31,26 @@ describe("Redirector Tests", () => {
             destination: "https://example.com",
             statusCode: 308,
             regex: "^/external$"
+          },
+          {
+            source: "/invalid-destination",
+            destination: "ftp://example.com",
+            statusCode: 308,
+            regex: "^/invalid-destination$"
           }
         ]
       };
     });
 
     it.each`
-      path                 | expectedRedirect         | expectedStatusCode
-      ${"/a"}              | ${"/b"}                  | ${308}
-      ${"/c"}              | ${"/d"}                  | ${302}
-      ${"/old-blog/abc"}   | ${"/news/abc"}           | ${308}
-      ${"/old-users/1234"} | ${"/users/1234"}         | ${307}
-      ${"/old-users/abc"}  | ${null}                  | ${null}
-      ${"/external"}       | ${"https://example.com"} | ${308}
+      path                      | expectedRedirect         | expectedStatusCode
+      ${"/a"}                   | ${"/b"}                  | ${308}
+      ${"/c"}                   | ${"/d"}                  | ${302}
+      ${"/old-blog/abc"}        | ${"/news/abc"}           | ${308}
+      ${"/old-users/1234"}      | ${"/users/1234"}         | ${307}
+      ${"/old-users/abc"}       | ${null}                  | ${null}
+      ${"/external"}            | ${"https://example.com"} | ${308}
+      ${"/invalid-destination"} | ${null}                  | ${null}
     `(
       "redirects path $path to $expectedRedirect",
       ({ path, expectedRedirect, expectedStatusCode }) => {

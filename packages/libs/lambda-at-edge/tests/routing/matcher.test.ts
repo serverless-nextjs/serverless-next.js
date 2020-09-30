@@ -73,5 +73,10 @@ describe("Matcher Tests", () => {
       });
       expect(match).toEqual("https://example.com/123");
     });
+
+    it("invalid destination returns null", () => {
+      const match = compileDestination("abc://123", {});
+      expect(match).toBeNull();
+    });
   });
 });
