@@ -41,6 +41,9 @@ export type OriginRequestDefaultHandlerManifest = {
     [key: string]: string;
   };
   trailingSlash: boolean;
+  domainRedirects: {
+    [key: string]: string;
+  };
 };
 
 export type OriginRequestEvent = {

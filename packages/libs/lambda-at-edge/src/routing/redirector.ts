@@ -1,6 +1,11 @@
 import { compileDestination, matchPath } from "./matcher";
-import { RedirectData, RoutesManifest } from "../../types";
+import {
+  OriginRequestDefaultHandlerManifest,
+  RedirectData,
+  RoutesManifest
+} from "../../types";
 import * as http from "http";
+import { CloudFrontRequest } from "aws-lambda";
 
 /**
  * Whether this is the default trailing slash redirect.
@@ -105,4 +110,26 @@ export function createRedirectResponse(
       refresh: refresh
     }
   };
+}
+
+/**
+ * Get a domain redirect such as redirecting www to non-www domain.
+ * @param request
+ * @param buildManifest
+ */
+export function getDomainRedirectPath(
+  request: CloudFrontRequest,
+  buildManifest: OriginRequestDefaultHandlerManifest
+): string | null {
+  const hostHeaders = request.headers["host"];
+  if (hostHeaders && hostHeaders.length > 0) {
+    const host = hostHeaders[0].value;
+    const domainRedirects = buildManifest.domainRedirects;
+
+    const newDomain = domainRedirects[host];
+    if (domainRedirects && newDomain) {
+      return `${newDomain}${request.uri}`;
+    }
+  }
+  return null;
 }

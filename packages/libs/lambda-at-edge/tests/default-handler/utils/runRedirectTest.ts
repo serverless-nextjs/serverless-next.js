@@ -6,11 +6,12 @@ export async function runRedirectTestWithHandler(
   path: string,
   expectedRedirect: string,
   statusCode: number,
-  querystring?: string
+  querystring?: string,
+  host?: string
 ): Promise<void> {
   const event = createCloudFrontEvent({
     uri: path,
-    host: "mydistribution.cloudfront.net",
+    host: host ?? "mydistribution.cloudfront.net",
     config: { eventType: "origin-request" } as any,
     querystring: querystring
   });

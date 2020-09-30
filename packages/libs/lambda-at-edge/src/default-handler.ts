@@ -24,7 +24,11 @@ import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
 import type { Readable } from "stream";
-import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
+import {
+  createRedirectResponse,
+  getDomainRedirectPath,
+  getRedirectPath
+} from "./routing/redirector";
 
 const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
@@ -208,8 +212,15 @@ const handleOriginRequest = async ({
   prerenderManifest: PrerenderManifestType;
   routesManifest: RoutesManifest;
 }) => {
-  const basePath = routesManifest.basePath;
   const request = event.Records[0].cf.request;
+
+  // Handle domain redirects e.g www to non-www domain
+  const domainRedirect = getDomainRedirectPath(request, manifest);
+  if (domainRedirect) {
+    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  }
+
+  const basePath = routesManifest.basePath;
   const uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
   const isPublicFile = publicFiles[uri];

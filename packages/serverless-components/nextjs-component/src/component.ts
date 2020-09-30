@@ -184,7 +184,8 @@ class NextjsComponent extends Component {
           env: buildConfig.env,
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
-          logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false
+          logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
+          domainRedirects: inputs.domainRedirects || {}
         }
       );
 
