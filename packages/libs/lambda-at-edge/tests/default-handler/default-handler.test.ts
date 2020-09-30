@@ -641,10 +641,11 @@ describe("Lambda@Edge", () => {
     describe("Custom Redirects", () => {
       if (trailingSlash) {
         it.each`
-          path                  | expectedRedirect  | expectedRedirectStatusCode
-          ${"/terms-new/"}      | ${"/terms/"}      | ${308}
-          ${"/old-blog/abc/"}   | ${"/news/abc/"}   | ${308}
-          ${"/old-users/1234/"} | ${"/users/1234/"} | ${307}
+          path                  | expectedRedirect         | expectedRedirectStatusCode
+          ${"/terms-new/"}      | ${"/terms/"}             | ${308}
+          ${"/old-blog/abc/"}   | ${"/news/abc/"}          | ${308}
+          ${"/old-users/1234/"} | ${"/users/1234/"}        | ${307}
+          ${"/external/"}       | ${"https://example.com"} | ${308}
         `(
           "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
@@ -657,10 +658,11 @@ describe("Lambda@Edge", () => {
         );
       } else {
         it.each`
-          path                 | expectedRedirect | expectedRedirectStatusCode
-          ${"/terms-new"}      | ${"/terms"}      | ${308}
-          ${"/old-blog/abc"}   | ${"/news/abc"}   | ${308}
-          ${"/old-users/1234"} | ${"/users/1234"} | ${307}
+          path                 | expectedRedirect         | expectedRedirectStatusCode
+          ${"/terms-new"}      | ${"/terms"}              | ${308}
+          ${"/old-blog/abc"}   | ${"/news/abc"}           | ${308}
+          ${"/old-users/1234"} | ${"/users/1234"}         | ${307}
+          ${"/external"}       | ${"https://example.com"} | ${308}
         `(
           "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
