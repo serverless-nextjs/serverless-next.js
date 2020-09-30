@@ -625,6 +625,7 @@ describe("Lambda@Edge", () => {
           ${"/basepath/terms-new/"}      | ${"/basepath/terms/"}      | ${308}
           ${"/basepath/old-blog/abc/"}   | ${"/basepath/news/abc/"}   | ${308}
           ${"/basepath/old-users/1234/"} | ${"/basepath/users/1234/"} | ${307}
+          ${"/basepath/external/"}       | ${"https://example.com"}   | ${308}
         `(
           "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
@@ -641,6 +642,7 @@ describe("Lambda@Edge", () => {
           ${"/basepath/terms-new"}      | ${"/basepath/terms"}      | ${308}
           ${"/basepath/old-blog/abc"}   | ${"/basepath/news/abc"}   | ${308}
           ${"/basepath/old-users/1234"} | ${"/basepath/users/1234"} | ${307}
+          ${"/basepath/external"}       | ${"https://example.com"}  | ${308}
         `(
           "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {

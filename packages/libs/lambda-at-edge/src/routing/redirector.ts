@@ -55,8 +55,17 @@ export function getRedirectPath(
     const match = matchPath(path, redirect.source);
 
     if (match) {
+      const compiledDestination = compileDestination(
+        redirect.destination,
+        match.params
+      );
+
+      if (!compiledDestination) {
+        return null;
+      }
+
       return {
-        redirectPath: compileDestination(redirect.destination, match.params),
+        redirectPath: compiledDestination,
         statusCode: redirect.statusCode
       };
     }

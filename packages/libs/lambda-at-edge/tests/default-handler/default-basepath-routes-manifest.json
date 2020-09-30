@@ -20,6 +20,12 @@
       "destination": "/basepath/users/:post",
       "statusCode": 307,
       "regex": "^/basepath/old-users(?:/(\\d{1,}))$"
+    },
+    {
+      "source": "/basepath/external",
+      "destination": "https://example.com",
+      "statusCode": 308,
+      "regex": "^/basepath/external"
     }
   ],
   "rewrites": [],

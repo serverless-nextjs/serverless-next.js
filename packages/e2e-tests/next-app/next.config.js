@@ -39,6 +39,21 @@ module.exports = {
       {
         source: "/api/deprecated-basic-api",
         destination: "/api/basic-api",
+        permanent: true,
+      },
+      {
+        source: "/external-redirect-1",
+        destination: "https://api.github.com",
+        permanent: true
+      },
+      {
+        source: "/external-redirect-2/:id",
+        destination: "https://api.github.com/:id",
+        permanent: true
+      },
+      {
+        source: "/external-redirect-3/:id",
+        destination: "https://api.github.com/:id/",
         permanent: true
       }
     ];
