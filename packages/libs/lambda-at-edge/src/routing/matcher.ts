@@ -23,6 +23,23 @@ export function compileDestination(
   destination: string,
   params: object
 ): string {
-  const toPath = compile(destination, { encode: encodeURIComponent });
-  return toPath(params);
+  if (destination.startsWith("https://") || destination.startsWith("http://")) {
+    // Handle external URLs
+    const { origin, pathname } = new URL(destination);
+    const toPath = compile(pathname, { encode: encodeURIComponent });
+    const compiledDestination = `${origin}${toPath(params)}`;
+
+    // Remove trailing slash if original destination didn't have it
+    if (destination.endsWith("/")) {
+      return compiledDestination;
+    } else if (compiledDestination.endsWith("/")) {
+      return compiledDestination.slice(0, -1);
+    } else {
+      return compiledDestination;
+    }
+  } else {
+    // Handle all other paths
+    const toPath = compile(destination, { encode: encodeURIComponent });
+    return toPath(params);
+  }
 }

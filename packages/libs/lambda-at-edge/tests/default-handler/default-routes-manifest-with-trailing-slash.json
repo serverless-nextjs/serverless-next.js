@@ -20,6 +20,12 @@
       "destination": "/users/:id/",
       "statusCode": 307,
       "regex": "^/old-users(?:/(\\d{1,}))/$"
+    },
+    {
+      "source": "/external/",
+      "destination": "https://example.com",
+      "statusCode": 308,
+      "regex": "^/external/"
     }
   ],
   "rewrites": [],

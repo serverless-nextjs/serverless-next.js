@@ -136,6 +136,24 @@ describe("Redirects Tests", () => {
         expectedRedirect: "/ssr-page",
         expectedStatus: 200,
         expectedRedirectStatus: 302
+      },
+      {
+        path: "/external-redirect-1",
+        expectedRedirect: "https://api.github.com",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/external-redirect-2/abcd",
+        expectedRedirect: "https://api.github.com/abcd",
+        expectedStatus: 404,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/external-redirect-3/abcd",
+        expectedRedirect: "https://api.github.com/abcd/",
+        expectedStatus: 404,
+        expectedRedirectStatus: 308
       }
     ].forEach(
       ({ path, expectedRedirect, expectedStatus, expectedRedirectStatus }) => {

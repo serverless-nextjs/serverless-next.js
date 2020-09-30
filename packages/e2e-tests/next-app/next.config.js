@@ -35,6 +35,21 @@ module.exports = {
         source: "/regex-redirect-2/:slug(\\d{1,})",
         destination: "/regex-redirect-2-dest/:slug",
         permanent: true
+      },
+      {
+        source: "/external-redirect-1",
+        destination: "https://api.github.com",
+        permanent: true
+      },
+      {
+        source: "/external-redirect-2/:id",
+        destination: "https://api.github.com/:id",
+        permanent: true
+      },
+      {
+        source: "/external-redirect-3/:id",
+        destination: "https://api.github.com/:id/",
+        permanent: true
       }
     ];
   }
