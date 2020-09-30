@@ -1,6 +1,7 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/api-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
+import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 
 jest.mock(
   "../../src/manifest.json",
@@ -66,5 +67,36 @@ describe("API lambda handler", () => {
     const response = (await handler(event)) as CloudFrontResponseResult;
 
     expect(response.status).toEqual("404");
+  });
+
+  describe("Custom Redirects", () => {
+    let runRedirectTest = async (
+      path: string,
+      expectedRedirect: string,
+      statusCode: number,
+      querystring?: string
+    ): Promise<void> => {
+      await runRedirectTestWithHandler(
+        handler,
+        path,
+        expectedRedirect,
+        statusCode,
+        querystring
+      );
+    };
+
+    it.each`
+      path                              | expectedRedirect       | expectedRedirectStatusCode
+      ${"/api/deprecated/getCustomers"} | ${"/api/getCustomers"} | ${308}
+    `(
+      "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+      async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
+        await runRedirectTest(
+          path,
+          expectedRedirect,
+          expectedRedirectStatusCode
+        );
+      }
+    );
   });
 });

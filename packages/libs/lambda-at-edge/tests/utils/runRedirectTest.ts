@@ -1,4 +1,4 @@
-import { createCloudFrontEvent } from "../../test-utils";
+import { createCloudFrontEvent } from "../test-utils";
 import { CloudFrontResultResponse } from "aws-lambda";
 
 export async function runRedirectTestWithHandler(
