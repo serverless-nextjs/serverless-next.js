@@ -30,61 +30,65 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 describe("API lambda handler", () => {
-  it("serves api request", async () => {
-    const event = createCloudFrontEvent({
-      uri: "/api/getCustomers",
-      host: "mydistribution.cloudfront.net",
-      origin: {
-        s3: {
-          domainName: "my-bucket.s3.amazonaws.com"
+  describe("API routes", () => {
+    it("serves api request", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/getCustomers",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
         }
-      }
+      });
+
+      mockPageRequire("pages/api/getCustomers.js");
+
+      const response = (await handler(event)) as CloudFrontResponseResult;
+
+      const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+
+      expect(decodedBody).toEqual("pages/api/getCustomers");
+      expect(response.status).toEqual(200);
     });
 
-    mockPageRequire("pages/api/getCustomers.js");
-
-    const response = (await handler(event)) as CloudFrontResponseResult;
-
-    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
-
-    expect(decodedBody).toEqual("pages/api/getCustomers");
-    expect(response.status).toEqual(200);
-  });
-
-  it("returns 404 for not-found api routes", async () => {
-    const event = createCloudFrontEvent({
-      uri: "/foo/bar",
-      host: "mydistribution.cloudfront.net",
-      origin: {
-        s3: {
-          domainName: "my-bucket.s3.amazonaws.com"
+    it("returns 404 for not-found api routes", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/foo/bar",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
         }
-      }
+      });
+
+      mockPageRequire("pages/api/getCustomers.js");
+
+      const response = (await handler(event)) as CloudFrontResponseResult;
+
+      expect(response.status).toEqual("404");
     });
-
-    mockPageRequire("pages/api/getCustomers.js");
-
-    const response = (await handler(event)) as CloudFrontResponseResult;
-
-    expect(response.status).toEqual("404");
   });
+
+  let runRedirectTest = async (
+    path: string,
+    expectedRedirect: string,
+    statusCode: number,
+    querystring?: string,
+    host?: string
+  ): Promise<void> => {
+    await runRedirectTestWithHandler(
+      handler,
+      path,
+      expectedRedirect,
+      statusCode,
+      querystring,
+      host
+    );
+  };
 
   describe("Custom Redirects", () => {
-    let runRedirectTest = async (
-      path: string,
-      expectedRedirect: string,
-      statusCode: number,
-      querystring?: string
-    ): Promise<void> => {
-      await runRedirectTestWithHandler(
-        handler,
-        path,
-        expectedRedirect,
-        statusCode,
-        querystring
-      );
-    };
-
     it.each`
       path                              | expectedRedirect       | expectedRedirectStatusCode
       ${"/api/deprecated/getCustomers"} | ${"/api/getCustomers"} | ${308}
@@ -95,6 +99,31 @@ describe("API lambda handler", () => {
           path,
           expectedRedirect,
           expectedRedirectStatusCode
+        );
+      }
+    );
+  });
+
+  describe("Domain Redirects", () => {
+    it.each`
+      path        | querystring | expectedRedirect                     | expectedRedirectStatusCode
+      ${"/"}      | ${""}       | ${"https://www.example.com/"}        | ${308}
+      ${"/"}      | ${"a=1234"} | ${"https://www.example.com/?a=1234"} | ${308}
+      ${"/terms"} | ${""}       | ${"https://www.example.com/terms"}   | ${308}
+    `(
+      "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+      async ({
+        path,
+        querystring,
+        expectedRedirect,
+        expectedRedirectStatusCode
+      }) => {
+        await runRedirectTest(
+          path,
+          expectedRedirect,
+          expectedRedirectStatusCode,
+          querystring,
+          "example.com" // Override host to test a domain redirect from host example.com -> https://www.example.com
         );
       }
     );
