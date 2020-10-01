@@ -9,7 +9,11 @@ import {
   RoutesManifest
 } from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
-import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
+import {
+  createRedirectResponse,
+  getDomainRedirectPath,
+  getRedirectPath
+} from "./routing/redirector";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -50,6 +54,12 @@ export const handler = async (
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
+
+  // Handle domain redirects e.g www to non-www domain
+  const domainRedirect = getDomainRedirectPath(request, manifest);
+  if (domainRedirect) {
+    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  }
 
   // Handle custom redirects
   const customRedirect = getRedirectPath(request.uri, routesManifest);
