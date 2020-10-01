@@ -360,7 +360,8 @@ class Builder {
       apis: {
         dynamic: {},
         nonDynamic: {}
-      }
+      },
+      domainRedirects: domainRedirects
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;

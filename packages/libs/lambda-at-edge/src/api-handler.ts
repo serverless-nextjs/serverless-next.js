@@ -54,9 +54,10 @@ export const handler = async (
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
+  const buildManifest: OriginRequestApiHandlerManifest = manifest;
 
   // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, manifest);
+  const domainRedirect = getDomainRedirectPath(request, buildManifest);
   if (domainRedirect) {
     return createRedirectResponse(domainRedirect, request.querystring, 308);
   }

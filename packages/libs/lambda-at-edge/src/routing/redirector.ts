@@ -1,5 +1,6 @@
 import { compileDestination, matchPath } from "./matcher";
 import {
+  OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
   RedirectData,
   RoutesManifest
@@ -128,16 +129,17 @@ export function createRedirectResponse(
  */
 export function getDomainRedirectPath(
   request: CloudFrontRequest,
-  buildManifest: OriginRequestDefaultHandlerManifest
+  buildManifest:
+    | OriginRequestDefaultHandlerManifest
+    | OriginRequestApiHandlerManifest
 ): string | null {
   const hostHeaders = request.headers["host"];
   if (hostHeaders && hostHeaders.length > 0) {
     const host = hostHeaders[0].value;
     const domainRedirects = buildManifest.domainRedirects;
 
-    const newDomain = domainRedirects[host];
-    if (domainRedirects && newDomain) {
-      return `${newDomain}${request.uri}`;
+    if (domainRedirects && domainRedirects[host]) {
+      return `${domainRedirects[host]}${request.uri}`;
     }
   }
   return null;
