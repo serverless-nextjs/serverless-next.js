@@ -7,6 +7,7 @@ import {
 } from "../../types";
 import * as http from "http";
 import { CloudFrontRequest } from "aws-lambda";
+import { CloudFrontResultResponse } from "aws-lambda";
 
 /**
  * Whether this is the default trailing slash redirect.
@@ -90,7 +91,7 @@ export function createRedirectResponse(
   uri: string,
   querystring: string,
   statusCode: number
-) {
+): CloudFrontResultResponse {
   const location = querystring ? `${uri}?${querystring}` : uri;
 
   const status = statusCode.toString();

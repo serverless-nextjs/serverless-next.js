@@ -723,5 +723,37 @@ describe("Lambda@Edge", () => {
         }
       );
     });
+
+    describe("Custom Headers", () => {
+      it.each`
+        path                             | expectedHeaders                    | expectedPage
+        ${"/basepath/customers/another"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
+      `(
+        "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
+        async ({ path, expectedHeaders, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          mockPageRequire(expectedPage);
+
+          const response = await handler(event);
+
+          for (const header in expectedHeaders) {
+            const headerEntry = response.headers[header][0];
+            expect(headerEntry).toEqual({
+              key: header,
+              value: expectedHeaders[header]
+            });
+          }
+        }
+      );
+    });
   });
 });
