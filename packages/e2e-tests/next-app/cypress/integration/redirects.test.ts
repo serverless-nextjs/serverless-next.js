@@ -163,7 +163,7 @@ describe("Redirects Tests", () => {
       },
       {
         path: "/query-string-destination-redirect",
-        expectedRedirect: "/ssg-page?a=1234",
+        expectedRedirect: "/ssg-page?a=1234&b=1?",
         expectedStatus: 200,
         expectedRedirectStatus: 308
       }

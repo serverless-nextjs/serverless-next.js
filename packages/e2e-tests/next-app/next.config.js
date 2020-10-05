@@ -58,7 +58,7 @@ module.exports = {
       },
       {
         source: "/query-string-destination-redirect",
-        destination: "/ssg-page?a=1234",
+        destination: "/ssg-page?a=1234&b=1?",
         permanent: true
       }
     ];
