@@ -211,7 +211,7 @@ class Builder {
       );
     }
 
-    const prerenderManifest = require(join(
+    let prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
     ));
