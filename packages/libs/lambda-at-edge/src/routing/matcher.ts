@@ -43,7 +43,6 @@ export function compileDestination(
     } else {
       // Handle all other paths. Escape all ? in case of query parameters
       const escapedDestination = destination.replace(/\?/g, "\\?");
-      console.log(escapedDestination);
       const toPath = compile(escapedDestination, {
         encode: encodeURIComponent
       });
