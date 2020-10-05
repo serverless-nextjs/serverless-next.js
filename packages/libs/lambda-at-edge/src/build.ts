@@ -28,6 +28,7 @@ type BuildOptions = {
   cmd?: string;
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
+  customHandler?: string;
 };
 
 const defaultBuildOptions = {
@@ -210,7 +211,7 @@ class Builder {
       );
     }
 
-    let prerenderManifest = require(join(
+    const prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
     ));
@@ -221,10 +222,16 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        join(this.nextConfigDir, "handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "handler.js")
-      ),
+      this.buildOptions?.customHandler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.customHandler),
+            join(
+              this.outputDir,
+              DEFAULT_LAMBDA_CODE_DIR,
+              this.buildOptions.customHandler
+            )
+          )
+        : Promise.resolve(),
       fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
@@ -304,10 +311,16 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        join(this.nextConfigDir, "handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "handler.js")
-      ),
+      this.buildOptions?.customHandler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.customHandler),
+            join(
+              this.outputDir,
+              DEFAULT_LAMBDA_CODE_DIR,
+              this.buildOptions.customHandler
+            )
+          )
+        : Promise.resolve(),
       fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
