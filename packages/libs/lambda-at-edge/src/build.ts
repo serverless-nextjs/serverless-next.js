@@ -316,7 +316,7 @@ class Builder {
             join(this.nextConfigDir, this.buildOptions.customHandler),
             join(
               this.outputDir,
-              DEFAULT_LAMBDA_CODE_DIR,
+              API_LAMBDA_CODE_DIR,
               this.buildOptions.customHandler
             )
           )
