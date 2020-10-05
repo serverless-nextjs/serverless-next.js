@@ -222,6 +222,10 @@ class Builder {
     return Promise.all([
       ...copyTraces,
       fse.copy(
+        join(this.nextConfigDir, "handler.js"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "handler.js")
+      ),
+      fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
       ),
@@ -300,6 +304,10 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
+      fse.copy(
+        join(this.nextConfigDir, "handler.js"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "handler.js")
+      ),
       fse.copy(
         require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")

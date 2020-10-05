@@ -954,7 +954,7 @@ describe("Custom inputs", () => {
 
   describe.each([
     [undefined, "index.handler"],
-    ["custom.handler", "custom.handler"]
+    ["handler.handler", "handler.handler"]
   ])("Lambda handler input", (inputHandler, expectedHandler) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
     let tmpCwd;
