@@ -28,6 +28,7 @@ type BuildOptions = {
   cmd?: string;
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
+  domainRedirects?: { [key: string]: string };
 };
 
 const defaultBuildOptions = {
@@ -36,7 +37,8 @@ const defaultBuildOptions = {
   env: {},
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
-  logLambdaExecutionTimes: false
+  logLambdaExecutionTimes: false,
+  domainRedirects: {}
 };
 
 class Builder {
@@ -329,7 +331,12 @@ class Builder {
       path.join(this.dotNextDir, "BUILD_ID"),
       "utf-8"
     );
-    const { logLambdaExecutionTimes = false } = this.buildOptions;
+    const {
+      logLambdaExecutionTimes = false,
+      domainRedirects = {}
+    } = this.buildOptions;
+
+    this.normalizeDomainRedirects(domainRedirects);
 
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
@@ -345,14 +352,16 @@ class Builder {
         }
       },
       publicFiles: {},
-      trailingSlash: false
+      trailingSlash: false,
+      domainRedirects: domainRedirects
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
       apis: {
         dynamic: {},
         nonDynamic: {}
-      }
+      },
+      domainRedirects: domainRedirects
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;
@@ -490,6 +499,46 @@ class Builder {
 
     if (hasAPIPages) {
       await this.buildApiLambda(apiBuildManifest);
+    }
+  }
+
+  /**
+   * Normalize domain redirects by validating they are URLs and getting rid of trailing slash.
+   * @param domainRedirects
+   */
+  normalizeDomainRedirects(domainRedirects: { [key: string]: string }) {
+    for (const key in domainRedirects) {
+      const destination = domainRedirects[key];
+
+      let url;
+      try {
+        url = new URL(destination);
+      } catch (error) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL is not in a valid URL format.`
+        );
+      }
+
+      const { origin, pathname, searchParams } = url;
+
+      if (!origin.startsWith("https://") && !origin.startsWith("http://")) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL must start with http:// or https://.`
+        );
+      }
+
+      if (Array.from(searchParams).length > 0) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL must not contain query parameters.`
+        );
+      }
+
+      let normalizedDomain = `${origin}${pathname}`;
+      normalizedDomain = normalizedDomain.endsWith("/")
+        ? normalizedDomain.slice(0, -1)
+        : normalizedDomain;
+
+      domainRedirects[key] = normalizedDomain;
     }
   }
 }

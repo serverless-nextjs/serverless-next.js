@@ -48,7 +48,8 @@ describe("Lambda@Edge", () => {
       path: string,
       expectedRedirect: string,
       statusCode: number,
-      querystring?: string
+      querystring?: string,
+      host?: string
     ) => Promise<void>;
     beforeEach(() => {
       jest.resetModules();
@@ -97,14 +98,16 @@ describe("Lambda@Edge", () => {
         path: string,
         expectedRedirect: string,
         statusCode: number,
-        querystring?: string
+        querystring?: string,
+        host?: string
       ): Promise<void> => {
         await runRedirectTestWithHandler(
           handler,
           path,
           expectedRedirect,
           statusCode,
-          querystring
+          querystring,
+          host
         );
       };
     });
@@ -674,6 +677,31 @@ describe("Lambda@Edge", () => {
           }
         );
       }
+    });
+
+    describe("Domain Redirects", () => {
+      it.each`
+        path        | querystring | expectedRedirect                     | expectedRedirectStatusCode
+        ${"/"}      | ${""}       | ${"https://www.example.com/"}        | ${308}
+        ${"/"}      | ${"a=1234"} | ${"https://www.example.com/?a=1234"} | ${308}
+        ${"/terms"} | ${""}       | ${"https://www.example.com/terms"}   | ${308}
+      `(
+        "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+        async ({
+          path,
+          querystring,
+          expectedRedirect,
+          expectedRedirectStatusCode
+        }) => {
+          await runRedirectTest(
+            path,
+            expectedRedirect,
+            expectedRedirectStatusCode,
+            querystring,
+            "example.com" // Override host to test a domain redirect from host example.com -> https://www.example.com
+          );
+        }
+      );
     });
 
     describe("Custom Rewrites", () => {
