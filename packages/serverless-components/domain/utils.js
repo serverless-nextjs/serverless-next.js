@@ -393,21 +393,19 @@ const addDomainToCloudfrontDistribution = async (
   params.Id = subdomain.distributionId;
 
   // 5. then make our changes
-  params.DistributionConfig.Aliases = {
-    Quantity: 1,
-    Items: [subdomain.domain]
-  };
-
+  params.DistributionConfig.Aliases.Items.push(subdomain.domain);
+  params.DistributionConfig.Aliases.Quantity += 1;
   if (subdomain.domain.startsWith("www.")) {
     if (domainType === "apex") {
-      params.DistributionConfig.Aliases.Items = [
-        `${subdomain.domain.replace("www.", "")}`
-      ];
+      params.DistributionConfig.Aliases.Items[-1] = `${subdomain.domain.replace(
+        "www.",
+        ""
+      )}`;
     } else if (domainType !== "www") {
-      params.DistributionConfig.Aliases.Quantity = 2;
       params.DistributionConfig.Aliases.Items.push(
         `${subdomain.domain.replace("www.", "")}`
       );
+      params.DistributionConfig.Aliases.Quantity += 1;
     }
   }
 
