@@ -28,7 +28,7 @@ type BuildOptions = {
   cmd?: string;
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
-  customHandler?: string;
+  handler?: string;
 };
 
 const defaultBuildOptions = {
@@ -222,13 +222,13 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      this.buildOptions?.customHandler
+      this.buildOptions?.handler
         ? fse.copy(
-            join(this.nextConfigDir, this.buildOptions.customHandler),
+            join(this.nextConfigDir, this.buildOptions.handler),
             join(
               this.outputDir,
               DEFAULT_LAMBDA_CODE_DIR,
-              this.buildOptions.customHandler
+              this.buildOptions.handler
             )
           )
         : Promise.resolve(),
@@ -311,13 +311,13 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      this.buildOptions?.customHandler
+      this.buildOptions?.handler
         ? fse.copy(
-            join(this.nextConfigDir, this.buildOptions.customHandler),
+            join(this.nextConfigDir, this.buildOptions.handler),
             join(
               this.outputDir,
               API_LAMBDA_CODE_DIR,
-              this.buildOptions.customHandler
+              this.buildOptions.handler
             )
           )
         : Promise.resolve(),

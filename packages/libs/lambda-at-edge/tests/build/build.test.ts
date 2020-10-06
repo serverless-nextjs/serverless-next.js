@@ -225,7 +225,7 @@ describe("Builder Tests", () => {
     });
   });
 
-  describe("Copies customHandler file into folder", () => {
+  describe("Custom handler", () => {
     let fseRemoveSpy: jest.SpyInstance;
     let fseEmptyDirSpy: jest.SpyInstance;
     let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
@@ -243,7 +243,7 @@ describe("Builder Tests", () => {
         .mockImplementation(() => undefined);
       fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
       const builder = new Builder(fixturePath, outputDir, {
-        customHandler: "testFile.js"
+        handler: "testFile.js"
       });
       await builder.build();
 
