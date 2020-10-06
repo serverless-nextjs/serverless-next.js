@@ -2,7 +2,9 @@
 
 ![logo](./logo.gif)
 
-A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
+A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) aiming for full feature parity. 
+
+Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
@@ -47,6 +49,8 @@ Users of this component should be able to use nextjs development tooling, aka `n
 With a simplified architecture and no use of CloudFormation, there are no limits to how many pages you can have in your application, plus deployment times are very fast! with the exception of CloudFront propagation times of course.
 
 ### Features
+
+The following shows all supported features or planned features. Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
 
 - [x] [Server side rendered pages at the Edge](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
       Pages that need server side compute to render are hosted on Lambda@Edge. The component takes care of all the routing for you so there is no configuration needed. Because rendering happens at the CloudFront edge locations latency is very low!
