@@ -206,6 +206,7 @@ class NextjsComponent extends Component {
     const {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
+      aliases: cloudFrontAliasesInputs,
       priceClass: cloudFrontPriceClassInputs,
       errorPages: cloudFrontErrorPagesInputs,
       distributionId: cloudFrontDistributionId = null,
@@ -535,6 +536,9 @@ class NextjsComponent extends Component {
         compress: true
       },
       origins: cloudFrontOrigins,
+      ...(cloudFrontAliasesInputs && {
+        aliases: cloudFrontAliasesInputs
+      }),
       ...(cloudFrontPriceClassInputs && {
         priceClass: cloudFrontPriceClassInputs
       }),

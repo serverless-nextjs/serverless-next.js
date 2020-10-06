@@ -183,6 +183,7 @@ myNextApplication:
               minTTL: 10
               maxTTL: 10
               defaultTTL: 10
+      aliases: ["foo.example.com", "bar.example.com"]
       priceClass: "PriceClass_100"
       # You can add custom error responses
       errorPages:

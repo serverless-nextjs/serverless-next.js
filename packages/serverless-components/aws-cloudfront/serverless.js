@@ -25,6 +25,7 @@ class CloudFront extends Component {
       inputs.comment === null || inputs.comment === undefined
         ? ""
         : String(inputs.comment);
+    inputs.aliases = inputs.aliases || [];
     inputs.priceClass = [
       "PriceClass_All",
       "PriceClass_200",
@@ -56,6 +57,7 @@ class CloudFront extends Component {
         !equals(this.state.defaults, inputs.defaults) ||
         !equals(this.state.enabled, inputs.enabled) ||
         !equals(this.state.comment, inputs.comment) ||
+        !equals(this.state.aliases, inputs.aliases) ||
         !equals(this.state.priceClass, inputs.priceClass) ||
         !equals(this.state.errorPages, inputs.errorPages)
       ) {
@@ -79,6 +81,7 @@ class CloudFront extends Component {
     this.state.region = inputs.region;
     this.state.enabled = inputs.enabled;
     this.state.comment = inputs.comment;
+    this.state.aliases = inputs.aliases;
     this.state.priceClass = inputs.priceClass;
     this.state.origins = inputs.origins;
     this.state.errorPages = inputs.errorPages;
