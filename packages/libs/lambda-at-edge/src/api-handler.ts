@@ -10,6 +10,7 @@ import {
 } from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
+import { getRewritePath } from "./routing/rewriter";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -59,6 +60,12 @@ export const handler = async (
       request.querystring,
       customRedirect.statusCode
     );
+  }
+
+  // Handle custom rewrites
+  const customRewrite = getRewritePath(request.uri, routesManifest);
+  if (customRewrite) {
+    request.uri = customRewrite;
   }
 
   const uri = normaliseUri(request.uri);

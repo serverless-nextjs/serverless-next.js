@@ -655,5 +655,45 @@ describe("Lambda@Edge", () => {
         );
       }
     });
+
+    describe("Custom Rewrites", () => {
+      it.each`
+        path                            | expectedPage
+        ${"/basepath/index-rewrite"}    | ${"/index.html"}
+        ${"/basepath/terms-rewrite"}    | ${"/terms.html"}
+        ${"/basepath/path-rewrite/123"} | ${"/terms.html"}
+      `(
+        "serves page $expectedPage from S3 for rewritten path $path",
+        async ({ path, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/basepath/static-pages",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual(expectedPage);
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
+        }
+      );
+    });
   });
 });

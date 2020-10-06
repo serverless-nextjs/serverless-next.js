@@ -25,6 +25,7 @@ import { ServerResponse } from "http";
 import jsonwebtoken from "jsonwebtoken";
 import type { Readable } from "stream";
 import { createRedirectResponse, getRedirectPath } from "./routing/redirector";
+import { getRewritePath } from "./routing/rewriter";
 
 const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
@@ -210,7 +211,7 @@ const handleOriginRequest = async ({
 }) => {
   const basePath = routesManifest.basePath;
   const request = event.Records[0].cf.request;
-  const uri = normaliseUri(request.uri);
+  let uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
   const isPublicFile = publicFiles[uri];
   const isDataReq = isDataRequest(uri);
@@ -253,6 +254,13 @@ const handleOriginRequest = async ({
       request.querystring,
       customRedirect.statusCode
     );
+  }
+
+  // Handle custom rewrites
+  const customRewrite = getRewritePath(request.uri, routesManifest);
+  if (customRewrite) {
+    request.uri = customRewrite;
+    uri = normaliseUri(request.uri);
   }
 
   const isStaticPage = pages.html.nonDynamic[uri];

@@ -62,5 +62,33 @@ module.exports = {
         permanent: true
       }
     ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/rewrite",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/path-rewrite/:slug",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/wildcard-rewrite/:slug*",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/regex-rewrite-1/:slug(\\d{1,})",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/regex-rewrite-2/:slug(\\d{1,})",
+        destination: "/regex-rewrite-2-dest/:slug"
+      },
+      {
+        source: "/api/rewrite-basic-api",
+        destination: "/api/basic-api"
+      }
+    ];
   }
 };

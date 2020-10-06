@@ -25,10 +25,26 @@
       "source": "/basepath/external",
       "destination": "https://example.com",
       "statusCode": 308,
-      "regex": "^/basepath/external"
+      "regex": "^/basepath/external$"
     }
   ],
-  "rewrites": [],
+  "rewrites": [
+    {
+      "source": "/basepath/terms-rewrite",
+      "destination": "/basepath/terms",
+      "regex": "^/basepath/terms-rewrite$"
+    },
+    {
+      "source": "/basepath/index-rewrite",
+      "destination": "/basepath/",
+      "regex": "^/basepath/index-rewrite$"
+    },
+    {
+      "source": "/basepath/path-rewrite/:slug",
+      "destination": "/basepath/terms",
+      "regex": "^/basepath/path-rewrite(?:/([^/]+?))$"
+    }
+  ],
   "headers": [],
   "dynamicRoutes": []
 }
