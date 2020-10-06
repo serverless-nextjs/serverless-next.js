@@ -17,6 +17,7 @@ export type ServerlessComponentInputs = {
   policy?: string;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
+  domainRedirects?: { [key: string]: string };
   cloudfront?: CloudfrontOptions;
 };
 
