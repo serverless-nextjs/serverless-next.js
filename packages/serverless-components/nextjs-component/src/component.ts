@@ -185,7 +185,7 @@ class NextjsComponent extends Component {
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
-          customHandler: inputs.handler
+          handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined
         }
