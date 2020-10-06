@@ -20,7 +20,7 @@
     "test:watch": "yarn test --watch --collect-coverage=false",
     "check-gh-token": ": \"${GH_TOKEN:?Please set GH_TOKEN to a GitHub personal token that can create releases.}\"",
     "publish": "yarn check-gh-token && lerna publish --conventional-commits --exact --create-release github",
-    "prerelease": "yarn check-gh-token && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github",
+    "prerelease": "yarn check-gh-token && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
     "graduate": "yarn check-gh-token && lerna publish --conventional-commits --conventional-graduate --exact --create-release github",
     "lint": "eslint .",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",

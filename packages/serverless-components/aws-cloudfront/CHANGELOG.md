@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.2.0...@sls-next/aws-cloudfront@1.3.0-alpha.0) (2020-10-06)
+
+### Features
+
+- **aws-cloudfront:** allow setting CloudFront distribution aliases ([#654](https://github.com/serverless-nextjs/serverless-next.js/issues/654)) ([ea180e6](https://github.com/serverless-nextjs/serverless-next.js/commit/ea180e67515ee5dceed1c3e19731291615a7cbbb))
+
 # [1.2.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.2.0-alpha.0...@sls-next/aws-cloudfront@1.2.0) (2020-09-26)
 
 **Note:** Version bump only for package @sls-next/aws-cloudfront

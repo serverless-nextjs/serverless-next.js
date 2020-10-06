@@ -55,6 +55,7 @@ distribution:
     region: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional
+    aliases: ['foo.example.com', 'bar.example.com']
     priceClass: 'PriceClass_All' # optional
     errorPages: # optional
       - code: 503
