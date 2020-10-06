@@ -99,4 +99,35 @@ describe("API lambda handler", () => {
       }
     );
   });
+
+  describe("Custom Rewrites", () => {
+    it.each`
+      path                           | expectedJs                     | expectedBody                | expectedStatus
+      ${"/api/rewrite-getCustomers"} | ${"pages/api/getCustomers.js"} | ${"pages/api/getCustomers"} | ${200}
+    `(
+      "serves API $expectedJs for rewritten path $path",
+      async ({ path, expectedJs, expectedBody, expectedStatus }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net",
+          origin: {
+            s3: {
+              domainName: "my-bucket.s3.amazonaws.com"
+            }
+          }
+        });
+
+        mockPageRequire(expectedJs);
+
+        const response = (await handler(event)) as CloudFrontResponseResult;
+
+        const decodedBody = new Buffer(response.body, "base64").toString(
+          "utf8"
+        );
+
+        expect(decodedBody).toEqual(expectedBody);
+        expect(response.status).toEqual(expectedStatus);
+      }
+    );
+  });
 });

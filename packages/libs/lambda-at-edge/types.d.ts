@@ -92,9 +92,16 @@ export type RedirectData = {
   regex: string;
 };
 
+export type RewriteData = {
+  source: string;
+  destination: string;
+  regex: string;
+};
+
 export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
+  rewrites: RewriteData[];
 };
 
 export type PerfLogger = {

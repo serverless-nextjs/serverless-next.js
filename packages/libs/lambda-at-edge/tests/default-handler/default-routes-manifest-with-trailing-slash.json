@@ -13,7 +13,7 @@
       "source": "/terms-new/",
       "destination": "/terms/",
       "statusCode": 308,
-      "regex": "^/terms/$"
+      "regex": "^/terms-new/$"
     },
     {
       "source": "/old-users/:id(\\d{1,})/",
@@ -25,10 +25,26 @@
       "source": "/external/",
       "destination": "https://example.com",
       "statusCode": 308,
-      "regex": "^/external/"
+      "regex": "^/external/$"
     }
   ],
-  "rewrites": [],
+  "rewrites": [
+    {
+      "source": "/terms-rewrite/",
+      "destination": "/terms/",
+      "regex": "^/terms-rewrite/$"
+    },
+    {
+      "source": "/index-rewrite/",
+      "destination": "/",
+      "regex": "^/index-rewrite/$"
+    },
+    {
+      "source": "/path-rewrite/:slug/",
+      "destination": "/terms/",
+      "regex": "^/path-rewrite(?:/([^/]+?))/$"
+    }
+  ],
   "headers": [],
   "dynamicRoutes": []
 }
