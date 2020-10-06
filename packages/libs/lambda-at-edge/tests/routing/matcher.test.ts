@@ -74,6 +74,11 @@ describe("Matcher Tests", () => {
       expect(match).toEqual("https://example.com/123");
     });
 
+    it("compiles query string destination", () => {
+      const match = compileDestination("/about?a=123&b=1?", {});
+      expect(match).toEqual("/about?a=123&b=1?");
+    });
+
     it("invalid destination returns null", () => {
       const match = compileDestination("abc://123", {});
       expect(match).toBeNull();
