@@ -267,6 +267,10 @@ Object {
 exports[`S3 origins When origin is an S3 bucket URL updates distribution 1`] = `
 Object {
   "DistributionConfig": Object {
+    "Aliases": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
     "CacheBehaviors": Object {
       "Items": Array [],
       "Quantity": 0,
@@ -439,6 +443,10 @@ Object {
 exports[`S3 origins when origin is outside of us-east-1 updates distribution 1`] = `
 Object {
   "DistributionConfig": Object {
+    "Aliases": Object {
+      "Items": Array [],
+      "Quantity": 0,
+    },
     "CacheBehaviors": Object {
       "Items": Array [],
       "Quantity": 0,
