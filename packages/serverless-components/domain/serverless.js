@@ -25,6 +25,7 @@ class Domain extends Component {
     inputs.privateZone = inputs.privateZone || false;
     inputs.domainType = inputs.domainType || "both";
     inputs.defaultCloudfrontInputs = inputs.defaultCloudfrontInputs || {};
+    inputs.certificateArn = inputs.certificateArn || "";
 
     if (!inputs.domain) {
       throw Error(`"domain" is a required input.`);
@@ -56,13 +57,22 @@ class Domain extends Component {
       inputs.privateZone
     );
 
-    this.context.debug(
-      `Searching for an AWS ACM Certificate based on the domain: ${inputs.domain}.`
-    );
-    let certificateArn = await getCertificateArnByDomain(
-      clients.acm,
-      inputs.domain
-    );
+    let certificateArn = "";
+    if (inputs.certificateArn === "") {
+      this.context.debug(
+        `Searching for an AWS ACM Certificate based on the domain: ${inputs.domain}.`
+      );
+      certificateArn = await getCertificateArnByDomain(
+        clients.acm,
+        inputs.domain
+      );
+    } else {
+      this.context.debug(
+        `Using specified SSL Certificate ARN: ${inputs.certificateArn}.`
+      );
+      certificateArn = inputs.certificateArn;
+    }
+
     if (!certificateArn) {
       this.context.debug(
         `No existing AWS ACM Certificates found for the domain: ${inputs.domain}.`
