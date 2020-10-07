@@ -63,9 +63,11 @@ For interactive debugging of the deployment you may launch serverless through no
 
 Note: If you are working with a Typescript package make sure you build it (`yarn build`) before deploying ;)
 
-### Adding new dependencies
+### Updating handler code
 
-If you would like to add new package dependencies, please be mindful of increasing cold start times and/or handler size. Note that JS `require` time has the most impact on cold start times. While code size is also important, it has little effect on cold start times, because Lambda seems to cache the code pretty efficiently.
+If you are updating the handler code, please be mindful of increasing cold start times and/or handler size, especially when adding new dependencies or doing complex operations. Note that JS `require` time has the most impact on cold start times. While code size is also important, it has little effect on cold start times, because Lambda seems to cache the code pretty efficiently - and this can be mitigated by minifying the Next.js build. 
+
+Note that Node.js seems to have a minimum cold start time of ~150 ms, even on an hello-world handler. So the idea is to try to optimize everything else as much as possible.
 
 For example, importing the built-in AWS SDK JS v2 at the top of `default-handler.ts` (outside of the handler) via the below:
 
@@ -79,11 +81,11 @@ or even just the S3 client:
 import S3 from "aws-sdk/clients/s3";
 ```
 
-could incur **100 ms** or more cold start times on every handler invocation, even when it's not needed. This is because even though `aws-sdk` (AWS SDK JS v2) is built into AWS Lambda's Node.js runtime, it is not modularized and will `require` a bunch of unused code. Even if using just the S3 client, it also takes close to 100 ms. In traditional server-based environments, we do not have to worry about this, but since Lambda is a serverless environment, containers will get re-initialized and this becomes a performance problem.
+could incur **100 ms** or more cold start times on every handler invocation, even when it's not actually used. Also, although the `aws-sdk` (AWS SDK JS v2) is built into AWS Lambda's Node.js runtime, it is not modularized and will `require` a bunch of unused code. Even if importing just the S3 client, it also takes close to 100 ms because it imports code for all S3 operations, even if you use only one. In traditional server-based environments, we do not have to worry about this as it is a one-time cost, but since Lambda is a serverless environment, containers will get re-initialized and this becomes a performance problem.
 
 See issue here for more information: https://github.com/serverless-nextjs/serverless-next.js/issues/580
 
-Instead, consider dynamically importing only when needed. For example, for S3:
+Instead, consider dynamically importing only when needed. For example, we use the AWS SDK JS v3 client which for S3:
 
 ```ts
 const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
