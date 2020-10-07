@@ -9,7 +9,7 @@
   "types": "next-aws-cloudfront.d.ts",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
     "directory": "packages/compat-layers/lambda-at-edge-compat"
   },
   "keywords": [
@@ -21,9 +21,9 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.50"
   }

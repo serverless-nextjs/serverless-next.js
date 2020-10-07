@@ -19,7 +19,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
     "directory": "packages/compat-layers/apigw-lambda-compat"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",

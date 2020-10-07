@@ -30,14 +30,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/danielcondemarin/serverless-next.js"
+    "url": "https://github.com/serverless-nextjs/serverless-next.js"
   },
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.10.4",
     "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",

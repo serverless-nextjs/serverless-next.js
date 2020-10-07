@@ -5,7 +5,7 @@
   "main": "index.js",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git"
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git"
   },
   "keywords": [
     "serverless",
