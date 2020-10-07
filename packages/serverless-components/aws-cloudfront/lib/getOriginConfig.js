@@ -28,7 +28,10 @@ module.exports = (origin, { originAccessIdentityId = "" }) => {
     originConfig.CustomOriginConfig = {
       HTTPPort: 80,
       HTTPSPort: 443,
-      OriginProtocolPolicy: "https-only",
+      OriginProtocolPolicy:
+        typeof origin === "object" && origin.protocolPolicy
+          ? origin.protocolPolicy
+          : "https-only",
       OriginSslProtocols: {
         Quantity: 1,
         Items: ["TLSv1.2"]

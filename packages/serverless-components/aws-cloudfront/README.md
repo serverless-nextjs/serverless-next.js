@@ -106,6 +106,25 @@ distribution:
             # ...
 ```
 
+#### Custom origin config
+
+To configure custom origins:
+https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CustomOriginConfig.html
+
+```yml
+# serverless.yml
+
+distribution:
+  component: "@serverless/aws-cloudfront"
+  inputs:
+    origins:
+      - url: http://old-api.com
+        protocolPolicy: http-only
+        pathPatterns:
+          /old-api:
+          # ...
+```
+
 #### Lambda@Edge
 
 ```yml

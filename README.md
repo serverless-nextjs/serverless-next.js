@@ -187,6 +187,13 @@ myNextApplication:
               minTTL: 10
               maxTTL: 10
               defaultTTL: 10
+        - url: http://old-api.com
+          protocolPolicy: http-only
+          pathPatterns:
+            /old-api/*:
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
       aliases: ["foo.example.com", "bar.example.com"]
       priceClass: "PriceClass_100"
       # You can add custom error responses
