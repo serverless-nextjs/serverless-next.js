@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.0...@sls-next/aws-cloudfront@1.3.0-alpha.1) (2020-10-07)
+
+### Features
+
+- **aws-cloudfront:** allow setting configuration for custom origins ([#657](https://github.com/serverless-nextjs/serverless-next.js/issues/657)) ([5f97683](https://github.com/serverless-nextjs/serverless-next.js/commit/5f97683f37dc3d81092aa3e16c9c8057680ec62e))
+
 # [1.3.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.2.0...@sls-next/aws-cloudfront@1.3.0-alpha.0) (2020-10-06)
 
 ### Features
