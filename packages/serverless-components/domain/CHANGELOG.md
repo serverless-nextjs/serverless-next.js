@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.0...@sls-next/domain@1.1.0-alpha.1) (2020-10-07)
+
+### Bug Fixes
+
+- **serverless-component:** when adding primary domain name to CloudFront distribution aliases, don't replace other aliases ([#658](https://github.com/serverless-nextjs/serverless-next.js/issues/658)) ([4428d5c](https://github.com/serverless-nextjs/serverless-next.js/commit/4428d5c84470808c4afcb6e8c109602518c854f9))
+
+# [1.1.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.0.3-alpha.0...@sls-next/domain@1.1.0-alpha.0) (2020-10-06)
+
+### Features
+
+- **serverless-component:** add manual ACM SSL ARN specification ([#655](https://github.com/serverless-nextjs/serverless-next.js/issues/655)) ([6bb1443](https://github.com/serverless-nextjs/serverless-next.js/commit/6bb144385c6621c4c5c00443259df538a185f4f2))
+
 ## [1.0.3-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.0.2...@sls-next/domain@1.0.3-alpha.0) (2020-09-30)
 
 ### Bug Fixes

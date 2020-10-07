@@ -10,7 +10,13 @@
       "regex": "^/api/deprecated/getCustomers$"
     }
   ],
-  "rewrites": [],
+  "rewrites": [
+    {
+      "source": "/api/rewrite-getCustomers",
+      "destination": "/api/getCustomers",
+      "regex": "^/api/rewrite-getCustomers$"
+    }
+  ],
   "headers": [],
   "dynamicRoutes": []
 }

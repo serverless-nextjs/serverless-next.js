@@ -29,7 +29,13 @@ describe("Builder Tests", () => {
     });
     fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
 
-    const builder = new Builder(fixturePath, outputDir);
+    const builder = new Builder(fixturePath, outputDir, {
+      domainRedirects: {
+        "example.com": "https://www.example.com",
+        "another.com": "https://www.another.com/",
+        "www.other.com": "https://other.com"
+      }
+    });
     await builder.build();
 
     defaultBuildManifest = await fse.readJSON(
@@ -77,7 +83,8 @@ describe("Builder Tests", () => {
           ssr: { dynamic, nonDynamic },
           html
         },
-        trailingSlash
+        trailingSlash,
+        domainRedirects
       } = defaultBuildManifest;
 
       expect(removeNewLineChars(buildId)).toEqual("test-build-id");
@@ -132,6 +139,12 @@ describe("Builder Tests", () => {
       });
 
       expect(trailingSlash).toBe(false);
+
+      expect(domainRedirects).toEqual({
+        "example.com": "https://www.example.com",
+        "another.com": "https://www.another.com",
+        "www.other.com": "https://other.com"
+      });
     });
   });
 

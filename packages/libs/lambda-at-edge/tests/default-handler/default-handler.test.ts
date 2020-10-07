@@ -48,7 +48,8 @@ describe("Lambda@Edge", () => {
       path: string,
       expectedRedirect: string,
       statusCode: number,
-      querystring?: string
+      querystring?: string,
+      host?: string
     ) => Promise<void>;
     beforeEach(() => {
       jest.resetModules();
@@ -97,14 +98,16 @@ describe("Lambda@Edge", () => {
         path: string,
         expectedRedirect: string,
         statusCode: number,
-        querystring?: string
+        querystring?: string,
+        host?: string
       ): Promise<void> => {
         await runRedirectTestWithHandler(
           handler,
           path,
           expectedRedirect,
           statusCode,
-          querystring
+          querystring,
+          host
         );
       };
     });
@@ -674,6 +677,71 @@ describe("Lambda@Edge", () => {
           }
         );
       }
+    });
+
+    describe("Domain Redirects", () => {
+      it.each`
+        path        | querystring | expectedRedirect                     | expectedRedirectStatusCode
+        ${"/"}      | ${""}       | ${"https://www.example.com/"}        | ${308}
+        ${"/"}      | ${"a=1234"} | ${"https://www.example.com/?a=1234"} | ${308}
+        ${"/terms"} | ${""}       | ${"https://www.example.com/terms"}   | ${308}
+      `(
+        "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+        async ({
+          path,
+          querystring,
+          expectedRedirect,
+          expectedRedirectStatusCode
+        }) => {
+          await runRedirectTest(
+            path,
+            expectedRedirect,
+            expectedRedirectStatusCode,
+            querystring,
+            "example.com" // Override host to test a domain redirect from host example.com -> https://www.example.com
+          );
+        }
+      );
+    });
+
+    describe("Custom Rewrites", () => {
+      it.each`
+        path                   | expectedPage
+        ${"/index-rewrite"}    | ${"/index.html"}
+        ${"/terms-rewrite"}    | ${"/terms.html"}
+        ${"/path-rewrite/123"} | ${"/terms.html"}
+      `(
+        "serves page $expectedPage from S3 for rewritten path $path",
+        async ({ path, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/static-pages",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual(expectedPage);
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
+        }
+      );
     });
   });
 });

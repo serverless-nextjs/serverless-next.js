@@ -68,5 +68,8 @@
     "/favicon.ico": "favicon.ico",
     "/manifest.json": "manifest.json"
   },
-  "trailingSlash": true
+  "trailingSlash": true,
+  "domainRedirects": {
+    "example.com": "https://www.example.com"
+  }
 }

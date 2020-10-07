@@ -185,6 +185,7 @@ class NextjsComponent extends Component {
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
+          domainRedirects: inputs.domainRedirects || {},
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined
@@ -209,6 +210,7 @@ class NextjsComponent extends Component {
     const {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
+      aliases: cloudFrontAliasesInputs,
       priceClass: cloudFrontPriceClassInputs,
       errorPages: cloudFrontErrorPagesInputs,
       distributionId: cloudFrontDistributionId = null,
@@ -538,6 +540,9 @@ class NextjsComponent extends Component {
         compress: true
       },
       origins: cloudFrontOrigins,
+      ...(cloudFrontAliasesInputs && {
+        aliases: cloudFrontAliasesInputs
+      }),
       ...(cloudFrontPriceClassInputs && {
         priceClass: cloudFrontPriceClassInputs
       }),

@@ -39,7 +39,7 @@ module.exports = {
       {
         source: "/api/deprecated-basic-api",
         destination: "/api/basic-api",
-        permanent: true,
+        permanent: true
       },
       {
         source: "/external-redirect-1",
@@ -55,6 +55,39 @@ module.exports = {
         source: "/external-redirect-3/:id",
         destination: "https://api.github.com/:id/",
         permanent: true
+      },
+      {
+        source: "/query-string-destination-redirect",
+        destination: "/ssg-page?a=1234&b=1?",
+        permanent: true
+      }
+    ];
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/rewrite",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/path-rewrite/:slug",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/wildcard-rewrite/:slug*",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/regex-rewrite-1/:slug(\\d{1,})",
+        destination: "/ssr-page"
+      },
+      {
+        source: "/regex-rewrite-2/:slug(\\d{1,})",
+        destination: "/regex-rewrite-2-dest/:slug"
+      },
+      {
+        source: "/api/rewrite-basic-api",
+        destination: "/api/basic-api"
       }
     ];
   }

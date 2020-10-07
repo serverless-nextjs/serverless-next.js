@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.4](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.3...@sls-next/lambda-at-edge@1.7.0-alpha.4) (2020-10-06)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix compilation of query strings in redirect des… ([#647](https://github.com/danielcondemarin/serverless-next.js/issues/647)) ([9ed7159](https://github.com/danielcondemarin/serverless-next.js/commit/9ed7159a759eccedd5cf6ee98a261c1cbcab1d90))
+
+### Features
+
+- **lambda-at-edge:** support page and API rewrites ([#653](https://github.com/danielcondemarin/serverless-next.js/issues/653)) ([f187b91](https://github.com/danielcondemarin/serverless-next.js/commit/f187b91dd40012810cb96308d416736f2e032222))
+- **lambda-at-edge, nextjs-component:** add new input domainRedirects ([#639](https://github.com/danielcondemarin/serverless-next.js/issues/639)) ([a12e31a](https://github.com/danielcondemarin/serverless-next.js/commit/a12e31ac06378f9fe26189b95a9b032942656380))
+
 # [1.7.0-alpha.3](https://github.com/danielcondemarin/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.2...@sls-next/lambda-at-edge@1.7.0-alpha.3) (2020-09-30)
 
 ### Features
