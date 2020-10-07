@@ -38,7 +38,8 @@ describe("Redirector Tests", () => {
             statusCode: 308,
             regex: "^/invalid-destination$"
           }
-        ]
+        ],
+        rewrites: []
       };
     });
 

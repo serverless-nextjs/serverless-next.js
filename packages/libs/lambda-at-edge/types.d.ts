@@ -18,6 +18,9 @@ export type OriginRequestApiHandlerManifest = {
       [key: string]: string;
     };
   };
+  domainRedirects: {
+    [key: string]: string;
+  };
 };
 
 export type OriginRequestDefaultHandlerManifest = {
@@ -41,6 +44,9 @@ export type OriginRequestDefaultHandlerManifest = {
     [key: string]: string;
   };
   trailingSlash: boolean;
+  domainRedirects: {
+    [key: string]: string;
+  };
 };
 
 export type OriginRequestEvent = {
@@ -92,9 +98,16 @@ export type RedirectData = {
   regex: string;
 };
 
+export type RewriteData = {
+  source: string;
+  destination: string;
+  regex: string;
+};
+
 export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
+  rewrites: RewriteData[];
 };
 
 export type PerfLogger = {

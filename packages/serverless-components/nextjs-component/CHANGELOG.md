@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.0...@sls-next/serverless-component@1.18.0-alpha.1) (2020-10-06)
+
+### Features
+
+- **lambda-at-edge, nextjs-component:** add new input domainRedirects ([#639](https://github.com/serverless-nextjs/serverless-next.js/issues/639)) ([a12e31a](https://github.com/serverless-nextjs/serverless-next.js/commit/a12e31ac06378f9fe26189b95a9b032942656380))
+
 # [1.18.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.17.1-alpha.3...@sls-next/serverless-component@1.18.0-alpha.0) (2020-10-06)
 
 ### Features

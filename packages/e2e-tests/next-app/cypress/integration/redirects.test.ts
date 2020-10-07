@@ -160,6 +160,12 @@ describe("Redirects Tests", () => {
         expectedRedirect: "https://api.github.com/abcd/",
         expectedStatus: 404,
         expectedRedirectStatus: 308
+      },
+      {
+        path: "/query-string-destination-redirect",
+        expectedRedirect: "/ssg-page?a=1234&b=1?",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
       }
     ].forEach(
       ({ path, expectedRedirect, expectedStatus, expectedRedirectStatus }) => {

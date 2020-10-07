@@ -41,8 +41,11 @@ export function compileDestination(
         return compiledDestination;
       }
     } else {
-      // Handle all other paths
-      const toPath = compile(destination, { encode: encodeURIComponent });
+      // Handle all other paths. Escape all ? in case of query parameters
+      const escapedDestination = destination.replace(/\?/g, "\\?");
+      const toPath = compile(escapedDestination, {
+        encode: encodeURIComponent
+      });
       return toPath(params);
     }
   } catch (error) {
