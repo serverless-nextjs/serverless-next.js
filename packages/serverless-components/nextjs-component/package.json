@@ -22,7 +22,7 @@
     "nextjs"
   ],
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
     "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
   },
