@@ -599,7 +599,11 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 ### Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/danielcondemarin/serverless-next.js/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors">
+<img src="https://contributors-img.web.app/image?repo=serverless-nextjs/serverless-next.js" />
+</a>
+
+Made with [contributors-img](https://contributors-img.web.app).
 
 ### Financial Contributors
 
