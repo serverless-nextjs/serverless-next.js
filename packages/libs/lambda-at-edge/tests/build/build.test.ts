@@ -289,7 +289,7 @@ describe("Builder Tests", () => {
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/index.js`)
       );
 
-      expect(countLines(defaultHandler.toString())).toEqual(1);
+      expect(countLines(defaultHandler.toString())).toEqual(2);
     });
 
     it("API handler is minified", async () => {
@@ -297,7 +297,7 @@ describe("Builder Tests", () => {
         join(outputDir, `${API_LAMBDA_CODE_DIR}/index.js`)
       );
 
-      expect(countLines(apiHandler.toString())).toEqual(1);
+      expect(countLines(apiHandler.toString())).toEqual(2);
     });
   });
 });

@@ -184,27 +184,22 @@ class Builder {
 
   /**
    * Process and copy handler code. This allows minifying it before copying to Lambda package.
-   * @param source
+   * @param handlerType
    * @param destination
    * @param shouldMinify
-   * @param minifyOptions
    */
   async processAndCopyHandler(
-    source: string,
+    handlerType: "api-handler" | "default-handler",
     destination: string,
     shouldMinify: boolean
   ) {
-    if (shouldMinify) {
-      const handler = await fse.readFile(source);
-      const minifiedHandler = await minify(handler.toString(), {
-        compress: true,
-        mangle: true,
-        output: { comments: false } // Remove all comments, which is fine as the handler code is not distributed.
-      });
-      await fse.writeFile(destination, minifiedHandler.code);
-    } else {
-      await fse.copy(source, destination);
-    }
+    const source = require.resolve(
+      `@sls-next/lambda-at-edge/dist/${handlerType}${
+        shouldMinify ? ".min" : ""
+      }.js`
+    );
+
+    await fse.copy(source, destination);
   }
 
   async buildDefaultLambda(
@@ -252,7 +247,7 @@ class Builder {
     return Promise.all([
       ...copyTraces,
       this.processAndCopyHandler(
-        require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
+        "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
         !!this.buildOptions.minifyHandlers
       ),
@@ -332,7 +327,7 @@ class Builder {
     return Promise.all([
       ...copyTraces,
       this.processAndCopyHandler(
-        require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
+        "api-handler",
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
         !!this.buildOptions.minifyHandlers
       ),

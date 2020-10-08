@@ -43,6 +43,7 @@
     "@types/path-to-regexp": "^1.7.0",
     "rollup": "^2.26.6",
     "rollup-plugin-node-externals": "^2.2.0",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.27.2",
     "ts-loader": "^7.0.5",
     "typescript": "^3.9.6"
@@ -55,7 +56,6 @@
     "fs-extra": "^9.0.1",
     "get-stream": "^6.0.0",
     "jsonwebtoken": "^8.5.1",
-    "path-to-regexp": "^6.1.0",
-    "terser": "^5.3.4"
+    "path-to-regexp": "^6.1.0"
   }
 }
