@@ -234,7 +234,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(defaultHandler.toString())).toBeGreaterThan(1);
+        expect(countLines(defaultHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
       });
     });
 
@@ -263,7 +263,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${API_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(apiHandler.toString())).toBeGreaterThan(1);
+        expect(countLines(apiHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
       });
     });
   });
