@@ -185,7 +185,8 @@ class NextjsComponent extends Component {
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
-          domainRedirects: inputs.domainRedirects || {}
+          domainRedirects: inputs.domainRedirects || {},
+          minifyHandlers: inputs.minifyHandlers || false
         }
       );
 

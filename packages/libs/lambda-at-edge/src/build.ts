@@ -17,6 +17,7 @@ import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
+import { minify } from "terser";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -29,6 +30,7 @@ type BuildOptions = {
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
   domainRedirects?: { [key: string]: string };
+  minifyHandlers?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -38,7 +40,8 @@ const defaultBuildOptions = {
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
   logLambdaExecutionTimes: false,
-  domainRedirects: {}
+  domainRedirects: {},
+  minifyHandlers: false
 };
 
 class Builder {
@@ -179,6 +182,31 @@ class Builder {
     await fse.writeFile(destination, JSON.stringify(routesManifest));
   }
 
+  /**
+   * Process and copy handler code. This allows minifying it before copying to Lambda package.
+   * @param source
+   * @param destination
+   * @param shouldMinify
+   * @param minifyOptions
+   */
+  async processAndCopyHandler(
+    source: string,
+    destination: string,
+    shouldMinify: boolean
+  ) {
+    if (shouldMinify) {
+      const handler = await fse.readFile(source);
+      const minifiedHandler = await minify(handler.toString(), {
+        compress: true,
+        mangle: true,
+        output: { comments: false } // Remove all comments, which is fine as the handler code is not distributed.
+      });
+      await fse.writeFile(destination, minifiedHandler.code);
+    } else {
+      await fse.copy(source, destination);
+    }
+  }
+
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
@@ -223,9 +251,10 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
+      this.processAndCopyHandler(
         require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
@@ -302,9 +331,10 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
+      this.processAndCopyHandler(
         require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
       fse.copy(
         join(this.serverlessDir, "pages/api"),
@@ -453,7 +483,7 @@ class Builder {
     }
   }
 
-  async build(debugMode: boolean): Promise<void> {
+  async build(debugMode?: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
