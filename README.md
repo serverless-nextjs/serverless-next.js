@@ -543,11 +543,12 @@ Users are encouraged to use this component instead of the `serverless-plugin`. T
 
 See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB. You can find a full list of examples [here](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-component/examples)
 
-#### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that
+#### [CI/CD] Multi-stage deployments / A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
-You need to commit your application state in source control. That is the files under the `.serverless` directory. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f)
+1. You need to commit your application state in source control. That is the files under the `.serverless` directory. Although this is not recommended as it doesn't work well for multiple stages.
+2. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f) or [here](https://gist.github.com/dphang/7395ee09f6182f6b34f224660bed8e8c) (uses multiple `serverless.yml` files)
 
-The serverless team is currently working on remote state storage so this won't be necessary in the future.
+In the future, we will look to improve this by integrating it into the component itself. The serverless team is currently working on remote state storage so this won't be necessary in the future.
 
 #### My lambda is deployed to `us-east-1`. How can I deploy it to another region?
 
