@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.3...@sls-next/serverless-component@1.18.0-alpha.4) (2020-10-09)
+
+### Features
+
+- **lambda-at-edge:** add minifyHandlers input to minify handler code using Terser ([#659](https://github.com/serverless-nextjs/serverless-next.js/issues/659)) ([1b33e72](https://github.com/serverless-nextjs/serverless-next.js/commit/1b33e72bf1e578e1a8bd6c7a77aeb99db412471a))
+
 # [1.18.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.2...@sls-next/serverless-component@1.18.0-alpha.3) (2020-10-07)
 
 **Note:** Version bump only for package @sls-next/serverless-component
