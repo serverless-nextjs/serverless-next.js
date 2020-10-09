@@ -29,6 +29,7 @@ type BuildOptions = {
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
   domainRedirects?: { [key: string]: string };
+  minifyHandlers?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -38,7 +39,8 @@ const defaultBuildOptions = {
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
   logLambdaExecutionTimes: false,
-  domainRedirects: {}
+  domainRedirects: {},
+  minifyHandlers: false
 };
 
 class Builder {
@@ -179,6 +181,26 @@ class Builder {
     await fse.writeFile(destination, JSON.stringify(routesManifest));
   }
 
+  /**
+   * Process and copy handler code. This allows minifying it before copying to Lambda package.
+   * @param handlerType
+   * @param destination
+   * @param shouldMinify
+   */
+  async processAndCopyHandler(
+    handlerType: "api-handler" | "default-handler",
+    destination: string,
+    shouldMinify: boolean
+  ) {
+    const source = require.resolve(
+      `@sls-next/lambda-at-edge/dist/${handlerType}${
+        shouldMinify ? ".min" : ""
+      }.js`
+    );
+
+    await fse.copy(source, destination);
+  }
+
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
@@ -223,9 +245,10 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
+      this.processAndCopyHandler(
+        "default-handler",
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
@@ -302,9 +325,10 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
+      this.processAndCopyHandler(
+        "api-handler",
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
       fse.copy(
         join(this.serverlessDir, "pages/api"),
@@ -453,7 +477,7 @@ class Builder {
     }
   }
 
-  async build(debugMode: boolean): Promise<void> {
+  async build(debugMode?: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
