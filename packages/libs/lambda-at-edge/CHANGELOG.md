@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.6...@sls-next/lambda-at-edge@1.7.0-alpha.7) (2020-10-10)
+
+### Features
+
+- **lambda-at-edge:** support custom headers (with caveats) ([#662](https://github.com/serverless-nextjs/serverless-next.js/issues/662)) ([8b9e822](https://github.com/serverless-nextjs/serverless-next.js/commit/8b9e822a7071fc3277711ed476860564577e0af3))
+
 # [1.7.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.5...@sls-next/lambda-at-edge@1.7.0-alpha.6) (2020-10-09)
 
 ### Features
