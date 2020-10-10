@@ -2,15 +2,17 @@
 
 ![logo](./logo.gif)
 
+[![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
+![GitHub contributors](https://img.shields.io/github/contributors/serverless-nextjs/serverless-next.js)
+[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
+![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
+[![Coverage Status](https://coveralls.io/repos/github/serverless-nextjs/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/serverless-nextjs/serverless-next.js?branch=master)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.5-blue)
+
 A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS aiming for full feature parity.
 
 Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
-
-[![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
-![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
-[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
-[![Coverage Status](https://coveralls.io/repos/github/serverless-nextjs/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/serverless-nextjs/serverless-next.js?branch=master)
 
 ## Contents
 
@@ -50,7 +52,7 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Features
 
-The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or in implementation stage. Please refer item's description for specific details.
+The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or implementation stage. Please refer to an item's description for specific details.
 
 Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
 
