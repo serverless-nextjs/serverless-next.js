@@ -35,7 +35,8 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 
 ### Motivation
 
-Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
+Since Next.js 8.0, [serverless mode](https://
+.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
 
 ### Design principles
 
@@ -43,7 +44,7 @@ Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-n
 
 There is no configuration needed. You can extend defaults based on your application needs.
 
-2. Feature parity with nextjs
+2. Feature parity with Next.js
 
 Users of this component should be able to use Next.js development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
 
@@ -75,9 +76,9 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
 - [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
-- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release now (caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
-- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). In latest alpha release now (caveats: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. [External URL rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewriting-to-an-external-url) are not yet implemented). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
-- [ ] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release (caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). In latest alpha release (caveats: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. [External URL rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewriting-to-an-external-url) are not yet implemented). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). In latest alpha release (caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
 
 ### Getting started
 
