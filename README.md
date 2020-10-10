@@ -8,6 +8,7 @@
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
 [![Coverage Status](https://coveralls.io/repos/github/serverless-nextjs/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/serverless-nextjs/serverless-next.js?branch=master)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.5-blue)
 
 A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS aiming for full feature parity.
 
