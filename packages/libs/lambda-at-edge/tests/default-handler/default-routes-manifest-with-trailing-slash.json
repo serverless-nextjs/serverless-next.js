@@ -45,6 +45,17 @@
       "regex": "^/path-rewrite(?:/([^/]+?))/$"
     }
   ],
-  "headers": [],
+  "headers": [
+    {
+      "source": "/customers/another/",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/customers/another/$"
+    }
+  ],
   "dynamicRoutes": []
 }

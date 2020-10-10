@@ -17,6 +17,17 @@
       "regex": "^/basepath/api/rewrite-getCustomers$"
     }
   ],
-  "headers": [],
+  "headers": [
+    {
+      "source": "/basepath/api/getCustomers",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/basepath/api/basic-api$"
+    }
+  ],
   "dynamicRoutes": []
 }

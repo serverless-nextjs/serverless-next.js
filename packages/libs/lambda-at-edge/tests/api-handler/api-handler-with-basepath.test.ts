@@ -99,4 +99,33 @@ describe("API lambda handler with basePath configured", () => {
       }
     );
   });
+
+  describe("Custom Headers", () => {
+    it.each`
+      path                            | expectedHeaders                    | expectedJs
+      ${"/basepath/api/getCustomers"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
+    `(
+      "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
+      async ({ path, expectedHeaders, expectedJs }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockPageRequire(expectedJs);
+
+        const response = await handler(event);
+
+        expect(response.headers).not.toBeUndefined();
+
+        for (const header in expectedHeaders) {
+          const headerEntry = response.headers![header][0];
+          expect(headerEntry).toEqual({
+            key: header,
+            value: expectedHeaders[header]
+          });
+        }
+      }
+    );
+  });
 });

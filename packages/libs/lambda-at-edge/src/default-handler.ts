@@ -30,6 +30,7 @@ import {
   getRedirectPath
 } from "./routing/redirector";
 import { getRewritePath } from "./routing/rewriter";
+import { addHeadersToResponse } from "./headers/addHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
@@ -193,6 +194,18 @@ export const handler = async (
       prerenderManifest,
       routesManifest
     });
+  }
+
+  // Add custom headers to responses only.
+  // TODO: for paths that hit S3 origin, it will match on the rewritten URI, i.e it may be rewritten to S3 key.
+  if (response.hasOwnProperty("status")) {
+    const request = event.Records[0].cf.request;
+
+    addHeadersToResponse(
+      request.uri,
+      response as CloudFrontResultResponse,
+      routesManifest
+    );
   }
 
   const tHandlerEnd = now();

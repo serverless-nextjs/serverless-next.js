@@ -17,6 +17,17 @@
       "regex": "^/api/rewrite-getCustomers$"
     }
   ],
-  "headers": [],
+  "headers": [
+    {
+      "source": "/api/getCustomers",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/api/basic-api$"
+    }
+  ],
   "dynamicRoutes": []
 }
