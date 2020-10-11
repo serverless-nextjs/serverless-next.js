@@ -486,6 +486,8 @@ If you are encountering code size issues, please try the following:
 
 - Optimize your code size: reduce # dependencies in your SSR pages and API routes, have fewer SSR pages (i.e don't use `getInitialProps()` or `getServerSideProps()`).
 
+- Minify the handler code itself by using the `minifyHandlers` input. This will reduce handler size from ~500 kB to ~200 kB.
+
 - Minify/minimize your server-side code using Terser by adding the following Webpack configuration to your `next.config.js`. It uses `NEXT_MINIMIZE` environment variable to tell it to minimize the SSR code. Note that this will increase build times, and minify the code so it could be harder to debug CloudWatch errors.
 
 First, add `terser-webpack-plugin` to your dependencies. Then update `next.config.js`:
@@ -517,6 +519,8 @@ webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
   return config;
 };
 ```
+
+Note that if you do not use any API routes, all JS files used only for prerendering static pages are automatically removed from the bundle. However, if you use API routes, we do not remove them as they may be used for preview mode. There's no official/non-hacky way to identify and remove these JS files not used in preview mode even when API routes are used. But we can add a new input to manually exclude them, if needed.
 
 - Use the `useServerlessTraceTarget` option in `serverless.yml`. This will cause Next.js to not bundle dependencies into each page (instead creating lightweight pages) and then `serverless-next.js` will reference a single set of dependencies in `node_modules`.
 
