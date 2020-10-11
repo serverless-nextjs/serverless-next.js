@@ -571,13 +571,14 @@ See the sample below for an advanced `build` setup that includes passing additio
 ```yml
 # serverless.yml
 myDatabase:
-  component: MY_DATABASE_COMPNENT
+  component: MY_DATABASE_COMPONENT
 myNextApp:
   component: "@sls-next/serverless-component@{version_here}"
-  build:
-    args: ["build", "custom/path/to/pages"]
-    env:
-      DATABASE_URL: ${myDatabase.databaseUrl}
+  inputs: 
+    build:
+      args: ["build", "custom/path/to/pages"]
+      env:
+        DATABASE_URL: ${myDatabase.databaseUrl}
 ```
 
 #### I was expecting for automatic subdomain redirection when using the domainType: www/apex input
