@@ -1,14 +1,14 @@
 {
   "name": "next-app",
   "version": "1.0.0",
-  "description": "Test Next.js app for running serverless-next.js end-to-end tests",
+  "description": "Basic test Next.js app for running serverless-next.js end-to-end tests",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "ts-node --project tsconfig.scripts.json scripts/run-e2e-ci.ts"
+    "e2e:ci": "APP_NAME=next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
   },
   "repository": {
     "type": "git",

@@ -13,4 +13,5 @@
 // https://on.cypress.io/configuration
 // ***********************************************************
 
+import "../../../test-utils/cypress/custom-commands";
 import "./commands";
