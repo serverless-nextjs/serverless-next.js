@@ -46,3 +46,7 @@ jobs:
           cd packages/e2e-tests/next-app
           yarn --frozen-lockfile
           yarn e2e:ci
+      - name: Upload code coverage
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+        run: npx codecov
