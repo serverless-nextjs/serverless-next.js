@@ -22,7 +22,7 @@ import type {
 type DeploymentResult = {
   appUrl: string;
   bucketName: string;
-  distributionId: unknown;
+  distributionId: string;
 };
 
 class NextjsComponent extends Component {
@@ -74,9 +74,7 @@ class NextjsComponent extends Component {
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
-        throw Error(
-          `Setting custom cache behaviour for api/ route "${path}" is not supported`
-        );
+        stillToMatch.delete(path);
       }
     }
 
@@ -186,7 +184,9 @@ class NextjsComponent extends Component {
           env: buildConfig.env,
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
-          logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false
+          logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
+          domainRedirects: inputs.domainRedirects || {},
+          minifyHandlers: inputs.minifyHandlers || false
         }
       );
 
@@ -208,7 +208,9 @@ class NextjsComponent extends Component {
     const {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
+      aliases: cloudFrontAliasesInputs,
       priceClass: cloudFrontPriceClassInputs,
+      errorPages: cloudFrontErrorPagesInputs,
       distributionId: cloudFrontDistributionId = null,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
@@ -254,7 +256,7 @@ class NextjsComponent extends Component {
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
-    // If origin is relative path then prepend the bucketUrl
+    // if origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
     const expandRelativeUrls = (origin: string | Record<string, unknown>) => {
       const originUrl =
@@ -291,7 +293,9 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/static/*", routesManifest)
     ] = {
-      ttl: 86400,
+      minTTL: 0,
+      defaultTTL: 86400,
+      maxTTL: 31536000,
       forward: {
         headers: "none",
         cookies: "none",
@@ -302,7 +306,9 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("static/*", routesManifest)
     ] = {
-      ttl: 86400,
+      minTTL: 0,
+      defaultTTL: 86400,
+      maxTTL: 31536000,
       forward: {
         headers: "none",
         cookies: "none",
@@ -333,6 +339,35 @@ class NextjsComponent extends Component {
       return inputValue[lambdaType] || defaultValue;
     };
 
+    // default policy
+    let policy: Record<string, unknown> = {
+      Version: "2012-10-17",
+      Statement: [
+        {
+          Effect: "Allow",
+          Resource: "*",
+          Action: [
+            "logs:CreateLogGroup",
+            "logs:CreateLogStream",
+            "logs:PutLogEvents"
+          ]
+        },
+        {
+          Effect: "Allow",
+          Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
+          Action: ["s3:GetObject", "s3:PutObject"]
+        }
+      ]
+    };
+
+    if (inputs.policy) {
+      if (typeof inputs.policy === "string") {
+        policy = { arn: inputs.policy };
+      } else {
+        policy = inputs.policy;
+      }
+    }
+
     if (hasAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {
         description: inputs.description
@@ -342,11 +377,7 @@ class NextjsComponent extends Component {
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            arn:
-              inputs.policy ||
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-          }
+          policy
         },
         memory: readLambdaInputValue("memory", "apiLambda", 512) as number,
         timeout: readLambdaInputValue("timeout", "apiLambda", 10) as number,
@@ -367,7 +398,9 @@ class NextjsComponent extends Component {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
-        ttl: 0,
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
         allowedHttpMethods: [
           "HEAD",
           "DELETE",
@@ -390,33 +423,10 @@ class NextjsComponent extends Component {
         "Default Lambda@Edge for Next CloudFront distribution",
       handler: "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
-      role:
-        inputs.role && inputs.role.defaultArn
-          ? inputs.role
-          : {
-              service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-              policy: inputs.policy
-                ? { arn: inputs.policy }
-                : {
-                    Version: "2012-10-17",
-                    Statement: [
-                      {
-                        Effect: "Allow",
-                        Resource: "*",
-                        Action: [
-                          "logs:CreateLogGroup",
-                          "logs:CreateLogStream",
-                          "logs:PutLogEvents"
-                        ]
-                      },
-                      {
-                        Effect: "Allow",
-                        Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
-                        Action: ["s3:GetObject", "s3:PutObject"]
-                      }
-                    ]
-                  }
-            },
+      role: {
+        service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+        policy
+      },
       memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
       timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
       runtime: readLambdaInputValue(
@@ -479,7 +489,9 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
     ] = {
-      ttl: 0,
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 31536000,
       allowedHttpMethods: ["HEAD", "GET"],
       "lambda@edge": {
         "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
@@ -497,9 +509,11 @@ class NextjsComponent extends Component {
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const cloudFrontOutputs = await cloudFront({
-      distributionId: cloudFrontDistributionId || null,
+      distributionId: cloudFrontDistributionId,
       defaults: {
-        ttl: 0,
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
         ...cloudFrontDefaults,
         forward: {
           cookies: "all",
@@ -507,7 +521,15 @@ class NextjsComponent extends Component {
           ...cloudFrontDefaults.forward
         },
         // everything after here cant be overridden
-        allowedHttpMethods: ["HEAD", "GET"],
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
@@ -516,8 +538,14 @@ class NextjsComponent extends Component {
         compress: true
       },
       origins: cloudFrontOrigins,
+      ...(cloudFrontAliasesInputs && {
+        aliases: cloudFrontAliasesInputs
+      }),
       ...(cloudFrontPriceClassInputs && {
         priceClass: cloudFrontPriceClassInputs
+      }),
+      ...(cloudFrontErrorPagesInputs && {
+        errorPages: cloudFrontErrorPagesInputs
       })
     });
 
@@ -556,10 +584,10 @@ class NextjsComponent extends Component {
       this.load("@sls-next/aws-cloudfront"),
       this.load("@sls-next/domain")
     ]);
+
     await bucket.remove();
     await cloudfront.remove();
     await domain.remove();
-    // await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
   }
 }
 

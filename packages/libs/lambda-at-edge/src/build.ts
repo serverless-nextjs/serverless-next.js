@@ -7,7 +7,8 @@ import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
+  OriginRequestApiHandlerManifest,
+  RoutesManifest
 } from "../types";
 import isDynamicRoute from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -15,6 +16,7 @@ import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
+import { isTrailingSlashRedirect } from "./routing/redirector";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -26,6 +28,8 @@ type BuildOptions = {
   cmd?: string;
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
+  domainRedirects?: { [key: string]: string };
+  minifyHandlers?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -34,7 +38,9 @@ const defaultBuildOptions = {
   env: {},
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
-  logLambdaExecutionTimes: false
+  logLambdaExecutionTimes: false,
+  domainRedirects: {},
+  minifyHandlers: false
 };
 
 class Builder {
@@ -114,7 +120,10 @@ class Builder {
       .filter((file) => {
         // exclude "initial" files from lambda artefact. These are just the pages themselves
         // which are copied over separately
-        return (!reasons[file] || reasons[file].type !== "initial") && file !== "package.json";
+        return (
+          (!reasons[file] || reasons[file].type !== "initial") &&
+          file !== "package.json"
+        );
       })
       .map((filePath: string) => {
         const resolvedFilePath = path.resolve(filePath);
@@ -127,6 +136,69 @@ class Builder {
           join(this.outputDir, handlerDirectory, dst)
         );
       });
+  }
+
+  /**
+   * Check whether this .next/serverless/pages file is a JS file used only for prerendering at build time.
+   * @param prerenderManifest
+   * @param relativePageFile
+   */
+  isPrerenderedJSFile(
+    prerenderManifest: any,
+    relativePageFile: string
+  ): boolean {
+    if (path.extname(relativePageFile) === ".js") {
+      // Page route is without .js extension
+      let pageRoute = relativePageFile.slice(0, -3);
+
+      // Prepend "/"
+      pageRoute = pageRoute.startsWith("/") ? pageRoute : `/${pageRoute}`;
+
+      // Normalise index route
+      pageRoute = pageRoute === "/index" ? "/" : pageRoute;
+
+      return (
+        !!prerenderManifest.routes && !!prerenderManifest.routes[pageRoute]
+      );
+    }
+
+    return false;
+  }
+
+  /**
+   * Process and copy RoutesManifest.
+   * @param source
+   * @param destination
+   */
+  async processAndCopyRoutesManifest(source: string, destination: string) {
+    const routesManifest = require(source) as RoutesManifest;
+
+    // Remove default trailing slash redirects as they are already handled without regex matching.
+    routesManifest.redirects = routesManifest.redirects.filter((redirect) => {
+      return !isTrailingSlashRedirect(redirect, routesManifest.basePath);
+    });
+
+    await fse.writeFile(destination, JSON.stringify(routesManifest));
+  }
+
+  /**
+   * Process and copy handler code. This allows minifying it before copying to Lambda package.
+   * @param handlerType
+   * @param destination
+   * @param shouldMinify
+   */
+  async processAndCopyHandler(
+    handlerType: "api-handler" | "default-handler",
+    destination: string,
+    shouldMinify: boolean
+  ) {
+    const source = require.resolve(
+      `@sls-next/lambda-at-edge/dist/${handlerType}${
+        shouldMinify ? ".min" : ""
+      }.js`
+    );
+
+    await fse.copy(source, destination);
   }
 
   async buildDefaultLambda(
@@ -162,23 +234,25 @@ class Builder {
       );
     }
 
+    let prerenderManifest = require(join(
+      this.dotNextDir,
+      "prerender-manifest.json"
+    ));
+
+    const hasAPIRoutes = await fse.pathExists(
+      join(this.serverlessDir, "pages/api")
+    );
+
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
+      this.processAndCopyHandler(
+        "default-handler",
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
-      ),
-      fse.copy(
-        require.resolve("@sls-next/next-aws-cloudfront"),
-        join(
-          this.outputDir,
-          DEFAULT_LAMBDA_CODE_DIR,
-          "node_modules/@sls-next/next-aws-cloudfront/index.js"
-        )
       ),
       fse.copy(
         join(this.serverlessDir, "pages"),
@@ -189,10 +263,23 @@ class Builder {
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
 
+            // If there are API routes, include all JS files.
+            // If there are no API routes, exclude all JS files that used only for prerendering at build time.
+            // We do this because if there are API routes, preview mode is possible which may use these JS files.
+            // This is what Vercel does: https://github.com/vercel/next.js/discussions/15631#discussioncomment-44289
+            // TODO: possibly optimize bundle further for those apps using API routes.
+            const isNotExcludedJSFile =
+              hasAPIRoutes ||
+              !this.isPrerenderedJSFile(
+                prerenderManifest,
+                path.relative(join(this.serverlessDir, "pages"), file)
+              );
+
             return (
               isNotApiPage &&
               isNotPrerenderedHTMLPage &&
-              isNotStaticPropsJSONFile
+              isNotStaticPropsJSONFile &&
+              isNotExcludedJSFile
             );
           }
         }
@@ -201,7 +288,7 @@ class Builder {
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
       ),
-      fse.copy(
+      this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
@@ -238,17 +325,10 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
-      ),
-      fse.copy(
-        require.resolve("@sls-next/next-aws-cloudfront"),
-        join(
-          this.outputDir,
-          API_LAMBDA_CODE_DIR,
-          "node_modules/@sls-next/next-aws-cloudfront/index.js"
-        )
+      this.processAndCopyHandler(
+        "api-handler",
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
       fse.copy(
         join(this.serverlessDir, "pages/api"),
@@ -275,7 +355,12 @@ class Builder {
       path.join(this.dotNextDir, "BUILD_ID"),
       "utf-8"
     );
-    const { logLambdaExecutionTimes = false } = this.buildOptions;
+    const {
+      logLambdaExecutionTimes = false,
+      domainRedirects = {}
+    } = this.buildOptions;
+
+    this.normalizeDomainRedirects(domainRedirects);
 
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
@@ -290,14 +375,17 @@ class Builder {
           nonDynamic: {}
         }
       },
-      publicFiles: {}
+      publicFiles: {},
+      trailingSlash: false,
+      domainRedirects: domainRedirects
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
       apis: {
         dynamic: {},
         nonDynamic: {}
-      }
+      },
+      domainRedirects: domainRedirects
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;
@@ -348,6 +436,25 @@ class Builder {
       defaultBuildManifest.publicFiles["/" + pf] = pf;
     });
 
+    // Read next.config.js
+    const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
+
+    if (await fse.pathExists(nextConfigPath)) {
+      const nextConfig = await require(nextConfigPath);
+
+      let normalisedNextConfig;
+      if (typeof nextConfig === "object") {
+        normalisedNextConfig = nextConfig;
+      } else if (typeof nextConfig === "function") {
+        // Execute using phase based on: https://github.com/vercel/next.js/blob/8a489e24bcb6141ad706e1527b77f3ff38940b6d/packages/next/next-server/lib/constants.ts#L1-L4
+        normalisedNextConfig = nextConfig("phase-production-server", {});
+      }
+
+      // Support trailing slash: https://nextjs.org/docs/api-reference/next.config.js/trailing-slash
+      defaultBuildManifest.trailingSlash =
+        normalisedNextConfig?.trailingSlash ?? false;
+    }
+
     return {
       defaultBuildManifest,
       apiBuildManifest
@@ -370,7 +477,7 @@ class Builder {
     }
   }
 
-  async build(debugMode: boolean): Promise<void> {
+  async build(debugMode?: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
@@ -416,6 +523,46 @@ class Builder {
 
     if (hasAPIPages) {
       await this.buildApiLambda(apiBuildManifest);
+    }
+  }
+
+  /**
+   * Normalize domain redirects by validating they are URLs and getting rid of trailing slash.
+   * @param domainRedirects
+   */
+  normalizeDomainRedirects(domainRedirects: { [key: string]: string }) {
+    for (const key in domainRedirects) {
+      const destination = domainRedirects[key];
+
+      let url;
+      try {
+        url = new URL(destination);
+      } catch (error) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL is not in a valid URL format.`
+        );
+      }
+
+      const { origin, pathname, searchParams } = url;
+
+      if (!origin.startsWith("https://") && !origin.startsWith("http://")) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL must start with http:// or https://.`
+        );
+      }
+
+      if (Array.from(searchParams).length > 0) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL must not contain query parameters.`
+        );
+      }
+
+      let normalizedDomain = `${origin}${pathname}`;
+      normalizedDomain = normalizedDomain.endsWith("/")
+        ? normalizedDomain.slice(0, -1)
+        : normalizedDomain;
+
+      domainRedirects[key] = normalizedDomain;
     }
   }
 }

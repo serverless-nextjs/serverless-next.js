@@ -18,7 +18,9 @@ export type ServerlessComponentInputs = {
   role?: Record<string, unknown>;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
+  domainRedirects?: { [key: string]: string };
   cloudfront?: CloudfrontOptions;
+  minifyHandlers?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

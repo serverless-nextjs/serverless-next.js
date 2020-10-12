@@ -96,6 +96,40 @@ describe("General options propagation", () => {
     );
   });
 
+  it("create distribution with aliases and update it", async () => {
+    await component.default({
+      aliases: ["foo.example.com"],
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Aliases: {
+            Items: ["foo.example.com"],
+            Quantity: 1
+          }
+        })
+      })
+    );
+
+    await component.default({
+      aliases: ["bar.example.com"],
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Aliases: {
+            Items: ["bar.example.com"],
+            Quantity: 1
+          }
+        })
+      })
+    );
+  });
+
   it("create distribution with priceClass and update it", async () => {
     await component.default({
       priceClass: "PriceClass_All",

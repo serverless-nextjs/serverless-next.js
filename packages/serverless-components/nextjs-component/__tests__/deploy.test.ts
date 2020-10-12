@@ -123,8 +123,23 @@ describe("deploy tests", () => {
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
           policy: {
-            arn:
-              "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Resource: "*",
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ]
+              },
+              {
+                Effect: "Allow",
+                Resource: `arn:aws:s3:::bucket-xyz/*`,
+                Action: ["s3:GetObject", "s3:PutObject"]
+              }
+            ]
           }
         }
       });
@@ -138,7 +153,9 @@ describe("deploy tests", () => {
             queryString: true,
             cookies: "all"
           },
-          ttl: 0,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "origin-request":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
@@ -153,7 +170,9 @@ describe("deploy tests", () => {
             private: true,
             pathPatterns: {
               "_next/static/*": {
-                ttl: 86400,
+                minTTL: 0,
+                defaultTTL: 86400,
+                maxTTL: 31536000,
                 forward: {
                   headers: "none",
                   cookies: "none",
@@ -161,7 +180,9 @@ describe("deploy tests", () => {
                 }
               },
               "_next/data/*": {
-                ttl: 0,
+                minTTL: 0,
+                defaultTTL: 0,
+                maxTTL: 31536000,
                 allowedHttpMethods: ["HEAD", "GET"],
                 "lambda@edge": {
                   "origin-request":
@@ -171,7 +192,9 @@ describe("deploy tests", () => {
                 }
               },
               "static/*": {
-                ttl: 86400,
+                minTTL: 0,
+                defaultTTL: 86400,
+                maxTTL: 31536000,
                 forward: {
                   headers: "none",
                   cookies: "none",
@@ -179,7 +202,9 @@ describe("deploy tests", () => {
                 }
               },
               "api/*": {
-                ttl: 0,
+                minTTL: 0,
+                defaultTTL: 0,
+                maxTTL: 31536000,
                 "lambda@edge": {
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"

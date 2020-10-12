@@ -1,10 +1,23 @@
 // @ts-ignore
 import manifest from "./manifest.json";
 // @ts-ignore
-import { basePath } from "./routes-manifest.json";
+import RoutesManifestJson from "./routes-manifest.json";
 import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
-import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
+import {
+  OriginRequestApiHandlerManifest,
+  OriginRequestEvent,
+  RoutesManifest
+} from "../types";
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
+import {
+  createRedirectResponse,
+  getDomainRedirectPath,
+  getRedirectPath
+} from "./routing/redirector";
+import { getRewritePath } from "./routing/rewriter";
+import { addHeadersToResponse } from "./headers/addHeaders";
+
+const basePath = RoutesManifestJson.basePath;
 
 const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
 
@@ -40,8 +53,33 @@ const router = (
 
 export const handler = async (
   event: OriginRequestEvent
-): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
+): Promise<CloudFrontResultResponse> => {
   const request = event.Records[0].cf.request;
+  const routesManifest: RoutesManifest = RoutesManifestJson;
+  const buildManifest: OriginRequestApiHandlerManifest = manifest;
+
+  // Handle domain redirects e.g www to non-www domain
+  const domainRedirect = getDomainRedirectPath(request, buildManifest);
+  if (domainRedirect) {
+    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  }
+
+  // Handle custom redirects
+  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  if (customRedirect) {
+    return createRedirectResponse(
+      customRedirect.redirectPath,
+      request.querystring,
+      customRedirect.statusCode
+    );
+  }
+
+  // Handle custom rewrites
+  const customRewrite = getRewritePath(request.uri, routesManifest);
+  if (customRewrite) {
+    request.uri = customRewrite;
+  }
+
   const uri = normaliseUri(request.uri);
 
   const pagePath = router(manifest)(uri);
@@ -58,5 +96,10 @@ export const handler = async (
 
   page.default(req, res);
 
-  return responsePromise;
+  const response = await responsePromise;
+
+  // Add custom headers before returning response
+  addHeadersToResponse(request.uri, response, routesManifest);
+
+  return response;
 };

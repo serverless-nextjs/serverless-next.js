@@ -1,0 +1,25 @@
+{
+  "name": "e2e-test-utils",
+  "version": "1.0.0",
+  "description": "Test utils for running serverless-next.js end-to-end tests",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-next.js/serverless-next.js"
+  },
+  "keywords": [],
+  "author": "Daniel Phang",
+  "license": "MIT",
+  "homepage": "https://github.com/serverless-next.js/serverless-next.js",
+  "devDependencies": {
+    "@types/node": "14.6.2",
+    "@types/node-fetch": "2.5.7",
+    "@types/uuid": "8.3.0",
+    "aws-sdk": "2.758.0",
+    "cypress": "5.1.0",
+    "ts-node": "9.0.0",
+    "typescript": "4.0.2",
+    "uuid": "8.3.0",
+    "yargs": "16.0.3"
+  },
+  "private": true
+}
