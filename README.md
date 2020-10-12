@@ -36,7 +36,7 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 ### Motivation
 
 Since Next.js 8.0, [serverless mode](https://
-.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
+.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/serverless-nextjs/serverless-next.js/issues/101), [better development experience](https://github.com/serverless-nextjs/serverless-next.js/issues/59), [the 200 CloudFormation resource limit](https://github.com/serverless-nextjs/serverless-next.js/issues/17) and [performance](https://github.com/serverless-nextjs/serverless-next.js/issues/13).
 
 ### Design principles
 
@@ -210,7 +210,7 @@ myNextApplication:
           responseCode: 500 # optional, alters the response code
 ```
 
-This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
 You can also [update an existing cloudfront distribution](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#updating-an-existing-cloudfront-distribution) using custom cloudfront inputs.
 
 ### Static pages caching
@@ -544,7 +544,7 @@ myNextApplication:
           headers: [Host]
 ```
 
-#### Should I use the [serverless-plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-plugin) or this component?
+#### Should I use the [serverless-plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) or this component?
 
 Users are encouraged to use this component instead of the `serverless-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
@@ -574,7 +574,7 @@ myDatabase:
   component: MY_DATABASE_COMPONENT
 myNextApp:
   component: "@sls-next/serverless-component@{version_here}"
-  inputs: 
+  inputs:
     build:
       args: ["build", "custom/path/to/pages"]
       env:

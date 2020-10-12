@@ -3,7 +3,7 @@
 ### Running the example
 
 ```shell
-git clone https://github.com/danielcondemarin/serverless-nextjs-plugin
+git clone https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin
 cd serverless-nextjs-plugin/examples/basic-next-serverless-app
 ```
 
