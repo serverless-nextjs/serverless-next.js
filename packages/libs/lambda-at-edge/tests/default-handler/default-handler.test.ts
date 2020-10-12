@@ -217,7 +217,7 @@ describe("Lambda@Edge", () => {
         mockPageRequire("pages/preview.js");
         const result = await handler(event);
         const response = result as CloudFrontResultResponse;
-        const decodedBody = new Buffer(
+        const decodedBody = Buffer.from(
           response.body as string,
           "base64"
         ).toString("utf8");
@@ -303,7 +303,7 @@ describe("Lambda@Edge", () => {
           const response = await handler(event);
 
           const cfResponse = response as CloudFrontResultResponse;
-          const decodedBody = new Buffer(
+          const decodedBody = Buffer.from(
             cfResponse.body as string,
             "base64"
           ).toString("utf8");
@@ -382,7 +382,7 @@ describe("Lambda@Edge", () => {
           const result = await handler(event);
 
           const cfResponse = result as CloudFrontResultResponse;
-          const decodedBody = new Buffer(
+          const decodedBody = Buffer.from(
             cfResponse.body as string,
             "base64"
           ).toString("utf8");
@@ -454,7 +454,7 @@ describe("Lambda@Edge", () => {
         mockPageRequire("/pages/preview.js");
         const result = await handler(event);
         const response = result as CloudFrontResultResponse;
-        const decodedBody = new Buffer(
+        const decodedBody = Buffer.from(
           response.body as string,
           "base64"
         ).toString("utf8");
@@ -557,7 +557,7 @@ describe("Lambda@Edge", () => {
 
         const response = (await handler(event)) as CloudFrontResultResponse;
         const body = response.body as string;
-        const decodedBody = new Buffer(body, "base64").toString("utf8");
+        const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 404");
         expect(response.status).toEqual("404");
@@ -595,7 +595,7 @@ describe("Lambda@Edge", () => {
 
           const response = (await handler(event)) as CloudFrontResultResponse;
           const body = response.body as string;
-          const decodedBody = new Buffer(body, "base64").toString("utf8");
+          const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
           expect(decodedBody).toEqual(
             JSON.stringify({
@@ -634,7 +634,7 @@ describe("Lambda@Edge", () => {
 
         const response = (await handler(event)) as CloudFrontResultResponse;
         const body = response.body as string;
-        const decodedBody = new Buffer(body, "base64").toString("utf8");
+        const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
         expect(response.status).toEqual("500");

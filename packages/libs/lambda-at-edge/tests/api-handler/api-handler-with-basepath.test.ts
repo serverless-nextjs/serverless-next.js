@@ -45,7 +45,7 @@ describe("API lambda handler with basePath configured", () => {
 
     const response = (await handler(event)) as CloudFrontResponseResult;
 
-    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+    const decodedBody = Buffer.from(response.body, "base64").toString("utf8");
 
     expect(decodedBody).toEqual("pages/api/getCustomers");
     expect(response.status).toEqual(200);

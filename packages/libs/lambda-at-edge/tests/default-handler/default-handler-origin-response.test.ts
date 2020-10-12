@@ -108,7 +108,7 @@ describe("Lambda@Edge origin response", () => {
       const response = await handler(event);
 
       const cfResponse = response as CloudFrontResultResponse;
-      const decodedBody = new Buffer(
+      const decodedBody = Buffer.from(
         cfResponse.body as string,
         "base64"
       ).toString("utf8");
@@ -157,7 +157,7 @@ describe("Lambda@Edge origin response", () => {
       const response = await handler(event);
 
       const cfResponse = response as CloudFrontResultResponse;
-      const decodedBody = new Buffer(
+      const decodedBody = Buffer.from(
         cfResponse.body as string,
         "base64"
       ).toString("utf8");
