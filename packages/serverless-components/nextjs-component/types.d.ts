@@ -15,6 +15,7 @@ export type ServerlessComponentInputs = {
   runtime?: string | { defaultLambda?: string; apiLambda?: string };
   description?: string;
   policy?: string;
+  role?: Record<string, unknown>;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
   domainRedirects?: { [key: string]: string };
