@@ -19,9 +19,9 @@ const waitTimeout = parseInt(process.env["WAIT_TIMEOUT"] ?? "600");
 
 // Constants
 const deploymentBucketName = "serverless-next-js-e2e-test"; // For saving .serverless state
-const appName = process.env["APP_NAME"]; // app name to store in deployment bucket. Choose a unique name per test app.
+const appName = process.env["APP_NAME"] || ""; // app name to store in deployment bucket. Choose a unique name per test app.
 
-if (!appName) {
+if (appName === "") {
   throw new Error("Please set the APP_NAME environment variable.");
 }
 
