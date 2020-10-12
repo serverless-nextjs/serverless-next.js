@@ -25,6 +25,8 @@ type CloudFrontEventOptions = {
   origin?: CloudFrontOrigin;
   config?: CloudFrontEvent["config"];
   response?: CloudFrontResponse;
+  querystring?: string;
+  requestHeaders?: { [name: string]: { key: string; value: string }[] };
 };
 
 export const createCloudFrontEvent = ({
@@ -33,7 +35,9 @@ export const createCloudFrontEvent = ({
   s3DomainName,
   s3Region,
   config = {} as any,
-  response
+  response,
+  querystring,
+  requestHeaders = {}
 }: CloudFrontEventOptions): OriginRequestEvent => ({
   Records: [
     {
@@ -43,14 +47,15 @@ export const createCloudFrontEvent = ({
           method: "GET",
           uri,
           clientIp: "1.2.3.4",
-          querystring: "",
+          querystring: querystring ?? "",
           headers: {
             host: [
               {
                 key: "host",
                 value: host
               }
-            ]
+            ],
+            ...requestHeaders
           },
           origin: {
             s3: {

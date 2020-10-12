@@ -3,6 +3,29 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.0...@sls-next/aws-cloudfront@1.3.0-alpha.1) (2020-10-07)
+
+### Features
+
+- **aws-cloudfront:** allow setting configuration for custom origins ([#657](https://github.com/serverless-nextjs/serverless-next.js/issues/657)) ([5f97683](https://github.com/serverless-nextjs/serverless-next.js/commit/5f97683f37dc3d81092aa3e16c9c8057680ec62e))
+
+# [1.3.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.2.0...@sls-next/aws-cloudfront@1.3.0-alpha.0) (2020-10-06)
+
+### Features
+
+- **aws-cloudfront:** allow setting CloudFront distribution aliases ([#654](https://github.com/serverless-nextjs/serverless-next.js/issues/654)) ([ea180e6](https://github.com/serverless-nextjs/serverless-next.js/commit/ea180e67515ee5dceed1c3e19731291615a7cbbb))
+
+# [1.2.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.2.0-alpha.0...@sls-next/aws-cloudfront@1.2.0) (2020-09-26)
+
+**Note:** Version bump only for package @sls-next/aws-cloudfront
+
+# [1.2.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.1.1-alpha.2...@sls-next/aws-cloudfront@1.2.0-alpha.0) (2020-09-10)
+
+### Features
+
+- **aws-cloudfront, s3-static-assets:** support setting individual min, max, default CloudFront TTLs, update Cache-Control headers and TTLs for \_next/data files ([#593](https://github.com/serverless-nextjs/serverless-next.js/issues/593)) ([fb8e61d](https://github.com/serverless-nextjs/serverless-next.js/commit/fb8e61dc50b11c0e5966548a8c84b58e495ea748))
+- **aws-cloudfront, serverless-component:** add cloudfront custom error responses ([#590](https://github.com/serverless-nextjs/serverless-next.js/issues/590)) ([f3d2a17](https://github.com/serverless-nextjs/serverless-next.js/commit/f3d2a17b2fac5e9bb67b1f6ed5201c8128600314))
+
 ## [1.1.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.1.1-alpha.1...@sls-next/aws-cloudfront@1.1.1-alpha.2) (2020-08-14)
 
 **Note:** Version bump only for package @sls-next/aws-cloudfront

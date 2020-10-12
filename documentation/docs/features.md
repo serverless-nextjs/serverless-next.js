@@ -18,8 +18,8 @@ sidebar_label: Features
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
 - [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
-- [ ] `getStaticPaths` using fallback page. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
-- [ ] Preview mode. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [ ] `getStaticPaths` using fallback page. See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/355) for updates.
+- [ ] Preview mode. See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/355) for updates.
 
 Refer the image below for Default Lambda@Edge and API Lambda@Edge
 

@@ -486,20 +486,24 @@ describe("Custom inputs", () => {
     [
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "origin-request": "ignored",
             "origin-response": "also ignored"
           }
         }
       },
-      { defaults: { ttl: 500 } }
+      { defaults: { minTTL: 0, defaultTTL: 0, maxTTL: 31536000 } }
     ],
     // allow lamdba@edge triggers other than origin-request and origin-response
     [
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "viewer-request": "used value"
           }
@@ -507,7 +511,9 @@ describe("Custom inputs", () => {
       },
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": { "viewer-request": "used value" }
         }
       }
@@ -528,23 +534,29 @@ describe("Custom inputs", () => {
     [
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-request": "ignored value" }
         }
       },
-      { "api/*": { ttl: 500 } }
+      { "api/*": { minTTL: 500, defaultTTL: 500, maxTTL: 500 } }
     ],
     // allow other lambda@edge triggers on the api cache behaviour
     [
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-response": "used value" }
         }
       },
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-response": "used value" }
         }
       }
@@ -581,7 +593,9 @@ describe("Custom inputs", () => {
     [
       {
         "/terms": {
-          ttl: 5500,
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500,
           "misc-param": "misc-value",
           "lambda@edge": {
             "origin-request": "ignored value"
@@ -590,7 +604,9 @@ describe("Custom inputs", () => {
       },
       {
         "/terms": {
-          ttl: 5500,
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500,
           "misc-param": "misc-value"
         }
       }
@@ -598,12 +614,16 @@ describe("Custom inputs", () => {
     [
       {
         "/customers/stan-sack": {
-          ttl: 5500
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500
         }
       },
       {
         "/customers/stan-sack": {
-          ttl: 5500
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500
         }
       }
     ]
@@ -661,8 +681,18 @@ describe("Custom inputs", () => {
 
     const cloudfrontConfig = {
       defaults: {
-        ttl: 0,
-        allowedHttpMethods: ["HEAD", "GET"],
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         forward: {
           cookies: "all",
           queryString: true
@@ -676,7 +706,9 @@ describe("Custom inputs", () => {
             ...customPageCacheBehaviours,
             "_next/static/*": {
               ...customPageCacheBehaviours["_next/static/*"],
-              ttl: 86400,
+              minTTL: 0,
+              defaultTTL: 86400,
+              maxTTL: 31536000,
               forward: {
                 headers: "none",
                 cookies: "none",
@@ -684,7 +716,9 @@ describe("Custom inputs", () => {
               }
             },
             "_next/data/*": {
-              ttl: 0,
+              minTTL: 0,
+              defaultTTL: 0,
+              maxTTL: 31536000,
               allowedHttpMethods: ["HEAD", "GET"],
               "lambda@edge": {
                 "origin-request":
@@ -694,12 +728,16 @@ describe("Custom inputs", () => {
               }
             },
             "api/*": {
-              ttl: 0,
+              minTTL: 0,
+              defaultTTL: 0,
+              maxTTL: 31536000,
               ...expectedApiCacheBehaviour
             },
             "static/*": {
               ...customPageCacheBehaviours["static/*"],
-              ttl: 86400,
+              minTTL: 0,
+              defaultTTL: 86400,
+              maxTTL: 31536000,
               forward: {
                 headers: "none",
                 cookies: "none",
@@ -743,9 +781,6 @@ describe("Custom inputs", () => {
   describe.each`
     cloudFrontInput                                | expectedErrorMessage
     ${{ "some-invalid-page-route": { ttl: 100 } }} | ${'Could not find next.js pages for "some-invalid-page-route"'}
-    ${{ "/api": { ttl: 100 } }}                    | ${'route "/api" is not supported'}
-    ${{ api: { ttl: 100 } }}                       | ${'route "api" is not supported'}
-    ${{ "api/test": { ttl: 100 } }}                | ${'route "api/test" is not supported'}
   `(
     "Invalid cloudfront inputs",
     ({ cloudFrontInput, expectedErrorMessage }) => {
@@ -777,6 +812,122 @@ describe("Custom inputs", () => {
       });
     }
   );
+
+  describe.each`
+    cloudFrontInput                                                  | pathName
+    ${{ api: { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}        | ${"api"}
+    ${{ "api/test": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }} | ${"api/test"}
+    ${{ "api/*": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}    | ${"api/*"}
+  `("API cloudfront inputs", ({ cloudFrontInput, pathName }) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({});
+
+      const component = createNextComponent({});
+
+      componentOutputs = await component({
+        cloudfront: cloudFrontInput
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`allows setting custom cache behavior: ${JSON.stringify(
+      cloudFrontInput
+    )}`, async () => {
+      cloudFrontInput[pathName]["lambda@edge"] = {
+        "origin-request":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+      };
+
+      // If path is api/*, then it has allowed HTTP methods by default
+      if (pathName === "api/*") {
+        cloudFrontInput[pathName]["allowedHttpMethods"] = [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ];
+      }
+
+      const expectedInput = {
+        origins: [
+          {
+            pathPatterns: {
+              "_next/data/*": {
+                allowedHttpMethods: ["HEAD", "GET"],
+                defaultTTL: 0,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                  "origin-response":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "_next/static/*": {
+                defaultTTL: 86400,
+                forward: {
+                  cookies: "none",
+                  headers: "none",
+                  queryString: false
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "api/*": {
+                allowedHttpMethods: [
+                  "HEAD",
+                  "DELETE",
+                  "POST",
+                  "GET",
+                  "OPTIONS",
+                  "PUT",
+                  "PATCH"
+                ],
+                defaultTTL: 0,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "static/*": {
+                defaultTTL: 86400,
+                forward: {
+                  cookies: "none",
+                  headers: "none",
+                  queryString: false
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              ...cloudFrontInput
+            },
+            private: true,
+            url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
+          }
+        ]
+      };
+
+      expect(mockCloudFront).toBeCalledWith(
+        expect.objectContaining(expectedInput)
+      );
+    });
+  });
 
   describe("Build using serverless trace target", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");

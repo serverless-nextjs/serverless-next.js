@@ -1,8 +1,8 @@
 # UPDATE!
 
 A new iteration of this project has been released powered by the amazing [Serverless Components](https://github.com/serverless/components).
-Check it out [here](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component). As you can see, it lives in the same monorepo.
-The new version has feature parity with nextjs 9.0 and does not use CloudFormation, allowing faster deployments and no [resource limit issues](https://github.com/danielcondemarin/serverless-next.js/issues/17).
+Check it out [here](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component). As you can see, it lives in the same monorepo.
+The new version has feature parity with nextjs 9.0 and does not use CloudFormation, allowing faster deployments and no [resource limit issues](https://github.com/serverless-nextjs/serverless-next.js/issues/17).
 
 It is recommended for both existing and new users to try the new version. Obviously existing users of the next plugin don't have to migrate over straight away, the plan is to continue maintaining the plugin until the new component is more mature.
 
@@ -366,7 +366,7 @@ module.exports = (page) => {
 
 ## Caveats
 
-Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-component which solves this problem by not using CloudFormation.
+Beware this plugin relies on CloudFormation which has a hard limit of 200 resources. If you have a large number of pages in your application it is very likely that you will hit this limit. Use https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component which solves this problem by not using CloudFormation.
 
 ## Examples
 
@@ -381,7 +381,7 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 ### Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/danielcondemarin/serverless-nextjs-plugin/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
 
 ### Financial Contributors
 

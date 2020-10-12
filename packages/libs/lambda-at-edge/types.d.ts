@@ -18,6 +18,9 @@ export type OriginRequestApiHandlerManifest = {
       [key: string]: string;
     };
   };
+  domainRedirects: {
+    [key: string]: string;
+  };
 };
 
 export type OriginRequestDefaultHandlerManifest = {
@@ -38,6 +41,10 @@ export type OriginRequestDefaultHandlerManifest = {
     };
   };
   publicFiles: {
+    [key: string]: string;
+  };
+  trailingSlash: boolean;
+  domainRedirects: {
     [key: string]: string;
   };
 };
@@ -79,11 +86,39 @@ export type PreRenderedManifest = {
   };
   preview: {
     previewModeId: string;
+    previewModeSigningKey: string;
+    previewModeEncryptionKey: string;
   };
+};
+
+export type RedirectData = {
+  statusCode: number;
+  source: string;
+  destination: string;
+  regex: string;
+};
+
+export type RewriteData = {
+  source: string;
+  destination: string;
+};
+
+export type Header = {
+  key: string;
+  value: string;
+};
+
+export type HeaderData = {
+  source: string;
+  headers: Header[];
+  regex: string;
 };
 
 export type RoutesManifest = {
   basePath: string;
+  redirects: RedirectData[];
+  rewrites: RewriteData[];
+  headers: HeaderData[];
 };
 
 export type PerfLogger = {

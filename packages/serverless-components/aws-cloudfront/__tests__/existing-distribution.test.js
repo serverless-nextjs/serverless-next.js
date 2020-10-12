@@ -113,7 +113,9 @@ describe("Working with an existing distribution", () => {
           url: "https://existingorigin2.com",
           pathPatterns: {
             "/some/path": {
-              ttl: 10
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10
             }
           }
         }

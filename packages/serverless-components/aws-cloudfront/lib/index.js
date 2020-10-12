@@ -2,6 +2,7 @@ const parseInputOrigins = require("./parseInputOrigins");
 const getDefaultCacheBehavior = require("./getDefaultCacheBehavior");
 const createOriginAccessIdentity = require("./createOriginAccessIdentity");
 const grantCloudFrontBucketAccess = require("./grantCloudFrontBucketAccess");
+const getCustomErrorResponses = require("./getCustomErrorResponses");
 
 const servePrivateContentEnabled = (inputs) =>
   inputs.origins.some((origin) => {
@@ -27,10 +28,14 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
       CallerReference: String(Date.now()),
       Comment: inputs.comment,
       Aliases: {
+        Quantity: inputs.aliases.length,
+        Items: inputs.aliases
+      },
+      Origins: {
         Quantity: 0,
         Items: []
       },
-      Origins: {
+      CustomErrorResponses: {
         Quantity: 0,
         Items: []
       },
@@ -72,6 +77,9 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     distributionConfig.CacheBehaviors = CacheBehaviors;
   }
 
+  const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
+  distributionConfig.CustomErrorResponses = CustomErrorResponses;
+
   const res = await cf.createDistribution(params).promise();
 
   return {
@@ -104,6 +112,10 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
 
   params.DistributionConfig.Enabled = inputs.enabled;
   params.DistributionConfig.Comment = inputs.comment;
+  params.DistributionConfig.Aliases = {
+    Items: inputs.aliases,
+    Quantity: inputs.aliases.length
+  };
   params.DistributionConfig.PriceClass = inputs.priceClass;
 
   let s3CanonicalUserId;
@@ -151,6 +163,9 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   if (CacheBehaviors) {
     params.DistributionConfig.CacheBehaviors = CacheBehaviors;
   }
+
+  const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
+  params.DistributionConfig.CustomErrorResponses = CustomErrorResponses;
 
   // 6. then finally update!
   const res = await cf.updateDistribution(params).promise();

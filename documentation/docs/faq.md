@@ -2,7 +2,8 @@
 id: faq
 title: Frequently Asked Questions
 sidebar_label: FAQs
----                                                                                                                                                                                                                   
+---
+
 ### My component doesn't deploy
 
 Make sure your `serverless.yml` uses the `serverless-components` format. [serverless components](https://serverless.com/blog/what-are-serverless-components-how-use/) differ from the original serverless framework, even though they are both accessible via the same CLI.
@@ -42,7 +43,7 @@ For deploying, don't run `serverless deploy`. Simply run `serverless` and that d
 
 For more information about serverless components go [here](https://serverless.com/blog/what-are-serverless-components-how-use/).
 
-### Should I use the [serverless-plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-plugin) or this component?
+### Should I use the [serverless-plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) or this component?
 
 Users are encouraged to use this component instead of the `serverless-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
