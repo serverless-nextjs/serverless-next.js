@@ -32,6 +32,10 @@ jobs:
         uses: softprops/turnstyle@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install test utils
+        run: |
+          cd packages/e2e-tests/test-utils
+          yarn --frozen-lockfile
       - name: Run e2e tests
         if: ${{ matrix.node-version == '12.x' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)) }}
         env:

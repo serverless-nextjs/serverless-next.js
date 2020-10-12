@@ -1,5 +1,5 @@
 {
-  "name": "next-app",
+  "name": "e2e-test-utils",
   "version": "1.0.0",
   "description": "Test utils for running serverless-next.js end-to-end tests",
   "repository": {
