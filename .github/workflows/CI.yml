@@ -1,4 +1,5 @@
 # This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
+# Finally, it triggers the e2e tests workflow.
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: CI
@@ -19,36 +20,27 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
+
       - run: yarn --frozen-lockfile
+
       - run: yarn test
+
       - run: yarn integration
-      - name: Wait for existing workflow to complete before e2e tests
-        # Note: we only run e2e tests once (using the 12.x version in matrix) and only if this PR is not from a fork
-        if: ${{ matrix.node-version == '12.x' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)) }}
-        uses: softprops/turnstyle@v1
-        with:
-          poll-interval-seconds: 15
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Install test utils
-        run: |
-          cd packages/e2e-tests/test-utils
-          yarn --frozen-lockfile
-      - name: Run e2e tests
-        if: ${{ matrix.node-version == '12.x' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)) }}
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
-          WAIT_TIMEOUT: 600
-        run: |
-          cd packages/e2e-tests/next-app
-          yarn --frozen-lockfile
-          yarn e2e:ci
+
       - name: Upload code coverage
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: npx codecov
+
+      - name: Trigger end-to-end tests workflow
+        # Note: we only run e2e tests once (using the 12.x version in matrix) and only if this PR is not from a fork
+        if: ${{ matrix.node-version == '12.x' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)) }}
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: End-to-end Tests
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
