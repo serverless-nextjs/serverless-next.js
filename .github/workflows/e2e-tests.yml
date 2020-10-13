@@ -3,18 +3,19 @@ name: End-to-end Tests
 on:
   workflow_dispatch:
     pull_request_id:
-      # TODO: Optional PR ID, to manually run for a PR from a fork
       description: "Pull Request ID"
       required: false
       default: ""
 
 jobs:
-  e2e-next-app:
+  run-e2e-tests:
     runs-on: [ubuntu-latest]
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [12.x]
+        app: [next-app, next-app-with-trailing-slash]
 
     steps:
       - uses: actions/checkout@v2
@@ -50,20 +51,11 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
           WAIT_TIMEOUT: 600
+          APP_NAME: ${{ matrix.app }}
         run: |
-          cd packages/e2e-tests/next-app
+          cd packages/e2e-tests/$APP_NAME
           yarn --frozen-lockfile
           yarn e2e:ci
-
-      - name: Mark end-to-end tests as succeeded
-        uses: Sibz/github-status-action@v1
-        if: ${{ success() }}
-        with:
-          authToken: ${{ secrets.GITHUB_TOKEN }}
-          context: "End-to-end Tests"
-          description: "End-to-end tests have passed"
-          state: "success"
-          sha: ${{ github.sha }}
 
       - name: Mark end-to-end tests as failed
         if: ${{ failure() }}
@@ -73,4 +65,18 @@ jobs:
           context: "End-to-end Tests"
           description: "End-to-end tests have failed"
           state: "failure"
+          sha: ${{ github.sha }}
+
+  finalize:
+    needs: run-e2e-tests
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Mark end-to-end tests as succeeded
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "End-to-end tests have passed"
+          state: "success"
           sha: ${{ github.sha }}
