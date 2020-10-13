@@ -1,0 +1,49 @@
+name: End-to-end Tests
+
+on:
+  workflow_dispatch:
+    pull_request_id:
+      # TODO: Optional PR ID, to run for a PR from a fork
+      description: "Pull Request ID"
+      required: false
+
+jobs:
+  e2e-next-app:
+    runs-on: [ubuntu-latest]
+
+    strategy:
+      matrix:
+        node-version: [12.x]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: yarn --frozen-lockfile
+      # TODO: build once and cache for all e2e tests
+
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 15
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Install test utils
+        run: |
+          cd packages/e2e-tests/test-utils
+          yarn --frozen-lockfile
+
+      - name: Run e2e tests
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
+          WAIT_TIMEOUT: 600
+        run: |
+          cd packages/e2e-tests/next-app
+          yarn --frozen-lockfile
+          yarn e2e:ci
