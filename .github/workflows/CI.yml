@@ -37,6 +37,11 @@ jobs:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: npx codecov
 
+  start-e2e-tests:
+    needs: [build]
+    runs-on: [ubuntu-latest]
+
+    steps:
       - name: Mark end-to-end tests as pending
         uses: Sibz/github-status-action@v1
         with:
@@ -47,8 +52,8 @@ jobs:
           sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
       - name: Trigger end-to-end tests workflow
-        # Note: we only run e2e tests once (using the 12.x version in matrix) and only if this PR is not from a fork
-        if: ${{ matrix.node-version == '12.x' && (github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)) }}
+        # Note: we only run e2e tests automatically if this PR is not from a fork, as forks won't have access to secrets
+        if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
         uses: benc-uk/workflow-dispatch@v1
         with:
           workflow: End-to-end Tests

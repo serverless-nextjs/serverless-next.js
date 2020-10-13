@@ -8,7 +8,22 @@ on:
       default: ""
 
 jobs:
+  initialize:
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Mark end-to-end tests as pending with run URL
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "Waiting for end-to-end tests to pass"
+          state: "pending"
+          sha: ${{ github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
   run-e2e-tests:
+    needs: [initialize]
     runs-on: [ubuntu-latest]
 
     strategy:
@@ -66,6 +81,7 @@ jobs:
           description: "End-to-end tests have failed"
           state: "failure"
           sha: ${{ github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   finalize:
     needs: run-e2e-tests
@@ -80,3 +96,4 @@ jobs:
           description: "End-to-end tests have passed"
           state: "success"
           sha: ${{ github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
