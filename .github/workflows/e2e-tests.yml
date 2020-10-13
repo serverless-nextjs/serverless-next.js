@@ -81,6 +81,7 @@ jobs:
           description: "End-to-end tests have failed"
           state: "failure"
           sha: ${{ github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   finalize:
     needs: run-e2e-tests
@@ -95,3 +96,4 @@ jobs:
           description: "End-to-end tests have passed"
           state: "success"
           sha: ${{ github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
