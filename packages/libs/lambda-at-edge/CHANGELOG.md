@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.7...@sls-next/lambda-at-edge@1.7.0-alpha.8) (2020-10-13)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix possible redirect loop in API handler ([#671](https://github.com/serverless-nextjs/serverless-next.js/issues/671)) ([ed92ebc](https://github.com/serverless-nextjs/serverless-next.js/commit/ed92ebce73720c46fdb5c7c9065127d7f8a51078))
+
 # [1.7.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.6...@sls-next/lambda-at-edge@1.7.0-alpha.7) (2020-10-10)
 
 ### Features
