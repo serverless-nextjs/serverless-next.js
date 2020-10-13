@@ -296,7 +296,7 @@ async function runEndToEndTest(): Promise<boolean> {
     }
 
     console.info("Getting CloudFront URL and distribution ID.");
-    const { cloudFrontUrl, distributionId } = getCloudFrontDetails("next-app");
+    const { cloudFrontUrl, distributionId } = getCloudFrontDetails(appName);
 
     if (!cloudFrontUrl || !distributionId) {
       throw new Error("CloudFront url or distribution id not found.");

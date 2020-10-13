@@ -3,7 +3,6 @@ name: End-to-end Tests
 on:
   workflow_dispatch:
     pull_request_id:
-      # TODO: Optional PR ID, to manually run for a PR from a fork
       description: "Pull Request ID"
       required: false
       default: ""
@@ -16,6 +15,7 @@ jobs:
       matrix:
         node-version: [12.x]
         app: [next-app, next-app-with-trailing-slash]
+        fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
