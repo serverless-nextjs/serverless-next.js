@@ -7,11 +7,13 @@
 [![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=backers)](https://opencollective.com/serverless-nextjs-plugin)
 [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
+![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
 ![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.5-blue)
+![Platforms](https://img.shields.io/badge/platforms-aws-blue)
 
-A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS aiming for full feature parity.
+A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
 Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
 
