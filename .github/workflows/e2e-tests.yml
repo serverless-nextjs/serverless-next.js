@@ -57,16 +57,6 @@ jobs:
           yarn --frozen-lockfile
           yarn e2e:ci
 
-      - name: Mark end-to-end tests as succeeded
-        uses: Sibz/github-status-action@v1
-        if: ${{ success() }}
-        with:
-          authToken: ${{ secrets.GITHUB_TOKEN }}
-          context: "End-to-end Tests"
-          description: "End-to-end tests have passed"
-          state: "success"
-          sha: ${{ github.sha }}
-
       - name: Mark end-to-end tests as failed
         if: ${{ failure() }}
         uses: Sibz/github-status-action@v1
@@ -75,4 +65,18 @@ jobs:
           context: "End-to-end Tests"
           description: "End-to-end tests have failed"
           state: "failure"
+          sha: ${{ github.sha }}
+
+  finalize:
+    needs: run-e2e-tests
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Mark end-to-end tests as succeeded
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "End-to-end tests have passed"
+          state: "success"
           sha: ${{ github.sha }}
