@@ -14,8 +14,6 @@ describe("Redirects Tests", () => {
       { path: "/unmatched", expectedStatus: 404 }
     ].forEach(({ path, expectedStatus }) => {
       it(`redirects page ${path}`, () => {
-        cy.ensureRouteHasStatusCode(path, 308);
-
         const redirectedPath = `${path}/`;
 
         // Verify redirect response
