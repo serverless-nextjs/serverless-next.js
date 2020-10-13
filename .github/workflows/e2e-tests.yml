@@ -15,7 +15,7 @@ jobs:
     strategy:
       matrix:
         node-version: [12.x]
-        app: [next-app, next-app-trailing-slash]
+        app: [next-app, next-app-with-trailing-slash]
 
     steps:
       - uses: actions/checkout@v2
