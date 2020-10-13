@@ -12,10 +12,10 @@ jobs:
     runs-on: [ubuntu-latest]
 
     strategy:
+      fail-fast: false
       matrix:
         node-version: [12.x]
         app: [next-app, next-app-with-trailing-slash]
-        fail-fast: false
 
     steps:
       - uses: actions/checkout@v2
