@@ -6,6 +6,7 @@ on:
       # TODO: Optional PR ID, to manually run for a PR from a fork
       description: "Pull Request ID"
       required: false
+      default: ""
 
 jobs:
   e2e-next-app:
@@ -18,6 +19,12 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Checkout pull request
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        uses: dawidd6/action-checkout-pr@v1
+        with:
+          pr: ${{ github.event.inputs.pull_request_id }}
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -26,17 +33,17 @@ jobs:
       - run: yarn --frozen-lockfile
       # TODO: build once and cache for all e2e tests
 
+      - name: Install test utils
+        run: |
+          cd packages/e2e-tests/test-utils
+          yarn --frozen-lockfile
+
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
         with:
           poll-interval-seconds: 15
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Install test utils
-        run: |
-          cd packages/e2e-tests/test-utils
-          yarn --frozen-lockfile
 
       - name: Run e2e tests
         env:
