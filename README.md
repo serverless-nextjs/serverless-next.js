@@ -107,6 +107,8 @@ $ serverless
 
 :no_entry_sign: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
 
+:no_entry_sign: **Do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
+
 ### Custom domain name
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
