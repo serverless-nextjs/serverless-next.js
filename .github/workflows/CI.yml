@@ -42,7 +42,7 @@ jobs:
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: "End-to-end Tests"
-          description: "Waiting for end-to-end tests to pass."
+          description: "Waiting for end-to-end tests to pass"
           state: "pending"
           sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
@@ -53,4 +53,4 @@ jobs:
         with:
           workflow: End-to-end Tests
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}

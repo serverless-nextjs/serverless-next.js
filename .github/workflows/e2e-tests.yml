@@ -54,7 +54,7 @@ jobs:
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: "End-to-end Tests"
-          description: "End-to-end tests have passed."
+          description: "End-to-end tests have passed"
           state: "success"
           sha: ${{ github.sha }}
 
@@ -64,6 +64,6 @@ jobs:
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
           context: "End-to-end Tests"
-          description: "End-to-end tests have failed."
+          description: "End-to-end tests have failed"
           state: "failure"
           sha: ${{ github.sha }}
