@@ -37,4 +37,4 @@ assignees: ""
 <!-- Please review the following checklist before submitting the issue. -->
 
 - [ ] You have reviewed the README and [FAQs](https://github.com/serverless-nextjs/serverless-next.js#faq), which answers several common questions.
-- [ ] Consider using the latest [release version](https://github.com/serverless-nextjs/serverless-next.js/releases), which may have already fixed your issue.
+- [ ] Please first try using the latest `@sls-next/serverless-component` [release version](https://github.com/serverless-nextjs/serverless-next.js/releases), which may have already fixed your issue. Note that the old `serverless-next.js` component and the `serverless-next.js` plugin are deprecated and no longer maintained.
