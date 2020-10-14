@@ -2,10 +2,11 @@ name: End-to-end Tests
 
 on:
   workflow_dispatch:
-    pull_request_id:
-      description: "Pull Request ID"
-      required: false
-      default: ""
+    inputs:
+      pull_request_id:
+        description: "Pull Request ID"
+        required: false
+        default: ""
 
 jobs:
   initialize:
