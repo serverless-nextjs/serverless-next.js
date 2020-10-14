@@ -1,0 +1,2 @@
+next-app-with-base-path:
+  component: "../../serverless-components/nextjs-component"

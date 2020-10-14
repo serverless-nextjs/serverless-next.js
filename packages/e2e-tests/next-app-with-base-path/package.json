@@ -1,14 +1,14 @@
 {
-  "name": "next-app-with-trailing-slash",
+  "name": "next-app-with-base-path",
   "version": "1.0.0",
-  "description": "Basic test Next.js app with trailing slash for running serverless-next.js end-to-end tests",
+  "description": "Basic test Next.js app for running serverless-next.js end-to-end tests",
   "scripts": {
     "dev": "next",
     "build": "next build",
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "SSG_PAGE_PATH=/ssg-page/ SSR_PAGE_PATH=/ssr-page/ APP_NAME=next-app-with-trailing-slash ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
+    "e2e:ci": "SSG_PAGE_PATH=/basepath/ssg-page SSR_PAGE_PATH=/basepath/ssr-page APP_NAME=next-app-with-base-path ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
   },
   "repository": {
     "type": "git",
