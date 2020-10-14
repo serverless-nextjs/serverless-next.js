@@ -51,7 +51,7 @@ async function checkWebAppBuildId(
   while (new Date().getTime() - startTime < waitDurationMillis) {
     // Guarantee that CloudFront cache is missed by appending uuid query parameter.
     const uuid: string = uuidv4().replace("-", "");
-    const suffixedUrl: string = `url${
+    const suffixedUrl: string = `${url}${
       url.endsWith("/") ? "" : "/"
     } ?uuid=${uuid}`;
 
