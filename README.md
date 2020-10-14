@@ -15,7 +15,7 @@
 
 A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
-Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
+Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for the list of currently supported features.
 
 ## Contents
 
