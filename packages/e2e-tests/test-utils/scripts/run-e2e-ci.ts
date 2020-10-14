@@ -53,7 +53,7 @@ async function checkWebAppBuildId(
     const uuid: string = uuidv4().replace("-", "");
     const suffixedUrl: string = `${url}${
       url.endsWith("/") ? "" : "/"
-    } ?uuid=${uuid}`;
+    }?uuid=${uuid}`;
 
     try {
       const response = await fetch(suffixedUrl);
