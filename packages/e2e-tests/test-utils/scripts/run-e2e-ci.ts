@@ -21,6 +21,9 @@ const waitTimeout = parseInt(process.env["WAIT_TIMEOUT"] ?? "600");
 const deploymentBucketName = "serverless-next-js-e2e-test"; // For saving .serverless state
 const appName = process.env["APP_NAME"] || ""; // app name to store in deployment bucket. Choose a unique name per test app.
 
+const ssgPagePath = process.env["SSG_PAGE_PATH"];
+const ssrPagePath = process.env["SSR_PAGE_PATH"];
+
 if (appName === "") {
   throw new Error("Please set the APP_NAME environment variable.");
 }
@@ -308,8 +311,8 @@ async function runEndToEndTest(): Promise<boolean> {
     );
     const [cloudFrontReady, ssrReady, ssgReady] = await Promise.all([
       checkInvalidationsCompleted(distributionId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + "/ssr-page", buildId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + "/ssg-page", buildId, waitTimeout, 10)
+      checkWebAppBuildId(cloudFrontUrl + ssrPagePath, buildId, waitTimeout, 10),
+      checkWebAppBuildId(cloudFrontUrl + ssgPagePath, buildId, waitTimeout, 10)
       // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
       // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
     ]);
