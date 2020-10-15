@@ -13,7 +13,7 @@ jobs:
     runs-on: [ubuntu-latest]
 
     outputs:
-      pr_git_sha: $ {{ steps.set_pr_git_sha.outputs.pr_git_sha }}
+      pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
 
     steps:
       - uses: actions/checkout@v2
