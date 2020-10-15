@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.8...@sls-next/lambda-at-edge@1.7.0-alpha.9) (2020-10-15)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix dynamic routes with getStaticPaths interfering with public files ([#679](https://github.com/serverless-nextjs/serverless-next.js/issues/679)) ([17beb1f](https://github.com/serverless-nextjs/serverless-next.js/commit/17beb1f7a994ec17d3e378bee931237b2b5cc54f))
+
 # [1.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.7...@sls-next/lambda-at-edge@1.7.0-alpha.8) (2020-10-13)
 
 ### Bug Fixes
