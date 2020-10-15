@@ -1,22 +1,4 @@
 describe("Static Files Tests", () => {
-  before(() => {
-    cy.ensureAllRoutesNotErrored();
-  });
-
-  describe("all static file requests for a page are cached", () => {
-    [{ path: "/" }].forEach(({ path }) => {
-      it(`serves and caches all static files for page ${path}`, () => {
-        // Visit page once to ensure files are cached in CloudFront
-        cy.visit(path);
-
-        cy.visit(path);
-        // TODO: figure out how to grab all static files from page
-        // and verify they are cached, since Cypress route intercepting does not
-        // seem to work on static file requests after page visit.
-      });
-    });
-  });
-
   describe("public files", () => {
     [{ path: "/app-store-badge.png" }].forEach(({ path }) => {
       it(`serves and caches file ${path}`, () => {

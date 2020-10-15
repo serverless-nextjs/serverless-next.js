@@ -23,6 +23,7 @@ describe("Static Files Tests", () => {
         // Request once to ensure cached
         cy.request(path);
         cy.request(path).then((response) => {
+          expect(response.headers["content-type"]).to.equal("image/png");
           expect(response.status).to.equal(200);
           cy.verifyResponseCacheStatus(response, true);
         });
