@@ -433,6 +433,12 @@ const handleOriginResponse = async ({
     }
     return response;
   }
+
+  // For PUT or DELETE just return the response as these should be unsupported S3 methods
+  if (request.method === "PUT" || request.method === "DELETE") {
+    return response;
+  }
+
   const uri = normaliseUri(request.uri);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
