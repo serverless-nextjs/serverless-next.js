@@ -499,6 +499,11 @@ const handleOriginResponse = async ({
     const hasFallback = hasFallbackForUri(uri, prerenderManifest);
     if (!hasFallback) return response;
 
+    // If route has fallback, return that page from S3, otherwise return 404 page
+    let s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages${
+      hasFallback.fallback || "/404.html"
+    }`;
+
     const { GetObjectCommand } = await import(
       "@aws-sdk/client-s3/commands/GetObjectCommand"
     );
@@ -506,25 +511,13 @@ const handleOriginResponse = async ({
     const getStream = await import("get-stream");
     let bodyString;
 
-    // If has fallback, return that page, otherwise return 404 page
-    if (hasFallback.fallback) {
-      const s3Params = {
-        Bucket: bucketName,
-        Key: `${basePath}${basePath === "" ? "" : "/"}static-pages${
-          hasFallback.fallback
-        }`
-      };
+    const s3Params = {
+      Bucket: bucketName,
+      Key: s3Key
+    };
 
-      const { Body } = await s3.send(new GetObjectCommand(s3Params));
-      bodyString = await getStream.default(Body as Readable);
-    } else {
-      const s3Params = {
-        Bucket: bucketName,
-        Key: `${basePath}${basePath === "" ? "" : "/"}static-pages/404.html`
-      };
-      const { Body } = await s3.send(new GetObjectCommand(s3Params));
-      bodyString = await getStream.default(Body as Readable);
-    }
+    const { Body } = await s3.send(new GetObjectCommand(s3Params));
+    bodyString = await getStream.default(Body as Readable);
 
     return {
       status: hasFallback.fallback ? "200" : "404",
