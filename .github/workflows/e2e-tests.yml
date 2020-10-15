@@ -39,7 +39,7 @@ jobs:
           context: "End-to-end Tests"
           description: "Waiting for end-to-end tests to pass"
           state: "pending"
-          sha: ${{ needs.initialize.outputs.pr_git_sha || github.sha }}
+          sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   run-e2e-tests:
