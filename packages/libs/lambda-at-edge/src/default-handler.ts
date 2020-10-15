@@ -465,13 +465,18 @@ const handleOriginResponse = async ({
     if (isSSG) {
       const s3JsonParams = {
         Bucket: bucketName,
-        Key: uri.replace(/^\//, ""),
+        Key: `${basePath}${basePath === "" ? "" : "/"}${uri.replace(
+          /^\//,
+          ""
+        )}`,
         Body: JSON.stringify(renderOpts.pageData),
         ContentType: "application/json"
       };
       const s3HtmlParams = {
         Bucket: bucketName,
-        Key: `static-pages/${request.uri
+        Key: `${basePath}${
+          basePath === "" ? "" : "/"
+        }static-pages/${request.uri
           .replace(`/_next/data/${manifest.buildId}/`, "")
           .replace(".json", ".html")}`,
         Body: html,
@@ -493,27 +498,49 @@ const handleOriginResponse = async ({
   } else {
     const hasFallback = hasFallbackForUri(uri, prerenderManifest);
     if (!hasFallback) return response;
-    const s3Params = {
-      Bucket: bucketName,
-      Key: `static-pages${hasFallback.fallback}`
-    };
+
     const { GetObjectCommand } = await import(
       "@aws-sdk/client-s3/commands/GetObjectCommand"
     );
-    const { Body } = await s3.send(new GetObjectCommand(s3Params));
-
-    // Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
     const getStream = await import("get-stream");
-    const bodyString = await getStream.default(Body as Readable);
+    let bodyString;
+
+    // If has fallback, return that page, otherwise return 404 page
+    if (hasFallback.fallback) {
+      const s3Params = {
+        Bucket: bucketName,
+        Key: `${basePath}${basePath === "" ? "" : "/"}static-pages${
+          hasFallback.fallback
+        }`
+      };
+
+      const { Body } = await s3.send(new GetObjectCommand(s3Params));
+      bodyString = await getStream.default(Body as Readable);
+    } else {
+      const s3Params = {
+        Bucket: bucketName,
+        Key: `${basePath}${basePath === "" ? "" : "/"}static-pages/404.html`
+      };
+      const { Body } = await s3.send(new GetObjectCommand(s3Params));
+      bodyString = await getStream.default(Body as Readable);
+    }
+
     return {
-      status: "200",
-      statusDescription: "OK",
+      status: hasFallback.fallback ? "200" : "404",
+      statusDescription: hasFallback.fallback ? "OK" : "Not Found",
       headers: {
         ...response.headers,
         "content-type": [
           {
             key: "Content-Type",
             value: "text/html"
+          }
+        ],
+        "cache-control": [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=2678400, must-revalidate"
           }
         ]
       },

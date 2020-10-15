@@ -82,6 +82,12 @@ describe("Lambda@Edge origin response", () => {
         status: "200",
         statusDescription: "OK",
         headers: {
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+            }
+          ],
           "content-type": [
             {
               key: "Content-Type",
@@ -92,6 +98,47 @@ describe("Lambda@Edge origin response", () => {
         body: "S3Body"
       });
     });
+
+    it("serves 404 page from S3 for fallback: false", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/tests/prerender-manifest/[staticPageName]",
+        host: "mydistribution.cloudfront.net",
+        config: { eventType: "origin-response" } as any,
+        response: {
+          status: "403"
+        } as any
+      });
+
+      const result = await handler(event);
+      const response = result as CloudFrontResponse;
+
+      expect(s3Client.send).toHaveBeenCalledWith({
+        Command: "GetObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "static-pages/404.html"
+      });
+
+      expect(response).toEqual({
+        status: "404",
+        statusDescription: "Not Found",
+        headers: {
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+            }
+          ],
+          "content-type": [
+            {
+              key: "Content-Type",
+              value: "text/html"
+            }
+          ]
+        },
+        body: "S3Body"
+      });
+    });
+
     it("renders and uploads HTML and JSON for fallback SSG data requests", async () => {
       const event = createCloudFrontEvent({
         uri: "/_next/data/build-id/fallback/not-yet-built.json",
