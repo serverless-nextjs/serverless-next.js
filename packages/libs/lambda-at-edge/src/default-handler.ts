@@ -323,20 +323,16 @@ const handleOriginRequest = async ({
     (hasFallback && !isPreviewRequest) ||
     (isDataReq && !isPreviewRequest)
   ) {
-    if (isHTMLPage || hasFallback) {
-      s3Origin.path = `${basePath}/static-pages`;
-      const pageName = uri === "/" ? "/index" : uri;
-      request.uri = `${pageName}.html`;
-    }
-
     if (isPublicFile) {
       s3Origin.path = `${basePath}/public`;
       if (basePath) {
         request.uri = request.uri.replace(basePath, "");
       }
-    }
-
-    if (isDataReq) {
+    } else if (isHTMLPage || hasFallback) {
+      s3Origin.path = `${basePath}/static-pages`;
+      const pageName = uri === "/" ? "/index" : uri;
+      request.uri = `${pageName}.html`;
+    } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
       const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
       const pagePath = router(manifest)(normalisedDataRequestUri);
