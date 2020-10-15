@@ -82,6 +82,12 @@ describe("Lambda@Edge origin response", () => {
         status: "200",
         statusDescription: "OK",
         headers: {
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+            }
+          ],
           "content-type": [
             {
               key: "Content-Type",
