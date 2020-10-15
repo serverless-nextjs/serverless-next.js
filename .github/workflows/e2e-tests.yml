@@ -12,7 +12,26 @@ jobs:
   initialize:
     runs-on: [ubuntu-latest]
 
+    outputs:
+      pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
+
     steps:
+      - uses: actions/checkout@v2
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+
+      - name: Checkout pull request
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        uses: dawidd6/action-checkout-pr@v1
+        with:
+          pr: ${{ github.event.inputs.pull_request_id }}
+
+      - name: Set pull request's git SHA
+        id: set_pr_git_sha
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        run: |
+          echo "PR_GIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "::set-output name=pr_git_sha::$(git rev-parse HEAD)"
+
       - name: Mark end-to-end tests as pending with run URL
         uses: Sibz/github-status-action@v1
         with:
@@ -20,7 +39,7 @@ jobs:
           context: "End-to-end Tests"
           description: "Waiting for end-to-end tests to pass"
           state: "pending"
-          sha: ${{ github.sha }}
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   run-e2e-tests:
@@ -84,11 +103,11 @@ jobs:
           context: "End-to-end Tests"
           description: "End-to-end tests have failed"
           state: "failure"
-          sha: ${{ github.sha }}
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   finalize:
-    needs: run-e2e-tests
+    needs: [initialize, run-e2e-tests]
     runs-on: [ubuntu-latest]
 
     steps:
@@ -99,5 +118,5 @@ jobs:
           context: "End-to-end Tests"
           description: "End-to-end tests have passed"
           state: "success"
-          sha: ${{ github.sha }}
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
