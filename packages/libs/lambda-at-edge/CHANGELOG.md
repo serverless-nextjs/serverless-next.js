@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.9...@sls-next/lambda-at-edge@1.7.0-alpha.10) (2020-10-15)
+
+### Bug Fixes
+
+- **lambda-at-edge, e2e-tests:** PUT or DELETE S3 methods should just … ([#680](https://github.com/serverless-nextjs/serverless-next.js/issues/680)) ([f9910a0](https://github.com/serverless-nextjs/serverless-next.js/commit/f9910a023511240337ee62251a169f9504ffbfec))
+
+### Features
+
+- **lambda-at-edge:** support fallback: false for getStaticPaths and fix cache-control header ([#681](https://github.com/serverless-nextjs/serverless-next.js/issues/681)) ([3ef5c17](https://github.com/serverless-nextjs/serverless-next.js/commit/3ef5c17032bd206f706323b9a85e940b594cfc38))
+
 # [1.7.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.8...@sls-next/lambda-at-edge@1.7.0-alpha.9) (2020-10-15)
 
 ### Bug Fixes
