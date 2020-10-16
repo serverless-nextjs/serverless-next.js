@@ -73,7 +73,7 @@ Is there a feature that you want but is not yet supported? Please open a [new is
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
-- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
+- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths` (Note: known conflict with public files if you use this with a root dynamic route and `fallback: false` is not supported in 1.17. Please try the latest 1.18 alpha in case of any issues).
 - [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
 - [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
