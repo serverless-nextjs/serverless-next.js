@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.9...@sls-next/serverless-component@1.18.0-alpha.10) (2020-10-16)
+
+### Bug Fixes
+
+- **nextjs-component:** fix inability to set custom behavior for \_next/data/\* ([#684](https://github.com/serverless-nextjs/serverless-next.js/issues/684)) ([326acc8](https://github.com/serverless-nextjs/serverless-next.js/commit/326acc859dc20bb59b89bcbcbf4095d6db7c9dc2))
+
 # [1.18.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.8...@sls-next/serverless-component@1.18.0-alpha.9) (2020-10-15)
 
 **Note:** Version bump only for package @sls-next/serverless-component
