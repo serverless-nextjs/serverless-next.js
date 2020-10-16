@@ -16,8 +16,10 @@ jobs:
       pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
 
     steps:
-      - uses: actions/checkout@v2
+      # For manually run PRs
+      - name: Initialize empty git repository
         if: ${{ github.event.inputs.pull_request_id != '' }}
+        run: git init --initial-branch serverless-next-js-placeholder
 
       - name: Checkout pull request
         if: ${{ github.event.inputs.pull_request_id != '' }}
@@ -59,7 +61,14 @@ jobs:
           - next-app-dynamic-routes
 
     steps:
+      # For non-fork PRs
       - uses: actions/checkout@v2
+        if: ${{ github.event.inputs.pull_request_id == '' }}
+
+      # For manually run PRs
+      - name: Initialize empty git repository
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        run: git init --initial-branch serverless-next-js-placeholder
 
       - name: Checkout pull request
         if: ${{ github.event.inputs.pull_request_id != '' }}
