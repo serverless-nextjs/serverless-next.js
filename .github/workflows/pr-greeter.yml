@@ -1,0 +1,25 @@
+# This workflow greets PRs from forks with links to the Code of Conduct, Contributing Guide and other noteworthy information.
+
+name: PR Greeter
+
+on:
+  pull_request:
+    branches: [master]
+    types: [opened]
+
+jobs:
+  greet-fork-pr:
+    if: ${{ github.event.pull_request.head.repo.full_name != github.repository }}
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Greet fork PR
+        uses: unsplash/comment-on-pr@master
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          msg:
+            "Thanks for your code contribution to serverless-next.js, @${{ github.actor }}! If you haven't already, please read the [Code of Conduct](https://github.com/serverless-nextjs/serverless-next.js/blob/master/CODE_OF_CONDUCT.md) and [Contributing Guide](https://github.com/serverless-nextjs/serverless-next.js/blob/master/CONTRIBUTING.md).
+
+            As this pull request is from a fork, it doesn't have the permissions needed to automatically run the end-to-end tests. Please wait for a maintainer to manually run them. Thanks!"
+          check_for_duplicate_msg: true
