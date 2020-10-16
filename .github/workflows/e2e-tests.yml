@@ -33,6 +33,8 @@ jobs:
           echo "::set-output name=pr_git_sha::$(git rev-parse HEAD)"
 
       - name: Mark end-to-end tests as pending with run URL
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ github.event.inputs.pull_request_id != '' }}
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
@@ -97,7 +99,8 @@ jobs:
           yarn e2e:ci
 
       - name: Mark end-to-end tests as failed
-        if: ${{ failure() }}
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ failure() && github.event.inputs.pull_request_id != '' }}
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
@@ -113,6 +116,8 @@ jobs:
 
     steps:
       - name: Mark end-to-end tests as succeeded
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ github.event.inputs.pull_request_id != '' }}
         uses: Sibz/github-status-action@v1
         with:
           authToken: ${{ secrets.GITHUB_TOKEN }}
