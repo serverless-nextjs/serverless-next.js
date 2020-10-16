@@ -16,9 +16,6 @@ jobs:
       pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
 
     steps:
-      - uses: actions/checkout@v2
-        if: ${{ github.event.inputs.pull_request_id != '' }}
-
       - name: Checkout pull request
         if: ${{ github.event.inputs.pull_request_id != '' }}
         uses: dawidd6/action-checkout-pr@v1
@@ -60,6 +57,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        if: ${{ github.event.inputs.pull_request_id == '' }}
 
       - name: Checkout pull request
         if: ${{ github.event.inputs.pull_request_id != '' }}
