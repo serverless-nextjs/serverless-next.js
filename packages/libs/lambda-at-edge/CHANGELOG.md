@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.11...@sls-next/lambda-at-edge@1.7.0-alpha.12) (2020-10-16)
+
+### Bug Fixes
+
+- **lambda-at-edge:** non-dynamic pages (SSG, SSR) should be prioritized over dynamic fallback pages ([#685](https://github.com/serverless-nextjs/serverless-next.js/issues/685)) ([71b61e7](https://github.com/serverless-nextjs/serverless-next.js/commit/71b61e7644874da15715c6ec9af60cdc3746f71a))
+
 # [1.7.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.10...@sls-next/lambda-at-edge@1.7.0-alpha.11) (2020-10-15)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
