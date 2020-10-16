@@ -293,7 +293,7 @@ const handleOriginRequest = async ({
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
-  const hasFallback = hasFallbackForUri(uri, prerenderManifest);
+  const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
   const previewCookies = getPreviewCookies(request);
   const isPreviewRequest =
@@ -496,7 +496,7 @@ const handleOriginResponse = async ({
     res.end(JSON.stringify(renderOpts.pageData));
     return await responsePromise;
   } else {
-    const hasFallback = hasFallbackForUri(uri, prerenderManifest);
+    const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
     if (!hasFallback) return response;
 
     // If route has fallback, return that page from S3, otherwise return 404 page
@@ -550,8 +550,17 @@ const isOriginResponse = (
 
 const hasFallbackForUri = (
   uri: string,
-  prerenderManifest: PrerenderManifestType
+  prerenderManifest: PrerenderManifestType,
+  manifest: OriginRequestDefaultHandlerManifest
 ) => {
+  const {
+    pages: { ssr, html }
+  } = manifest;
+  // Non dynamic routes are prioritized over dynamic fallbacks, return false to ensure those get rendered instead
+  if (ssr.nonDynamic[uri] || html.nonDynamic[uri]) {
+    return false;
+  }
+
   return Object.values(prerenderManifest.dynamicRoutes).find((routeConfig) => {
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);

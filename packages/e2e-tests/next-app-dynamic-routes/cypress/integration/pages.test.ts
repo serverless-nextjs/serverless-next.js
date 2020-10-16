@@ -3,7 +3,7 @@ describe("Pages Tests", () => {
     cy.ensureAllRoutesNotErrored();
   });
 
-  describe("Dynamic Pages with getStaticPaths() fallback: true", () => {
+  describe("Dynamic Page at root level with getStaticPaths() fallback: true", () => {
     [{ path: "/a" }, { path: "/b" }, { path: "/not-prerendered" }].forEach(
       ({ path }) => {
         it(`serves and caches page ${path}`, () => {
@@ -36,9 +36,29 @@ describe("Pages Tests", () => {
         });
       }
     );
+
+    it("serves non-dynamic SSG page at same level", () => {
+      const path = "/ssg-page";
+
+      cy.request({
+        url: path
+      }).then((response) => {
+        expect(response.body).to.contain("SSG Page");
+      });
+    });
+
+    it("serves non-dynamic SSR page at same level", () => {
+      const path = "/ssr-page";
+
+      cy.request({
+        url: path
+      }).then((response) => {
+        expect(response.body).to.contain("SSR Page");
+      });
+    });
   });
 
-  describe("Nested Dynamic Pages with getStaticPaths() fallback: false", () => {
+  describe("Nested Dynamic Page with getStaticPaths() fallback: false", () => {
     [{ path: "/nested/a" }, { path: "/nested/b" }].forEach(({ path }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
@@ -86,9 +106,6 @@ describe("Pages Tests", () => {
             failOnStatusCode: false
           }).then((response) => {
             expect(response.status).to.equal(404);
-            expect(response.headers["x-cache"]).to.equal(
-              "Error from cloudfront"
-            );
           });
         });
       });

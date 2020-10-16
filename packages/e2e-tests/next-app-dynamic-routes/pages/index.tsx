@@ -11,7 +11,7 @@ export default function IndexPage(props: IndexPageProps): JSX.Element {
       <div>
         {`Hello ${props.name}. This is an SSR page using getServerSideProps(). It also has an image.`}
       </div>
-      <img src={"/basepath/app-store-badge.png"} alt={"An image"} />
+      <img src={"/app-store-badge.png"} alt={"An image"} />
     </React.Fragment>
   );
 }
