@@ -19,8 +19,7 @@ jobs:
       # For manually run PRs
       - name: Initialize empty git repository
         if: ${{ github.event.inputs.pull_request_id != '' }}
-        run: |
-          git init
+        run: git init --initial-branch serverless-next-js-placeholder
 
       - name: Checkout pull request
         if: ${{ github.event.inputs.pull_request_id != '' }}
@@ -69,7 +68,7 @@ jobs:
       # For manually run PRs
       - name: Initialize empty git repository
         if: ${{ github.event.inputs.pull_request_id != '' }}
-        run: git init
+        run: git init --initial-branch serverless-next-js-placeholder
 
       - name: Checkout pull request
         if: ${{ github.event.inputs.pull_request_id != '' }}
