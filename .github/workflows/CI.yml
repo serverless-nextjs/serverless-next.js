@@ -58,4 +58,4 @@ jobs:
         with:
           workflow: End-to-end Tests
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
-          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
