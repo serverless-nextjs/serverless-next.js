@@ -7,6 +7,9 @@
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "build-lambda-at-edge": "src/command.js"
+  },
   "scripts": {
     "prepare": "yarn build",
     "build": "rollup --config && tsc -p tsconfig.build.json"
