@@ -70,6 +70,7 @@ class NextjsComponent extends Component {
     stillToMatch.delete(this.pathPattern("api/*", routesManifest));
     stillToMatch.delete(this.pathPattern("static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("_next/data/*", routesManifest));
 
     // check for other api like paths
     for (const path of stillToMatch) {
@@ -445,6 +446,19 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
+    cloudFrontOrigins[0].pathPatterns[
+      this.pathPattern("_next/data/*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 31536000,
+      allowedHttpMethods: ["HEAD", "GET"],
+      "lambda@edge": {
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
     // validate that the custom config paths match generated paths in the manifest
     this.validatePathPatterns(
       Object.keys(cloudFrontOtherInputs),
@@ -453,7 +467,7 @@ class NextjsComponent extends Component {
     );
 
     // Add any custom cloudfront configuration
-    // this includes overrides for _next, static and api
+    // this includes overrides for _next/data/*, _next/static/*, static/*, api/*, and default cache behaviors
     Object.entries(cloudFrontOtherInputs).map(([path, config]) => {
       const edgeConfig = {
         ...(config["lambda@edge"] || {})
@@ -485,19 +499,6 @@ class NextjsComponent extends Component {
         }
       };
     });
-
-    cloudFrontOrigins[0].pathPatterns[
-      this.pathPattern("_next/data/*", routesManifest)
-    ] = {
-      minTTL: 0,
-      defaultTTL: 0,
-      maxTTL: 31536000,
-      allowedHttpMethods: ["HEAD", "GET"],
-      "lambda@edge": {
-        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-      }
-    };
 
     // make sure that origin-response is not set.
     // this is reserved for serverless-next.js usage
