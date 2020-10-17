@@ -740,6 +740,13 @@
   dependencies:
     "@types/node" "*"
 
+"@types/klaw@^3.0.1":
+  version "3.0.1"
+  resolved "https://registry.yarnpkg.com/@types/klaw/-/klaw-3.0.1.tgz#29f90021c0234976aa4eb97efced9cb6db9fa8b3"
+  integrity sha512-acnF3n9mYOr1aFJKFyvfNX0am9EtPUsYPq22QUCGdJE+MVt6UyAN1jwo+PmOPqXD4K7ZS9MtxDEp/un0lxFccA==
+  dependencies:
+    "@types/node" "*"
+
 "@types/node@*", "@types/node@^14.0.14":
   version "14.0.27"
   resolved "https://registry.npmjs.org/@types/node/-/node-14.0.27.tgz#a151873af5a5e851b51b3b065c9e63390a9e0eb1"
@@ -1187,7 +1194,7 @@ glob@^7.1.3, glob@^7.1.6:
     once "^1.3.0"
     path-is-absolute "^1.0.0"
 
-graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.2.0:
+graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0:
   version "4.2.4"
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.4.tgz#2256bde14d3632958c465ebc96dc467ca07a29fb"
   integrity sha512-WjKPNJF79dtJAVniUlGGWHYGz2jWxT6VhN/4m1NdkbZ2nOsEF+cI1Edgql5zCRhs/VsQYRvrXctxktVXZUkixw==
@@ -1357,6 +1364,13 @@ jws@^3.2.2:
   dependencies:
     jwa "^1.4.1"
     safe-buffer "^5.0.1"
+
+klaw@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/klaw/-/klaw-3.0.0.tgz#b11bec9cf2492f06756d6e809ab73a2910259146"
+  integrity sha512-0Fo5oir+O9jnXu5EefYbVK+mHMBeEVEy2cmctR1O1NECcCkPRreJKrS6Qt/j3KC2C148Dfo9i3pCmCMsdqGr0g==
+  dependencies:
+    graceful-fs "^4.1.9"
 
 loader-utils@^1.0.2:
   version "1.4.0"

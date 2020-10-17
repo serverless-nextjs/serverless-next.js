@@ -17,9 +17,14 @@ import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
+import readDirectoryFiles from "./lib/readDirectoryFiles";
+import filterOutDirectories from "./lib/filterOutDirectories";
+import { PrerenderManifest } from "next/dist/build";
+import { Item } from "klaw";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
+export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
   args?: string[];
@@ -461,6 +466,166 @@ class Builder {
     };
   }
 
+  /**
+   * Build static assets such as client-side JS, public files, static pages, etc.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildStaticAssets(routesManifest: RoutesManifest) {
+    const basePath = routesManifest.basePath;
+    const nextConfigDir = this.nextConfigDir;
+    const nextStaticDir = nextConfigDir;
+
+    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
+
+    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
+
+    const s3BasePath = basePath ? basePath.slice(1) : "";
+
+    const buildStaticFiles = await readDirectoryFiles(
+      path.join(dotNextDirectory, "static")
+    );
+
+    const withBasePath = (key: string): string => path.join(s3BasePath, key);
+
+    const staticFileAssets = buildStaticFiles
+      .filter(filterOutDirectories)
+      .map(async (fileItem: Item) => {
+        const source = fileItem.path;
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            path
+              .relative(path.resolve(nextConfigDir), source)
+              .replace(/^.next/, "_next")
+          )
+        );
+
+        return fse.copy(source, destination);
+      });
+
+    const pagesManifest = await fse.readJSON(
+      path.join(dotNextDirectory, "serverless/pages-manifest.json")
+    );
+
+    const htmlPageAssets = Object.values(pagesManifest)
+      .filter((pageFile) => (pageFile as string).endsWith(".html"))
+      .map((relativePageFilePath) => {
+        const source = path.join(
+          dotNextDirectory,
+          `serverless/${relativePageFilePath}`
+        );
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            `static-pages/${(relativePageFilePath as string).replace(
+              /^pages\//,
+              ""
+            )}`
+          )
+        );
+
+        return fse.copy(source, destination);
+      });
+
+    const prerenderManifest: PrerenderManifest = await fse.readJSON(
+      path.join(dotNextDirectory, "prerender-manifest.json")
+    );
+
+    const prerenderManifestJSONPropFileAssets = Object.keys(
+      prerenderManifest.routes
+    ).map((key) => {
+      const source = path.join(
+        dotNextDirectory,
+        `serverless/pages/${
+          key.endsWith("/") ? key + "index.json" : key + ".json"
+        }`
+      );
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
+      );
+
+      return fse.copy(source, destination);
+    });
+
+    const prerenderManifestHTMLPageAssets = Object.keys(
+      prerenderManifest.routes
+    ).map((key) => {
+      const relativePageFilePath = key.endsWith("/")
+        ? path.join(key, "index.html")
+        : key + ".html";
+
+      const source = path.join(
+        dotNextDirectory,
+        `serverless/pages/${relativePageFilePath}`
+      );
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(path.join("static-pages", relativePageFilePath))
+      );
+
+      return fse.copy(source, destination);
+    });
+
+    const fallbackHTMLPageAssets = Object.values(
+      prerenderManifest.dynamicRoutes || {}
+    )
+      .filter(({ fallback }) => {
+        return !!fallback;
+      })
+      .map((routeConfig) => {
+        const fallback = routeConfig.fallback as string;
+
+        const source = path.join(
+          dotNextDirectory,
+          `serverless/pages/${fallback}`
+        );
+
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(path.join("static-pages", fallback))
+        );
+
+        return fse.copy(source, destination);
+      });
+
+    const buildPublicOrStaticDirectory = async (
+      directory: "public" | "static"
+    ) => {
+      const directoryPath = path.join(nextStaticDir, directory);
+      if (!(await fse.pathExists(directoryPath))) {
+        return Promise.resolve([]);
+      }
+
+      const files = await readDirectoryFiles(directoryPath);
+
+      return files.filter(filterOutDirectories).map((fileItem: Item) => {
+        const source = fileItem.path;
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            path.relative(path.resolve(nextStaticDir), fileItem.path)
+          )
+        );
+
+        return fse.copy(source, destination);
+      });
+    };
+
+    const publicDirAssets = await buildPublicOrStaticDirectory("public");
+    const staticDirAssets = await buildPublicOrStaticDirectory("static");
+
+    return Promise.all([
+      ...staticFileAssets, // .next/static
+      ...htmlPageAssets, // prerendered html pages
+      ...prerenderManifestJSONPropFileAssets, // SSG json files
+      ...prerenderManifestHTMLPageAssets, // SSG html files
+      ...fallbackHTMLPageAssets, // fallback files
+      ...publicDirAssets, // public dir
+      ...staticDirAssets // static dir
+    ]);
+  }
+
   async cleanupDotNext(): Promise<void> {
     const exists = await fse.pathExists(this.dotNextDir);
 
@@ -487,6 +652,7 @@ class Builder {
 
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
 
     const { restoreUserConfig } = await createServerlessConfig(
       cwd,
@@ -524,6 +690,13 @@ class Builder {
     if (hasAPIPages) {
       await this.buildApiLambda(apiBuildManifest);
     }
+
+    // Copy static assets to .serverless_nextjs directory
+    const routesManifest = require(join(
+      this.dotNextDir,
+      "routes-manifest.json"
+    ));
+    await this.buildStaticAssets(routesManifest);
   }
 
   /**
