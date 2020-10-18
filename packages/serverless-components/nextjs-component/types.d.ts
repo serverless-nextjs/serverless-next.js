@@ -21,6 +21,7 @@ export type ServerlessComponentInputs = {
   cloudfront?: CloudfrontOptions;
   minifyHandlers?: boolean;
   uploadStaticAssetsFromBuild?: boolean;
+  deploy?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

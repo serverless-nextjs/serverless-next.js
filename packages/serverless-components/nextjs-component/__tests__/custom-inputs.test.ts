@@ -982,4 +982,33 @@ describe("Custom inputs", () => {
       });
     });
   });
+
+  describe("Skip deployment after build", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("builds but skips deployment", async () => {
+      const result = await createNextComponent().default({
+        deploy: false
+      });
+
+      expect(result).toEqual({
+        appUrl: "SKIPPED_DEPLOY",
+        bucketName: "SKIPPED_DEPLOY",
+        distributionId: "SKIPPED_DEPLOY"
+      });
+    });
+  });
 });
