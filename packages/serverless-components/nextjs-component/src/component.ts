@@ -22,7 +22,7 @@ import type {
   LambdaInput
 } from "../types";
 
-type DeploymentResult = {
+export type DeploymentResult = {
   appUrl: string;
   bucketName: string;
   distributionId: string;
@@ -160,6 +160,10 @@ class NextjsComponent extends Component {
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
 
+    const nextStaticPath = inputs.nextStaticDir
+      ? resolve(inputs.nextStaticDir)
+      : nextConfigPath;
+
     const buildCwd =
       typeof inputs.build === "boolean" ||
       typeof inputs.build === "undefined" ||
@@ -191,7 +195,8 @@ class NextjsComponent extends Component {
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
           minifyHandlers: inputs.minifyHandlers || false
-        }
+        },
+        nextStaticPath
       );
 
       await builder.build(this.context.instance.debugMode);

@@ -50,6 +50,7 @@ const defaultBuildOptions = {
 
 class Builder {
   nextConfigDir: string;
+  nextStaticDir: string;
   dotNextDir: string;
   serverlessDir: string;
   outputDir: string;
@@ -58,9 +59,11 @@ class Builder {
   constructor(
     nextConfigDir: string,
     outputDir: string,
-    buildOptions?: BuildOptions
+    buildOptions?: BuildOptions,
+    nextStaticDir?: string
   ) {
     this.nextConfigDir = path.resolve(nextConfigDir);
+    this.nextStaticDir = path.resolve(nextStaticDir ?? nextConfigDir);
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
     this.serverlessDir = path.join(this.dotNextDir, "serverless");
     this.outputDir = outputDir;
@@ -473,7 +476,7 @@ class Builder {
   async buildStaticAssets(routesManifest: RoutesManifest) {
     const basePath = routesManifest.basePath;
     const nextConfigDir = this.nextConfigDir;
-    const nextStaticDir = nextConfigDir;
+    const nextStaticDir = this.nextStaticDir;
 
     const dotNextDirectory = path.join(this.nextConfigDir, ".next");
 
