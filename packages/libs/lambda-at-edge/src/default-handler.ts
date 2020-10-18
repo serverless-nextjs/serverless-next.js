@@ -375,7 +375,12 @@ const handleOriginRequest = async ({
   log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
 
   const tBeforeSSR = now();
-  const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression: manifest.enableHTTPCompression
+    }
+  );
   try {
     // If page is _error.js, set status to 404 so _error.js will render a 404 page
     if (pagePath === "pages/_error.js") {
@@ -454,7 +459,10 @@ const handleOriginResponse = async ({
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
-      event.Records[0].cf
+      event.Records[0].cf,
+      {
+        enableHTTPCompression: manifest.enableHTTPCompression
+      }
     );
     const isSSG = !!page.getStaticProps;
     const { renderOpts, html } = await page.renderReqToHTML(

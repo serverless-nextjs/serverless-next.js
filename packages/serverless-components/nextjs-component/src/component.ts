@@ -197,7 +197,8 @@ class NextjsComponent extends Component {
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
-          minifyHandlers: inputs.minifyHandlers || false
+          minifyHandlers: inputs.minifyHandlers || false,
+          enableHTTPCompression: false
         },
         nextStaticPath
       );

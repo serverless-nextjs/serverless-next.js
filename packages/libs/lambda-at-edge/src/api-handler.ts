@@ -8,7 +8,7 @@ import {
   OriginRequestEvent,
   RoutesManifest
 } from "../types";
-import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
+import { CloudFrontResultResponse } from "aws-lambda";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
@@ -92,7 +92,9 @@ export const handler = async (
 
   // eslint-disable-next-line
   const page = require(`./${pagePath}`);
-  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
+  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
+    enableHTTPCompression: buildManifest.enableHTTPCompression
+  });
 
   page.default(req, res);
 

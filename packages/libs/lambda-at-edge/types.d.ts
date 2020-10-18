@@ -21,6 +21,7 @@ export type OriginRequestApiHandlerManifest = {
   domainRedirects: {
     [key: string]: string;
   };
+  enableHTTPCompression: boolean;
 };
 
 export type OriginRequestDefaultHandlerManifest = {
@@ -44,6 +45,7 @@ export type OriginRequestDefaultHandlerManifest = {
     [key: string]: string;
   };
   trailingSlash: boolean;
+  enableHTTPCompression: boolean;
   domainRedirects: {
     [key: string]: string;
   };
