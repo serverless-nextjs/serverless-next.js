@@ -1,8 +1,11 @@
 import { join } from "path";
 import fse from "fs-extra";
 import execa from "execa";
-import Builder from "../../src/build";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../../src/build";
+import Builder, {
+  ASSETS_DIR,
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR
+} from "../../src/build";
 import { cleanupDir, removeNewLineChars } from "../test-utils";
 import {
   OriginRequestDefaultHandlerManifest,
@@ -79,6 +82,9 @@ describe("Builder Tests", () => {
         );
         expect(fseEmptyDirSpy).toBeCalledWith(
           expect.stringContaining(join(".test_sls_next_output", "api-lambda"))
+        );
+        expect(fseEmptyDirSpy).toBeCalledWith(
+          expect.stringContaining(join(".test_sls_next_output", "assets"))
         );
       });
     });
@@ -264,6 +270,40 @@ describe("Builder Tests", () => {
         );
 
         expect(countLines(apiHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+      });
+    });
+
+    describe("Assets Artefact Files", () => {
+      it("copies all assets", async () => {
+        const publicFiles = await fse.readdir(
+          join(outputDir, `${ASSETS_DIR}/public`)
+        );
+        expect(publicFiles).toEqual(["favicon.ico", "sub", "sw.js"]);
+
+        const staticFiles = await fse.readdir(
+          join(outputDir, `${ASSETS_DIR}/static`)
+        );
+        expect(staticFiles).toEqual(["donotdelete.txt"]);
+
+        const nextDataFiles = await fse.readdir(
+          join(outputDir, `${ASSETS_DIR}/_next/data/zsWqBqLjpgRmswfQomanp`)
+        );
+        expect(nextDataFiles).toEqual(["contact.json", "index.json"]);
+
+        const nextStaticFiles = await fse.readdir(
+          join(outputDir, `${ASSETS_DIR}/_next/static`)
+        );
+        expect(nextStaticFiles).toEqual(["chunks"]);
+
+        const staticPagesFiles = await fse.readdir(
+          join(outputDir, `${ASSETS_DIR}/static-pages`)
+        );
+        expect(staticPagesFiles).toEqual([
+          "about.html",
+          "contact.html",
+          "index.html",
+          "terms.html"
+        ]);
       });
     });
   });

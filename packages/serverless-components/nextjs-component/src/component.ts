@@ -8,7 +8,10 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest
 } from "@sls-next/lambda-at-edge/types";
-import uploadAssetsToS3 from "@sls-next/s3-static-assets";
+import {
+  uploadStaticAssetsFromBuild,
+  uploadStaticAssets
+} from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
@@ -19,7 +22,7 @@ import type {
   LambdaInput
 } from "../types";
 
-type DeploymentResult = {
+export type DeploymentResult = {
   appUrl: string;
   bucketName: string;
   distributionId: string;
@@ -157,6 +160,10 @@ class NextjsComponent extends Component {
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
 
+    const nextStaticPath = inputs.nextStaticDir
+      ? resolve(inputs.nextStaticDir)
+      : nextConfigPath;
+
     const buildCwd =
       typeof inputs.build === "boolean" ||
       typeof inputs.build === "undefined" ||
@@ -188,7 +195,8 @@ class NextjsComponent extends Component {
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
           minifyHandlers: inputs.minifyHandlers || false
-        }
+        },
+        nextStaticPath
       );
 
       await builder.build(this.context.instance.debugMode);
@@ -246,14 +254,27 @@ class NextjsComponent extends Component {
       region: bucketRegion
     });
 
-    await uploadAssetsToS3({
-      bucketName: bucketOutputs.name,
-      basePath: routesManifest.basePath,
-      nextConfigDir: nextConfigPath,
-      nextStaticDir: nextStaticPath,
-      credentials: this.context.credentials.aws,
-      publicDirectoryCache: inputs.publicDirectoryCache
-    });
+    // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
+    // TODO: remove once proven stable.
+    if (inputs.uploadStaticAssetsFromBuild ?? true) {
+      await uploadStaticAssetsFromBuild({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    } else {
+      await uploadStaticAssets({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    }
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
