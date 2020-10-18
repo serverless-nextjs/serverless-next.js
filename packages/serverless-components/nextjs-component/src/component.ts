@@ -22,6 +22,9 @@ import type {
   LambdaInput
 } from "../types";
 
+// Message when deployment is explicitly skipped
+const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
+
 export type DeploymentResult = {
   appUrl: string;
   bucketName: string;
@@ -206,6 +209,16 @@ class NextjsComponent extends Component {
   async deploy(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    // Skip deployment if user explicitly set deploy input to false.
+    // Useful when they just want the build outputs to deploy themselves.
+    if (inputs.deploy === false) {
+      return {
+        appUrl: SKIPPED_DEPLOY,
+        bucketName: SKIPPED_DEPLOY,
+        distributionId: SKIPPED_DEPLOY
+      };
+    }
+
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
