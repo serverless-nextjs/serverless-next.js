@@ -1,6 +1,12 @@
 import klaw, { Item } from "klaw";
+import fse from "fs-extra";
 
-const readDirectoryFiles = (directory: string): Promise<Array<Item>> => {
+const readDirectoryFiles = async (directory: string): Promise<Array<Item>> => {
+  const directoryExists = await fse.pathExists(directory);
+  if (!directoryExists) {
+    return Promise.resolve([]);
+  }
+
   const items: Item[] = [];
   return new Promise((resolve, reject) => {
     klaw(directory.trim())

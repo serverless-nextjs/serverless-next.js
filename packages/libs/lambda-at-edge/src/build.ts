@@ -479,13 +479,22 @@ class Builder {
 
     const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
 
-    const s3BasePath = basePath ? basePath.slice(1) : "";
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+    const withBasePath = (key: string): string =>
+      path.join(normalizedBasePath, key);
+
+    const copyIfExists = async (
+      source: string,
+      destination: string
+    ): Promise<void> => {
+      if (await fse.pathExists(source)) {
+        await fse.copy(source, destination);
+      }
+    };
 
     const buildStaticFiles = await readDirectoryFiles(
       path.join(dotNextDirectory, "static")
     );
-
-    const withBasePath = (key: string): string => path.join(s3BasePath, key);
 
     const staticFileAssets = buildStaticFiles
       .filter(filterOutDirectories)
@@ -500,7 +509,7 @@ class Builder {
           )
         );
 
-        return fse.copy(source, destination);
+        return copyIfExists(source, destination);
       });
 
     const pagesManifest = await fse.readJSON(
@@ -524,7 +533,7 @@ class Builder {
           )
         );
 
-        return fse.copy(source, destination);
+        return copyIfExists(source, destination);
       });
 
     const prerenderManifest: PrerenderManifest = await fse.readJSON(
@@ -545,7 +554,7 @@ class Builder {
         withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
       );
 
-      return fse.copy(source, destination);
+      return copyIfExists(source, destination);
     });
 
     const prerenderManifestHTMLPageAssets = Object.keys(
@@ -564,7 +573,7 @@ class Builder {
         withBasePath(path.join("static-pages", relativePageFilePath))
       );
 
-      return fse.copy(source, destination);
+      return copyIfExists(source, destination);
     });
 
     const fallbackHTMLPageAssets = Object.values(
@@ -586,7 +595,7 @@ class Builder {
           withBasePath(path.join("static-pages", fallback))
         );
 
-        return fse.copy(source, destination);
+        return copyIfExists(source, destination);
       });
 
     const buildPublicOrStaticDirectory = async (

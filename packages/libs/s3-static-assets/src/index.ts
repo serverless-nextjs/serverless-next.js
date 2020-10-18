@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import path from "path";
+import path, { join } from "path";
 import fse from "fs-extra";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
@@ -31,14 +31,25 @@ type UploadStaticAssetsOptions = {
 const uploadStaticAssetsFromBuild = async (
   options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
-  const { bucketName, credentials, basePath, publicDirectoryCache } = options;
+  const {
+    bucketName,
+    credentials,
+    basePath,
+    publicDirectoryCache,
+    nextConfigDir
+  } = options;
   const s3 = await S3ClientFactory({
     bucketName,
     credentials: credentials
   });
 
   const normalizedBasePath = basePath ? basePath.slice(1) : "";
-  const assetsOutputDirectory = "";
+
+  const assetsOutputDirectory = path.join(
+    nextConfigDir,
+    ".serverless_nextjs",
+    "assets"
+  );
 
   // Upload Next.js static files
 
@@ -76,7 +87,7 @@ const uploadStaticAssetsFromBuild = async (
       return s3.uploadFile({
         s3Key,
         filePath: fileItem.path,
-        cacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+        cacheControl: SERVER_CACHE_CONTROL_HEADER
       });
     });
 
