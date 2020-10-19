@@ -20,3 +20,13 @@ module.exports.render = async (event, context) => {
   return responsePromise;
 };
 ```
+
+## Options
+
+### Gzip compression
+
+```js
+const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
+  enableHTTPCompresssion: true // false by default
+});
+```
