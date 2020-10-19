@@ -1,5 +1,5 @@
 import path from "path";
-import uploadStaticAssets from "../src/index";
+import { uploadStaticAssets } from "../src/index";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
   DEFAULT_PUBLIC_DIR_CACHE_CONTROL,

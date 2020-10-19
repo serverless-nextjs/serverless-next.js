@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.11...@sls-next/serverless-component@1.18.0-alpha.12) (2020-10-18)
+
+### Features
+
+- **nextjs-component:** add deploy input which can be set to false to skip deployment ([#691](https://github.com/serverless-nextjs/serverless-next.js/issues/691)) ([5adaf2b](https://github.com/serverless-nextjs/serverless-next.js/commit/5adaf2bacae6f8647ac7fc90f910eefb97d8f229))
+
+# [1.18.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.10...@sls-next/serverless-component@1.18.0-alpha.11) (2020-10-16)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+# [1.18.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.9...@sls-next/serverless-component@1.18.0-alpha.10) (2020-10-16)
+
+### Bug Fixes
+
+- **nextjs-component:** fix inability to set custom behavior for \_next/data/\* ([#684](https://github.com/serverless-nextjs/serverless-next.js/issues/684)) ([326acc8](https://github.com/serverless-nextjs/serverless-next.js/commit/326acc859dc20bb59b89bcbcbf4095d6db7c9dc2))
+
 # [1.18.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.8...@sls-next/serverless-component@1.18.0-alpha.9) (2020-10-15)
 
 **Note:** Version bump only for package @sls-next/serverless-component
