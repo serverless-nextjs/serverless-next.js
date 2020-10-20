@@ -21,6 +21,8 @@ In watch mode:
 yarn test --watch lambda-at-edge/
 ```
 
+Note that you may need to first build some packages e.g for `serverless-components` before running the tests.
+
 #### Integration tests
 
 To run local integration tests, run the following command:
@@ -31,10 +33,17 @@ yarn integration
 
 #### End-to-end tests
 
-The end-to-end tests will automatically verify a real deployment to AWS using a test app. The test app may also be useful for you to manually verify your changes.
+The end-to-end tests will automatically verify a real deployment to AWS using a test app. Currently, we have four sets of end-to-end tests, which each test various configurations:
+
+* next-app: basic app
+* next-app-with-trailing-slash: app with `trailingSlash = true`
+* next-app-with-basepath: app with `basepath` set
+* next-app-dynamic-routes: app that tests catch-all and other dynamic routes
+
+Each test app tests various combinations of configuration. The test app may also be useful for you to manually verify your changes. When making a PR, it is recommended to at least run the end-to-end tests for the basic app, i.e `next-app`. However, if you have difficulty setting up the end-to-end tests, no worries! We will also run them for you as part of the PR. For forks, this is run manually by a maintainer.
 
 1. Ensure you have built all your changes by running `yarn` in the root directory of `serverless-next.js` repository.
-2. Change directory to the test [Next.js app](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/e2e-tests/next-app).
+2. Change directory to the test app, e.g the basic one is [next-app](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/e2e-tests/next-app).
 3. Run `yarn install` to ensure dependencies such as Cypress are installed.
 4. Run `AWS_ACCESS_KEY_ID=xxx AWS_SECRET_ACCESS_KEY=xxx serverless` (or `npx serverless`) to deploy your changes to your AWS account.
 5. Save the output CloudFront distribution URL somewhere.
@@ -44,9 +53,11 @@ The end-to-end tests will automatically verify a real deployment to AWS using a 
 CYPRESS_NEXT_BUILD_ID=123 CYPRESS_BASE_URL=https://dxxxxxxxxxxxx.cloudfront.net yarn e2e
 ```
 
-This will run the tests in headless mode using the [Electron](https://www.electronjs.org/) browser, which is based on Chromium. You can also run it in Chrome by adding arguments `--browser chrome`.
+This will run the tests in headless mode using the [Electron](https://www.electronjs.org/) browser, which is based on Chromium. You can also run it in Chrome by adding arguments `--browser chrome`. For other options, refer to the Cypress documentation.
 
 ### Deploying to AWS and testing your changes
+
+In general, the above end-to-end tests should be sufficient. But if you want to use your own app, follow the below guide.
 
 First, create your own test serverless component app and in the `serverless.yml` point the `component` field to your fork:
 
@@ -61,11 +72,11 @@ Then from the app simply run `serverless` or `npx serverless` if you don't have 
 
 For interactive debugging of the deployment you may launch serverless through node like `node --inspect node_modules/serverless/bin/serverless.js`. From there you may attach and debug as any other Node.js app.
 
-Note: If you are working with a Typescript package make sure you build it (`yarn build`) before deploying ;)
+Note: If you are working with a TypeScript package make sure you build it (`yarn build`) before deploying ;)
 
 ### Updating handler code
 
-If you are updating the handler code, please be mindful of increasing cold start times and/or handler size, especially when adding new dependencies or doing complex operations. Note that JS `require` time has the most impact on cold start times. While code size is also important, it has little effect on cold start times, because Lambda seems to cache the code pretty efficiently - and this can be mitigated by minifying the Next.js build. 
+If you are updating the runtime handler code, please be mindful of increasing cold start times and/or handler size, especially when adding new dependencies or doing complex operations. Note that JS `require` time has the most impact on cold start times. While code size is also important, it has little effect on cold start times, because Lambda seems to cache the code pretty efficiently - and this can be mitigated by minifying the Next.js build. 
 
 Note that Node.js seems to have a minimum cold start time of ~150 ms, even on an hello-world handler. So the idea is to try to optimize everything else as much as possible.
 

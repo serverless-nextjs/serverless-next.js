@@ -81,7 +81,11 @@ const getOutdatedDomains = (inputs, state) => {
  * - These don't need to be created and SHOULD NOT be modified.
  */
 const getDomainHostedZoneId = async (route53, domain, privateZone) => {
-  const hostedZonesRes = await route53.listHostedZonesByName().promise();
+  const params = {
+    DNSName: domain
+  };
+  
+  const hostedZonesRes = await route53.listHostedZonesByName(params).promise();
 
   const hostedZone = hostedZonesRes.HostedZones.find(
     // Name has a period at the end, so we're using includes rather than equals
@@ -121,7 +125,7 @@ const getCertificateArnByDomain = async (acm, domain) => {
   for (const certificate of listRes.CertificateSummaryList) {
     if (certificate.DomainName === domain && certificate.CertificateArn) {
       if (domain.startsWith("www.")) {
-        const nakedDomain = domain.replace("wwww.", "");
+        const nakedDomain = domain.replace("www.", "");
         // check whether certificate support naked domain
         const certDetail = await describeCertificateByArn(
           acm,
