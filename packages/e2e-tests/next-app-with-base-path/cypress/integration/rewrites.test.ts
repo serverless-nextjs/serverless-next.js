@@ -34,6 +34,21 @@ describe("Rewrites Tests", () => {
         path: "/basepath/api/rewrite-basic-api",
         expectedRewrite: "/basepath/api/basic-api",
         expectedStatus: 200
+      },
+      {
+        path: "/basepath/ssr-page",
+        expectedRewrite: "/basepath/ssr-page",
+        expectedStatus: 200
+      },
+      {
+        path: "/basepath/ssg-page",
+        expectedRewrite: "/basepath/ssg-page",
+        expectedStatus: 200
+      },
+      {
+        path: "/basepath/app-store-badge.png",
+        expectedRewrite: "/basepath/app-store-badge.png",
+        expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {
       it(`rewrites path ${path} to ${expectedRewrite}`, () => {

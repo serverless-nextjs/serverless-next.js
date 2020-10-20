@@ -43,6 +43,11 @@
       "source": "/path-rewrite/:slug",
       "destination": "/terms",
       "regex": "^/path-rewrite(?:/([^/]+?))$"
+    },
+    {
+      "source": "/terms",
+      "destination": "/",
+      "regex": "^/terms$"
     }
   ],
   "headers": [

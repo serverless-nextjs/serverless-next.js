@@ -87,6 +87,21 @@ module.exports = {
         destination: "/regex-rewrite-2-dest/:slug"
       },
       {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/ssg-page",
+        destination: "/"
+      },
+      {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/ssr-page",
+        destination: "/"
+      },
+      {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/app-store-badge.png",
+        destination: "/"
+      },
+      {
         source: "/api/rewrite-basic-api",
         destination: "/api/basic-api"
       }
