@@ -30,6 +30,7 @@ import {
   getRedirectPath
 } from "./routing/redirector";
 import { getRewritePath } from "./routing/rewriter";
+import { addHeadersToResponse } from "./headers/addHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
@@ -195,6 +196,18 @@ export const handler = async (
     });
   }
 
+  // Add custom headers to responses only.
+  // TODO: for paths that hit S3 origin, it will match on the rewritten URI, i.e it may be rewritten to S3 key.
+  if (response.hasOwnProperty("status")) {
+    const request = event.Records[0].cf.request;
+
+    addHeadersToResponse(
+      request.uri,
+      response as CloudFrontResultResponse,
+      routesManifest
+    );
+  }
+
   const tHandlerEnd = now();
 
   log("handler execution time", tHandlerBegin, tHandlerEnd);
@@ -280,7 +293,7 @@ const handleOriginRequest = async ({
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
-  const hasFallback = hasFallbackForUri(uri, prerenderManifest);
+  const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
   const previewCookies = getPreviewCookies(request);
   const isPreviewRequest =
@@ -310,20 +323,16 @@ const handleOriginRequest = async ({
     (hasFallback && !isPreviewRequest) ||
     (isDataReq && !isPreviewRequest)
   ) {
-    if (isHTMLPage || hasFallback) {
-      s3Origin.path = `${basePath}/static-pages`;
-      const pageName = uri === "/" ? "/index" : uri;
-      request.uri = `${pageName}.html`;
-    }
-
     if (isPublicFile) {
       s3Origin.path = `${basePath}/public`;
       if (basePath) {
         request.uri = request.uri.replace(basePath, "");
       }
-    }
-
-    if (isDataReq) {
+    } else if (isHTMLPage || hasFallback) {
+      s3Origin.path = `${basePath}/static-pages`;
+      const pageName = uri === "/" ? "/index" : uri;
+      request.uri = `${pageName}.html`;
+    } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
       const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
       const pagePath = router(manifest)(normalisedDataRequestUri);
@@ -424,6 +433,12 @@ const handleOriginResponse = async ({
     }
     return response;
   }
+
+  // For PUT or DELETE just return the response as these should be unsupported S3 methods
+  if (request.method === "PUT" || request.method === "DELETE") {
+    return response;
+  }
+
   const uri = normaliseUri(request.uri);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
@@ -450,13 +465,18 @@ const handleOriginResponse = async ({
     if (isSSG) {
       const s3JsonParams = {
         Bucket: bucketName,
-        Key: uri.replace(/^\//, ""),
+        Key: `${basePath}${basePath === "" ? "" : "/"}${uri.replace(
+          /^\//,
+          ""
+        )}`,
         Body: JSON.stringify(renderOpts.pageData),
         ContentType: "application/json"
       };
       const s3HtmlParams = {
         Bucket: bucketName,
-        Key: `static-pages/${request.uri
+        Key: `${basePath}${
+          basePath === "" ? "" : "/"
+        }static-pages/${request.uri
           .replace(`/_next/data/${manifest.buildId}/`, "")
           .replace(".json", ".html")}`,
         Body: html,
@@ -476,29 +496,44 @@ const handleOriginResponse = async ({
     res.end(JSON.stringify(renderOpts.pageData));
     return await responsePromise;
   } else {
-    const hasFallback = hasFallbackForUri(uri, prerenderManifest);
+    const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
     if (!hasFallback) return response;
-    const s3Params = {
-      Bucket: bucketName,
-      Key: `static-pages${hasFallback.fallback}`
-    };
+
+    // If route has fallback, return that page from S3, otherwise return 404 page
+    let s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages${
+      hasFallback.fallback || "/404.html"
+    }`;
+
     const { GetObjectCommand } = await import(
       "@aws-sdk/client-s3/commands/GetObjectCommand"
     );
-    const { Body } = await s3.send(new GetObjectCommand(s3Params));
-
-    // Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
     const getStream = await import("get-stream");
-    const bodyString = await getStream.default(Body as Readable);
+    let bodyString;
+
+    const s3Params = {
+      Bucket: bucketName,
+      Key: s3Key
+    };
+
+    const { Body } = await s3.send(new GetObjectCommand(s3Params));
+    bodyString = await getStream.default(Body as Readable);
+
     return {
-      status: "200",
-      statusDescription: "OK",
+      status: hasFallback.fallback ? "200" : "404",
+      statusDescription: hasFallback.fallback ? "OK" : "Not Found",
       headers: {
         ...response.headers,
         "content-type": [
           {
             key: "Content-Type",
             value: "text/html"
+          }
+        ],
+        "cache-control": [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=2678400, must-revalidate"
           }
         ]
       },
@@ -515,8 +550,17 @@ const isOriginResponse = (
 
 const hasFallbackForUri = (
   uri: string,
-  prerenderManifest: PrerenderManifestType
+  prerenderManifest: PrerenderManifestType,
+  manifest: OriginRequestDefaultHandlerManifest
 ) => {
+  const {
+    pages: { ssr, html }
+  } = manifest;
+  // Non dynamic routes are prioritized over dynamic fallbacks, return false to ensure those get rendered instead
+  if (ssr.nonDynamic[uri] || html.nonDynamic[uri]) {
+    return false;
+  }
+
   return Object.values(prerenderManifest.dynamicRoutes).find((routeConfig) => {
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);

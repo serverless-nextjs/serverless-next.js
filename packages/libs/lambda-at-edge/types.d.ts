@@ -101,6 +101,16 @@ export type RedirectData = {
 export type RewriteData = {
   source: string;
   destination: string;
+};
+
+export type Header = {
+  key: string;
+  value: string;
+};
+
+export type HeaderData = {
+  source: string;
+  headers: Header[];
   regex: string;
 };
 
@@ -108,6 +118,7 @@ export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
   rewrites: RewriteData[];
+  headers: HeaderData[];
 };
 
 export type PerfLogger = {

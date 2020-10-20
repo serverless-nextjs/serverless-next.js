@@ -17,9 +17,14 @@ import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
+import readDirectoryFiles from "./lib/readDirectoryFiles";
+import filterOutDirectories from "./lib/filterOutDirectories";
+import { PrerenderManifest } from "next/dist/build";
+import { Item } from "klaw";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
+export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
   args?: string[];
@@ -29,6 +34,7 @@ type BuildOptions = {
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
   domainRedirects?: { [key: string]: string };
+  minifyHandlers?: boolean;
   handler?: string;
 };
 
@@ -39,11 +45,13 @@ const defaultBuildOptions = {
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
   logLambdaExecutionTimes: false,
-  domainRedirects: {}
+  domainRedirects: {},
+  minifyHandlers: false
 };
 
 class Builder {
   nextConfigDir: string;
+  nextStaticDir: string;
   dotNextDir: string;
   serverlessDir: string;
   outputDir: string;
@@ -52,9 +60,11 @@ class Builder {
   constructor(
     nextConfigDir: string,
     outputDir: string,
-    buildOptions?: BuildOptions
+    buildOptions?: BuildOptions,
+    nextStaticDir?: string
   ) {
     this.nextConfigDir = path.resolve(nextConfigDir);
+    this.nextStaticDir = path.resolve(nextStaticDir ?? nextConfigDir);
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
     this.serverlessDir = path.join(this.dotNextDir, "serverless");
     this.outputDir = outputDir;
@@ -180,6 +190,26 @@ class Builder {
     await fse.writeFile(destination, JSON.stringify(routesManifest));
   }
 
+  /**
+   * Process and copy handler code. This allows minifying it before copying to Lambda package.
+   * @param handlerType
+   * @param destination
+   * @param shouldMinify
+   */
+  async processAndCopyHandler(
+    handlerType: "api-handler" | "default-handler",
+    destination: string,
+    shouldMinify: boolean
+  ) {
+    const source = require.resolve(
+      `@sls-next/lambda-at-edge/dist/${handlerType}${
+        shouldMinify ? ".min" : ""
+      }.js`
+    );
+
+    await fse.copy(source, destination);
+  }
+
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
@@ -224,6 +254,11 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
+      this.processAndCopyHandler(
+        "default-handler",
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
+      ),
       this.buildOptions?.handler
         ? fse.copy(
             join(this.nextConfigDir, this.buildOptions.handler),
@@ -234,10 +269,6 @@ class Builder {
             )
           )
         : Promise.resolve(),
-      fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/default-handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
-      ),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
@@ -313,16 +344,17 @@ class Builder {
 
     return Promise.all([
       ...copyTraces,
+      this.processAndCopyHandler(
+        "api-handler",
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
+      ),
       this.buildOptions?.handler
         ? fse.copy(
             join(this.nextConfigDir, this.buildOptions.handler),
             join(this.outputDir, API_LAMBDA_CODE_DIR, this.buildOptions.handler)
           )
         : Promise.resolve(),
-      fse.copy(
-        require.resolve("@sls-next/lambda-at-edge/dist/api-handler.js"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
-      ),
       fse.copy(
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
@@ -331,7 +363,7 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
       ),
-      fse.copy(
+      this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
@@ -454,6 +486,175 @@ class Builder {
     };
   }
 
+  /**
+   * Build static assets such as client-side JS, public files, static pages, etc.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildStaticAssets(routesManifest: RoutesManifest) {
+    const basePath = routesManifest.basePath;
+    const nextConfigDir = this.nextConfigDir;
+    const nextStaticDir = this.nextStaticDir;
+
+    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
+
+    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
+
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+    const withBasePath = (key: string): string =>
+      path.join(normalizedBasePath, key);
+
+    const copyIfExists = async (
+      source: string,
+      destination: string
+    ): Promise<void> => {
+      if (await fse.pathExists(source)) {
+        await fse.copy(source, destination);
+      }
+    };
+
+    const buildStaticFiles = await readDirectoryFiles(
+      path.join(dotNextDirectory, "static")
+    );
+
+    const staticFileAssets = buildStaticFiles
+      .filter(filterOutDirectories)
+      .map(async (fileItem: Item) => {
+        const source = fileItem.path;
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            path
+              .relative(path.resolve(nextConfigDir), source)
+              .replace(/^.next/, "_next")
+          )
+        );
+
+        return copyIfExists(source, destination);
+      });
+
+    const pagesManifest = await fse.readJSON(
+      path.join(dotNextDirectory, "serverless/pages-manifest.json")
+    );
+
+    const htmlPageAssets = Object.values(pagesManifest)
+      .filter((pageFile) => (pageFile as string).endsWith(".html"))
+      .map((relativePageFilePath) => {
+        const source = path.join(
+          dotNextDirectory,
+          `serverless/${relativePageFilePath}`
+        );
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            `static-pages/${(relativePageFilePath as string).replace(
+              /^pages\//,
+              ""
+            )}`
+          )
+        );
+
+        return copyIfExists(source, destination);
+      });
+
+    const prerenderManifest: PrerenderManifest = await fse.readJSON(
+      path.join(dotNextDirectory, "prerender-manifest.json")
+    );
+
+    const prerenderManifestJSONPropFileAssets = Object.keys(
+      prerenderManifest.routes
+    ).map((key) => {
+      const source = path.join(
+        dotNextDirectory,
+        `serverless/pages/${
+          key.endsWith("/") ? key + "index.json" : key + ".json"
+        }`
+      );
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
+      );
+
+      return copyIfExists(source, destination);
+    });
+
+    const prerenderManifestHTMLPageAssets = Object.keys(
+      prerenderManifest.routes
+    ).map((key) => {
+      const relativePageFilePath = key.endsWith("/")
+        ? path.join(key, "index.html")
+        : key + ".html";
+
+      const source = path.join(
+        dotNextDirectory,
+        `serverless/pages/${relativePageFilePath}`
+      );
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(path.join("static-pages", relativePageFilePath))
+      );
+
+      return copyIfExists(source, destination);
+    });
+
+    const fallbackHTMLPageAssets = Object.values(
+      prerenderManifest.dynamicRoutes || {}
+    )
+      .filter(({ fallback }) => {
+        return !!fallback;
+      })
+      .map((routeConfig) => {
+        const fallback = routeConfig.fallback as string;
+
+        const source = path.join(
+          dotNextDirectory,
+          `serverless/pages/${fallback}`
+        );
+
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(path.join("static-pages", fallback))
+        );
+
+        return copyIfExists(source, destination);
+      });
+
+    const buildPublicOrStaticDirectory = async (
+      directory: "public" | "static"
+    ) => {
+      const directoryPath = path.join(nextStaticDir, directory);
+      if (!(await fse.pathExists(directoryPath))) {
+        return Promise.resolve([]);
+      }
+
+      const files = await readDirectoryFiles(directoryPath);
+
+      return files.filter(filterOutDirectories).map((fileItem: Item) => {
+        const source = fileItem.path;
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            path.relative(path.resolve(nextStaticDir), fileItem.path)
+          )
+        );
+
+        return fse.copy(source, destination);
+      });
+    };
+
+    const publicDirAssets = await buildPublicOrStaticDirectory("public");
+    const staticDirAssets = await buildPublicOrStaticDirectory("static");
+
+    return Promise.all([
+      ...staticFileAssets, // .next/static
+      ...htmlPageAssets, // prerendered html pages
+      ...prerenderManifestJSONPropFileAssets, // SSG json files
+      ...prerenderManifestHTMLPageAssets, // SSG html files
+      ...fallbackHTMLPageAssets, // fallback files
+      ...publicDirAssets, // public dir
+      ...staticDirAssets // static dir
+    ]);
+  }
+
   async cleanupDotNext(): Promise<void> {
     const exists = await fse.pathExists(this.dotNextDir);
 
@@ -470,7 +671,7 @@ class Builder {
     }
   }
 
-  async build(debugMode: boolean): Promise<void> {
+  async build(debugMode?: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
@@ -480,6 +681,7 @@ class Builder {
 
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
 
     const { restoreUserConfig } = await createServerlessConfig(
       cwd,
@@ -517,6 +719,13 @@ class Builder {
     if (hasAPIPages) {
       await this.buildApiLambda(apiBuildManifest);
     }
+
+    // Copy static assets to .serverless_nextjs directory
+    const routesManifest = require(join(
+      this.dotNextDir,
+      "routes-manifest.json"
+    ));
+    await this.buildStaticAssets(routesManifest);
   }
 
   /**

@@ -1,5 +1,5 @@
 import AWS from "aws-sdk";
-import path from "path";
+import path, { join } from "path";
 import fse from "fs-extra";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
@@ -23,6 +23,135 @@ type UploadStaticAssetsOptions = {
   publicDirectoryCache?: PublicDirectoryCache;
 };
 
+/**
+ * Uploads from built assets folder in .serverless_nextjs/assets to S3.
+ * This is used to decouple a build from deployment.
+ * Currently this works for Lambda@Edge deployment.
+ */
+const uploadStaticAssetsFromBuild = async (
+  options: UploadStaticAssetsOptions
+): Promise<AWS.S3.ManagedUpload.SendData[]> => {
+  const {
+    bucketName,
+    credentials,
+    basePath,
+    publicDirectoryCache,
+    nextConfigDir
+  } = options;
+  const s3 = await S3ClientFactory({
+    bucketName,
+    credentials: credentials
+  });
+
+  const normalizedBasePath = basePath ? basePath.slice(1) : "";
+
+  const assetsOutputDirectory = path.join(
+    nextConfigDir,
+    ".serverless_nextjs",
+    "assets"
+  );
+
+  // Upload Next.js static files
+
+  const nextStaticFiles = await readDirectoryFiles(
+    path.join(assetsOutputDirectory, normalizedBasePath, "_next", "static")
+  );
+
+  const nextStaticFilesUploads = nextStaticFiles
+    .filter(filterOutDirectories)
+    .map(async (fileItem) => {
+      const s3Key = pathToPosix(
+        path.relative(assetsOutputDirectory, fileItem.path)
+      );
+
+      return s3.uploadFile({
+        s3Key,
+        filePath: fileItem.path,
+        cacheControl: IMMUTABLE_CACHE_CONTROL_HEADER
+      });
+    });
+
+  // Upload Next.js data files
+
+  const nextDataFiles = await readDirectoryFiles(
+    path.join(assetsOutputDirectory, normalizedBasePath, "_next", "data")
+  );
+
+  const nextDataFilesUploads = nextDataFiles
+    .filter(filterOutDirectories)
+    .map(async (fileItem) => {
+      const s3Key = pathToPosix(
+        path.relative(assetsOutputDirectory, fileItem.path)
+      );
+
+      return s3.uploadFile({
+        s3Key,
+        filePath: fileItem.path,
+        cacheControl: SERVER_CACHE_CONTROL_HEADER
+      });
+    });
+
+  // Upload Next.js HTML pages
+
+  const htmlPages = await readDirectoryFiles(
+    path.join(assetsOutputDirectory, normalizedBasePath, "static-pages")
+  );
+
+  const htmlPagesUploads = htmlPages
+    .filter(filterOutDirectories)
+    .map(async (fileItem) => {
+      const s3Key = pathToPosix(
+        path.relative(assetsOutputDirectory, fileItem.path)
+      );
+
+      return s3.uploadFile({
+        s3Key,
+        filePath: fileItem.path,
+        cacheControl: SERVER_CACHE_CONTROL_HEADER
+      });
+    });
+
+  // Upload user static and public files
+
+  const publicFiles = await readDirectoryFiles(
+    path.join(assetsOutputDirectory, normalizedBasePath, "public")
+  );
+
+  const staticFiles = await readDirectoryFiles(
+    path.join(assetsOutputDirectory, normalizedBasePath, "static")
+  );
+
+  const publicAndStaticUploads = [...publicFiles, ...staticFiles]
+    .filter(filterOutDirectories)
+    .map(async (fileItem) => {
+      const s3Key = pathToPosix(
+        path.relative(assetsOutputDirectory, fileItem.path)
+      );
+
+      return s3.uploadFile({
+        filePath: fileItem.path,
+        s3Key: s3Key,
+        cacheControl: getPublicAssetCacheControl(
+          fileItem.path,
+          publicDirectoryCache
+        )
+      });
+    });
+
+  return Promise.all([
+    ...nextStaticFilesUploads,
+    ...nextDataFilesUploads,
+    ...htmlPagesUploads,
+    ...publicAndStaticUploads
+  ]);
+};
+
+/**
+ * @deprecated This uploads directly from .next build directory. Deprecated since
+ * it couples the build and deploy steps for S3 into one. The new method is to use
+ * uploadStaticAssetsFromBuild() instead.
+ * @param options
+ */
 const uploadStaticAssets = async (
   options: UploadStaticAssetsOptions
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
@@ -205,4 +334,4 @@ const uploadStaticAssets = async (
   return Promise.all(allUploads);
 };
 
-export default uploadStaticAssets;
+export { uploadStaticAssetsFromBuild, uploadStaticAssets };

@@ -54,5 +54,21 @@ module.exports = {
         })
       })
     );
+  },
+
+  assertHasCustomOriginConfig: (spy, originConfig) => {
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Items: expect.arrayContaining([
+              expect.objectContaining({
+                CustomOriginConfig: expect.objectContaining(originConfig)
+              })
+            ])
+          })
+        })
+      })
+    );
   }
 };

@@ -2,15 +2,20 @@
 
 ![logo](./logo.gif)
 
-A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) aiming for full feature parity.
+[![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
+[![GitHub contributors](https://img.shields.io/github/contributors/serverless-nextjs/serverless-next.js)](https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors)
+[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=backers)](https://opencollective.com/serverless-nextjs-plugin)
+[![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
+![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
+![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.5-blue)
+![Platforms](https://img.shields.io/badge/platforms-aws-blue)
+
+A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
 Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
-
-[![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
-![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
-[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
-[![Coverage Status](https://coveralls.io/repos/github/serverless-nextjs/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/serverless-nextjs/serverless-next.js?branch=master)
 
 ## Contents
 
@@ -32,7 +37,7 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 
 ### Motivation
 
-Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
+Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/serverless-nextjs/serverless-next.js/issues/101), [better development experience](https://github.com/serverless-nextjs/serverless-next.js/issues/59), [the 200 CloudFormation resource limit](https://github.com/serverless-nextjs/serverless-next.js/issues/17) and [performance](https://github.com/serverless-nextjs/serverless-next.js/issues/13).
 
 ### Design principles
 
@@ -40,9 +45,9 @@ Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-ne
 
 There is no configuration needed. You can extend defaults based on your application needs.
 
-2. Feature parity with nextjs
+2. Feature parity with Next.js
 
-Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
+Users of this component should be able to use Next.js development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
 
 3. Fast deployments / no CloudFormation resource limits.
 
@@ -50,7 +55,9 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Features
 
-The following shows all supported features or planned features. Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
+The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or implementation stage. Please refer to an item's description for specific details.
+
+Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
 
 - [x] [Server side rendered pages at the Edge](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
       Pages that need server side compute to render are hosted on Lambda@Edge. The component takes care of all the routing for you so there is no configuration needed. Because rendering happens at the CloudFront edge locations latency is very low!
@@ -61,18 +68,18 @@ The following shows all supported features or planned features. Is there a featu
 - [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
       Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
 - [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
-      Nextjs build assets `/_next/*` served from CloudFront.
+      Next.js build assets `/_next/*` served from CloudFront.
 - [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
-- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
+- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths` (Note: known conflict with public files if you use this with a root dynamic route and `fallback: false` is not supported in 1.17. Please try the latest 1.18 alpha in case of any issues).
 - [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
 - [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
-- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release now (caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
-- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). In latest alpha release now (caveats: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. [External URL rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewriting-to-an-external-url) are not yet implemented). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
-- [ ] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release (caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). In latest alpha release (caveats: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. [External URL rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewriting-to-an-external-url) are not yet implemented). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). In latest alpha release (caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
 
 ### Getting started
 
@@ -100,6 +107,8 @@ $ serverless
 
 :no_entry_sign: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
 
+:no_entry_sign: **Do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
+
 ### Custom domain name
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
@@ -110,7 +119,7 @@ You can use any domain name but you must be using AWS Route53 for your DNS hosti
 - Route53 must include a _hosted zone_ for your domain (e.g. `mydomain.com`) with a set of nameservers.
 - You must update the nameservers listed with your domain name registrar (e.g. namecheap, godaddy, etc.) with those provided for your new _hosted zone_.
 
-The serverless next.js component will automatically generate an SSL certificate and create a new record to point to your CloudFront distribution.
+The serverless Next.js component will automatically generate an SSL certificate and create a new record to point to your CloudFront distribution.
 
 ```yml
 # serverless.yml
@@ -187,6 +196,13 @@ myNextApplication:
               minTTL: 10
               maxTTL: 10
               defaultTTL: 10
+        - url: http://old-api.com
+          protocolPolicy: http-only
+          pathPatterns:
+            /old-api/*:
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
       aliases: ["foo.example.com", "bar.example.com"]
       priceClass: "PriceClass_100"
       # You can add custom error responses
@@ -197,7 +213,7 @@ myNextApplication:
           responseCode: 500 # optional, alters the response code
 ```
 
-This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
 You can also [update an existing cloudfront distribution](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#updating-an-existing-cloudfront-distribution) using custom cloudfront inputs.
 
 ### Static pages caching
@@ -413,6 +429,8 @@ The fourth cache behaviour handles next API requests `api/*`.
 | publicDirectoryCache     | `boolean\|object` | `true`                                                                                                                     | Customize the `public`/`static` folder asset caching policy. Assigning an object with `value` and/or `test` lets you customize the caching policy and the types of files being cached. Assigning false disables caching                                                                                                                                                          |
 | useServerlessTraceTarget | `boolean`         | `false`                                                                                                                    | Use the experimental-serverless-trace target to build your next app. This is the same build target that Vercel Now uses. See this [RFC](https://github.com/vercel/next.js/pull/8246) for details.                                                                                                                                                                                |
 | logLambdaExecutionTimes  | `boolean`         | `false`                                                                                                                    | Logs to CloudWatch the default handler performance metrics.                                                                                                                                                                                                                                                                                                                      |
+| minifyHandlers           | `boolean`         | `false`                                                                                                                    | Use minified handlers to reduce code size.                                                                                                                                                                                                                                                                                                                                       |
+| deploy                   | `boolean`         | `true`                                                                                                                     | Whether to deploy resources to AWS. Useful if you just need the Lambdas and assets but want to deploy them yourself (available in latest alpha).                                                                                                                                                                                                                                 |
 
 Custom inputs can be configured like this:
 
@@ -472,6 +490,8 @@ If you are encountering code size issues, please try the following:
 
 - Optimize your code size: reduce # dependencies in your SSR pages and API routes, have fewer SSR pages (i.e don't use `getInitialProps()` or `getServerSideProps()`).
 
+- Minify the handler code itself by using the `minifyHandlers` input. This will reduce handler size from ~500 kB to ~200 kB.
+
 - Minify/minimize your server-side code using Terser by adding the following Webpack configuration to your `next.config.js`. It uses `NEXT_MINIMIZE` environment variable to tell it to minimize the SSR code. Note that this will increase build times, and minify the code so it could be harder to debug CloudWatch errors.
 
 First, add `terser-webpack-plugin` to your dependencies. Then update `next.config.js`:
@@ -504,6 +524,8 @@ webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
 };
 ```
 
+Note that if you do not use any API routes, all JS files used only for prerendering static pages are automatically removed from the bundle. However, if you use API routes, we do not remove them as they may be used for preview mode. There's no official/non-hacky way to identify and remove these JS files not used in preview mode even when API routes are used. But we can add a new input to manually exclude them, if needed.
+
 - Use the `useServerlessTraceTarget` option in `serverless.yml`. This will cause Next.js to not bundle dependencies into each page (instead creating lightweight pages) and then `serverless-next.js` will reference a single set of dependencies in `node_modules`.
 
 #### Serverless deployment takes a long time and times out with a message like "TimeoutError: Connection timed out after 120000ms"
@@ -526,7 +548,7 @@ myNextApplication:
           headers: [Host]
 ```
 
-#### Should I use the [serverless-plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-plugin) or this component?
+#### Should I use the [serverless-plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) or this component?
 
 Users are encouraged to use this component instead of the `serverless-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
@@ -534,15 +556,17 @@ Users are encouraged to use this component instead of the `serverless-plugin`. T
 
 See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB. You can find a full list of examples [here](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-component/examples)
 
-#### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that
+#### [CI/CD] Multi-stage deployments / A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
-You need to commit your application state in source control. That is the files under the `.serverless` directory. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f)
+1. You need to commit your application state in source control. That is the files under the `.serverless` directory. Although this is not recommended as it doesn't work well for multiple stages.
+2. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f), [here](https://gist.github.com/dphang/7395ee09f6182f6b34f224660bed8e8c) (uses multiple `serverless.yml` files), or [here](https://github.com/serverless-nextjs/serverless-next.js/issues/328#issuecomment-655466654) (GitHub Actions-based, uses multiple `serverless.yml` files).
+3. You can also use the `distributionId` CloudFront input to specify an existing CloudFront distribution to deploy to.
 
-The serverless team is currently working on remote state storage so this won't be necessary in the future.
+In the future, we will look to improve this by integrating proper stage management into the component itself.
 
 #### My lambda is deployed to `us-east-1`. How can I deploy it to another region?
 
-Serverless next.js is _regionless_. By design, `serverless-next.js` applications will be deployed across the globe to every CloudFront edge location. The lambda might look like is only deployed to `us-east-1` but behind the scenes, it is replicated to every other region.
+Serverless Next.js is _regionless_. By design, `serverless-next.js` applications will be deployed across the globe to every CloudFront edge location. The lambda might look like is only deployed to `us-east-1` but behind the scenes, it is replicated to every other region.
 
 #### I require passing additional information into my build
 
@@ -551,13 +575,14 @@ See the sample below for an advanced `build` setup that includes passing additio
 ```yml
 # serverless.yml
 myDatabase:
-  component: MY_DATABASE_COMPNENT
+  component: MY_DATABASE_COMPONENT
 myNextApp:
   component: "@sls-next/serverless-component@{version_here}"
-  build:
-    args: ["build", "custom/path/to/pages"]
-    env:
-      DATABASE_URL: ${myDatabase.databaseUrl}
+  inputs:
+    build:
+      args: ["build", "custom/path/to/pages"]
+      env:
+        DATABASE_URL: ${myDatabase.databaseUrl}
 ```
 
 #### I was expecting for automatic subdomain redirection when using the domainType: www/apex input
@@ -592,7 +617,11 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 ### Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/danielcondemarin/serverless-next.js/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors">
+<img src="https://contributors-img.web.app/image?repo=serverless-nextjs/serverless-next.js" />
+</a>
+
+Made with [contributors-img](https://contributors-img.web.app).
 
 ### Financial Contributors
 

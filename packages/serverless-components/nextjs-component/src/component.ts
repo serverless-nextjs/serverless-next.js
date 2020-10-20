@@ -8,7 +8,10 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest
 } from "@sls-next/lambda-at-edge/types";
-import uploadAssetsToS3 from "@sls-next/s3-static-assets";
+import {
+  uploadStaticAssetsFromBuild,
+  uploadStaticAssets
+} from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
@@ -19,7 +22,10 @@ import type {
   LambdaInput
 } from "../types";
 
-type DeploymentResult = {
+// Message when deployment is explicitly skipped
+const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
+
+export type DeploymentResult = {
   appUrl: string;
   bucketName: string;
   distributionId: string;
@@ -70,6 +76,7 @@ class NextjsComponent extends Component {
     stillToMatch.delete(this.pathPattern("api/*", routesManifest));
     stillToMatch.delete(this.pathPattern("static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("_next/data/*", routesManifest));
 
     // check for other api like paths
     for (const path of stillToMatch) {
@@ -156,6 +163,10 @@ class NextjsComponent extends Component {
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
 
+    const nextStaticPath = inputs.nextStaticDir
+      ? resolve(inputs.nextStaticDir)
+      : nextConfigPath;
+
     const buildCwd =
       typeof inputs.build === "boolean" ||
       typeof inputs.build === "undefined" ||
@@ -186,9 +197,10 @@ class NextjsComponent extends Component {
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
-          handler: inputs.handler
-            ? `${inputs.handler.split(".")[0]}.js`
-            : undefined
+          minifyHandlers: inputs.minifyHandlers || false,
+          handler: inputs.handler ? `${inputs.handler.split(".")[0]}.js` : undefined
+        },
+        nextStaticPath
         }
       );
 
@@ -199,6 +211,16 @@ class NextjsComponent extends Component {
   async deploy(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    // Skip deployment if user explicitly set deploy input to false.
+    // Useful when they just want the build outputs to deploy themselves.
+    if (inputs.deploy === false) {
+      return {
+        appUrl: SKIPPED_DEPLOY,
+        bucketName: SKIPPED_DEPLOY,
+        distributionId: SKIPPED_DEPLOY
+      };
+    }
+
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -247,14 +269,27 @@ class NextjsComponent extends Component {
       region: bucketRegion
     });
 
-    await uploadAssetsToS3({
-      bucketName: bucketOutputs.name,
-      basePath: routesManifest.basePath,
-      nextConfigDir: nextConfigPath,
-      nextStaticDir: nextStaticPath,
-      credentials: this.context.credentials.aws,
-      publicDirectoryCache: inputs.publicDirectoryCache
-    });
+    // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
+    // TODO: remove once proven stable.
+    if (inputs.uploadStaticAssetsFromBuild ?? true) {
+      await uploadStaticAssetsFromBuild({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    } else {
+      await uploadStaticAssets({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    }
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
@@ -447,6 +482,19 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
+    cloudFrontOrigins[0].pathPatterns[
+      this.pathPattern("_next/data/*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 31536000,
+      allowedHttpMethods: ["HEAD", "GET"],
+      "lambda@edge": {
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
     // validate that the custom config paths match generated paths in the manifest
     this.validatePathPatterns(
       Object.keys(cloudFrontOtherInputs),
@@ -455,7 +503,7 @@ class NextjsComponent extends Component {
     );
 
     // Add any custom cloudfront configuration
-    // this includes overrides for _next, static and api
+    // this includes overrides for _next/data/*, _next/static/*, static/*, api/*, and default cache behaviors
     Object.entries(cloudFrontOtherInputs).map(([path, config]) => {
       const edgeConfig = {
         ...(config["lambda@edge"] || {})
@@ -487,19 +535,6 @@ class NextjsComponent extends Component {
         }
       };
     });
-
-    cloudFrontOrigins[0].pathPatterns[
-      this.pathPattern("_next/data/*", routesManifest)
-    ] = {
-      minTTL: 0,
-      defaultTTL: 0,
-      maxTTL: 31536000,
-      allowedHttpMethods: ["HEAD", "GET"],
-      "lambda@edge": {
-        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-      }
-    };
 
     // make sure that origin-response is not set.
     // this is reserved for serverless-next.js usage

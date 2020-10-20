@@ -45,7 +45,7 @@ describe("API lambda handler with basePath configured", () => {
 
     const response = (await handler(event)) as CloudFrontResponseResult;
 
-    const decodedBody = new Buffer(response.body, "base64").toString("utf8");
+    const decodedBody = Buffer.from(response.body, "base64").toString("utf8");
 
     expect(decodedBody).toEqual("pages/api/getCustomers");
     expect(response.status).toEqual(200);
@@ -96,6 +96,35 @@ describe("API lambda handler with basePath configured", () => {
           expectedRedirect,
           expectedRedirectStatusCode
         );
+      }
+    );
+  });
+
+  describe("Custom Headers", () => {
+    it.each`
+      path                            | expectedHeaders                    | expectedJs
+      ${"/basepath/api/getCustomers"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
+    `(
+      "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
+      async ({ path, expectedHeaders, expectedJs }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockPageRequire(expectedJs);
+
+        const response = await handler(event);
+
+        expect(response.headers).not.toBeUndefined();
+
+        for (const header in expectedHeaders) {
+          const headerEntry = response.headers![header][0];
+          expect(headerEntry).toEqual({
+            key: header,
+            value: expectedHeaders[header]
+          });
+        }
       }
     );
   });

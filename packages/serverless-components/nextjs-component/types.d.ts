@@ -20,6 +20,9 @@ export type ServerlessComponentInputs = {
   domainType?: "www" | "apex" | "both";
   domainRedirects?: { [key: string]: string };
   cloudfront?: CloudfrontOptions;
+  minifyHandlers?: boolean;
+  uploadStaticAssetsFromBuild?: boolean;
+  deploy?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

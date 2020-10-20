@@ -271,7 +271,7 @@ describe("Lambda@Edge", () => {
           const response = await handler(event);
 
           const cfResponse = response as CloudFrontResultResponse;
-          const decodedBody = new Buffer(
+          const decodedBody = Buffer.from(
             cfResponse.body as string,
             "base64"
           ).toString("utf8");
@@ -350,7 +350,7 @@ describe("Lambda@Edge", () => {
           const result = await handler(event);
 
           const cfResponse = result as CloudFrontResultResponse;
-          const decodedBody = new Buffer(
+          const decodedBody = Buffer.from(
             cfResponse.body as string,
             "base64"
           ).toString("utf8");
@@ -498,7 +498,7 @@ describe("Lambda@Edge", () => {
 
         const response = (await handler(event)) as CloudFrontResultResponse;
         const body = response.body as string;
-        const decodedBody = new Buffer(body, "base64").toString("utf8");
+        const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 404");
         expect(response.status).toEqual("404");
@@ -573,7 +573,7 @@ describe("Lambda@Edge", () => {
 
           const response = (await handler(event)) as CloudFrontResultResponse;
           const body = response.body as string;
-          const decodedBody = new Buffer(body, "base64").toString("utf8");
+          const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
           expect(decodedBody).toEqual(
             JSON.stringify({
@@ -614,7 +614,7 @@ describe("Lambda@Edge", () => {
 
         const response = (await handler(event)) as CloudFrontResultResponse;
         const body = response.body as string;
-        const decodedBody = new Buffer(body, "base64").toString("utf8");
+        const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
         expect(response.status).toEqual("500");
@@ -720,6 +720,38 @@ describe("Lambda@Edge", () => {
           expect(request.headers.host[0].value).toEqual(
             "my-bucket.s3.amazonaws.com"
           );
+        }
+      );
+    });
+
+    describe("Custom Headers", () => {
+      it.each`
+        path                             | expectedHeaders                    | expectedPage
+        ${"/basepath/customers/another"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
+      `(
+        "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
+        async ({ path, expectedHeaders, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          mockPageRequire(expectedPage);
+
+          const response = await handler(event);
+
+          for (const header in expectedHeaders) {
+            const headerEntry = response.headers[header][0];
+            expect(headerEntry).toEqual({
+              key: header,
+              value: expectedHeaders[header]
+            });
+          }
         }
       );
     });

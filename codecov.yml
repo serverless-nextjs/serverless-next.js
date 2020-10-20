@@ -1,0 +1,4 @@
+ignore:
+  - "packages/e2e-tests"
+  - "packages/deprecated"
+  - "**/rollup.config.js"

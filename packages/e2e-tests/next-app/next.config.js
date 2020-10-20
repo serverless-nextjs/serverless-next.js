@@ -90,5 +90,60 @@ module.exports = {
         destination: "/api/basic-api"
       }
     ];
+  },
+  async headers() {
+    return [
+      {
+        source: "/:path*",
+        headers: [
+          {
+            key: "x-custom-header-all",
+            value: "custom"
+          }
+        ]
+      },
+      {
+        source: "/ssr-page",
+        headers: [
+          {
+            key: "x-custom-header-ssr-page",
+            value: "custom"
+          }
+        ]
+      },
+      {
+        /**
+         * TODO: we need to specify S3 key here for SSG page (ssg-page.html) because of how things currently work.
+         * Request URI is rewritten to the S3 key, so in origin response handler we have no easy way to determine the original page path.
+         * In the future, we may bypass S3 origin + remove origin response handler so origin request handler directly calls S3, making this easier.
+         */
+        source: "/ssg-page.html",
+        headers: [
+          {
+            key: "x-custom-header-ssg-page",
+            value: "custom"
+          }
+        ]
+      },
+      {
+        // For public files, the original path matches the S3 key
+        source: "/app-store-badge.png",
+        headers: [
+          {
+            key: "x-custom-header-public-file",
+            value: "custom"
+          }
+        ]
+      },
+      {
+        source: "/api/basic-api",
+        headers: [
+          {
+            key: "x-custom-header-api",
+            value: "custom"
+          }
+        ]
+      }
+    ];
   }
 };

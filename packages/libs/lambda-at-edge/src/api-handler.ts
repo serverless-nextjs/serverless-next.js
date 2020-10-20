@@ -15,6 +15,7 @@ import {
   getRedirectPath
 } from "./routing/redirector";
 import { getRewritePath } from "./routing/rewriter";
+import { addHeadersToResponse } from "./headers/addHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -52,7 +53,7 @@ const router = (
 
 export const handler = async (
   event: OriginRequestEvent
-): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
+): Promise<CloudFrontResultResponse> => {
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
@@ -95,5 +96,10 @@ export const handler = async (
 
   page.default(req, res);
 
-  return responsePromise;
+  const response = await responsePromise;
+
+  // Add custom headers before returning response
+  addHeadersToResponse(request.uri, response, routesManifest);
+
+  return response;
 };

@@ -1,13 +1,15 @@
 #!/usr/bin/env node
 
+// Script to run e2e tests in a CI environment
+
 import fetch from "node-fetch";
 import { v4 as uuidv4 } from "uuid";
 import { execSync } from "child_process";
-import AWS from "aws-sdk";
-import fs from "fs";
+import * as AWS from "aws-sdk";
+import * as fs from "fs";
 
 // Next.js build ID follows a certain pattern
-const regex = /"buildId":"([a-zA-Z0-9_-]+)"/;
+const buildIdRegex = /"buildId":"([a-zA-Z0-9_-]+)"/;
 
 // AWS clients
 const cloudfront = new AWS.CloudFront();
@@ -17,7 +19,14 @@ const waitTimeout = parseInt(process.env["WAIT_TIMEOUT"] ?? "600");
 
 // Constants
 const deploymentBucketName = "serverless-next-js-e2e-test"; // For saving .serverless state
-const appName = "next-app";
+const appName = process.env["APP_NAME"] || ""; // app name to store in deployment bucket. Choose a unique name per test app.
+
+const ssgPagePath = process.env["SSG_PAGE_PATH"];
+const ssrPagePath = process.env["SSR_PAGE_PATH"];
+
+if (appName === "") {
+  throw new Error("Please set the APP_NAME environment variable.");
+}
 
 // To ensure cleanup doesn't happen more than once
 let alreadyCleaned = false;
@@ -42,14 +51,16 @@ async function checkWebAppBuildId(
   while (new Date().getTime() - startTime < waitDurationMillis) {
     // Guarantee that CloudFront cache is missed by appending uuid query parameter.
     const uuid: string = uuidv4().replace("-", "");
-    const suffixedUrl: string = url + `/?uuid=${uuid}`;
+    const suffixedUrl: string = `${url}${
+      url.endsWith("/") ? "" : "/"
+    }?uuid=${uuid}`;
 
     try {
       const response = await fetch(suffixedUrl);
 
       if (response.status >= 200 && response.status < 400) {
         const html = await response.text();
-        const matches = regex.exec(html);
+        const matches = buildIdRegex.exec(html);
 
         // Found match in actual buildId and expected buildId
         if (matches && matches.length > 0 && matches[1] === buildId) {
@@ -290,7 +301,7 @@ async function runEndToEndTest(): Promise<boolean> {
     }
 
     console.info("Getting CloudFront URL and distribution ID.");
-    const { cloudFrontUrl, distributionId } = getCloudFrontDetails("next-app");
+    const { cloudFrontUrl, distributionId } = getCloudFrontDetails(appName);
 
     if (!cloudFrontUrl || !distributionId) {
       throw new Error("CloudFront url or distribution id not found.");
@@ -302,8 +313,8 @@ async function runEndToEndTest(): Promise<boolean> {
     );
     const [cloudFrontReady, ssrReady, ssgReady] = await Promise.all([
       checkInvalidationsCompleted(distributionId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + "/ssr-page", buildId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + "/ssg-page", buildId, waitTimeout, 10)
+      checkWebAppBuildId(cloudFrontUrl + ssrPagePath, buildId, waitTimeout, 10),
+      checkWebAppBuildId(cloudFrontUrl + ssgPagePath, buildId, waitTimeout, 10)
       // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
       // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
     ]);
