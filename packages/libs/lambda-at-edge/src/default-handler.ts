@@ -237,8 +237,8 @@ const handleOriginRequest = async ({
   const basePath = routesManifest.basePath;
   let uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
-  const isPublicFile = publicFiles[uri];
-  const isDataReq = isDataRequest(uri);
+  let isPublicFile = publicFiles[uri];
+  let isDataReq = isDataRequest(uri);
 
   // Handle redirects
   // TODO: refactor redirect logic to another file since this is getting quite large
@@ -280,11 +280,24 @@ const handleOriginRequest = async ({
     );
   }
 
-  // Handle custom rewrites
-  const customRewrite = getRewritePath(request.uri, routesManifest);
-  if (customRewrite) {
-    request.uri = customRewrite;
-    uri = normaliseUri(request.uri);
+  // Check for non-dynamic pages before rewriting
+  let isNonDynamicRoute =
+    pages.html.nonDynamic[uri] ||
+    pages.ssr.nonDynamic[uri] ||
+    prerenderManifest.routes[uri] ||
+    isPublicFile;
+
+  // Handle custom rewrites, but don't rewrite non-dynamic pages or public files per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
+  if (!isNonDynamicRoute) {
+    const customRewrite = getRewritePath(request.uri, routesManifest);
+    if (customRewrite) {
+      request.uri = customRewrite;
+      uri = normaliseUri(request.uri);
+
+      // Set these variables again since URI has changed
+      isPublicFile = publicFiles[uri];
+      isDataReq = isDataRequest(uri);
+    }
   }
 
   const isStaticPage = pages.html.nonDynamic[uri];
