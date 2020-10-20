@@ -197,7 +197,10 @@ class NextjsComponent extends Component {
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
-          minifyHandlers: inputs.minifyHandlers || false
+          minifyHandlers: inputs.minifyHandlers || false,
+          handler: inputs.handler
+            ? `${inputs.handler.split(".")[0]}.js`
+            : undefined
         },
         nextStaticPath
       );
@@ -408,7 +411,7 @@ class NextjsComponent extends Component {
         description: inputs.description
           ? `${inputs.description} (API)`
           : "API Lambda@Edge for Next CloudFront distribution",
-        handler: "index.handler",
+        handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -456,7 +459,7 @@ class NextjsComponent extends Component {
       description:
         inputs.description ||
         "Default Lambda@Edge for Next CloudFront distribution",
-      handler: "index.handler",
+      handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
