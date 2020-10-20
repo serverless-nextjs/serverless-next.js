@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.14...@sls-next/lambda-at-edge@1.7.0-alpha.15) (2020-10-20)
+
+### Bug Fixes
+
+- **lambda-at-edge, e2e-tests:** non-dynamic routes should never be rewritten ([#697](https://github.com/serverless-nextjs/serverless-next.js/issues/697)) ([f16c9a0](https://github.com/serverless-nextjs/serverless-next.js/commit/f16c9a0811e80bb5d45d9ebd517c2ae8f3b35316))
+
 # [1.7.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.13...@sls-next/lambda-at-edge@1.7.0-alpha.14) (2020-10-20)
 
 ### Features
