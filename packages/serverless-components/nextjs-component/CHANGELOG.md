@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.12...@sls-next/serverless-component@1.18.0-alpha.13) (2020-10-20)
+
+### Bug Fixes
+
+- **aws-cloudfront, nextjs-component:** fix inability to set cloudfront comment input ([#695](https://github.com/serverless-nextjs/serverless-next.js/issues/695)) ([6803378](https://github.com/serverless-nextjs/serverless-next.js/commit/68033783a407ba58b48b08664fcc52430a70010b))
+
+### Features
+
+- **lambda-at-edge, nextjs-component:** allow `handler` input for custom handler code ([#649](https://github.com/serverless-nextjs/serverless-next.js/issues/649)) ([cecd327](https://github.com/serverless-nextjs/serverless-next.js/commit/cecd327993d593c582eeb140538b271b2eef509a))
+
 # [1.18.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.11...@sls-next/serverless-component@1.18.0-alpha.12) (2020-10-18)
 
 ### Features
