@@ -1017,14 +1017,15 @@ describe("Custom inputs", () => {
     ["customHandler.handler", "customHandler.handler"]
   ])("Lambda handler input", (inputHandler, expectedHandler) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-    let tmpCwd;
+    let tmpCwd: string;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
-      mockServerlessComponentDependencies({});
-      const component = createNextComponent({ handler: inputHandler });
-      componentOutputs = await component({ handler: inputHandler });
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+      const component = createNextComponent();
+      componentOutputs = await component.default({ handler: inputHandler });
     });
 
     afterEach(() => {
@@ -1048,6 +1049,31 @@ describe("Custom inputs", () => {
           handler: expectedHandler
         })
       );
+    });
+  });
+
+  describe("Miscellaneous CloudFront inputs", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("sets custom comment", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          comment: "a comment"
+        }
+      });
     });
   });
 });

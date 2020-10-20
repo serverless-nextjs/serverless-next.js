@@ -237,6 +237,7 @@ class NextjsComponent extends Component {
       priceClass: cloudFrontPriceClassInputs,
       errorPages: cloudFrontErrorPagesInputs,
       distributionId: cloudFrontDistributionId = null,
+      comment: cloudFrontComment,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -584,7 +585,8 @@ class NextjsComponent extends Component {
       }),
       ...(cloudFrontErrorPagesInputs && {
         errorPages: cloudFrontErrorPagesInputs
-      })
+      }),
+      comment: cloudFrontComment
     });
 
     let appUrl = cloudFrontOutputs.url;
