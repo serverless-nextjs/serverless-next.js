@@ -1011,4 +1011,29 @@ describe("Custom inputs", () => {
       });
     });
   });
+
+  describe("Miscellaneous CloudFront inputs", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("sets custom comment", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          comment: "a comment"
+        }
+      });
+    });
+  });
 });
