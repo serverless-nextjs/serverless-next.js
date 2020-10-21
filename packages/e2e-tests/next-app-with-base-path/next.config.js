@@ -104,6 +104,10 @@ module.exports = {
       {
         source: "/api/rewrite-basic-api",
         destination: "/api/basic-api"
+      },
+      {
+        source: "/basepath/api/basic-api",
+        destination: "/"
       }
     ];
   },

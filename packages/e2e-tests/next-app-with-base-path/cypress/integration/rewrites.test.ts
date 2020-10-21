@@ -36,6 +36,11 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       },
       {
+        path: "/basepath/api/basic-api",
+        expectedRewrite: "/basepath/api/basic-api",
+        expectedStatus: 200
+      },
+      {
         path: "/basepath/ssr-page",
         expectedRewrite: "/basepath/ssr-page",
         expectedStatus: 200
