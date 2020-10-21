@@ -371,11 +371,10 @@ describe("Response Tests", () => {
     });
   });
 
-  it(`gzips`, () => {
-    expect.assertions(2);
+  it("does not gzip by default", () => {
+    expect.assertions(3);
 
     const gzipSpy = jest.spyOn(zlib, "gzipSync");
-    gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
 
     const { res, responsePromise } = create({
       request: {
@@ -390,6 +389,40 @@ describe("Response Tests", () => {
         }
       }
     });
+
+    res.end("ok");
+
+    return responsePromise.then((response) => {
+      expect(gzipSpy).not.toBeCalled();
+      expect(response.headers["content-encoding"]).not.toBeDefined();
+      expect(response.body).toEqual("b2s=");
+    });
+  });
+
+  it(`gzips when compression is enabled`, () => {
+    expect.assertions(2);
+
+    const gzipSpy = jest.spyOn(zlib, "gzipSync");
+    gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
+
+    const { res, responsePromise } = create(
+      {
+        request: {
+          path: "/",
+          headers: {
+            "accept-encoding": [
+              {
+                key: "Accept-Encoding",
+                value: "gzip"
+              }
+            ]
+          }
+        }
+      },
+      {
+        enableHTTPCompression: true
+      }
+    );
 
     res.end("ok");
 

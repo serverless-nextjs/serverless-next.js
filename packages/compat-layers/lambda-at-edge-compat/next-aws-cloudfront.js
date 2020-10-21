@@ -144,7 +144,11 @@ const isGzipSupported = (headers) => {
   return gz;
 };
 
-const handler = (event, { enableHTTPCompression }) => {
+const defaultOptions = {
+  enableHTTPCompression: false
+};
+
+const handler = (event, { enableHTTPCompression } = defaultOptions) => {
   const { request: cfRequest, response: cfResponse = { headers: {} } } = event;
 
   const response = {

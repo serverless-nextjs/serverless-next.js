@@ -27,6 +27,6 @@ module.exports.render = async (event, context) => {
 
 ```js
 const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
-  enableHTTPCompresssion: true // false by default
+  enableHTTPCompression: true // false by default
 });
 ```
