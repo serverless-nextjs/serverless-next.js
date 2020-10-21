@@ -282,10 +282,7 @@ const handleOriginRequest = async ({
 
   // Check for non-dynamic pages before rewriting
   let isNonDynamicRoute =
-    pages.html.nonDynamic[uri] ||
-    pages.ssr.nonDynamic[uri] ||
-    prerenderManifest.routes[uri] ||
-    isPublicFile;
+    pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri] || isPublicFile;
 
   // Handle custom rewrites, but don't rewrite non-dynamic pages or public files per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
   if (!isNonDynamicRoute) {
