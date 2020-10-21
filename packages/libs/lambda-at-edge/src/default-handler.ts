@@ -297,7 +297,7 @@ const handleOriginRequest = async ({
     }
   }
 
-  const isStaticPage = pages.html.nonDynamic[uri];
+  const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
   const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
@@ -328,7 +328,9 @@ const handleOriginRequest = async ({
   s3Origin.domainName = normalisedS3DomainName;
 
   S3Check: if (
+    // Note: public files and static pages (HTML pages with no props) don't have JS files needed for preview mode, always serve from S3.
     isPublicFile ||
+    isStaticPage ||
     (isHTMLPage && !isPreviewRequest) ||
     (hasFallback && !isPreviewRequest) ||
     (isDataReq && !isPreviewRequest)
