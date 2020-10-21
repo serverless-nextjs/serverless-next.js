@@ -62,4 +62,4 @@ jobs:
           # FIXME: Passing sha doesn't seem to work, created GitHub ticket here: https://github.community/t/workflow-dispatch-cant-set-ref-to-commit-sha/138132
           # So for now we pass in SHA as an input
           # ref: ${{ github.event.pull_request.head.sha || github.sha }}
-          inputs: '{"sha": "${{ github.sha }}"}'
+          inputs: '{"sha": "${{ github.event.pull_request.head.sha || github.sha }}"}'
