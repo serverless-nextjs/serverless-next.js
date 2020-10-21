@@ -7,6 +7,10 @@ on:
         description: "Pull Request ID"
         required: false
         default: ""
+      sha:
+        description: "GitHub SHA"
+        required: false
+        default: ""
 
 jobs:
   initialize:
@@ -43,7 +47,7 @@ jobs:
           context: "End-to-end Tests"
           description: "Waiting for end-to-end tests to pass"
           state: "pending"
-          sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.sha }}
+          sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   run-e2e-tests:
@@ -116,7 +120,7 @@ jobs:
           context: "End-to-end Tests"
           description: "End-to-end tests have failed"
           state: "failure"
-          sha: ${{ needs.initialize.outputs.pr_git_sha || github.sha }}
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
   finalize:
@@ -133,5 +137,5 @@ jobs:
           context: "End-to-end Tests"
           description: "End-to-end tests have passed"
           state: "success"
-          sha: ${{ needs.initialize.outputs.pr_git_sha || github.sha }}
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
