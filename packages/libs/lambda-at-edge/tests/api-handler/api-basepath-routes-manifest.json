@@ -15,6 +15,11 @@
       "source": "/basepath/api/rewrite-getCustomers",
       "destination": "/basepath/api/getCustomers",
       "regex": "^/basepath/api/rewrite-getCustomers$"
+    },
+    {
+      "source": "/basepath/api/getCustomers",
+      "destination": "/basepath/api/another",
+      "regex": "^/basepath/api/getCustomers$"
     }
   ],
   "headers": [

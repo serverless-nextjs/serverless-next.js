@@ -103,6 +103,11 @@ module.exports = {
       {
         source: "/api/rewrite-basic-api",
         destination: "/api/basic-api"
+      },
+      {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/api/basic-api",
+        destination: "/"
       }
     ];
   },

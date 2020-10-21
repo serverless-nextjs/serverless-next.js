@@ -100,6 +100,38 @@ describe("API lambda handler with basePath configured", () => {
     );
   });
 
+  describe("Custom Rewrites", () => {
+    it.each`
+      path                                    | expectedJs                     | expectedBody                | expectedStatus
+      ${"/basepath/api/rewrite-getCustomers"} | ${"pages/api/getCustomers.js"} | ${"pages/api/getCustomers"} | ${200}
+      ${"/basepath/api/getCustomers"}         | ${"pages/api/getCustomers.js"} | ${"pages/api/getCustomers"} | ${200}
+    `(
+      "serves API $expectedJs for rewritten path $path",
+      async ({ path, expectedJs, expectedBody, expectedStatus }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net",
+          origin: {
+            s3: {
+              domainName: "my-bucket.s3.amazonaws.com"
+            }
+          }
+        });
+
+        mockPageRequire(expectedJs);
+
+        const response = (await handler(event)) as CloudFrontResponseResult;
+
+        const decodedBody = Buffer.from(response.body, "base64").toString(
+          "utf8"
+        );
+
+        expect(decodedBody).toEqual(expectedBody);
+        expect(response.status).toEqual(expectedStatus);
+      }
+    );
+  });
+
   describe("Custom Headers", () => {
     it.each`
       path                            | expectedHeaders                    | expectedJs

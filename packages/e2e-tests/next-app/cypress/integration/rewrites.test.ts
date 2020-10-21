@@ -49,6 +49,12 @@ describe("Rewrites Tests", () => {
         path: "/app-store-badge.png",
         expectedRewrite: "/app-store-badge.png",
         expectedStatus: 200
+      },
+      {
+        // Not rewritten since it's a non-dynamic route
+        path: "/api/basic-api",
+        expectedRewrite: "/api/basic-api",
+        expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {
       it(`rewrites path ${path} to ${expectedRewrite}`, () => {
