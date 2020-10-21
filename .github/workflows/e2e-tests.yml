@@ -67,6 +67,7 @@ jobs:
     steps:
       # For non-fork PRs
       - uses: actions/checkout@v2
+        ref: ${{ github.event.inputs.sha || github.ref }}
         if: ${{ github.event.inputs.pull_request_id == '' }}
 
       # For manually run PRs
