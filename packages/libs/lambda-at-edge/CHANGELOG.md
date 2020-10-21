@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.16...@sls-next/lambda-at-edge@1.7.0-alpha.17) (2020-10-21)
+
+### Bug Fixes
+
+- **lambda-at-edge:** non-dynamic routes for rewrite should not include routes in prerender manifest ([#700](https://github.com/serverless-nextjs/serverless-next.js/issues/700)) ([06d4edb](https://github.com/serverless-nextjs/serverless-next.js/commit/06d4edb72da2662affc9ad25a2e4eb5550d415e9))
+- **lambda-at-edge:** serve HTML pages with no props (i.e static pages) properly on preview mode enabled ([#701](https://github.com/serverless-nextjs/serverless-next.js/issues/701)) ([57cd668](https://github.com/serverless-nextjs/serverless-next.js/commit/57cd6689152530064635eb9d53c5201d580c9b61))
+
 # [1.7.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.15...@sls-next/lambda-at-edge@1.7.0-alpha.16) (2020-10-21)
 
 ### Bug Fixes
