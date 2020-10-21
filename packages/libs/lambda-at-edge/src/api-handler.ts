@@ -19,7 +19,13 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 
-const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
+const normaliseUri = (uri: string): string => {
+  if (uri.startsWith(basePath)) {
+    uri = uri.slice(basePath.length);
+  }
+
+  return uri;
+};
 
 const router = (
   manifest: OriginRequestApiHandlerManifest
@@ -74,10 +80,15 @@ export const handler = async (
     );
   }
 
-  // Handle custom rewrites
-  const customRewrite = getRewritePath(request.uri, routesManifest);
-  if (customRewrite) {
-    request.uri = customRewrite;
+  // Handle custom rewrites but not for non-dynamic routes
+  let isNonDynamicRoute =
+    buildManifest.apis.nonDynamic[normaliseUri(request.uri)];
+
+  if (!isNonDynamicRoute) {
+    const customRewrite = getRewritePath(request.uri, routesManifest);
+    if (customRewrite) {
+      request.uri = customRewrite;
+    }
   }
 
   const uri = normaliseUri(request.uri);

@@ -1011,4 +1011,69 @@ describe("Custom inputs", () => {
       });
     });
   });
+
+  describe.each([
+    [undefined, "index.handler"],
+    ["customHandler.handler", "customHandler.handler"]
+  ])("Lambda handler input", (inputHandler, expectedHandler) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+      const component = createNextComponent();
+      componentOutputs = await component.default({ handler: inputHandler });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`sets handler to ${expectedHandler} and api lambda handler to ${expectedHandler}`, () => {
+      // default Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          handler: expectedHandler
+        })
+      );
+
+      // api Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          handler: expectedHandler
+        })
+      );
+    });
+  });
+
+  describe("Miscellaneous CloudFront inputs", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("sets custom comment", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          comment: "a comment"
+        }
+      });
+    });
+  });
 });

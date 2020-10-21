@@ -87,6 +87,21 @@ module.exports = {
         source: "/regex-rewrite-2/:slug(\\d{1,})/",
         destination: "/regex-rewrite-2-dest/:slug/"
       },
+      {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/ssg-page/",
+        destination: "/"
+      },
+      {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/ssr-page/",
+        destination: "/"
+      },
+      {
+        // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
+        source: "/app-store-badge.png",
+        destination: "/"
+      },
       // No trailing slash for API yet
       {
         source: "/api/rewrite-basic-api",

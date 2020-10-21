@@ -26,7 +26,10 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
   const params = {
     DistributionConfig: {
       CallerReference: String(Date.now()),
-      Comment: inputs.comment,
+      Comment:
+        inputs.comment !== null && inputs.comment !== undefined
+          ? inputs.comment
+          : "",
       Aliases: {
         Quantity: inputs.aliases.length,
         Items: inputs.aliases
@@ -111,11 +114,14 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   // 5. then make our changes
 
   params.DistributionConfig.Enabled = inputs.enabled;
-  params.DistributionConfig.Comment = inputs.comment;
-  params.DistributionConfig.Aliases = {
-    Items: inputs.aliases,
-    Quantity: inputs.aliases.length
-  };
+  (params.DistributionConfig.Comment =
+    inputs.comment !== null && inputs.comment !== undefined
+      ? inputs.comment
+      : ""),
+    (params.DistributionConfig.Aliases = {
+      Items: inputs.aliases,
+      Quantity: inputs.aliases.length
+    });
   params.DistributionConfig.PriceClass = inputs.priceClass;
 
   let s3CanonicalUserId;

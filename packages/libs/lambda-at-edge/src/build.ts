@@ -36,6 +36,7 @@ type BuildOptions = {
   domainRedirects?: { [key: string]: string };
   minifyHandlers?: boolean;
   enableHTTPCompression?: boolean;
+  handler?: string;
 };
 
 const defaultBuildOptions = {
@@ -260,6 +261,16 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
         !!this.buildOptions.minifyHandlers
       ),
+      this.buildOptions?.handler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.handler),
+            join(
+              this.outputDir,
+              DEFAULT_LAMBDA_CODE_DIR,
+              this.buildOptions.handler
+            )
+          )
+        : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
@@ -340,6 +351,12 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
         !!this.buildOptions.minifyHandlers
       ),
+      this.buildOptions?.handler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.handler),
+            join(this.outputDir, API_LAMBDA_CODE_DIR, this.buildOptions.handler)
+          )
+        : Promise.resolve(),
       fse.copy(
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")

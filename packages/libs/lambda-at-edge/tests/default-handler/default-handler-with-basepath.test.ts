@@ -690,6 +690,7 @@ describe("Lambda@Edge", () => {
         ${"/basepath/index-rewrite"}    | ${"/index.html"}
         ${"/basepath/terms-rewrite"}    | ${"/terms.html"}
         ${"/basepath/path-rewrite/123"} | ${"/terms.html"}
+        ${"/basepath/terms"}            | ${"/terms.html"}
       `(
         "serves page $expectedPage from S3 for rewritten path $path",
         async ({ path, expectedPage }) => {

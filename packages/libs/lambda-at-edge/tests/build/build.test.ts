@@ -340,4 +340,71 @@ describe("Builder Tests", () => {
       expect(countLines(apiHandler.toString())).toEqual(2);
     });
   });
+
+  describe("Custom handler", () => {
+    let fseRemoveSpy: jest.SpyInstance;
+    let fseEmptyDirSpy: jest.SpyInstance;
+    let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
+    let apiBuildManifest: OriginRequestApiHandlerManifest;
+
+    const fixturePath = join(__dirname, "./simple-app-fixture");
+    const outputDir = join(fixturePath, ".test_sls_next_output");
+
+    beforeEach(async () => {
+      const mockExeca = execa as jest.Mock;
+      mockExeca.mockResolvedValueOnce();
+
+      fseRemoveSpy = jest
+        .spyOn(fse, "remove")
+        .mockImplementation(() => undefined);
+      fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
+      const builder = new Builder(fixturePath, outputDir, {
+        handler: "testFile.js"
+      });
+      await builder.build();
+
+      defaultBuildManifest = await fse.readJSON(
+        join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/manifest.json`)
+      );
+
+      apiBuildManifest = await fse.readJSON(
+        join(outputDir, `${API_LAMBDA_CODE_DIR}/manifest.json`)
+      );
+    });
+
+    afterEach(() => {
+      fseEmptyDirSpy.mockRestore();
+      fseRemoveSpy.mockRestore();
+      return cleanupDir(outputDir);
+    });
+
+    it("copies build files", async () => {
+      expect.assertions(2);
+
+      const defaultFiles = await fse.readdir(
+        join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
+      );
+
+      expect(defaultFiles).toEqual([
+        "index.js",
+        "manifest.json",
+        "pages",
+        "prerender-manifest.json",
+        "routes-manifest.json",
+        "testFile.js"
+      ]);
+
+      const apiFiles = await fse.readdir(
+        join(outputDir, `${API_LAMBDA_CODE_DIR}`)
+      );
+
+      expect(apiFiles).toEqual([
+        "index.js",
+        "manifest.json",
+        "pages",
+        "routes-manifest.json",
+        "testFile.js"
+      ]);
+    });
+  });
 });
