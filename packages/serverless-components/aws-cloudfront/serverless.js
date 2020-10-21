@@ -25,7 +25,7 @@ class CloudFront extends Component {
       inputs.comment === null || inputs.comment === undefined
         ? ""
         : String(inputs.comment);
-    inputs.aliases = inputs.aliases || [];
+    inputs.aliases = inputs.aliases || undefined; // by default will be undefined, not empty array
     inputs.priceClass = [
       "PriceClass_All",
       "PriceClass_200",

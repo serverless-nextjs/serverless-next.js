@@ -30,10 +30,18 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
         inputs.comment !== null && inputs.comment !== undefined
           ? inputs.comment
           : "",
-      Aliases: {
-        Quantity: inputs.aliases.length,
-        Items: inputs.aliases
-      },
+      Aliases:
+        // For initial creation if aliases undefined, then have default empty array of aliases
+        // Although this is not required per https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_DistributionConfig.html
+        inputs.aliases !== null && inputs.aliases !== undefined
+          ? {
+              Quantity: inputs.aliases.length,
+              Items: inputs.aliases
+            }
+          : {
+              Quantity: 0,
+              Items: []
+            },
       Origins: {
         Quantity: 0,
         Items: []
@@ -114,15 +122,19 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   // 5. then make our changes
 
   params.DistributionConfig.Enabled = inputs.enabled;
-  (params.DistributionConfig.Comment =
+  params.DistributionConfig.Comment =
     inputs.comment !== null && inputs.comment !== undefined
       ? inputs.comment
-      : ""),
-    (params.DistributionConfig.Aliases = {
+      : "";
+  params.DistributionConfig.PriceClass = inputs.priceClass;
+
+  // When updating, don't override any existing aliases if not set in inputs
+  if (inputs.aliases !== null && inputs.aliases !== undefined) {
+    params.DistributionConfig.Aliases = {
       Items: inputs.aliases,
       Quantity: inputs.aliases.length
-    });
-  params.DistributionConfig.PriceClass = inputs.priceClass;
+    };
+  }
 
   let s3CanonicalUserId;
   let originAccessIdentityId;
