@@ -60,5 +60,6 @@ jobs:
           token: ${{ secrets.BOT_GITHUB_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref || github.ref }}
           # FIXME: Passing sha doesn't seem to work, created GitHub ticket here: https://github.community/t/workflow-dispatch-cant-set-ref-to-commit-sha/138132
-          # But using ref (branch name) should be fine as it means tests always run on latest commit on PR or master branch
+          # So for now we pass in SHA as an input
           # ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          inputs: '{"sha": "${{ github.event.pull_request.head.sha || github.sha }}"}'
