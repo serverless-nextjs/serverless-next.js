@@ -224,6 +224,39 @@ describe("Lambda@Edge", () => {
         expect(decodedBody).toBe("pages/preview.js");
         expect(response.status).toBe(200);
       });
+
+      it("HTML page without any props served from S3 on preview mode", async () => {
+        const event = createCloudFrontEvent({
+          uri: `/terms${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net",
+          requestHeaders: {
+            cookie: [
+              {
+                key: "Cookie",
+                value: "__next_preview_data=abc; __prerender_bypass=def"
+              }
+            ]
+          }
+        });
+
+        const result = await handler(event);
+
+        const request = result as CloudFrontRequest;
+
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "/static-pages",
+            region: "us-east-1"
+          }
+        });
+        expect(request.uri).toEqual("/terms.html");
+        expect(request.headers.host[0].key).toEqual("host");
+        expect(request.headers.host[0].value).toEqual(
+          "my-bucket.s3.amazonaws.com"
+        );
+      });
     });
 
     describe("Public files routing", () => {
