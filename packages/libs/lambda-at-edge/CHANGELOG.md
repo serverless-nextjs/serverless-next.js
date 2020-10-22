@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.18](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.17...@sls-next/lambda-at-edge@1.7.0-alpha.18) (2020-10-22)
+
+### Features
+
+- **lambda-at-edge:** add a binary to allow use without copying example ([#688](https://github.com/serverless-nextjs/serverless-next.js/issues/688)) ([0c138a2](https://github.com/serverless-nextjs/serverless-next.js/commit/0c138a2d63b230b3c0ec5a37080b8987bfcc86ff))
+- **lambda-at-edge-compat, lambda-at-edge, nextjs-component:** let CloudFront do the Gzipping ([#692](https://github.com/serverless-nextjs/serverless-next.js/issues/692)) ([05fb0eb](https://github.com/serverless-nextjs/serverless-next.js/commit/05fb0ebdf38096fb7e0427956c4747e782c680a8))
+
 # [1.7.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.16...@sls-next/lambda-at-edge@1.7.0-alpha.17) (2020-10-21)
 
 ### Bug Fixes

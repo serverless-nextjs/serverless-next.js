@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.2...@sls-next/aws-cloudfront@1.3.0-alpha.3) (2020-10-22)
+
+### Bug Fixes
+
+- **aws-cloudfront:** do not override aliases when not specified in serverless.yml inputs ([#704](https://github.com/serverless-nextjs/serverless-next.js/issues/704)) ([2188d26](https://github.com/serverless-nextjs/serverless-next.js/commit/2188d2628fb6f1c8f982acdb4ad99da1760d0cd7))
+
 # [1.3.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.1...@sls-next/aws-cloudfront@1.3.0-alpha.2) (2020-10-20)
 
 ### Bug Fixes

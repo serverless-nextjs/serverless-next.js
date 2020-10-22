@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.16...@sls-next/serverless-component@1.18.0-alpha.17) (2020-10-22)
+
+### Features
+
+- **lambda-at-edge-compat, lambda-at-edge, nextjs-component:** let CloudFront do the Gzipping ([#692](https://github.com/serverless-nextjs/serverless-next.js/issues/692)) ([05fb0eb](https://github.com/serverless-nextjs/serverless-next.js/commit/05fb0ebdf38096fb7e0427956c4747e782c680a8))
+
 # [1.18.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.15...@sls-next/serverless-component@1.18.0-alpha.16) (2020-10-21)
 
 **Note:** Version bump only for package @sls-next/serverless-component
