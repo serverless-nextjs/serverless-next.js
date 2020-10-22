@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.18...@sls-next/lambda-at-edge@1.7.0-alpha.19) (2020-10-22)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix broken npm install by changing src/command.js -> dist/command.js ([fde41ee](https://github.com/serverless-nextjs/serverless-next.js/commit/fde41ee098c06759b3b71e9dc489a6aef98baff2))
+
 # [1.7.0-alpha.18](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.17...@sls-next/lambda-at-edge@1.7.0-alpha.18) (2020-10-22)
 
 ### Features
