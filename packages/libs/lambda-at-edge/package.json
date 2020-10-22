@@ -8,7 +8,7 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
-    "build-lambda-at-edge": "src/command.js"
+    "build-lambda-at-edge": "dist/command.js"
   },
   "scripts": {
     "prepare": "yarn build",
