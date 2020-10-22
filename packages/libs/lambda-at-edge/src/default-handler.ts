@@ -576,11 +576,64 @@ const hasFallbackForUri = (
   const {
     pages: { ssr, html }
   } = manifest;
-  // Non dynamic routes are prioritized over dynamic fallbacks, return false to ensure those get rendered instead
+  // Non-dynamic routes are prioritized over dynamic fallbacks, return false to ensure those get rendered instead
   if (ssr.nonDynamic[uri] || html.nonDynamic[uri]) {
     return false;
   }
 
+  let foundFallback:
+    | {
+        routeRegex: string;
+        fallback: string | false;
+        dataRoute: string;
+        dataRouteRegex: string;
+      }
+    | undefined = undefined; // for later use to reduce duplicate work
+
+  // Dynamic routes that does not have fallback are prioritized over dynamic fallback
+  const isNonFallbackDynamicRoute = Object.values({
+    ...ssr.dynamic,
+    ...html.dynamic
+  }).find((dynamicRoute) => {
+    if (foundFallback) {
+      return false;
+    }
+
+    const re = new RegExp(dynamicRoute.regex);
+    const matchesRegex = re.test(uri);
+
+    // If any dynamic route matches, check that this isn't one of the fallback routes in prerender manifest
+    if (matchesRegex) {
+      const matchesFallbackRoute = Object.keys(
+        prerenderManifest.dynamicRoutes
+      ).find((prerenderManifestRoute) => {
+        const fileMatchesPrerenderRoute =
+          dynamicRoute.file === `pages${prerenderManifestRoute}.js`;
+
+        if (fileMatchesPrerenderRoute) {
+          foundFallback =
+            prerenderManifest.dynamicRoutes[prerenderManifestRoute];
+        }
+
+        return fileMatchesPrerenderRoute;
+      });
+
+      return !matchesFallbackRoute;
+    } else {
+      return false;
+    }
+  });
+
+  if (isNonFallbackDynamicRoute) {
+    return false;
+  }
+
+  // If fallback previously found, return it to prevent additional regex matching
+  if (foundFallback) {
+    return foundFallback;
+  }
+
+  // Otherwise, try to match fallback against dynamic routes in prerender manifest
   return Object.values(prerenderManifest.dynamicRoutes).find((routeConfig) => {
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);

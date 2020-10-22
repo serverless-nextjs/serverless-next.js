@@ -133,6 +133,10 @@ describe("Pages Tests", () => {
 
         cy.visit(path);
         cy.location("pathname").should("eq", path);
+
+        cy.request(path).then((response) => {
+          expect(response.body).to.contain("catch-all-ssr");
+        });
       });
 
       ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
@@ -145,5 +149,71 @@ describe("Pages Tests", () => {
         }
       );
     });
+  });
+
+  describe("Dynamic SSR page", () => {
+    [{ path: "/another/1234" }].forEach(({ path }) => {
+      it(`serves and caches page ${path}`, () => {
+        cy.ensureRouteNotCached(path);
+
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+
+        cy.request(path).then((response) => {
+          expect(response.body).to.contain("dynamic-ssr");
+        });
+      });
+
+      ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
+        (method) => {
+          it(`allows HTTP method for path ${path}: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              expect(response.status).to.equal(200);
+            });
+          });
+        }
+      );
+    });
+
+    [{ path: "/another/ssg-prioritized-over-dynamic-ssr" }].forEach(
+      ({ path }) => {
+        it(`serves and caches page ${path}`, () => {
+          cy.visit(path);
+
+          cy.ensureRouteCached(path);
+
+          cy.visit(path);
+          cy.location("pathname").should("eq", path);
+
+          cy.request(path).then((response) => {
+            expect(response.body).to.contain(
+              "ssg-prioritized-over-dynamic-ssr"
+            );
+          });
+        });
+
+        ["HEAD", "GET"].forEach((method) => {
+          it(`allows HTTP method for path ${path}: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              expect(response.status).to.equal(200);
+            });
+          });
+        });
+
+        ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+          it(`disallows HTTP method for path ${path} with 4xx error: ${method}`, () => {
+            cy.request({
+              url: path,
+              method: method,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.not.equal(404);
+              expect(response.status).to.be.at.least(400);
+              expect(response.status).to.be.lessThan(500);
+            });
+          });
+        });
+      }
+    );
   });
 });
