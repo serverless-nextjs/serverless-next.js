@@ -1,9 +1,16 @@
 import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 import { IncomingMessage, ServerResponse } from "http";
 
-declare function lambdaAtEdgeCompat(event: {
-  request: CloudFrontRequest;
-}): {
+type CompatOptions = {
+  enableHTTPCompression: boolean;
+};
+
+declare function lambdaAtEdgeCompat(
+  event: {
+    request: CloudFrontRequest;
+  },
+  options: CompatOptions
+): {
   responsePromise: Promise<CloudFrontResultResponse>;
   req: IncomingMessage;
   res: ServerResponse;
