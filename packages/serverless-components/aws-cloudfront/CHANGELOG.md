@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.1...@sls-next/aws-cloudfront@1.3.0-alpha.2) (2020-10-20)
+
+### Bug Fixes
+
+- **aws-cloudfront, nextjs-component:** fix inability to set cloudfront comment input ([#695](https://github.com/serverless-nextjs/serverless-next.js/issues/695)) ([6803378](https://github.com/serverless-nextjs/serverless-next.js/commit/68033783a407ba58b48b08664fcc52430a70010b))
+
 # [1.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.0...@sls-next/aws-cloudfront@1.3.0-alpha.1) (2020-10-07)
 
 ### Features

@@ -7,6 +7,7 @@ import mockCreateInvalidation from "@sls-next/cloudfront";
 import NextjsComponent from "../src/component";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
+import { mockUpload } from "aws-sdk";
 
 describe("deploy tests", () => {
   let tmpCwd;
@@ -226,6 +227,65 @@ describe("deploy tests", () => {
         },
         distributionId: "cloudfrontdistrib"
       });
+    });
+  });
+
+  it("uploads static assets to S3 correctly", () => {
+    expect(mockUpload).toBeCalledTimes(12);
+
+    [
+      "static-pages/index.html",
+      "static-pages/terms.html",
+      "static-pages/404.html",
+      "static-pages/about.html",
+      "static-pages/blog/[post].html"
+    ].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        })
+      );
+    });
+
+    [
+      "_next/static/chunks/chunk1.js",
+      "_next/static/test-build-id/placeholder.js"
+    ].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=31536000, immutable"
+        })
+      );
+    });
+
+    ["_next/data/zsWqBqLjpgRmswfQomanp/index.json"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        })
+      );
+    });
+
+    ["public/sub/image.png", "public/favicon.ico"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=31536000, must-revalidate"
+        })
+      );
+    });
+
+    // Only certain public/static file extensions are cached by default
+    ["public/sw.js", "static/donotdelete.txt"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: undefined
+        })
+      );
     });
   });
 });

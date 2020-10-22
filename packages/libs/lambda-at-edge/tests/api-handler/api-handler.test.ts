@@ -133,6 +133,7 @@ describe("API lambda handler", () => {
     it.each`
       path                           | expectedJs                     | expectedBody                | expectedStatus
       ${"/api/rewrite-getCustomers"} | ${"pages/api/getCustomers.js"} | ${"pages/api/getCustomers"} | ${200}
+      ${"/api/getCustomers"}         | ${"pages/api/getCustomers.js"} | ${"pages/api/getCustomers"} | ${200}
     `(
       "serves API $expectedJs for rewritten path $path",
       async ({ path, expectedJs, expectedBody, expectedStatus }) => {

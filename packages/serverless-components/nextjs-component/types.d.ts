@@ -13,6 +13,7 @@ export type ServerlessComponentInputs = {
   timeout?: number | { defaultLambda?: number; apiLambda?: number };
   name?: string | { defaultLambda?: string; apiLambda?: string };
   runtime?: string | { defaultLambda?: string; apiLambda?: string };
+  handler?: string;
   description?: string;
   policy?: string;
   domain?: string | string[];
@@ -20,6 +21,8 @@ export type ServerlessComponentInputs = {
   domainRedirects?: { [key: string]: string };
   cloudfront?: CloudfrontOptions;
   minifyHandlers?: boolean;
+  uploadStaticAssetsFromBuild?: boolean;
+  deploy?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

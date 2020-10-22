@@ -8,7 +8,10 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest
 } from "@sls-next/lambda-at-edge/types";
-import uploadAssetsToS3 from "@sls-next/s3-static-assets";
+import {
+  uploadStaticAssetsFromBuild,
+  uploadStaticAssets
+} from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
@@ -19,7 +22,10 @@ import type {
   LambdaInput
 } from "../types";
 
-type DeploymentResult = {
+// Message when deployment is explicitly skipped
+const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
+
+export type DeploymentResult = {
   appUrl: string;
   bucketName: string;
   distributionId: string;
@@ -157,6 +163,10 @@ class NextjsComponent extends Component {
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
 
+    const nextStaticPath = inputs.nextStaticDir
+      ? resolve(inputs.nextStaticDir)
+      : nextConfigPath;
+
     const buildCwd =
       typeof inputs.build === "boolean" ||
       typeof inputs.build === "undefined" ||
@@ -187,8 +197,12 @@ class NextjsComponent extends Component {
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
-          minifyHandlers: inputs.minifyHandlers || false
-        }
+          minifyHandlers: inputs.minifyHandlers || false,
+          handler: inputs.handler
+            ? `${inputs.handler.split(".")[0]}.js`
+            : undefined
+        },
+        nextStaticPath
       );
 
       await builder.build(this.context.instance.debugMode);
@@ -198,6 +212,16 @@ class NextjsComponent extends Component {
   async deploy(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    // Skip deployment if user explicitly set deploy input to false.
+    // Useful when they just want the build outputs to deploy themselves.
+    if (inputs.deploy === false) {
+      return {
+        appUrl: SKIPPED_DEPLOY,
+        bucketName: SKIPPED_DEPLOY,
+        distributionId: SKIPPED_DEPLOY
+      };
+    }
+
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -213,6 +237,7 @@ class NextjsComponent extends Component {
       priceClass: cloudFrontPriceClassInputs,
       errorPages: cloudFrontErrorPagesInputs,
       distributionId: cloudFrontDistributionId = null,
+      comment: cloudFrontComment,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -246,14 +271,27 @@ class NextjsComponent extends Component {
       region: bucketRegion
     });
 
-    await uploadAssetsToS3({
-      bucketName: bucketOutputs.name,
-      basePath: routesManifest.basePath,
-      nextConfigDir: nextConfigPath,
-      nextStaticDir: nextStaticPath,
-      credentials: this.context.credentials.aws,
-      publicDirectoryCache: inputs.publicDirectoryCache
-    });
+    // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
+    // TODO: remove once proven stable.
+    if (inputs.uploadStaticAssetsFromBuild ?? true) {
+      await uploadStaticAssetsFromBuild({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    } else {
+      await uploadStaticAssets({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    }
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
@@ -374,7 +412,7 @@ class NextjsComponent extends Component {
         description: inputs.description
           ? `${inputs.description} (API)`
           : "API Lambda@Edge for Next CloudFront distribution",
-        handler: "index.handler",
+        handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
         role: {
           service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -422,7 +460,7 @@ class NextjsComponent extends Component {
       description:
         inputs.description ||
         "Default Lambda@Edge for Next CloudFront distribution",
-      handler: "index.handler",
+      handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
       role: {
         service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -547,7 +585,8 @@ class NextjsComponent extends Component {
       }),
       ...(cloudFrontErrorPagesInputs && {
         errorPages: cloudFrontErrorPagesInputs
-      })
+      }),
+      comment: cloudFrontComment
     });
 
     let appUrl = cloudFrontOutputs.url;

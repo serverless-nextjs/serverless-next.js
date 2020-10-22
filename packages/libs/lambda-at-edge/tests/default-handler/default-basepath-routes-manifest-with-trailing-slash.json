@@ -43,6 +43,11 @@
       "source": "/basepath/path-rewrite/:slug/",
       "destination": "/basepath/terms/",
       "regex": "^/basepath/path-rewrite(?:/([^/]+?))/$"
+    },
+    {
+      "source": "/basepath/terms/",
+      "destination": "/basepath/",
+      "regex": "^/basepath/terms/$"
     }
   ],
   "headers": [
