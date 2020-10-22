@@ -623,6 +623,13 @@ class Builder {
         return copyIfExists(source, destination);
       });
 
+    // Check if public/static exists and fail build since this conflicts with static/* behavior.
+    if (await fse.pathExists(path.join(nextStaticDir, "public", "static"))) {
+      throw new Error(
+        "You cannot have assets in the directory [public/static] as they conflict with the static/* CloudFront cache behavior. Please move these assets into another directory."
+      );
+    }
+
     const buildPublicOrStaticDirectory = async (
       directory: "public" | "static"
     ) => {

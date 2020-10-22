@@ -341,6 +341,31 @@ describe("Builder Tests", () => {
     });
   });
 
+  describe("Build edge cases", () => {
+    let builder: Builder;
+
+    beforeEach(async () => {
+      const mockExeca = execa as jest.Mock;
+      mockExeca.mockResolvedValueOnce();
+
+      fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
+        return;
+      });
+      fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
+    });
+
+    it("fails build when there is a public/static directory that conflicts with static/* behavior", async () => {
+      const fixturePath = join(
+        __dirname,
+        "./simple-app-fixture-public-static-error"
+      );
+      builder = new Builder(fixturePath, outputDir, {});
+      await expect(builder.build()).rejects.toThrow(
+        "You cannot have assets in the directory [public/static] as they conflict with the static/* CloudFront cache behavior. Please move these assets into another directory."
+      );
+    });
+  });
+
   describe("Custom handler", () => {
     let fseRemoveSpy: jest.SpyInstance;
     let fseEmptyDirSpy: jest.SpyInstance;
