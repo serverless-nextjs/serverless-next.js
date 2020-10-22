@@ -18,6 +18,9 @@ describe("Pages Tests", () => {
         (method) => {
           it(`allows HTTP method for path ${path}: ${method}`, () => {
             cy.request({ url: path, method: method }).then((response) => {
+              if (method !== "HEAD") {
+                cy.verifyResponseIsCompressed(response);
+              }
               expect(response.status).to.equal(200);
             });
           });
@@ -46,6 +49,9 @@ describe("Pages Tests", () => {
         (method) => {
           it(`allows HTTP method for path ${path}: ${method}`, () => {
             cy.request({ url: path, method: method }).then((response) => {
+              if (method !== "HEAD") {
+                cy.verifyResponseIsCompressed(response);
+              }
               expect(response.status).to.equal(200);
             });
           });

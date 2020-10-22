@@ -44,6 +44,9 @@ declare namespace Cypress {
       response: Cypress.Response,
       shouldBeCached: boolean
     ) => Cypress.Chainable<JQuery>;
+    verifyResponseIsCompressed: (
+      response: Cypress.Response
+    ) => Cypress.Chainable<JQuery>;
   }
 }
 
@@ -138,5 +141,12 @@ Cypress.Commands.add(
         "LambdaGeneratedResponse from cloudfront"
       ]);
     }
+  }
+);
+
+Cypress.Commands.add(
+  "verifyResponseIsCompressed",
+  (response: Cypress.Response) => {
+    expect(response.headers["content-encoding"]).to.equal("gzip");
   }
 );

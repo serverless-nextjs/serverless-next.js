@@ -35,6 +35,7 @@ type BuildOptions = {
   logLambdaExecutionTimes?: boolean;
   domainRedirects?: { [key: string]: string };
   minifyHandlers?: boolean;
+  enableHTTPCompression?: boolean;
   handler?: string;
 };
 
@@ -46,7 +47,8 @@ const defaultBuildOptions = {
   useServerlessTraceTarget: false,
   logLambdaExecutionTimes: false,
   domainRedirects: {},
-  minifyHandlers: false
+  minifyHandlers: false,
+  enableHTTPCompression: true
 };
 
 class Builder {
@@ -382,7 +384,8 @@ class Builder {
     );
     const {
       logLambdaExecutionTimes = false,
-      domainRedirects = {}
+      domainRedirects = {},
+      enableHTTPCompression = false
     } = this.buildOptions;
 
     this.normalizeDomainRedirects(domainRedirects);
@@ -402,7 +405,8 @@ class Builder {
       },
       publicFiles: {},
       trailingSlash: false,
-      domainRedirects: domainRedirects
+      domainRedirects: domainRedirects,
+      enableHTTPCompression
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
@@ -410,7 +414,8 @@ class Builder {
         dynamic: {},
         nonDynamic: {}
       },
-      domainRedirects: domainRedirects
+      domainRedirects: domainRedirects,
+      enableHTTPCompression
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;

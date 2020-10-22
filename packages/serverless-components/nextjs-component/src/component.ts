@@ -198,6 +198,7 @@ class NextjsComponent extends Component {
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
           minifyHandlers: inputs.minifyHandlers || false,
+          enableHTTPCompression: false,
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined
