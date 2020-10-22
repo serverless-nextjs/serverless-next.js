@@ -130,6 +130,25 @@ describe("General options propagation", () => {
     );
   });
 
+  it("update distribution with undefined aliases does not override existing aliases", async () => {
+    // Create distribution
+    await component.default({ enabled: true, origins });
+
+    // Update distribution
+    await component.default({
+      enabled: false,
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.not.objectContaining({
+          Aliases: expect.anything()
+        })
+      })
+    );
+  });
+
   it("create distribution with priceClass and update it", async () => {
     await component.default({
       priceClass: "PriceClass_All",

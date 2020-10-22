@@ -112,10 +112,6 @@ Object {
 exports[`Input origin as a custom url updates distribution 1`] = `
 Object {
   "DistributionConfig": Object {
-    "Aliases": Object {
-      "Items": Array [],
-      "Quantity": 0,
-    },
     "CacheBehaviors": Object {
       "Items": Array [],
       "Quantity": 0,
