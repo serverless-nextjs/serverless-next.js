@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.19...@sls-next/lambda-at-edge@1.7.0-alpha.20) (2020-10-23)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fail build when "public/static" folder exists as this conflicts with static/\* cache behavior ([#709](https://github.com/serverless-nextjs/serverless-next.js/issues/709)) ([187bbc8](https://github.com/serverless-nextjs/serverless-next.js/commit/187bbc8bd3b4c5284db155dced94c8d857b7f68a))
+
 # [1.7.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.18...@sls-next/lambda-at-edge@1.7.0-alpha.19) (2020-10-22)
 
 ### Bug Fixes
