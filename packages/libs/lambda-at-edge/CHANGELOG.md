@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.20...@sls-next/lambda-at-edge@1.7.0-alpha.21) (2020-10-27)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix dynamic route precedence conflicting with fallback pages ([#714](https://github.com/serverless-nextjs/serverless-next.js/issues/714)) ([e667e76](https://github.com/serverless-nextjs/serverless-next.js/commit/e667e76cef137d68ef215e91a72490dba7f7199f))
+
 # [1.7.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.19...@sls-next/lambda-at-edge@1.7.0-alpha.20) (2020-10-23)
 
 ### Bug Fixes
