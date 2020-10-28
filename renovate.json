@@ -1,0 +1,6 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "automerge": true,
+  "automergeType": "branch",
+  "ignorePaths": ["packages/e2e-tests/**", "packages/deprecated/**"]
+}
