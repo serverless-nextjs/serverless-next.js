@@ -31,6 +31,7 @@ import {
 } from "./routing/redirector";
 import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
+import type { SdkError } from "@aws-sdk/smithy-client";
 
 const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
@@ -167,6 +168,30 @@ const router = (
 
     return "pages/_error.js";
   };
+};
+
+// Need retries to fix https://github.com/aws/aws-sdk-js-v3/issues/1196
+const buildS3RetryStrategy = async () => {
+  const { defaultRetryDecider, StandardRetryStrategy } = await import(
+    "@aws-sdk/middleware-retry"
+  );
+
+  const retryDecider = (err: SdkError & { code?: string }) => {
+    if (
+      "code" in err &&
+      (err.code === "ECONNRESET" ||
+        err.code === "EPIPE" ||
+        err.code === "ETIMEDOUT")
+    ) {
+      return true;
+    } else {
+      return defaultRetryDecider(err);
+    }
+  };
+
+  return new StandardRetryStrategy(async () => 3, {
+    retryDecider
+  });
 };
 
 export const handler = async (
@@ -458,7 +483,12 @@ const handleOriginResponse = async ({
 
   // Lazily import only S3Client to reduce init times until actually needed
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
-  const s3 = new S3Client({ region: request.origin?.s3?.region });
+
+  const s3 = new S3Client({
+    region: request.origin?.s3?.region,
+    maxAttempts: 3,
+    retryStrategy: await buildS3RetryStrategy()
+  });
   let pagePath;
   if (
     isDataRequest(uri) &&
