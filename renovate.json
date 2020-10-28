@@ -2,5 +2,11 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automerge": true,
   "automergeType": "branch",
-  "ignorePaths": ["packages/e2e-tests/**", "packages/deprecated/**"]
+  "ignorePaths": [
+    "packages/e2e-tests/**",
+    "packages/deprecated/**",
+    "packages/serverless-components/nextjs-component/examples/**"
+  ],
+  "prHourlyLimit": 5,
+  "schedule": ["before 9am on Monday"]
 }
