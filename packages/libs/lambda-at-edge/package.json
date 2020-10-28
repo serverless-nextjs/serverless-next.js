@@ -54,7 +54,7 @@
     "typescript": "^3.9.6"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "1.0.0-gamma.8",
+    "@aws-sdk/client-s3": "1.0.0-rc.3",
     "@zeit/node-file-trace": "^0.6.5",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
