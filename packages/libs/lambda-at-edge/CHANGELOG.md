@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.21...@sls-next/lambda-at-edge@1.7.0-alpha.22) (2020-10-28)
+
+### Bug Fixes
+
+- **lambda-at-edge:** don't rewrite data requests ([#719](https://github.com/serverless-nextjs/serverless-next.js/issues/719)) ([5b6f848](https://github.com/serverless-nextjs/serverless-next.js/commit/5b6f84891724c7d2b83d8ee6c2708bb3874f0ccd))
+
 # [1.7.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.20...@sls-next/lambda-at-edge@1.7.0-alpha.21) (2020-10-27)
 
 ### Bug Fixes
