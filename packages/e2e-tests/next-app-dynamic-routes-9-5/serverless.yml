@@ -1,0 +1,2 @@
+next-app-dynamic-routes:
+  component: "../../serverless-components/nextjs-component"

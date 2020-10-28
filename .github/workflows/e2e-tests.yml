@@ -59,10 +59,16 @@ jobs:
       matrix:
         node-version: [12.x]
         app:
+          # Latest Next.js 10.x version
           - next-app
           - next-app-with-trailing-slash
           - next-app-with-base-path
           - next-app-dynamic-routes
+          # Previous Next.js 9.5.x version for backwards compatibility testing
+          - next-app-9-5
+          - next-app-with-trailing-slash-9-5
+          - next-app-with-base-path-9-5
+          - next-app-dynamic-routes-9-5
 
     steps:
       # For non-fork PRs
