@@ -284,16 +284,12 @@ const handleOriginRequest = async ({
   let isNonDynamicRoute =
     pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri] || isPublicFile;
 
-  // Handle custom rewrites, but don't rewrite non-dynamic pages or public files per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
-  if (!isNonDynamicRoute) {
+  // Handle custom rewrites, but don't rewrite non-dynamic pages, public files or data requests per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
+  if (!isNonDynamicRoute && !isDataReq) {
     const customRewrite = getRewritePath(request.uri, routesManifest);
     if (customRewrite) {
       request.uri = customRewrite;
       uri = normaliseUri(request.uri);
-
-      // Set these variables again since URI has changed
-      isPublicFile = publicFiles[uri];
-      isDataReq = isDataRequest(uri);
     }
   }
 
