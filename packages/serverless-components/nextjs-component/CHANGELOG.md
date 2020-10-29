@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.22...@sls-next/serverless-component@1.18.0-alpha.23) (2020-10-29)
+
+### Bug Fixes
+
+- **domain, nextjs-component:** set aliases correctly with domainType of apex and domain starting with www ([#723](https://github.com/serverless-nextjs/serverless-next.js/issues/723)) ([c68a4fc](https://github.com/serverless-nextjs/serverless-next.js/commit/c68a4fccfdf755db3e857fdfa5049a2fe63bd58b))
+
 # [1.18.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.21...@sls-next/serverless-component@1.18.0-alpha.22) (2020-10-29)
 
 **Note:** Version bump only for package @sls-next/serverless-component

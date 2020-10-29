@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.3...@sls-next/domain@1.1.0-alpha.4) (2020-10-29)
+
+### Bug Fixes
+
+- **domain, nextjs-component:** set aliases correctly with domainType of apex and domain starting with www ([#723](https://github.com/serverless-nextjs/serverless-next.js/issues/723)) ([c68a4fc](https://github.com/serverless-nextjs/serverless-next.js/commit/c68a4fccfdf755db3e857fdfa5049a2fe63bd58b))
+
 # [1.1.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.2...@sls-next/domain@1.1.0-alpha.3) (2020-10-20)
 
 ### Bug Fixes
