@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.7.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.22...@sls-next/lambda-at-edge@1.7.0-alpha.23) (2020-10-29)
+
+### Bug Fixes
+
+- **lambda-at-edge:** add retries for s3 calls ([#720](https://github.com/serverless-nextjs/serverless-next.js/issues/720)) ([72252fc](https://github.com/serverless-nextjs/serverless-next.js/commit/72252fc08dbc90a7c487cbceb5d61a696594676c))
+
 # [1.7.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.21...@sls-next/lambda-at-edge@1.7.0-alpha.22) (2020-10-28)
 
 ### Bug Fixes
