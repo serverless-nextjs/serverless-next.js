@@ -84,7 +84,7 @@ const getDomainHostedZoneId = async (route53, domain, privateZone) => {
   const params = {
     DNSName: domain
   };
-  
+
   const hostedZonesRes = await route53.listHostedZonesByName(params).promise();
 
   const hostedZone = hostedZonesRes.HostedZones.find(
@@ -288,7 +288,7 @@ const configureDnsForCloudFrontDistribution = async (
   domainHostedZoneId,
   distributionUrl,
   domainType,
-  that
+  context
 ) => {
   const dnsRecordParams = {
     HostedZoneId: domainHostedZoneId,
@@ -329,6 +329,11 @@ const configureDnsForCloudFrontDistribution = async (
     });
   }
 
+  context.debug(
+    "Updating Route53 DNS records with parameters:\n" +
+      JSON.stringify(dnsRecordParams, null, 2)
+  );
+
   return route53.changeResourceRecordSets(dnsRecordParams).promise();
 };
 
@@ -339,7 +344,8 @@ const removeCloudFrontDomainDnsRecords = async (
   route53,
   domain,
   domainHostedZoneId,
-  distributionUrl
+  distributionUrl,
+  context
 ) => {
   const params = {
     HostedZoneId: domainHostedZoneId,
@@ -364,6 +370,10 @@ const removeCloudFrontDomainDnsRecords = async (
   // TODO: should the CNAME records be removed too?
 
   try {
+    context.debug(
+      "Updating Route53 with parameters:\n" + JSON.stringify(params, null, 2)
+    );
+
     await route53.changeResourceRecordSets(params).promise();
   } catch (e) {
     if (e.code !== "InvalidChangeBatch") {
@@ -377,7 +387,8 @@ const addDomainToCloudfrontDistribution = async (
   subdomain,
   certificateArn,
   domainType,
-  defaultCloudfrontInputs
+  defaultCloudfrontInputs,
+  context
 ) => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
@@ -398,20 +409,20 @@ const addDomainToCloudfrontDistribution = async (
 
   // 5. then make our changes
   params.DistributionConfig.Aliases.Items.push(subdomain.domain);
-  params.DistributionConfig.Aliases.Quantity += 1;
   if (subdomain.domain.startsWith("www.")) {
     if (domainType === "apex") {
-      params.DistributionConfig.Aliases.Items[-1] = `${subdomain.domain.replace(
-        "www.",
-        ""
-      )}`;
+      params.DistributionConfig.Aliases.Items[
+        params.DistributionConfig.Aliases.Items.length - 1
+      ] = `${subdomain.domain.replace("www.", "")}`;
     } else if (domainType !== "www") {
       params.DistributionConfig.Aliases.Items.push(
         `${subdomain.domain.replace("www.", "")}`
       );
-      params.DistributionConfig.Aliases.Quantity += 1;
     }
   }
+
+  params.DistributionConfig.Aliases.Quantity =
+    params.DistributionConfig.Aliases.Items.length;
 
   params.DistributionConfig.ViewerCertificate = {
     ACMCertificateArn: certificateArn,
@@ -421,6 +432,11 @@ const addDomainToCloudfrontDistribution = async (
     CertificateSource: "acm",
     ...defaultCloudfrontInputs.viewerCertificate
   };
+
+  context.debug(
+    "Updating CloudFront distribution with parameters:\n" +
+      JSON.stringify(params, null, 2)
+  );
 
   // 6. then finally update!
   const res = await cf.updateDistribution(params).promise();
@@ -432,7 +448,11 @@ const addDomainToCloudfrontDistribution = async (
   };
 };
 
-const removeDomainFromCloudFrontDistribution = async (cf, subdomain) => {
+const removeDomainFromCloudFrontDistribution = async (
+  cf,
+  subdomain,
+  context
+) => {
   const params = await cf
     .getDistributionConfig({ Id: subdomain.distributionId })
     .promise();
@@ -452,6 +472,11 @@ const removeDomainFromCloudFrontDistribution = async (cf, subdomain) => {
     SSLSupportMethod: "sni-only",
     MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION
   };
+
+  context.debug(
+    "Updating CloudFront distribution with parameters:\n" +
+      JSON.stringify(params, null, 2)
+  );
 
   const res = await cf.updateDistribution(params).promise();
 
