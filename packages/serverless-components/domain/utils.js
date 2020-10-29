@@ -331,7 +331,7 @@ const configureDnsForCloudFrontDistribution = async (
 
   context.debug(
     "Updating Route53 DNS records with parameters:\n" +
-      JSON.stringify(params, null, 2)
+      JSON.stringify(dnsRecordParams, null, 2)
   );
 
   return route53.changeResourceRecordSets(dnsRecordParams).promise();
