@@ -133,7 +133,8 @@ class Domain extends Component {
           subdomain,
           certificate.CertificateArn,
           inputs.domainType,
-          inputs.defaultCloudfrontInputs
+          inputs.defaultCloudfrontInputs,
+          this.context
         );
 
         this.context.debug(
@@ -146,7 +147,7 @@ class Domain extends Component {
             domainHostedZoneId,
             subdomain.url.replace("https://", ""),
             inputs.domainType,
-            this
+            this.context
           );
         } else {
           this.context.debug(
@@ -215,7 +216,8 @@ class Domain extends Component {
             clients.route53,
             domainState.domain,
             domainHostedZoneId,
-            domainState.url.replace("https://", "")
+            domainState.url.replace("https://", ""),
+            this.context
           );
         } else {
           this.context.debug(
