@@ -1102,8 +1102,20 @@ describe("Custom inputs", () => {
       await createNextComponent().default({
         cloudfront: {
           certificate: {
+            cloudFrontDefaultCertificate: false,
             acmCertificateArn:
               "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+          }
+        }
+      });
+    });
+
+    it("sets certificate with an IAM certificate", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          certificate: {
+            cloudFrontDefaultCertificate: false,
+            iamCertificateId: "iam-cert-id"
           }
         }
       });
@@ -1112,7 +1124,9 @@ describe("Custom inputs", () => {
     it("sets certificate to default", async () => {
       await createNextComponent().default({
         cloudfront: {
-          certificate: "default"
+          certificate: {
+            cloudFrontDefaultCertificate: true
+          }
         }
       });
     });

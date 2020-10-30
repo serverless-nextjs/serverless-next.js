@@ -361,6 +361,7 @@ describe("General options propagation", () => {
     // Create
     await component.default({
       certificate: {
+        cloudFrontDefaultCertificate: false,
         acmCertificateArn:
           "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
       },
@@ -371,10 +372,11 @@ describe("General options propagation", () => {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           ViewerCertificate: {
+            CloudFrontDefaultCertificate: false,
             ACMCertificateArn:
               "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
             SSLSupportMethod: "sni-only",
-            MinimumProtocolVersion: "TLSv1.2_2018"
+            MinimumProtocolVersion: "TLSv1.2_2019"
           }
         })
       })
@@ -383,6 +385,7 @@ describe("General options propagation", () => {
     // Update
     await component.default({
       certificate: {
+        cloudFrontDefaultCertificate: false,
         acmCertificateArn:
           "arn:aws:acm:us-east-1:123456789012:certificate/updated"
       },
@@ -393,10 +396,11 @@ describe("General options propagation", () => {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           ViewerCertificate: {
+            CloudFrontDefaultCertificate: false,
             ACMCertificateArn:
               "arn:aws:acm:us-east-1:123456789012:certificate/updated",
             SSLSupportMethod: "sni-only",
-            MinimumProtocolVersion: "TLSv1.2_2018"
+            MinimumProtocolVersion: "TLSv1.2_2019"
           }
         })
       })
@@ -406,7 +410,9 @@ describe("General options propagation", () => {
   it("create distribution with default certificate", async () => {
     // Create
     await component.default({
-      certificate: "default",
+      certificate: {
+        cloudFrontDefaultCertificate: true
+      },
       origins
     });
 
@@ -414,7 +420,9 @@ describe("General options propagation", () => {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           ViewerCertificate: {
-            CloudFrontDefaultCertificate: true
+            CloudFrontDefaultCertificate: true,
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2019"
           }
         })
       })
@@ -425,6 +433,7 @@ describe("General options propagation", () => {
     // Create
     await component.default({
       certificate: {
+        cloudFrontDefaultCertificate: false,
         iamCertificateId: "12345"
       },
       origins
@@ -434,9 +443,10 @@ describe("General options propagation", () => {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           ViewerCertificate: {
+            CloudFrontDefaultCertificate: false,
             IAMCertificateId: "12345",
             SSLSupportMethod: "sni-only",
-            MinimumProtocolVersion: "TLSv1.2_2018"
+            MinimumProtocolVersion: "TLSv1.2_2019"
           }
         })
       })
