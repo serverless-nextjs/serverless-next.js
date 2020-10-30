@@ -1091,7 +1091,6 @@ describe("Custom inputs", () => {
           restrictions: {
             geoRestriction: {
               restrictionType: "blacklist",
-              quantity: 1,
               items: ["AA"]
             }
           }
