@@ -213,6 +213,10 @@ myNextApplication:
           responseCode: 500 # optional, alters the response code
       comment: "a comment" # optional, describes your distribution
       webACLId: "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a" # ARN of WAF
+      restrictions:
+        geoRestriction:
+          restrictionType: "blacklist" # valid values are whitelist/blacklist/none. Set to "none" and omit items to disable restrictions
+          items: ["AA"] # ISO 3166 alpha-2 country codes
 ```
 
 This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
