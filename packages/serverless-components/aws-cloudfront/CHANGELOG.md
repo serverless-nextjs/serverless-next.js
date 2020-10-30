@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.5...@sls-next/aws-cloudfront@1.3.0-alpha.6) (2020-10-30)
+
+### Features
+
+- **aws-cloudfront, nextjs-component:** support setting certificate input in cloudfront ([#727](https://github.com/serverless-nextjs/serverless-next.js/issues/727)) ([6f68bf1](https://github.com/serverless-nextjs/serverless-next.js/commit/6f68bf1910d80cc69b09f6529081e6ccad74552e))
+
 # [1.3.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.4...@sls-next/aws-cloudfront@1.3.0-alpha.5) (2020-10-30)
 
 ### Features
