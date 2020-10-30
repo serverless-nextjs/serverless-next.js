@@ -91,6 +91,11 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
   const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
   distributionConfig.CustomErrorResponses = CustomErrorResponses;
 
+  // Set WAF web ACL id if defined
+  if (inputs.webACLId !== undefined && inputs.webACLId !== null) {
+    distributionConfig.WebACLId = inputs.webACLId;
+  }
+
   const res = await cf.createDistribution(params).promise();
 
   return {
@@ -134,6 +139,11 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
       Items: inputs.aliases,
       Quantity: inputs.aliases.length
     };
+  }
+
+  // When updating, don't override any existing webACLId if not set in inputs
+  if (inputs.webACLId !== undefined && inputs.webACLId !== null) {
+    params.DistributionConfig.WebACLId = inputs.webACLId;
   }
 
   let s3CanonicalUserId;

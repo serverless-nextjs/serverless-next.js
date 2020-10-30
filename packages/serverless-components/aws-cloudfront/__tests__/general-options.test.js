@@ -176,4 +176,71 @@ describe("General options propagation", () => {
       })
     );
   });
+
+  it("create distribution with web ACL id and update it", async () => {
+    // Create
+    await component.default({
+      webACLId:
+        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        })
+      })
+    );
+
+    // Update
+    await component.default({
+      webACLId:
+        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        })
+      })
+    );
+  });
+
+  it("create distribution with web ACL id and delete it", async () => {
+    // Create
+    await component.default({
+      webACLId:
+        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        })
+      })
+    );
+
+    // Delete
+    // Per AWS, providing an empty ACLId will remove the WAF association: https://docs.aws.amazon.com/waf/latest/APIReference/API_DisassociateWebACL.html
+    await component.default({
+      webACLId: "",
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId: ""
+        })
+      })
+    );
+  });
 });

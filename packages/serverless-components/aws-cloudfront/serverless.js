@@ -59,7 +59,8 @@ class CloudFront extends Component {
         !equals(this.state.comment, inputs.comment) ||
         !equals(this.state.aliases, inputs.aliases) ||
         !equals(this.state.priceClass, inputs.priceClass) ||
-        !equals(this.state.errorPages, inputs.errorPages)
+        !equals(this.state.errorPages, inputs.errorPages) ||
+        !equals(this.state.webACLId, inputs.webACLId)
       ) {
         this.context.debug(
           `Updating CloudFront distribution of ID ${this.state.id}.`
