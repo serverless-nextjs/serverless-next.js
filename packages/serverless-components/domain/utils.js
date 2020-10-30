@@ -409,7 +409,6 @@ const addDomainToCloudfrontDistribution = async (
 
   // 5. then make our changes
   params.DistributionConfig.Aliases = {
-    Quantity: 1,
     Items: [subdomain.domain]
   };
 
