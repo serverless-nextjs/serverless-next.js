@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.3.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.4...@sls-next/aws-cloudfront@1.3.0-alpha.5) (2020-10-30)
+
+### Features
+
+- **aws-cloudfront, nextjs-component:** support setting geo restrictions ([#726](https://github.com/serverless-nextjs/serverless-next.js/issues/726)) ([964b936](https://github.com/serverless-nextjs/serverless-next.js/commit/964b9360484a6a9ad3f69a593dc2f26547c15eb2))
+
 # [1.3.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0-alpha.3...@sls-next/aws-cloudfront@1.3.0-alpha.4) (2020-10-30)
 
 ### Features

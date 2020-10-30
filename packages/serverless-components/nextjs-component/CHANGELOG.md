@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.24...@sls-next/serverless-component@1.18.0-alpha.25) (2020-10-30)
+
+### Features
+
+- **aws-cloudfront, nextjs-component:** support setting geo restrictions ([#726](https://github.com/serverless-nextjs/serverless-next.js/issues/726)) ([964b936](https://github.com/serverless-nextjs/serverless-next.js/commit/964b9360484a6a9ad3f69a593dc2f26547c15eb2))
+
 # [1.18.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.23...@sls-next/serverless-component@1.18.0-alpha.24) (2020-10-30)
 
 ### Features
