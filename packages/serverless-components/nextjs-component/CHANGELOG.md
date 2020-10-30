@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.18.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.23...@sls-next/serverless-component@1.18.0-alpha.24) (2020-10-30)
+
+### Features
+
+- **aws-cloudfront, nextjs-component:** support setting WAF web ACL id ([#724](https://github.com/serverless-nextjs/serverless-next.js/issues/724)) ([1a11594](https://github.com/serverless-nextjs/serverless-next.js/commit/1a1159472621e91191f1f41a39fe75a0ed9897b1))
+
 # [1.18.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.0-alpha.22...@sls-next/serverless-component@1.18.0-alpha.23) (2020-10-29)
 
 ### Bug Fixes
