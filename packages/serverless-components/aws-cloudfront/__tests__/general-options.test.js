@@ -356,4 +356,90 @@ describe("General options propagation", () => {
       })
     });
   });
+
+  it("create distribution with certificate arn and updates it", async () => {
+    // Create
+    await component.default({
+      certificate: {
+        acmCertificateArn:
+          "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            ACMCertificateArn:
+              "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2018"
+          }
+        })
+      })
+    );
+
+    // Update
+    await component.default({
+      certificate: {
+        acmCertificateArn:
+          "arn:aws:acm:us-east-1:123456789012:certificate/updated"
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            ACMCertificateArn:
+              "arn:aws:acm:us-east-1:123456789012:certificate/updated",
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2018"
+          }
+        })
+      })
+    );
+  });
+
+  it("create distribution with default certificate", async () => {
+    // Create
+    await component.default({
+      certificate: "default",
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            CloudFrontDefaultCertificate: true
+          }
+        })
+      })
+    );
+  });
+
+  it("create distribution with IAM certificate", async () => {
+    // Create
+    await component.default({
+      certificate: {
+        iamCertificateId: "12345"
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            IAMCertificateId: "12345",
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2018"
+          }
+        })
+      })
+    );
+  });
 });

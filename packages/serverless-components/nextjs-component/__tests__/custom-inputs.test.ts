@@ -1097,5 +1097,24 @@ describe("Custom inputs", () => {
         }
       });
     });
+
+    it("sets certificate with an ACM ARN", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          certificate: {
+            acmCertificateArn:
+              "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+          }
+        }
+      });
+    });
+
+    it("sets certificate to default", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          certificate: "default"
+        }
+      });
+    });
   });
 });

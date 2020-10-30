@@ -4,6 +4,9 @@ const createOriginAccessIdentity = require("./createOriginAccessIdentity");
 const grantCloudFrontBucketAccess = require("./grantCloudFrontBucketAccess");
 const getCustomErrorResponses = require("./getCustomErrorResponses");
 
+const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2018";
+const DEFAULT_SSL_SUPPORT_METHOD = "sni-only";
+
 const servePrivateContentEnabled = (inputs) =>
   inputs.origins.some((origin) => {
     return origin && origin.private === true;
@@ -113,6 +116,25 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     }
   }
 
+  // Note this will override the certificate which is also set by domain input
+  if (inputs.certificate !== undefined && inputs.certificate !== null) {
+    if (inputs.certificate === "default") {
+      params.DistributionConfig.ViewerCertificate = {
+        CloudFrontDefaultCertificate: true
+      };
+    } else {
+      params.DistributionConfig.ViewerCertificate = {
+        ACMCertificateArn: inputs.certificate.acmCertificateArn,
+        IAMCertificateId: inputs.certificate.iamCertificateId,
+        SSLSupportMethod:
+          inputs.certificate.sslSupportMethod || DEFAULT_SSL_SUPPORT_METHOD,
+        MinimumProtocolVersion:
+          inputs.certificate.minimumProtocolVersion ||
+          DEFAULT_MINIMUM_PROTOCOL_VERSION
+      };
+    }
+  }
+
   const res = await cf.createDistribution(params).promise();
 
   return {
@@ -178,6 +200,25 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     if (geoRestriction.items && geoRestriction.items.length > 0) {
       params.DistributionConfig.Restrictions.GeoRestriction.Items =
         geoRestriction.items;
+    }
+  }
+
+  // Note this will override the certificate which is also set by domain input
+  if (inputs.certificate !== undefined && inputs.certificate !== null) {
+    if (inputs.certificate === "default") {
+      params.DistributionConfig.ViewerCertificate = {
+        CloudFrontDefaultCertificate: true
+      };
+    } else {
+      params.DistributionConfig.ViewerCertificate = {
+        ACMCertificateArn: inputs.certificate.acmCertificateArn,
+        IAMCertificateId: inputs.certificate.iamCertificateId,
+        SSLSupportMethod:
+          inputs.certificate.sslSupportMethod || DEFAULT_SSL_SUPPORT_METHOD,
+        MinimumProtocolVersion:
+          inputs.certificate.minimumProtocolVersion ||
+          DEFAULT_MINIMUM_PROTOCOL_VERSION
+      };
     }
   }
 

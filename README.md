@@ -217,6 +217,11 @@ myNextApplication:
         geoRestriction:
           restrictionType: "blacklist" # valid values are whitelist/blacklist/none. Set to "none" and omit items to disable restrictions
           items: ["AA"] # ISO 3166 alpha-2 country codes
+      certificate:
+        acmCertificateArn: "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+        iamCertificateId: "iam-certificate-id" # specify either ACM or IAM certificate, not both
+        sslSupportMethod: "sni-only" # can be omitted, defaults to "sni-only"
+        minimumProtocolVersion: "TLSv1.2_2018" # can be omitted, defaults to "TLSv1.2_2018"
 ```
 
 This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
