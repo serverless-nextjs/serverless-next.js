@@ -1084,5 +1084,18 @@ describe("Custom inputs", () => {
         }
       });
     });
+
+    it("sets restrictions", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          restrictions: {
+            geoRestriction: {
+              restrictionType: "blacklist",
+              items: ["AA"]
+            }
+          }
+        }
+      });
+    });
   });
 });

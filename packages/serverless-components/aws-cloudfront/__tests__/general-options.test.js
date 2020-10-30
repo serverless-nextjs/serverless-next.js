@@ -243,4 +243,117 @@ describe("General options propagation", () => {
       })
     );
   });
+
+  it("create distribution with restrictions and updates it", async () => {
+    // Create
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "blacklist",
+          items: ["AA"]
+        }
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "blacklist",
+              Quantity: 1,
+              Items: ["AA"]
+            }
+          }
+        })
+      })
+    );
+
+    // Update
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "blacklist",
+          items: ["ZZ"]
+        }
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "blacklist",
+              Quantity: 1,
+              Items: ["ZZ"]
+            }
+          }
+        })
+      })
+    );
+  });
+
+  it("create distribution with restrictions and deletes it", async () => {
+    // Create
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "blacklist",
+          items: ["AA"]
+        }
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "blacklist",
+              Quantity: 1,
+              Items: ["AA"]
+            }
+          }
+        })
+      })
+    );
+
+    // Delete
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "none"
+        }
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "none",
+              Quantity: 0
+            }
+          }
+        })
+      })
+    );
+
+    // Restriction items not needed when deleting it
+    expect.objectContaining({
+      DistributionConfig: expect.not.objectContaining({
+        Restrictions: {
+          GeoRestriction: {
+            Items: expect.anything()
+          }
+        }
+      })
+    });
+  });
 });

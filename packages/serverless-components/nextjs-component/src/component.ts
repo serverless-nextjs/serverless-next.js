@@ -240,6 +240,7 @@ class NextjsComponent extends Component {
       distributionId: cloudFrontDistributionId = null,
       comment: cloudFrontComment,
       webACLId: cloudFrontWebACLId,
+      restrictions: cloudFrontRestrictions,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -589,7 +590,8 @@ class NextjsComponent extends Component {
         errorPages: cloudFrontErrorPagesInputs
       }),
       comment: cloudFrontComment,
-      webACLId: cloudFrontWebACLId
+      webACLId: cloudFrontWebACLId,
+      restrictions: cloudFrontRestrictions
     });
 
     let appUrl = cloudFrontOutputs.url;

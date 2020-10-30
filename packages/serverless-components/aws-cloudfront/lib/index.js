@@ -96,6 +96,23 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     distributionConfig.WebACLId = inputs.webACLId;
   }
 
+  // Set restrictions
+  if (inputs.restrictions !== undefined && inputs.restrictions !== null) {
+    const geoRestriction = inputs.restrictions.geoRestriction;
+
+    distributionConfig.Restrictions = {
+      GeoRestriction: {
+        RestrictionType: geoRestriction.restrictionType,
+        Quantity: geoRestriction.items ? geoRestriction.items.length : 0
+      }
+    };
+
+    if (geoRestriction.items && geoRestriction.items.length > 0) {
+      distributionConfig.Restrictions.GeoRestriction.Items =
+        geoRestriction.items;
+    }
+  }
+
   const res = await cf.createDistribution(params).promise();
 
   return {
@@ -144,6 +161,24 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   // When updating, don't override any existing webACLId if not set in inputs
   if (inputs.webACLId !== undefined && inputs.webACLId !== null) {
     params.DistributionConfig.WebACLId = inputs.webACLId;
+  }
+
+  // When updating, don't override any existing geo restrictions if not set in inputs
+  if (inputs.restrictions !== undefined && inputs.restrictions !== null) {
+    const geoRestriction = inputs.restrictions.geoRestriction;
+
+    params.DistributionConfig.Restrictions = {
+      GeoRestriction: {
+        RestrictionType: geoRestriction.restrictionType,
+        Quantity: geoRestriction.items ? geoRestriction.items.length : 0,
+        Items: geoRestriction.items
+      }
+    };
+
+    if (geoRestriction.items && geoRestriction.items.length > 0) {
+      params.DistributionConfig.Restrictions.GeoRestriction.Items =
+        geoRestriction.items;
+    }
   }
 
   let s3CanonicalUserId;
