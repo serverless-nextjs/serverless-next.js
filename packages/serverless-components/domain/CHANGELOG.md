@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.4...@sls-next/domain@1.1.0-alpha.5) (2020-10-31)
+
+### Bug Fixes
+
+- **aws-cloudfront, nextjs-component:** fix aliases updating when domain is used ([#731](https://github.com/serverless-nextjs/serverless-next.js/issues/731)) ([d41a6a9](https://github.com/serverless-nextjs/serverless-next.js/commit/d41a6a919c2427e8feb104bde0cde18b315d2da0))
+
 # [1.1.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.3...@sls-next/domain@1.1.0-alpha.4) (2020-10-29)
 
 ### Bug Fixes
