@@ -7,7 +7,8 @@
     "packages/deprecated/**",
     "packages/serverless-components/nextjs-component/examples/**",
     "packages/serverless-components/nextjs-component/**",
-    "package.json"
+    "package.json",
+    "lerna.json"
   ],
   "prHourlyLimit": 5,
   "schedule": ["before 9am on Monday"]
