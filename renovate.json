@@ -8,5 +8,10 @@
     "packages/serverless-components/nextjs-component/examples/**"
   ],
   "prHourlyLimit": 5,
-  "schedule": ["before 9am on Monday"]
+  "schedule": ["before 9am on Monday"],
+  "updateLockFiles": false,
+  "postUpgradeTasks": {
+    "commands": ["yarn"],
+    "fileFilters": ["**/yarn.lock"]
+  }
 }
