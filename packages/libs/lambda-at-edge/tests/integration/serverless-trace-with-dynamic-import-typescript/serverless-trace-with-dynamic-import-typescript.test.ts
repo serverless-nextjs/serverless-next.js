@@ -6,7 +6,7 @@ import { getNextBinary } from "../../test-utils";
 
 jest.unmock("execa");
 
-describe("Serverless Trace With Dynamic Import", () => {
+describe("Serverless Trace With Dynamic Import - TypeScript", () => {
   const nextBinary = getNextBinary();
   const fixtureDir = path.join(__dirname, "./fixture");
   let outputDir: string;

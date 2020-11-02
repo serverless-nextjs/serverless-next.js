@@ -1,4 +1,4 @@
-import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
+import nodeFileTrace, { NodeFileTraceReasons } from "@zeit/node-file-trace";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
