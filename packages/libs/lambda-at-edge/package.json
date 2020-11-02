@@ -36,7 +36,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
     "@types/aws-lambda": "^8.10.57",
     "@types/cookie": "^0.4.0",
     "@types/execa": "^2.0.0",
