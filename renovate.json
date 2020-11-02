@@ -10,6 +10,5 @@
     "package.json",
     "lerna.json"
   ],
-  "prHourlyLimit": 5,
-  "schedule": ["before 9am on Monday"]
+  "prHourlyLimit": 5
 }
