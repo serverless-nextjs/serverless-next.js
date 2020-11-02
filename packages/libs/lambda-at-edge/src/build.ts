@@ -131,6 +131,13 @@ class Builder {
       .filter((file) => {
         // exclude "initial" files from lambda artefact. These are just the pages themselves
         // which are copied over separately
+
+        // For TypeScript apps, somehow nodeFileTrace will generate filelist with TS or TSX files, we need to exclude these files to be copied
+        // as it ends up copying from same source to destination.
+        if (file.endsWith(".ts") || file.endsWith(".tsx")) {
+          return false;
+        }
+
         return (
           (!reasons[file] || reasons[file].type !== "initial") &&
           file !== "package.json"
