@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.7.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0...@sls-next/lambda-at-edge@1.7.1-alpha.0) (2020-11-02)
+
+### Bug Fixes
+
+- **lambda-at-edge:** for serverless-trace target, exclude files that are not in node-modules folder ([#758](https://github.com/serverless-nextjs/serverless-next.js/issues/758)) ([2d72f4f](https://github.com/serverless-nextjs/serverless-next.js/commit/2d72f4f7932124d136eb3cfc6c1134682ca36ef0))
+
 # [1.7.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0-alpha.23...@sls-next/lambda-at-edge@1.7.0) (2020-11-02)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
