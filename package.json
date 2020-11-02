@@ -64,7 +64,7 @@
     "prettier": "^2.0.5",
     "react": "^16.13.1",
     "react-dom": "^16.13.1",
-    "serverless": "^1.74.1",
+    "serverless": "^2.0.0",
     "serverless-offline": "^6.4.0",
     "typescript": "^3.9.6"
   },
