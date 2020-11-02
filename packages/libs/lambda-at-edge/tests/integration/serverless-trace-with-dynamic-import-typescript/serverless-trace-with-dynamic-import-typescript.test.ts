@@ -3,6 +3,7 @@ import path from "path";
 import os from "os";
 import Builder from "../../../src/build";
 import { getNextBinary } from "../../test-utils";
+import klaw from "klaw";
 
 jest.unmock("execa");
 
@@ -60,9 +61,12 @@ describe("Serverless Trace With Dynamic Import - TypeScript", () => {
   });
 
   it("does not copy TypeScript sources", async () => {
-    const typeScriptFileName = (
-      await readdir(path.join(fixtureDir, ".next/serverless"))
-    ).find((file) => {
+    const defaultLambdaFiles: string[] = [];
+    klaw(path.join(outputDir, "default-lambda")).on("data", (item) =>
+      defaultLambdaFiles.push(item.path)
+    );
+
+    const typeScriptFileName = defaultLambdaFiles.find((file) => {
       return /^[\d]+\.+[\w,\s-]+\.(ts|tsx)$/.test(file);
     });
 
