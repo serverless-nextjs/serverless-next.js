@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.6.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.0-alpha.0...@sls-next/next-aws-cloudfront@1.6.0) (2020-11-02)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
 # [1.6.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.5.1-alpha.0...@sls-next/next-aws-cloudfront@1.6.0-alpha.0) (2020-10-22)
 
 ### Features

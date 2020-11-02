@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.3.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.3.1-alpha.1...@sls-next/s3-static-assets@1.3.1) (2020-11-02)
+
+**Note:** Version bump only for package @sls-next/s3-static-assets
+
 ## [1.3.1-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.3.1-alpha.0...@sls-next/s3-static-assets@1.3.1-alpha.1) (2020-10-18)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets

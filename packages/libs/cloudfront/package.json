@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/cloudfront",
-  "version": "1.0.4-alpha.0",
+  "version": "1.0.4",
   "description": "Handles CloudFront invalidation",
   "publishConfig": {
     "access": "public"

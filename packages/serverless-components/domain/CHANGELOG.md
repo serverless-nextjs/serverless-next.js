@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.1.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.5...@sls-next/domain@1.1.0) (2020-11-02)
+
+**Note:** Version bump only for package @sls-next/domain
+
 # [1.1.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/domain@1.1.0-alpha.4...@sls-next/domain@1.1.0-alpha.5) (2020-10-31)
 
 ### Bug Fixes
