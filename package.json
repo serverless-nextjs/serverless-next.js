@@ -62,7 +62,7 @@
     "lint-staged": "^10.2.11",
     "next": "^9.4.4",
     "prettier": "^2.0.5",
-    "react": "^16.13.1",
+    "react": "^17.0.0",
     "react-dom": "^16.13.1",
     "serverless": "^1.74.1",
     "serverless-offline": "^6.4.0",
