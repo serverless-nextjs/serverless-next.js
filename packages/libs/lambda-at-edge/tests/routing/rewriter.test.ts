@@ -4,6 +4,7 @@ import { RoutesManifest } from "../../types";
 describe("Rewriter Tests", () => {
   describe("getRewritePath()", () => {
     let routesManifest: RoutesManifest;
+    let router: (path: string) => string | null;
 
     beforeAll(() => {
       routesManifest = {
@@ -32,7 +33,12 @@ describe("Rewriter Tests", () => {
             regex: "^/invalid-destination$"
           }
         ],
-        redirects: []
+        redirects: [],
+        headers: []
+      };
+
+      router = (path: string): string | null => {
+        return path;
       };
     });
 
@@ -46,9 +52,54 @@ describe("Rewriter Tests", () => {
       ${"/external"}            | ${"https://example.com"}
       ${"/invalid-destination"} | ${null}
     `(
-      "redirects path $path to $expectedRedirect",
+      "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {
-        const rewrite = getRewritePath(path, routesManifest);
+        const rewrite = getRewritePath(path, routesManifest, router, path);
+
+        if (expectedRewrite) {
+          expect(rewrite).toEqual(expectedRewrite);
+        } else {
+          expect(rewrite).toBeNull();
+        }
+      }
+    );
+
+    it.each`
+      path    | expectedRewrite
+      ${"/a"} | ${"/a"}
+      ${"/b"} | ${"/another/b"}
+    `(
+      "no-op rewrite: rewrites $path to $expectedRewrite",
+      ({ path, expectedRewrite }) => {
+        routesManifest = {
+          basePath: "",
+          rewrites: [
+            {
+              source: "/:path*",
+              destination: "/:path*",
+              regex: "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$"
+            },
+            {
+              source: "/:path*",
+              destination: "/another/:path*",
+              regex: "^/path(?:/([^/]+?))$"
+            }
+          ],
+          redirects: [],
+          headers: []
+        };
+
+        router = (path: string): string | null => {
+          if (path === "/a") {
+            return "pages/a.html";
+          } else if (path === "/b") {
+            return "pages/404.html";
+          } else {
+            return null;
+          }
+        };
+
+        const rewrite = getRewritePath(path, routesManifest, router, path);
 
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);

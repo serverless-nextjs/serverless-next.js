@@ -150,6 +150,10 @@ const router = (
       return ssr.nonDynamic[normalisedUri];
     }
 
+    if (html.nonDynamic[normalisedUri]) {
+      return html.nonDynamic[normalisedUri];
+    }
+
     for (const route in allDynamicRoutes) {
       const { file, regex } = allDynamicRoutes[route];
 
@@ -311,7 +315,12 @@ const handleOriginRequest = async ({
 
   // Handle custom rewrites, but don't rewrite non-dynamic pages, public files or data requests per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
   if (!isNonDynamicRoute && !isDataReq) {
-    const customRewrite = getRewritePath(request.uri, routesManifest);
+    const customRewrite = getRewritePath(
+      request.uri,
+      routesManifest,
+      router(manifest),
+      uri
+    );
     if (customRewrite) {
       request.uri = customRewrite;
       uri = normaliseUri(request.uri);

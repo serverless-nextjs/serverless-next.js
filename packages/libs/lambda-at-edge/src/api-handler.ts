@@ -84,14 +84,21 @@ export const handler = async (
   let isNonDynamicRoute =
     buildManifest.apis.nonDynamic[normaliseUri(request.uri)];
 
+  let uri = normaliseUri(request.uri);
+
   if (!isNonDynamicRoute) {
-    const customRewrite = getRewritePath(request.uri, routesManifest);
+    const customRewrite = getRewritePath(
+      request.uri,
+      routesManifest,
+      router(manifest),
+      uri
+    );
     if (customRewrite) {
       request.uri = customRewrite;
     }
   }
 
-  const uri = normaliseUri(request.uri);
+  uri = normaliseUri(request.uri);
 
   const pagePath = router(manifest)(uri);
 
