@@ -149,10 +149,15 @@ class Builder {
           path.relative(this.serverlessDir, resolvedFilePath)
         );
 
-        return fse.copy(
-          resolvedFilePath,
-          join(this.outputDir, handlerDirectory, dst)
-        );
+        if (resolvedFilePath !== join(this.outputDir, handlerDirectory, dst)) {
+          // Only copy when source and destination are different
+          return fse.copy(
+            resolvedFilePath,
+            join(this.outputDir, handlerDirectory, dst)
+          );
+        } else {
+          return Promise.resolve();
+        }
       });
   }
 
