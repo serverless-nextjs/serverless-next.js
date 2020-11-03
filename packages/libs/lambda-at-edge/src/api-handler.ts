@@ -95,10 +95,9 @@ export const handler = async (
     );
     if (customRewrite) {
       request.uri = customRewrite;
+      uri = normaliseUri(request.uri);
     }
   }
-
-  uri = normaliseUri(request.uri);
 
   const pagePath = router(manifest)(uri);
 
