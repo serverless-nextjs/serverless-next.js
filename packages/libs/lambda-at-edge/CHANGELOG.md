@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.1-alpha.0...@sls-next/lambda-at-edge@1.8.0-alpha.0) (2020-11-03)
+
+### Features
+
+- **lambda-at-edge:** no-op rewrite support ([#759](https://github.com/serverless-nextjs/serverless-next.js/issues/759)) ([2107ab1](https://github.com/serverless-nextjs/serverless-next.js/commit/2107ab1f3c0213dcfbd54521ff10811a2d58ca51))
+
 ## [1.7.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.7.0...@sls-next/lambda-at-edge@1.7.1-alpha.0) (2020-11-02)
 
 ### Bug Fixes
