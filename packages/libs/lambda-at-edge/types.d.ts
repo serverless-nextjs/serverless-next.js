@@ -103,6 +103,7 @@ export type RedirectData = {
 export type RewriteData = {
   source: string;
   destination: string;
+  regex: string;
 };
 
 export type Header = {
