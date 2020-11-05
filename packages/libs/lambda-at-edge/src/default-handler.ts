@@ -222,9 +222,10 @@ const handleOriginRequest = async ({
   const hasFallback = hasFallbackForUri(uri, prerenderManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
   const previewCookies = getPreviewCookies(request);
-  const isPreviewRequest =
+  let isPreviewRequest = !!(
     previewCookies[NEXT_PREVIEW_DATA_COOKIE] &&
-    previewCookies[NEXT_PRERENDER_BYPASS_COOKIE];
+    previewCookies[NEXT_PRERENDER_BYPASS_COOKIE]
+  );
 
   if (isPreviewRequest) {
     try {
@@ -233,11 +234,7 @@ const handleOriginRequest = async ({
         prerenderManifest.preview.previewModeSigningKey
       );
     } catch (e) {
-      console.error("Failed preview mode verification for URI:", request.uri);
-      return {
-        status: "403",
-        statusDescription: "Forbidden"
-      };
+      isPreviewRequest = false;
     }
   }
 
