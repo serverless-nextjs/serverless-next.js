@@ -624,6 +624,29 @@ All of this happens within the Lambda@Edge origin request handlers. Please note 
 Otherwise, you can also use the manual workaround using an S3 bucket outlined [here](https://simonecarletti.com/blog/2016/08/redirect-domain-https-amazon-cloudfront/#configuring-the-amazon-s3-static-site-with-redirect).
 In summary, you will have to create a new S3 bucket and set it up with static website hosting to redirect requests to your supported subdomain type (ex. "www.example.com" or "example.com"). To be able to support HTTPS redirects, you'll need to set up a CloudFront distribution with the S3 redirect bucket as the origin. Finally, you'll need to create an "A" record in Route 53 with your newly created CloudFront distribution as the alias target.
 
+#### My environment variables set in `build.env` don't show up in my app
+
+To allow your app to access the defined environment variables, you need to expose them via the `next.config.js` as outlined [here](https://nextjs.org/docs/api-reference/next.config.js/environment-variables).
+
+Given a `serverless.yml` like this
+```yml
+myApp:
+  inputs:
+    build:
+      env:
+        API_HOST: "http://example.com"
+```
+
+your next.config.js should look like that:
+
+```js
+module.exports = {
+  env: {
+    API_HOST: process.env.API_HOST,
+  },
+}
+```
+
 ## Contributing
 
 Please see the [contributing](./CONTRIBUTING.md) guide.
