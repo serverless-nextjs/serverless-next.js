@@ -634,7 +634,7 @@ myApp:
   inputs:
     build:
       env:
-        API_HOST: "${env.API_HOST}"
+        API_HOST: "http://example.com"
 ```
 
 your next.config.js should look like that:
