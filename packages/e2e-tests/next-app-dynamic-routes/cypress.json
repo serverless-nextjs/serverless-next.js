@@ -4,5 +4,6 @@
   "responseTimeout": 15000,
   "requestTimeout": 15000,
   "experimentalNetworkStubbing": true,
-  "experimentalFetchPolyfill": true
+  "experimentalFetchPolyfill": true,
+  "retries": 4
 }
