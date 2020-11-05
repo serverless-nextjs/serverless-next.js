@@ -628,7 +628,7 @@ In summary, you will have to create a new S3 bucket and set it up with static we
 
 To allow your app to access the defined environment variables, you need to expose them via the `next.config.js` as outlined [here](https://nextjs.org/docs/api-reference/next.config.js/environment-variables).
 
-Given a `servless.yml` like this
+Given a `serverless.yml` like this
 ```yml
 myApp:
   inputs:
