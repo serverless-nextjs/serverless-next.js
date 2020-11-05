@@ -1,0 +1,8 @@
+{
+  "baseUrl": "http://localhost:3000",
+  "supportFile": "cypress/support/index.ts",
+  "responseTimeout": 15000,
+  "requestTimeout": 15000,
+  "experimentalNetworkStubbing": true,
+  "experimentalFetchPolyfill": true
+}

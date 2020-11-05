@@ -59,10 +59,16 @@ jobs:
       matrix:
         node-version: [12.x]
         app:
+          # Current minor version of Next.js
           - next-app
           - next-app-with-trailing-slash
           - next-app-with-base-path
           - next-app-dynamic-routes
+          # Previous minor version of Next.js
+          - prev-next-app
+          - prev-next-app-with-trailing-slash
+          - prev-next-app-with-base-path
+          - prev-next-app-dynamic-routes
 
     steps:
       # For non-fork PRs
