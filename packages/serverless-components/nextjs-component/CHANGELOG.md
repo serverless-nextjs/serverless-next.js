@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.1...@sls-next/serverless-component@1.19.0-alpha.2) (2020-11-06)
+
+### Features
+
+- **nextjs-component, lambda-at-edge:** support single username/password basic authen… ([#773](https://github.com/serverless-nextjs/serverless-next.js/issues/773)) ([220da4a](https://github.com/serverless-nextjs/serverless-next.js/commit/220da4a7274bc43408803bb831c2221a95a7d435))
+
 # [1.19.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.0...@sls-next/serverless-component@1.19.0-alpha.1) (2020-11-06)
 
 **Note:** Version bump only for package @sls-next/serverless-component
