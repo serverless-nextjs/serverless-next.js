@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [2.6.5-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-plugin@2.6.4...@sls-next/serverless-plugin@2.6.5-alpha.0) (2020-11-06)
+
+**Note:** Version bump only for package @sls-next/serverless-plugin
+
 ## [2.6.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-plugin@2.6.4-alpha.1...@sls-next/serverless-plugin@2.6.4) (2020-11-02)
 
 **Note:** Version bump only for package @sls-next/serverless-plugin

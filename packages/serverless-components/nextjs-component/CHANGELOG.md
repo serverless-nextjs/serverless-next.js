@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.1-alpha.2...@sls-next/serverless-component@1.19.0-alpha.0) (2020-11-06)
+
+### Features
+
+- **nextjs-component:** add build.postBuildCommands input to execute any command or script post-build ([#772](https://github.com/serverless-nextjs/serverless-next.js/issues/772)) ([b2cc97f](https://github.com/serverless-nextjs/serverless-next.js/commit/b2cc97f35adfa7364c3d708cd84ac9efeb7be68e))
+
 ## [1.18.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.18.1-alpha.1...@sls-next/serverless-component@1.18.1-alpha.2) (2020-11-03)
 
 **Note:** Version bump only for package @sls-next/serverless-component
