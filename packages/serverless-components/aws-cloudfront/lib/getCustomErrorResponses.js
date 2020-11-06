@@ -1,5 +1,6 @@
 // https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/custom-error-pages.html
 const CF_ALLOWED_ERROR_CODES = [
+  200,
   400,
   403,
   404,
