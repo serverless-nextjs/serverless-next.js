@@ -1,2 +1,5 @@
 next-app:
   component: "../../serverless-components/nextjs-component"
+  inputs:
+    build:
+      postBuildCommands: ["node scripts/post-build-test.js"]
