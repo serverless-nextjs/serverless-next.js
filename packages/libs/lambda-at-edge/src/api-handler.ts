@@ -16,6 +16,7 @@ import {
 } from "./routing/redirector";
 import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
+import { getUnauthenticatedResponse } from "./auth/authenticator";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -63,6 +64,16 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
+
+  // Handle basic auth
+  const authorization = request.headers.authorization;
+  const unauthResponse = getUnauthenticatedResponse(
+    authorization ? authorization[0].value : null,
+    manifest.authentication
+  );
+  if (unauthResponse) {
+    return unauthResponse;
+  }
 
   // Handle domain redirects e.g www to non-www domain
   const domainRedirect = getDomainRedirectPath(request, buildManifest);

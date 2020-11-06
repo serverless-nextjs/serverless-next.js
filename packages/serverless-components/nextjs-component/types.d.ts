@@ -24,6 +24,7 @@ export type ServerlessComponentInputs = {
   uploadStaticAssetsFromBuild?: boolean;
   deploy?: boolean;
   enableHTTPCompression?: boolean;
+  authentication?: { username: string; password: string };
 };
 
 type CloudfrontOptions = Record<string, any>;

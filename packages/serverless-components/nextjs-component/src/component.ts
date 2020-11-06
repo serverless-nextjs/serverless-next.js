@@ -203,7 +203,8 @@ class NextjsComponent extends Component {
           enableHTTPCompression: false,
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
-            : undefined
+            : undefined,
+          authentication: inputs.authentication ?? undefined
         },
         nextStaticPath
       );

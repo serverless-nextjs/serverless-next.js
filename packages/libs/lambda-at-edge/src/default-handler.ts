@@ -32,6 +32,7 @@ import {
 import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import type { SdkError } from "@aws-sdk/smithy-client";
+import { getUnauthenticatedResponse } from "./auth/authenticator";
 
 const basePath = RoutesManifestJson.basePath;
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
@@ -256,6 +257,16 @@ const handleOriginRequest = async ({
   routesManifest: RoutesManifest;
 }) => {
   const request = event.Records[0].cf.request;
+
+  // Handle basic auth
+  const authorization = request.headers.authorization;
+  const unauthResponse = getUnauthenticatedResponse(
+    authorization ? authorization[0].value : null,
+    manifest.authentication
+  );
+  if (unauthResponse) {
+    return unauthResponse;
+  }
 
   // Handle domain redirects e.g www to non-www domain
   const domainRedirect = getDomainRedirectPath(request, manifest);
