@@ -21,6 +21,7 @@ import type {
   LambdaType,
   LambdaInput
 } from "../types";
+import { execSync } from "child_process";
 
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -37,6 +38,7 @@ class NextjsComponent extends Component {
   ): Promise<DeploymentResult> {
     if (inputs.build !== false) {
       await this.build(inputs);
+      await this.postBuild(inputs);
     }
 
     return this.deploy(inputs);
@@ -207,6 +209,22 @@ class NextjsComponent extends Component {
       );
 
       await builder.build(this.context.instance.debugMode);
+    }
+  }
+
+  /**
+   * Run any post-build steps.
+   * Useful to run any custom commands before deploying.
+   * @param inputs
+   */
+  async postBuild(inputs: ServerlessComponentInputs): Promise<void> {
+    const buildOptions = inputs.build;
+
+    const postBuildCommands =
+      (buildOptions as BuildOptions)?.postBuildCommands ?? [];
+
+    for (const command of postBuildCommands) {
+      execSync(command, { stdio: "inherit" });
     }
   }
 

@@ -34,6 +34,7 @@ export type BuildOptions = {
   cmd: string;
   args: string[];
   env?: Record<string, string>;
+  postBuildCommands?: string[];
 };
 
 export type LambdaType = "defaultLambda" | "apiLambda";
