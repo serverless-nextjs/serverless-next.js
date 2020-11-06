@@ -22,6 +22,10 @@ export type OriginRequestApiHandlerManifest = {
     [key: string]: string;
   };
   enableHTTPCompression: boolean;
+  authentication?: {
+    username: string;
+    password: string;
+  };
 };
 
 export type OriginRequestDefaultHandlerManifest = {
@@ -48,6 +52,10 @@ export type OriginRequestDefaultHandlerManifest = {
   enableHTTPCompression: boolean;
   domainRedirects: {
     [key: string]: string;
+  };
+  authentication?: {
+    username: string;
+    password: string;
   };
 };
 

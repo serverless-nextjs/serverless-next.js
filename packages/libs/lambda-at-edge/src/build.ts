@@ -37,6 +37,7 @@ type BuildOptions = {
   minifyHandlers?: boolean;
   enableHTTPCompression?: boolean;
   handler?: string;
+  authentication?: { username: string; password: string } | undefined;
 };
 
 const defaultBuildOptions = {
@@ -48,7 +49,8 @@ const defaultBuildOptions = {
   logLambdaExecutionTimes: false,
   domainRedirects: {},
   minifyHandlers: false,
-  enableHTTPCompression: true
+  enableHTTPCompression: true,
+  authentication: undefined
 };
 
 class Builder {
@@ -397,7 +399,8 @@ class Builder {
     const {
       logLambdaExecutionTimes = false,
       domainRedirects = {},
-      enableHTTPCompression = false
+      enableHTTPCompression = false,
+      authentication = undefined
     } = this.buildOptions;
 
     this.normalizeDomainRedirects(domainRedirects);
@@ -418,6 +421,7 @@ class Builder {
       publicFiles: {},
       trailingSlash: false,
       domainRedirects: domainRedirects,
+      authentication: authentication,
       enableHTTPCompression
     };
 
@@ -427,6 +431,7 @@ class Builder {
         nonDynamic: {}
       },
       domainRedirects: domainRedirects,
+      authentication: authentication,
       enableHTTPCompression
     };
 
