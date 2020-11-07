@@ -347,22 +347,21 @@ const handleOriginRequest = async ({
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
   const previewCookies = getPreviewCookies(request);
-  const isPreviewRequest =
+  let isPreviewRequest = false;
+  const containsPreviewCookies =
     previewCookies[NEXT_PREVIEW_DATA_COOKIE] &&
     previewCookies[NEXT_PRERENDER_BYPASS_COOKIE];
 
-  if (isPreviewRequest) {
+  if (containsPreviewCookies) {
     try {
       jsonwebtoken.verify(
         previewCookies[NEXT_PREVIEW_DATA_COOKIE],
         prerenderManifest.preview.previewModeSigningKey
       );
+
+      isPreviewRequest = true;
     } catch (e) {
-      console.error("Failed preview mode verification for URI:", request.uri);
-      return {
-        status: "403",
-        statusDescription: "Forbidden"
-      };
+      console.warn("Failed preview mode verification for URI:", request.uri);
     }
   }
 
