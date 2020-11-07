@@ -10,7 +10,8 @@
 ![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
-![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.5-blue)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.x%20%7C%2010.0.x-blue)
+[![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![Platforms](https://img.shields.io/badge/platforms-aws-blue)
 
 A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
@@ -82,6 +83,7 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release (caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
 - [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). In latest alpha release (caveats: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. [External URL rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewriting-to-an-external-url) are not yet implemented). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
 - [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). In latest alpha release (caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [ ] [Next.js 10 Features](https://nextjs.org/blog/next-10). A few issues such as https://github.com/serverless-nextjs/serverless-next.js/issues/725 and https://github.com/serverless-nextjs/serverless-next.js/issues/721 are in progress, aiming for 1.19 release.
 
 ### Getting started
 
