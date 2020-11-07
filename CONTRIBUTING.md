@@ -33,12 +33,14 @@ yarn integration
 
 #### End-to-end tests
 
-The end-to-end tests will automatically verify a real deployment to AWS using a test app. Currently, we have four sets of end-to-end tests, which each test various configurations:
+The end-to-end tests will automatically verify a real deployment to AWS using a test app and the Cypress testing framework. Currently, we have four sets of end-to-end tests, which each test various configurations:
 
 * next-app: basic app
 * next-app-with-trailing-slash: app with `trailingSlash = true`
 * next-app-with-basepath: app with `basepath` set
 * next-app-dynamic-routes: app that tests catch-all and other dynamic routes
+
+The above always test the latest minor version of Next.js. These are also duplicated with `prev-` prefixes, which indicate they test the previous minor version of Next.js. As of November 7th, 2020, these are `10.0.x` and `9.5.x` respectively.
 
 Each test app tests various combinations of configuration. The test app may also be useful for you to manually verify your changes. When making a PR, it is recommended to at least run the end-to-end tests for the basic app, i.e `next-app`. However, if you have difficulty setting up the end-to-end tests, no worries! We will also run them for you as part of the PR. For forks, this is run manually by a maintainer.
 
