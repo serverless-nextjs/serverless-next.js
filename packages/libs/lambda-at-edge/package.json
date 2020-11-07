@@ -55,7 +55,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "1.0.0-rc.3",
-    "@zeit/node-file-trace": "^0.6.5",
+    "@vercel/nft": "^0.9.3",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
     "fs-extra": "^9.0.1",
