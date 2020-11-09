@@ -29,8 +29,12 @@ const mockCreateCloudFrontOriginAccessIdentityPromise = promisifyMock(
 const mockPutBucketPolicy = jest.fn();
 const mockPutBucketPolicyPromise = promisifyMock(mockPutBucketPolicy);
 
+const mockCreateCachePolicy = jest.fn();
+const mockCreateCachePolicyPromise = promisifyMock(mockCreateCachePolicy);
+
 module.exports = {
   mockCreateDistribution,
+  mockCreateCachePolicy,
   mockUpdateDistribution,
   mockGetDistributionConfig,
   mockDeleteDistribution,
@@ -39,6 +43,7 @@ module.exports = {
 
   mockPutBucketPolicyPromise,
   mockCreateDistributionPromise,
+  mockCreateCachePolicyPromise,
   mockUpdateDistributionPromise,
   mockGetDistributionConfigPromise,
   mockDeleteDistributionPromise,
@@ -49,7 +54,8 @@ module.exports = {
     updateDistribution: mockUpdateDistribution,
     getDistributionConfig: mockGetDistributionConfig,
     deleteDistribution: mockDeleteDistribution,
-    createCloudFrontOriginAccessIdentity: mockCreateCloudFrontOriginAccessIdentity
+    createCloudFrontOriginAccessIdentity: mockCreateCloudFrontOriginAccessIdentity,
+    createCachePolicy: mockCreateCachePolicy
   })),
 
   S3: jest.fn(() => ({

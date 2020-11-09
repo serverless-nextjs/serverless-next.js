@@ -71,9 +71,25 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     } = await createOriginAccessIdentity(cf));
   }
 
-  const { Origins, CacheBehaviors } = parseInputOrigins(inputs.origins, {
+  const {
+    Origins,
+    CacheBehaviors,
+    CachePoliciesPerBehavior
+  } = parseInputOrigins(inputs.origins, {
     originAccessIdentityId
   });
+
+  for (let pathPattern in CachePoliciesPerBehavior) {
+    const policyConfig = CachePoliciesPerBehavior[pathPattern];
+
+    const { CachePolicy } = await cf.createCachePolicy(policyConfig).promise();
+
+    const cacheBehavior = CacheBehaviors.Items.find(
+      (cb) => cb.PathPattern === pathPattern
+    );
+
+    cacheBehavior.CachePolicyId = CachePolicy.Id;
+  }
 
   if (s3CanonicalUserId) {
     await updateBucketsPolicies(s3, Origins, s3CanonicalUserId);

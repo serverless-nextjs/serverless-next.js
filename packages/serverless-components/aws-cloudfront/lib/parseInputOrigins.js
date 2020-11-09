@@ -1,4 +1,5 @@
 const getOriginConfig = require("./getOriginConfig");
+const getCachePolicy = require("./getCachePolicy");
 const getCacheBehavior = require("./getCacheBehavior");
 const addLambdaAtEdgeToCacheBehavior = require("./addLambdaAtEdgeToCacheBehavior");
 
@@ -12,6 +13,8 @@ module.exports = (origins, options) => {
     Quantity: 0,
     Items: []
   };
+
+  const cachePoliciesPerBehavior = {};
 
   for (const origin of origins) {
     const originConfig = getOriginConfig(origin, options);
@@ -29,6 +32,9 @@ module.exports = (origins, options) => {
           originConfig.Id
         );
 
+        const cachePolicy = getCachePolicy(pathPatternConfig.cachePolicy);
+        cachePoliciesPerBehavior[pathPattern] = cachePolicy;
+
         addLambdaAtEdgeToCacheBehavior(
           cacheBehavior,
           pathPatternConfig["lambda@edge"]
@@ -43,6 +49,7 @@ module.exports = (origins, options) => {
 
   return {
     Origins: distributionOrigins,
-    CacheBehaviors: distributionCacheBehaviors
+    CacheBehaviors: distributionCacheBehaviors,
+    CachePoliciesPerBehavior: cachePoliciesPerBehavior
   };
 };
