@@ -1,5 +1,5 @@
 import React from "react";
-import { NextPageContext } from "next";
+import { GetStaticPropsContext } from "next";
 
 type SSGPageProps = {
   name: string;
@@ -17,8 +17,8 @@ export default function SSGPage(props: any): JSX.Element {
   );
 }
 
-export async function getServerSideProps(
-  ctx: NextPageContext & { preview: boolean }
+export async function getStaticProps(
+  ctx: GetStaticPropsContext
 ): Promise<{ props: SSGPageProps }> {
   return {
     props: {
