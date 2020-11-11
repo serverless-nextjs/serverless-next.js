@@ -70,17 +70,17 @@ describe("Pages Tests", () => {
         cy.visit(path);
       });
 
-      it(`supports preview mode ${path}`, () => {
-        cy.visit("/api/preview/enabled");
+      it.only(`supports preview mode ${path}`, () => {
+        cy.request("/api/preview/enabled");
         cy.visit(path);
         cy.location("pathname").should("eq", path);
-        cy.get("[data-cy=preview-mode]").and("match", /true/);
+        cy.get("[data-cy=preview-mode]").contains("true");
         cy.ensureRouteNotCached(path);
 
-        cy.visit("/api/preview/disabled");
+        cy.request("/api/preview/disabled");
         cy.visit(path);
         cy.location("pathname").should("eq", path);
-        cy.get("[data-cy=preview-mode]").and("match", /false/);
+        cy.get("[data-cy=preview-mode]").contains("false");
 
         cy.ensureRouteCached(path);
         cy.visit(path);
