@@ -1,4 +1,4 @@
-next-app:
+next-app-using-serverless-trace:
   component: "../../serverless-components/nextjs-component"
   inputs:
     useServerlessTraceTarget: true
