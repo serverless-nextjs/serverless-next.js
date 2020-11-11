@@ -70,6 +70,22 @@ describe("Pages Tests", () => {
         cy.visit(path);
       });
 
+      it(`supports preview mode ${path}`, () => {
+        cy.visit("/api/preview/enabled");
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.get("[data-cy=preview-mode]").and("match", /true/);
+        cy.ensureRouteNotCached(path);
+
+        cy.visit("/api/preview/disabled");
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.get("[data-cy=preview-mode]").and("match", /false/);
+
+        cy.ensureRouteCached(path);
+        cy.visit(path);
+      });
+
       ["HEAD", "GET"].forEach((method) => {
         it(`allows HTTP method for path ${path}: ${method}`, () => {
           cy.request({ url: path, method: method }).then((response) => {
