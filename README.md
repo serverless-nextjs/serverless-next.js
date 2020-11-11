@@ -34,7 +34,7 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 - [Inputs](#inputs)
 - [FAQ](#faq)
 
-> :warning: This README may reference new or changed functionality that is not yet published to npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information.
+> :warning: This README reflects the latest changes on the `master` branch. It may or may not yet be published to the `latest` (stable) or `alpha` release in npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information. If a feature is listed in this README but not working, please first try upgrading to the most recent `alpha` release in npm.
 
 ### Motivation
 
