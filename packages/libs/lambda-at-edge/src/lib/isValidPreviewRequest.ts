@@ -17,8 +17,8 @@ export type Cookies = {
 /**
  * Determine if the request contains a valid signed JWT for preview mode
  *
- * @param request
- * @param prerenderManifest
+ * @param cookies - Cookies header with cookies in RFC 6265 compliant format
+ * @param previewModeSigningKey - Next build key generated in the preRenderManifest
  */
 export const isValidPreviewRequest = (
   cookies: Cookies,
