@@ -70,7 +70,7 @@ describe("Pages Tests", () => {
         cy.visit(path);
       });
 
-      it.only(`supports preview mode ${path}`, () => {
+      it(`supports preview mode ${path}`, () => {
         cy.request("/api/preview/enabled");
         cy.visit(path);
         cy.location("pathname").should("eq", path);
