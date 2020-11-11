@@ -1,9 +1,6 @@
 import cookie from "cookie";
 import jsonwebtoken from "jsonwebtoken";
 
-import type { CloudFrontRequest } from "aws-lambda";
-import type { PreRenderedManifest } from "../../types";
-
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
 const defaultPreviewCookies = {
@@ -12,6 +9,10 @@ const defaultPreviewCookies = {
 };
 
 type DefaultPreviewCookies = typeof defaultPreviewCookies;
+export type Cookies = {
+  key?: string | undefined;
+  value: string;
+}[];
 
 /**
  * Determine if the request contains a valid signed JWT for preview mode
@@ -20,21 +21,21 @@ type DefaultPreviewCookies = typeof defaultPreviewCookies;
  * @param prerenderManifest
  */
 export const isValidPreviewRequest = (
-  request: CloudFrontRequest,
-  prerenderManifest: PreRenderedManifest
+  cookies: Cookies,
+  previewModeSigningKey: string
 ): boolean => {
-  const previewCookies = getPreviewCookies(request);
+  const previewCookies = getPreviewCookies(cookies);
 
   if (hasPreviewCookies(previewCookies)) {
     try {
       jsonwebtoken.verify(
         previewCookies[NEXT_PREVIEW_DATA_COOKIE],
-        prerenderManifest.preview.previewModeSigningKey
+        previewModeSigningKey
       );
 
       return true;
     } catch (e) {
-      console.warn("Failed preview mode verification for URI:", request.uri);
+      console.warn("Found preview headers without valid authentication token");
     }
   }
 
@@ -43,10 +44,8 @@ export const isValidPreviewRequest = (
 
 // Private
 
-const getPreviewCookies = (
-  request: CloudFrontRequest
-): DefaultPreviewCookies => {
-  const targetCookie = request.headers.cookie || [];
+const getPreviewCookies = (cookies: Cookies): DefaultPreviewCookies => {
+  const targetCookie = cookies || [];
 
   return targetCookie.reduce((previewCookies, cookieObj) => {
     const parsedCookie = cookie.parse(cookieObj.value);

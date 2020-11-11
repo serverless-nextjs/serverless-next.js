@@ -325,7 +325,10 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const isPreviewRequest = isValidPreviewRequest(request, prerenderManifest);
+  const isPreviewRequest = isValidPreviewRequest(
+    request.headers.cookie,
+    prerenderManifest.preview.previewModeSigningKey
+  );
 
   s3Origin.domainName = normalisedS3DomainName;
 

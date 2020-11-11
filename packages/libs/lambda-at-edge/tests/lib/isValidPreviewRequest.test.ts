@@ -1,34 +1,36 @@
-import { isValidPreviewRequest } from "../../src/lib/isValidPreviewRequest";
-
-import type { CloudFrontRequest } from "aws-lambda";
-import type { PreRenderedManifest } from "../../types";
-
-import * as manifestFixture from "../default-handler/prerender-manifest.json";
-const preRenderManifest = manifestFixture as PreRenderedManifest;
+import {
+  isValidPreviewRequest,
+  Cookies
+} from "../../src/lib/isValidPreviewRequest";
 
 import jsonwebtoken from "jsonwebtoken";
 
-const request: CloudFrontRequest = {
-  clientIp: "0.0.0.0",
-  headers: {
-    "x-example": [
-      {
-        key: "Example",
-        value: "Example Header"
-      }
-    ]
-  },
-  method: "GET",
-  querystring: "",
-  uri: "https://resource.com"
-};
+const previewModeSigningKey = "secret-key-sign";
 
 describe("isValidPreviewRequest", () => {
   describe("with preview mode disabled", () => {
     it("is falsey for missing preview cookies", () => {
-      const currentRequest = { ...request };
+      const cookies: Cookies = [
+        {
+          key: "cookie",
+          value: "user-session=12345;"
+        }
+      ];
 
-      expect(isValidPreviewRequest(currentRequest, preRenderManifest)).toEqual(
+      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).toEqual(
+        false
+      );
+    });
+    it("is falsey for invalid preview cookies", () => {
+      const cookies: Cookies = [
+        {
+          key: "cookie",
+          value:
+            "user-session=12345; __next_preview_data=$incorrect-token; __prerender_bypass=def"
+        }
+      ];
+
+      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).toEqual(
         false
       );
     });
@@ -36,24 +38,16 @@ describe("isValidPreviewRequest", () => {
 
   describe("with preview mode enabled", () => {
     it("is truthy for valid jwt token in cookies", () => {
-      const token = jsonwebtoken.sign(
-        "example-data",
-        preRenderManifest.preview.previewModeSigningKey
-      );
+      const token = jsonwebtoken.sign("example-data", previewModeSigningKey);
 
-      const currentRequest = {
-        ...request,
-        headers: {
-          cookie: [
-            {
-              key: "Cookie",
-              value: `__next_preview_data=${token}; __prerender_bypass=def`
-            }
-          ]
+      const cookies: Cookies = [
+        {
+          key: "Cookie",
+          value: `user-session=12345; __next_preview_data=${token}; __prerender_bypass=def`
         }
-      };
+      ];
 
-      expect(isValidPreviewRequest(currentRequest, preRenderManifest)).toEqual(
+      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).toEqual(
         true
       );
     });
