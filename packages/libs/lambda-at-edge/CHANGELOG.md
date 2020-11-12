@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.3...@sls-next/lambda-at-edge@1.8.0-alpha.4) (2020-11-11)
+
+### Features
+
+- **lambda-at-edge:** add baseDir and resolve build options to serverless-trace ([#779](https://github.com/serverless-nextjs/serverless-next.js/issues/779)) ([8f978bb](https://github.com/serverless-nextjs/serverless-next.js/commit/8f978bb1f8117d1c1a81d965be3aa23b9c14798c)), closes [vercel/nft#153](https://github.com/vercel/nft/issues/153)
+
 # [1.8.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.2...@sls-next/lambda-at-edge@1.8.0-alpha.3) (2020-11-07)
 
 ### Bug Fixes

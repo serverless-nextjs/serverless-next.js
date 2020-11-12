@@ -1,4 +1,4 @@
-import nodeFileTrace, { NodeFileTraceReasons } from "@zeit/node-file-trace";
+import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
@@ -21,6 +21,7 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
+import { Job } from "@vercel/nft/out/node-file-trace";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -38,6 +39,13 @@ type BuildOptions = {
   enableHTTPCompression?: boolean;
   handler?: string;
   authentication?: { username: string; password: string } | undefined;
+  resolve?: (
+    id: string,
+    parent: string,
+    job: Job,
+    cjsResolve: boolean
+  ) => string | string[];
+  baseDir?: string;
 };
 
 const defaultBuildOptions = {
@@ -50,7 +58,9 @@ const defaultBuildOptions = {
   domainRedirects: {},
   minifyHandlers: false,
   enableHTTPCompression: true,
-  authentication: undefined
+  authentication: undefined,
+  resolve: undefined,
+  baseDir: process.cwd()
 };
 
 class Builder {
@@ -127,7 +137,8 @@ class Builder {
   copyLambdaHandlerDependencies(
     fileList: string[],
     reasons: NodeFileTraceReasons,
-    handlerDirectory: string
+    handlerDirectory: string,
+    base: string
   ): Promise<void>[] {
     return fileList
       .filter((file) => {
@@ -146,7 +157,7 @@ class Builder {
         );
       })
       .map((filePath: string) => {
-        const resolvedFilePath = path.resolve(filePath);
+        const resolvedFilePath = path.resolve(join(base, filePath));
         const dst = normalizeNodeModules(
           path.relative(this.serverlessDir, resolvedFilePath)
         );
@@ -248,14 +259,17 @@ class Builder {
         path.join(this.serverlessDir, pageFile)
       );
 
+      const base = this.buildOptions.baseDir || process.cwd();
       const { fileList, reasons } = await nodeFileTrace(ssrPages, {
-        base: process.cwd()
+        base,
+        resolve: this.buildOptions.resolve
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
         fileList,
         reasons,
-        DEFAULT_LAMBDA_CODE_DIR
+        DEFAULT_LAMBDA_CODE_DIR,
+        base
       );
     }
 
@@ -347,14 +361,17 @@ class Builder {
         path.join(this.serverlessDir, pageFile)
       );
 
+      const base = this.buildOptions.baseDir || process.cwd();
       const { fileList, reasons } = await nodeFileTrace(apiPages, {
-        base: process.cwd()
+        base,
+        resolve: this.buildOptions.resolve
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
         fileList,
         reasons,
-        API_LAMBDA_CODE_DIR
+        API_LAMBDA_CODE_DIR,
+        base
       );
     }
 

@@ -1,0 +1,6 @@
+next-app-using-serverless-trace:
+  component: "../../serverless-components/nextjs-component"
+  inputs:
+    useServerlessTraceTarget: true
+    build:
+      postBuildCommands: ["node scripts/post-build-test.js"]
