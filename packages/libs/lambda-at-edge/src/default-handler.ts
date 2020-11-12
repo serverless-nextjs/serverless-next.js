@@ -5,7 +5,7 @@ import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
-import cookie from "cookie";
+
 import {
   CloudFrontRequest,
   CloudFrontS3Origin,
@@ -22,7 +22,6 @@ import {
 } from "../types";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
-import jsonwebtoken from "jsonwebtoken";
 import type { Readable } from "stream";
 import {
   createRedirectResponse,
@@ -31,31 +30,11 @@ import {
 } from "./routing/redirector";
 import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
+import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import type { SdkError } from "@aws-sdk/smithy-client";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 
 const basePath = RoutesManifestJson.basePath;
-const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
-const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
-const defaultPreviewCookies = {
-  [NEXT_PRERENDER_BYPASS_COOKIE]: "",
-  [NEXT_PREVIEW_DATA_COOKIE]: ""
-};
-
-const getPreviewCookies = (request: CloudFrontRequest) => {
-  const targetCookie = request.headers.cookie || [];
-  return targetCookie.reduce((previewCookies, cookieObj) => {
-    const cookieValue = cookie.parse(cookieObj.value);
-    if (
-      cookieValue[NEXT_PREVIEW_DATA_COOKIE] &&
-      cookieValue[NEXT_PRERENDER_BYPASS_COOKIE]
-    ) {
-      return cookieValue as typeof defaultPreviewCookies;
-    } else {
-      return previewCookies;
-    }
-  }, defaultPreviewCookies);
-};
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -346,24 +325,10 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const previewCookies = getPreviewCookies(request);
-  let isPreviewRequest = false;
-  const containsPreviewCookies =
-    previewCookies[NEXT_PREVIEW_DATA_COOKIE] &&
-    previewCookies[NEXT_PRERENDER_BYPASS_COOKIE];
-
-  if (containsPreviewCookies) {
-    try {
-      jsonwebtoken.verify(
-        previewCookies[NEXT_PREVIEW_DATA_COOKIE],
-        prerenderManifest.preview.previewModeSigningKey
-      );
-
-      isPreviewRequest = true;
-    } catch (e) {
-      console.warn("Failed preview mode verification for URI:", request.uri);
-    }
-  }
+  const isPreviewRequest = isValidPreviewRequest(
+    request.headers.cookie,
+    prerenderManifest.preview.previewModeSigningKey
+  );
 
   s3Origin.domainName = normalisedS3DomainName;
 
