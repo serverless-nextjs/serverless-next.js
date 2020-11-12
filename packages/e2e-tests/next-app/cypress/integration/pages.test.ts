@@ -13,6 +13,19 @@ describe("Pages Tests", () => {
 
         cy.visit(path);
       });
+
+      ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
+        (method) => {
+          it(`allows HTTP method for path ${path}: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              if (method !== "HEAD") {
+                cy.verifyResponseIsCompressed(response);
+              }
+              expect(response.status).to.equal(200);
+            });
+          });
+        }
+      );
     });
   });
 
@@ -31,6 +44,19 @@ describe("Pages Tests", () => {
 
         cy.visit(path);
       });
+
+      ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
+        (method) => {
+          it(`allows HTTP method for path ${path}: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              if (method !== "HEAD") {
+                cy.verifyResponseIsCompressed(response);
+              }
+              expect(response.status).to.equal(200);
+            });
+          });
+        }
+      );
     });
   });
 
@@ -42,6 +68,43 @@ describe("Pages Tests", () => {
 
         cy.ensureRouteCached(path);
         cy.visit(path);
+      });
+
+      it(`supports preview mode ${path}`, () => {
+        cy.request("/api/preview/enabled");
+        cy.getCookies().should("have.length", 2); // Preview cookies are now set
+        // FIXME: Not sure why adding cy.ensureRouteNotCached(path) here fails as a preview response should be uncached?
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.get("[data-cy=preview-mode]").contains("true");
+
+        cy.request("/api/preview/disabled");
+        cy.getCookies().should("have.length", 0); // Preview cookies are now removed
+        cy.ensureRouteCached(path);
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.get("[data-cy=preview-mode]").contains("false");
+      });
+
+      ["HEAD", "GET"].forEach((method) => {
+        it(`allows HTTP method for path ${path}: ${method}`, () => {
+          cy.request({ url: path, method: method }).then((response) => {
+            expect(response.status).to.equal(200);
+          });
+        });
+      });
+
+      ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+        it(`disallows HTTP method for path ${path} with 4xx error: ${method}`, () => {
+          cy.request({
+            url: path,
+            method: method,
+            failOnStatusCode: false
+          }).then((response) => {
+            expect(response.status).to.be.at.least(400);
+            expect(response.status).to.be.lessThan(500);
+          });
+        });
       });
     });
   });

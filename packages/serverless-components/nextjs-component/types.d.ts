@@ -13,11 +13,18 @@ export type ServerlessComponentInputs = {
   timeout?: number | { defaultLambda?: number; apiLambda?: number };
   name?: string | { defaultLambda?: string; apiLambda?: string };
   runtime?: string | { defaultLambda?: string; apiLambda?: string };
+  handler?: string;
   description?: string;
   policy?: string;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
+  domainRedirects?: { [key: string]: string };
   cloudfront?: CloudfrontOptions;
+  minifyHandlers?: boolean;
+  uploadStaticAssetsFromBuild?: boolean;
+  deploy?: boolean;
+  enableHTTPCompression?: boolean;
+  authentication?: { username: string; password: string };
 };
 
 type CloudfrontOptions = Record<string, any>;
@@ -28,6 +35,7 @@ export type BuildOptions = {
   cmd: string;
   args: string[];
   env?: Record<string, string>;
+  postBuildCommands?: string[];
 };
 
 export type LambdaType = "defaultLambda" | "apiLambda";

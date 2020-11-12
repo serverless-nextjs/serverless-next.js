@@ -3,7 +3,7 @@
 ### Running the example
 
 ```shell
-git clone https://github.com/danielcondemarin/serverless-next.js
+git clone https://github.com/serverless-nextjs/serverless-next.js
 cd serverless-plugin/examples/app-using-cloudfront
 ```
 

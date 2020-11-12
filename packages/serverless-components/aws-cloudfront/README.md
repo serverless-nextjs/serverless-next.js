@@ -55,6 +55,7 @@ distribution:
     region: us-east-1
     enabled: true # optional
     comment: 'My distribution' # optional
+    aliases: ['foo.example.com', 'bar.example.com']
     priceClass: 'PriceClass_All' # optional
     errorPages: # optional
       - code: 503
@@ -103,6 +104,25 @@ distribution:
               queryString: true
             compress: false # optional
             # ...
+```
+
+#### Custom origin config
+
+To configure custom origins:
+https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_CustomOriginConfig.html
+
+```yml
+# serverless.yml
+
+distribution:
+  component: "@serverless/aws-cloudfront"
+  inputs:
+    origins:
+      - url: http://old-api.com
+        protocolPolicy: http-only
+        pathPatterns:
+          /old-api:
+          # ...
 ```
 
 #### Lambda@Edge

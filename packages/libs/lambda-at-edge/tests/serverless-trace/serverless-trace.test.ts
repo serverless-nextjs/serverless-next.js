@@ -12,7 +12,7 @@ describe("Serverless Trace", () => {
   let fseRemoveSpy: jest.SpyInstance;
 
   beforeEach(async () => {
-    outputDir = os.tmpdir();
+    outputDir = path.join(os.tmpdir(), `${Date.now()}`);
 
     fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;

@@ -1,14 +1,22 @@
-# Serverless Nextjs Component
+# Serverless Next.js Component
 
 ![logo](./logo.gif)
 
-A zero configuration Nextjs 9.0 [serverless component](https://github.com/serverless-components/) with full feature parity.
-
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
+[![GitHub contributors](https://img.shields.io/github/contributors/serverless-nextjs/serverless-next.js)](https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors)
+[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=backers)](https://opencollective.com/serverless-nextjs-plugin)
+[![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
-[![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=financial+contributors)](https://opencollective.com/serverless-nextjs-plugin) [![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/app/danielcondemarin/serverless-nextjs-plugin?utm_source=github.com&utm_medium=referral&utm_content=danielcondemarin/serverless-nextjs-plugin&utm_campaign=Badge_Grade)
-[![Coverage Status](https://coveralls.io/repos/github/danielcondemarin/serverless-next.js/badge.svg?branch=master)](https://coveralls.io/github/danielcondemarin/serverless-next.js?branch=master)
+![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
+[![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.x%20%7C%2010.0.x-blue)
+[![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
+![Platforms](https://img.shields.io/badge/platforms-aws-blue)
+
+A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
+
+Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
 
 ## Contents
 
@@ -26,11 +34,11 @@ A zero configuration Nextjs 9.0 [serverless component](https://github.com/server
 - [Inputs](#inputs)
 - [FAQ](#faq)
 
-> :warning: This README may reference new or changed functionality that is not yet published to npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information.
+> :warning: This README reflects the latest changes on the `master` branch. It may or may not yet be published to the `latest` (stable) or `alpha` release in npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information. If a feature is listed in this README but not working, please first try upgrading to the most recent `alpha` release in npm.
 
 ### Motivation
 
-Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-nextjs-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/101), [better development experience](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/59), [the 200 CloudFormation resource limit](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/17) and [performance](https://github.com/danielcondemarin/serverless-nextjs-plugin/issues/13).
+Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/serverless-nextjs/serverless-next.js/issues/101), [better development experience](https://github.com/serverless-nextjs/serverless-next.js/issues/59), [the 200 CloudFormation resource limit](https://github.com/serverless-nextjs/serverless-next.js/issues/17) and [performance](https://github.com/serverless-nextjs/serverless-next.js/issues/13).
 
 ### Design principles
 
@@ -38,15 +46,21 @@ Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-ne
 
 There is no configuration needed. You can extend defaults based on your application needs.
 
-2. Feature parity with nextjs
+2. Feature parity with Next.js
 
-Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
+Users of this component should be able to use Next.js development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
 
 3. Fast deployments / no CloudFormation resource limits.
 
 With a simplified architecture and no use of CloudFormation, there are no limits to how many pages you can have in your application, plus deployment times are very fast! with the exception of CloudFront propagation times of course.
 
 ### Features
+
+The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or implementation stage. Please refer to an item's description for specific details.
+
+Note that some features may only be on the latest [alpha version](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions). Please help us test the latest changes and [submit a bug report](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=bug_report.md&title=) if you find any issues. Thank you!
+
+Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
 
 - [x] [Server side rendered pages at the Edge](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
       Pages that need server side compute to render are hosted on Lambda@Edge. The component takes care of all the routing for you so there is no configuration needed. Because rendering happens at the CloudFront edge locations latency is very low!
@@ -57,16 +71,19 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 - [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
       Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
 - [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
-      Nextjs build assets `/_next/*` served from CloudFront.
+      Next.js build assets `/_next/*` served from CloudFront.
 - [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
-- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths`.
-- [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath) available on current `alpha` release.
+- [x] [Statically generate a set of routes from dynamic sources](https://nextjs.org/docs/basic-features/data-fetching#getstaticpaths-static-generation) via `getStaticPaths` (Note: known conflict with public files if you use this with a root dynamic route and `fallback: false` is not supported in 1.17. Please try the latest 1.18 alpha in case of any issues).
+- [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
+- [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [ ] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
-- [ ] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites)
-- [ ] Preview mode. See [RFC](https://github.com/danielcondemarin/serverless-next.js/issues/355) for updates.
+- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). In latest alpha release (caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). In latest alpha release (caveats: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. [External URL rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites#rewriting-to-an-external-url) are not yet implemented). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). In latest alpha release (caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details). See [RFC](https://github.com/serverless-nextjs/serverless-next.js/issues/587) for updates.
+- [ ] [Next.js 10 Features](https://nextjs.org/blog/next-10). A few issues such as https://github.com/serverless-nextjs/serverless-next.js/issues/725 and https://github.com/serverless-nextjs/serverless-next.js/issues/721 are in progress, aiming for 1.19 release.
 
 ### Getting started
 
@@ -94,6 +111,8 @@ $ serverless
 
 :no_entry_sign: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
 
+:no_entry_sign: **Do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
+
 ### Custom domain name
 
 In most cases you wouldn't want to use CloudFront's distribution domain to access your application. Instead, you can specify a custom domain name.
@@ -104,13 +123,13 @@ You can use any domain name but you must be using AWS Route53 for your DNS hosti
 - Route53 must include a _hosted zone_ for your domain (e.g. `mydomain.com`) with a set of nameservers.
 - You must update the nameservers listed with your domain name registrar (e.g. namecheap, godaddy, etc.) with those provided for your new _hosted zone_.
 
-The serverless next.js component will automatically generate an SSL certificate and create a new record to point to your CloudFront distribution.
+The serverless Next.js component will automatically generate an SSL certificate and create a new record to point to your CloudFront distribution.
 
 ```yml
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     domain: "example.com" # sub-domain defaults to www
 ```
@@ -121,7 +140,7 @@ You can also configure a `subdomain`:
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     domain: ["sub", "example.com"] # [ sub-domain, domain ]
 ```
@@ -134,7 +153,7 @@ To specify your own CloudFront inputs, just add any [aws-cloudfront inputs](http
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     cloudfront:
       # if you want to use an existing cloudfront distribution, provide it here
@@ -181,6 +200,14 @@ myNextApplication:
               minTTL: 10
               maxTTL: 10
               defaultTTL: 10
+        - url: http://old-api.com
+          protocolPolicy: http-only
+          pathPatterns:
+            /old-api/*:
+              minTTL: 10
+              maxTTL: 10
+              defaultTTL: 10
+      aliases: ["foo.example.com", "bar.example.com"]
       priceClass: "PriceClass_100"
       # You can add custom error responses
       errorPages:
@@ -188,9 +215,21 @@ myNextApplication:
           path: "/503.html"
           minTTL: 5 # optional, minimum ttl the error is cached (default 10)
           responseCode: 500 # optional, alters the response code
+      comment: "a comment" # optional, describes your distribution
+      webACLId: "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a" # ARN of WAF
+      restrictions:
+        geoRestriction:
+          restrictionType: "blacklist" # valid values are whitelist/blacklist/none. Set to "none" and omit items to disable restrictions
+          items: ["AA"] # ISO 3166 alpha-2 country codes
+      certificate:
+        cloudFrontDefaultCertificate: false # specify false and one of IAM/ACM certificates, or specify true and omit IAM/ACM inputs for default certificate
+        acmCertificateArn: "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+        iamCertificateId: "iam-certificate-id" # specify either ACM or IAM certificate, not both
+        sslSupportMethod: "sni-only" # can be omitted, defaults to "sni-only"
+        minimumProtocolVersion: "TLSv1.2_2019" # can be omitted, defaults to "TLSv1.2_2019"
 ```
 
-This is particularly useful for caching any of your next.js pages at CloudFront's edge locations. See [this](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
+This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
 You can also [update an existing cloudfront distribution](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/aws-cloudfront#updating-an-existing-cloudfront-distribution) using custom cloudfront inputs.
 
 ### Static pages caching
@@ -212,7 +251,7 @@ You may customize either the `Cache-Control` header `value` and the regex of whi
 
 ```yaml
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     publicDirectoryCache:
       value: public, max-age=604800
@@ -224,7 +263,7 @@ If you don't want browsers to cache assets from the public directory, you can di
 
 ```yaml
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     publicDirectoryCache: false
 ```
@@ -237,7 +276,7 @@ By default the Lambda@Edge functions run using AWSLambdaBasicExecutionRole which
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     policy: "arn:aws:iam::123456789012:policy/MyCustomPolicy"
 ```
@@ -299,7 +338,7 @@ Both **default** and **api** edge lambdas will be assigned 512mb of memory by de
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     memory: 1024
 ```
@@ -310,7 +349,7 @@ Values for **default** and **api** lambdas can be separately defined by assignin
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     memory:
       defaultLambda: 1024
@@ -323,7 +362,7 @@ The same pattern can be followed for specifying the Node.js runtime (nodejs12.x 
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     runtime:
       defaultLambda: "nodejs10.x"
@@ -336,7 +375,7 @@ Similarly, the timeout by default is 10 seconds. To customise you can:
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     timeout:
       defaultLambda: 20
@@ -351,7 +390,7 @@ You can also set a custom name for **default** and **api** lambdas - if not the 
 # serverless.yml
 
 myNextApplication:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     name:
       defaultLambda: fooDefaultLambda
@@ -380,36 +419,46 @@ The fourth cache behaviour handles next API requests `api/*`.
 
 ### Inputs
 
-| Name                     | Type              | Default Value                                                      | Description                                                                                                                                                                                                                                                          |
-| ------------------------ | ----------------- | ------------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| domain                   | `Array`           | `null`                                                             | For example `['admin', 'portal.com']`                                                                                                                                                                                                                                |
-| bucketName               | `string`          | `null`                                                             | Custom bucket name where static assets are stored. By default is autogenerated.                                                                                                                                                                                      |
-| bucketRegion             | `string`          | `null`                                                             | Region where you want to host your s3 bucket. Make sure this is geographically closer to the majority of your end users to reduce latency when CloudFront proxies a request to S3.                                                                                   |
-| nextConfigDir            | `string`          | `./`                                                               | Directory where your application `next.config.js` file is. This input is useful when the `serverless.yml` is not in the same directory as the next app. <br>**Note:** `nextConfigDir` should be set if `next.config.js` `distDir` is used                            |
-| nextStaticDir            | `string`          | `./`                                                               | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed                                                                                                                                                                       |
-| description              | `string`          | `*lambda-type*@Edge for Next CloudFront distribution`              | The description that will be used for both lambdas. Note that "(API)" will be appended to the API lambda description.                                                                                                                                                |
-| policy                   | `string\|object`          | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole` | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                                |
-| runtime                  | `string\|object`  | `nodejs12.x`                                                       | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                              |  |
-| memory                   | `number\|object`  | `512`                                                              | When assigned a number, both the default and api lambdas will be assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                         |  |
-| timeout                  | `number\|object`  | `10`                                                               | Same as above                                                                                                                                                                                                                                                        |
-| name                     | `string\|object`  | /                                                                  | When assigned a string, both the default and api lambdas will assigned name of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                              |
-| build                    | `boolean\|object` | `true`                                                             | When true builds and deploys app, when false assume the app has been built and uses the `.next` `.serverless_nextjs` directories in `nextConfigDir` to deploy. If an object is passed `build` allows for overriding what script gets called and with what arguments. |
-| build.cmd                | `string`          | `node_modules/.bin/next`                                           | Build command                                                                                                                                                                                                                                                        |
-| build.args               | `Array\|string`   | `['build']`                                                        | Arguments to pass to the build                                                                                                                                                                                                                                       |
-| build.cwd                | `string`          | `./`                                                               | Override the current working directory                                                                                                                                                                                                                               |
-| build.enabled            | `boolean`         | `true`                                                             | Same as passing `build:false` but from within the config                                                                                                                                                                                                             |
-| build.env                | `object`          | `{}`                                                               | Add additional environment variables to the script                                                                                                                                                                                                                   |
-| cloudfront               | `object`          | `{}`                                                               | Inputs to be passed to [aws-cloudfront](https://github.com/serverless-components/aws-cloudfront)                                                                                                                                                                     |
-| domainType               | `string`          | `"both"`                                                           | Can be one of: `"apex"` - apex domain only, don't create a www subdomain. `"www"` - www domain only, don't create an apex subdomain.`"both"` - create both www and apex domains when either one is provided.                                                         |
-| publicDirectoryCache     | `boolean\|object` | `true`                                                             | Customize the `public`/`static` folder asset caching policy. Assigning an object with `value` and/or `test` lets you customize the caching policy and the types of files being cached. Assigning false disables caching                                              |
-| useServerlessTraceTarget | `boolean`         | `false`                                                            | Use the experimental-serverless-trace target to build your next app. This is the same build target that Vercel Now uses. See this [RFC](https://github.com/vercel/next.js/pull/8246) for details.                                                                    |
-| logLambdaExecutionTimes  | `boolean`         | `false`                                                            | Logs to CloudWatch the default handler performance metrics.                                                                                                                                                                                                          |
+| Name                     | Type              | Default Value                                                                                                                                                                                                                                                                                                                                                                                                                                                                          | Description                                                                                                                                                                                                                                                                                                                                                                                                                                           |
+| ------------------------ | ----------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| domain                   | `Array`           | `null`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | For example `['admin', 'portal.com']`                                                                                                                                                                                                                                                                                                                                                                                                                 |
+| domainRedirects          | `object`          | `{}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Adds domain-level redirects at the edge using a 308 redirect. Specify an object of domain name -> redirect destination with protocol. For example, `www.example.com: https://example.com`. See [here](https://github.com/serverless-nextjs/serverless-next.js#i-was-expecting-for-automatic-subdomain-redirection-when-using-the-domaintype-wwwapex-input) for more information.                                                                      |
+| bucketName               | `string`          | `null`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Custom bucket name where static assets are stored. By default is autogenerated.                                                                                                                                                                                                                                                                                                                                                                       |
+| bucketRegion             | `string`          | `null`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Region where you want to host your s3 bucket. Make sure this is geographically closer to the majority of your end users to reduce latency when CloudFront proxies a request to S3.                                                                                                                                                                                                                                                                    |
+| nextConfigDir            | `string`          | `./`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Directory where your application `next.config.js` file is. This input is useful when the `serverless.yml` is not in the same directory as the next app. <br>**Note:** `nextConfigDir` should be set if `next.config.js` `distDir` is used                                                                                                                                                                                                             |
+| nextStaticDir            | `string`          | `./`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed                                                                                                                                                                                                                                                                                                                                                        |
+| description              | `string`          | `*lambda-type*@Edge for Next CloudFront distribution`                                                                                                                                                                                                                                                                                                                                                                                                                                  | The description that will be used for both lambdas. Note that "(API)" will be appended to the API lambda description.                                                                                                                                                                                                                                                                                                                                 |
+| policy                   | `string\|object`  | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole`                                                                                                                                                                                                                                                                                                                                                                                                                     | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                                                                                                                                                                                                       |
+| runtime                  | `string\|object`  | `nodejs12.x`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                               |  |
+| memory                   | `number\|object`  | `512`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | When assigned a number, both the default and api lambdas will be assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                          |  |
+| timeout                  | `number\|object`  | `10`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Same as above                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| handler                  | `string`          | `index.handler`                                                                                                                                                                                                                                                                                                                                                                                                                                                                        | When assigned a value, overrides the default function handler to allow for configuration. Copies `handler.js` in route into the Lambda folders. Your handler MUST still call the `default-handler` afterwards or your function won't work with Next.JS                                                                                                                                                                                                |
+| name                     | `string\|object`  | /                                                                                                                                                                                                                                                                                                                                                                                                                                                                                      | When assigned a string, both the default and api lambdas will assigned name of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                               |
+| build                    | `boolean\|object` | `true`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | When true builds and deploys app, when false assume the app has been built and uses the `.next` `.serverless_nextjs` directories in `nextConfigDir` to deploy. If an object is passed `build` allows for overriding what script gets called and with what arguments.                                                                                                                                                                                  |
+| build.cmd                | `string`          | `node_modules/.bin/next`                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Build command                                                                                                                                                                                                                                                                                                                                                                                                                                         |
+| build.args               | `Array\|string`   | `['build']`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Arguments to pass to the build                                                                                                                                                                                                                                                                                                                                                                                                                        |
+| build.cwd                | `string`          | `./`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Override the current working directory                                                                                                                                                                                                                                                                                                                                                                                                                |
+| build.enabled            | `boolean`         | `true`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Same as passing `build:false` but from within the config                                                                                                                                                                                                                                                                                                                                                                                              |
+| build.env                | `object`          | `{}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Add additional environment variables to the script                                                                                                                                                                                                                                                                                                                                                                                                    |
+| build.postBuildCommands  | `Array`           | `[]`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Any commands to run post-build and pre-deploy. For example, you can run any custom code on the `.serverless_nextjs` directory. Only applies during execution of the `serverless` command.                                                                                                                                                                                                                                                             |
+| cloudfront               | `object`          | `{}`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Inputs to be passed to [aws-cloudfront](https://github.com/serverless-components/aws-cloudfront)                                                                                                                                                                                                                                                                                                                                                      |
+| certificateArn           | `string`          | `` | Specific certificate ARN to use for CloudFront distribution. Helpful if you have a wildcard SSL cert you wish to use. This currently works only in tandem with the `domain` input. Please check [custom CloudFront configuration](https://github.com/serverless-nextjs/serverless-next.js#custom-cloudfront-configuration) for how to specify `certificate` without needing to use the `domain` input (note that doing so will override any certificate due to the domain input). |
+| domainType               | `string`          | `"both"`                                                                                                                                                                                                                                                                                                                                                                                                                                                                               | Can be one of: `"apex"` - apex domain only, don't create a www subdomain. `"www"` - www domain only, don't create an apex subdomain.`"both"` - create both www and apex domains when either one is provided.                                                                                                                                                                                                                                          |
+| publicDirectoryCache     | `boolean\|object` | `true`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Customize the `public`/`static` folder asset caching policy. Assigning an object with `value` and/or `test` lets you customize the caching policy and the types of files being cached. Assigning false disables caching                                                                                                                                                                                                                               |
+| useServerlessTraceTarget | `boolean`         | `false`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Use the experimental-serverless-trace target to build your next app. This is the same build target that Vercel Now uses. See this [RFC](https://github.com/vercel/next.js/pull/8246) for details. Note: while using this, you may need to set `NODE_ENV` variable to `production`.                                                                                                                                                                    |
+| logLambdaExecutionTimes  | `boolean`         | `false`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Logs to CloudWatch the default handler performance metrics.                                                                                                                                                                                                                                                                                                                                                                                           |
+| minifyHandlers           | `boolean`         | `false`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | Use pre-built minified handlers to reduce code size. Does not minify custom handlers.                                                                                                                                                                                                                                                                                                                                                                 |
+| deploy                   | `boolean`         | `true`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 | Whether to deploy resources to AWS (available in the latest alpha). Useful if you just need the build outputs (Lambdas and assets) but want to deploy them yourself. Build outputs will be created in the `.serverless_nextjs` directory. You are then responsible to configure AWS yourself: setting CloudFront behaviors with Lambda function associations, uploading assets to S3 with the proper `Cache-Control` headers, etc.                    |
+| enableHTTPCompression    | `boolean`         | `false`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                | When set to `true` the Lambda@Edge functions for SSR and API requests will use Gzip to compress the response. Note that you shouldn't need to enable this because CloudFront will compress responses for you out of the box.                                                                                                                                                                                                                          |
+| authentication           | `object`          | `undefined`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Authentication object for use with basic authentication (available from 1.19.0-alpha.3). It only supports a single username/password combination for now and is inlined in plaintext in the Lambda handler. You must also forward the `Authorization` header for CloudFront behaviors, e.g `defaults`, `api/*`, and `_next/data/*`. **Note: this is meant as a simple means of protecting an environment such as a development/test site, it is not recommended for production use.** |
+| authentication.username  | `string`          | `undefined`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Username for basic authentication.                                                                                                                                                                                                                                                                                                                                                                                                                    |
+| authentication.password  | `string`          | `undefined`                                                                                                                                                                                                                                                                                                                                                                                                                                                                            | Password for basic authentication. **Note: it is highly recommended not to reuse a password here as it gets inlined in plaintext in the Lambda handler.**                                                                                                                                                                                                                                                                                             |
 
 Custom inputs can be configured like this:
 
 ```yaml
 myNextApp:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
   inputs:
     bucketName: my-bucket
 ```
@@ -425,7 +474,7 @@ Make sure your `serverless.yml` uses the `serverless-components` format. [server
 ```yml
 # serverless.yml
 myNextApp:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
 
 myTable:
   component: serverless/aws-dynamodb
@@ -444,7 +493,7 @@ provider:
   region: eu-west-1
 
 myNextApp:
-  component: serverless-next.js
+  component: "@sls-next/serverless-component@{version_here}"
 
 Resources: ...
 ```
@@ -455,7 +504,73 @@ For deploying, don't run `serverless deploy`. Simply run `serverless` and that d
 
 For more information about serverless components go [here](https://serverless.com/blog/what-are-serverless-components-how-use/).
 
-#### Should I use the [serverless-plugin](https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-plugin) or this component?
+#### The Lambda@Edge code size is too large
+
+The API handler and default handler packages are deployed separately, but each has a limit of 50 MB zipped or 250 MB uncompressed per AWS - see [here](https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html) and [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-requirements-limits.html). By design, there is currently only one Lambda@Edge for all page routes and one Lambda@Edge for all API routes. This could lead to code size issues especially if you have many API routes, SSR pages, etc.
+
+If you are encountering code size issues, please try the following:
+
+- Optimize your code size: reduce # dependencies in your SSR pages and API routes, have fewer SSR pages (i.e don't use `getInitialProps()` or `getServerSideProps()`).
+
+- Minify the handler code itself by using the `minifyHandlers` input. This will reduce handler size from ~500 kB to ~200 kB.
+
+- Minify/minimize your server-side code using Terser by adding the following Webpack configuration to your `next.config.js`. It uses `NEXT_MINIMIZE` environment variable to tell it to minimize the SSR code. Note that this will increase build times, and minify the code so it could be harder to debug CloudWatch errors.
+
+First, add `terser-webpack-plugin` to your dependencies. Then update `next.config.js`:
+
+```js
+const TerserPlugin = require("terser-webpack-plugin");
+```
+
+```js
+webpack: (config, { buildId, dev, isServer, defaultLoaders, webpack }) => {
+  if (isServer && !dev && process.env.NEXT_MINIMIZE === "true") {
+    config.optimization = {
+      minimize: true,
+      minimizer: [
+        new TerserPlugin({
+          parallel: true,
+          cache: true,
+          terserOptions: {
+            output: { comments: false },
+            mangle: true,
+            compress: true
+          },
+          extractComments: false
+        })
+      ]
+    };
+  }
+
+  return config;
+};
+```
+
+Note that if you do not use any API routes, all JS files used only for prerendering static pages are automatically removed from the bundle. However, if you use API routes, we do not remove them as they may be used for preview mode. There's no official/non-hacky way to identify and remove these JS files not used in preview mode even when API routes are used. But we can add a new input to manually exclude them, if needed.
+
+- Use the `useServerlessTraceTarget` option in `serverless.yml`. This will cause Next.js to not bundle dependencies into each page (instead creating lightweight pages) and then `serverless-next.js` will reference a single set of dependencies in `node_modules`.
+
+#### Serverless deployment takes a long time and times out with a message like "TimeoutError: Connection timed out after 120000ms"
+
+This is likely either because of a Lambda@Edge code size issue (see above for potential solutions. Related [GitHub Issue](https://github.com/serverless-nextjs/serverless-next.js/issues/611)) or if you have a slow network upload speed and/or are trying to deploy a large Lambda package.
+
+In the second case, the `aws-sdk` npm package used has a default timeout of 120 seconds. Right now this is not configurable, but we may support longer timeouts in the near future (similar to https://github.com/serverless/serverless/pull/937, which only applies to Serverless Framework, not Serverless Components).
+
+#### When accessing the Host header in my SSR pages or APIs, I get an S3 domain instead of the CloudFront distribution or my domain name
+
+By default, CloudFront sets the `Host` header to the S3 origin host name. You need to forward the `Host` header to the origin. See the example below for forwarding it for your `api/*` cache behavior:
+
+```yml
+myNextApplication:
+  component: "@sls-next/serverless-component@{version_here}"
+  inputs:
+    cloudfront:
+      api/*:
+        forward:
+          headers: [Host]
+```
+
+#### Should I use the [serverless-plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) or this component?
 
 Users are encouraged to use this component instead of the `serverless-plugin`. This component was built and designed using lessons learned from the serverless plugin.
 
@@ -463,15 +578,17 @@ Users are encouraged to use this component instead of the `serverless-plugin`. T
 
 See `examples/dynamodb-crud` for an example Todo application that interacts with DynamoDB. You can find a full list of examples [here](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-component/examples)
 
-#### [CI/CD] A new CloudFront distribution is created on every CI build. I wasn't expecting that
+#### [CI/CD] Multi-stage deployments / A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
-You need to commit your application state in source control. That is the files under the `.serverless` directory. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f)
+1. You need to commit your application state in source control. That is the files under the `.serverless` directory. Although this is not recommended as it doesn't work well for multiple stages.
+2. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f), [here](https://gist.github.com/dphang/7395ee09f6182f6b34f224660bed8e8c) (uses multiple `serverless.yml` files), or [here](https://github.com/serverless-nextjs/serverless-next.js/issues/328#issuecomment-655466654) (GitHub Actions-based, uses multiple `serverless.yml` files).
+3. You can also use the `distributionId` CloudFront input to specify an existing CloudFront distribution to deploy to.
 
-The serverless team is currently working on remote state storage so this won't be necessary in the future.
+In the future, we will look to improve this by integrating proper stage management into the component itself.
 
 #### My lambda is deployed to `us-east-1`. How can I deploy it to another region?
 
-Serverless next.js is _regionless_. By design, `serverless-next.js` applications will be deployed across the globe to every CloudFront edge location. The lambda might look like is only deployed to `us-east-1` but behind the scenes, it is replicated to every other region.
+Serverless Next.js is _regionless_. By design, `serverless-next.js` applications will be deployed across the globe to every CloudFront edge location. The lambda might look like is only deployed to `us-east-1` but behind the scenes, it is replicated to every other region.
 
 #### I require passing additional information into my build
 
@@ -480,19 +597,62 @@ See the sample below for an advanced `build` setup that includes passing additio
 ```yml
 # serverless.yml
 myDatabase:
-  component: MY_DATABASE_COMPNENT
+  component: MY_DATABASE_COMPONENT
 myNextApp:
-  component: serverless-next.js
-  build:
-    args: ["build", "custom/path/to/pages"]
-    env:
-      DATABASE_URL: ${myDatabase.databaseUrl}
+  component: "@sls-next/serverless-component@{version_here}"
+  inputs:
+    build:
+      args: ["build", "custom/path/to/pages"]
+      env:
+        DATABASE_URL: ${myDatabase.databaseUrl}
 ```
 
 #### I was expecting for automatic subdomain redirection when using the domainType: www/apex input
 
-The redirection is not currently implemented, but there is a manual workaround outlined [here](https://simonecarletti.com/blog/2016/08/redirect-domain-https-amazon-cloudfront/#configuring-the-amazon-s3-static-site-with-redirect).
+You can use the new `domainRedirects` input, along with forwarding `Host` header and `domainType: both`, to redirect requests to the correct domain. See example configuration below that redirects `www.example.com` requests to `https://example.com`.
+
+```yml
+next-app:
+  component: "../../serverless-components/nextjs-component"
+  inputs:
+    cloudfront:
+      defaults:
+        forward:
+          headers: [Host]
+    domain: ["example.com"]
+    domainType: "both"
+    domainRedirects:
+      www.example.com: https://example.com
+```
+
+All of this happens within the Lambda@Edge origin request handlers. Please note that this will not allow you to redirect requests at `_next/static/*` or `/static/*`, since those cache behaviors do not have a Lambda@Edge handler attached to them.
+
+Otherwise, you can also use the manual workaround using an S3 bucket outlined [here](https://simonecarletti.com/blog/2016/08/redirect-domain-https-amazon-cloudfront/#configuring-the-amazon-s3-static-site-with-redirect).
 In summary, you will have to create a new S3 bucket and set it up with static website hosting to redirect requests to your supported subdomain type (ex. "www.example.com" or "example.com"). To be able to support HTTPS redirects, you'll need to set up a CloudFront distribution with the S3 redirect bucket as the origin. Finally, you'll need to create an "A" record in Route 53 with your newly created CloudFront distribution as the alias target.
+
+#### My environment variables set in `build.env` don't show up in my app
+
+To allow your app to access the defined environment variables, you need to expose them via the `next.config.js` as outlined [here](https://nextjs.org/docs/api-reference/next.config.js/environment-variables).
+
+Given a `serverless.yml` like this
+
+```yml
+myApp:
+  inputs:
+    build:
+      env:
+        API_HOST: "http://example.com"
+```
+
+your next.config.js should look like that:
+
+```js
+module.exports = {
+  env: {
+    API_HOST: process.env.API_HOST
+  }
+};
+```
 
 ## Contributing
 
@@ -503,7 +663,11 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 ### Code Contributors
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
-<a href="https://github.com/danielcondemarin/serverless-next.js/graphs/contributors"><img src="https://opencollective.com/serverless-nextjs-plugin/contributors.svg?width=890&button=false" /></a>
+<a href="https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors">
+<img src="https://contributors-img.web.app/image?repo=serverless-nextjs/serverless-next.js" />
+</a>
+
+Made with [contributors-img](https://contributors-img.web.app).
 
 ### Financial Contributors
 

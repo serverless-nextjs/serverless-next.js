@@ -1,12 +1,32 @@
 // @ts-ignore
 import manifest from "./manifest.json";
 // @ts-ignore
-import { basePath } from "./routes-manifest.json";
+import RoutesManifestJson from "./routes-manifest.json";
 import cloudFrontCompat from "@sls-next/next-aws-cloudfront";
-import { OriginRequestApiHandlerManifest, OriginRequestEvent } from "../types";
-import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
+import {
+  OriginRequestApiHandlerManifest,
+  OriginRequestEvent,
+  RoutesManifest
+} from "../types";
+import { CloudFrontResultResponse } from "aws-lambda";
+import {
+  createRedirectResponse,
+  getDomainRedirectPath,
+  getRedirectPath
+} from "./routing/redirector";
+import { getRewritePath } from "./routing/rewriter";
+import { addHeadersToResponse } from "./headers/addHeaders";
+import { getUnauthenticatedResponse } from "./auth/authenticator";
 
-const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
+const basePath = RoutesManifestJson.basePath;
+
+const normaliseUri = (uri: string): string => {
+  if (uri.startsWith(basePath)) {
+    uri = uri.slice(basePath.length);
+  }
+
+  return uri;
+};
 
 const router = (
   manifest: OriginRequestApiHandlerManifest
@@ -40,9 +60,55 @@ const router = (
 
 export const handler = async (
   event: OriginRequestEvent
-): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
+): Promise<CloudFrontResultResponse> => {
   const request = event.Records[0].cf.request;
-  const uri = normaliseUri(request.uri);
+  const routesManifest: RoutesManifest = RoutesManifestJson;
+  const buildManifest: OriginRequestApiHandlerManifest = manifest;
+
+  // Handle basic auth
+  const authorization = request.headers.authorization;
+  const unauthResponse = getUnauthenticatedResponse(
+    authorization ? authorization[0].value : null,
+    manifest.authentication
+  );
+  if (unauthResponse) {
+    return unauthResponse;
+  }
+
+  // Handle domain redirects e.g www to non-www domain
+  const domainRedirect = getDomainRedirectPath(request, buildManifest);
+  if (domainRedirect) {
+    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  }
+
+  // Handle custom redirects
+  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  if (customRedirect) {
+    return createRedirectResponse(
+      customRedirect.redirectPath,
+      request.querystring,
+      customRedirect.statusCode
+    );
+  }
+
+  // Handle custom rewrites but not for non-dynamic routes
+  let isNonDynamicRoute =
+    buildManifest.apis.nonDynamic[normaliseUri(request.uri)];
+
+  let uri = normaliseUri(request.uri);
+
+  if (!isNonDynamicRoute) {
+    const customRewrite = getRewritePath(
+      request.uri,
+      routesManifest,
+      router(manifest),
+      uri
+    );
+    if (customRewrite) {
+      request.uri = customRewrite;
+      uri = normaliseUri(request.uri);
+    }
+  }
 
   const pagePath = router(manifest)(uri);
 
@@ -54,9 +120,16 @@ export const handler = async (
 
   // eslint-disable-next-line
   const page = require(`./${pagePath}`);
-  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
+  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
+    enableHTTPCompression: buildManifest.enableHTTPCompression
+  });
 
   page.default(req, res);
 
-  return responsePromise;
+  const response = await responsePromise;
+
+  // Add custom headers before returning response
+  addHeadersToResponse(request.uri, response, routesManifest);
+
+  return response;
 };

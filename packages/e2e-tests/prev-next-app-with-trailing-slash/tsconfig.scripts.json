@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "baseUrl": "scripts",
+    "noImplicitReturns": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false,
+    "preserveConstEnums": true,
+    "removeComments": true,
+    "sourceMap": true,
+    "strictNullChecks": true,
+    "strict": true,
+    "esModuleInterop": true,
+    "target": "es2015",
+    "module": "commonjs",
+    "rootDir": "./"
+  },
+  "include": ["**/*.ts"]
+}

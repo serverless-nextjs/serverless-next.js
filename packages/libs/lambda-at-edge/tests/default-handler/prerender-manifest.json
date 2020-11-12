@@ -1,6 +1,11 @@
 {
   "version": 2,
   "routes": {
+    "/": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/test-build-id/index.json"
+    },
     "/tests/prerender-manifest/example-static-page": {
       "initialRevalidateSeconds": false,
       "srcRoute": "/tests/prerender-manifest/[staticPageName]",
