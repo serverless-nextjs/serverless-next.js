@@ -1,0 +1,11 @@
+{
+  "apis": {
+    "dynamic": {},
+    "nonDynamic": {
+      "/api/getCustomers": "pages/api/getCustomers.js"
+    }
+  },
+  "domainRedirects": {
+    "example.com": "https://www.example.com"
+  }
+}

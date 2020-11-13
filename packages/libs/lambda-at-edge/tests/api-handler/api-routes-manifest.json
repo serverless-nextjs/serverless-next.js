@@ -1,0 +1,38 @@
+{
+  "version": 1,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/api/deprecated/getCustomers",
+      "destination": "/api/getCustomers",
+      "statusCode": 308,
+      "regex": "^/api/deprecated/getCustomers$"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/api/rewrite-getCustomers",
+      "destination": "/api/getCustomers",
+      "regex": "^/api/rewrite-getCustomers$"
+    },
+    {
+      "source": "/api/getCustomers",
+      "destination": "/api/another",
+      "regex": "^/api/getCustomers$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/api/getCustomers",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/api/getCustomers$"
+    }
+  ],
+  "dynamicRoutes": []
+}

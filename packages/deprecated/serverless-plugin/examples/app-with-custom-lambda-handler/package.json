@@ -1,0 +1,31 @@
+{
+  "name": "app-with-custom-lambda-handler",
+  "version": "1.0.0",
+  "description": "Example nextjs serverless app using a custom lambda handler",
+  "main": "index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin.git"
+  },
+  "keywords": [
+    "serverless",
+    "nextjs",
+    "lambda"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin#readme",
+  "dependencies": {
+    "next": "^8.0.3",
+    "react": "^16.8.4",
+    "react-dom": "^16.8.4"
+  },
+  "devDependencies": {
+    "eslint-plugin-react": "^7.12.4",
+    "serverless": "^1.39.1",
+    "serverless-nextjs-plugin": "^1.2.0"
+  }
+}

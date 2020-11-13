@@ -1,0 +1,15 @@
+{
+  "apis": {
+    "dynamic": {},
+    "nonDynamic": {
+      "/api/getCustomers": "pages/api/getCustomers.js"
+    }
+  },
+  "domainRedirects": {
+    "example.com": "https://www.example.com"
+  },
+  "authentication": {
+    "username": "test",
+    "password": "123"
+  }
+}

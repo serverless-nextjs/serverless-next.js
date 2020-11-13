@@ -1,4 +1,5 @@
 {
-  "testMatch": ["<rootDir>/integration/**/*.test.js"],
-  "modulePathIgnorePatterns": ["<rootDir>/integration/basic-app"]
+  "testMatch": ["**/integration/**/*.test.[jt]s?(x)"],
+  "testPathIgnorePatterns": ["/cypress/"],
+  "watchPathIgnorePatterns": ["/fixture/"]
 }

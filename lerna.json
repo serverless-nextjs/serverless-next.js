@@ -1,21 +1,15 @@
 {
   "version": "independent",
-  "npmClient": "npm",
+  "npmClient": "yarn",
   "command": {
     "publish": {
-      "ignoreChanges": [
-        "*.md"
-      ],
+      "ignoreChanges": ["*.md"],
       "message": "chore(release): publish"
     },
     "bootstrap": {
       "ignore": "component-*",
-      "npmClientArgs": [
-        "--no-package-lock"
-      ]
+      "npmClientArgs": ["--no-package-lock"]
     }
   },
-  "packages": [
-    "packages/*"
-  ]
+  "packages": ["packages/compat-layers/*", "packages/serverless-components/*", "packages/libs/*", "packages/deprecated/*"]
 }
