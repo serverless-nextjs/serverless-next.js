@@ -10,9 +10,12 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest
 } from "../types";
-import isDynamicRoute from "./lib/isDynamicRoute";
+import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
-import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
+import {
+  expressifyDynamicRoute,
+  expressifyOptionalCatchAllDynamicRoute
+} from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
@@ -460,35 +463,68 @@ class Builder {
     const isApiPage = (path: string): boolean => path.startsWith("pages/api");
 
     Object.entries(pagesManifest).forEach(([route, pageFile]) => {
-      const dynamicRoute = isDynamicRoute(route);
-      const expressRoute = dynamicRoute ? expressifyDynamicRoute(route) : null;
+      // Check for optional catch all dynamic routes vs. other types of dynamic routes
+      // We also add another route without dynamic parameter for optional catch all dynamic routes
+      const isOptionalCatchAllDynamicRoute = isOptionalCatchAllRoute(route);
+      const isOtherDynamicRoute =
+        !isOptionalCatchAllDynamicRoute && isDynamicRoute(route);
+
+      let expressRoute = "";
+      let optionalBaseRoute = "";
+      if (isOtherDynamicRoute) {
+        expressRoute = expressifyDynamicRoute(route);
+      } else if (isOptionalCatchAllDynamicRoute) {
+        expressRoute = expressifyOptionalCatchAllDynamicRoute(route);
+        optionalBaseRoute = route.split("/[[")[0]; // The base path of optional catch-all without parameter
+      }
 
       if (isHtmlPage(pageFile)) {
-        if (dynamicRoute) {
-          const route = expressRoute as string;
+        if (isOtherDynamicRoute) {
+          const route = expressRoute;
           htmlPages.dynamic[route] = {
             file: pageFile,
             regex: pathToRegexStr(route)
           };
+        } else if (isOptionalCatchAllDynamicRoute) {
+          const route = expressRoute;
+          htmlPages.dynamic[route] = {
+            file: pageFile,
+            regex: pathToRegexStr(route)
+          };
+          htmlPages.nonDynamic[optionalBaseRoute] = pageFile;
         } else {
           htmlPages.nonDynamic[route] = pageFile;
         }
       } else if (isApiPage(pageFile)) {
-        if (dynamicRoute) {
+        if (isOtherDynamicRoute) {
           const route = expressRoute as string;
           apiPages.dynamic[route] = {
             file: pageFile,
             regex: pathToRegexStr(route)
           };
+        } else if (isOptionalCatchAllDynamicRoute) {
+          const route = expressRoute as string;
+          apiPages.dynamic[route] = {
+            file: pageFile,
+            regex: pathToRegexStr(route)
+          };
+          apiPages.nonDynamic[optionalBaseRoute] = pageFile;
         } else {
           apiPages.nonDynamic[route] = pageFile;
         }
-      } else if (dynamicRoute) {
+      } else if (isOtherDynamicRoute) {
         const route = expressRoute as string;
         ssrPages.dynamic[route] = {
           file: pageFile,
           regex: pathToRegexStr(route)
         };
+      } else if (isOptionalCatchAllDynamicRoute) {
+        const route = expressRoute as string;
+        ssrPages.dynamic[route] = {
+          file: pageFile,
+          regex: pathToRegexStr(route)
+        };
+        ssrPages.nonDynamic[optionalBaseRoute] = pageFile;
       } else {
         ssrPages.nonDynamic[route] = pageFile;
       }
