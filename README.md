@@ -96,7 +96,20 @@ myNextApplication:
   component: "@sls-next/serverless-component@{version_here}" # it is recommended you pin the latest stable version of serverless-next.js
 ```
 
-Set your AWS credentials as environment variables:
+:no_entry_sign: **If you specify `@sls-next/serverless-component` in your `serverless.yml` file, do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used, which Serverless pulls from npm by itself. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
+
+In uncommon scenarios, you can also point it to a local installation.
+
+In this case, configure the following:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: "./node_modules/@sls-next/serverless-component"
+```
+
+Then set your AWS credentials as environment variables:
 
 ```bash
 AWS_ACCESS_KEY_ID=accesskey
@@ -110,8 +123,6 @@ $ serverless
 ```
 
 :no_entry_sign: **Don't attempt to deploy by running `serverless deploy`, use only `serverless`**
-
-:no_entry_sign: **Do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
 
 ### Custom domain name
 
