@@ -206,7 +206,7 @@ class Domain extends Component {
         this.context.debug(
           `Removing domain ${domainState.domain} from CloudFront.`
         );
-        await removeDomainFromCloudFrontDistribution(clients.cf, domainState);
+        await removeDomainFromCloudFrontDistribution(clients.cf, domainState, this.context);
 
         if (domainHostedZoneId) {
           this.context.debug(
