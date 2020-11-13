@@ -472,10 +472,8 @@ class Builder {
       let expressRoute = "";
       let optionalBaseRoute = "";
       if (isOtherDynamicRoute) {
-        console.log("other dynamic: " + route);
         expressRoute = expressifyDynamicRoute(route);
       } else if (isOptionalCatchAllDynamicRoute) {
-        console.log("optional: " + route);
         expressRoute = expressifyOptionalCatchAllDynamicRoute(route);
         optionalBaseRoute = route.split("/[[")[0]; // The base path of optional catch-all without parameter
       }
