@@ -1,4 +1,6 @@
 describe("Pages Tests", () => {
+  const buildId = Cypress.env("NEXT_BUILD_ID");
+
   before(() => {
     cy.ensureAllRoutesNotErrored();
   });
@@ -148,6 +150,57 @@ describe("Pages Tests", () => {
           });
         }
       );
+    });
+  });
+
+  describe("Optional catch-all SSR Page", () => {
+    [
+      { path: "/optional-catch-all-ssr" },
+      { path: "/optional-catch-all-ssr/a" },
+      { path: "/optional-catch-all-ssr/b" }
+    ].forEach(({ path }) => {
+      const param = path
+        .replace("/optional-catch-all-ssr", "")
+        .replace("/", "");
+
+      it(`serves and caches page ${path}`, () => {
+        cy.ensureRouteNotCached(path);
+
+        cy.visit(path);
+        cy.contains("optional-catch-all-ssr");
+        cy.location("pathname").should("eq", path);
+
+        // Make sure page itself is SSR'd and contains the dynamic parameter on initial response
+        cy.request(path).then((response) => {
+          expect(response.body).to.contain("optional-catch-all-ssr");
+          expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+        });
+      });
+
+      ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
+        (method) => {
+          it(`allows HTTP method for path ${path}: ${method}`, () => {
+            cy.request({ url: path, method: method }).then((response) => {
+              expect(response.status).to.equal(200);
+            });
+          });
+        }
+      );
+
+      it(`serves data request for ${path}`, () => {
+        const fullPath = `/_next/data/${buildId}${path}`;
+
+        cy.request({ url: fullPath, method: "GET" }).then((response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body).to.deep.equal({
+            pageProps: {
+              name: "serverless-next.js",
+              catch: param
+            },
+            __N_SSP: true
+          });
+        });
+      });
     });
   });
 

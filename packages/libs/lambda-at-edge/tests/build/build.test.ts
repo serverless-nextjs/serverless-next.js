@@ -123,6 +123,10 @@ describe("Builder Tests", () => {
           "/customers/:catchAll*": {
             file: "pages/customers/[...catchAll].js",
             regex: expect.any(String)
+          },
+          "/products/:optionalCatchAll*": {
+            file: "pages/products/[[...optionalCatchAll]].js",
+            regex: expect.any(String)
           }
         });
 
@@ -130,7 +134,8 @@ describe("Builder Tests", () => {
           "/customers/new": "pages/customers/new.js",
           "/": "pages/index.js",
           "/_app": "pages/_app.js",
-          "/_document": "pages/_document.js"
+          "/_document": "pages/_document.js",
+          "/products": "pages/products/[[...optionalCatchAll]].js"
         });
 
         expect(html).toEqual({
@@ -184,7 +189,7 @@ describe("Builder Tests", () => {
 
     describe("Default Handler Artefact Files", () => {
       it("copies build files", async () => {
-        expect.assertions(6);
+        expect.assertions(7);
 
         const files = await fse.readdir(
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
@@ -194,6 +199,9 @@ describe("Builder Tests", () => {
         );
         const customerPages = await fse.readdir(
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/customers`)
+        );
+        const productPages = await fse.readdir(
+          join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/products`)
         );
         const apiDirExists = await fse.pathExists(
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
@@ -230,9 +238,11 @@ describe("Builder Tests", () => {
           "blog.js",
           "contact.js",
           "customers",
-          "index.js"
+          "index.js",
+          "products"
         ]);
         expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
+        expect(productPages).toEqual(["[[...optionalCatchAll]].js"]);
       });
 
       it("default handler is not minified", async () => {
