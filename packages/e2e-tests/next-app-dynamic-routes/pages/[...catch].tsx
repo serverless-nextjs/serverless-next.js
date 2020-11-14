@@ -1,8 +1,9 @@
 import React from "react";
-import { NextPageContext } from "next";
+import { GetServerSidePropsContext } from "next";
 
 type CatchAllPageProps = {
   name: string;
+  catch: string;
 };
 
 export default function CatchAllPage(props: CatchAllPageProps): JSX.Element {
@@ -17,9 +18,11 @@ export default function CatchAllPage(props: CatchAllPageProps): JSX.Element {
 }
 
 export async function getServerSideProps(
-  ctx: NextPageContext
+  ctx: GetServerSidePropsContext
 ): Promise<{ props: CatchAllPageProps }> {
+  const catchAll = ((ctx.params?.catch as string[]) ?? []).join("/");
+
   return {
-    props: { name: "serverless-next.js" }
+    props: { name: "serverless-next.js", catch: catchAll }
   };
 }
