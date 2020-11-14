@@ -5,7 +5,8 @@
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 [![GitHub contributors](https://img.shields.io/github/contributors/serverless-nextjs/serverless-next.js)](https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors)
 [![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=backers)](https://opencollective.com/serverless-nextjs-plugin)
-[![npm version](https://badge.fury.io/js/%40sls-next%2Fserverless-component.svg)](https://badge.fury.io/js/%40sls-next%2Fserverless-component)
+[![npm latest](https://badgen.net/npm/v/@sls-next/serverless-component/latest)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
+[![npm alpha](https://badgen.net/npm/v/@sls-next/serverless-component/alpha)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
 ![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
@@ -58,7 +59,7 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or implementation stage. Please refer to an item's description for specific details.
 
-Note that some features may only be on the latest [alpha version](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions). Please help us test the latest changes and [submit a bug report](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=bug_report.md&title=) if you find any issues. Thank you!
+Note that some features may only be on the latest [alpha version](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions). If a feature is listed as supported but not working on the `latest` tag, it most likely is in the `alpha` tag. If you can, please help us test the latest alpha changes and [submit a bug report](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=bug_report.md&title=) if you find any issues. Thank you!
 
 Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
 
