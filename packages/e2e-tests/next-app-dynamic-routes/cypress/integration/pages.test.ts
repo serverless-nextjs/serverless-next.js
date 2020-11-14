@@ -150,6 +150,19 @@ describe("Pages Tests", () => {
           });
         }
       );
+
+      it(`serves data request for ${path}`, () => {
+        const fullPath = `/_next/data/${buildId}${path}`;
+        const dataRequestParam = path.replace("/", "");
+
+        cy.request({ url: fullPath, method: "GET" }).then((response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body).to.deep.equal({
+            pageProps: { name: "serverless-next.js", catch: dataRequestParam },
+            __N_SSP: true
+          });
+        });
+      });
     });
   });
 
@@ -198,6 +211,179 @@ describe("Pages Tests", () => {
               catch: param
             },
             __N_SSP: true
+          });
+        });
+      });
+    });
+  });
+
+  describe("Optional catch-all SSG Page with fallback: false", () => {
+    [
+      { path: "/optional-catch-all-ssg-no-fallback" },
+      { path: "/optional-catch-all-ssg-no-fallback/a" },
+      { path: "/optional-catch-all-ssg-no-fallback/b" }
+    ].forEach(({ path }) => {
+      const param = path
+        .replace("/optional-catch-all-ssg-no-fallback", "")
+        .replace("/", "");
+
+      it(`serves and caches page ${path}`, () => {
+        cy.visit(path);
+        cy.contains("optional-catch-all-ssg-no-fallback");
+        cy.location("pathname").should("eq", path);
+
+        cy.ensureRouteCached(path);
+        cy.visit(path);
+
+        // Make sure page itself is SSG'd and contains the pre-built parameter in initial response
+        cy.request(path).then((response) => {
+          expect(response.body).to.contain(
+            "optional-catch-all-ssg-no-fallback"
+          );
+          expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+        });
+      });
+
+      ["HEAD", "GET"].forEach((method) => {
+        it(`allows HTTP method for path ${path}: ${method}`, () => {
+          cy.request({ url: path, method: method }).then((response) => {
+            expect(response.status).to.equal(200);
+          });
+        });
+      });
+
+      ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+        it(`disallows HTTP method for path ${path} with 4xx error ${method}`, () => {
+          cy.request({
+            url: path,
+            method: method,
+            failOnStatusCode: false
+          }).then((response) => {
+            expect(response.status).to.be.gte(400);
+          });
+        });
+      });
+
+      it(`serves data request for ${path}`, () => {
+        const fullPath = `/_next/data/${buildId}${path}`;
+
+        cy.request({ url: fullPath, method: "GET" }).then((response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body).to.deep.equal({
+            pageProps: { name: "serverless-next.js", catch: param },
+            __N_SSG: true
+          });
+        });
+      });
+    });
+
+    [{ path: "/optional-catch-all-ssg-no-fallback/not-found" }].forEach(
+      ({ path }) => {
+        const param = path
+          .replace("/optional-catch-all-ssg-no-fallback", "")
+          .replace("/", "");
+
+        ["HEAD", "GET"].forEach((method) => {
+          it(`allows HTTP method for path ${path}: ${method} and returns 404 status`, () => {
+            cy.request({
+              url: path,
+              method: method,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.equal(404);
+            });
+          });
+        });
+
+        ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+          it(`disallows HTTP method for path ${path} with 4xx status code: ${method}`, () => {
+            cy.request({
+              url: path,
+              method: method,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.be.gte(400);
+            });
+          });
+        });
+
+        it(`serve data request for ${path}`, () => {
+          // TODO: page itself is 404 but data request can still be served if requested.
+          const fullPath = `/_next/data/${buildId}${path}`;
+
+          cy.request({
+            url: fullPath,
+            method: "GET"
+          }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body).to.deep.equal({
+              pageProps: { name: "serverless-next.js", catch: param },
+              __N_SSG: true
+            });
+          });
+        });
+      }
+    );
+  });
+
+  describe("Optional catch-all SSG Page with fallback: true", () => {
+    [
+      { path: "/optional-catch-all-ssg-with-fallback", param: "" },
+      { path: "/optional-catch-all-ssg-with-fallback/a", param: "a" },
+      { path: "/optional-catch-all-ssg-with-fallback/b", param: "b" },
+      {
+        path: "/optional-catch-all-ssg-with-fallback/not-found",
+        param: ""
+      }
+    ].forEach(({ path, param }) => {
+      it(`serves and caches page ${path}`, () => {
+        cy.visit(path);
+        cy.contains("optional-catch-all-ssg-with-fallback");
+        cy.location("pathname").should("eq", path);
+
+        cy.ensureRouteCached(path);
+        cy.visit(path);
+
+        // Make sure page itself is SSG'd and contains the pre-built parameter in initial response
+        cy.request(path).then((response) => {
+          expect(response.body).to.contain(
+            "optional-catch-all-ssg-with-fallback"
+          );
+          expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+        });
+      });
+
+      ["HEAD", "GET"].forEach((method) => {
+        it(`allows HTTP method for path ${path}: ${method}`, () => {
+          cy.request({ url: path, method: method }).then((response) => {
+            expect(response.status).to.equal(200);
+          });
+        });
+      });
+
+      ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+        it(`disallows HTTP method for path ${path} with 4xx error ${method}`, () => {
+          cy.request({
+            url: path,
+            method: method,
+            failOnStatusCode: false
+          }).then((response) => {
+            expect(response.status).to.be.gte(400);
+          });
+        });
+      });
+
+      it(`serves data request for ${path}`, () => {
+        const fullPath = `/_next/data/${buildId}${path}`;
+        const dataRequestParam = path
+          .replace("/optional-catch-all-ssg-with-fallback", "")
+          .replace("/", "");
+
+        cy.request({ url: fullPath, method: "GET" }).then((response) => {
+          expect(response.status).to.equal(200);
+          expect(response.body).to.deep.equal({
+            pageProps: { name: "serverless-next.js", catch: dataRequestParam },
+            __N_SSG: true
           });
         });
       });
