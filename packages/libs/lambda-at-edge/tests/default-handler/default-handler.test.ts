@@ -445,8 +445,6 @@ describe("Lambda@Edge", () => {
 
           const request = result as CloudFrontRequest;
 
-          console.log(JSON.stringify(request));
-
           expect(request.origin).toEqual({
             s3: {
               authMethod: "origin-access-identity",
