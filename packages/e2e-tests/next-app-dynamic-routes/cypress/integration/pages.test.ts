@@ -362,7 +362,9 @@ describe("Pages Tests", () => {
           expect(response.body).to.contain(
             "optional-catch-all-ssg-with-fallback"
           );
-          expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+          if (prerendered) {
+            expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+          }
         });
       });
 
