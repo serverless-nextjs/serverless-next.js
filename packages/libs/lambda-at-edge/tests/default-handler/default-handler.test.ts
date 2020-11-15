@@ -426,9 +426,10 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                 | expectedPage
-        ${"/_next/data/build-id"}            | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"} | ${"pages/index.js"}
+        path                                                                           | expectedPage
+        ${"/_next/data/build-id"}                                                      | ${"pages/index.js"}
+        ${"/_next/data/build-id/index.json"}                                           | ${"pages/index.js"}
+        ${"/_next/data/build-id/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
         async ({ path, expectedPage }) => {

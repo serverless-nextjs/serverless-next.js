@@ -26,6 +26,10 @@
         "/customers/:catchAll*": {
           "file": "pages/customers/[...catchAll].js",
           "regex": "^/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+        },
+        "/tests/prerender-manifest-fallback/:fallback": {
+          "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
+          "regex": "^/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
         }
       },
       "nonDynamic": {

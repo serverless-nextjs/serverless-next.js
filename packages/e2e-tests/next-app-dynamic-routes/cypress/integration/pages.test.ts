@@ -328,14 +328,27 @@ describe("Pages Tests", () => {
 
   describe("Optional catch-all SSG Page with fallback: true", () => {
     [
-      { path: "/optional-catch-all-ssg-with-fallback", param: "" },
-      { path: "/optional-catch-all-ssg-with-fallback/a", param: "a" },
-      { path: "/optional-catch-all-ssg-with-fallback/b", param: "b" },
+      {
+        path: "/optional-catch-all-ssg-with-fallback",
+        param: "",
+        prerendered: true
+      },
+      {
+        path: "/optional-catch-all-ssg-with-fallback/a",
+        param: "a",
+        prerendered: true
+      },
+      {
+        path: "/optional-catch-all-ssg-with-fallback/b",
+        param: "b",
+        prerendered: true
+      },
       {
         path: "/optional-catch-all-ssg-with-fallback/not-found",
-        param: ""
+        param: "",
+        prerendered: false
       }
-    ].forEach(({ path, param }) => {
+    ].forEach(({ path, param, prerendered }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
         cy.contains("optional-catch-all-ssg-with-fallback");
@@ -349,7 +362,9 @@ describe("Pages Tests", () => {
           expect(response.body).to.contain(
             "optional-catch-all-ssg-with-fallback"
           );
-          expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+          if (prerendered) {
+            expect(response.body).to.contain(`<p data-cy="catch">${param}</p>`);
+          }
         });
       });
 
@@ -386,6 +401,22 @@ describe("Pages Tests", () => {
             __N_SSG: true
           });
         });
+
+        // If not prerendered, check that the SSG data request gets cached on the 2nd time requested
+        if (!prerendered) {
+          cy.request({ url: fullPath, method: "GET" }).then((response) => {
+            expect(response.status).to.equal(200);
+            expect(response.body).to.deep.equal({
+              pageProps: {
+                name: "serverless-next.js",
+                catch: dataRequestParam
+              },
+              __N_SSG: true
+            });
+
+            cy.verifyResponseCacheStatus(response, true);
+          });
+        }
       });
     });
   });

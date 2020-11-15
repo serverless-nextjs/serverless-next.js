@@ -360,15 +360,21 @@ const handleOriginRequest = async ({
         request.uri = pagePath.replace("pages", "");
       } else if (
         pagePath === "pages/_error.js" ||
-        !prerenderManifest.routes[normalisedDataRequestUri]
+        (!prerenderManifest.routes[normalisedDataRequestUri] &&
+          !hasFallbackForUri(
+            normalisedDataRequestUri,
+            prerenderManifest,
+            manifest
+          ))
       ) {
         // Break to continue to SSR render in two cases:
         // 1. URI routes to _error.js
-        // 2. URI is not unmatched, but it's not in prerendered routes, i.e this is an SSR data request, we need to SSR render the JSON
+        // 2. URI is not unmatched, but it's not in prerendered routes nor is for an SSG fallback, i.e this is an SSR data request, we need to SSR render the JSON
         break S3Check;
       }
 
-      // Otherwise, this is an SSG data request, so continue to get the JSON from S3
+      // Otherwise, this is an SSG data request, so continue to get to try to get the JSON from S3.
+      // For fallback SSG, this will fail the first time but the origin response handler will render and store in S3.
     }
 
     addS3HostHeader(request, normalisedS3DomainName);
@@ -500,7 +506,8 @@ const handleOriginResponse = async ({
           ""
         )}`,
         Body: JSON.stringify(renderOpts.pageData),
-        ContentType: "application/json"
+        ContentType: "application/json",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
       const s3HtmlParams = {
         Bucket: bucketName,
