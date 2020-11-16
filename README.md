@@ -1,6 +1,6 @@
 # Serverless Next.js Component
 
-![logo](./logo.gif)
+![logo](./img/logo.gif)
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 [![GitHub contributors](https://img.shields.io/github/contributors/serverless-nextjs/serverless-next.js)](https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors)
@@ -411,7 +411,7 @@ myNextApplication:
 
 ### Architecture
 
-![architecture](./arch_no_grid.png)
+![architecture](./img/arch_no_grid.png)
 
 Four Cache Behaviours are created in CloudFront.
 
