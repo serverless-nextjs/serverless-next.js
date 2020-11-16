@@ -32,8 +32,10 @@ module.exports = (origins, options) => {
           originConfig.Id
         );
 
-        const cachePolicy = getCachePolicy(pathPatternConfig.cachePolicy);
-        cachePoliciesPerBehavior[pathPattern] = cachePolicy;
+        if (pathPatternConfig.cachePolicy) {
+          const cachePolicy = getCachePolicy(pathPatternConfig.cachePolicy);
+          cachePoliciesPerBehavior[pathPattern] = cachePolicy;
+        }
 
         addLambdaAtEdgeToCacheBehavior(
           cacheBehavior,
