@@ -174,7 +174,8 @@ describe("Lambda@Edge origin response", () => {
         Body: JSON.stringify({
           page: "pages/fallback/[slug].js"
         }),
-        ContentType: "application/json"
+        ContentType: "application/json",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       });
       expect(s3Client.send).toHaveBeenNthCalledWith(2, {
         Command: "PutObjectCommand",

@@ -1,6 +1,11 @@
 const isDynamicRoute = (route: string): boolean => {
   // Identify /[param]/ in route string
-  return /\/\[[^\/]+?\](?=\/|$)/.test(route);
+  return /\/\[[^\/]+?](?=\/|$)/.test(route);
 };
 
-export default isDynamicRoute;
+const isOptionalCatchAllRoute = (route: string): boolean => {
+  // Identify /[[param]]/ in route string
+  return /\/\[\[[^\/]+?]](?=\/|$)/.test(route);
+};
+
+export { isDynamicRoute, isOptionalCatchAllRoute };
