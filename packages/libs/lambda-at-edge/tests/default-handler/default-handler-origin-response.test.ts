@@ -86,7 +86,7 @@ describe("Lambda@Edge origin response", () => {
           "cache-control": [
             {
               key: "Cache-Control",
-              value: "no-store" // Fallback page shouldn't be cached as it will override the path for a just generated SSG page.
+              value: "public, max-age=0, s-maxage=0, must-revalidate" // Fallback page shouldn't be cached as it will override the path for a just generated SSG page.
             }
           ],
           "content-type": [

@@ -553,7 +553,9 @@ const handleOriginResponse = async ({
       Key: s3Key
     };
 
-    const { Body } = await s3.send(new GetObjectCommand(s3Params));
+    const { Body, CacheControl } = await s3.send(
+      new GetObjectCommand(s3Params)
+    );
     bodyString = await getStream.default(Body as Readable);
 
     return {
@@ -570,9 +572,11 @@ const handleOriginResponse = async ({
         "cache-control": [
           {
             key: "Cache-Control",
-            value: hasFallback.fallback
-              ? "no-store" // fallback should never be cached
-              : "public, max-age=0, s-maxage=2678400, must-revalidate"
+            value:
+              CacheControl ??
+              (hasFallback.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+                ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+                : "public, max-age=0, s-maxage=2678400, must-revalidate")
           }
         ]
       },

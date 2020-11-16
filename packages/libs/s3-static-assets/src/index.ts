@@ -5,7 +5,7 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
-  NO_STORE_CACHE_CONTROL_HEADER,
+  SERVER_NO_CACHE_CACHE_CONTROL_HEADER,
   SERVER_CACHE_CONTROL_HEADER
 } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
@@ -122,7 +122,7 @@ const uploadStaticAssetsFromBuild = async (
         return s3.uploadFile({
           s3Key,
           filePath: fileItem.path,
-          cacheControl: NO_STORE_CACHE_CONTROL_HEADER
+          cacheControl: SERVER_NO_CACHE_CACHE_CONTROL_HEADER
         });
       } else {
         return s3.uploadFile({
@@ -384,18 +384,21 @@ const deleteOldStaticAssets = async (
   // If above exists, remove all versioned assets that are not BUILD_ID file (we don't remove unversioned pages static-pages as those are the previous way)
   if (buildId) {
     // Delete old _next/data versions except for buildId
-    await s3.deleteFilesByPattern({
+    const deleteNextDataFiles = s3.deleteFilesByPattern({
       prefix: "_next/data",
       pattern: /_next\/data\/.+\//, // Ensure to only delete versioned directories
       excludePattern: new RegExp(`_next/data/${buildId}/`) // Don't delete given build ID
     });
 
     // Delete old static-pages versions except for buildId
-    await s3.deleteFilesByPattern({
+    const deleteStaticPageFiles = s3.deleteFilesByPattern({
       prefix: "static-pages",
       pattern: /static-pages\/.+\//, // Ensure to only delete versioned directories, not existing pages in static-pages/*
       excludePattern: new RegExp(`static-pages/${buildId}/`) // Don't delete given build ID
     });
+
+    // Run deletion tasks in parallel (safe since they have different prefixes)
+    await Promise.all([deleteNextDataFiles, deleteStaticPageFiles]);
   }
 };
 
