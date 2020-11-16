@@ -346,7 +346,7 @@ const handleOriginRequest = async ({
         request.uri = request.uri.replace(basePath, "");
       }
     } else if (isHTMLPage || hasFallback) {
-      s3Origin.path = `${basePath}/static-pages`;
+      s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
     } else if (isDataReq) {
@@ -356,7 +356,7 @@ const handleOriginRequest = async ({
 
       if (pagePath === "pages/404.html") {
         // Request static 404 page from s3
-        s3Origin.path = `${basePath}/static-pages`;
+        s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
         request.uri = pagePath.replace("pages", "");
       } else if (
         pagePath === "pages/_error.js" ||
@@ -384,7 +384,7 @@ const handleOriginRequest = async ({
   const pagePath = router(manifest)(uri);
 
   if (pagePath.endsWith(".html") && !isPreviewRequest) {
-    s3Origin.path = `${basePath}/static-pages`;
+    s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
 
@@ -511,9 +511,9 @@ const handleOriginResponse = async ({
       };
       const s3HtmlParams = {
         Bucket: bucketName,
-        Key: `${basePath}${
-          basePath === "" ? "" : "/"
-        }static-pages/${request.uri
+        Key: `${basePath}${basePath === "" ? "" : "/"}static-pages/${
+          manifest.buildId
+        }/${request.uri
           .replace(`/_next/data/${manifest.buildId}/`, "")
           .replace(".json", ".html")}`,
         Body: html,
@@ -537,9 +537,9 @@ const handleOriginResponse = async ({
     if (!hasFallback) return response;
 
     // If route has fallback, return that page from S3, otherwise return 404 page
-    let s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages${
-      hasFallback.fallback || "/404.html"
-    }`;
+    let s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages/${
+      manifest.buildId
+    }${hasFallback.fallback || "/404.html"}`;
 
     const { GetObjectCommand } = await import(
       "@aws-sdk/client-s3/commands/GetObjectCommand"
@@ -570,7 +570,9 @@ const handleOriginResponse = async ({
         "cache-control": [
           {
             key: "Cache-Control",
-            value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+            value: hasFallback.fallback
+              ? "no-store" // fallback should never be cached
+              : "public, max-age=0, s-maxage=2678400, must-revalidate"
           }
         ]
       },

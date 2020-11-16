@@ -64,7 +64,7 @@ describe("Lambda@Edge", () => {
               s3: {
                 authMethod: "origin-access-identity",
                 domainName: "my-bucket.s3.amazonaws.com",
-                path: "/static-pages",
+                path: "/static-pages/build-id2",
                 region: "us-east-1"
               }
             },

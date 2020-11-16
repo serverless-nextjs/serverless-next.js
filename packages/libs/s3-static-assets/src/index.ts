@@ -5,6 +5,7 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
+  NO_STORE_CACHE_CONTROL_HEADER,
   SERVER_CACHE_CONTROL_HEADER
 } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
@@ -50,6 +51,17 @@ const uploadStaticAssetsFromBuild = async (
     ".serverless_nextjs",
     "assets"
   );
+
+  // Upload BUILD_ID file to represent the current build ID to be uploaded. This is for metadata and also used for deleting old versioned files.
+  const buildIdPath = path.join(
+    assetsOutputDirectory,
+    normalizedBasePath,
+    "BUILD_ID"
+  );
+  const buildIdUpload = s3.uploadFile({
+    s3Key: "BUILD_ID",
+    filePath: buildIdPath
+  });
 
   // Upload Next.js static files
 
@@ -104,11 +116,21 @@ const uploadStaticAssetsFromBuild = async (
         path.relative(assetsOutputDirectory, fileItem.path)
       );
 
-      return s3.uploadFile({
-        s3Key,
-        filePath: fileItem.path,
-        cacheControl: SERVER_CACHE_CONTROL_HEADER
-      });
+      // Dynamic fallback HTML pages should never be cached as it will override actual pages once generated and stored in S3.
+      const isDynamicFallback = /\[.*]/.test(s3Key);
+      if (isDynamicFallback) {
+        return s3.uploadFile({
+          s3Key,
+          filePath: fileItem.path,
+          cacheControl: NO_STORE_CACHE_CONTROL_HEADER
+        });
+      } else {
+        return s3.uploadFile({
+          s3Key,
+          filePath: fileItem.path,
+          cacheControl: SERVER_CACHE_CONTROL_HEADER
+        });
+      }
     });
 
   // Upload user static and public files
@@ -142,7 +164,8 @@ const uploadStaticAssetsFromBuild = async (
     ...nextStaticFilesUploads,
     ...nextDataFilesUploads,
     ...htmlPagesUploads,
-    ...publicAndStaticUploads
+    ...publicAndStaticUploads,
+    buildIdUpload
   ]);
 };
 
@@ -334,4 +357,50 @@ const uploadStaticAssets = async (
   return Promise.all(allUploads);
 };
 
-export { uploadStaticAssetsFromBuild, uploadStaticAssets };
+type DeleteOldStaticAssetsOptions = {
+  bucketName: string;
+  basePath: string;
+  credentials: Credentials;
+};
+
+/**
+ * Remove old static assets from S3 bucket. This reads the existing BUILD_ID file from S3.
+ * If it exists, it removes all versioned assets except that BUILD_ID, in order to save S3 storage costs.
+ * @param options
+ */
+const deleteOldStaticAssets = async (
+  options: DeleteOldStaticAssetsOptions
+): Promise<void> => {
+  const { bucketName } = options;
+
+  const s3 = await S3ClientFactory({
+    bucketName,
+    credentials: options.credentials
+  });
+
+  // Get BUILD_ID file from S3 if it exists
+  let buildId = await s3.getFile({ key: "BUILD_ID" });
+
+  // If above exists, remove all versioned assets that are not BUILD_ID file (we don't remove unversioned pages static-pages as those are the previous way)
+  if (buildId) {
+    // Delete old _next/data versions except for buildId
+    await s3.deleteFilesByPattern({
+      prefix: "_next/data",
+      pattern: /_next\/data\/.+\//, // Ensure to only delete versioned directories
+      excludePattern: new RegExp(`_next/data/${buildId}/`) // Don't delete given build ID
+    });
+
+    // Delete old static-pages versions except for buildId
+    await s3.deleteFilesByPattern({
+      prefix: "static-pages",
+      pattern: /static-pages\/.+\//, // Ensure to only delete versioned directories, not existing pages in static-pages/*
+      excludePattern: new RegExp(`static-pages/${buildId}/`) // Don't delete given build ID
+    });
+  }
+};
+
+export {
+  deleteOldStaticAssets,
+  uploadStaticAssetsFromBuild,
+  uploadStaticAssets
+};
