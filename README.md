@@ -381,7 +381,7 @@ myNextApplication:
       apiLambda: "nodejs10.x"
 ```
 
-Similarly, the timeout by default is 10 seconds. To customise you can:
+Similarly, the timeout by default is 10 seconds. To customize you can:
 
 ```yml
 # serverless.yml
@@ -421,7 +421,7 @@ The third is associated to a lambda function which is responsible for handling t
 
 1. Server side rendered page. Any page that defines `getInitialProps` method will be rendered at this level and the response is returned immediately to the user.
 
-2. Statically optimised page. Requests to pages that were pre-compiled by next to HTML are forwarded to S3.
+2. Statically optimized page. Requests to pages that were pre-compiled by next to HTML are forwarded to S3.
 
 3. Public resources. Requests to root level resources like `/robots.txt`, `/favicon.ico`, `/manifest.json`, etc. These are forwarded to S3.
 
