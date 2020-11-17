@@ -63,17 +63,17 @@ Note that some features may only be on the latest [alpha version](https://www.np
 
 Is there a feature that you want but is not yet supported? Please open a [new issue](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=feature_request.md&title=) to let us know!
 
-- [x] [Server side rendered pages at the Edge](https://github.com/zeit/next.js#fetching-data-and-component-lifecycle).
+- [x] [Server side rendered pages at the Edge](https://nextjs.org/docs/basic-features/data-fetching).
       Pages that need server side compute to render are hosted on Lambda@Edge. The component takes care of all the routing for you so there is no configuration needed. Because rendering happens at the CloudFront edge locations latency is very low!
-- [x] [API Routes](https://nextjs.org/docs#api-routes).
+- [x] [API Routes](https://nextjs.org/docs/api-routes/introduction).
       Similarly to the server side rendered pages, API requests are also served from the CloudFront edge locations using Lambda@Edge.
-- [x] [Dynamic pages / route segments](https://github.com/zeit/next.js/#dynamic-routing).
-- [x] [Catch all routes](https://nextjs.org/docs/routing/dynamic-routes).
-- [x] [Automatic prerendering](https://github.com/zeit/next.js/#automatic-prerendering).
+- [x] [Dynamic pages / route segments](https://nextjs.org/docs/routing/dynamic-routes).
+- [x] [Catch all routes](https://nextjs.org/docs/routing/dynamic-routes#catch-all-routes).
+- [x] [Automatic prerendering](https://nextjs.org/docs/advanced-features/automatic-static-optimization).
       Statically optimised pages compiled by next are served from CloudFront edge locations with low latency and cost.
-- [x] [Client assets](https://github.com/zeit/next.js/#cdn-support-with-asset-prefix).
+- [x] [Client assets](https://nextjs.org/docs/api-reference/next.config.js/cdn-support-with-asset-prefix).
       Next.js build assets `/_next/*` served from CloudFront.
-- [x] [User static / public folders](https://github.com/zeit/next.js#static-file-serving-eg-images).
+- [x] [User static / public folders](https://nextjs.org/docs/basic-features/static-file-serving).
       Any of your assets in the static or public folders are uploaded to S3 and served from CloudFront automatically.
 - [x] [Opt-in to static generation (SSG)](https://nextjs.org/docs/basic-features/data-fetching#getstaticprops-static-generation) via `getStaticProps`.
 - [x] [Opt-in to server-side rendering (SSR)](https://nextjs.org/docs/basic-features/data-fetching#getserversideprops-server-side-rendering) via `getServerSideProps`.
