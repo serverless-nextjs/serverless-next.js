@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.7...@sls-next/serverless-component@1.19.0-alpha.8) (2020-11-17)
+
+### Features
+
+- **lambda-at-edge, nextjs-component, s3-static-assets:** support ver… ([#803](https://github.com/serverless-nextjs/serverless-next.js/issues/803)) ([015065d](https://github.com/serverless-nextjs/serverless-next.js/commit/015065d02c1d06659dc1d1a7258b89f9415c3721))
+
 # [1.19.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.5...@sls-next/serverless-component@1.19.0-alpha.7) (2020-11-13)
 
 **Note:** Version bump only for package @sls-next/serverless-component

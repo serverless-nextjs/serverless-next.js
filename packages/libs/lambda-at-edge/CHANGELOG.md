@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.5...@sls-next/lambda-at-edge@1.8.0-alpha.6) (2020-11-17)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix fallback (non-prerendered) SSG requests not … ([#800](https://github.com/serverless-nextjs/serverless-next.js/issues/800)) ([29719f5](https://github.com/serverless-nextjs/serverless-next.js/commit/29719f59e5468a2815ec87171a456e4dfff5ef35))
+
+### Features
+
+- **lambda-at-edge, nextjs-component, s3-static-assets:** support ver… ([#803](https://github.com/serverless-nextjs/serverless-next.js/issues/803)) ([015065d](https://github.com/serverless-nextjs/serverless-next.js/commit/015065d02c1d06659dc1d1a7258b89f9415c3721))
+
 # [1.8.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.4...@sls-next/lambda-at-edge@1.8.0-alpha.5) (2020-11-13)
 
 ### Features
