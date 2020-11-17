@@ -1,6 +1,8 @@
 import getMimeType from "./getMimeType";
 import fse from "fs-extra";
-import AWS from "aws-sdk";
+import AWS, { AWSError, S3 } from "aws-sdk";
+import { PromiseResult } from "aws-sdk/lib/request";
+import { ObjectList } from "aws-sdk/clients/s3";
 
 type S3ClientFactoryOptions = {
   bucketName: string;
@@ -13,10 +15,30 @@ type UploadFileOptions = {
   s3Key?: string;
 };
 
+type DeleteFilesByPatternOptions = {
+  prefix: string;
+  pattern: RegExp;
+  excludePattern?: RegExp;
+};
+
+type GetFileOptions = {
+  key: string;
+};
+
 export type S3Client = {
   uploadFile: (
     options: UploadFileOptions
   ) => Promise<AWS.S3.ManagedUpload.SendData>;
+  /**
+   * Delete all files in S3 given the pattern.
+   * @param options
+   */
+  deleteFilesByPattern: (options: DeleteFilesByPatternOptions) => Promise<void>;
+  /**
+   * Get file in S3 given the key and read it into a string.
+   * @param options
+   */
+  getFile: (options: GetFileOptions) => Promise<string | undefined>;
 };
 
 export type Credentials = {
@@ -64,6 +86,92 @@ export default async ({
           CacheControl: cacheControl || undefined
         })
         .promise();
+    },
+    deleteFilesByPattern: async (
+      options: DeleteFilesByPatternOptions
+    ): Promise<void> => {
+      const { prefix, pattern, excludePattern } = options;
+
+      // 1. Get all objects by given prefix and matching the pattern, but excluding a pattern.
+      const foundKeys: string[] = [];
+      let continuationToken = undefined; // needed to paginate through all objects
+
+      while (true) {
+        const data: PromiseResult<S3.ListObjectsV2Output, AWSError> = await s3
+          .listObjectsV2({
+            Bucket: bucketName,
+            Prefix: prefix,
+            ContinuationToken: continuationToken
+          })
+          .promise();
+
+        // Push all objects
+        const contents: ObjectList = data.Contents ?? [];
+        contents.forEach(function (content) {
+          if (content.Key) {
+            const key = content.Key;
+
+            // Match pattern and does not match exclude pattern
+            if (
+              pattern.test(key) &&
+              (!excludePattern || !excludePattern.test(key))
+            ) {
+              foundKeys.push(content.Key);
+            }
+          }
+        });
+
+        // Continue listing since ListObjectsV2 gets up to 1000 objects at a time
+        if (data.IsTruncated) {
+          continuationToken = data.NextContinuationToken;
+        } else {
+          break;
+        }
+      }
+
+      const maxKeysToDelete = 1000; // From https://docs.aws.amazon.com/AmazonS3/latest/API/API_DeleteObjects.html
+
+      // 2. Delete all the objects in batch mode
+      let start = 0;
+      while (start < foundKeys.length) {
+        const objects = [];
+        for (
+          let i = start;
+          i < start + maxKeysToDelete && i < foundKeys.length;
+          i++
+        ) {
+          objects.push({
+            Key: foundKeys[i]
+          });
+        }
+
+        await s3
+          .deleteObjects({
+            Bucket: bucketName,
+            Delete: {
+              Objects: objects
+            }
+          })
+          .promise();
+
+        start += maxKeysToDelete;
+      }
+    },
+    getFile: async (options: GetFileOptions): Promise<string | undefined> => {
+      try {
+        const data = await s3
+          .getObject({
+            Bucket: bucketName,
+            Key: options.key
+          })
+          .promise();
+
+        return data.Body?.toString("utf-8");
+      } catch (e) {
+        if (e.code === "NoSuchKey") {
+          return undefined;
+        }
+      }
     }
   };
 };

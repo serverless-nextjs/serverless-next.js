@@ -9,6 +9,7 @@ import {
   RoutesManifest
 } from "@sls-next/lambda-at-edge/types";
 import {
+  deleteOldStaticAssets,
   uploadStaticAssetsFromBuild,
   uploadStaticAssets
 } from "@sls-next/s3-static-assets";
@@ -292,6 +293,14 @@ class NextjsComponent extends Component {
       accelerated: true,
       name: inputs.bucketName,
       region: bucketRegion
+    });
+
+    // If new BUILD_ID file is present, remove all versioned assets but the existing build ID's assets, to save S3 storage costs.
+    // After deployment, only the new and previous build ID's assets are present. We still need previous build assets as it takes time to propagate the Lambda.
+    await deleteOldStaticAssets({
+      bucketName: bucketOutputs.name,
+      basePath: routesManifest.basePath,
+      credentials: this.context.credentials.aws
     });
 
     // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.

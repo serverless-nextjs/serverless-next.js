@@ -231,19 +231,36 @@ describe("deploy tests", () => {
   });
 
   it("uploads static assets to S3 correctly", () => {
-    expect(mockUpload).toBeCalledTimes(12);
+    expect(mockUpload).toBeCalledTimes(13);
+
+    ["BUILD_ID"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file
+        })
+      );
+    });
 
     [
-      "static-pages/index.html",
-      "static-pages/terms.html",
-      "static-pages/404.html",
-      "static-pages/about.html",
-      "static-pages/blog/[post].html"
+      "static-pages/test-build-id/index.html",
+      "static-pages/test-build-id/terms.html",
+      "static-pages/test-build-id/404.html",
+      "static-pages/test-build-id/about.html"
     ].forEach((file) => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: file,
           CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        })
+      );
+    });
+
+    // Fallback page is never cached in S3
+    ["static-pages/test-build-id/blog/[post].html"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=0, s-maxage=0, must-revalidate"
         })
       );
     });
