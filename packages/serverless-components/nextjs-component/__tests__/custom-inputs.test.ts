@@ -226,7 +226,7 @@ describe("Custom inputs", () => {
           expect(mockUpload).toBeCalledWith(
             expect.objectContaining({
               Key: file,
-              CacheControl: "no-store"
+              CacheControl: "public, max-age=0, s-maxage=0, must-revalidate"
             })
           );
         });

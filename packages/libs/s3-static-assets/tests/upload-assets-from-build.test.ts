@@ -2,7 +2,7 @@ import path from "path";
 import { uploadStaticAssetsFromBuild } from "../src/index";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
-  NO_STORE_CACHE_CONTROL_HEADER,
+  SERVER_NO_CACHE_CACHE_CONTROL_HEADER,
   SERVER_CACHE_CONTROL_HEADER
 } from "../src/lib/constants";
 import AWS, {
@@ -142,7 +142,7 @@ describe.each`
         expect.objectContaining({
           Key: "static-pages/zsWqBqLjpgRmswfQomanp/todos/terms/[section].html",
           ContentType: "text/html",
-          CacheControl: NO_STORE_CACHE_CONTROL_HEADER
+          CacheControl: SERVER_NO_CACHE_CACHE_CONTROL_HEADER
         })
       );
 
