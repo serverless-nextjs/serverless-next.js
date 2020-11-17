@@ -59,7 +59,7 @@ const uploadStaticAssetsFromBuild = async (
     "BUILD_ID"
   );
   const buildIdUpload = s3.uploadFile({
-    s3Key: "BUILD_ID",
+    s3Key: pathToPosix(path.join(normalizedBasePath, "BUILD_ID")),
     filePath: buildIdPath
   });
 
@@ -371,7 +371,9 @@ type DeleteOldStaticAssetsOptions = {
 const deleteOldStaticAssets = async (
   options: DeleteOldStaticAssetsOptions
 ): Promise<void> => {
-  const { bucketName } = options;
+  const { bucketName, basePath } = options;
+
+  const normalizedBasePathPrefix = basePath ? basePath.slice(1) + "/" : "";
 
   const s3 = await S3ClientFactory({
     bucketName,
@@ -379,22 +381,28 @@ const deleteOldStaticAssets = async (
   });
 
   // Get BUILD_ID file from S3 if it exists
-  let buildId = await s3.getFile({ key: "BUILD_ID" });
+  let buildId = await s3.getFile({
+    key: normalizedBasePathPrefix + "BUILD_ID"
+  });
 
   // If above exists, remove all versioned assets that are not BUILD_ID file (we don't remove unversioned pages static-pages as those are the previous way)
   if (buildId) {
     // Delete old _next/data versions except for buildId
     const deleteNextDataFiles = s3.deleteFilesByPattern({
-      prefix: "_next/data",
-      pattern: /_next\/data\/.+\//, // Ensure to only delete versioned directories
-      excludePattern: new RegExp(`_next/data/${buildId}/`) // Don't delete given build ID
+      prefix: `${normalizedBasePathPrefix}_next/data`,
+      pattern: new RegExp(`${normalizedBasePathPrefix}_next/data/.+/`), // Ensure to only delete versioned directories
+      excludePattern: new RegExp(
+        `${normalizedBasePathPrefix}_next/data/${buildId}/`
+      ) // Don't delete given build ID
     });
 
     // Delete old static-pages versions except for buildId
     const deleteStaticPageFiles = s3.deleteFilesByPattern({
-      prefix: "static-pages",
-      pattern: /static-pages\/.+\//, // Ensure to only delete versioned directories, not existing pages in static-pages/*
-      excludePattern: new RegExp(`static-pages/${buildId}/`) // Don't delete given build ID
+      prefix: `${normalizedBasePathPrefix}static-pages`,
+      pattern: new RegExp(`${normalizedBasePathPrefix}static-pages/.+/`), // Ensure to only delete versioned directories
+      excludePattern: new RegExp(
+        `${normalizedBasePathPrefix}static-pages/${buildId}/`
+      ) // Don't delete given build ID
     });
 
     // Run deletion tasks in parallel (safe since they have different prefixes)
