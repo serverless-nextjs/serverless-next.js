@@ -214,6 +214,9 @@ class NextjsComponent extends Component {
 
     const bucketRegion = inputs.bucketRegion || "us-east-1";
 
+    const staticCachePolicyIdInput = inputs.staticCachePolicyId;
+    const dynamicCachePolicyIdInput = inputs.dynamicCachePolicyId;
+
     const [
       defaultBuildManifest,
       apiBuildManifest,
@@ -290,6 +293,7 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/static/*", routesManifest)
     ] = {
+      cachePolicyId: staticCachePolicyIdInput,
       ttl: 86400,
       forward: {
         headers: "none",
@@ -301,6 +305,7 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("static/*", routesManifest)
     ] = {
+      cachePolicyId: staticCachePolicyIdInput,
       ttl: 86400,
       forward: {
         headers: "none",
@@ -391,6 +396,7 @@ class NextjsComponent extends Component {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
+        cachePolicyId: dynamicCachePolicyIdInput,
         ttl: 0,
         allowedHttpMethods: [
           "HEAD",
@@ -480,6 +486,7 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
     ] = {
+      cachePolicyId: dynamicCachePolicyIdInput,
       ttl: 0,
       allowedHttpMethods: ["HEAD", "GET"],
       "lambda@edge": {
@@ -498,6 +505,7 @@ class NextjsComponent extends Component {
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
     const defaultBehaviour = {
+      cachePolicyId: cloudFrontDefaults.cachePolicyId,
       ttl: 86400,
       ...cloudFrontDefaults,
       forward: {

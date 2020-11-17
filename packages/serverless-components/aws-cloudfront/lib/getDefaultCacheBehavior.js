@@ -9,19 +9,18 @@ module.exports = (originId, defaults = {}) => {
     compress = false,
     smoothStreaming = false,
     viewerProtocolPolicy = "redirect-to-https",
-    fieldLevelEncryptionId = ""
+    fieldLevelEncryptionId = "",
+    cachePolicyId
   } = defaults;
 
   const defaultCacheBehavior = {
     TargetOriginId: originId,
-    ForwardedValues: getForwardedValues(forward),
     TrustedSigners: {
       Enabled: false,
       Quantity: 0,
       Items: []
     },
     ViewerProtocolPolicy: viewerProtocolPolicy,
-    MinTTL: 0,
     AllowedMethods: {
       Quantity: allowedHttpMethods.length,
       Items: allowedHttpMethods,
@@ -31,8 +30,6 @@ module.exports = (originId, defaults = {}) => {
       }
     },
     SmoothStreaming: smoothStreaming,
-    DefaultTTL: ttl,
-    MaxTTL: 31536000,
     Compress: compress,
     LambdaFunctionAssociations: {
       Quantity: 0,
@@ -40,6 +37,15 @@ module.exports = (originId, defaults = {}) => {
     },
     FieldLevelEncryptionId: fieldLevelEncryptionId
   };
+
+  if (cachePolicyId) {
+    defaultCacheBehavior.CachePolicyId = cachePolicyId;
+  } else {
+    defaultCacheBehavior.ForwardedValues = getForwardedValues(forward);
+    defaultCacheBehavior.MinTTL = 0;
+    defaultCacheBehavior.DefaultTTL = ttl;
+    defaultCacheBehavior.MaxTTL = 31536000;
+  }
 
   addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);
 

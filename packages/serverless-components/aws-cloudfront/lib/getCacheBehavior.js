@@ -7,15 +7,11 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
     compress = true,
     smoothStreaming = false,
     viewerProtocolPolicy = "https-only",
-    fieldLevelEncryptionId = ""
+    fieldLevelEncryptionId = "",
+    cachePolicyId
   } = pathPatternConfig;
 
-  return {
-    ForwardedValues: getForwardedValues(pathPatternConfig.forward, {
-      cookies: "all",
-      queryString: true
-    }),
-    MinTTL: ttl,
+  const cacheBehaviour = {
     PathPattern: pathPattern,
     TargetOriginId: originId,
     TrustedSigners: {
@@ -33,12 +29,27 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
     },
     Compress: compress,
     SmoothStreaming: smoothStreaming,
-    DefaultTTL: ttl,
-    MaxTTL: ttl,
     FieldLevelEncryptionId: fieldLevelEncryptionId,
     LambdaFunctionAssociations: {
       Quantity: 0,
       Items: []
     }
   };
+
+  if (cachePolicyId) {
+    cacheBehaviour.CachePolicyId = cachePolicyId;
+  } else {
+    cacheBehaviour.ForwardedValues = getForwardedValues(
+      pathPatternConfig.forward,
+      {
+        cookies: "all",
+        queryString: true
+      }
+    );
+    cacheBehaviour.MinTTL = 0;
+    cacheBehaviour.DefaultTTL = ttl;
+    cacheBehaviour.MaxTTL = 31536000;
+  }
+
+  return cacheBehaviour;
 };
