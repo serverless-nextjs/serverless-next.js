@@ -75,7 +75,8 @@ describe("Lambda@Edge origin response", () => {
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
         Bucket: "my-bucket.s3.amazonaws.com",
-        Key: "static-pages/tests/prerender-manifest-fallback/[fallback].html"
+        Key:
+          "static-pages/build-id/tests/prerender-manifest-fallback/[fallback].html"
       });
 
       expect(response).toEqual({
@@ -85,7 +86,7 @@ describe("Lambda@Edge origin response", () => {
           "cache-control": [
             {
               key: "Cache-Control",
-              value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+              value: "public, max-age=0, s-maxage=0, must-revalidate" // Fallback page shouldn't be cached as it will override the path for a just generated SSG page.
             }
           ],
           "content-type": [
@@ -115,7 +116,7 @@ describe("Lambda@Edge origin response", () => {
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
         Bucket: "my-bucket.s3.amazonaws.com",
-        Key: "static-pages/404.html"
+        Key: "static-pages/build-id/404.html"
       });
 
       expect(response).toEqual({
@@ -180,7 +181,7 @@ describe("Lambda@Edge origin response", () => {
       expect(s3Client.send).toHaveBeenNthCalledWith(2, {
         Command: "PutObjectCommand",
         Bucket: "my-bucket.s3.amazonaws.com",
-        Key: "static-pages/fallback/not-yet-built.html",
+        Key: "static-pages/build-id/fallback/not-yet-built.html",
         Body: "<div>Rendered Page</div>",
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"

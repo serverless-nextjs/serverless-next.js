@@ -205,20 +205,28 @@ describe("Custom inputs", () => {
       });
 
       it("uploads static assets to S3 correctly", () => {
-        expect(mockUpload).toBeCalledTimes(11);
+        expect(mockUpload).toBeCalledTimes(12);
 
         [
-          "static-pages/index.html",
-          "static-pages/terms.html",
-          "static-pages/404.html",
-          "static-pages/about.html",
-          "static-pages/blog/[post].html"
+          "static-pages/test-build-id/index.html",
+          "static-pages/test-build-id/terms.html",
+          "static-pages/test-build-id/404.html",
+          "static-pages/test-build-id/about.html"
         ].forEach((file) => {
           expect(mockUpload).toBeCalledWith(
             expect.objectContaining({
               Key: file,
               CacheControl:
                 "public, max-age=0, s-maxage=2678400, must-revalidate"
+            })
+          );
+        });
+
+        ["static-pages/test-build-id/blog/[post].html"].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl: "public, max-age=0, s-maxage=0, must-revalidate"
             })
           );
         });

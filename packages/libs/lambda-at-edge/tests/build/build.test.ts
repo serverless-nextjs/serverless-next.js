@@ -306,7 +306,7 @@ describe("Builder Tests", () => {
         expect(nextStaticFiles).toEqual(["chunks"]);
 
         const staticPagesFiles = await fse.readdir(
-          join(outputDir, `${ASSETS_DIR}/static-pages`)
+          join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id`)
         );
         expect(staticPagesFiles).toEqual([
           "about.html",
@@ -314,6 +314,13 @@ describe("Builder Tests", () => {
           "index.html",
           "terms.html"
         ]);
+
+        // Check BUILD_ID file
+        expect(
+          (
+            await fse.readFile(join(outputDir, `${ASSETS_DIR}/BUILD_ID`))
+          ).toString()
+        ).toEqual("test-build-id");
       });
     });
   });

@@ -142,7 +142,7 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/basepath/static-pages",
+              path: "/basepath/static-pages/build-id",
               region: "us-east-1"
             }
           });
@@ -446,7 +446,7 @@ describe("Lambda@Edge", () => {
         s3: {
           authMethod: "origin-access-identity",
           domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
-          path: "/basepath/static-pages",
+          path: "/basepath/static-pages/build-id",
           region: "eu-west-1"
         }
       });
@@ -541,7 +541,7 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/basepath/static-pages",
+              path: "/basepath/static-pages/build-id",
               region: "us-east-1"
             }
           });
@@ -712,7 +712,7 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/basepath/static-pages",
+              path: "/basepath/static-pages/build-id",
               region: "us-east-1"
             }
           });

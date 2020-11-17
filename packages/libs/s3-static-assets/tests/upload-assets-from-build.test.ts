@@ -2,6 +2,7 @@ import path from "path";
 import { uploadStaticAssetsFromBuild } from "../src/index";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
+  SERVER_NO_CACHE_CACHE_CONTROL_HEADER,
   SERVER_CACHE_CONTROL_HEADER
 } from "../src/lib/constants";
 import AWS, {
@@ -98,10 +99,6 @@ describe("Upload tests from build", () => {
     );
     expect(AWS.S3).toBeCalledTimes(1);
   });
-
-  describe("when no public or static directory exists", () => {
-    it("upload does not crash", () => upload("./fixtures/app-no-public-dir"));
-  });
 });
 
 describe.each`
@@ -135,7 +132,7 @@ describe.each`
     it("uploads HTML pages in static-pages", async () => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
-          Key: "static-pages/todos/terms.html",
+          Key: "static-pages/zsWqBqLjpgRmswfQomanp/todos/terms.html",
           ContentType: "text/html",
           CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
@@ -143,7 +140,15 @@ describe.each`
 
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
-          Key: "static-pages/todos/terms/[section].html",
+          Key: "static-pages/zsWqBqLjpgRmswfQomanp/todos/terms/[section].html",
+          ContentType: "text/html",
+          CacheControl: SERVER_NO_CACHE_CACHE_CONTROL_HEADER
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: "static-pages/zsWqBqLjpgRmswfQomanp/todos/terms/a.html",
           ContentType: "text/html",
           CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
@@ -151,15 +156,7 @@ describe.each`
 
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
-          Key: "static-pages/todos/terms/a.html",
-          ContentType: "text/html",
-          CacheControl: SERVER_CACHE_CONTROL_HEADER
-        })
-      );
-
-      expect(mockUpload).toBeCalledWith(
-        expect.objectContaining({
-          Key: "static-pages/todos/terms/b.html",
+          Key: "static-pages/zsWqBqLjpgRmswfQomanp/todos/terms/b.html",
           ContentType: "text/html",
           CacheControl: SERVER_CACHE_CONTROL_HEADER
         })

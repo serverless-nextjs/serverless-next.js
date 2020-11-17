@@ -565,7 +565,11 @@ class Builder {
    * Build static assets such as client-side JS, public files, static pages, etc.
    * Note that the upload to S3 is done in a separate deploy step.
    */
-  async buildStaticAssets(routesManifest: RoutesManifest) {
+  async buildStaticAssets(
+    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    routesManifest: RoutesManifest
+  ) {
+    const buildId = defaultBuildManifest.buildId;
     const basePath = routesManifest.basePath;
     const nextConfigDir = this.nextConfigDir;
     const nextStaticDir = this.nextStaticDir;
@@ -586,6 +590,12 @@ class Builder {
         await fse.copy(source, destination);
       }
     };
+
+    // Copy BUILD_ID file
+    const copyBuildId = copyIfExists(
+      path.join(dotNextDirectory, "BUILD_ID"),
+      path.join(assetOutputDirectory, withBasePath("BUILD_ID"))
+    );
 
     const buildStaticFiles = await readDirectoryFiles(
       path.join(dotNextDirectory, "static")
@@ -621,7 +631,7 @@ class Builder {
         const destination = path.join(
           assetOutputDirectory,
           withBasePath(
-            `static-pages/${(relativePageFilePath as string).replace(
+            `static-pages/${buildId}/${(relativePageFilePath as string).replace(
               /^pages\//,
               ""
             )}`
@@ -665,7 +675,7 @@ class Builder {
       );
       const destination = path.join(
         assetOutputDirectory,
-        withBasePath(path.join("static-pages", relativePageFilePath))
+        withBasePath(path.join("static-pages", buildId, relativePageFilePath))
       );
 
       return copyIfExists(source, destination);
@@ -687,7 +697,7 @@ class Builder {
 
         const destination = path.join(
           assetOutputDirectory,
-          withBasePath(path.join("static-pages", fallback))
+          withBasePath(path.join("static-pages", buildId, fallback))
         );
 
         return copyIfExists(source, destination);
@@ -727,6 +737,7 @@ class Builder {
     const staticDirAssets = await buildPublicOrStaticDirectory("static");
 
     return Promise.all([
+      copyBuildId, // BUILD_ID
       ...staticFileAssets, // .next/static
       ...htmlPageAssets, // prerendered html pages
       ...prerenderManifestJSONPropFileAssets, // SSG json files
@@ -807,7 +818,7 @@ class Builder {
       this.dotNextDir,
       "routes-manifest.json"
     ));
-    await this.buildStaticAssets(routesManifest);
+    await this.buildStaticAssets(defaultBuildManifest, routesManifest);
   }
 
   /**

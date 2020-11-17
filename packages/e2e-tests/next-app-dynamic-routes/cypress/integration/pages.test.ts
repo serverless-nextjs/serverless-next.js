@@ -419,6 +419,30 @@ describe("Pages Tests", () => {
         }
       });
     });
+
+    [
+      {
+        path: "/optional-catch-all-ssg-with-fallback/not-prerendered",
+        param: "not-prerendered"
+      }
+    ].forEach(({ path, param }) => {
+      it(`serves but does not cache fallback page, then caches page ${path}`, () => {
+        // Ensure we hit a new page
+        const now = Date.now();
+        const newPath = `${path}-${now}`;
+
+        // Verify first request is to fallback page
+        cy.request(newPath).then((response) => {
+          expect(response.headers["cache-control"]).to.equal(
+            "public, max-age=0, s-maxage=0, must-revalidate"
+          );
+          expect(response.body).to.contain('<p data-cy="catch"></p>');
+        });
+
+        // TODO: not sure why but I couldn't verify that subsequent request is the prerendered page, Cypress seemed to cache the fallback page response.
+        //  However, verified manually that it works correctly.
+      });
+    });
   });
 
   describe("Dynamic SSR page", () => {
