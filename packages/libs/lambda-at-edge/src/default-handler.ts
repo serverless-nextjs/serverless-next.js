@@ -256,8 +256,8 @@ const handleOriginRequest = async ({
   const basePath = routesManifest.basePath;
   let uri = normaliseUri(request.uri);
   const { pages, publicFiles } = manifest;
-  let isPublicFile = publicFiles[uri];
-  let isDataReq = isDataRequest(uri);
+  const isPublicFile = publicFiles[uri];
+  const isDataReq = isDataRequest(uri);
 
   // Handle redirects
   // TODO: refactor redirect logic to another file since this is getting quite large
@@ -300,9 +300,10 @@ const handleOriginRequest = async ({
   }
 
   // Check for non-dynamic pages before rewriting
-  let isNonDynamicRoute =
+  const isNonDynamicRoute =
     pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri] || isPublicFile;
 
+  let rewrittenUri;
   // Handle custom rewrites, but don't rewrite non-dynamic pages, public files or data requests per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
   if (!isNonDynamicRoute && !isDataReq) {
     const customRewrite = getRewritePath(
@@ -312,6 +313,7 @@ const handleOriginRequest = async ({
       uri
     );
     if (customRewrite) {
+      rewrittenUri = request.uri;
       request.uri = customRewrite;
       uri = normaliseUri(request.uri);
     }
@@ -401,7 +403,8 @@ const handleOriginRequest = async ({
   const { req, res, responsePromise } = lambdaAtEdgeCompat(
     event.Records[0].cf,
     {
-      enableHTTPCompression: manifest.enableHTTPCompression
+      enableHTTPCompression: manifest.enableHTTPCompression,
+      rewrittenUri
     }
   );
   try {
@@ -537,7 +540,7 @@ const handleOriginResponse = async ({
     if (!hasFallback) return response;
 
     // If route has fallback, return that page from S3, otherwise return 404 page
-    let s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages/${
+    const s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages/${
       manifest.buildId
     }${hasFallback.fallback || "/404.html"}`;
 

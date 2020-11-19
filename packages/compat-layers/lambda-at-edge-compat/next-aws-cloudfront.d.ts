@@ -3,6 +3,7 @@ import { IncomingMessage, ServerResponse } from "http";
 
 type CompatOptions = {
   enableHTTPCompression: boolean;
+  rewrittenUri?: string;
 };
 
 declare function lambdaAtEdgeCompat(
