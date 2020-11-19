@@ -25,7 +25,9 @@ module.exports = {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           CacheBehaviors: expect.objectContaining({
-            Items: [expect.objectContaining(cacheBehavior)]
+            Items: expect.arrayContaining([
+              expect.objectContaining(cacheBehavior)
+            ])
           })
         })
       })
