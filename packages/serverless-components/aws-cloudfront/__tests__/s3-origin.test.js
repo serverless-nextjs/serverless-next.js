@@ -5,6 +5,7 @@ const {
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise,
   mockCreateCloudFrontOriginAccessIdentityPromise,
+  mockGetCloudFrontOriginAccessIdentityPromise,
   mockPutBucketPolicy
 } = require("aws-sdk");
 
@@ -183,6 +184,62 @@ describe("S3 origins", () => {
       });
 
       expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    });
+
+    it("updates distribution persisting existing identity", async () => {
+      mockGetCloudFrontOriginAccessIdentityPromise.mockResolvedValue({
+        CloudFrontOriginAccessIdentity: {
+          Id: "access-identity-1",
+          S3CanonicalUserId: "s3-canonical-user-id-1"
+        }
+      });
+
+      mockGetDistributionConfigPromise.mockResolvedValueOnce({
+        ETag: "etag",
+        DistributionConfig: {
+          Origins: {
+            Quantity: 0,
+            Items: []
+          }
+        }
+      });
+
+      mockUpdateDistributionPromise.mockResolvedValueOnce({
+        Distribution: {
+          Id: "distributionwithS3origin"
+        }
+      });
+
+      await component.default({
+        distributionId: "distributionwithS3origin",
+        origins: [
+          {
+            url: "https://anotherbucket.s3.amazonaws.com",
+            private: true
+          }
+        ],
+        originAccessIdentityId: "access-identity-1"
+      });
+
+      expect(mockPutBucketPolicy).toBeCalledWith({
+        Bucket: "anotherbucket",
+        Policy: expect.stringContaining(
+          '"CanonicalUser":"s3-canonical-user-id-1"'
+        )
+      });
+
+      assertHasOrigin(mockUpdateDistribution, {
+        Id: "anotherbucket",
+        DomainName: "anotherbucket.s3.amazonaws.com",
+        S3OriginConfig: {
+          OriginAccessIdentity:
+            "origin-access-identity/cloudfront/access-identity-1"
+        },
+        OriginPath: "",
+        CustomHeaders: { Items: [], Quantity: 0 }
+      });
+
+      expect(mockUpdateDistribution.mock.calls[0][0]).toMatchSnapshot();
     });
   });
 
