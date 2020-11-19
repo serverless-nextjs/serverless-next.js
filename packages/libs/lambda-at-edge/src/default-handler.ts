@@ -420,7 +420,7 @@ const handleOriginRequest = async ({
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
     } else {
-      await page.render(req, res);
+      await Promise.race([page.render(req, res), responsePromise]);
     }
   } catch (error) {
     // Set status to 500 so _error.js will render a 500 page
