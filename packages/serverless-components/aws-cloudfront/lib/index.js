@@ -268,7 +268,19 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   });
 
   if (CacheBehaviors) {
-    params.DistributionConfig.CacheBehaviors = CacheBehaviors;
+    const behaviors = (params.DistributionConfig.CacheBehaviors = params
+      .DistributionConfig.CacheBehaviors || { Items: [] });
+    const behaviorPaths = behaviors.Items.map((b) => b.PathPattern);
+    CacheBehaviors.Items.forEach((inputBehavior) => {
+      const behaviorIndex = behaviorPaths.indexOf(inputBehavior.PathPattern);
+      if (behaviorIndex > -1) {
+        // replace origin with new input configuration
+        behaviors.Items.splice(behaviorIndex, 1, inputBehavior);
+      } else {
+        behaviors.Items.push(inputBehavior);
+      }
+    });
+    behaviors.Quantity = behaviors.Items.length;
   }
 
   const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
