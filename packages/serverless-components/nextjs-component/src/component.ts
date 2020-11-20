@@ -262,6 +262,7 @@ class NextjsComponent extends Component {
       webACLId: cloudFrontWebACLId,
       restrictions: cloudFrontRestrictions,
       certificate: cloudFrontCertificate,
+      originAccessIdentityId: cloudFrontOriginAccessIdentityId,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -621,7 +622,8 @@ class NextjsComponent extends Component {
       comment: cloudFrontComment,
       webACLId: cloudFrontWebACLId,
       restrictions: cloudFrontRestrictions,
-      certificate: cloudFrontCertificate
+      certificate: cloudFrontCertificate,
+      originAccessIdentityId: cloudFrontOriginAccessIdentityId
     });
 
     let appUrl = cloudFrontOutputs.url;

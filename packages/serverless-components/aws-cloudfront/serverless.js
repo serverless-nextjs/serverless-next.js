@@ -62,7 +62,11 @@ class CloudFront extends Component {
         !equals(this.state.errorPages, inputs.errorPages) ||
         !equals(this.state.webACLId, inputs.webACLId) ||
         !equals(this.state.restrictions, inputs.restrictions) ||
-        !equals(this.state.certificate, inputs.certificate)
+        !equals(this.state.certificate, inputs.certificate) ||
+        !equals(
+          this.state.originAccessIdentityId,
+          inputs.originAccessIdentityId
+        )
       ) {
         this.context.debug(
           `Updating CloudFront distribution of ID ${this.state.id}.`
