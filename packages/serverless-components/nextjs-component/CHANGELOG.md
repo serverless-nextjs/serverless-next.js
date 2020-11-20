@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.8...@sls-next/serverless-component@1.19.0-alpha.9) (2020-11-20)
+
+### Features
+
+- **aws-cloudfront:** allow predefined originAccessIdentityId ([#811](https://github.com/serverless-nextjs/serverless-next.js/issues/811)) ([8785727](https://github.com/serverless-nextjs/serverless-next.js/commit/878572769397428e08349982079001a8b94d977e))
+
 # [1.19.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.7...@sls-next/serverless-component@1.19.0-alpha.8) (2020-11-17)
 
 ### Features
