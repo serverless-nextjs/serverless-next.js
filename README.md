@@ -240,6 +240,7 @@ myNextApplication:
         sslSupportMethod: "sni-only" # can be omitted, defaults to "sni-only"
         minimumProtocolVersion: "TLSv1.2_2019" # can be omitted, defaults to "TLSv1.2_2019"
       originAccessIdentityId: XYZEXAMPLE #optional
+      paths: ["/*"] # which paths should be invalidated on deploy, default matches everything, empty array skips invalidation completely
 ```
 
 This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
