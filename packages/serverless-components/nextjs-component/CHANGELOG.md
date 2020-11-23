@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.9...@sls-next/serverless-component@1.19.0-alpha.10) (2020-11-23)
+
+### Features
+
+- **cloudfront, serverless-component:** add optional invalidation paths configuration ([#814](https://github.com/serverless-nextjs/serverless-next.js/issues/814)) ([088d0c0](https://github.com/serverless-nextjs/serverless-next.js/commit/088d0c05dc1b278f8387a5a8eaf36d9725cf9740))
+
 # [1.19.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.8...@sls-next/serverless-component@1.19.0-alpha.9) (2020-11-20)
 
 ### Features
