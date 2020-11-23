@@ -148,7 +148,10 @@ const defaultOptions = {
   enableHTTPCompression: false
 };
 
-const handler = (event, { enableHTTPCompression } = defaultOptions) => {
+const handler = (
+  event,
+  { enableHTTPCompression, rewrittenUri } = defaultOptions
+) => {
   const { request: cfRequest, response: cfResponse = { headers: {} } } = event;
 
   const response = {
@@ -158,7 +161,7 @@ const handler = (event, { enableHTTPCompression } = defaultOptions) => {
   const newStream = new Stream.Readable();
 
   const req = Object.assign(newStream, http.IncomingMessage.prototype);
-  req.url = cfRequest.uri;
+  req.url = rewrittenUri || cfRequest.uri;
   req.method = cfRequest.method;
   req.rawHeaders = [];
   req.headers = {};
