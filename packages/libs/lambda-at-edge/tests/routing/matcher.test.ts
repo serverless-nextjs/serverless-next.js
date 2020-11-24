@@ -83,17 +83,5 @@ describe("Matcher Tests", () => {
       const match = compileDestination("abc://123", {});
       expect(match).toBeNull();
     });
-
-    it.only("matches", () => {
-      const match: any = matchPath(
-        "/outdoor/a/b/c",
-        "/:market(outdoor|leaf|sale)/:rest*"
-      );
-
-      const dest = compileDestination("/:rest*?market=:market", match.params);
-
-      console.log(match);
-      console.log(dest);
-    });
   });
 });
