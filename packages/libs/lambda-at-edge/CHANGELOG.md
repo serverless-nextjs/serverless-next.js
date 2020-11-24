@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.6...@sls-next/lambda-at-edge@1.8.0-alpha.7) (2020-11-24)
+
+### Bug Fixes
+
+- **lambda-at-edge:** handle/merge query params in redirect/rewrite destinat… ([#816](https://github.com/serverless-nextjs/serverless-next.js/issues/816)) ([cd03658](https://github.com/serverless-nextjs/serverless-next.js/commit/cd03658191182207d09a2c1c132d60971aac572c))
+
 # [1.8.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.5...@sls-next/lambda-at-edge@1.8.0-alpha.6) (2020-11-17)
 
 ### Bug Fixes
