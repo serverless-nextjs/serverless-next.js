@@ -39,7 +39,8 @@ describe("Redirector Tests", () => {
             regex: "^/invalid-destination$"
           }
         ],
-        rewrites: []
+        rewrites: [],
+        headers: []
       };
     });
 

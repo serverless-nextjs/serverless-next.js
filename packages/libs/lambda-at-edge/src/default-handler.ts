@@ -312,7 +312,18 @@ const handleOriginRequest = async ({
       uri
     );
     if (customRewrite) {
-      request.uri = customRewrite;
+      const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
+        "?"
+      );
+      request.uri = customRewriteUriPath;
+      if (request.querystring) {
+        request.querystring = `${request.querystring}${
+          customRewriteUriQuery ? `&${customRewriteUriQuery}` : ""
+        }`;
+      } else {
+        request.querystring = `${customRewriteUriQuery ?? ""}`;
+      }
+
       uri = normaliseUri(request.uri);
     }
   }

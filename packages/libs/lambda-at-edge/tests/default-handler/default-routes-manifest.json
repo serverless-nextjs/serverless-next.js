@@ -26,6 +26,12 @@
       "destination": "https://example.com",
       "statusCode": 308,
       "regex": "^/external$"
+    },
+    {
+      "source": "/terms-redirect-dest-query",
+      "destination": "/terms?foo=bar",
+      "statusCode": 308,
+      "regex": "^/terms-redirect-dest-query$"
     }
   ],
   "rewrites": [
@@ -48,6 +54,11 @@
       "source": "/terms",
       "destination": "/",
       "regex": "^/terms$"
+    },
+    {
+      "source": "/terms-rewrite-dest-query",
+      "destination": "/terms?foo=bar",
+      "regex": "^/terms-rewrite-dest-query$"
     }
   ],
   "headers": [

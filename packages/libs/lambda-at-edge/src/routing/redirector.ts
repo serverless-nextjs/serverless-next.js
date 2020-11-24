@@ -92,7 +92,15 @@ export function createRedirectResponse(
   querystring: string,
   statusCode: number
 ): CloudFrontResultResponse {
-  const location = querystring ? `${uri}?${querystring}` : uri;
+  let location;
+
+  // Properly join query strings
+  if (querystring) {
+    const [uriPath, uriQuery] = uri.split("?");
+    location = `${uriPath}?${querystring}${uriQuery ? `&${uriQuery}` : ""}`;
+  } else {
+    location = uri;
+  }
 
   const status = statusCode.toString();
   const statusDescription = http.STATUS_CODES[status];
