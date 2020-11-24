@@ -108,6 +108,10 @@ module.exports = {
         // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
         source: "/api/basic-api",
         destination: "/"
+      },
+      {
+        source: "/rewrite-dest-with-query",
+        destination: "/ssr-page?a=123"
       }
     ];
   },
