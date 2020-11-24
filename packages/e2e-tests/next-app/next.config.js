@@ -58,7 +58,7 @@ module.exports = {
       },
       {
         source: "/query-string-destination-redirect",
-        destination: "/ssg-page?a=1234&b=1?",
+        destination: "/ssg-page?a=1234&b=1",
         permanent: true
       }
     ];
@@ -111,7 +111,7 @@ module.exports = {
       },
       {
         source: "/rewrite-dest-with-query",
-        destination: "/ssr-page?a=123"
+        destination: "/ssr-page?foo=bar"
       }
     ];
   },
