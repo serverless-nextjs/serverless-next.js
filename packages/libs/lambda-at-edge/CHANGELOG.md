@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.7...@sls-next/lambda-at-edge@1.8.0-alpha.8) (2020-11-26)
+
+### Bug Fixes
+
+- **lambda-at-edge:** minor fix to optional catch-all base route at root level ([#820](https://github.com/serverless-nextjs/serverless-next.js/issues/820)) ([60cee0d](https://github.com/serverless-nextjs/serverless-next.js/commit/60cee0d76b8593d38308e57f0feea02cb18905e1))
+
 # [1.8.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.6...@sls-next/lambda-at-edge@1.8.0-alpha.7) (2020-11-24)
 
 ### Bug Fixes
