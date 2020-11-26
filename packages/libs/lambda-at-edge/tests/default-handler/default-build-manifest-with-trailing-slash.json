@@ -40,7 +40,8 @@
         "/_error": "pages/_error.js",
         "/erroredPage": "pages/erroredPage.js",
         "/404": "pages/404.html",
-        "/preview": "pages/preview.js"
+        "/preview": "pages/preview.js",
+        "/async-page": "pages/async-page.js"
       }
     },
     "html": {

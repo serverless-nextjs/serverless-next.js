@@ -48,6 +48,11 @@
       "source": "/terms",
       "destination": "/",
       "regex": "^/terms/$"
+    },
+    {
+      "source": "/promise-page/",
+      "destination": "/async-page/",
+      "regex": "^/promise-page/$"
     }
   ],
   "headers": [
