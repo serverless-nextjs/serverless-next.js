@@ -476,6 +476,7 @@ class Builder {
       } else if (isOptionalCatchAllDynamicRoute) {
         expressRoute = expressifyOptionalCatchAllDynamicRoute(route);
         optionalBaseRoute = route.split("/[[")[0]; // The base path of optional catch-all without parameter
+        optionalBaseRoute = optionalBaseRoute === "" ? "/" : optionalBaseRoute;
       }
 
       if (isHtmlPage(pageFile)) {
