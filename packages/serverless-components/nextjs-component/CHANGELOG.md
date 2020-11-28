@@ -3,6 +3,26 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.11...@sls-next/serverless-component@1.19.0-alpha.12) (2020-11-26)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+# [1.19.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.10...@sls-next/serverless-component@1.19.0-alpha.11) (2020-11-24)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+# [1.19.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.9...@sls-next/serverless-component@1.19.0-alpha.10) (2020-11-23)
+
+### Features
+
+- **cloudfront, serverless-component:** add optional invalidation paths configuration ([#814](https://github.com/serverless-nextjs/serverless-next.js/issues/814)) ([088d0c0](https://github.com/serverless-nextjs/serverless-next.js/commit/088d0c05dc1b278f8387a5a8eaf36d9725cf9740))
+
+# [1.19.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.8...@sls-next/serverless-component@1.19.0-alpha.9) (2020-11-20)
+
+### Features
+
+- **aws-cloudfront:** allow predefined originAccessIdentityId ([#811](https://github.com/serverless-nextjs/serverless-next.js/issues/811)) ([8785727](https://github.com/serverless-nextjs/serverless-next.js/commit/878572769397428e08349982079001a8b94d977e))
+
 # [1.19.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.7...@sls-next/serverless-component@1.19.0-alpha.8) (2020-11-17)
 
 ### Features

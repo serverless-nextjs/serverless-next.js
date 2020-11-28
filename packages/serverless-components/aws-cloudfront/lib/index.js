@@ -226,16 +226,25 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   }
 
   let s3CanonicalUserId;
-  let originAccessIdentityId;
+  let { originAccessIdentityId } = inputs;
 
   if (servePrivateContentEnabled(inputs)) {
     // presumably it's ok to call create origin access identity again
     // aws api returns cached copy of what was previously created
     // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#createCloudFrontOriginAccessIdentity-property
-    ({
-      originAccessIdentityId,
-      s3CanonicalUserId
-    } = await createOriginAccessIdentity(cf));
+
+    if (originAccessIdentityId) {
+      ({
+        CloudFrontOriginAccessIdentity: { S3CanonicalUserId: s3CanonicalUserId }
+      } = await cf
+        .getCloudFrontOriginAccessIdentity({ Id: originAccessIdentityId })
+        .promise());
+    } else {
+      ({
+        originAccessIdentityId,
+        s3CanonicalUserId
+      } = await createOriginAccessIdentity(cf));
+    }
   }
 
   const { Origins, CacheBehaviors } = parseInputOrigins(inputs.origins, {
@@ -268,7 +277,19 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   });
 
   if (CacheBehaviors) {
-    params.DistributionConfig.CacheBehaviors = CacheBehaviors;
+    const behaviors = (params.DistributionConfig.CacheBehaviors = params
+      .DistributionConfig.CacheBehaviors || { Items: [] });
+    const behaviorPaths = behaviors.Items.map((b) => b.PathPattern);
+    CacheBehaviors.Items.forEach((inputBehavior) => {
+      const behaviorIndex = behaviorPaths.indexOf(inputBehavior.PathPattern);
+      if (behaviorIndex > -1) {
+        // replace origin with new input configuration
+        behaviors.Items.splice(behaviorIndex, 1, inputBehavior);
+      } else {
+        behaviors.Items.push(inputBehavior);
+      }
+    });
+    behaviors.Quantity = behaviors.Items.length;
   }
 
   const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);

@@ -678,35 +678,45 @@ describe("Lambda@Edge", () => {
     describe("Custom Redirects", () => {
       if (trailingSlash) {
         it.each`
-          path                  | expectedRedirect         | expectedRedirectStatusCode
-          ${"/terms-new/"}      | ${"/terms/"}             | ${308}
-          ${"/old-blog/abc/"}   | ${"/news/abc/"}          | ${308}
-          ${"/old-users/1234/"} | ${"/users/1234/"}        | ${307}
-          ${"/external/"}       | ${"https://example.com"} | ${308}
+          uri                                  | expectedRedirect         | expectedRedirectStatusCode
+          ${"/terms-new/"}                     | ${"/terms/"}             | ${308}
+          ${"/old-blog/abc/"}                  | ${"/news/abc/"}          | ${308}
+          ${"/old-users/1234/"}                | ${"/users/1234/"}        | ${307}
+          ${"/external/"}                      | ${"https://example.com"} | ${308}
+          ${"/terms-redirect-dest-query/"}     | ${"/terms/?foo=bar"}     | ${308}
+          ${"/terms-redirect-dest-query/?a=b"} | ${"/terms/?a=b&foo=bar"} | ${308}
         `(
-          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
-          async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
+          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
+            const [path, querystring] = uri.split("?");
+
             await runRedirectTest(
               path,
               expectedRedirect,
-              expectedRedirectStatusCode
+              expectedRedirectStatusCode,
+              querystring
             );
           }
         );
       } else {
         it.each`
-          path                 | expectedRedirect         | expectedRedirectStatusCode
-          ${"/terms-new"}      | ${"/terms"}              | ${308}
-          ${"/old-blog/abc"}   | ${"/news/abc"}           | ${308}
-          ${"/old-users/1234"} | ${"/users/1234"}         | ${307}
-          ${"/external"}       | ${"https://example.com"} | ${308}
+          uri                                 | expectedRedirect         | expectedRedirectStatusCode
+          ${"/terms-new"}                     | ${"/terms"}              | ${308}
+          ${"/old-blog/abc"}                  | ${"/news/abc"}           | ${308}
+          ${"/old-users/1234"}                | ${"/users/1234"}         | ${307}
+          ${"/external"}                      | ${"https://example.com"} | ${308}
+          ${"/terms-redirect-dest-query"}     | ${"/terms?foo=bar"}      | ${308}
+          ${"/terms-redirect-dest-query?a=b"} | ${"/terms?a=b&foo=bar"}  | ${308}
         `(
-          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
-          async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
+          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
+            const [path, querystring] = uri.split("?");
+
             await runRedirectTest(
               path,
               expectedRedirect,
-              expectedRedirectStatusCode
+              expectedRedirectStatusCode,
+              querystring
             );
           }
         );
@@ -740,14 +750,18 @@ describe("Lambda@Edge", () => {
 
     describe("Custom Rewrites", () => {
       it.each`
-        path                   | expectedPage
-        ${"/index-rewrite"}    | ${"/index.html"}
-        ${"/terms-rewrite"}    | ${"/terms.html"}
-        ${"/path-rewrite/123"} | ${"/terms.html"}
-        ${"/terms"}            | ${"/terms.html"}
+        uri                                | expectedPage     | expectedQuerystring
+        ${"/index-rewrite"}                | ${"/index.html"} | ${""}
+        ${"/terms-rewrite"}                | ${"/terms.html"} | ${""}
+        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${""}
+        ${"/terms"}                        | ${"/terms.html"} | ${""}
+        ${"/terms-rewrite-dest-query"}     | ${"/terms.html"} | ${"foo=bar"}
+        ${"/terms-rewrite-dest-query?a=b"} | ${"/terms.html"} | ${"a=b&foo=bar"}
       `(
-        "serves page $expectedPage from S3 for rewritten path $path",
-        async ({ path, expectedPage }) => {
+        "serves page $expectedPage from S3 for rewritten path $uri",
+        async ({ uri, expectedPage, expectedQuerystring }) => {
+          let [path, querystring] = uri.split("?");
+
           // If trailingSlash = true, append "/" to get the non-redirected path
           if (trailingSlash && !path.endsWith("/")) {
             path += "/";
@@ -755,6 +769,7 @@ describe("Lambda@Edge", () => {
 
           const event = createCloudFrontEvent({
             uri: path,
+            querystring: querystring,
             host: "mydistribution.cloudfront.net"
           });
 
@@ -771,6 +786,7 @@ describe("Lambda@Edge", () => {
             }
           });
           expect(request.uri).toEqual(expectedPage);
+          expect(request.querystring).toEqual(expectedQuerystring);
           expect(request.headers.host[0].key).toEqual("host");
           expect(request.headers.host[0].value).toEqual(
             "my-bucket.s3.amazonaws.com"

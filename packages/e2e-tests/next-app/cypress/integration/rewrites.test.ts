@@ -11,6 +11,11 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       },
       {
+        path: "/rewrite?a=b",
+        expectedRewrite: "/ssr-page?a=b",
+        expectedStatus: 200
+      },
+      {
         path: "/path-rewrite/123",
         expectedRewrite: "/ssr-page",
         expectedStatus: 200
@@ -54,6 +59,16 @@ describe("Rewrites Tests", () => {
         // Not rewritten since it's a non-dynamic route
         path: "/api/basic-api",
         expectedRewrite: "/api/basic-api",
+        expectedStatus: 200
+      },
+      {
+        path: "/rewrite-dest-with-query",
+        expectedRewrite: "/ssr-page?foo=bar",
+        expectedStatus: 200
+      },
+      {
+        path: "/rewrite-dest-with-query?a=b",
+        expectedRewrite: "/ssr-page?a=b&foo=bar",
         expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {

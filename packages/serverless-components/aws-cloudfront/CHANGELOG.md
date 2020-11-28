@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.1-alpha.0...@sls-next/aws-cloudfront@1.4.0-alpha.0) (2020-11-20)
+
+### Features
+
+- **aws-cloudfront:** add ability to persist cache behaviors not set in serverless ([#809](https://github.com/serverless-nextjs/serverless-next.js/issues/809)) ([b339bf5](https://github.com/serverless-nextjs/serverless-next.js/commit/b339bf5b6905a7e93aaf18622adc0b88c854b7b2))
+- **aws-cloudfront:** allow predefined originAccessIdentityId ([#811](https://github.com/serverless-nextjs/serverless-next.js/issues/811)) ([8785727](https://github.com/serverless-nextjs/serverless-next.js/commit/878572769397428e08349982079001a8b94d977e))
+
 ## [1.3.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-cloudfront@1.3.0...@sls-next/aws-cloudfront@1.3.1-alpha.0) (2020-11-06)
 
 ### Bug Fixes
