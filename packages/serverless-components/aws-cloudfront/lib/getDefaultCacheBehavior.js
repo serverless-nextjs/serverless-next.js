@@ -10,7 +10,8 @@ module.exports = (originId, defaults = {}) => {
     smoothStreaming = false,
     viewerProtocolPolicy = "redirect-to-https",
     fieldLevelEncryptionId = "",
-    cachePolicyId
+    cachePolicyId,
+    originRequestPolicyId
   } = defaults;
 
   const defaultCacheBehavior = {
@@ -45,6 +46,10 @@ module.exports = (originId, defaults = {}) => {
     defaultCacheBehavior.MinTTL = 0;
     defaultCacheBehavior.DefaultTTL = ttl;
     defaultCacheBehavior.MaxTTL = 31536000;
+  }
+
+  if (originRequestPolicyId) {
+    defaultCacheBehavior.OriginRequestPolicyId = originRequestPolicyId;
   }
 
   addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);

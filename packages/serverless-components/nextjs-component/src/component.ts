@@ -506,6 +506,7 @@ class NextjsComponent extends Component {
 
     const defaultBehaviour = {
       cachePolicyId: cloudFrontDefaults.cachePolicyId,
+      originRequestPolicyId: cloudFrontDefaults.originRequestPolicyId,
       ttl: 86400,
       ...cloudFrontDefaults,
       forward: {
