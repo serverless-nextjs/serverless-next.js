@@ -70,7 +70,8 @@
   },
   "publicFiles": {
     "/favicon.ico": "favicon.ico",
-    "/manifest.json": "manifest.json"
+    "/manifest.json": "manifest.json",
+    "/file with spaces.json": "file with spaces.json"
   },
   "trailingSlash": false,
   "domainRedirects": {
