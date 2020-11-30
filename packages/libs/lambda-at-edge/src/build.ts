@@ -49,6 +49,7 @@ type BuildOptions = {
     cjsResolve: boolean
   ) => string | string[];
   baseDir?: string;
+  imageOptimizer?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -63,7 +64,8 @@ const defaultBuildOptions = {
   enableHTTPCompression: true,
   authentication: undefined,
   resolve: undefined,
-  baseDir: process.cwd()
+  baseDir: process.cwd(),
+  imageOptimizer: false
 };
 
 class Builder {
@@ -240,6 +242,45 @@ class Builder {
     await fse.copy(source, destination);
   }
 
+  async copyImageOptimizerFiles() {
+    // TODO: check whether serverless.yml input enables it, as there is no easy way
+    // to tell if Image Component is used without looking through pages.
+    // We don't copy by default since it may add ~7 MB compressed (will be minified further).
+    const imageOptimizerEnabled: boolean = !!this.buildOptions.imageOptimizer;
+
+    if (!imageOptimizerEnabled) {
+      console.info(
+        "Image optimizer is not enabled, so sharp modules are not copied. If you are using the Next.js 10 Image component, this must be explicitly enabled under serverless.yml inputs."
+      );
+    }
+
+    const copySharpNodeModules = async () => {
+      // Copy Lambda-specific sharp node_modules
+      // Built following: https://sharp.pixelplumbing.com/install#aws-lambda
+      // TODO: package these in dist
+      if (imageOptimizerEnabled) {
+        await fse.copy(
+          join(
+            path.dirname(
+              require.resolve("@sls-next/lambda-at-edge/package.json")
+            ),
+            "dist",
+            "sharp_node_modules"
+          ),
+          join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "node_modules")
+        );
+      }
+    };
+
+    await Promise.all([
+      await copySharpNodeModules(),
+      fse.copy(
+        join(this.dotNextDir, "images-manifest.json"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "images-manifest.json")
+      )
+    ]);
+  }
+
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
@@ -343,7 +384,9 @@ class Builder {
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
-      )
+      ),
+      // Copy needed sharp files for image optimizer
+      this.copyImageOptimizerFiles()
     ]);
   }
 
@@ -442,6 +485,7 @@ class Builder {
       trailingSlash: false,
       domainRedirects: domainRedirects,
       authentication: authentication,
+      images: undefined,
       enableHTTPCompression
     };
 
@@ -554,6 +598,9 @@ class Builder {
       // Support trailing slash: https://nextjs.org/docs/api-reference/next.config.js/trailing-slash
       defaultBuildManifest.trailingSlash =
         normalisedNextConfig?.trailingSlash ?? false;
+
+      // Support image optimization configurations: https://nextjs.org/docs/basic-features/image-optimization#configuration
+      defaultBuildManifest.images = normalisedNextConfig?.images;
     }
 
     return {

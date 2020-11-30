@@ -18,7 +18,9 @@ import {
   PreRenderedManifest as PrerenderManifestType,
   OriginResponseEvent,
   PerfLogger,
-  RoutesManifest
+  RoutesManifest,
+  ImageConfig,
+  ImagesManifest
 } from "../types";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
@@ -31,8 +33,11 @@ import {
 import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
-import type { SdkError } from "@aws-sdk/smithy-client";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
+import { imageOptimizer } from "./images/imageOptimizer";
+import { UrlWithParsedQuery } from "url";
+import * as url from "url";
+import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -60,6 +65,9 @@ const addS3HostHeader = (
 };
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
+
+const isImageOptimizerRequest = (uri: string): boolean =>
+  uri.startsWith("/_next/image");
 
 const normaliseUri = (uri: string): string => {
   if (basePath) {
@@ -152,30 +160,6 @@ const router = (
 
     return "pages/_error.js";
   };
-};
-
-// Need retries to fix https://github.com/aws/aws-sdk-js-v3/issues/1196
-const buildS3RetryStrategy = async () => {
-  const { defaultRetryDecider, StandardRetryStrategy } = await import(
-    "@aws-sdk/middleware-retry"
-  );
-
-  const retryDecider = (err: SdkError & { code?: string }) => {
-    if (
-      "code" in err &&
-      (err.code === "ECONNRESET" ||
-        err.code === "EPIPE" ||
-        err.code === "ETIMEDOUT")
-    ) {
-      return true;
-    } else {
-      return defaultRetryDecider(err);
-    }
-  };
-
-  return new StandardRetryStrategy(async () => 3, {
-    retryDecider
-  });
 };
 
 export const handler = async (
@@ -326,6 +310,40 @@ const handleOriginRequest = async ({
 
       uri = normaliseUri(request.uri);
     }
+  }
+
+  // Handle imag optimizer requests
+  const isImageRequest = isImageOptimizerRequest(uri);
+  if (isImageRequest) {
+    const imagesManifest: ImagesManifest | undefined = await import(
+      // @ts-ignore
+      "./images-manifest.json"
+    );
+
+    let imagesConfig: ImageConfig | undefined;
+    const { req, res, responsePromise } = lambdaAtEdgeCompat(
+      event.Records[0].cf,
+      {
+        enableHTTPCompression: manifest.enableHTTPCompression
+      }
+    );
+
+    const urlWithParsedQuery: UrlWithParsedQuery = url.parse(
+      `${request.uri}?${request.querystring}`,
+      true
+    );
+
+    const { domainName, region } = request.origin!.s3!;
+    const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+
+    await imageOptimizer(
+      { basePath: basePath, bucketName: bucketName, region: region },
+      imagesManifest,
+      req,
+      res,
+      urlWithParsedQuery
+    );
+    return await responsePromise;
   }
 
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props

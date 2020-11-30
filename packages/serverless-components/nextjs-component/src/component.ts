@@ -205,7 +205,8 @@ class NextjsComponent extends Component {
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,
-          authentication: inputs.authentication ?? undefined
+          authentication: inputs.authentication ?? undefined,
+          imageOptimizer: inputs.imageOptimizer ?? false
         },
         nextStaticPath
       );
@@ -633,7 +634,7 @@ class NextjsComponent extends Component {
       await createInvalidation({
         distributionId: cloudFrontOutputs.id,
         credentials: this.context.credentials.aws,
-        paths: cloudFrontPaths,
+        paths: cloudFrontPaths
       });
     }
 
