@@ -633,7 +633,7 @@ class NextjsComponent extends Component {
       await createInvalidation({
         distributionId: cloudFrontOutputs.id,
         credentials: this.context.credentials.aws,
-        paths: cloudFrontPaths,
+        paths: cloudFrontPaths
       });
     }
 
@@ -647,7 +647,8 @@ class NextjsComponent extends Component {
           [subdomain]: cloudFrontOutputs
         },
         domainType: inputs.domainType || "both",
-        defaultCloudfrontInputs: cloudFrontDefaults
+        defaultCloudfrontInputs: cloudFrontDefaults,
+        certificateArn: inputs.certificateArn
       });
       appUrl = domainOutputs.domains[0];
     }
