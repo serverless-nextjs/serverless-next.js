@@ -633,7 +633,7 @@ class NextjsComponent extends Component {
       await createInvalidation({
         distributionId: cloudFrontOutputs.id,
         credentials: this.context.credentials.aws,
-        paths: cloudFrontPaths
+        paths: cloudFrontPaths,
       });
     }
 
