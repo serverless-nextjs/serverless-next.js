@@ -8,7 +8,8 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
     smoothStreaming = false,
     viewerProtocolPolicy = "https-only",
     fieldLevelEncryptionId = "",
-    cachePolicyId
+    cachePolicyId,
+    originRequestPolicyId
   } = pathPatternConfig;
 
   const cacheBehaviour = {
@@ -49,6 +50,10 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
     cacheBehaviour.MinTTL = 0;
     cacheBehaviour.DefaultTTL = ttl;
     cacheBehaviour.MaxTTL = 31536000;
+  }
+
+  if (originRequestPolicyId) {
+    cacheBehaviour.OriginRequestPolicyId = originRequestPolicyId;
   }
 
   return cacheBehaviour;
