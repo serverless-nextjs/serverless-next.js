@@ -305,7 +305,7 @@ myNextApplication:
 myNextApplication:
   component: "@sls-next/serverless-component@{version_here}"
   inputs:
-    roleArn: "arn:aws:iam::123456789012:policy/MyCustomLambdaRole"
+    roleArn: "arn:aws:iam::123456789012:role/MyCustomLambdaRole"
 ```
 
 Make sure you add CloudWatch log permissions to your custom policy or role. Minimum policy JSON example:
