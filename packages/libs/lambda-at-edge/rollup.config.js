@@ -45,5 +45,7 @@ export default [
   { filename: "default-handler", minify: false },
   { filename: "default-handler", minify: true },
   { filename: "api-handler", minify: false },
-  { filename: "api-handler", minify: true }
+  { filename: "api-handler", minify: true },
+  { filename: "image-handler", minify: false },
+  { filename: "image-handler", minify: true }
 ].map(generateConfig);

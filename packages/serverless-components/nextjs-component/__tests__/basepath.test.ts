@@ -35,6 +35,10 @@ describe("basepath tests", () => {
     });
     mockLambda.mockResolvedValueOnce({
       arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn:
         "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
     });
     mockLambdaPublish.mockResolvedValue({
@@ -74,6 +78,7 @@ describe("basepath tests", () => {
         "custom_base/_next/static/*",
         "custom_base/static/*",
         "custom_base/api/*",
+        "custom_base/_next/image*",
         "custom_base/_next/data/*"
       ]);
     });

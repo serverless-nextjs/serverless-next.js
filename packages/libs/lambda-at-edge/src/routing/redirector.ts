@@ -2,6 +2,7 @@ import { compileDestination, matchPath } from "./matcher";
 import {
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
+  OriginRequestImageHandlerManifest,
   RedirectData,
   RoutesManifest
 } from "../../types";
@@ -141,6 +142,7 @@ export function getDomainRedirectPath(
   buildManifest:
     | OriginRequestDefaultHandlerManifest
     | OriginRequestApiHandlerManifest
+    | OriginRequestImageHandlerManifest
 ): string | null {
   const hostHeaders = request.headers["host"];
   if (hostHeaders && hostHeaders.length > 0) {

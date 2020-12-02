@@ -18,9 +18,7 @@ import {
   PreRenderedManifest as PrerenderManifestType,
   OriginResponseEvent,
   PerfLogger,
-  RoutesManifest,
-  ImageConfig,
-  ImagesManifest
+  RoutesManifest
 } from "../types";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
@@ -34,9 +32,6 @@ import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
-import { imageOptimizer } from "./images/imageOptimizer";
-import { UrlWithParsedQuery } from "url";
-import * as url from "url";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 
 const basePath = RoutesManifestJson.basePath;
@@ -65,9 +60,6 @@ const addS3HostHeader = (
 };
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
-
-const isImageOptimizerRequest = (uri: string): boolean =>
-  uri.startsWith("/_next/image");
 
 const normaliseUri = (uri: string): string => {
   if (basePath) {
@@ -312,45 +304,6 @@ const handleOriginRequest = async ({
 
       uri = normaliseUri(request.uri);
     }
-  }
-
-  // Handle image optimizer requests
-  const isImageRequest = isImageOptimizerRequest(uri);
-  if (isImageRequest) {
-    let imagesManifest: ImagesManifest | undefined;
-
-    try {
-      // @ts-ignore
-      imagesManifest = await import("./images-manifest.json");
-    } catch (error) {
-      console.warn(
-        "Images manifest not found for image optimizer request. Image optimizer will not work correctly."
-      );
-    }
-
-    const { req, res, responsePromise } = lambdaAtEdgeCompat(
-      event.Records[0].cf,
-      {
-        enableHTTPCompression: manifest.enableHTTPCompression
-      }
-    );
-
-    const urlWithParsedQuery: UrlWithParsedQuery = url.parse(
-      `${request.uri}?${request.querystring}`,
-      true
-    );
-
-    const { domainName, region } = request.origin!.s3!;
-    const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
-
-    await imageOptimizer(
-      { basePath: basePath, bucketName: bucketName, region: region },
-      imagesManifest,
-      req,
-      res,
-      urlWithParsedQuery
-    );
-    return await responsePromise;
   }
 
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props

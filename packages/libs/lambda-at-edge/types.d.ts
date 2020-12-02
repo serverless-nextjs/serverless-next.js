@@ -71,7 +71,13 @@ export type OriginRequestDefaultHandlerManifest = {
     username: string;
     password: string;
   };
-  images: ImageConfig | undefined;
+};
+
+export type OriginRequestImageHandlerManifest = {
+  enableHTTPCompression: boolean;
+  domainRedirects: {
+    [key: string]: string;
+  };
 };
 
 export type OriginRequestEvent = {
