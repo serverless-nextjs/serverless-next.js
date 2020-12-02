@@ -448,10 +448,14 @@ class NextjsComponent extends Component {
           : "API Lambda@Edge for Next CloudFront distribution",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy
-        },
+        role: inputs.roleArn
+          ? {
+              arn: inputs.roleArn
+            }
+          : {
+              service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+              policy
+            },
         memory: readLambdaInputValue("memory", "apiLambda", 512) as number,
         timeout: readLambdaInputValue("timeout", "apiLambda", 10) as number,
         runtime: readLambdaInputValue(
@@ -496,10 +500,14 @@ class NextjsComponent extends Component {
         "Default Lambda@Edge for Next CloudFront distribution",
       handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
-      role: {
-        service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-        policy
-      },
+      role: inputs.roleArn
+        ? {
+            arn: inputs.roleArn
+          }
+        : {
+            service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+            policy
+          },
       memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
       timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
       runtime: readLambdaInputValue(
@@ -633,7 +641,7 @@ class NextjsComponent extends Component {
       await createInvalidation({
         distributionId: cloudFrontOutputs.id,
         credentials: this.context.credentials.aws,
-        paths: cloudFrontPaths,
+        paths: cloudFrontPaths
       });
     }
 

@@ -16,6 +16,7 @@ export type ServerlessComponentInputs = {
   handler?: string;
   description?: string;
   policy?: string;
+  roleArn?: string;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
   domainRedirects?: { [key: string]: string };

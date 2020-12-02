@@ -178,6 +178,41 @@ describe("Custom inputs", () => {
     });
   });
 
+  describe("Custom role arn", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        roleArn: "arn:aws:iam::aws:role/CustomRole"
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("uses custom role arn provided", () => {
+      expect(mockLambda).toBeCalledTimes(2);
+
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          role: expect.objectContaining({
+            arn: "arn:aws:iam::aws:role/CustomRole"
+          })
+        })
+      );
+    });
+  });
+
   describe.each`
     nextConfigDir      | nextStaticDir      | fixturePath
     ${"nextConfigDir"} | ${"nextStaticDir"} | ${path.join(__dirname, "./fixtures/split-app")}
@@ -1148,7 +1183,7 @@ describe("Custom inputs", () => {
         }
       });
       expect(mockCreateInvalidation).toBeCalledWith(
-        expect.objectContaining({paths: pathsConfig})
+        expect.objectContaining({ paths: pathsConfig })
       );
     });
 
