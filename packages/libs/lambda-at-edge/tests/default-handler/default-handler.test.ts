@@ -260,26 +260,33 @@ describe("Lambda@Edge", () => {
     });
 
     describe("Public files routing", () => {
-      it("serves public file from S3 /public folder", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/manifest.json",
-          host: "mydistribution.cloudfront.net"
-        });
+      it.each`
+        path
+        ${"/manifest.json"}
+        ${"/file%20with%20spaces.json"}
+      `(
+        "serves public file at path $path from S3 /public folder",
+        async ({ path }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
 
-        const result = await handler(event);
+          const result = await handler(event);
 
-        const request = result as CloudFrontRequest;
+          const request = result as CloudFrontRequest;
 
-        expect(request.origin).toEqual({
-          s3: {
-            authMethod: "origin-access-identity",
-            domainName: "my-bucket.s3.amazonaws.com",
-            path: "/public",
-            region: "us-east-1"
-          }
-        });
-        expect(request.uri).toEqual("/manifest.json");
-      });
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/public",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual(path);
+        }
+      );
 
       it("public file should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
