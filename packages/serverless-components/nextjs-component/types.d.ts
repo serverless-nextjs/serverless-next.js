@@ -26,6 +26,7 @@ export type ServerlessComponentInputs = {
   deploy?: boolean;
   enableHTTPCompression?: boolean;
   authentication?: { username: string; password: string };
+  certificateArn?: string;
 };
 
 type CloudfrontOptions = Record<string, any>;
