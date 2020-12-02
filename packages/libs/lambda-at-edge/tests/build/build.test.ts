@@ -42,7 +42,8 @@ describe("Builder Tests", () => {
           "example.com": "https://www.example.com",
           "another.com": "https://www.another.com/",
           "www.other.com": "https://other.com"
-        }
+        },
+        imageOptimizer: true
       });
       await builder.build();
 
@@ -208,8 +209,10 @@ describe("Builder Tests", () => {
         );
 
         expect(files).toEqual([
+          "images-manifest.json",
           "index.js",
           "manifest.json",
+          "node_modules", // node_modules for sharp image library
           "pages",
           "prerender-manifest.json",
           "routes-manifest.json"

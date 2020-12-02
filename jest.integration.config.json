@@ -1,5 +1,8 @@
 {
   "testMatch": ["**/integration/**/*.test.[jt]s?(x)"],
-  "testPathIgnorePatterns": ["/cypress/"],
-  "watchPathIgnorePatterns": ["/fixture/"]
+  "testPathIgnorePatterns": ["/cypress/", "/sharp_node_modules/"],
+  "watchPathIgnorePatterns": ["/fixture/"],
+  "modulePathIgnorePatterns": [
+    "/sharp_node_modules/"
+  ]
 }
