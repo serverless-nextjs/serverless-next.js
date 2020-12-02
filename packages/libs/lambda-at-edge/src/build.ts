@@ -248,17 +248,8 @@ class Builder {
     // We don't copy by default since it may add ~7 MB compressed (will be minified further).
     const imageOptimizerEnabled: boolean = !!this.buildOptions.imageOptimizer;
 
-    if (!imageOptimizerEnabled) {
-      console.info(
-        "Image optimizer is not enabled, so sharp modules are not copied. If you are using the Next.js 10 Image component, this must be explicitly enabled under serverless.yml inputs."
-      );
-    }
-
-    const copySharpNodeModules = async () => {
-      // Copy Lambda-specific sharp node_modules
-      // Built following: https://sharp.pixelplumbing.com/install#aws-lambda
-      // TODO: package these in dist
-      if (imageOptimizerEnabled) {
+    if (imageOptimizerEnabled) {
+      await Promise.all([
         await fse.copy(
           join(
             path.dirname(
@@ -268,17 +259,13 @@ class Builder {
             "sharp_node_modules"
           ),
           join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "node_modules")
-        );
-      }
-    };
-
-    await Promise.all([
-      await copySharpNodeModules(),
-      fse.copy(
-        join(this.dotNextDir, "images-manifest.json"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "images-manifest.json")
-      )
-    ]);
+        ),
+        fse.copy(
+          join(this.dotNextDir, "images-manifest.json"),
+          join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "images-manifest.json")
+        )
+      ]);
+    }
   }
 
   async buildDefaultLambda(

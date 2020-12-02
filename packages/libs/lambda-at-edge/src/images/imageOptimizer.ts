@@ -154,7 +154,7 @@ export async function imageOptimizer(
   }
 
   const hash = getHash([CACHE_VERSION, href, width, quality, mimeType]);
-  const imagesDir = join(process.cwd(), "cache", "images"); // Use Lambda directory for now
+  const imagesDir = join("/tmp", "cache", "images"); // Use Lambda tmp directory
   const hashDir = join(imagesDir, hash);
   const now = Date.now();
 
@@ -321,7 +321,10 @@ export async function imageOptimizer(
     await promises.writeFile(filename, optimizedBuffer);
     sendResponse(req, res, contentType, optimizedBuffer);
   } catch (error) {
-    console.error("Error processing image with sharp: " + error);
+    console.error(
+      "Error processing image with sharp, returning upstream image as fallback instead: " +
+        error.stack
+    );
     sendResponse(req, res, upstreamType, upstreamBuffer);
   }
 

@@ -314,15 +314,20 @@ const handleOriginRequest = async ({
     }
   }
 
-  // Handle imag optimizer requests
+  // Handle image optimizer requests
   const isImageRequest = isImageOptimizerRequest(uri);
   if (isImageRequest) {
-    const imagesManifest: ImagesManifest | undefined = await import(
-      // @ts-ignore
-      "./images-manifest.json"
-    );
+    let imagesManifest: ImagesManifest | undefined;
 
-    let imagesConfig: ImageConfig | undefined;
+    try {
+      // @ts-ignore
+      imagesManifest = await import("./images-manifest.json");
+    } catch (error) {
+      console.warn(
+        "Images manifest not found for image optimizer request. Image optimizer will not work correctly."
+      );
+    }
+
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
       event.Records[0].cf,
       {

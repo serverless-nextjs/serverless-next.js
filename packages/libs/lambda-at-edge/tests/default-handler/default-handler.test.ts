@@ -18,6 +18,14 @@ jest.mock(
   }
 );
 
+jest.mock(
+  "../../src/images-manifest.json",
+  () => require("./images-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../../src/${mockPagePath}`,
