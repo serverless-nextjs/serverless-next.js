@@ -168,7 +168,7 @@ class NextjsComponent extends Component {
 
   async readImageBuildManifest(
     nextConfigPath: string
-  ): Promise<OriginRequestImageHandlerManifest> {
+  ): Promise<OriginRequestImageHandlerManifest | undefined> {
     const path = join(
       nextConfigPath,
       ".serverless_nextjs/image-lambda/manifest.json"
@@ -516,9 +516,7 @@ class NextjsComponent extends Component {
       };
     }
 
-    const hasImageLambda = true;
-
-    if (hasImageLambda) {
+    if (imageBuildManifest) {
       const imageEdgeLambdaInput: LambdaInput = {
         description: inputs.description
           ? `${inputs.description} (Image)`
