@@ -166,7 +166,9 @@ export async function imageOptimizer(
       const contentType = getContentType(extension);
       const fsPath = join(hashDir, file);
       if (now < expireAt) {
-        res.setHeader("Cache-Control", "public, max-age=60");
+        if (!res.getHeader("Cache-Control")) {
+          res.setHeader("Cache-Control", "public, max-age=60");
+        }
         if (sendEtagResponse(req, res, etag)) {
           return { finished: true };
         }
@@ -200,9 +202,6 @@ export async function imageOptimizer(
     maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control"));
   } else {
     try {
-      // Get public file from S3 and convert into buffer.
-      // TODO: separate this logic into another file
-
       let s3Key;
 
       if (href.startsWith(`${basePath}/static`)) {
