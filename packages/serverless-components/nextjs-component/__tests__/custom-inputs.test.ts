@@ -201,7 +201,7 @@ describe("Custom inputs", () => {
     });
 
     it("uses custom role arn provided", () => {
-      expect(mockLambda).toBeCalledTimes(2);
+      expect(mockLambda).toBeCalledTimes(3);
 
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({

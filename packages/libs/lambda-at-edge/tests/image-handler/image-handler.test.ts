@@ -64,7 +64,7 @@ describe("Image lambda handler", () => {
           etag: [
             {
               key: "etag",
-              value: "EgPzM1+JEfODRDono-khNIYVTReUyN1MRotWs3M8a4k="
+              value: expect.any(String)
             }
           ],
           "content-type": [{ key: "content-type", value: "image/png" }]
