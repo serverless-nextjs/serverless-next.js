@@ -45,8 +45,8 @@ jest.mock(
 );
 
 describe("Image lambda handler", () => {
-  if (!process.version.startsWith("v12")) {
-    it("skipping tests for Node.js that is not v12", () => {});
+  if (process.version.startsWith("v10")) {
+    it("skipping tests for Node.js that is on v10", () => {});
     return;
   }
 
