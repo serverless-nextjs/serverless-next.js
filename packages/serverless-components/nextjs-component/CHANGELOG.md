@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.13...@sls-next/serverless-component@1.19.0-alpha.14) (2020-12-03)
+
+### Bug Fixes
+
+- **domain:** pass certificateArn to domain component ([#826](https://github.com/serverless-nextjs/serverless-next.js/issues/826)) ([b7cf083](https://github.com/serverless-nextjs/serverless-next.js/commit/b7cf0834c6bbfaa178f0836fd2c92b80c1182b46))
+
+### Features
+
+- **nextjs-component:** add inputs.roleArn for existing lambda role ([#827](https://github.com/serverless-nextjs/serverless-next.js/issues/827)) ([f63bc76](https://github.com/serverless-nextjs/serverless-next.js/commit/f63bc763fcc224b3a0c49637ad58129c3143351c))
+
 # [1.19.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.12...@sls-next/serverless-component@1.19.0-alpha.13) (2020-11-30)
 
 **Note:** Version bump only for package @sls-next/serverless-component
