@@ -18,7 +18,6 @@ import { mediaType } from "@hapi/accept";
 import { createReadStream, promises } from "fs";
 import { createHash } from "crypto";
 import { getContentType, getExtension } from "./serveStatic";
-import { fileExists } from "../lib/fileExists";
 // @ts-ignore no types for is-animated
 import isAnimated from "is-animated";
 import Stream from "stream";
@@ -26,6 +25,7 @@ import { sendEtagResponse } from "../lib/sendEtagResponse";
 import { ImageConfig, ImagesManifest } from "../../types";
 import { imageConfigDefault } from "./imageConfig";
 import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
+import * as fs from "fs";
 
 let sharp: typeof import("sharp");
 //const AVIF = 'image/avif'
@@ -158,7 +158,7 @@ export async function imageOptimizer(
   const hashDir = join(imagesDir, hash);
   const now = Date.now();
 
-  if (await fileExists(hashDir, "directory")) {
+  if (fs.existsSync(hashDir)) {
     const files = await promises.readdir(hashDir);
     for (let file of files) {
       const [prefix, etag, extension] = file.split(".");
