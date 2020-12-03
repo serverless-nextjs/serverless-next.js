@@ -168,7 +168,7 @@ class NextjsComponent extends Component {
 
   async readImageBuildManifest(
     nextConfigPath: string
-  ): Promise<OriginRequestImageHandlerManifest | undefined> {
+  ): Promise<OriginRequestImageHandlerManifest> {
     const path = join(
       nextConfigPath,
       ".serverless_nextjs/image-lambda/manifest.json"
