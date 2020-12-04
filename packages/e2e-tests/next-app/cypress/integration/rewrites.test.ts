@@ -17,17 +17,17 @@ describe("Rewrites Tests", () => {
       },
       {
         path: "/path-rewrite/123",
-        expectedRewrite: "/ssr-page",
+        expectedRewrite: "/ssr-page?slug=123",
         expectedStatus: 200
       },
       {
         path: "/wildcard-rewrite/123",
-        expectedRewrite: "/ssr-page",
+        expectedRewrite: "/ssr-page?slug=123",
         expectedStatus: 200
       },
       {
         path: "/regex-rewrite-1/123",
-        expectedRewrite: "/ssr-page",
+        expectedRewrite: "/ssr-page?slug=123",
         expectedStatus: 200
       },
       {
