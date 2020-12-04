@@ -160,7 +160,10 @@ describe("Image lambda handler", () => {
       ${"/_next/image?url=absoluteUrl&q=101&w=64"}
       ${"/_next/image?url=ftp%3A%2F%2Fexample.com&q=100&w=64"}
       ${"/_next/image?url=https%3A%2F%2Fnotallowed.com%2Fimage.png&q=100&w=64"}
-    `("returns 400 for path $path", async ({ path }) => {
+      ${"/_next/image?url=%2Ftest-image.png&url=%2Ftest-image2.png&q=100&w=128"}
+      ${"/_next/image?url=%2Ftest-image.png&q=100&q=50&w=128"}
+      ${"/_next/image?url=%2Ftest-image.png&q=100&w=128&w=64"}
+    `("invalid queries return 400 for path $path", async ({ path }) => {
       const event = createCloudFrontEvent({
         uri: path,
         host: "mydistribution.cloudfront.net"
