@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.8...@sls-next/lambda-at-edge@1.8.0-alpha.9) (2020-11-30)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix not found for public files with encoded characters in path ([#825](https://github.com/serverless-nextjs/serverless-next.js/issues/825)) ([b63f199](https://github.com/serverless-nextjs/serverless-next.js/commit/b63f199e1c80f018eab1b0efabc1b337088e0aa0))
+
 # [1.8.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.7...@sls-next/lambda-at-edge@1.8.0-alpha.8) (2020-11-26)
 
 ### Bug Fixes

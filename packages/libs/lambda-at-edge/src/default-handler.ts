@@ -255,9 +255,11 @@ const handleOriginRequest = async ({
 
   const basePath = routesManifest.basePath;
   let uri = normaliseUri(request.uri);
+  const decodedUri = decodeURI(uri);
   const { pages, publicFiles } = manifest;
-  const isPublicFile = publicFiles[uri];
-  const isDataReq = isDataRequest(uri);
+
+  let isPublicFile = publicFiles[decodedUri];
+  let isDataReq = isDataRequest(uri);
 
   // Handle redirects
   // TODO: refactor redirect logic to another file since this is getting quite large

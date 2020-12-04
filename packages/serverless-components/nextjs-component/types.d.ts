@@ -16,6 +16,7 @@ export type ServerlessComponentInputs = {
   handler?: string;
   description?: string;
   policy?: string;
+  roleArn?: string;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
   domainRedirects?: { [key: string]: string };
@@ -25,6 +26,7 @@ export type ServerlessComponentInputs = {
   deploy?: boolean;
   enableHTTPCompression?: boolean;
   authentication?: { username: string; password: string };
+  certificateArn?: string;
 };
 
 type CloudfrontOptions = Record<string, any>;

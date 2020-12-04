@@ -284,7 +284,9 @@ myNextApplication:
 
 ### AWS Permissions
 
-By default the Lambda@Edge functions run using AWSLambdaBasicExecutionRole which only allows uploading logs to CloudWatch. If you need permissions beyond this, like for example access to DynamoDB or any other AWS resource you will need your own custom policy arn:
+By default the Lambda@Edge functions run using AWSLambdaBasicExecutionRole which only allows uploading logs to CloudWatch. If you need permissions beyond this, like for example access to DynamoDB or any other AWS resource you will need your own custom policy or role arn:
+
+#### Specify policy:
 
 ```yml
 # serverless.yml
@@ -295,7 +297,46 @@ myNextApplication:
     policy: "arn:aws:iam::123456789012:policy/MyCustomPolicy"
 ```
 
-Make sure you add CloudWatch log permissions to your custom policy.
+#### Specify role:
+
+```yml
+# serverless.yml
+
+myNextApplication:
+  component: "@sls-next/serverless-component@{version_here}"
+  inputs:
+    roleArn: "arn:aws:iam::123456789012:role/MyCustomLambdaRole"
+```
+
+Make sure you add CloudWatch log permissions to your custom policy or role. Minimum policy JSON example:
+
+```json
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Resource": "*",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Resource": "arn:aws:s3:::s3-deployment-bucket-name/*",
+      "Action": ["s3:GetObject", "s3:PutObject"]
+    }
+  ]
+}
+```
+
+Role should include trust relationship with `lambda.amazonaws.com` and `edgelambda.amazonaws.com`.
+
+**NOTE**: Specify `bucketName` and give permissions to access that bucket via `policy` or `roleArn` so default and API lambdas can access static resources.
+
+### AWS Permissions for deployment
 
 The exhaustive list of AWS actions required for a deployment:
 
@@ -443,6 +484,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | nextStaticDir            | `string`          | `./`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | If your `static` or `public` directory is not a direct child of `nextConfigDir` this is needed                                                                                                                                                                                                                                                                                                                                                                                        |
 | description              | `string`          | `*lambda-type*@Edge for Next CloudFront distribution`                                                                                                                                                                                                                                                                                                                                                                                                                                  | The description that will be used for both lambdas. Note that "(API)" will be appended to the API lambda description.                                                                                                                                                                                                                                                                                                                                                                 |
 | policy                   | `string\|object`  | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole`                                                                                                                                                                                                                                                                                                                                                                                                                     | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                                                                                                                                                                                                                                       |
+| roleArn                  | `string\|object`  | null                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | The arn of role that will be assigned to both lambdas.                                                                                                                                                                                                                                                                                                                                                                                                                                |
 | runtime                  | `string\|object`  | `nodejs12.x`                                                                                                                                                                                                                                                                                                                                                                                                                                                                           | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                                               |  |
 | memory                   | `number\|object`  | `512`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  | When assigned a number, both the default and api lambdas will be assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                                                          |  |
 | timeout                  | `number\|object`  | `10`                                                                                                                                                                                                                                                                                                                                                                                                                                                                                   | Same as above                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
