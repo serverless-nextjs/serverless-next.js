@@ -1,4 +1,3 @@
-import { IncomingMessage, ServerResponse } from "http";
 import send from "send";
 
 export function getContentType(extWithoutDot: string): string | null {

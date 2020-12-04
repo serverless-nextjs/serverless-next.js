@@ -2,6 +2,8 @@ import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
+import sharp from "sharp";
+import fetchMock from "fetch-mock";
 
 jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
@@ -47,10 +49,10 @@ describe("Image lambda handler", () => {
         uri: "/_next/image?url=%2Ftest-image.png&q=100&w=128",
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
-          Accept: [
+          accept: [
             {
-              key: "Accept",
-              value: "*/*"
+              key: "accept",
+              value: "image/webp"
             }
           ]
         }
@@ -72,7 +74,7 @@ describe("Image lambda handler", () => {
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "content-type", value: "image/png" }]
+          "content-type": [{ key: "content-type", value: "image/webp" }]
         },
         status: 200,
         statusDescription: "OK",
@@ -81,7 +83,63 @@ describe("Image lambda handler", () => {
       });
     });
 
-    it("return 500 response when s3 throw an error", async () => {
+    it("serves external image request", async () => {
+      const imageBuffer: Buffer = await sharp({
+        create: {
+          width: 100,
+          height: 100,
+          channels: 4,
+          background: { r: 0, g: 0, b: 0, alpha: 1 }
+        }
+      })
+        .png()
+        .toBuffer();
+
+      fetchMock.get("https://allowed.com/image.png", {
+        body: imageBuffer,
+        headers: { "Content-Type": "image/png" }
+      });
+
+      const event = createCloudFrontEvent({
+        uri:
+          "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ]
+        }
+      });
+
+      const response = (await handler(event)) as CloudFrontResponseResult;
+
+      expect(response).toEqual({
+        headers: {
+          "cache-control": [
+            {
+              key: "cache-control",
+              value: "public, max-age=60"
+            }
+          ],
+          etag: [
+            {
+              key: "etag",
+              value: expect.any(String)
+            }
+          ],
+          "content-type": [{ key: "content-type", value: "image/webp" }]
+        },
+        status: 200,
+        statusDescription: "OK",
+        body: expect.any(String),
+        bodyEncoding: "base64"
+      });
+    });
+
+    it("return 500 response when s3 throws an error", async () => {
       const event = createCloudFrontEvent({
         uri: "/_next/image?url=%2Fthrow-error.png&q=100&w=128",
         host: "mydistribution.cloudfront.net"
@@ -99,6 +157,9 @@ describe("Image lambda handler", () => {
       ${"/_next/image?w=64&q=100"}
       ${"/_next/image?url=%2Ftest-image.png&q=100&w=100"}
       ${"/_next/image?url=%2Ftest-image.png&q=101&w=64"}
+      ${"/_next/image?url=absoluteUrl&q=101&w=64"}
+      ${"/_next/image?url=ftp%3A%2F%2Fexample.com&q=100&w=64"}
+      ${"/_next/image?url=https%3A%2F%2Fnotallowed.com%2Fimage.png&q=100&w=64"}
     `("returns 400 for path $path", async ({ path }) => {
       const event = createCloudFrontEvent({
         uri: path,

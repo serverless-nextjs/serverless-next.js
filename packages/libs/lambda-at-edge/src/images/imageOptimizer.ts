@@ -26,6 +26,7 @@ import { ImageConfig, ImagesManifest } from "../../types";
 import { imageConfigDefault } from "./imageConfig";
 import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
 import * as fs from "fs";
+import fetch from "node-fetch";
 
 let sharp: typeof import("sharp");
 //const AVIF = 'image/avif'
