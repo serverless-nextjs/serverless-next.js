@@ -56,6 +56,11 @@
       "regex": "^/terms$"
     },
     {
+      "source": "/promise-page",
+      "destination": "/async-page",
+      "regex": "^/promise-page$"
+    },
+    {
       "source": "/terms-rewrite-dest-query",
       "destination": "/terms?foo=bar",
       "regex": "^/terms-rewrite-dest-query$"

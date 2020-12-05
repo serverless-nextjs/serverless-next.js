@@ -802,6 +802,39 @@ describe("Lambda@Edge", () => {
       );
     });
 
+    describe("Custom Rewrites pass correct Request URL to page render", () => {
+      it.each`
+        path               | expectedPage
+        ${"/promise-page"} | ${"pages/async-page.js"}
+      `(
+        "serves page $expectedPage for rewritten path $path with correct request url",
+        async ({ path, expectedPage }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          mockPageRequire(expectedPage);
+          // eslint-disable-next-line @typescript-eslint/no-var-requires
+          const page = require(`../../src/${expectedPage}`);
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const result = await handler(event);
+          const call = page.render.mock.calls[0];
+          const firstArgument = call[0];
+          expect(firstArgument).toMatchObject({ url: path });
+          const decodedBody = Buffer.from(
+            result.body as string,
+            "base64"
+          ).toString("utf8");
+          expect(decodedBody).toEqual(expectedPage);
+        }
+      );
+    });
+
     describe("Custom Headers", () => {
       it.each`
         path                    | expectedHeaders                    | expectedPage

@@ -305,6 +305,7 @@ const handleOriginRequest = async ({
   const isNonDynamicRoute =
     pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri] || isPublicFile;
 
+  let rewrittenUri;
   // Handle custom rewrites, but don't rewrite non-dynamic pages, public files or data requests per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
   if (!isNonDynamicRoute && !isDataReq) {
     const customRewrite = getRewritePath(
@@ -314,6 +315,7 @@ const handleOriginRequest = async ({
       uri
     );
     if (customRewrite) {
+      rewrittenUri = request.uri;
       const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
         "?"
       );
@@ -414,7 +416,8 @@ const handleOriginRequest = async ({
   const { req, res, responsePromise } = lambdaAtEdgeCompat(
     event.Records[0].cf,
     {
-      enableHTTPCompression: manifest.enableHTTPCompression
+      enableHTTPCompression: manifest.enableHTTPCompression,
+      rewrittenUri
     }
   );
   try {
@@ -433,7 +436,7 @@ const handleOriginRequest = async ({
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
     } else {
-      await page.render(req, res);
+      await Promise.race([page.render(req, res), responsePromise]);
     }
   } catch (error) {
     // Set status to 500 so _error.js will render a 500 page
