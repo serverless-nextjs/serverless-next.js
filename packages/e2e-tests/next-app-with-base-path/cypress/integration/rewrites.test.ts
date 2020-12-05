@@ -16,13 +16,13 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       },
       {
-        path: "/basepath/wildcard-rewrite/123",
-        expectedRewrite: "/basepath/ssr-page?slug=123",
+        path: "/basepath/wildcard-rewrite/123/456",
+        expectedRewrite: "/basepath/ssr-page?slug=123&slug=456",
         expectedStatus: 200
       },
       {
-        path: "/basepath/regex-rewrite-1/123/456",
-        expectedRewrite: "/basepath/ssr-page?slug=123&slug=456",
+        path: "/basepath/regex-rewrite-1/123",
+        expectedRewrite: "/basepath/ssr-page?slug=123",
         expectedStatus: 200
       },
       {
