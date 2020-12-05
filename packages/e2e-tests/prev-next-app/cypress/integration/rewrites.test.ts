@@ -21,7 +21,7 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       },
       {
-        path: "/regex-rewrite-1",
+        path: "/regex-rewrite-1/123",
         expectedRewrite: "/ssr-page?slug=123",
         expectedStatus: 200
       },
