@@ -21,8 +21,8 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       },
       {
-        path: "/wildcard-rewrite/123",
-        expectedRewrite: "/ssr-page?slug=123",
+        path: "/wildcard-rewrite/123/456",
+        expectedRewrite: "/ssr-page?slug=123&slug=456",
         expectedStatus: 200
       },
       {
