@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.11...@sls-next/lambda-at-edge@1.8.0-alpha.12) (2020-12-08)
+
+### Bug Fixes
+
+- **lambda-at-edge:** try to copy all files in sharp_node_modules ([#841](https://github.com/serverless-nextjs/serverless-next.js/issues/841)) ([9234c1a](https://github.com/serverless-nextjs/serverless-next.js/commit/9234c1a980010745153218c2ffcd6f286ad32c11))
+
 # [1.8.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.10...@sls-next/lambda-at-edge@1.8.0-alpha.11) (2020-12-08)
 
 ### Features
