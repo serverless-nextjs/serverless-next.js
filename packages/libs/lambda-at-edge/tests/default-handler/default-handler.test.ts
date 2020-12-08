@@ -5,7 +5,8 @@ import {
   CloudFrontOrigin
 } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
-import fetchMock from "fetch-mock";
+
+jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
 jest.mock("jsonwebtoken", () => ({
   verify: jest.fn()
@@ -816,6 +817,7 @@ describe("Lambda@Edge", () => {
       `(
         "serves external rewrite $rewriteUri for rewritten path $uri",
         async ({ uri, rewriteUri }) => {
+          const { default: fetchMock } = await import("node-fetch");
           fetchMock.get(rewriteUri, {
             body: "external",
             headers: { "Content-Type": "text/plain", Host: "external.com" }, // host header will be removed

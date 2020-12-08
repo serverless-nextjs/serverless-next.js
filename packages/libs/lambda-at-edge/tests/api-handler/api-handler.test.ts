@@ -2,8 +2,9 @@ import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/api-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
-import fetchMock from "fetch-mock";
 import { CloudFrontResultResponse } from "aws-lambda";
+
+jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
 jest.mock(
   "../../src/manifest.json",
@@ -168,6 +169,7 @@ describe("API lambda handler", () => {
     `(
       "serves external rewrite $rewriteUri for rewritten path $uri",
       async ({ uri, rewriteUri }) => {
+        const { default: fetchMock } = await import("node-fetch");
         fetchMock.get(rewriteUri, {
           body: "external",
           headers: { "Content-Type": "text/plain" },
