@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.15...@sls-next/serverless-component@1.19.0-alpha.16) (2020-12-08)
+
+### Features
+
+- **lambda-at-edge:** support image optimization ([#829](https://github.com/serverless-nextjs/serverless-next.js/issues/829)) ([f6c5156](https://github.com/serverless-nextjs/serverless-next.js/commit/f6c5156bf8bb4912528dfb3723227cca0790218a))
+
 # [1.19.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.14...@sls-next/serverless-component@1.19.0-alpha.15) (2020-12-05)
 
 **Note:** Version bump only for package @sls-next/serverless-component

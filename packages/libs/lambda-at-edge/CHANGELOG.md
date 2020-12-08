@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.10...@sls-next/lambda-at-edge@1.8.0-alpha.11) (2020-12-08)
+
+### Features
+
+- **lambda-at-edge:** support image optimization ([#829](https://github.com/serverless-nextjs/serverless-next.js/issues/829)) ([f6c5156](https://github.com/serverless-nextjs/serverless-next.js/commit/f6c5156bf8bb4912528dfb3723227cca0790218a))
+
 # [1.8.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.9...@sls-next/lambda-at-edge@1.8.0-alpha.10) (2020-12-05)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
