@@ -16,7 +16,8 @@
     "build": "rollup --config && tsc -p tsconfig.build.json && yarn copy-sharp-modules"
   },
   "files": [
-    "dist"
+    "dist",
+    "dist/sharp_node_modules/**"
   ],
   "repository": {
     "type": "git",
