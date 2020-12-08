@@ -100,10 +100,14 @@
       "/fixture/",
       "/examples/",
       "/integration/",
-      "/cypress/"
+      "/cypress/",
+      "/sharp_node_modules/"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
+    ],
+    "modulePathIgnorePatterns": [
+      "/sharp_node_modules/"
     ]
   },
   "dependencies": {

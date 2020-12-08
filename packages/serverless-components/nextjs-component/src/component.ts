@@ -6,7 +6,8 @@ import {
   OriginRequestDefaultHandlerManifest as BuildManifest,
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
-  RoutesManifest
+  RoutesManifest,
+  OriginRequestImageHandlerManifest
 } from "@sls-next/lambda-at-edge/types";
 import {
   deleteOldStaticAssets,
@@ -15,7 +16,11 @@ import {
 } from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
+} from "./constants";
 import type {
   BuildOptions,
   ServerlessComponentInputs,
@@ -161,6 +166,19 @@ class NextjsComponent extends Component {
       : Promise.resolve(undefined);
   }
 
+  async readImageBuildManifest(
+    nextConfigPath: string
+  ): Promise<OriginRequestImageHandlerManifest> {
+    const path = join(
+      nextConfigPath,
+      ".serverless_nextjs/image-lambda/manifest.json"
+    );
+
+    return (await pathExists(path))
+      ? readJSON(path)
+      : Promise.resolve(undefined);
+  }
+
   async build(inputs: ServerlessComponentInputs = {}): Promise<void> {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
@@ -272,10 +290,12 @@ class NextjsComponent extends Component {
     const [
       defaultBuildManifest,
       apiBuildManifest,
+      imageBuildManifest,
       routesManifest
     ] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
       this.readApiBuildManifest(nextConfigPath),
+      this.readImageBuildManifest(nextConfigPath),
       this.readRoutesManifest(nextConfigPath)
     ]);
 
@@ -283,12 +303,14 @@ class NextjsComponent extends Component {
       bucket,
       cloudFront,
       defaultEdgeLambda,
-      apiEdgeLambda
+      apiEdgeLambda,
+      imageEdgeLambda
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
       this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
-      this.load("@sls-next/aws-lambda", "apiEdgeLambda")
+      this.load("@sls-next/aws-lambda", "apiEdgeLambda"),
+      this.load("@sls-next/aws-lambda", "imageEdgeLambda")
     ]);
 
     const bucketOutputs = await bucket({
@@ -490,6 +512,59 @@ class NextjsComponent extends Component {
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
           "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
+        }
+      };
+    }
+
+    if (imageBuildManifest) {
+      const imageEdgeLambdaInput: LambdaInput = {
+        description: inputs.description
+          ? `${inputs.description} (Image)`
+          : "Image Lambda@Edge for Next CloudFront distribution",
+        handler: inputs.handler || "index.handler",
+        code: join(nextConfigPath, IMAGE_LAMBDA_CODE_DIR),
+        role: {
+          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+          policy
+        },
+        memory: readLambdaInputValue("memory", "imageLambda", 512) as number,
+        timeout: readLambdaInputValue("timeout", "imageLambda", 10) as number,
+        runtime: readLambdaInputValue(
+          "runtime",
+          "imageLambda",
+          "nodejs12.x"
+        ) as string,
+        name: readLambdaInputValue("name", "imageLambda", undefined) as
+          | string
+          | undefined
+      };
+
+      const imageEdgeLambdaOutputs = await imageEdgeLambda(
+        imageEdgeLambdaInput
+      );
+
+      const imageEdgeLambdaPublishOutputs = await imageEdgeLambda.publishVersion();
+
+      cloudFrontOrigins[0].pathPatterns[
+        this.pathPattern("_next/image*", routesManifest)
+      ] = {
+        minTTL: 0,
+        defaultTTL: 60,
+        maxTTL: 31536000,
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
+        forward: {
+          headers: ["Accept"]
+        },
+        "lambda@edge": {
+          "origin-request": `${imageEdgeLambdaOutputs.arn}:${imageEdgeLambdaPublishOutputs.version}`
         }
       };
     }

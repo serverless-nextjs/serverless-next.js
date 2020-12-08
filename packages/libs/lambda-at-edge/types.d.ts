@@ -11,6 +11,20 @@ export type DynamicPageKeyValue = {
   };
 };
 
+// Image optimization
+export type ImageConfig = {
+  deviceSizes: number[];
+  imageSizes: number[];
+  loader: "default" | "imgix" | "cloudinary" | "akamai";
+  path: string;
+  domains?: string[];
+};
+
+export type ImagesManifest = {
+  version: number;
+  images: ImageConfig;
+};
+
 export type OriginRequestApiHandlerManifest = {
   apis: {
     dynamic: DynamicPageKeyValue;
@@ -56,6 +70,13 @@ export type OriginRequestDefaultHandlerManifest = {
   authentication?: {
     username: string;
     password: string;
+  };
+};
+
+export type OriginRequestImageHandlerManifest = {
+  enableHTTPCompression: boolean;
+  domainRedirects: {
+    [key: string]: string;
   };
 };
 

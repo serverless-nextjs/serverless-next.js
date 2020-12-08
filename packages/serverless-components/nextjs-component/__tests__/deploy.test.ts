@@ -5,7 +5,11 @@ import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import mockCreateInvalidation from "@sls-next/cloudfront";
 import NextjsComponent from "../src/component";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
+} from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 import { mockUpload } from "aws-sdk";
 
@@ -35,6 +39,10 @@ describe("deploy tests", () => {
     mockLambda.mockResolvedValueOnce({
       arn:
         "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
       arn:
@@ -81,7 +89,7 @@ describe("deploy tests", () => {
 
   describe("cloudfront", () => {
     it("provisions default lambda", () => {
-      expect(mockLambda).toHaveBeenNthCalledWith(2, {
+      expect(mockLambda).toHaveBeenNthCalledWith(3, {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -118,6 +126,39 @@ describe("deploy tests", () => {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+        memory: 512,
+        timeout: 10,
+        runtime: "nodejs12.x",
+        role: {
+          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+          policy: {
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Resource: "*",
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ]
+              },
+              {
+                Effect: "Allow",
+                Resource: `arn:aws:s3:::bucket-xyz/*`,
+                Action: ["s3:GetObject", "s3:PutObject"]
+              }
+            ]
+          }
+        }
+      });
+    });
+
+    it("provisions image lambda", () => {
+      expect(mockLambda).toHaveBeenNthCalledWith(2, {
+        description: expect.any(String),
+        handler: "index.handler",
+        code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
         memory: 512,
         timeout: 10,
         runtime: "nodejs12.x",
@@ -209,6 +250,19 @@ describe("deploy tests", () => {
                 "lambda@edge": {
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
+                },
+                allowedHttpMethods: expect.any(Array)
+              },
+              "_next/image*": {
+                minTTL: 0,
+                defaultTTL: 60,
+                maxTTL: 31536000,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func:v1"
+                },
+                forward: {
+                  headers: ["Accept"]
                 },
                 allowedHttpMethods: expect.any(Array)
               }

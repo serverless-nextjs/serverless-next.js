@@ -4,12 +4,14 @@ import execa from "execa";
 import Builder, {
   ASSETS_DIR,
   DEFAULT_LAMBDA_CODE_DIR,
-  API_LAMBDA_CODE_DIR
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
 } from "../../src/build";
 import { cleanupDir, removeNewLineChars } from "../test-utils";
 import {
   OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
+  OriginRequestApiHandlerManifest,
+  OriginRequestImageHandlerManifest
 } from "../../types";
 
 jest.mock("execa");
@@ -23,6 +25,7 @@ describe("Builder Tests", () => {
   let fseEmptyDirSpy: jest.SpyInstance;
   let defaultBuildManifest: OriginRequestDefaultHandlerManifest;
   let apiBuildManifest: OriginRequestApiHandlerManifest;
+  let imageBuildManifest: OriginRequestImageHandlerManifest;
 
   const fixturePath = join(__dirname, "./simple-app-fixture");
   const outputDir = join(fixturePath, ".test_sls_next_output");
@@ -52,6 +55,10 @@ describe("Builder Tests", () => {
 
       apiBuildManifest = await fse.readJSON(
         join(outputDir, `${API_LAMBDA_CODE_DIR}/manifest.json`)
+      );
+
+      imageBuildManifest = await fse.readJSON(
+        join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}/manifest.json`)
       );
     });
 
@@ -283,6 +290,45 @@ describe("Builder Tests", () => {
       });
     });
 
+    describe("Image Handler Manifest", () => {
+      it("adds full image manifest", () => {
+        expect.assertions(1);
+
+        const { domainRedirects } = imageBuildManifest;
+        expect(domainRedirects).toEqual({
+          "example.com": "https://www.example.com",
+          "another.com": "https://www.another.com",
+          "www.other.com": "https://other.com"
+        });
+      });
+    });
+
+    describe("Image Handler Artefact Files", () => {
+      it("copies build files", async () => {
+        expect.assertions(1);
+
+        const files = await fse.readdir(
+          join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}`)
+        );
+
+        expect(files).toEqual([
+          "images-manifest.json", // Next.js default images manifest
+          "index.js",
+          "manifest.json",
+          "node_modules", // Contains sharp node modules built for Lambda Node.js 12.x
+          "routes-manifest.json"
+        ]);
+      });
+
+      it("image handler is not minified", async () => {
+        const imageHandler = await fse.readFile(
+          join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}/index.js`)
+        );
+
+        expect(countLines(imageHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+      });
+    });
+
     describe("Assets Artefact Files", () => {
       it("copies all assets", async () => {
         const publicFiles = await fse.readdir(
@@ -355,6 +401,14 @@ describe("Builder Tests", () => {
       );
 
       expect(countLines(apiHandler.toString())).toEqual(2);
+    });
+
+    it("Image handler is minified", async () => {
+      const imageHandler = await fse.readFile(
+        join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}/index.js`)
+      );
+
+      expect(countLines(imageHandler.toString())).toEqual(2);
     });
   });
 

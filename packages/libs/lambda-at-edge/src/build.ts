@@ -8,7 +8,8 @@ import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
-  RoutesManifest
+  RoutesManifest,
+  OriginRequestImageHandlerManifest
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -28,6 +29,7 @@ import { Job } from "@vercel/nft/out/node-file-trace";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
+export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
 export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
@@ -227,7 +229,7 @@ class Builder {
    * @param shouldMinify
    */
   async processAndCopyHandler(
-    handlerType: "api-handler" | "default-handler",
+    handlerType: "api-handler" | "default-handler" | "image-handler",
     destination: string,
     shouldMinify: boolean
   ) {
@@ -406,9 +408,58 @@ class Builder {
     ]);
   }
 
+  /**
+   * Build image optimization lambda (supported by Next.js 10)
+   * @param buildManifest
+   */
+  async buildImageLambda(
+    buildManifest: OriginRequestImageHandlerManifest
+  ): Promise<void[]> {
+    return Promise.all([
+      this.processAndCopyHandler(
+        "image-handler",
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
+      ),
+      this.buildOptions?.handler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.handler),
+            join(
+              this.outputDir,
+              IMAGE_LAMBDA_CODE_DIR,
+              this.buildOptions.handler
+            )
+          )
+        : Promise.resolve(),
+      fse.writeJson(
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
+      this.processAndCopyRoutesManifest(
+        join(this.dotNextDir, "routes-manifest.json"),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "routes-manifest.json")
+      ),
+      fse.copy(
+        join(
+          path.dirname(
+            require.resolve("@sls-next/lambda-at-edge/package.json")
+          ),
+          "dist",
+          "sharp_node_modules"
+        ),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "node_modules")
+      ),
+      fse.copy(
+        join(this.dotNextDir, "images-manifest.json"),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "images-manifest.json")
+      )
+    ]);
+  }
+
   async prepareBuildManifests(): Promise<{
     defaultBuildManifest: OriginRequestDefaultHandlerManifest;
     apiBuildManifest: OriginRequestApiHandlerManifest;
+    imageBuildManifest: OriginRequestImageHandlerManifest;
   }> {
     const pagesManifest = await this.readPagesManifest();
 
@@ -556,9 +607,16 @@ class Builder {
         normalisedNextConfig?.trailingSlash ?? false;
     }
 
+    // Image manifest
+    const imageBuildManifest: OriginRequestImageHandlerManifest = {
+      domainRedirects: domainRedirects,
+      enableHTTPCompression: enableHTTPCompression
+    };
+
     return {
       defaultBuildManifest,
-      apiBuildManifest
+      apiBuildManifest,
+      imageBuildManifest
     };
   }
 
@@ -775,6 +833,7 @@ class Builder {
 
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
 
     const { restoreUserConfig } = await createServerlessConfig(
@@ -801,7 +860,8 @@ class Builder {
 
     const {
       defaultBuildManifest,
-      apiBuildManifest
+      apiBuildManifest,
+      imageBuildManifest
     } = await this.prepareBuildManifests();
 
     await this.buildDefaultLambda(defaultBuildManifest);
@@ -812,6 +872,15 @@ class Builder {
 
     if (hasAPIPages) {
       await this.buildApiLambda(apiBuildManifest);
+    }
+
+    // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
+    const hasImageOptimizer = fse.existsSync(
+      join(this.dotNextDir, "images-manifest.json")
+    );
+
+    if (hasImageOptimizer) {
+      await this.buildImageLambda(imageBuildManifest);
     }
 
     // Copy static assets to .serverless_nextjs directory

@@ -8,7 +8,8 @@ import { terser } from "rollup-plugin-terser";
 const LOCAL_EXTERNALS = [
   "./manifest.json",
   "./routes-manifest.json",
-  "./prerender-manifest.json"
+  "./prerender-manifest.json",
+  "./images-manifest.json"
 ];
 const NPM_EXTERNALS = ["aws-lambda", "aws-sdk/clients/s3"];
 
@@ -44,5 +45,7 @@ export default [
   { filename: "default-handler", minify: false },
   { filename: "default-handler", minify: true },
   { filename: "api-handler", minify: false },
-  { filename: "api-handler", minify: true }
+  { filename: "api-handler", minify: true },
+  { filename: "image-handler", minify: false },
+  { filename: "image-handler", minify: true }
 ].map(generateConfig);

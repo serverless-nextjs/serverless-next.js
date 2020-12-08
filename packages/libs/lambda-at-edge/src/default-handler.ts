@@ -31,8 +31,8 @@ import {
 import { getRewritePath } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
-import type { SdkError } from "@aws-sdk/smithy-client";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
+import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -152,30 +152,6 @@ const router = (
 
     return "pages/_error.js";
   };
-};
-
-// Need retries to fix https://github.com/aws/aws-sdk-js-v3/issues/1196
-const buildS3RetryStrategy = async () => {
-  const { defaultRetryDecider, StandardRetryStrategy } = await import(
-    "@aws-sdk/middleware-retry"
-  );
-
-  const retryDecider = (err: SdkError & { code?: string }) => {
-    if (
-      "code" in err &&
-      (err.code === "ECONNRESET" ||
-        err.code === "EPIPE" ||
-        err.code === "ETIMEDOUT")
-    ) {
-      return true;
-    } else {
-      return defaultRetryDecider(err);
-    }
-  };
-
-  return new StandardRetryStrategy(async () => 3, {
-    retryDecider
-  });
 };
 
 export const handler = async (

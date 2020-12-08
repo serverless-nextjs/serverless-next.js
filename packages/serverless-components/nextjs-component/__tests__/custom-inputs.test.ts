@@ -201,7 +201,7 @@ describe("Custom inputs", () => {
     });
 
     it("uses custom role arn provided", () => {
-      expect(mockLambda).toBeCalledTimes(2);
+      expect(mockLambda).toBeCalledTimes(3);
 
       expect(mockLambda).toBeCalledWith(
         expect.objectContaining({
@@ -808,6 +808,19 @@ describe("Custom inputs", () => {
               maxTTL: 31536000,
               ...expectedApiCacheBehaviour
             },
+            "_next/image*": {
+              minTTL: 0,
+              defaultTTL: 60,
+              maxTTL: 31536000,
+              "lambda@edge": {
+                "origin-request":
+                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+              },
+              forward: {
+                headers: ["Accept"]
+              },
+              allowedHttpMethods: expect.any(Array)
+            },
             "static/*": {
               ...customPageCacheBehaviours["static/*"],
               minTTL: 0,
@@ -979,6 +992,19 @@ describe("Custom inputs", () => {
                 },
                 maxTTL: 31536000,
                 minTTL: 0
+              },
+              "_next/image*": {
+                minTTL: 0,
+                defaultTTL: 60,
+                maxTTL: 31536000,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                forward: {
+                  headers: ["Accept"]
+                },
+                allowedHttpMethods: expect.any(Array)
               },
               "static/*": {
                 defaultTTL: 86400,
