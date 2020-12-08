@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.12...@sls-next/lambda-at-edge@1.8.0-alpha.13) (2020-12-08)
+
+### Bug Fixes
+
+- **lambda-at-edge:** include all vendor files in sharp package.json so npm publish will copy all vendor libs correctly ([#842](https://github.com/serverless-nextjs/serverless-next.js/issues/842)) ([0f3c417](https://github.com/serverless-nextjs/serverless-next.js/commit/0f3c41730752ee3423a47d8c06fe34f4fe7b29b8))
+
 # [1.8.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.11...@sls-next/lambda-at-edge@1.8.0-alpha.12) (2020-12-08)
 
 ### Bug Fixes
