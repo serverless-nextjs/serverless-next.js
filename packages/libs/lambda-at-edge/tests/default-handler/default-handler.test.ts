@@ -820,7 +820,11 @@ describe("Lambda@Edge", () => {
           const { default: fetchMock } = await import("node-fetch");
           fetchMock.get(rewriteUri, {
             body: "external",
-            headers: { "Content-Type": "text/plain", Host: "external.com" }, // host header will be removed
+            headers: {
+              "Content-Type": "text/plain",
+              Host: "external.com",
+              "x-amz-cf-pop": "SEA19-C1"
+            }, // host and x-amz-cf-pop header are blacklisted and won't be added
             status: 200
           });
 
