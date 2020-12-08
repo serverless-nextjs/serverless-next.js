@@ -115,6 +115,14 @@ module.exports = {
       {
         source: "/rewrite-dest-with-query",
         destination: "/ssr-page?foo=bar"
+      },
+      {
+        source: "/external-rewrite",
+        destination: "https://api.github.com"
+      },
+      {
+        source: "/api/external-rewrite",
+        destination: "https://api.github.com"
       }
     ];
   },

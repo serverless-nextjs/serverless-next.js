@@ -2,6 +2,8 @@ import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/api-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
+import fetchMock from "fetch-mock";
+import { CloudFrontResultResponse } from "aws-lambda";
 
 jest.mock(
   "../../src/manifest.json",
@@ -157,6 +159,47 @@ describe("API lambda handler", () => {
 
         expect(decodedBody).toEqual(expectedBody);
         expect(response.status).toEqual(expectedStatus);
+      }
+    );
+
+    it.each`
+      uri                        | rewriteUri
+      ${"/api/external-rewrite"} | ${"https://external.com"}
+    `(
+      "serves external rewrite $rewriteUri for rewritten path $uri",
+      async ({ uri, rewriteUri }) => {
+        fetchMock.get(rewriteUri, {
+          body: "external",
+          headers: { "Content-Type": "text/plain" },
+          status: 200
+        });
+
+        let [path, querystring] = uri.split("?");
+
+        const event = createCloudFrontEvent({
+          uri: path,
+          querystring: querystring,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        const response: CloudFrontResultResponse = await handler(event);
+
+        expect(response).toEqual({
+          body: "ZXh0ZXJuYWw=",
+          bodyEncoding: "base64",
+          headers: {
+            "content-type": [
+              {
+                key: "content-type",
+                value: "text/plain"
+              }
+            ]
+          },
+          status: 200,
+          statusDescription: "OK"
+        });
+
+        fetchMock.reset();
       }
     );
   });

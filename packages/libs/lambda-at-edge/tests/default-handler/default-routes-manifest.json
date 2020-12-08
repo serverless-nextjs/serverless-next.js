@@ -64,6 +64,11 @@
       "source": "/terms-rewrite-dest-query",
       "destination": "/terms?foo=bar",
       "regex": "^/terms-rewrite-dest-query$"
+    },
+    {
+      "source": "/external-rewrite",
+      "destination": "https://external.com",
+      "regex": "^/external-rewrite$"
     }
   ],
   "headers": [
