@@ -70,6 +70,16 @@ describe("Rewrites Tests", () => {
         path: "/rewrite-dest-with-query?a=b",
         expectedRewrite: "/ssr-page?a=b&foo=bar",
         expectedStatus: 200
+      },
+      {
+        path: "/external-rewrite",
+        expectedRewrite: "https://api.github.com",
+        expectedStatus: 200
+      },
+      {
+        path: "/api/external-rewrite",
+        expectedRewrite: "https://api.github.com",
+        expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {
       it(`rewrites path ${path} to ${expectedRewrite}`, () => {

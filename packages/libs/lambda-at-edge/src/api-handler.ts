@@ -14,9 +14,14 @@ import {
   getDomainRedirectPath,
   getRedirectPath
 } from "./routing/redirector";
-import { getRewritePath } from "./routing/rewriter";
+import {
+  createExternalRewriteResponse,
+  getRewritePath,
+  isExternalRewrite
+} from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
+import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -105,6 +110,17 @@ export const handler = async (
       uri
     );
     if (customRewrite) {
+      if (isExternalRewrite(customRewrite)) {
+        const { req, res, responsePromise } = lambdaAtEdgeCompat(
+          event.Records[0].cf,
+          {
+            enableHTTPCompression: manifest.enableHTTPCompression
+          }
+        );
+        await createExternalRewriteResponse(customRewrite, req, res);
+        return await responsePromise;
+      }
+
       request.uri = customRewrite;
       uri = normaliseUri(request.uri);
     }

@@ -20,6 +20,11 @@
       "source": "/api/getCustomers",
       "destination": "/api/another",
       "regex": "^/api/getCustomers$"
+    },
+    {
+      "source": "/api/external-rewrite",
+      "destination": "https://external.com",
+      "regex": "^/api/external-rewrite$"
     }
   ],
   "headers": [

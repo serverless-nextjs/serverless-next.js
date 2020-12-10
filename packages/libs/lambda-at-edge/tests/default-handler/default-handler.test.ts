@@ -6,6 +6,8 @@ import {
 } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 
+jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
+
 jest.mock("jsonwebtoken", () => ({
   verify: jest.fn()
 }));
@@ -806,6 +808,57 @@ describe("Lambda@Edge", () => {
           expect(request.headers.host[0].value).toEqual(
             "my-bucket.s3.amazonaws.com"
           );
+        }
+      );
+
+      it.each`
+        uri                    | rewriteUri
+        ${"/external-rewrite"} | ${"https://external.com"}
+      `(
+        "serves external rewrite $rewriteUri for rewritten path $uri",
+        async ({ uri, rewriteUri }) => {
+          const { default: fetchMock } = await import("node-fetch");
+          fetchMock.get(rewriteUri, {
+            body: "external",
+            headers: {
+              "Content-Type": "text/plain",
+              Host: "external.com",
+              "x-amz-cf-pop": "SEA19-C1"
+            }, // host and x-amz-cf-pop header are blacklisted and won't be added
+            status: 200
+          });
+
+          let [path, querystring] = uri.split("?");
+
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            querystring: querystring,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const response: CloudFrontResultResponse = await handler(event);
+
+          expect(response).toEqual({
+            body: "ZXh0ZXJuYWw=",
+            bodyEncoding: "base64",
+            headers: {
+              "content-type": [
+                {
+                  key: "content-type",
+                  value: "text/plain"
+                }
+              ]
+            },
+            status: 200,
+            statusDescription: "OK"
+          });
+
+          fetchMock.reset();
         }
       );
     });

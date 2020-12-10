@@ -7,17 +7,17 @@ import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 
 import {
-  CloudFrontRequest,
-  CloudFrontS3Origin,
   CloudFrontOrigin,
-  CloudFrontResultResponse
+  CloudFrontRequest,
+  CloudFrontResultResponse,
+  CloudFrontS3Origin
 } from "aws-lambda";
 import {
-  OriginRequestEvent,
   OriginRequestDefaultHandlerManifest,
-  PreRenderedManifest as PrerenderManifestType,
+  OriginRequestEvent,
   OriginResponseEvent,
   PerfLogger,
+  PreRenderedManifest as PrerenderManifestType,
   RoutesManifest
 } from "../types";
 import { performance } from "perf_hooks";
@@ -28,7 +28,11 @@ import {
   getDomainRedirectPath,
   getRedirectPath
 } from "./routing/redirector";
-import { getRewritePath } from "./routing/rewriter";
+import {
+  createExternalRewriteResponse,
+  getRewritePath,
+  isExternalRewrite
+} from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
@@ -291,6 +295,17 @@ const handleOriginRequest = async ({
       uri
     );
     if (customRewrite) {
+      if (isExternalRewrite(customRewrite)) {
+        const { req, res, responsePromise } = lambdaAtEdgeCompat(
+          event.Records[0].cf,
+          {
+            enableHTTPCompression: manifest.enableHTTPCompression
+          }
+        );
+        await createExternalRewriteResponse(customRewrite, req, res);
+        return await responsePromise;
+      }
+
       rewrittenUri = request.uri;
       const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
         "?"
