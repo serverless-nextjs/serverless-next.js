@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.15...@sls-next/lambda-at-edge@1.8.0-alpha.16) (2020-12-11)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
 # [1.8.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.14...@sls-next/lambda-at-edge@1.8.0-alpha.15) (2020-12-10)
 
 ### Features
