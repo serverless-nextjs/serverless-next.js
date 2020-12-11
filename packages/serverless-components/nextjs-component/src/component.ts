@@ -215,7 +215,11 @@ class NextjsComponent extends Component {
     const bucketRegion = inputs.bucketRegion || "us-east-1";
 
     const staticCachePolicyIdInput = inputs.staticCachePolicyId;
+    const staticOriginRequestPolicyIdInput =
+      inputs.staticOriginRequestPolicyIdInput;
     const dynamicCachePolicyIdInput = inputs.dynamicCachePolicyId;
+    const dynamicOriginRequestPolicyIdInput =
+      inputs.dynamicOriginRequestPolicyIdInput;
 
     const [
       defaultBuildManifest,
@@ -294,6 +298,7 @@ class NextjsComponent extends Component {
       this.pathPattern("_next/static/*", routesManifest)
     ] = {
       cachePolicyId: staticCachePolicyIdInput,
+      originRequestPolicyId: staticOriginRequestPolicyIdInput,
       ttl: 86400,
       forward: {
         headers: "none",
@@ -306,6 +311,7 @@ class NextjsComponent extends Component {
       this.pathPattern("static/*", routesManifest)
     ] = {
       cachePolicyId: staticCachePolicyIdInput,
+      originRequestPolicyId: staticOriginRequestPolicyIdInput,
       ttl: 86400,
       forward: {
         headers: "none",
@@ -397,6 +403,7 @@ class NextjsComponent extends Component {
         this.pathPattern("api/*", routesManifest)
       ] = {
         cachePolicyId: dynamicCachePolicyIdInput,
+        originRequestPolicyId: dynamicOriginRequestPolicyIdInput,
         ttl: 0,
         allowedHttpMethods: [
           "HEAD",
@@ -487,6 +494,7 @@ class NextjsComponent extends Component {
       this.pathPattern("_next/data/*", routesManifest)
     ] = {
       cachePolicyId: dynamicCachePolicyIdInput,
+      originRequestPolicyId: dynamicOriginRequestPolicyIdInput,
       ttl: 0,
       allowedHttpMethods: ["HEAD", "GET"],
       "lambda@edge": {

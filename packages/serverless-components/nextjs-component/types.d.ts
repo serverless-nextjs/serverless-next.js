@@ -18,7 +18,9 @@ export type ServerlessComponentInputs = {
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
   staticCachePolicyId?: string;
+  staticOriginRequestPolicyIdInput?: string;
   dynamicCachePolicyId?: string;
+  dynamicOriginRequestPolicyIdInput?: string;
   cloudfront?: CloudfrontOptions;
 };
 
