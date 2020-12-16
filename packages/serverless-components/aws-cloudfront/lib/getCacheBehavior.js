@@ -3,7 +3,9 @@ const { getForwardedValues } = require("./cacheBahaviorUtils");
 module.exports = (pathPattern, pathPatternConfig, originId) => {
   const {
     allowedHttpMethods = ["GET", "HEAD"],
-    ttl,
+    minTTL,
+    defaultTTL,
+    maxTTL,
     compress = true,
     smoothStreaming = false,
     viewerProtocolPolicy = "https-only",
@@ -47,9 +49,9 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
         queryString: true
       }
     );
-    cacheBehaviour.MinTTL = 0;
-    cacheBehaviour.DefaultTTL = ttl;
-    cacheBehaviour.MaxTTL = 31536000;
+    cacheBehaviour.MinTTL = minTTL;
+    cacheBehaviour.DefaultTTL = defaultTTL;
+    cacheBehaviour.MaxTTL = maxTTL;
   }
 
   if (originRequestPolicyId) {

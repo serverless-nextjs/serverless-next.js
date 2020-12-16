@@ -144,7 +144,14 @@ const isGzipSupported = (headers) => {
   return gz;
 };
 
-const handler = (event) => {
+const defaultOptions = {
+  enableHTTPCompression: false
+};
+
+const handler = (
+  event,
+  { enableHTTPCompression, rewrittenUri } = defaultOptions
+) => {
   const { request: cfRequest, response: cfResponse = { headers: {} } } = event;
 
   const response = {
@@ -154,7 +161,7 @@ const handler = (event) => {
   const newStream = new Stream.Readable();
 
   const req = Object.assign(newStream, http.IncomingMessage.prototype);
-  req.url = cfRequest.uri;
+  req.url = rewrittenUri || cfRequest.uri;
   req.method = cfRequest.method;
   req.rawHeaders = [];
   req.headers = {};
@@ -227,7 +234,7 @@ const handler = (event) => {
     ]);
   };
 
-  let gz = isGzipSupported(headers);
+  let shouldGzip = enableHTTPCompression && isGzipSupported(headers);
 
   const responsePromise = new Promise((resolve) => {
     res.end = (text) => {
@@ -245,14 +252,14 @@ const handler = (event) => {
 
       if (response.body) {
         response.bodyEncoding = "base64";
-        response.body = gz
+        response.body = shouldGzip
           ? zlib.gzipSync(response.body).toString("base64")
           : Buffer.from(response.body).toString("base64");
       }
 
       response.headers = toCloudFrontHeaders(res.headers, cfResponse.headers);
 
-      if (gz) {
+      if (shouldGzip) {
         response.headers["content-encoding"] = [
           { key: "Content-Encoding", value: "gzip" }
         ];

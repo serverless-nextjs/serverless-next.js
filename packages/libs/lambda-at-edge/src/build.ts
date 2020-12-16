@@ -1,4 +1,4 @@
-import nodeFileTrace, { NodeFileTraceReasons } from "@zeit/node-file-trace";
+import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
@@ -7,25 +7,51 @@ import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
+  OriginRequestApiHandlerManifest,
+  RoutesManifest,
+  OriginRequestImageHandlerManifest
 } from "../types";
-import isDynamicRoute from "./lib/isDynamicRoute";
+import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
-import expressifyDynamicRoute from "./lib/expressifyDynamicRoute";
+import {
+  expressifyDynamicRoute,
+  expressifyOptionalCatchAllDynamicRoute
+} from "./lib/expressifyDynamicRoute";
 import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
+import { isTrailingSlashRedirect } from "./routing/redirector";
+import readDirectoryFiles from "./lib/readDirectoryFiles";
+import filterOutDirectories from "./lib/filterOutDirectories";
+import { PrerenderManifest } from "next/dist/build";
+import { Item } from "klaw";
+import { Job } from "@vercel/nft/out/node-file-trace";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
+export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
+export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
   args?: string[];
   cwd?: string;
-  env?: NodeJS.ProcessEnv;
+  env?: { [key: string]: unknown };
   cmd?: string;
   useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
+  domainRedirects?: { [key: string]: string };
+  minifyHandlers?: boolean;
+  enableHTTPCompression?: boolean;
+  handler?: string;
+  authentication?: { username: string; password: string } | undefined;
+  resolve?: (
+    id: string,
+    parent: string,
+    job: Job,
+    cjsResolve: boolean
+  ) => string | string[];
+  baseDir?: string;
+  canonicalHostname?: string;
 };
 
 const defaultBuildOptions = {
@@ -34,11 +60,18 @@ const defaultBuildOptions = {
   env: {},
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
-  logLambdaExecutionTimes: false
+  logLambdaExecutionTimes: false,
+  domainRedirects: {},
+  minifyHandlers: false,
+  enableHTTPCompression: true,
+  authentication: undefined,
+  resolve: undefined,
+  baseDir: process.cwd()
 };
 
 class Builder {
   nextConfigDir: string;
+  nextStaticDir: string;
   dotNextDir: string;
   serverlessDir: string;
   outputDir: string;
@@ -47,9 +80,11 @@ class Builder {
   constructor(
     nextConfigDir: string,
     outputDir: string,
-    buildOptions?: BuildOptions
+    buildOptions?: BuildOptions,
+    nextStaticDir?: string
   ) {
     this.nextConfigDir = path.resolve(nextConfigDir);
+    this.nextStaticDir = path.resolve(nextStaticDir ?? nextConfigDir);
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
     this.serverlessDir = path.join(this.dotNextDir, "serverless");
     this.outputDir = outputDir;
@@ -108,28 +143,105 @@ class Builder {
   copyLambdaHandlerDependencies(
     fileList: string[],
     reasons: NodeFileTraceReasons,
-    handlerDirectory: string
+    handlerDirectory: string,
+    base: string
   ): Promise<void>[] {
     return fileList
       .filter((file) => {
         // exclude "initial" files from lambda artefact. These are just the pages themselves
         // which are copied over separately
+
+        // For TypeScript apps, somehow nodeFileTrace will generate filelist with TS or TSX files, we need to exclude these files to be copied
+        // as it ends up copying from same source to destination.
+        if (file.endsWith(".ts") || file.endsWith(".tsx")) {
+          return false;
+        }
+
         return (
           (!reasons[file] || reasons[file].type !== "initial") &&
           file !== "package.json"
         );
       })
       .map((filePath: string) => {
-        const resolvedFilePath = path.resolve(filePath);
+        const resolvedFilePath = path.resolve(join(base, filePath));
         const dst = normalizeNodeModules(
           path.relative(this.serverlessDir, resolvedFilePath)
         );
 
-        return fse.copy(
-          resolvedFilePath,
-          join(this.outputDir, handlerDirectory, dst)
-        );
+        if (resolvedFilePath !== join(this.outputDir, handlerDirectory, dst)) {
+          // Only copy when source and destination are different
+          return fse.copy(
+            resolvedFilePath,
+            join(this.outputDir, handlerDirectory, dst)
+          );
+        } else {
+          return Promise.resolve();
+        }
       });
+  }
+
+  /**
+   * Check whether this .next/serverless/pages file is a JS file used only for prerendering at build time.
+   * @param prerenderManifest
+   * @param relativePageFile
+   */
+  isPrerenderedJSFile(
+    prerenderManifest: any,
+    relativePageFile: string
+  ): boolean {
+    if (path.extname(relativePageFile) === ".js") {
+      // Page route is without .js extension
+      let pageRoute = relativePageFile.slice(0, -3);
+
+      // Prepend "/"
+      pageRoute = pageRoute.startsWith("/") ? pageRoute : `/${pageRoute}`;
+
+      // Normalise index route
+      pageRoute = pageRoute === "/index" ? "/" : pageRoute;
+
+      return (
+        !!prerenderManifest.routes && !!prerenderManifest.routes[pageRoute]
+      );
+    }
+
+    return false;
+  }
+
+  /**
+   * Process and copy RoutesManifest.
+   * @param source
+   * @param destination
+   */
+  async processAndCopyRoutesManifest(source: string, destination: string) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const routesManifest = require(source) as RoutesManifest;
+
+    // Remove default trailing slash redirects as they are already handled without regex matching.
+    routesManifest.redirects = routesManifest.redirects.filter((redirect) => {
+      return !isTrailingSlashRedirect(redirect, routesManifest.basePath);
+    });
+
+    await fse.writeFile(destination, JSON.stringify(routesManifest));
+  }
+
+  /**
+   * Process and copy handler code. This allows minifying it before copying to Lambda package.
+   * @param handlerType
+   * @param destination
+   * @param shouldMinify
+   */
+  async processAndCopyHandler(
+    handlerType: "api-handler" | "default-handler" | "image-handler",
+    destination: string,
+    shouldMinify: boolean
+  ) {
+    const source = require.resolve(
+      `@getjerry/lambda-at-edge/dist/${handlerType}${
+        shouldMinify ? ".min" : ""
+      }.js`
+    );
+
+    await fse.copy(source, destination);
   }
 
   async buildDefaultLambda(
@@ -154,23 +266,47 @@ class Builder {
         path.join(this.serverlessDir, pageFile)
       );
 
+      const base = this.buildOptions.baseDir || process.cwd();
       const { fileList, reasons } = await nodeFileTrace(ssrPages, {
-        base: process.cwd()
+        base,
+        resolve: this.buildOptions.resolve
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
         fileList,
         reasons,
-        DEFAULT_LAMBDA_CODE_DIR
+        DEFAULT_LAMBDA_CODE_DIR,
+        base
       );
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const prerenderManifest = require(join(
+      this.dotNextDir,
+      "prerender-manifest.json"
+    ));
+
+    const hasAPIRoutes = await fse.pathExists(
+      join(this.serverlessDir, "pages/api")
+    );
+
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        require.resolve("@getjerry/lambda-at-edge/dist/default-handler.js"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js")
+      this.processAndCopyHandler(
+        "default-handler",
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
+      this.buildOptions?.handler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.handler),
+            join(
+              this.outputDir,
+              DEFAULT_LAMBDA_CODE_DIR,
+              this.buildOptions.handler
+            )
+          )
+        : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
@@ -184,10 +320,23 @@ class Builder {
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
 
+            // If there are API routes, include all JS files.
+            // If there are no API routes, exclude all JS files that used only for prerendering at build time.
+            // We do this because if there are API routes, preview mode is possible which may use these JS files.
+            // This is what Vercel does: https://github.com/vercel/next.js/discussions/15631#discussioncomment-44289
+            // TODO: possibly optimize bundle further for those apps using API routes.
+            const isNotExcludedJSFile =
+              hasAPIRoutes ||
+              !this.isPrerenderedJSFile(
+                prerenderManifest,
+                path.relative(join(this.serverlessDir, "pages"), file)
+              );
+
             return (
               isNotApiPage &&
               isNotPrerenderedHTMLPage &&
-              isNotStaticPropsJSONFile
+              isNotStaticPropsJSONFile &&
+              isNotExcludedJSFile
             );
           }
         }
@@ -196,7 +345,7 @@ class Builder {
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
       ),
-      fse.copy(
+      this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
@@ -220,23 +369,33 @@ class Builder {
         path.join(this.serverlessDir, pageFile)
       );
 
+      const base = this.buildOptions.baseDir || process.cwd();
       const { fileList, reasons } = await nodeFileTrace(apiPages, {
-        base: process.cwd()
+        base,
+        resolve: this.buildOptions.resolve
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
         fileList,
         reasons,
-        API_LAMBDA_CODE_DIR
+        API_LAMBDA_CODE_DIR,
+        base
       );
     }
 
     return Promise.all([
       ...copyTraces,
-      fse.copy(
-        require.resolve("@getjerry/lambda-at-edge/dist/api-handler.js"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js")
+      this.processAndCopyHandler(
+        "api-handler",
+        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
       ),
+      this.buildOptions?.handler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.handler),
+            join(this.outputDir, API_LAMBDA_CODE_DIR, this.buildOptions.handler)
+          )
+        : Promise.resolve(),
       fse.copy(
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
@@ -245,9 +404,57 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
       ),
-      fse.copy(
+      this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
+      )
+    ]);
+  }
+
+  /**
+   * Build image optimization lambda (supported by Next.js 10)
+   * @param buildManifest
+   */
+  async buildImageLambda(
+    buildManifest: OriginRequestImageHandlerManifest
+  ): Promise<void[]> {
+    return Promise.all([
+      this.processAndCopyHandler(
+        "image-handler",
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
+      ),
+      this.buildOptions?.handler
+        ? fse.copy(
+            join(this.nextConfigDir, this.buildOptions.handler),
+            join(
+              this.outputDir,
+              IMAGE_LAMBDA_CODE_DIR,
+              this.buildOptions.handler
+            )
+          )
+        : Promise.resolve(),
+      fse.writeJson(
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
+      this.processAndCopyRoutesManifest(
+        join(this.dotNextDir, "routes-manifest.json"),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "routes-manifest.json")
+      ),
+      fse.copy(
+        join(
+          path.dirname(
+            require.resolve("@getjerry/lambda-at-edge/package.json")
+          ),
+          "dist",
+          "sharp_node_modules"
+        ),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "node_modules")
+      ),
+      fse.copy(
+        join(this.dotNextDir, "images-manifest.json"),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "images-manifest.json")
       )
     ]);
   }
@@ -255,6 +462,7 @@ class Builder {
   async prepareBuildManifests(): Promise<{
     defaultBuildManifest: OriginRequestDefaultHandlerManifest;
     apiBuildManifest: OriginRequestApiHandlerManifest;
+    imageBuildManifest: OriginRequestImageHandlerManifest;
   }> {
     const pagesManifest = await this.readPagesManifest();
 
@@ -262,7 +470,14 @@ class Builder {
       path.join(this.dotNextDir, "BUILD_ID"),
       "utf-8"
     );
-    const { logLambdaExecutionTimes = false } = this.buildOptions;
+    const {
+      logLambdaExecutionTimes = false,
+      domainRedirects = {},
+      enableHTTPCompression = false,
+      authentication = undefined
+    } = this.buildOptions;
+
+    this.normalizeDomainRedirects(domainRedirects);
 
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
@@ -278,14 +493,21 @@ class Builder {
         }
       },
       publicFiles: {},
-      trailingSlash: false
+      trailingSlash: false,
+      domainRedirects: domainRedirects,
+      authentication: authentication,
+      canonicalHostname: this.buildOptions.canonicalHostname,
+      enableHTTPCompression
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
       apis: {
         dynamic: {},
         nonDynamic: {}
-      }
+      },
+      domainRedirects: domainRedirects,
+      authentication: authentication,
+      enableHTTPCompression
     };
 
     const ssrPages = defaultBuildManifest.pages.ssr;
@@ -296,35 +518,69 @@ class Builder {
     const isApiPage = (path: string): boolean => path.startsWith("pages/api");
 
     Object.entries(pagesManifest).forEach(([route, pageFile]) => {
-      const dynamicRoute = isDynamicRoute(route);
-      const expressRoute = dynamicRoute ? expressifyDynamicRoute(route) : null;
+      // Check for optional catch all dynamic routes vs. other types of dynamic routes
+      // We also add another route without dynamic parameter for optional catch all dynamic routes
+      const isOptionalCatchAllDynamicRoute = isOptionalCatchAllRoute(route);
+      const isOtherDynamicRoute =
+        !isOptionalCatchAllDynamicRoute && isDynamicRoute(route);
+
+      let expressRoute = "";
+      let optionalBaseRoute = "";
+      if (isOtherDynamicRoute) {
+        expressRoute = expressifyDynamicRoute(route);
+      } else if (isOptionalCatchAllDynamicRoute) {
+        expressRoute = expressifyOptionalCatchAllDynamicRoute(route);
+        optionalBaseRoute = route.split("/[[")[0]; // The base path of optional catch-all without parameter
+        optionalBaseRoute = optionalBaseRoute === "" ? "/" : optionalBaseRoute;
+      }
 
       if (isHtmlPage(pageFile)) {
-        if (dynamicRoute) {
-          const route = expressRoute as string;
+        if (isOtherDynamicRoute) {
+          const route = expressRoute;
           htmlPages.dynamic[route] = {
             file: pageFile,
             regex: pathToRegexStr(route)
           };
+        } else if (isOptionalCatchAllDynamicRoute) {
+          const route = expressRoute;
+          htmlPages.dynamic[route] = {
+            file: pageFile,
+            regex: pathToRegexStr(route)
+          };
+          htmlPages.nonDynamic[optionalBaseRoute] = pageFile;
         } else {
           htmlPages.nonDynamic[route] = pageFile;
         }
       } else if (isApiPage(pageFile)) {
-        if (dynamicRoute) {
+        if (isOtherDynamicRoute) {
           const route = expressRoute as string;
           apiPages.dynamic[route] = {
             file: pageFile,
             regex: pathToRegexStr(route)
           };
+        } else if (isOptionalCatchAllDynamicRoute) {
+          const route = expressRoute as string;
+          apiPages.dynamic[route] = {
+            file: pageFile,
+            regex: pathToRegexStr(route)
+          };
+          apiPages.nonDynamic[optionalBaseRoute] = pageFile;
         } else {
           apiPages.nonDynamic[route] = pageFile;
         }
-      } else if (dynamicRoute) {
+      } else if (isOtherDynamicRoute) {
         const route = expressRoute as string;
         ssrPages.dynamic[route] = {
           file: pageFile,
           regex: pathToRegexStr(route)
         };
+      } else if (isOptionalCatchAllDynamicRoute) {
+        const route = expressRoute as string;
+        ssrPages.dynamic[route] = {
+          file: pageFile,
+          regex: pathToRegexStr(route)
+        };
+        ssrPages.nonDynamic[optionalBaseRoute] = pageFile;
       } else {
         ssrPages.nonDynamic[route] = pageFile;
       }
@@ -355,10 +611,204 @@ class Builder {
         normalisedNextConfig?.trailingSlash ?? false;
     }
 
+    // Image manifest
+    const imageBuildManifest: OriginRequestImageHandlerManifest = {
+      domainRedirects: domainRedirects,
+      enableHTTPCompression: enableHTTPCompression
+    };
+
     return {
       defaultBuildManifest,
-      apiBuildManifest
+      apiBuildManifest,
+      imageBuildManifest
     };
+  }
+
+  /**
+   * Build static assets such as client-side JS, public files, static pages, etc.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildStaticAssets(
+    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    routesManifest: RoutesManifest
+  ) {
+    const buildId = defaultBuildManifest.buildId;
+    const basePath = routesManifest.basePath;
+    const nextConfigDir = this.nextConfigDir;
+    const nextStaticDir = this.nextStaticDir;
+
+    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
+
+    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
+
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+    const withBasePath = (key: string): string =>
+      path.join(normalizedBasePath, key);
+
+    const copyIfExists = async (
+      source: string,
+      destination: string
+    ): Promise<void> => {
+      if (await fse.pathExists(source)) {
+        await fse.copy(source, destination);
+      }
+    };
+
+    // Copy BUILD_ID file
+    const copyBuildId = copyIfExists(
+      path.join(dotNextDirectory, "BUILD_ID"),
+      path.join(assetOutputDirectory, withBasePath("BUILD_ID"))
+    );
+
+    const buildStaticFiles = await readDirectoryFiles(
+      path.join(dotNextDirectory, "static")
+    );
+
+    const staticFileAssets = buildStaticFiles
+      .filter(filterOutDirectories)
+      .map(async (fileItem: Item) => {
+        const source = fileItem.path;
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            path
+              .relative(path.resolve(nextConfigDir), source)
+              .replace(/^.next/, "_next")
+          )
+        );
+
+        return copyIfExists(source, destination);
+      });
+
+    const pagesManifest = await fse.readJSON(
+      path.join(dotNextDirectory, "serverless/pages-manifest.json")
+    );
+
+    const htmlPageAssets = Object.values(pagesManifest)
+      .filter((pageFile) => (pageFile as string).endsWith(".html"))
+      .map((relativePageFilePath) => {
+        const source = path.join(
+          dotNextDirectory,
+          `serverless/${relativePageFilePath}`
+        );
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            `static-pages/${buildId}/${(relativePageFilePath as string).replace(
+              /^pages\//,
+              ""
+            )}`
+          )
+        );
+
+        return copyIfExists(source, destination);
+      });
+
+    const prerenderManifest: PrerenderManifest = await fse.readJSON(
+      path.join(dotNextDirectory, "prerender-manifest.json")
+    );
+
+    const prerenderManifestJSONPropFileAssets = Object.keys(
+      prerenderManifest.routes
+    ).map((key) => {
+      const source = path.join(
+        dotNextDirectory,
+        `serverless/pages/${
+          key.endsWith("/") ? key + "index.json" : key + ".json"
+        }`
+      );
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
+      );
+
+      return copyIfExists(source, destination);
+    });
+
+    const prerenderManifestHTMLPageAssets = Object.keys(
+      prerenderManifest.routes
+    ).map((key) => {
+      const relativePageFilePath = key.endsWith("/")
+        ? path.join(key, "index.html")
+        : key + ".html";
+
+      const source = path.join(
+        dotNextDirectory,
+        `serverless/pages/${relativePageFilePath}`
+      );
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(path.join("static-pages", buildId, relativePageFilePath))
+      );
+
+      return copyIfExists(source, destination);
+    });
+
+    const fallbackHTMLPageAssets = Object.values(
+      prerenderManifest.dynamicRoutes || {}
+    )
+      .filter(({ fallback }) => {
+        return !!fallback;
+      })
+      .map((routeConfig) => {
+        const fallback = routeConfig.fallback as string;
+
+        const source = path.join(
+          dotNextDirectory,
+          `serverless/pages/${fallback}`
+        );
+
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(path.join("static-pages", buildId, fallback))
+        );
+
+        return copyIfExists(source, destination);
+      });
+
+    // Check if public/static exists and fail build since this conflicts with static/* behavior.
+    if (await fse.pathExists(path.join(nextStaticDir, "public", "static"))) {
+      throw new Error(
+        "You cannot have assets in the directory [public/static] as they conflict with the static/* CloudFront cache behavior. Please move these assets into another directory."
+      );
+    }
+
+    const buildPublicOrStaticDirectory = async (
+      directory: "public" | "static"
+    ) => {
+      const directoryPath = path.join(nextStaticDir, directory);
+      if (!(await fse.pathExists(directoryPath))) {
+        return Promise.resolve([]);
+      }
+
+      const files = await readDirectoryFiles(directoryPath);
+
+      return files.filter(filterOutDirectories).map((fileItem: Item) => {
+        const source = fileItem.path;
+        const destination = path.join(
+          assetOutputDirectory,
+          withBasePath(
+            path.relative(path.resolve(nextStaticDir), fileItem.path)
+          )
+        );
+
+        return fse.copy(source, destination);
+      });
+    };
+
+    const publicDirAssets = await buildPublicOrStaticDirectory("public");
+    const staticDirAssets = await buildPublicOrStaticDirectory("static");
+
+    return Promise.all([
+      copyBuildId, // BUILD_ID
+      ...staticFileAssets, // .next/static
+      ...htmlPageAssets, // prerendered html pages
+      ...prerenderManifestJSONPropFileAssets, // SSG json files
+      ...prerenderManifestHTMLPageAssets, // SSG html files
+      ...fallbackHTMLPageAssets, // fallback files
+      ...publicDirAssets, // public dir
+      ...staticDirAssets // static dir
+    ]);
   }
 
   async cleanupDotNext(): Promise<void> {
@@ -377,7 +827,7 @@ class Builder {
     }
   }
 
-  async build(debugMode: boolean): Promise<void> {
+  async build(debugMode?: boolean): Promise<void> {
     const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
@@ -387,6 +837,8 @@ class Builder {
 
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
 
     const { restoreUserConfig } = await createServerlessConfig(
       cwd,
@@ -397,7 +849,7 @@ class Builder {
     try {
       const subprocess = execa(cmd, args, {
         cwd,
-        env
+        env: env as NodeJS.ProcessEnv
       });
 
       if (debugMode) {
@@ -412,7 +864,8 @@ class Builder {
 
     const {
       defaultBuildManifest,
-      apiBuildManifest
+      apiBuildManifest,
+      imageBuildManifest
     } = await this.prepareBuildManifests();
 
     await this.buildDefaultLambda(defaultBuildManifest);
@@ -423,6 +876,63 @@ class Builder {
 
     if (hasAPIPages) {
       await this.buildApiLambda(apiBuildManifest);
+    }
+
+    // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
+    const hasImageOptimizer = fse.existsSync(
+      join(this.dotNextDir, "images-manifest.json")
+    );
+
+    if (hasImageOptimizer) {
+      await this.buildImageLambda(imageBuildManifest);
+    }
+
+    // Copy static assets to .serverless_nextjs directory
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const routesManifest = require(join(
+      this.dotNextDir,
+      "routes-manifest.json"
+    ));
+    await this.buildStaticAssets(defaultBuildManifest, routesManifest);
+  }
+
+  /**
+   * Normalize domain redirects by validating they are URLs and getting rid of trailing slash.
+   * @param domainRedirects
+   */
+  normalizeDomainRedirects(domainRedirects: { [key: string]: string }) {
+    for (const key in domainRedirects) {
+      const destination = domainRedirects[key];
+
+      let url;
+      try {
+        url = new URL(destination);
+      } catch (error) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL is not in a valid URL format.`
+        );
+      }
+
+      const { origin, pathname, searchParams } = url;
+
+      if (!origin.startsWith("https://") && !origin.startsWith("http://")) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL must start with http:// or https://.`
+        );
+      }
+
+      if (Array.from(searchParams).length > 0) {
+        throw new Error(
+          `domainRedirects: ${destination} is invalid. The URL must not contain query parameters.`
+        );
+      }
+
+      let normalizedDomain = `${origin}${pathname}`;
+      normalizedDomain = normalizedDomain.endsWith("/")
+        ? normalizedDomain.slice(0, -1)
+        : normalizedDomain;
+
+      domainRedirects[key] = normalizedDomain;
     }
   }
 }

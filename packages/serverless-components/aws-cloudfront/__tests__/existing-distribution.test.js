@@ -113,7 +113,9 @@ describe("Working with an existing distribution", () => {
           url: "https://existingorigin2.com",
           pathPatterns: {
             "/some/path": {
-              ttl: 10
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10
             }
           }
         }
@@ -132,6 +134,81 @@ describe("Working with an existing distribution", () => {
 
     assertHasCacheBehavior(mockUpdateDistribution, {
       PathPattern: "/some/path",
+      MinTTL: 10,
+      TargetOriginId: "existingorigin2.com"
+    });
+  });
+
+  it("should preserve the existing origin cache behaviors", async () => {
+    mockGetDistributionConfigPromise.mockReset();
+    mockGetDistributionConfigPromise.mockResolvedValueOnce({
+      ETag: "etag",
+      DistributionConfig: {
+        Origins: {
+          Quantity: 1,
+          Items: [
+            { Id: "existingorigin1.com", DomainName: "existingorigin1.com" },
+            { Id: "existingorigin2.com", DomainName: "existingorigin2.com" }
+          ]
+        },
+        CacheBehaviors: {
+          Quantity: 1,
+          Items: [
+            {
+              PathPattern: "/existing/path1",
+              MinTTL: 10,
+              TargetOriginId: "existingorigin1.com"
+            },
+            {
+              PathPattern: "/existing/path2",
+              MinTTL: 10,
+              TargetOriginId: "existingorigin2.com"
+            }
+          ]
+        }
+      }
+    });
+
+    await component.default({
+      distributionId: "fake-distribution-id",
+      origins: [
+        {
+          url: "https://existingorigin1.com",
+          pathPatterns: {
+            "/some/path": {
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10
+            }
+          }
+        }
+      ]
+    });
+
+    assertHasOrigin(mockUpdateDistribution, {
+      Id: "existingorigin1.com",
+      DomainName: "existingorigin1.com"
+    });
+
+    assertHasOrigin(mockUpdateDistribution, {
+      Id: "existingorigin2.com",
+      DomainName: "existingorigin2.com"
+    });
+
+    assertHasCacheBehavior(mockUpdateDistribution, {
+      PathPattern: "/some/path",
+      MinTTL: 10,
+      TargetOriginId: "existingorigin1.com"
+    });
+
+    assertHasCacheBehavior(mockUpdateDistribution, {
+      PathPattern: "/existing/path1",
+      MinTTL: 10,
+      TargetOriginId: "existingorigin1.com"
+    });
+
+    assertHasCacheBehavior(mockUpdateDistribution, {
+      PathPattern: "/existing/path2",
       MinTTL: 10,
       TargetOriginId: "existingorigin2.com"
     });

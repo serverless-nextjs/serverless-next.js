@@ -5,7 +5,9 @@ module.exports = (originId, defaults = {}) => {
   const {
     allowedHttpMethods = ["HEAD", "GET"],
     forward = {},
-    ttl = 86400,
+    minTTL = 0,
+    defaultTTL = 86400,
+    maxTTL = 31536000,
     compress = false,
     smoothStreaming = false,
     viewerProtocolPolicy = "redirect-to-https",
@@ -14,7 +16,7 @@ module.exports = (originId, defaults = {}) => {
     originRequestPolicyId
   } = defaults;
 
-  const defaultCacheBehavior = {
+  const cacheBehavior = {
     TargetOriginId: originId,
     TrustedSigners: {
       Enabled: false,
@@ -40,19 +42,19 @@ module.exports = (originId, defaults = {}) => {
   };
 
   if (cachePolicyId) {
-    defaultCacheBehavior.CachePolicyId = cachePolicyId;
+    cacheBehaviour.CachePolicyId = cachePolicyId;
   } else {
-    defaultCacheBehavior.ForwardedValues = getForwardedValues(forward);
-    defaultCacheBehavior.MinTTL = 0;
-    defaultCacheBehavior.DefaultTTL = ttl;
-    defaultCacheBehavior.MaxTTL = 31536000;
+    cacheBehaviour.ForwardedValues = getForwardedValues(forward);
+    cacheBehaviour.MinTTL = minTTL;
+    cacheBehaviour.DefaultTTL = defaultTTL;
+    cacheBehaviour.MaxTTL = maxTTL;
   }
 
   if (originRequestPolicyId) {
-    defaultCacheBehavior.OriginRequestPolicyId = originRequestPolicyId;
+    cacheBehaviour.OriginRequestPolicyId = originRequestPolicyId;
   }
 
-  addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);
+  addLambdaAtEdgeToCacheBehavior(cacheBehavior, defaults["lambda@edge"]);
 
-  return defaultCacheBehavior;
+  return cacheBehavior;
 };

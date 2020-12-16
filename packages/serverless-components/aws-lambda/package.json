@@ -12,11 +12,11 @@
     "Serverless"
   ],
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
     "@getjerry/aws-iam-role": "link:../aws-iam-role",
     "@serverless/aws-lambda-layer": "^1.0.0",

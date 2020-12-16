@@ -1,12 +1,17 @@
 import path from "path";
 import fse from "fs-extra";
 import { mockS3 } from "@serverless/aws-s3";
-import { mockCloudFront } from "@getjerry/aws-cloudfront";
-import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
-import mockCreateInvalidation from "@getjerry/cloudfront";
+import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
+import mockCreateInvalidation from "@sls-next/cloudfront";
 import NextjsComponent from "../src/component";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
+} from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
+import { mockUpload } from "aws-sdk";
 
 describe("deploy tests", () => {
   let tmpCwd;
@@ -34,6 +39,10 @@ describe("deploy tests", () => {
     mockLambda.mockResolvedValueOnce({
       arn:
         "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
       arn:
@@ -80,7 +89,7 @@ describe("deploy tests", () => {
 
   describe("cloudfront", () => {
     it("provisions default lambda", () => {
-      expect(mockLambda).toHaveBeenNthCalledWith(2, {
+      expect(mockLambda).toHaveBeenNthCalledWith(3, {
         description: expect.any(String),
         handler: "index.handler",
         code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
@@ -145,6 +154,39 @@ describe("deploy tests", () => {
       });
     });
 
+    it("provisions image lambda", () => {
+      expect(mockLambda).toHaveBeenNthCalledWith(2, {
+        description: expect.any(String),
+        handler: "index.handler",
+        code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
+        memory: 512,
+        timeout: 10,
+        runtime: "nodejs12.x",
+        role: {
+          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+          policy: {
+            Version: "2012-10-17",
+            Statement: [
+              {
+                Effect: "Allow",
+                Resource: "*",
+                Action: [
+                  "logs:CreateLogGroup",
+                  "logs:CreateLogStream",
+                  "logs:PutLogEvents"
+                ]
+              },
+              {
+                Effect: "Allow",
+                Resource: `arn:aws:s3:::bucket-xyz/*`,
+                Action: ["s3:GetObject", "s3:PutObject"]
+              }
+            ]
+          }
+        }
+      });
+    });
+
     it("creates distribution", () => {
       expect(mockCloudFront).toBeCalledWith({
         defaults: {
@@ -153,7 +195,9 @@ describe("deploy tests", () => {
             queryString: true,
             cookies: "all"
           },
-          ttl: 0,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "origin-request":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
@@ -168,7 +212,9 @@ describe("deploy tests", () => {
             private: true,
             pathPatterns: {
               "_next/static/*": {
-                ttl: 86400,
+                minTTL: 0,
+                defaultTTL: 86400,
+                maxTTL: 31536000,
                 forward: {
                   headers: "none",
                   cookies: "none",
@@ -176,7 +222,9 @@ describe("deploy tests", () => {
                 }
               },
               "_next/data/*": {
-                ttl: 0,
+                minTTL: 0,
+                defaultTTL: 0,
+                maxTTL: 31536000,
                 allowedHttpMethods: ["HEAD", "GET"],
                 "lambda@edge": {
                   "origin-request":
@@ -186,7 +234,9 @@ describe("deploy tests", () => {
                 }
               },
               "static/*": {
-                ttl: 86400,
+                minTTL: 0,
+                defaultTTL: 86400,
+                maxTTL: 31536000,
                 forward: {
                   headers: "none",
                   cookies: "none",
@@ -194,16 +244,32 @@ describe("deploy tests", () => {
                 }
               },
               "api/*": {
-                ttl: 0,
+                minTTL: 0,
+                defaultTTL: 0,
+                maxTTL: 31536000,
                 "lambda@edge": {
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
                 },
                 allowedHttpMethods: expect.any(Array)
+              },
+              "_next/image*": {
+                minTTL: 0,
+                defaultTTL: 60,
+                maxTTL: 31536000,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func:v1"
+                },
+                forward: {
+                  headers: ["Accept"]
+                },
+                allowedHttpMethods: expect.any(Array)
               }
             }
           }
-        ]
+        ],
+        distributionId: null
       });
     });
 
@@ -215,6 +281,82 @@ describe("deploy tests", () => {
         },
         distributionId: "cloudfrontdistrib"
       });
+    });
+  });
+
+  it("uploads static assets to S3 correctly", () => {
+    expect(mockUpload).toBeCalledTimes(13);
+
+    ["BUILD_ID"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file
+        })
+      );
+    });
+
+    [
+      "static-pages/test-build-id/index.html",
+      "static-pages/test-build-id/terms.html",
+      "static-pages/test-build-id/404.html",
+      "static-pages/test-build-id/about.html"
+    ].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        })
+      );
+    });
+
+    // Fallback page is never cached in S3
+    ["static-pages/test-build-id/blog/[post].html"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=0, s-maxage=0, must-revalidate"
+        })
+      );
+    });
+
+    [
+      "_next/static/chunks/chunk1.js",
+      "_next/static/test-build-id/placeholder.js"
+    ].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=31536000, immutable"
+        })
+      );
+    });
+
+    ["_next/data/zsWqBqLjpgRmswfQomanp/index.json"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        })
+      );
+    });
+
+    ["public/sub/image.png", "public/favicon.ico"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: "public, max-age=31536000, must-revalidate"
+        })
+      );
+    });
+
+    // Only certain public/static file extensions are cached by default
+    ["public/sw.js", "static/donotdelete.txt"].forEach((file) => {
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
+          Key: file,
+          CacheControl: undefined
+        })
+      );
     });
   });
 });

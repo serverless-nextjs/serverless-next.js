@@ -2,6 +2,10 @@ const parseInputOrigins = require("./parseInputOrigins");
 const getDefaultCacheBehavior = require("./getDefaultCacheBehavior");
 const createOriginAccessIdentity = require("./createOriginAccessIdentity");
 const grantCloudFrontBucketAccess = require("./grantCloudFrontBucketAccess");
+const getCustomErrorResponses = require("./getCustomErrorResponses");
+
+const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2019";
+const DEFAULT_SSL_SUPPORT_METHOD = "sni-only";
 
 const servePrivateContentEnabled = (inputs) =>
   inputs.origins.some((origin) => {
@@ -25,12 +29,27 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
   const params = {
     DistributionConfig: {
       CallerReference: String(Date.now()),
-      Comment: inputs.comment,
-      Aliases: {
+      Comment:
+        inputs.comment !== null && inputs.comment !== undefined
+          ? inputs.comment
+          : "",
+      Aliases:
+        // For initial creation if aliases undefined, then have default empty array of aliases
+        // Although this is not required per https://docs.aws.amazon.com/cloudfront/latest/APIReference/API_DistributionConfig.html
+        inputs.aliases !== null && inputs.aliases !== undefined
+          ? {
+              Quantity: inputs.aliases.length,
+              Items: inputs.aliases
+            }
+          : {
+              Quantity: 0,
+              Items: []
+            },
+      Origins: {
         Quantity: 0,
         Items: []
       },
-      Origins: {
+      CustomErrorResponses: {
         Quantity: 0,
         Items: []
       },
@@ -72,6 +91,52 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     distributionConfig.CacheBehaviors = CacheBehaviors;
   }
 
+  const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
+  distributionConfig.CustomErrorResponses = CustomErrorResponses;
+
+  // Set WAF web ACL id if defined
+  if (inputs.webACLId !== undefined && inputs.webACLId !== null) {
+    distributionConfig.WebACLId = inputs.webACLId;
+  }
+
+  // Set restrictions
+  if (inputs.restrictions !== undefined && inputs.restrictions !== null) {
+    const geoRestriction = inputs.restrictions.geoRestriction;
+
+    distributionConfig.Restrictions = {
+      GeoRestriction: {
+        RestrictionType: geoRestriction.restrictionType,
+        Quantity: geoRestriction.items ? geoRestriction.items.length : 0
+      }
+    };
+
+    if (geoRestriction.items && geoRestriction.items.length > 0) {
+      distributionConfig.Restrictions.GeoRestriction.Items =
+        geoRestriction.items;
+    }
+  }
+
+  // Note this will override the certificate which is also set by domain input
+  if (inputs.certificate !== undefined && inputs.certificate !== null) {
+    if (typeof inputs.certificate !== "object") {
+      throw new Error(
+        "Certificate input must be an object with cloudFrontDefaultCertificate, acmCertificateArn, iamCertificateId, sslSupportMethod, minimumProtocolVersion."
+      );
+    }
+
+    distributionConfig.ViewerCertificate = {
+      CloudFrontDefaultCertificate:
+        inputs.certificate.cloudFrontDefaultCertificate,
+      ACMCertificateArn: inputs.certificate.acmCertificateArn,
+      IAMCertificateId: inputs.certificate.iamCertificateId,
+      SSLSupportMethod:
+        inputs.certificate.sslSupportMethod || DEFAULT_SSL_SUPPORT_METHOD,
+      MinimumProtocolVersion:
+        inputs.certificate.minimumProtocolVersion ||
+        DEFAULT_MINIMUM_PROTOCOL_VERSION
+    };
+  }
+
   const res = await cf.createDistribution(params).promise();
 
   return {
@@ -103,20 +168,83 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   // 5. then make our changes
 
   params.DistributionConfig.Enabled = inputs.enabled;
-  params.DistributionConfig.Comment = inputs.comment;
+  params.DistributionConfig.Comment =
+    inputs.comment !== null && inputs.comment !== undefined
+      ? inputs.comment
+      : "";
   params.DistributionConfig.PriceClass = inputs.priceClass;
 
+  // When updating, don't override any existing aliases if not set in inputs
+  if (inputs.aliases !== null && inputs.aliases !== undefined) {
+    params.DistributionConfig.Aliases = {
+      Items: inputs.aliases,
+      Quantity: inputs.aliases.length
+    };
+  }
+
+  // When updating, don't override any existing webACLId if not set in inputs
+  if (inputs.webACLId !== undefined && inputs.webACLId !== null) {
+    params.DistributionConfig.WebACLId = inputs.webACLId;
+  }
+
+  // When updating, don't override any existing geo restrictions if not set in inputs
+  if (inputs.restrictions !== undefined && inputs.restrictions !== null) {
+    const geoRestriction = inputs.restrictions.geoRestriction;
+
+    params.DistributionConfig.Restrictions = {
+      GeoRestriction: {
+        RestrictionType: geoRestriction.restrictionType,
+        Quantity: geoRestriction.items ? geoRestriction.items.length : 0,
+        Items: geoRestriction.items
+      }
+    };
+
+    if (geoRestriction.items && geoRestriction.items.length > 0) {
+      params.DistributionConfig.Restrictions.GeoRestriction.Items =
+        geoRestriction.items;
+    }
+  }
+
+  // Note this will override the certificate which is also set by domain input
+  if (inputs.certificate !== undefined && inputs.certificate !== null) {
+    if (typeof inputs.certificate !== "object") {
+      throw new Error(
+        "Certificate input must be an object with cloudFrontDefaultCertificate, acmCertificateArn, iamCertificateId, sslSupportMethod, minimumProtocolVersion."
+      );
+    }
+    params.DistributionConfig.ViewerCertificate = {
+      CloudFrontDefaultCertificate:
+        inputs.certificate.cloudFrontDefaultCertificate,
+      ACMCertificateArn: inputs.certificate.acmCertificateArn,
+      IAMCertificateId: inputs.certificate.iamCertificateId,
+      SSLSupportMethod:
+        inputs.certificate.sslSupportMethod || DEFAULT_SSL_SUPPORT_METHOD,
+      MinimumProtocolVersion:
+        inputs.certificate.minimumProtocolVersion ||
+        DEFAULT_MINIMUM_PROTOCOL_VERSION
+    };
+  }
+
   let s3CanonicalUserId;
-  let originAccessIdentityId;
+  let { originAccessIdentityId } = inputs;
 
   if (servePrivateContentEnabled(inputs)) {
     // presumably it's ok to call create origin access identity again
     // aws api returns cached copy of what was previously created
     // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#createCloudFrontOriginAccessIdentity-property
-    ({
-      originAccessIdentityId,
-      s3CanonicalUserId
-    } = await createOriginAccessIdentity(cf));
+
+    if (originAccessIdentityId) {
+      ({
+        CloudFrontOriginAccessIdentity: { S3CanonicalUserId: s3CanonicalUserId }
+      } = await cf
+        .getCloudFrontOriginAccessIdentity({ Id: originAccessIdentityId })
+        .promise());
+    } else {
+      ({
+        originAccessIdentityId,
+        s3CanonicalUserId
+      } = await createOriginAccessIdentity(cf));
+    }
   }
 
   const { Origins, CacheBehaviors } = parseInputOrigins(inputs.origins, {
@@ -127,7 +255,7 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     await updateBucketsPolicies(s3, Origins, s3CanonicalUserId);
   }
 
-  if(inputs.defaults) {
+  if (inputs.defaults) {
     params.DistributionConfig.DefaultCacheBehavior = getDefaultCacheBehavior(
       Origins.Items[0].Id,
       inputs.defaults
@@ -152,13 +280,36 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   });
 
   if (CacheBehaviors) {
-    const existingCacheBehaviors = params.DistributionConfig.CacheBehaviors ? params.DistributionConfig.CacheBehaviors.Items.filter((behavior) => !inputOriginIds.includes(behavior.TargetOriginId)) : [];
-    const inputCacheBehaviours = CacheBehaviors.Items.concat(existingCacheBehaviors);
+    const existingCacheBehaviors = params.DistributionConfig.CacheBehaviors
+      ? params.DistributionConfig.CacheBehaviors.Items.filter(
+          (behavior) => !inputOriginIds.includes(behavior.TargetOriginId)
+        )
+      : [];
+    const inputCacheBehaviours = CacheBehaviors.Items.concat(
+      existingCacheBehaviors
+    );
     params.DistributionConfig.CacheBehaviors = {
       Quantity: inputCacheBehaviours.length,
       Items: inputCacheBehaviours
     };
+
+    // const behaviors = (params.DistributionConfig.CacheBehaviors = params
+    //   .DistributionConfig.CacheBehaviors || { Items: [] });
+    // const behaviorPaths = behaviors.Items.map((b) => b.PathPattern);
+    // CacheBehaviors.Items.forEach((inputBehavior) => {
+    //   const behaviorIndex = behaviorPaths.indexOf(inputBehavior.PathPattern);
+    //   if (behaviorIndex > -1) {
+    //     // replace origin with new input configuration
+    //     behaviors.Items.splice(behaviorIndex, 1, inputBehavior);
+    //   } else {
+    //     behaviors.Items.push(inputBehavior);
+    //   }
+    // });
+    // behaviors.Quantity = behaviors.Items.length;
   }
+
+  const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
+  params.DistributionConfig.CustomErrorResponses = CustomErrorResponses;
 
   // 6. then finally update!
   const res = await cf.updateDistribution(params).promise();

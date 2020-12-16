@@ -1,8 +1,8 @@
 import path from "path";
 import fse from "fs-extra";
 import { mockS3 } from "@serverless/aws-s3";
-import { mockCloudFront } from "@getjerry/aws-cloudfront";
-import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
+import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import NextjsComponent from "../src/component";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
@@ -32,6 +32,10 @@ describe("basepath tests", () => {
     mockLambda.mockResolvedValueOnce({
       arn:
         "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
       arn:
@@ -74,6 +78,7 @@ describe("basepath tests", () => {
         "custom_base/_next/static/*",
         "custom_base/static/*",
         "custom_base/api/*",
+        "custom_base/_next/image*",
         "custom_base/_next/data/*"
       ]);
     });

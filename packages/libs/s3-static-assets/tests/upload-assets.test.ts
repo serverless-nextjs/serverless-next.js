@@ -1,5 +1,5 @@
 import path from "path";
-import uploadStaticAssets from "../src/index";
+import { uploadStaticAssets } from "../src/index";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
   DEFAULT_PUBLIC_DIR_CACHE_CONTROL,
@@ -171,7 +171,7 @@ describe.each`
         expect.objectContaining({
           Key: "_next/data/zsWqBqLjpgRmswfQomanp/index.json",
           ContentType: "application/json",
-          CacheControl: undefined
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
 
@@ -179,7 +179,7 @@ describe.each`
         expect.objectContaining({
           Key: "_next/data/zsWqBqLjpgRmswfQomanp/todos/terms/a.json",
           ContentType: "application/json",
-          CacheControl: undefined
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
 
@@ -187,7 +187,7 @@ describe.each`
         expect.objectContaining({
           Key: "_next/data/zsWqBqLjpgRmswfQomanp/todos/terms/b.json",
           ContentType: "application/json",
-          CacheControl: undefined
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
         })
       );
     });

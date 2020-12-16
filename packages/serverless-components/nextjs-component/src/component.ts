@@ -6,22 +6,36 @@ import {
   OriginRequestDefaultHandlerManifest as BuildManifest,
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
-  RoutesManifest
+  RoutesManifest,
+  OriginRequestImageHandlerManifest
 } from "@getjerry/lambda-at-edge/types";
-import uploadAssetsToS3 from "@getjerry/s3-static-assets";
+import {
+  deleteOldStaticAssets,
+  uploadStaticAssetsFromBuild,
+  uploadStaticAssets
+} from "@getjerry/s3-static-assets";
 import createInvalidation from "@getjerry/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "./constants";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
+} from "./constants";
 import type {
   BuildOptions,
   ServerlessComponentInputs,
   LambdaType,
   LambdaInput
 } from "../types";
+import { execSync } from "child_process";
 
-type DeploymentResult = {
+// Message when deployment is explicitly skipped
+const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
+
+export type DeploymentResult = {
   appUrl: string;
   bucketName: string;
+  distributionId: string;
 };
 
 class NextjsComponent extends Component {
@@ -30,6 +44,7 @@ class NextjsComponent extends Component {
   ): Promise<DeploymentResult> {
     if (inputs.build !== false) {
       await this.build(inputs);
+      await this.postBuild(inputs);
     }
 
     return this.deploy(inputs);
@@ -69,13 +84,12 @@ class NextjsComponent extends Component {
     stillToMatch.delete(this.pathPattern("api/*", routesManifest));
     stillToMatch.delete(this.pathPattern("static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("_next/data/*", routesManifest));
 
     // check for other api like paths
     for (const path of stillToMatch) {
       if (/^(\/?api\/.*|\/?api)$/.test(path)) {
-        throw Error(
-          `Setting custom cache behaviour for api/ route "${path}" is not supported`
-        );
+        stillToMatch.delete(path);
       }
     }
 
@@ -152,10 +166,27 @@ class NextjsComponent extends Component {
       : Promise.resolve(undefined);
   }
 
+  async readImageBuildManifest(
+    nextConfigPath: string
+  ): Promise<OriginRequestImageHandlerManifest> {
+    const path = join(
+      nextConfigPath,
+      ".serverless_nextjs/image-lambda/manifest.json"
+    );
+
+    return (await pathExists(path))
+      ? readJSON(path)
+      : Promise.resolve(undefined);
+  }
+
   async build(inputs: ServerlessComponentInputs = {}): Promise<void> {
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
+
+    const nextStaticPath = inputs.nextStaticDir
+      ? resolve(inputs.nextStaticDir)
+      : nextConfigPath;
 
     const buildCwd =
       typeof inputs.build === "boolean" ||
@@ -185,17 +216,51 @@ class NextjsComponent extends Component {
           env: buildConfig.env,
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
-          logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false
-        }
+          logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
+          domainRedirects: inputs.domainRedirects || {},
+          minifyHandlers: inputs.minifyHandlers || false,
+          enableHTTPCompression: false,
+          handler: inputs.handler
+            ? `${inputs.handler.split(".")[0]}.js`
+            : undefined,
+          authentication: inputs.authentication ?? undefined
+        },
+        nextStaticPath
       );
 
       await builder.build(this.context.instance.debugMode);
     }
   }
 
+  /**
+   * Run any post-build steps.
+   * Useful to run any custom commands before deploying.
+   * @param inputs
+   */
+  async postBuild(inputs: ServerlessComponentInputs): Promise<void> {
+    const buildOptions = inputs.build;
+
+    const postBuildCommands =
+      (buildOptions as BuildOptions)?.postBuildCommands ?? [];
+
+    for (const command of postBuildCommands) {
+      execSync(command, { stdio: "inherit" });
+    }
+  }
+
   async deploy(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    // Skip deployment if user explicitly set deploy input to false.
+    // Useful when they just want the build outputs to deploy themselves.
+    if (inputs.deploy === false) {
+      return {
+        appUrl: SKIPPED_DEPLOY,
+        bucketName: SKIPPED_DEPLOY,
+        distributionId: SKIPPED_DEPLOY
+      };
+    }
+
     const nextConfigPath = inputs.nextConfigDir
       ? resolve(inputs.nextConfigDir)
       : process.cwd();
@@ -207,27 +272,35 @@ class NextjsComponent extends Component {
     const {
       defaults: cloudFrontDefaultsInputs,
       origins: cloudFrontOriginsInputs,
+      aliases: cloudFrontAliasesInputs,
       priceClass: cloudFrontPriceClassInputs,
-      distributionId: cloudFrontDistributionIdInput,
+      errorPages: cloudFrontErrorPagesInputs,
+      distributionId: cloudFrontDistributionId = null,
+      comment: cloudFrontComment,
+      webACLId: cloudFrontWebACLId,
+      restrictions: cloudFrontRestrictions,
+      certificate: cloudFrontCertificate,
+      originAccessIdentityId: cloudFrontOriginAccessIdentityId,
+      paths: cloudFrontPaths,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
     const bucketRegion = inputs.bucketRegion || "us-east-1";
 
-    const staticCachePolicyIdInput = inputs.staticCachePolicyId;
-    const staticOriginRequestPolicyIdInput =
-      inputs.staticOriginRequestPolicyIdInput;
-    const dynamicCachePolicyIdInput = inputs.dynamicCachePolicyId;
-    const dynamicOriginRequestPolicyIdInput =
-      inputs.dynamicOriginRequestPolicyIdInput;
+    const staticCachePolicyId = inputs.staticCachePolicyId;
+    const staticOriginRequestPolicyId = inputs.staticOriginRequestPolicyId;
+    const dynamicCachePolicyId = inputs.dynamicCachePolicyId;
+    const dynamicOriginRequestPolicyId = inputs.dynamicOriginRequestPolicyId;
 
     const [
       defaultBuildManifest,
       apiBuildManifest,
+      imageBuildManifest,
       routesManifest
     ] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
       this.readApiBuildManifest(nextConfigPath),
+      this.readImageBuildManifest(nextConfigPath),
       this.readRoutesManifest(nextConfigPath)
     ]);
 
@@ -235,12 +308,14 @@ class NextjsComponent extends Component {
       bucket,
       cloudFront,
       defaultEdgeLambda,
-      apiEdgeLambda
+      apiEdgeLambda,
+      imageEdgeLambda
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@getjerry/aws-cloudfront"),
       this.load("@getjerry/aws-lambda", "defaultEdgeLambda"),
-      this.load("@getjerry/aws-lambda", "apiEdgeLambda")
+      this.load("@getjerry/aws-lambda", "apiEdgeLambda"),
+      this.load("@getjerry/aws-lambda", "imageEdgeLambda")
     ]);
 
     const bucketOutputs = await bucket({
@@ -249,18 +324,39 @@ class NextjsComponent extends Component {
       region: bucketRegion
     });
 
-    await uploadAssetsToS3({
+    // If new BUILD_ID file is present, remove all versioned assets but the existing build ID's assets, to save S3 storage costs.
+    // After deployment, only the new and previous build ID's assets are present. We still need previous build assets as it takes time to propagate the Lambda.
+    await deleteOldStaticAssets({
       bucketName: bucketOutputs.name,
       basePath: routesManifest.basePath,
-      nextConfigDir: nextConfigPath,
-      nextStaticDir: nextStaticPath,
-      credentials: this.context.credentials.aws,
-      publicDirectoryCache: inputs.publicDirectoryCache
+      credentials: this.context.credentials.aws
     });
+
+    // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
+    // TODO: remove once proven stable.
+    if (inputs.uploadStaticAssetsFromBuild ?? true) {
+      await uploadStaticAssetsFromBuild({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    } else {
+      await uploadStaticAssets({
+        bucketName: bucketOutputs.name,
+        basePath: routesManifest.basePath,
+        nextConfigDir: nextConfigPath,
+        nextStaticDir: nextStaticPath,
+        credentials: this.context.credentials.aws,
+        publicDirectoryCache: inputs.publicDirectoryCache
+      });
+    }
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
-    // If origin is relative path then prepend the bucketUrl
+    // if origin is relative path then prepend the bucketUrl
     // e.g. /path => http://bucket.s3.aws.com/path
     const expandRelativeUrls = (origin: string | Record<string, unknown>) => {
       const originUrl =
@@ -297,9 +393,11 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/static/*", routesManifest)
     ] = {
-      cachePolicyId: staticCachePolicyIdInput,
-      originRequestPolicyId: staticOriginRequestPolicyIdInput,
-      ttl: 86400,
+      cachePolicyId: staticCachePolicyId,
+      originRequestPolicyId: staticOriginRequestPolicyId,
+      minTTL: 0,
+      defaultTTL: 86400,
+      maxTTL: 31536000,
       forward: {
         headers: "none",
         cookies: "none",
@@ -310,9 +408,11 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("static/*", routesManifest)
     ] = {
-      cachePolicyId: staticCachePolicyIdInput,
-      originRequestPolicyId: staticOriginRequestPolicyIdInput,
-      ttl: 86400,
+      cachePolicyId: staticCachePolicyId,
+      originRequestPolicyId: staticOriginRequestPolicyId,
+      minTTL: 0,
+      defaultTTL: 86400,
+      maxTTL: 31536000,
       forward: {
         headers: "none",
         cookies: "none",
@@ -377,12 +477,16 @@ class NextjsComponent extends Component {
         description: inputs.description
           ? `${inputs.description} (API)`
           : "API Lambda@Edge for Next CloudFront distribution",
-        handler: "index.handler",
+        handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy
-        },
+        role: inputs.roleArn
+          ? {
+              arn: inputs.roleArn
+            }
+          : {
+              service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+              policy
+            },
         memory: readLambdaInputValue("memory", "apiLambda", 512) as number,
         timeout: readLambdaInputValue("timeout", "apiLambda", 10) as number,
         runtime: readLambdaInputValue(
@@ -402,9 +506,11 @@ class NextjsComponent extends Component {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
-        cachePolicyId: dynamicCachePolicyIdInput,
-        originRequestPolicyId: dynamicOriginRequestPolicyIdInput,
-        ttl: 0,
+        cachePolicyId: dynamicCachePolicyId,
+        originRequestPolicyId: dynamicOriginRequestPolicyId,
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
         allowedHttpMethods: [
           "HEAD",
           "DELETE",
@@ -421,16 +527,75 @@ class NextjsComponent extends Component {
       };
     }
 
+    if (imageBuildManifest) {
+      const imageEdgeLambdaInput: LambdaInput = {
+        description: inputs.description
+          ? `${inputs.description} (Image)`
+          : "Image Lambda@Edge for Next CloudFront distribution",
+        handler: inputs.handler || "index.handler",
+        code: join(nextConfigPath, IMAGE_LAMBDA_CODE_DIR),
+        role: {
+          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+          policy
+        },
+        memory: readLambdaInputValue("memory", "imageLambda", 512) as number,
+        timeout: readLambdaInputValue("timeout", "imageLambda", 10) as number,
+        runtime: readLambdaInputValue(
+          "runtime",
+          "imageLambda",
+          "nodejs12.x"
+        ) as string,
+        name: readLambdaInputValue("name", "imageLambda", undefined) as
+          | string
+          | undefined
+      };
+
+      const imageEdgeLambdaOutputs = await imageEdgeLambda(
+        imageEdgeLambdaInput
+      );
+
+      const imageEdgeLambdaPublishOutputs = await imageEdgeLambda.publishVersion();
+
+      cloudFrontOrigins[0].pathPatterns[
+        this.pathPattern("_next/image*", routesManifest)
+      ] = {
+        cachePolicyId: staticCachePolicyId,
+        originRequestPolicyId: staticOriginRequestPolicyId,
+        minTTL: 0,
+        defaultTTL: 60,
+        maxTTL: 31536000,
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
+        forward: {
+          headers: ["Accept"]
+        },
+        "lambda@edge": {
+          "origin-request": `${imageEdgeLambdaOutputs.arn}:${imageEdgeLambdaPublishOutputs.version}`
+        }
+      };
+    }
+
     const defaultEdgeLambdaInput: LambdaInput = {
       description:
         inputs.description ||
         "Default Lambda@Edge for Next CloudFront distribution",
-      handler: "index.handler",
+      handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
-      role: {
-        service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-        policy
-      },
+      role: inputs.roleArn
+        ? {
+            arn: inputs.roleArn
+          }
+        : {
+            service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+            policy
+          },
       memory: readLambdaInputValue("memory", "defaultLambda", 512) as number,
       timeout: readLambdaInputValue("timeout", "defaultLambda", 10) as number,
       runtime: readLambdaInputValue(
@@ -449,6 +614,21 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
 
+    cloudFrontOrigins[0].pathPatterns[
+      this.pathPattern("_next/data/*", routesManifest)
+    ] = {
+      cachePolicyId: dynamicCachePolicyId,
+      originRequestPolicyId: dynamicOriginRequestPolicyId,
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 31536000,
+      allowedHttpMethods: ["HEAD", "GET"],
+      "lambda@edge": {
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
     // validate that the custom config paths match generated paths in the manifest
     this.validatePathPatterns(
       Object.keys(cloudFrontOtherInputs),
@@ -457,7 +637,7 @@ class NextjsComponent extends Component {
     );
 
     // Add any custom cloudfront configuration
-    // this includes overrides for _next, static and api
+    // this includes overrides for _next/data/*, _next/static/*, static/*, api/*, and default cache behaviors
     Object.entries(cloudFrontOtherInputs).map(([path, config]) => {
       const edgeConfig = {
         ...(config["lambda@edge"] || {})
@@ -490,19 +670,6 @@ class NextjsComponent extends Component {
       };
     });
 
-    cloudFrontOrigins[0].pathPatterns[
-      this.pathPattern("_next/data/*", routesManifest)
-    ] = {
-      cachePolicyId: dynamicCachePolicyIdInput,
-      originRequestPolicyId: dynamicOriginRequestPolicyIdInput,
-      ttl: 0,
-      allowedHttpMethods: ["HEAD", "GET"],
-      "lambda@edge": {
-        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-      }
-    };
-
     // make sure that origin-response is not set.
     // this is reserved for serverless-next.js usage
     const cloudFrontDefaults = cloudFrontDefaultsInputs || {};
@@ -515,7 +682,9 @@ class NextjsComponent extends Component {
     const defaultBehaviour = {
       cachePolicyId: cloudFrontDefaults.cachePolicyId,
       originRequestPolicyId: cloudFrontDefaults.originRequestPolicyId,
-      ttl: 86400,
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 31536000,
       ...cloudFrontDefaults,
       forward: {
         cookies: "all",
@@ -523,17 +692,22 @@ class NextjsComponent extends Component {
         ...cloudFrontDefaults.forward
       },
       // everything after here cant be overridden
-      allowedHttpMethods: ["HEAD", "GET"],
+      allowedHttpMethods: [
+        "HEAD",
+        "DELETE",
+        "POST",
+        "GET",
+        "OPTIONS",
+        "PUT",
+        "PATCH"
+      ],
       "lambda@edge": {
         ...defaultLambdaAtEdgeConfig,
         "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
         "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
       },
-      compress: true,
-      smoothStreaming: false,
-      viewerProtocolPolicy: "redirect-to-https"
+      compress: true
     };
-
     const defaults = !routesManifest.basePath && defaultBehaviour;
 
     if (!defaults) {
@@ -543,25 +717,38 @@ class NextjsComponent extends Component {
     }
 
     const cloudFrontOutputs = await cloudFront({
-      distributionId: cloudFrontDistributionIdInput,
+      distributionId: cloudFrontDistributionId,
       defaults,
       origins: cloudFrontOrigins,
+      ...(cloudFrontAliasesInputs && {
+        aliases: cloudFrontAliasesInputs
+      }),
       ...(cloudFrontPriceClassInputs && {
         priceClass: cloudFrontPriceClassInputs
-      })
+      }),
+      ...(cloudFrontErrorPagesInputs && {
+        errorPages: cloudFrontErrorPagesInputs
+      }),
+      comment: cloudFrontComment,
+      webACLId: cloudFrontWebACLId,
+      restrictions: cloudFrontRestrictions,
+      certificate: cloudFrontCertificate,
+      originAccessIdentityId: cloudFrontOriginAccessIdentityId
     });
 
     let appUrl = cloudFrontOutputs.url;
 
-    const paths = routesManifest.basePath
+    const pathsToInvalidate = routesManifest.basePath
       ? [`${routesManifest.basePath}*`]
-      : undefined;
+      : cloudFrontPaths;
 
-    await createInvalidation({
-      distributionId: cloudFrontOutputs.id,
-      credentials: this.context.credentials.aws,
-      paths
-    });
+    if (pathsToInvalidate && pathsToInvalidate.length) {
+      await createInvalidation({
+        distributionId: cloudFrontOutputs.id,
+        credentials: this.context.credentials.aws,
+        paths: pathsToInvalidate
+      });
+    }
 
     const { domain, subdomain } = obtainDomains(inputs.domain);
     if (domain && subdomain) {
@@ -573,14 +760,16 @@ class NextjsComponent extends Component {
           [subdomain]: cloudFrontOutputs
         },
         domainType: inputs.domainType || "both",
-        defaultCloudfrontInputs: cloudFrontDefaults
+        defaultCloudfrontInputs: cloudFrontDefaults,
+        certificateArn: inputs.certificateArn
       });
       appUrl = domainOutputs.domains[0];
     }
 
     return {
       appUrl,
-      bucketName: bucketOutputs.name
+      bucketName: bucketOutputs.name,
+      distributionId: cloudFrontOutputs.id
     };
   }
 
@@ -591,7 +780,9 @@ class NextjsComponent extends Component {
       this.load("@getjerry/domain")
     ]);
 
-    await Promise.all([bucket.remove(), cloudfront.remove(), domain.remove()]);
+    await bucket.remove();
+    await cloudfront.remove();
+    await domain.remove();
   }
 }
 

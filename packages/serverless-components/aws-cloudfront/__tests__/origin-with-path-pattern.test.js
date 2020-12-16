@@ -34,7 +34,9 @@ describe("Input origin with path pattern", () => {
           url: "https://exampleorigin.com",
           pathPatterns: {
             "/some/path": {
-              ttl: 10,
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10,
               allowedHttpMethods: ["GET", "HEAD", "POST"]
             }
           }
@@ -78,7 +80,9 @@ describe("Input origin with path pattern", () => {
           url: "https://exampleorigin.com",
           pathPatterns: {
             "/some/path": {
-              ttl: 10
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10
             }
           }
         }
@@ -91,7 +95,9 @@ describe("Input origin with path pattern", () => {
           url: "https://exampleorigin.com",
           pathPatterns: {
             "/some/other/path": {
-              ttl: 10
+              minTTL: 10,
+              defaultTTL: 10,
+              maxTTL: 10
             }
           }
         }

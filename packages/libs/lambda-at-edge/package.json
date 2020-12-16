@@ -7,16 +7,20 @@
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "bin": {
+    "build-lambda-at-edge": "dist/command.js"
+  },
   "scripts": {
     "prepare": "yarn build",
-    "build": "rollup --config && tsc -p tsconfig.build.json"
+    "copy-sharp-modules": "ts-node scripts/copy-sharp-modules.ts",
+    "build": "rollup --config && tsc -p tsconfig.build.json && yarn copy-sharp-modules"
   },
   "files": [
     "dist"
   ],
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/danielcondemarin/serverless-next.js.git",
+    "url": "git+https://github.com/getjerry/serverless-next.js.git",
     "directory": "packages/libs/lambda-at-edge"
   },
   "keywords": [
@@ -25,11 +29,11 @@
     "Next.js"
   ],
   "author": "Daniel Conde Marin <danielconde9@gmail.com>",
-  "license": "ISC",
+  "license": "MIT",
   "bugs": {
-    "url": "https://github.com/danielcondemarin/serverless-next.js/issues"
+    "url": "https://github.com/getjerry/serverless-next.js/issues"
   },
-  "homepage": "https://github.com/danielcondemarin/serverless-next.js#readme",
+  "homepage": "https://github.com/getjerry/serverless-next.js#readme",
   "devDependencies": {
     "@rollup/plugin-commonjs": "^15.0.0",
     "@rollup/plugin-json": "^4.1.0",
@@ -37,24 +41,39 @@
     "@types/aws-lambda": "^8.10.57",
     "@types/cookie": "^0.4.0",
     "@types/execa": "^2.0.0",
+    "@types/fresh": "^0.5.0",
     "@types/fs-extra": "^9.0.1",
     "@types/jsonwebtoken": "^8.5.0",
+    "@types/klaw": "^3.0.1",
     "@types/node": "^14.0.14",
+    "@types/node-fetch": "^2.5.7",
     "@types/path-to-regexp": "^1.7.0",
+    "@types/send": "^0.14.5",
+    "@types/sharp": "^0.26.1",
+    "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.26.6",
     "rollup-plugin-node-externals": "^2.2.0",
+    "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.27.2",
+    "sharp": "^0.26.3",
     "ts-loader": "^7.0.5",
+    "ts-node": "^9.0.0",
     "typescript": "^3.9.6"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "1.0.0-gamma.8",
-    "@zeit/node-file-trace": "^0.6.5",
+    "@aws-sdk/client-s3": "1.0.0-rc.3",
+    "@hapi/accept": "5.0.1",
+    "@vercel/nft": "^0.9.3",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
+    "fresh": "^0.5.2",
     "fs-extra": "^9.0.1",
     "get-stream": "^6.0.0",
+    "is-animated": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
-    "path-to-regexp": "6.1.0"
+    "klaw": "^3.0.0",
+    "node-fetch": "^2.6.1",
+    "path-to-regexp": "^6.1.0",
+    "send": "^0.17.1"
   }
 }

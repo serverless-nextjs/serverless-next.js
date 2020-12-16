@@ -10,6 +10,8 @@ declare module "@serverless/core" {
       instance: {
         debugMode: boolean;
       };
+      status(status: string): void;
+      debug(message: string): void;
     };
   }
 }

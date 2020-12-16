@@ -1,18 +1,19 @@
 import fse from "fs-extra";
 import path from "path";
-import { mockDomain } from "@getjerry/domain";
+import { mockDomain } from "@sls-next/domain";
 import { mockS3 } from "@serverless/aws-s3";
 import { mockUpload } from "aws-sdk";
-import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
-import { mockCloudFront } from "@getjerry/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
+import mockCreateInvalidation from "@sls-next/cloudfront";
+import { mockCloudFront } from "@sls-next/aws-cloudfront";
 
-import NextjsComponent from "../src/component";
+import NextjsComponent, { DeploymentResult } from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
-const createNextComponent = (inputs) => {
-  const component = new NextjsComponent(inputs);
+const createNextComponent = () => {
+  const component = new NextjsComponent();
   component.context.credentials = {
     aws: {
       accessKeyId: "123",
@@ -45,7 +46,7 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
 };
 
 describe("Custom inputs", () => {
-  let componentOutputs;
+  let componentOutputs: DeploymentResult;
   let consoleWarnSpy;
 
   beforeEach(() => {
@@ -71,17 +72,17 @@ describe("Custom inputs", () => {
     ${"eu-west-2"} | ${"eu-west-2"}
   `(`When input region is $inputRegion`, ({ inputRegion, expectedRegion }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-    let tmpCwd;
+    let tmpCwd: string;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-      const component = createNextComponent({});
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         bucketRegion: inputRegion
       });
     });
@@ -118,7 +119,7 @@ describe("Custom inputs", () => {
     ${"example.com"}              | ${"https://www.example.com"}
   `("Custom domain", ({ inputDomains, expectedDomain }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-    let tmpCwd;
+    let tmpCwd: string;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
@@ -128,9 +129,9 @@ describe("Custom inputs", () => {
         expectedDomain
       });
 
-      const component = createNextComponent({});
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         policy: "arn:aws:iam::aws:policy/CustomRole",
         domain: inputDomains,
         description: "Custom description",
@@ -143,7 +144,7 @@ describe("Custom inputs", () => {
       return cleanupFixtureDirectory(fixturePath);
     });
 
-    it("uses @getjerry/domain to provision custom domain", () => {
+    it("uses @sls-next/domain to provision custom domain", () => {
       const { domain, subdomain } = obtainDomains(inputDomains);
 
       expect(mockDomain).toBeCalledWith({
@@ -177,23 +178,58 @@ describe("Custom inputs", () => {
     });
   });
 
+  describe("Custom role arn", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        roleArn: "arn:aws:iam::aws:role/CustomRole"
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("uses custom role arn provided", () => {
+      expect(mockLambda).toBeCalledTimes(3);
+
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          role: expect.objectContaining({
+            arn: "arn:aws:iam::aws:role/CustomRole"
+          })
+        })
+      );
+    });
+  });
+
   describe.each`
     nextConfigDir      | nextStaticDir      | fixturePath
     ${"nextConfigDir"} | ${"nextStaticDir"} | ${path.join(__dirname, "./fixtures/split-app")}
   `(
     "nextConfigDir=$nextConfigDir, nextStaticDir=$nextStaticDir",
     ({ fixturePath, ...inputs }) => {
-      let tmpCwd;
+      let tmpCwd: string;
 
       beforeEach(async () => {
         tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
-        mockServerlessComponentDependencies({});
+        mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-        const component = createNextComponent({});
+        const component = createNextComponent();
 
-        componentOutputs = await component({
+        componentOutputs = await component.default({
           nextConfigDir: inputs.nextConfigDir,
           nextStaticDir: inputs.nextStaticDir
         });
@@ -205,28 +241,69 @@ describe("Custom inputs", () => {
       });
 
       it("uploads static assets to S3 correctly", () => {
-        expect(mockUpload).toBeCalledWith(
-          expect.objectContaining({
-            Key: expect.stringMatching(
-              "_next/static/test-build-id/placeholder.js"
-            )
-          })
-        );
-        expect(mockUpload).toBeCalledWith(
-          expect.objectContaining({
-            Key: expect.stringMatching("static-pages/terms.html")
-          })
-        );
-        expect(mockUpload).toBeCalledWith(
-          expect.objectContaining({
-            Key: expect.stringMatching("static/donotdelete.txt")
-          })
-        );
-        expect(mockUpload).toBeCalledWith(
-          expect.objectContaining({
-            Key: expect.stringMatching("public/favicon.ico")
-          })
-        );
+        expect(mockUpload).toBeCalledTimes(12);
+
+        [
+          "static-pages/test-build-id/index.html",
+          "static-pages/test-build-id/terms.html",
+          "static-pages/test-build-id/404.html",
+          "static-pages/test-build-id/about.html"
+        ].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl:
+                "public, max-age=0, s-maxage=2678400, must-revalidate"
+            })
+          );
+        });
+
+        ["static-pages/test-build-id/blog/[post].html"].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl: "public, max-age=0, s-maxage=0, must-revalidate"
+            })
+          );
+        });
+
+        ["_next/static/test-build-id/placeholder.js"].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl: "public, max-age=31536000, immutable"
+            })
+          );
+        });
+
+        ["_next/data/zsWqBqLjpgRmswfQomanp/index.json"].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl:
+                "public, max-age=0, s-maxage=2678400, must-revalidate"
+            })
+          );
+        });
+
+        ["public/sub/image.png", "public/favicon.ico"].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl: "public, max-age=31536000, must-revalidate"
+            })
+          );
+        });
+
+        // Only certain public/static file extensions are cached by default
+        ["public/sw.js", "static/donotdelete.txt"].forEach((file) => {
+          expect(mockUpload).toBeCalledWith(
+            expect.objectContaining({
+              Key: file,
+              CacheControl: undefined
+            })
+          );
+        });
       });
     }
   );
@@ -239,18 +316,18 @@ describe("Custom inputs", () => {
   `(
     "input=inputPublicDirectoryCache, expected=$expectedPublicDirectoryCache",
     ({ publicDirectoryCache, expected }) => {
-      let tmpCwd;
+      let tmpCwd: string;
       const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
       beforeEach(async () => {
         tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
-        mockServerlessComponentDependencies({});
+        mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-        const component = createNextComponent({});
+        const component = createNextComponent();
 
-        componentOutputs = await component({
+        componentOutputs = await component.default({
           publicDirectoryCache
         });
       });
@@ -283,19 +360,17 @@ describe("Custom inputs", () => {
     ]
   ])("Lambda memory input", (inputMemory, expectedMemory) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-    let tmpCwd;
+    let tmpCwd: string;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-      const component = createNextComponent({
-        memory: inputMemory
-      });
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         memory: inputMemory
       });
     });
@@ -335,18 +410,18 @@ describe("Custom inputs", () => {
     ${{ apiLambda: 20 }}                    | ${{ defaultTimeout: 10, apiTimeout: 20 }}
     ${{ defaultLambda: 15, apiLambda: 20 }} | ${{ defaultTimeout: 15, apiTimeout: 20 }}
   `("Input timeout options", ({ inputTimeout, expectedTimeout }) => {
-    let tmpCwd;
+    let tmpCwd: string;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-      const component = createNextComponent({});
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         timeout: inputTimeout
       });
     });
@@ -384,18 +459,18 @@ describe("Custom inputs", () => {
     ${{ apiLambda: "nodejs10.x" }}                              | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs10.x" }}
     ${{ defaultLambda: "nodejs10.x", apiLambda: "nodejs10.x" }} | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
   `("Input runtime options", ({ inputRuntime, expectedRuntime }) => {
-    let tmpCwd;
+    let tmpCwd: string;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-      const component = createNextComponent({});
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         runtime: inputRuntime
       });
     });
@@ -433,18 +508,18 @@ describe("Custom inputs", () => {
     ${{ apiLambda: "fooFunction" }}                               | ${{ defaultName: undefined, apiName: "fooFunction" }}
     ${{ defaultLambda: "fooFunction", apiLambda: "barFunction" }} | ${{ defaultName: "fooFunction", apiName: "barFunction" }}
   `("Lambda name input", ({ inputName, expectedName }) => {
-    let tmpCwd;
+    let tmpCwd: string;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-      const component = createNextComponent({});
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         name: inputName
       });
     });
@@ -486,20 +561,24 @@ describe("Custom inputs", () => {
     [
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "origin-request": "ignored",
             "origin-response": "also ignored"
           }
         }
       },
-      { defaults: { ttl: 500 } }
+      { defaults: { minTTL: 0, defaultTTL: 0, maxTTL: 31536000 } }
     ],
     // allow lamdba@edge triggers other than origin-request and origin-response
     [
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": {
             "viewer-request": "used value"
           }
@@ -507,7 +586,9 @@ describe("Custom inputs", () => {
       },
       {
         defaults: {
-          ttl: 500,
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
           "lambda@edge": { "viewer-request": "used value" }
         }
       }
@@ -528,23 +609,29 @@ describe("Custom inputs", () => {
     [
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-request": "ignored value" }
         }
       },
-      { "api/*": { ttl: 500 } }
+      { "api/*": { minTTL: 500, defaultTTL: 500, maxTTL: 500 } }
     ],
     // allow other lambda@edge triggers on the api cache behaviour
     [
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-response": "used value" }
         }
       },
       {
         "api/*": {
-          ttl: 500,
+          minTTL: 500,
+          defaultTTL: 500,
+          maxTTL: 500,
           "lambda@edge": { "origin-response": "used value" }
         }
       }
@@ -581,7 +668,9 @@ describe("Custom inputs", () => {
     [
       {
         "/terms": {
-          ttl: 5500,
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500,
           "misc-param": "misc-value",
           "lambda@edge": {
             "origin-request": "ignored value"
@@ -590,7 +679,9 @@ describe("Custom inputs", () => {
       },
       {
         "/terms": {
-          ttl: 5500,
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500,
           "misc-param": "misc-value"
         }
       }
@@ -598,17 +689,21 @@ describe("Custom inputs", () => {
     [
       {
         "/customers/stan-sack": {
-          ttl: 5500
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500
         }
       },
       {
         "/customers/stan-sack": {
-          ttl: 5500
+          minTTL: 5500,
+          defaultTTL: 5500,
+          maxTTL: 5500
         }
       }
     ]
   ])("Custom cloudfront inputs", (inputCloudfrontConfig, expectedInConfig) => {
-    let tmpCwd;
+    let tmpCwd: string;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
     const {
       origins = [],
@@ -661,8 +756,18 @@ describe("Custom inputs", () => {
 
     const cloudfrontConfig = {
       defaults: {
-        ttl: 0,
-        allowedHttpMethods: ["HEAD", "GET"],
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
         forward: {
           cookies: "all",
           queryString: true
@@ -676,7 +781,9 @@ describe("Custom inputs", () => {
             ...customPageCacheBehaviours,
             "_next/static/*": {
               ...customPageCacheBehaviours["_next/static/*"],
-              ttl: 86400,
+              minTTL: 0,
+              defaultTTL: 86400,
+              maxTTL: 31536000,
               forward: {
                 headers: "none",
                 cookies: "none",
@@ -684,7 +791,9 @@ describe("Custom inputs", () => {
               }
             },
             "_next/data/*": {
-              ttl: 0,
+              minTTL: 0,
+              defaultTTL: 0,
+              maxTTL: 31536000,
               allowedHttpMethods: ["HEAD", "GET"],
               "lambda@edge": {
                 "origin-request":
@@ -694,12 +803,29 @@ describe("Custom inputs", () => {
               }
             },
             "api/*": {
-              ttl: 0,
+              minTTL: 0,
+              defaultTTL: 0,
+              maxTTL: 31536000,
               ...expectedApiCacheBehaviour
+            },
+            "_next/image*": {
+              minTTL: 0,
+              defaultTTL: 60,
+              maxTTL: 31536000,
+              "lambda@edge": {
+                "origin-request":
+                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+              },
+              forward: {
+                headers: ["Accept"]
+              },
+              allowedHttpMethods: expect.any(Array)
             },
             "static/*": {
               ...customPageCacheBehaviours["static/*"],
-              ttl: 86400,
+              minTTL: 0,
+              defaultTTL: 86400,
+              maxTTL: 31536000,
               forward: {
                 headers: "none",
                 cookies: "none",
@@ -719,11 +845,11 @@ describe("Custom inputs", () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
 
-      const component = createNextComponent({});
+      const component = createNextComponent();
 
-      componentOutputs = await component({
+      componentOutputs = await component.default({
         cloudfront: inputCloudfrontConfig
       });
     });
@@ -743,20 +869,17 @@ describe("Custom inputs", () => {
   describe.each`
     cloudFrontInput                                | expectedErrorMessage
     ${{ "some-invalid-page-route": { ttl: 100 } }} | ${'Could not find next.js pages for "some-invalid-page-route"'}
-    ${{ "/api": { ttl: 100 } }}                    | ${'route "/api" is not supported'}
-    ${{ api: { ttl: 100 } }}                       | ${'route "api" is not supported'}
-    ${{ "api/test": { ttl: 100 } }}                | ${'route "api/test" is not supported'}
   `(
     "Invalid cloudfront inputs",
     ({ cloudFrontInput, expectedErrorMessage }) => {
       const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-      let tmpCwd;
+      let tmpCwd: string;
 
       beforeEach(async () => {
         tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
-        mockServerlessComponentDependencies({});
+        mockServerlessComponentDependencies({ expectedDomain: undefined });
       });
 
       afterEach(() => {
@@ -768,7 +891,7 @@ describe("Custom inputs", () => {
         expect.assertions(1);
 
         try {
-          await createNextComponent({})({
+          await createNextComponent().default({
             cloudfront: cloudFrontInput
           });
         } catch (err) {
@@ -778,15 +901,144 @@ describe("Custom inputs", () => {
     }
   );
 
-  describe("Build using serverless trace target", () => {
-    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
-    let tmpCwd;
+  describe.each`
+    cloudFrontInput                                                  | pathName
+    ${{ api: { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}        | ${"api"}
+    ${{ "api/test": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }} | ${"api/test"}
+    ${{ "api/*": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}    | ${"api/*"}
+  `("API cloudfront inputs", ({ cloudFrontInput, pathName }) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
 
     beforeEach(async () => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({});
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        cloudfront: cloudFrontInput
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`allows setting custom cache behavior: ${JSON.stringify(
+      cloudFrontInput
+    )}`, async () => {
+      cloudFrontInput[pathName]["lambda@edge"] = {
+        "origin-request":
+          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+      };
+
+      // If path is api/*, then it has allowed HTTP methods by default
+      if (pathName === "api/*") {
+        cloudFrontInput[pathName]["allowedHttpMethods"] = [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ];
+      }
+
+      const expectedInput = {
+        origins: [
+          {
+            pathPatterns: {
+              "_next/data/*": {
+                allowedHttpMethods: ["HEAD", "GET"],
+                defaultTTL: 0,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                  "origin-response":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "_next/static/*": {
+                defaultTTL: 86400,
+                forward: {
+                  cookies: "none",
+                  headers: "none",
+                  queryString: false
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "api/*": {
+                allowedHttpMethods: [
+                  "HEAD",
+                  "DELETE",
+                  "POST",
+                  "GET",
+                  "OPTIONS",
+                  "PUT",
+                  "PATCH"
+                ],
+                defaultTTL: 0,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              "_next/image*": {
+                minTTL: 0,
+                defaultTTL: 60,
+                maxTTL: 31536000,
+                "lambda@edge": {
+                  "origin-request":
+                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                },
+                forward: {
+                  headers: ["Accept"]
+                },
+                allowedHttpMethods: expect.any(Array)
+              },
+              "static/*": {
+                defaultTTL: 86400,
+                forward: {
+                  cookies: "none",
+                  headers: "none",
+                  queryString: false
+                },
+                maxTTL: 31536000,
+                minTTL: 0
+              },
+              ...cloudFrontInput
+            },
+            private: true,
+            url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
+          }
+        ]
+      };
+
+      expect(mockCloudFront).toBeCalledWith(
+        expect.objectContaining(expectedInput)
+      );
+    });
+  });
+
+  describe("Build using serverless trace target", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
     });
 
     afterEach(() => {
@@ -795,9 +1047,179 @@ describe("Custom inputs", () => {
     });
 
     it("builds correctly", async () => {
-      await createNextComponent({})({
+      await createNextComponent().default({
         useServerlessTraceTarget: true
       });
+    });
+  });
+
+  describe("Skip deployment after build", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("builds but skips deployment", async () => {
+      const result = await createNextComponent().default({
+        deploy: false
+      });
+
+      expect(result).toEqual({
+        appUrl: "SKIPPED_DEPLOY",
+        bucketName: "SKIPPED_DEPLOY",
+        distributionId: "SKIPPED_DEPLOY"
+      });
+    });
+  });
+
+  describe.each([
+    [undefined, "index.handler"],
+    ["customHandler.handler", "customHandler.handler"]
+  ])("Lambda handler input", (inputHandler, expectedHandler) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+      const component = createNextComponent();
+      componentOutputs = await component.default({ handler: inputHandler });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`sets handler to ${expectedHandler} and api lambda handler to ${expectedHandler}`, () => {
+      // default Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          handler: expectedHandler
+        })
+      );
+
+      // api Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          handler: expectedHandler
+        })
+      );
+    });
+  });
+
+  describe("Miscellaneous CloudFront inputs", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("sets custom comment", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          comment: "a comment"
+        }
+      });
+    });
+
+    it("sets web ACL id for AWS WAF", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          webACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        }
+      });
+    });
+
+    it("sets restrictions", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          restrictions: {
+            geoRestriction: {
+              restrictionType: "blacklist",
+              items: ["AA"]
+            }
+          }
+        }
+      });
+    });
+
+    it("sets certificate with an ACM ARN", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          certificate: {
+            cloudFrontDefaultCertificate: false,
+            acmCertificateArn:
+              "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+          }
+        }
+      });
+    });
+
+    it("sets certificate with an IAM certificate", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          certificate: {
+            cloudFrontDefaultCertificate: false,
+            iamCertificateId: "iam-cert-id"
+          }
+        }
+      });
+    });
+
+    it("sets certificate to default", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          certificate: {
+            cloudFrontDefaultCertificate: true
+          }
+        }
+      });
+    });
+
+    it("sets invalidation paths", async () => {
+      const pathsConfig = ["/foo", "/bar"];
+      await createNextComponent().default({
+        cloudfront: {
+          paths: pathsConfig
+        }
+      });
+      expect(mockCreateInvalidation).toBeCalledWith(
+        expect.objectContaining({ paths: pathsConfig })
+      );
+    });
+
+    it("skips invalidation", async () => {
+      await createNextComponent().default({
+        cloudfront: {
+          paths: []
+        }
+      });
+      expect(mockCreateInvalidation).not.toBeCalled();
     });
   });
 });

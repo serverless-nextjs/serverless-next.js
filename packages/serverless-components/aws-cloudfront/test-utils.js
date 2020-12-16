@@ -25,7 +25,9 @@ module.exports = {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           CacheBehaviors: expect.objectContaining({
-            Items: [expect.objectContaining(cacheBehavior)]
+            Items: expect.arrayContaining([
+              expect.objectContaining(cacheBehavior)
+            ])
           })
         })
       })
@@ -50,6 +52,22 @@ module.exports = {
         DistributionConfig: expect.objectContaining({
           Origins: expect.objectContaining({
             Items: expect.arrayContaining([expect.objectContaining(origin)])
+          })
+        })
+      })
+    );
+  },
+
+  assertHasCustomOriginConfig: (spy, originConfig) => {
+    expect(spy).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Items: expect.arrayContaining([
+              expect.objectContaining({
+                CustomOriginConfig: expect.objectContaining(originConfig)
+              })
+            ])
           })
         })
       })

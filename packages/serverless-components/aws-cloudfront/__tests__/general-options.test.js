@@ -96,6 +96,59 @@ describe("General options propagation", () => {
     );
   });
 
+  it("create distribution with aliases and update it", async () => {
+    await component.default({
+      aliases: ["foo.example.com"],
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Aliases: {
+            Items: ["foo.example.com"],
+            Quantity: 1
+          }
+        })
+      })
+    );
+
+    await component.default({
+      aliases: ["bar.example.com"],
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Aliases: {
+            Items: ["bar.example.com"],
+            Quantity: 1
+          }
+        })
+      })
+    );
+  });
+
+  it("update distribution with undefined aliases does not override existing aliases", async () => {
+    // Create distribution
+    await component.default({ enabled: true, origins });
+
+    // Update distribution
+    await component.default({
+      enabled: false,
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.not.objectContaining({
+          Aliases: expect.anything()
+        })
+      })
+    );
+  });
+
   it("create distribution with priceClass and update it", async () => {
     await component.default({
       priceClass: "PriceClass_All",
@@ -119,6 +172,282 @@ describe("General options propagation", () => {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           PriceClass: "PriceClass_100"
+        })
+      })
+    );
+  });
+
+  it("create distribution with web ACL id and update it", async () => {
+    // Create
+    await component.default({
+      webACLId:
+        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        })
+      })
+    );
+
+    // Update
+    await component.default({
+      webACLId:
+        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        })
+      })
+    );
+  });
+
+  it("create distribution with web ACL id and delete it", async () => {
+    // Create
+    await component.default({
+      webACLId:
+        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId:
+            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        })
+      })
+    );
+
+    // Delete
+    // Per AWS, providing an empty ACLId will remove the WAF association: https://docs.aws.amazon.com/waf/latest/APIReference/API_DisassociateWebACL.html
+    await component.default({
+      webACLId: "",
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          WebACLId: ""
+        })
+      })
+    );
+  });
+
+  it("create distribution with restrictions and updates it", async () => {
+    // Create
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "blacklist",
+          items: ["AA"]
+        }
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "blacklist",
+              Quantity: 1,
+              Items: ["AA"]
+            }
+          }
+        })
+      })
+    );
+
+    // Update
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "blacklist",
+          items: ["ZZ"]
+        }
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "blacklist",
+              Quantity: 1,
+              Items: ["ZZ"]
+            }
+          }
+        })
+      })
+    );
+  });
+
+  it("create distribution with restrictions and deletes it", async () => {
+    // Create
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "blacklist",
+          items: ["AA"]
+        }
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "blacklist",
+              Quantity: 1,
+              Items: ["AA"]
+            }
+          }
+        })
+      })
+    );
+
+    // Delete
+    await component.default({
+      restrictions: {
+        geoRestriction: {
+          restrictionType: "none"
+        }
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Restrictions: {
+            GeoRestriction: {
+              RestrictionType: "none",
+              Quantity: 0
+            }
+          }
+        })
+      })
+    );
+
+    // Restriction items not needed when deleting it
+    expect.objectContaining({
+      DistributionConfig: expect.not.objectContaining({
+        Restrictions: {
+          GeoRestriction: {
+            Items: expect.anything()
+          }
+        }
+      })
+    });
+  });
+
+  it("create distribution with certificate arn and updates it", async () => {
+    // Create
+    await component.default({
+      certificate: {
+        cloudFrontDefaultCertificate: false,
+        acmCertificateArn:
+          "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            CloudFrontDefaultCertificate: false,
+            ACMCertificateArn:
+              "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2019"
+          }
+        })
+      })
+    );
+
+    // Update
+    await component.default({
+      certificate: {
+        cloudFrontDefaultCertificate: false,
+        acmCertificateArn:
+          "arn:aws:acm:us-east-1:123456789012:certificate/updated"
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            CloudFrontDefaultCertificate: false,
+            ACMCertificateArn:
+              "arn:aws:acm:us-east-1:123456789012:certificate/updated",
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2019"
+          }
+        })
+      })
+    );
+  });
+
+  it("create distribution with default certificate", async () => {
+    // Create
+    await component.default({
+      certificate: {
+        cloudFrontDefaultCertificate: true
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            CloudFrontDefaultCertificate: true,
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2019"
+          }
+        })
+      })
+    );
+  });
+
+  it("create distribution with IAM certificate", async () => {
+    // Create
+    await component.default({
+      certificate: {
+        cloudFrontDefaultCertificate: false,
+        iamCertificateId: "12345"
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          ViewerCertificate: {
+            CloudFrontDefaultCertificate: false,
+            IAMCertificateId: "12345",
+            SSLSupportMethod: "sni-only",
+            MinimumProtocolVersion: "TLSv1.2_2019"
+          }
         })
       })
     );

@@ -26,6 +26,10 @@
         "/customers/:catchAll*": {
           "file": "pages/customers/[...catchAll].js",
           "regex": "^/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+        },
+        "/tests/prerender-manifest-fallback/:fallback": {
+          "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
+          "regex": "^/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
         }
       },
       "nonDynamic": {
@@ -36,7 +40,8 @@
         "/_error": "pages/_error.js",
         "/erroredPage": "pages/erroredPage.js",
         "/404": "pages/404.html",
-        "/preview": "pages/preview.js"
+        "/preview": "pages/preview.js",
+        "/async-page": "pages/async-page.js"
       }
     },
     "html": {
@@ -66,7 +71,11 @@
   },
   "publicFiles": {
     "/favicon.ico": "favicon.ico",
-    "/manifest.json": "manifest.json"
+    "/manifest.json": "manifest.json",
+    "/file with spaces.json": "file with spaces.json"
   },
-  "trailingSlash": true
+  "trailingSlash": true,
+  "domainRedirects": {
+    "example.com": "https://www.example.com"
+  }
 }

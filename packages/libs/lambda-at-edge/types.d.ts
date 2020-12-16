@@ -11,12 +11,34 @@ export type DynamicPageKeyValue = {
   };
 };
 
+// Image optimization
+export type ImageConfig = {
+  deviceSizes: number[];
+  imageSizes: number[];
+  loader: "default" | "imgix" | "cloudinary" | "akamai";
+  path: string;
+  domains?: string[];
+};
+
+export type ImagesManifest = {
+  version: number;
+  images: ImageConfig;
+};
+
 export type OriginRequestApiHandlerManifest = {
   apis: {
     dynamic: DynamicPageKeyValue;
     nonDynamic: {
       [key: string]: string;
     };
+  };
+  domainRedirects: {
+    [key: string]: string;
+  };
+  enableHTTPCompression: boolean;
+  authentication?: {
+    username: string;
+    password: string;
   };
 };
 
@@ -41,6 +63,22 @@ export type OriginRequestDefaultHandlerManifest = {
     [key: string]: string;
   };
   trailingSlash: boolean;
+  enableHTTPCompression: boolean;
+  domainRedirects: {
+    [key: string]: string;
+  };
+  authentication?: {
+    username: string;
+    password: string;
+  };
+  canonicalHostname?: string;
+};
+
+export type OriginRequestImageHandlerManifest = {
+  enableHTTPCompression: boolean;
+  domainRedirects: {
+    [key: string]: string;
+  };
 };
 
 export type OriginRequestEvent = {
@@ -85,8 +123,35 @@ export type PreRenderedManifest = {
   };
 };
 
+export type RedirectData = {
+  statusCode: number;
+  source: string;
+  destination: string;
+  regex: string;
+};
+
+export type RewriteData = {
+  source: string;
+  destination: string;
+  regex: string;
+};
+
+export type Header = {
+  key: string;
+  value: string;
+};
+
+export type HeaderData = {
+  source: string;
+  headers: Header[];
+  regex: string;
+};
+
 export type RoutesManifest = {
   basePath: string;
+  redirects: RedirectData[];
+  rewrites: RewriteData[];
+  headers: HeaderData[];
 };
 
 export type PerfLogger = {

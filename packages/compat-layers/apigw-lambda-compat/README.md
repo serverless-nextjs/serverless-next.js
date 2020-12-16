@@ -6,7 +6,7 @@ Lambda Proxy Integration event structure documentation can be found [here](https
 
 ## Installation
 
-`npm install @getjerry/next-aws-lambda`
+`npm install @sls-next/next-aws-lambda`
 
 ## Usage
 
