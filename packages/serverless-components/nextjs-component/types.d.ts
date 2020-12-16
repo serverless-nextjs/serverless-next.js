@@ -14,6 +14,7 @@ export interface LambdaOptions {
 
 export type ServerlessComponentInputs = {
   stage?: string;
+  canonicalHostname?: string;
   build?: BuildOptions | boolean;
   nextConfigDir?: string;
   useServerlessTraceTarget?: boolean;

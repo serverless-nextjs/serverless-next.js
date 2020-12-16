@@ -44,7 +44,8 @@ class NextjsComponent extends Component {
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
     const params = populateNames(inputs);
-    if (inputs.build !== false) {
+
+    if (params.build !== false) {
       await this.build(params);
       await this.postBuild(params);
     }
@@ -220,6 +221,7 @@ class NextjsComponent extends Component {
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
+          canonicalHostname: inputs.canonicalHostname,
           minifyHandlers: inputs.minifyHandlers || false,
           enableHTTPCompression: false,
           handler: inputs.handler
