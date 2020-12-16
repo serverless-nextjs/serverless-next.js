@@ -828,10 +828,18 @@ class Builder {
   }
 
   async build(debugMode?: boolean): Promise<void> {
-    const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
-      defaultBuildOptions,
-      this.buildOptions
-    );
+    const {
+      cmd,
+      args,
+      cwd,
+      env: inputEnv,
+      useServerlessTraceTarget
+    } = Object.assign(defaultBuildOptions, this.buildOptions);
+
+    const env = {
+      ...process.env,
+      ...inputEnv
+    };
 
     await this.cleanupDotNext();
 

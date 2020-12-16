@@ -16,6 +16,7 @@ import {
 } from "@getjerry/s3-static-assets";
 import createInvalidation from "@getjerry/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
+import { populateNames } from "./lib/populate-names";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
@@ -42,12 +43,13 @@ class NextjsComponent extends Component {
   async default(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    const params = populateNames(inputs);
     if (inputs.build !== false) {
-      await this.build(inputs);
-      await this.postBuild(inputs);
+      await this.build(params);
+      await this.postBuild(params);
     }
 
-    return this.deploy(inputs);
+    return this.deploy(params);
   }
 
   readDefaultBuildManifest(

@@ -40,8 +40,8 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
     "@babel/preset-typescript": "^7.10.4",
-    "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
-    "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
+    "@getjerry/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
+    "@getjerry/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.3",
     "@types/react": "^16.9.41",

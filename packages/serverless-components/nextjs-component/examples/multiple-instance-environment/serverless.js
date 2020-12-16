@@ -6,7 +6,7 @@ const { Component } = require("@serverless/core");
 class Deploy extends Component {
   async default(inputs = {}) {
     const { stage } = inputs;
-    if (stage === "staging" || stage === "prod") {
+    if (stage === "stage" || stage === "prod") {
       // Will load env-${stage} as environment variables
       require("dotenv").config({ path: `${__dirname}/env-${stage}` });
 
@@ -24,7 +24,7 @@ class Deploy extends Component {
   // run like so: serverless remove --stage=staging
   async remove(inputs = {}) {
     const { stage } = inputs;
-    if (stage === "staging" || stage === "prod") {
+    if (stage === "stage" || stage === "prod") {
       const template = await this.load("@serverless/template", stage);
       const output = await template.remove();
       return output;
