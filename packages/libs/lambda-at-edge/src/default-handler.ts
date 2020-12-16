@@ -397,9 +397,6 @@ const handleOriginRequest = async ({
 
     addS3HostHeader(request, normalisedS3DomainName);
 
-    console.log("REQUEST FOR STAT:");
-    console.log(request);
-
     return request;
   }
 
@@ -461,9 +458,6 @@ const handleOriginRequest = async ({
 
   setCloudFrontResponseStatus(response, res);
 
-  console.log("RESP FOR SSR:");
-  console.log(response);
-
   return response;
 };
 
@@ -479,11 +473,6 @@ const handleOriginResponse = async ({
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
   const { status } = response;
-
-  console.log("EARLY REQ:");
-  console.log(request);
-  console.log("EARLY RESP:");
-  console.log(response);
 
   if (status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
@@ -504,9 +493,6 @@ const handleOriginResponse = async ({
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
-  console.log("URI:");
-  console.log(uri);
-
   // Lazily import only S3Client to reduce init times until actually needed
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
 
@@ -520,12 +506,8 @@ const handleOriginResponse = async ({
     isDataRequest(uri) &&
     !(pagePath = router(manifest)(uri)).endsWith(".html")
   ) {
-    console.log("is dara req:");
-    console.log(isDataRequest(uri));
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
-    console.log("is sssg:");
-    console.log(page.getStaticProps);
 
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
       event.Records[0].cf,
@@ -533,7 +515,6 @@ const handleOriginResponse = async ({
         enableHTTPCompression: manifest.enableHTTPCompression
       }
     );
-    console.log("==================: 1");
 
     const isSSG = !!page.getStaticProps;
     const { renderOpts, html } = await page.renderReqToHTML(
@@ -542,11 +523,7 @@ const handleOriginResponse = async ({
       "passthrough"
     );
 
-    console.log("==================: 2");
-
     if (isSSG) {
-      console.log("==================: 3");
-
       const s3JsonParams = {
         Bucket: bucketName,
         Key: `${(basePath || "").replace(/^\//, "")}${
@@ -568,10 +545,6 @@ const handleOriginResponse = async ({
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 
-      console.log("PARAMS FOR CREATE PREREN:");
-      console.log(s3JsonParams);
-      console.log(s3HtmlParams);
-
       const { PutObjectCommand } = await import(
         "@aws-sdk/client-s3/commands/PutObjectCommand"
       );
@@ -586,8 +559,6 @@ const handleOriginResponse = async ({
     return await responsePromise;
   } else {
     const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
-    console.log("==================: 4");
-    console.log(hasFallback);
 
     if (!hasFallback) return response;
 
@@ -595,9 +566,6 @@ const handleOriginResponse = async ({
     const s3Key = `${(basePath || "").replace(/^\//, "")}${
       basePath === "" ? "" : "/"
     }static-pages/${manifest.buildId}${hasFallback.fallback || "/404.html"}`;
-
-    console.log("==================: 5");
-    console.log(s3Key);
 
     const { GetObjectCommand } = await import(
       "@aws-sdk/client-s3/commands/GetObjectCommand"
@@ -609,9 +577,6 @@ const handleOriginResponse = async ({
       Bucket: bucketName,
       Key: s3Key
     };
-
-    console.log("PARAMS FOR FALLB:");
-    console.log(s3Params);
 
     const { Body, CacheControl } = await s3.send(
       new GetObjectCommand(s3Params)
