@@ -3,8 +3,8 @@ next-app:
   inputs:
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
-    imageOptimizer: true
     cloudfront:
-      defaults:
-        forward:
-          headers: [Accept] # Needed for image optimizer
+      _next/static/*:
+        defaultTTL: 0
+        minTTL: 0
+        maxTTL: 0

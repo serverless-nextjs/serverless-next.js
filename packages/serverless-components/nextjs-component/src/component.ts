@@ -629,12 +629,16 @@ class NextjsComponent extends Component {
       };
 
       // here we are removing configs that cannot be overridden
-      if (path === this.pathPattern("api/*", routesManifest)) {
-        // for "api/*" we need to make sure we aren't overriding the predefined lambda handler
+      if (
+        path === this.pathPattern("api/*", routesManifest) ||
+        path === this.pathPattern("_next/image*", routesManifest)
+      ) {
+        // for "api/*" or "_next/image*" we need to make sure we aren't overriding the predefined lambda handler
+        // Since these are using special API or Image handlers
         // delete is idempotent so it's safe
         delete edgeConfig["origin-request"];
-      } else if (!["static/*", "_next/*"].includes(path)) {
-        // for everything but static/* and _next/* we want to ensure that they are pointing at our lambda
+      } else if (!["static/*", "_next/static/*", "_next/*"].includes(path)) {
+        // for everything but _next/static/*, static/* and _next/* we want to ensure that they are pointing at the default lambda
         edgeConfig[
           "origin-request"
         ] = `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`;
