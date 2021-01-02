@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.21...@sls-next/serverless-component@1.19.0-alpha.22) (2021-01-02)
+
+### Bug Fixes
+
+- **nextjs-component:** don't override \_next/image* and \_next/static/* origin request lambda with the default lambda ([#859](https://github.com/serverless-nextjs/serverless-next.js/issues/859)) ([20e513c](https://github.com/serverless-nextjs/serverless-next.js/commit/20e513cb736c1aada5dd670c13a366626a9d4f22))
+
 # [1.19.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.20...@sls-next/serverless-component@1.19.0-alpha.21) (2020-12-11)
 
 **Note:** Version bump only for package @sls-next/serverless-component
