@@ -10,12 +10,22 @@ import {
   CloudFrontOrigin,
   CloudFrontRequest,
   CloudFrontResultResponse,
-  CloudFrontS3Origin
+  CloudFrontS3Origin,
+  Context
 } from "aws-lambda";
+
+import { CloudFrontClient } from "@aws-sdk/client-cloudfront/CloudFrontClient";
+import { LambdaClient } from "@aws-sdk/client-lambda/LambdaClient";
+import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { S3Client } from "@aws-sdk/client-s3/S3Client";
+
+import { InvokeCommand } from "@aws-sdk/client-lambda";
+
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestEvent,
   OriginResponseEvent,
+  RevalidationEvent,
   PerfLogger,
   PreRenderedManifest as PrerenderManifestType,
   RoutesManifest
@@ -37,8 +47,34 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
+import { createETag } from "./lib/etag";
+import { ResourceService } from "./services/resource.service";
+import { CloudFrontService } from "./services/cloudfront.service";
+import { S3Service } from "./services/s3.service";
+import { RevalidateHandler } from "./handler/revalidate.handler";
+import { RenderService } from "./services/render.service";
+
+process.env.PRERENDER = "true";
+
+const DEBUG = true;
+
+const resourceService = new ResourceService(
+  Manifest,
+  PrerenderManifest,
+  RoutesManifestJson
+);
+
+const lambda = new LambdaClient({ region: "us-east-1" });
 
 const basePath = RoutesManifestJson.basePath;
+
+function debug(message: string): void {
+  if (!DEBUG) {
+    return;
+  }
+
+  console.log(message);
+}
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -154,9 +190,157 @@ const router = (
   };
 };
 
+/**
+ * Stale revalidate
+ */
+interface RevalidationInterface {
+  [key: string]: Date;
+}
+const REVALIDATE_IN =
+  PrerenderManifest.routes["/"]?.initialRevalidateSeconds || 20;
+
+const REVALIDATIONS: RevalidationInterface = {};
+
+const isStale = (key: string, revalidateIn = REVALIDATE_IN) => {
+  debug(`[isStale] revalidateIn: ${revalidateIn}`);
+
+  if (!revalidateIn) {
+    return false;
+  }
+
+  debug(`[isStale] Now: ${new Date()}`);
+  debug(`[isStale] REVALIDATIONS[key] before set: ${REVALIDATIONS[key]}`);
+
+  if (!REVALIDATIONS[key]) {
+    setStaleIn(key, revalidateIn);
+  }
+
+  debug(`[isStale] REVALIDATIONS[key] after set: ${REVALIDATIONS[key]}`);
+
+  debug(
+    `[isStale] REVALIDATIONS[key] < new Date(): ${
+      REVALIDATIONS[key] < new Date()
+    }`
+  );
+
+  return REVALIDATIONS[key] < new Date();
+};
+
+const setStaleIn = (key: string, seconds: number): void => {
+  const revalidateAt = new Date();
+  revalidateAt.setSeconds(revalidateAt.getSeconds() + seconds);
+  REVALIDATIONS[key] = revalidateAt;
+};
+
+const runRevalidation = async (
+  event: RevalidationEvent,
+  context: Context
+): Promise<void> => {
+  const functionName = context.functionName.split(".").pop();
+  const enc = new TextEncoder();
+  const params = {
+    FunctionName: functionName,
+    InvocationType: "Event",
+    Payload: enc.encode(JSON.stringify(event)),
+    Qualifier: context.functionVersion
+  };
+  debug(`[revalidation] invoke: ${JSON.stringify(params)}`);
+  lambda.send(new InvokeCommand(params));
+  debug("[revalidation] invoked");
+  return;
+};
+
+const handleRevalidation = async ({
+  event,
+  manifest,
+  prerenderManifest,
+  context
+}: {
+  event: OriginResponseEvent;
+  manifest: OriginRequestDefaultHandlerManifest;
+  prerenderManifest: PrerenderManifestType;
+  context: Context;
+}): Promise<void> => {
+  console.log("[revalidation-function] Processing revalidation...");
+  console.log(`[revalidation-function] event: ${JSON.stringify(event)}`);
+  // const response = event.Records[0].cf.response;
+  const request = event.Records[0].cf.request;
+  const uri = normaliseUri(request.uri);
+  const canonicalUrl = decodeURI(uri)
+    .replace(`${basePath}`, "")
+    .replace(`/_next/data/`, "")
+    .replace(`${manifest.buildId}/`, "")
+    .replace(".json", "")
+    .replace(".html", "");
+
+  const htmlKey = `${(basePath || "").replace(/^\//, "")}${
+    !basePath ? "" : "/"
+  }static-pages/${manifest.buildId}/${decodeURI(canonicalUrl)}.html`;
+  const jsonKey = `${(basePath || "").replace(/^\//, "")}${
+    !basePath ? "" : "/"
+  }_next/data/${manifest.buildId}/${decodeURI(canonicalUrl)}.json`;
+
+  // get heads from s3
+  const { domainName, region } = request.origin!.s3!;
+  const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+
+  console.log(`[revalidation-function] normalized uri: ${uri}`);
+  console.log(`[revalidation-function] canonical key: ${canonicalUrl}`);
+  console.log(`[revalidation-function] html key: ${htmlKey}`);
+  console.log(`[revalidation-function] json key: ${jsonKey}`);
+  console.log(`[revalidation-function] bucket name: ${bucketName}`);
+
+  const s3 = new S3Client({
+    // region,
+    maxAttempts: 3,
+    retryStrategy: await buildS3RetryStrategy()
+  });
+
+  const { HeadObjectCommand } = await import(
+    "@aws-sdk/client-s3/commands/HeadObjectCommand"
+  );
+  const getStream = await import("get-stream");
+
+  const htmlHead = await s3.send(
+    new HeadObjectCommand({
+      Bucket: bucketName,
+      Key: htmlKey
+    })
+  );
+
+  const jsonHead = await s3.send(
+    new HeadObjectCommand({
+      Bucket: bucketName,
+      Key: jsonKey
+    })
+  );
+
+  console.log(`[revalidation-function] html head resp: ${htmlHead}`);
+  console.log(`[revalidation-function] json head resp: ${jsonHead}`);
+
+  // const bodyString = await getStream.default(Body as Readable);
+
+  // render page
+
+  // calculate etags
+
+  const etag = createETag().update("test").digest();
+
+  console.log(`[revalidation-function] etag: ${etag}`);
+  // assert both or none etags differ
+
+  // if etags differ:
+
+  // -- put updated files to s3
+
+  // -- invalidate html and json path
+  return;
+};
+
 export const handler = async (
-  event: OriginRequestEvent | OriginResponseEvent
-): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
+  event: OriginRequestEvent | OriginResponseEvent | RevalidationEvent,
+  context: Context
+): Promise<CloudFrontResultResponse | CloudFrontRequest | void> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   let response: CloudFrontResultResponse | CloudFrontRequest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
@@ -166,18 +350,49 @@ export const handler = async (
 
   const tHandlerBegin = now();
 
+  if (event.revalidate) {
+    const { domainName, region } = event.Records[0].cf.request.origin!.s3!;
+    const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+
+    const renderService = new RenderService(event);
+    const s3Service = new S3Service(
+      new S3Client({
+        region,
+        maxAttempts: 3,
+        retryStrategy: await buildS3RetryStrategy()
+      }),
+      { bucketName, domainName, region }
+    );
+    const cloudfrontService = new CloudFrontService(new CloudFrontClient({}), {
+      distributionId: manifest.distributionId
+    });
+
+    const handler = new RevalidateHandler(
+      resourceService,
+      renderService,
+      s3Service,
+      cloudfrontService
+    );
+    await handler.run(event, context);
+    return;
+  }
+
   if (isOriginResponse(event)) {
+    debug(`[origin-response] event: ${JSON.stringify(event)}`);
     response = await handleOriginResponse({
       event,
       manifest,
-      prerenderManifest
+      prerenderManifest,
+      context
     });
   } else {
+    debug(`[origin-request] event: ${JSON.stringify(event)}`);
     response = await handleOriginRequest({
       event,
       manifest,
       prerenderManifest,
-      routesManifest
+      routesManifest,
+      context
     });
   }
 
@@ -197,6 +412,8 @@ export const handler = async (
 
   log("handler execution time", tHandlerBegin, tHandlerEnd);
 
+  debug(`[origin] final response: ${JSON.stringify(response)}`);
+
   return response;
 };
 
@@ -210,9 +427,9 @@ const handleOriginRequest = async ({
   manifest: OriginRequestDefaultHandlerManifest;
   prerenderManifest: PrerenderManifestType;
   routesManifest: RoutesManifest;
+  context?: Context;
 }) => {
   const request = event.Records[0].cf.request;
-
   // Handle basic auth
   const authorization = request.headers.authorization;
   const unauthResponse = getUnauthenticatedResponse(
@@ -336,7 +553,7 @@ const handleOriginRequest = async ({
   }
 
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
-  const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
+  const isPrerenderedPage = prerenderManifest.routes[decodedUri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
@@ -367,15 +584,19 @@ const handleOriginRequest = async ({
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
+      debug(`[origin-request] is html of fallback, uri: ${request.uri}`);
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
       const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
+      console.log(normalisedDataRequestUri);
       const pagePath = router(manifest)(normalisedDataRequestUri);
-
+      console.log(pagePath);
+      debug(`[origin-request] is json, uri: ${request.uri}`);
       if (pagePath === "pages/404.html") {
         // Request static 404 page from s3
         s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
         request.uri = pagePath.replace("pages", "");
+        debug(`[origin-request] is 404, uri: ${request.uri}`);
       } else if (
         pagePath === "pages/_error.js" ||
         (!prerenderManifest.routes[normalisedDataRequestUri] &&
@@ -402,10 +623,16 @@ const handleOriginRequest = async ({
 
   const pagePath = router(manifest)(uri);
 
+  debug(
+    `[origin-request] [ssr] start ssr for uri: uri: ${request.uri}, pagePath: ${pagePath}`
+  );
+
   if (pagePath.endsWith(".html") && !isPreviewRequest) {
     s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
+
+    debug(`[origin-request] [ssr] html response: ${JSON.stringify(request)}`);
 
     return request;
   }
@@ -437,7 +664,11 @@ const handleOriginRequest = async ({
         res,
         "passthrough"
       );
+
       res.setHeader("Content-Type", "application/json");
+
+      debug(`[origin-request] [ssr] json response: ${JSON.stringify(res)}`);
+
       res.end(JSON.stringify(renderOpts.pageData));
     } else {
       await Promise.race([page.render(req, res), responsePromise]);
@@ -464,37 +695,68 @@ const handleOriginRequest = async ({
 const handleOriginResponse = async ({
   event,
   manifest,
-  prerenderManifest
+  prerenderManifest,
+  context
 }: {
   event: OriginResponseEvent;
   manifest: OriginRequestDefaultHandlerManifest;
   prerenderManifest: PrerenderManifestType;
+  context: Context;
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
   const { status } = response;
 
-  if (status !== "403") {
-    // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (request.uri === "/404.html") {
-      response.status = "404";
-      response.statusDescription = "Not Found";
-    }
-
-    return response;
-  }
+  const uri = normaliseUri(request.uri);
+  const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
+  const isHTMLPage = prerenderManifest.routes[decodeURI(uri)];
+  const isPreview = isValidPreviewRequest(
+    request.headers.cookie,
+    prerenderManifest.preview.previewModeSigningKey
+  );
 
   // For PUT or DELETE just return the response as these should be unsupported S3 methods
   if (request.method === "PUT" || request.method === "DELETE") {
     return response;
   }
 
-  const uri = normaliseUri(request.uri);
+  if (status !== "403") {
+    debug(`[origin-response] bypass: ${request.uri}`);
+
+    // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
+    if (request.uri === "/404.html") {
+      response.status = "404";
+      response.statusDescription = "Not Found";
+    } else {
+      const revalidationKey = decodeURI(uri)
+        .replace(`_next/data/`, "")
+        .replace(`${manifest.buildId}/`, "")
+        .replace(".json", "")
+        .replace(".html", "");
+
+      debug(`[origin-response] revalidationKey: ${revalidationKey}`);
+      debug(`[origin-response] isData: ${isDataRequest(uri)}`);
+      debug(`[origin-response] isHtml: ${isHTMLPage}`);
+      debug(`[origin-response] isFallback: ${hasFallback}`);
+
+      if (
+        (isHTMLPage || hasFallback || isDataRequest(uri)) &&
+        !isPreview &&
+        isStale(revalidationKey)
+      ) {
+        await runRevalidation({ ...event, revalidate: true }, context);
+        setStaleIn(revalidationKey, REVALIDATE_IN);
+      }
+    }
+
+    return response;
+  }
+
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
   // Lazily import only S3Client to reduce init times until actually needed
-  const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+  //const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
 
   const s3 = new S3Client({
     region,
@@ -523,12 +785,18 @@ const handleOriginResponse = async ({
       "passthrough"
     );
 
+    debug(
+      `[origin-response] rendered page, uri: ${uri}, pagePath: ${pagePath}, opts: ${JSON.stringify(
+        renderOpts
+      )}, html: ${JSON.stringify(html)}`
+    );
+
     if (isSSG) {
       const s3JsonParams = {
         Bucket: bucketName,
         Key: `${(basePath || "").replace(/^\//, "")}${
           basePath === "" ? "" : "/"
-        }${uri.replace(/^\//, "")}`,
+        }${decodeURI(uri.replace(/^\//, ""))}`,
         Body: JSON.stringify(renderOpts.pageData),
         ContentType: "application/json",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
@@ -537,39 +805,52 @@ const handleOriginResponse = async ({
         Bucket: bucketName,
         Key: `${(basePath || "").replace(/^\//, "")}${
           basePath === "" ? "" : "/"
-        }static-pages/${manifest.buildId}/${normaliseUri(request.uri)
-          .replace(`/_next/data/${manifest.buildId}/`, "")
+        }static-pages/${manifest.buildId}/${decodeURI(normaliseUri(request.uri))
+          .replace(`/_next/data/`, "")
+          .replace(`${manifest.buildId}/`, "")
           .replace(".json", ".html")}`,
         Body: html,
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 
-      const { PutObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/PutObjectCommand"
-      );
+      debug(region);
+      debug(bucketName);
+      debug(JSON.stringify(s3HtmlParams));
+      debug(JSON.stringify(s3JsonParams));
+
+      // const { PutObjectCommand } = await import(
+      //   "@aws-sdk/client-s3/commands/PutObjectCommand"
+      // );
       await Promise.all([
         s3.send(new PutObjectCommand(s3JsonParams)),
         s3.send(new PutObjectCommand(s3HtmlParams))
       ]);
+      debug(`[origin-response] created json: ${JSON.stringify(s3JsonParams)}`);
+      debug(`[origin-response] created html: ${JSON.stringify(s3HtmlParams)}`);
     }
     res.writeHead(200, response.headers as any);
     res.setHeader("Content-Type", "application/json");
     res.end(JSON.stringify(renderOpts.pageData));
-    return await responsePromise;
+    const jsonOut = await responsePromise;
+    debug(`[origin-response] responded with json: ${JSON.stringify(jsonOut)}`);
+    return jsonOut;
   } else {
-    const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
-
-    if (!hasFallback) return response;
+    if (!hasFallback) {
+      debug(`[origin-response] fallback bypass: ${JSON.stringify(response)}`);
+      return response;
+    }
 
     // If route has fallback, return that page from S3, otherwise return 404 page
     const s3Key = `${(basePath || "").replace(/^\//, "")}${
       basePath === "" ? "" : "/"
     }static-pages/${manifest.buildId}${hasFallback.fallback || "/404.html"}`;
 
-    const { GetObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/GetObjectCommand"
-    );
+    debug(`[origin-response] has fallback: ${JSON.stringify(hasFallback)}`);
+
+    // const { GetObjectCommand } = await import(
+    //   "@aws-sdk/client-s3/commands/GetObjectCommand"
+    // );
     // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
     const getStream = await import("get-stream");
 
@@ -583,7 +864,7 @@ const handleOriginResponse = async ({
     );
     const bodyString = await getStream.default(Body as Readable);
 
-    return {
+    const out = {
       status: hasFallback.fallback ? "200" : "404",
       statusDescription: hasFallback.fallback ? "OK" : "Not Found",
       headers: {
@@ -607,6 +888,8 @@ const handleOriginResponse = async ({
       },
       body: bodyString
     };
+    debug(`[origin-response] fallback response: ${JSON.stringify(out)}`);
+    return out;
   }
 };
 

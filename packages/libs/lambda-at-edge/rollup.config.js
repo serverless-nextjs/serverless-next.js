@@ -11,7 +11,13 @@ const LOCAL_EXTERNALS = [
   "./prerender-manifest.json",
   "./images-manifest.json"
 ];
-const NPM_EXTERNALS = ["aws-lambda", "aws-sdk/clients/s3"];
+const NPM_EXTERNALS = [
+  "aws-lambda",
+  "aws-sdk/clients/s3"
+  // "@aws-sdk/client-lambda",
+  // "@aws-sdk/client-s3",
+  // "@aws-sdk/client-cloudfront"
+];
 
 const generateConfig = (input) => ({
   input: `./src/${input.filename}.ts`,
@@ -23,7 +29,7 @@ const generateConfig = (input) => ({
     json(),
     commonjs(),
     externals({
-      exclude: "@getjerry/next-aws-cloudfront"
+      exclude: ["@getjerry/next-aws-cloudfront"]
     }),
     nodeResolve(),
     typescript({
@@ -43,9 +49,9 @@ const generateConfig = (input) => ({
 
 export default [
   { filename: "default-handler", minify: false },
-  { filename: "default-handler", minify: true },
+  // { filename: "default-handler", minify: true },
   { filename: "api-handler", minify: false },
-  { filename: "api-handler", minify: true },
-  { filename: "image-handler", minify: false },
-  { filename: "image-handler", minify: true }
+  // { filename: "api-handler", minify: true },
+  { filename: "image-handler", minify: false }
+  // { filename: "image-handler", minify: true }
 ].map(generateConfig);

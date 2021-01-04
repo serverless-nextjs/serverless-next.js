@@ -49,7 +49,7 @@ class AwsLambda extends Component {
     const config = mergeDeepRight(defaults, inputs);
 
     if (config.role && !config.role.name) {
-      config.role.name = `${config.name}-role`;
+      config.role.name = `${config.name}-lambda-role`;
     }
 
     this.context.debug(

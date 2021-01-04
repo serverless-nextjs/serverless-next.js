@@ -52,6 +52,7 @@ type BuildOptions = {
   ) => string | string[];
   baseDir?: string;
   canonicalHostname?: string;
+  distributionId: string;
 };
 
 const defaultBuildOptions = {
@@ -66,7 +67,8 @@ const defaultBuildOptions = {
   enableHTTPCompression: true,
   authentication: undefined,
   resolve: undefined,
-  baseDir: process.cwd()
+  baseDir: process.cwd(),
+  distributionId: ""
 };
 
 class Builder {
@@ -497,6 +499,7 @@ class Builder {
       domainRedirects: domainRedirects,
       authentication: authentication,
       canonicalHostname: this.buildOptions.canonicalHostname,
+      distributionId: this.buildOptions.distributionId,
       enableHTTPCompression
     };
 

@@ -222,6 +222,8 @@ class NextjsComponent extends Component {
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
           canonicalHostname: inputs.canonicalHostname,
+          //TODO make it work without distributionId specified
+          distributionId: inputs.cloudfront?.distributionId,
           minifyHandlers: inputs.minifyHandlers || false,
           enableHTTPCompression: false,
           handler: inputs.handler
@@ -462,6 +464,16 @@ class NextjsComponent extends Component {
         },
         {
           Effect: "Allow",
+          Resource: "*",
+          Action: ["lambda:InvokeFunction"]
+        },
+        {
+          Effect: "Allow",
+          Resource: "*",
+          Action: ["cloudfront:CreateInvalidation"]
+        },
+        {
+          Effect: "Allow",
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
           Action: ["s3:GetObject", "s3:PutObject"]
         }
@@ -621,7 +633,7 @@ class NextjsComponent extends Component {
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
     ] = {
-      cachePolicyId: dynamicCachePolicyId,
+      cachePolicyId: cloudFrontDefaultsInputs.cachePolicyId,
       originRequestPolicyId: dynamicOriginRequestPolicyId,
       minTTL: 0,
       defaultTTL: 0,

@@ -44,6 +44,7 @@ export type OriginRequestApiHandlerManifest = {
 
 export type OriginRequestDefaultHandlerManifest = {
   buildId: string;
+  distributionId: string;
   logLambdaExecutionTimes: boolean;
   pages: {
     ssr: {
@@ -81,13 +82,22 @@ export type OriginRequestImageHandlerManifest = {
   };
 };
 
+export type RevalidationEvent = {
+  revalidate?: boolean;
+  Records: [
+    { cf: { request: CloudFrontRequest; config: CloudFrontEvent["config"] } }
+  ];
+};
+
 export type OriginRequestEvent = {
+  revalidate?: boolean;
   Records: [
     { cf: { request: CloudFrontRequest; config: CloudFrontEvent["config"] } }
   ];
 };
 
 export type OriginResponseEvent = {
+  revalidate?: boolean;
   Records: [
     {
       cf: {

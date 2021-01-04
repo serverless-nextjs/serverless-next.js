@@ -72,7 +72,7 @@ distribution:
         cookies: ['my-cookie]
         queryString: true
         queryStringCacheKeys: ['queryKey']
-      viewerProtocolPolicy: 'https-only' # optional
+      viewerProtocolPolicy: 'redirect-to-https' # optional
       smoothStreaming: true # optional
       compress: true # optional
       fieldLevelEncryptionId: '123' # optional

@@ -14,7 +14,8 @@ async function main(args: string[]) {
     cmd: "./node_modules/.bin/next",
     cwd: process.cwd(),
     env: {},
-    args: ["build"]
+    args: ["build"],
+    distributionId: ""
   });
 
   await builder.build();
