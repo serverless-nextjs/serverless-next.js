@@ -4,10 +4,6 @@ next-app:
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
     cloudfront:
-      _next/static/*:
-        defaultTTL: 0
-        minTTL: 0
-        maxTTL: 0
       defaults:
         forward:
           headers: [Authorization]
