@@ -114,6 +114,7 @@ describe("Rewrites Tests", () => {
         path: "/api/external-rewrite",
         expectedRewrite: "https://api.github.com",
         method: "POST",
+        body: '{ "hello": "world" }', // Check that body can passed to external rewrite
         expectedStatus: 404
       },
       {
@@ -121,6 +122,7 @@ describe("Rewrites Tests", () => {
         expectedRewrite:
           "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
         method: "GET",
+        body: undefined,
         expectedStatus: 200
       },
       {
@@ -128,6 +130,7 @@ describe("Rewrites Tests", () => {
         expectedRewrite:
           "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
         method: "GET",
+        body: undefined,
         expectedStatus: 200
       },
       {
@@ -135,6 +138,7 @@ describe("Rewrites Tests", () => {
         expectedRewrite:
           "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
         method: "GET",
+        body: undefined,
         expectedStatus: 200
       },
       {
@@ -142,9 +146,10 @@ describe("Rewrites Tests", () => {
         expectedRewrite:
           "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
         method: "GET",
+        body: undefined,
         expectedStatus: 200
       }
-    ].forEach(({ path, expectedRewrite, method, expectedStatus }) => {
+    ].forEach(({ path, expectedRewrite, method, body, expectedStatus }) => {
       const headers = Cypress.env("GITHUB_TOKEN")
         ? { Authorization: `Bearer ${Cypress.env("GITHUB_TOKEN")}` }
         : undefined;
@@ -153,6 +158,7 @@ describe("Rewrites Tests", () => {
         cy.request({
           url: path,
           method: method,
+          body: body,
           failOnStatusCode: false,
           headers: headers
         }).then((response) => {
@@ -160,6 +166,7 @@ describe("Rewrites Tests", () => {
           cy.request({
             url: expectedRewrite,
             method: method,
+            body: body,
             failOnStatusCode: false,
             headers: headers
           }).then((rewriteResponse) => {
