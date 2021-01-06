@@ -1,5 +1,6 @@
 import { CloudFrontClient } from "@aws-sdk/client-cloudfront/CloudFrontClient";
 import { CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
+import { debug } from "../lib/console";
 
 interface CloudFrontServiceOptions {
   distributionId: string;
@@ -15,7 +16,9 @@ export class CloudFrontService {
     if (!this.options.distributionId) {
       throw new Error("Distribution id is not provided");
     }
-    await this.client.send(
+    debug(`[cloudfront] Invalidate paths: ${JSON.stringify(paths)}`);
+
+    const res = await this.client.send(
       new CreateInvalidationCommand({
         DistributionId: this.options.distributionId,
         InvalidationBatch: {

@@ -1,5 +1,6 @@
 import lambdaAtEdgeCompat from "@getjerry/next-aws-cloudfront";
 import { createETag } from "../lib/etag";
+import { debug } from "../lib/console";
 
 class Page {
   constructor(
@@ -27,7 +28,12 @@ class Page {
 export class RenderService {
   constructor(private readonly event: any) {}
 
-  public async getPage(pagePath?: string): Promise<Page | undefined> {
+  public async getPage(
+    pagePath?: string,
+    rewrittenUri?: string
+  ): Promise<Page | undefined> {
+    debug(`[render] Page path: ${pagePath}`);
+
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
 
@@ -36,7 +42,8 @@ export class RenderService {
     }
 
     const { req, res } = lambdaAtEdgeCompat(this.event.Records[0].cf, {
-      enableHTTPCompression: false
+      enableHTTPCompression: false,
+      rewrittenUri
     });
 
     const { renderOpts, html } = await page.renderReqToHTML(
@@ -44,6 +51,9 @@ export class RenderService {
       res,
       "passthrough"
     );
+
+    debug(`[render] Rendered HTML: ${html}`);
+    debug(`[render] Rendered options: ${JSON.stringify(renderOpts)}`);
 
     return new Page(renderOpts.pageData, html);
   }

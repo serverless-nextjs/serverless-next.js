@@ -39,7 +39,7 @@ export class Resource {
   public getHtmlKey(): string {
     return `${(this.basePath || "").replace(/^\//, "")}${
       !this.basePath ? "" : "/"
-    }static-pages/${this.buildId}/${this.getCanonicalUri()}.html`;
+    }static-pages/${this.buildId}${this.getCanonicalUri()}.html`;
   }
 
   public getHtmlUri(): string {
@@ -49,7 +49,7 @@ export class Resource {
   public getJsonKey(): string {
     return `${(this.basePath || "").replace(/^\//, "")}${
       !this.basePath ? "" : "/"
-    }_next/data/${this.buildId}/${this.getCanonicalUri()}.json`;
+    }_next/data/${this.buildId}${this.getCanonicalUri()}.json`;
   }
 
   public getJsonUri(): string {

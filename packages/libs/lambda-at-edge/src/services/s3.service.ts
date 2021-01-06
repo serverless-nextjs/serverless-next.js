@@ -1,5 +1,9 @@
 import { S3Client } from "@aws-sdk/client-s3/S3Client";
-import { PutObjectCommand, PutObjectCommandOutput } from "@aws-sdk/client-s3";
+import {
+  PutObjectCommand,
+  HeadObjectCommand,
+  HeadObjectCommandOutput
+} from "@aws-sdk/client-s3";
 
 interface S3ServiceOptions {
   bucketName?: string;
@@ -8,9 +12,9 @@ interface S3ServiceOptions {
 }
 
 class S3Header {
-  header: PutObjectCommandOutput;
+  header: HeadObjectCommandOutput;
 
-  constructor(header: PutObjectCommandOutput) {
+  constructor(header: HeadObjectCommandOutput) {
     this.header = header;
   }
 
@@ -32,14 +36,18 @@ export class S3Service {
     if (!key) {
       throw new Error("Key is not provided");
     }
-    return new S3Header(
-      await this.client.send(
-        new PutObjectCommand({
+
+    try {
+      const headOutput = await this.client.send(
+        new HeadObjectCommand({
           Bucket: this.options.bucketName,
           Key: key
         })
-      )
-    );
+      );
+      return new S3Header(headOutput);
+    } catch (e) {
+      return new S3Header({ $metadata: {}, ETag: undefined });
+    }
   }
 
   public async putObject(key: string, body: string): Promise<void> {

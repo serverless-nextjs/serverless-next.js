@@ -53,10 +53,9 @@ import { CloudFrontService } from "./services/cloudfront.service";
 import { S3Service } from "./services/s3.service";
 import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
+import { debug } from "./lib/console";
 
 process.env.PRERENDER = "true";
-
-const DEBUG = true;
 
 const resourceService = new ResourceService(
   Manifest,
@@ -67,14 +66,6 @@ const resourceService = new ResourceService(
 const lambda = new LambdaClient({ region: "us-east-1" });
 
 const basePath = RoutesManifestJson.basePath;
-
-function debug(message: string): void {
-  if (!DEBUG) {
-    return;
-  }
-
-  console.log(message);
-}
 
 const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -213,6 +204,7 @@ const isStale = (key: string, revalidateIn = REVALIDATE_IN) => {
 
   if (!REVALIDATIONS[key]) {
     setStaleIn(key, revalidateIn);
+    return true;
   }
 
   debug(`[isStale] REVALIDATIONS[key] after set: ${REVALIDATIONS[key]}`);
@@ -261,8 +253,8 @@ const handleRevalidation = async ({
   prerenderManifest: PrerenderManifestType;
   context: Context;
 }): Promise<void> => {
-  console.log("[revalidation-function] Processing revalidation...");
-  console.log(`[revalidation-function] event: ${JSON.stringify(event)}`);
+  debug("[revalidation-function] Processing revalidation...");
+  debug(`[revalidation-function] event: ${JSON.stringify(event)}`);
   // const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
   const uri = normaliseUri(request.uri);
@@ -284,11 +276,11 @@ const handleRevalidation = async ({
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
-  console.log(`[revalidation-function] normalized uri: ${uri}`);
-  console.log(`[revalidation-function] canonical key: ${canonicalUrl}`);
-  console.log(`[revalidation-function] html key: ${htmlKey}`);
-  console.log(`[revalidation-function] json key: ${jsonKey}`);
-  console.log(`[revalidation-function] bucket name: ${bucketName}`);
+  debug(`[revalidation-function] normalized uri: ${uri}`);
+  debug(`[revalidation-function] canonical key: ${canonicalUrl}`);
+  debug(`[revalidation-function] html key: ${htmlKey}`);
+  debug(`[revalidation-function] json key: ${jsonKey}`);
+  debug(`[revalidation-function] bucket name: ${bucketName}`);
 
   const s3 = new S3Client({
     // region,
@@ -315,8 +307,8 @@ const handleRevalidation = async ({
     })
   );
 
-  console.log(`[revalidation-function] html head resp: ${htmlHead}`);
-  console.log(`[revalidation-function] json head resp: ${jsonHead}`);
+  debug(`[revalidation-function] html head resp: ${htmlHead}`);
+  debug(`[revalidation-function] json head resp: ${jsonHead}`);
 
   // const bodyString = await getStream.default(Body as Readable);
 
@@ -326,7 +318,7 @@ const handleRevalidation = async ({
 
   const etag = createETag().update("test").digest();
 
-  console.log(`[revalidation-function] etag: ${etag}`);
+  debug(`[revalidation-function] etag: ${etag}`);
   // assert both or none etags differ
 
   // if etags differ:
@@ -588,9 +580,7 @@ const handleOriginRequest = async ({
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
       const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
-      console.log(normalisedDataRequestUri);
       const pagePath = router(manifest)(normalisedDataRequestUri);
-      console.log(pagePath);
       debug(`[origin-request] is json, uri: ${request.uri}`);
       if (pagePath === "pages/404.html") {
         // Request static 404 page from s3
@@ -714,6 +704,7 @@ const handleOriginResponse = async ({
     request.headers.cookie,
     prerenderManifest.preview.previewModeSigningKey
   );
+  const isPublicFile = manifest.publicFiles[decodeURI(uri)];
 
   // For PUT or DELETE just return the response as these should be unsupported S3 methods
   if (request.method === "PUT" || request.method === "DELETE") {
@@ -742,6 +733,7 @@ const handleOriginResponse = async ({
       if (
         (isHTMLPage || hasFallback || isDataRequest(uri)) &&
         !isPreview &&
+        !isPublicFile &&
         isStale(revalidationKey)
       ) {
         await runRevalidation({ ...event, revalidate: true }, context);

@@ -698,6 +698,7 @@ class NextjsComponent extends Component {
     const defaultBehaviour = {
       cachePolicyId: cloudFrontDefaults.cachePolicyId,
       originRequestPolicyId: cloudFrontDefaults.originRequestPolicyId,
+      viewerProtocolPolicy: "redirect-to-https",
       minTTL: 0,
       defaultTTL: 0,
       maxTTL: 31536000,

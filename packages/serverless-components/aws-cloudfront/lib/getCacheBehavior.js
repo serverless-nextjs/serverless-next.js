@@ -8,7 +8,7 @@ module.exports = (pathPattern, pathPatternConfig, originId) => {
     maxTTL,
     compress = true,
     smoothStreaming = false,
-    viewerProtocolPolicy = "redirect-to-https",
+    viewerProtocolPolicy = "https-only",
     fieldLevelEncryptionId = "",
     cachePolicyId,
     originRequestPolicyId

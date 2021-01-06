@@ -28,7 +28,6 @@ export class ResourceService {
       page: this.findPageRoute(resource)
     };
 
-    //resource.isPreviewRoute = this.findPrerenderRoute(resource);
     return resource;
   }
 

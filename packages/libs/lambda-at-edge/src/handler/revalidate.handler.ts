@@ -5,6 +5,7 @@ import { CloudFrontService } from "../services/cloudfront.service";
 import { RenderService } from "../services/render.service";
 import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
+import { debug } from "../lib/console";
 
 export class RevalidateHandler {
   constructor(
@@ -23,26 +24,25 @@ export class RevalidateHandler {
     const [htmlHeader, jsonHeader, candidatePage] = await Promise.all([
       this.s3Service.getHeader(resource.getHtmlKey()),
       this.s3Service.getHeader(resource.getJsonKey()),
-      this.renderService.getPage(resource.getPagePath())
+      this.renderService.getPage(resource.getPagePath(), resource.getJsonUri())
     ]);
 
-    console.log(JSON.stringify(htmlHeader));
-    console.log(JSON.stringify(jsonHeader));
-    console.log(JSON.stringify(candidatePage));
+    debug(`[handler] Revalidate resource: ${JSON.stringify(resource)}`);
 
     if (!candidatePage) {
       throw new Error(`Page for ${resource.getPagePath()} not found`);
     }
 
-    console.log(htmlHeader.getETag());
-    console.log(jsonHeader.getETag());
-    console.log(candidatePage.getHtmlEtag());
-    console.log(candidatePage.getJsonEtag());
+    console.log(`JSON CANDIDATE ETAG: ${candidatePage.getJsonEtag()}`);
+    console.log(`HTML CANDIDATE ETAG: ${candidatePage.getHtmlEtag()}`);
+    console.log(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
     if (
       htmlHeader.getETag() !== candidatePage.getHtmlEtag() ||
       jsonHeader.getETag() !== candidatePage.getJsonEtag()
     ) {
+      debug(`[handler] Resource changed, update S3 cache and invalidate`);
+
       await Promise.all([
         this.s3Service.putObject(
           resource.getHtmlKey(),
