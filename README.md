@@ -668,6 +668,25 @@ myNextApp:
         DATABASE_URL: ${myDatabase.databaseUrl}
 ```
 
+#### Concatenating environment variables doesn't seem to work
+
+If you try to concatenate an environment variable with another string, like `${env.VARIABLE}-blah`, Serverless framework seems to resolve it to only `${env.VARIABLE}`.
+
+It seems to be a bug in Serverless Components - it may be due to not using the latest GA version, where it might have been fixed (this is still on Components Beta, unfortunately). For now, the workaround is:
+
+1. Don't concatenate but specify only environment variable, though this means duplicating environment variables.
+2. Follow https://github.com/serverless-nextjs/serverless-next.js/issues/530#issuecomment-680122810 and set a `serverless.yml` variable first, then concatenate:
+
+```yml
+stage: ${env.STAGE}
+my-app:
+  component: '@sls-next/serverless-component@1.18.0'
+  inputs:
+    domain:
+      - '${stage}-front-end'
+      - mydomain.com
+```
+
 #### I was expecting for automatic subdomain redirection when using the domainType: www/apex input
 
 You can use the new `domainRedirects` input, along with forwarding `Host` header and `domainType: both`, to redirect requests to the correct domain. See example configuration below that redirects `www.example.com` requests to `https://example.com`.

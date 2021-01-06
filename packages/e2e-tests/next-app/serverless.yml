@@ -8,3 +8,9 @@ next-app:
         defaultTTL: 0
         minTTL: 0
         maxTTL: 0
+      defaults:
+        forward:
+          headers: [Authorization]
+      api/*:
+        forward:
+          headers: [Authorization]

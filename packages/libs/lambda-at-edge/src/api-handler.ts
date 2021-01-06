@@ -111,13 +111,33 @@ export const handler = async (
     );
     if (customRewrite) {
       if (isExternalRewrite(customRewrite)) {
+        const [
+          customRewriteUriPath,
+          customRewriteUriQuery
+        ] = customRewrite.split("?");
+
+        if (request.querystring) {
+          request.querystring = `${request.querystring}${
+            customRewriteUriQuery ? `&${customRewriteUriQuery}` : ""
+          }`;
+        } else {
+          request.querystring = `${customRewriteUriQuery ?? ""}`;
+        }
+
         const { req, res, responsePromise } = lambdaAtEdgeCompat(
           event.Records[0].cf,
           {
             enableHTTPCompression: manifest.enableHTTPCompression
           }
         );
-        await createExternalRewriteResponse(customRewrite, req, res);
+        await createExternalRewriteResponse(
+          customRewriteUriPath +
+            (request.querystring ? "?" : "") +
+            request.querystring,
+          req,
+          res,
+          request.body?.data
+        );
         return await responsePromise;
       }
 

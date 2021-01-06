@@ -116,6 +116,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
           WAIT_TIMEOUT: 600
           APP_NAME: ${{ matrix.app }}
+          CYPRESS_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for testing external rewrites to GitHub API without getting throttled
         run: |
           cd packages/e2e-tests/$APP_NAME
           yarn --frozen-lockfile

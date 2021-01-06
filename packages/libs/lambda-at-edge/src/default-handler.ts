@@ -295,17 +295,6 @@ const handleOriginRequest = async ({
       uri
     );
     if (customRewrite) {
-      if (isExternalRewrite(customRewrite)) {
-        const { req, res, responsePromise } = lambdaAtEdgeCompat(
-          event.Records[0].cf,
-          {
-            enableHTTPCompression: manifest.enableHTTPCompression
-          }
-        );
-        await createExternalRewriteResponse(customRewrite, req, res);
-        return await responsePromise;
-      }
-
       rewrittenUri = request.uri;
       const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
         "?"
@@ -317,6 +306,24 @@ const handleOriginRequest = async ({
         }`;
       } else {
         request.querystring = `${customRewriteUriQuery ?? ""}`;
+      }
+
+      if (isExternalRewrite(customRewriteUriPath)) {
+        const { req, res, responsePromise } = lambdaAtEdgeCompat(
+          event.Records[0].cf,
+          {
+            enableHTTPCompression: manifest.enableHTTPCompression
+          }
+        );
+        await createExternalRewriteResponse(
+          customRewriteUriPath +
+            (request.querystring ? "?" : "") +
+            request.querystring,
+          req,
+          res,
+          request.body?.data
+        );
+        return await responsePromise;
       }
 
       uri = normaliseUri(request.uri);

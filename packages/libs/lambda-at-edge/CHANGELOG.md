@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.16...@sls-next/lambda-at-edge@1.8.0-alpha.17) (2021-01-06)
+
+### Bug Fixes
+
+- **lambda-at-edge:** external rewrites should use method, header, body from cloudfront request ([#864](https://github.com/serverless-nextjs/serverless-next.js/issues/864)) ([f7dd42a](https://github.com/serverless-nextjs/serverless-next.js/commit/f7dd42a4ece5dd69fe15747d76bc75756e56d43b))
+
 # [1.8.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.15...@sls-next/lambda-at-edge@1.8.0-alpha.16) (2020-12-11)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
