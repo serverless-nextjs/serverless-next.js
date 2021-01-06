@@ -27,6 +27,13 @@ type CloudFrontEventOptions = {
   response?: CloudFrontResponse;
   querystring?: string;
   requestHeaders?: { [name: string]: { key: string; value: string }[] };
+  method?: string;
+  body?: {
+    action: "read-only" | "replace";
+    data: string;
+    encoding: "base64" | "text";
+    readonly inputTruncated: boolean;
+  };
 };
 
 export const createCloudFrontEvent = ({
@@ -37,14 +44,16 @@ export const createCloudFrontEvent = ({
   config = {} as any,
   response,
   querystring,
-  requestHeaders = {}
+  requestHeaders = {},
+  method = "GET",
+  body = undefined
 }: CloudFrontEventOptions): OriginRequestEvent => ({
   Records: [
     {
       cf: {
         config,
         request: {
-          method: "GET",
+          method: method,
           uri,
           clientIp: "1.2.3.4",
           querystring: querystring ?? "",
@@ -64,7 +73,8 @@ export const createCloudFrontEvent = ({
               authMethod: "origin-access-identity",
               domainName: s3DomainName || "my-bucket.s3.amazonaws.com"
             }
-          }
+          },
+          body: body
         },
         response
       }

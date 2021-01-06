@@ -70,16 +70,6 @@ describe("Rewrites Tests", () => {
         path: "/rewrite-dest-with-query?a=b",
         expectedRewrite: "/ssr-page?a=b&foo=bar",
         expectedStatus: 200
-      },
-      {
-        path: "/external-rewrite",
-        expectedRewrite: "https://api.github.com",
-        expectedStatus: 200
-      },
-      {
-        path: "/api/external-rewrite",
-        expectedRewrite: "https://api.github.com",
-        expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {
       it(`rewrites path ${path} to ${expectedRewrite}`, () => {
@@ -104,6 +94,79 @@ describe("Rewrites Tests", () => {
             expect(response.status).to.equal(404);
           });
         }
+      });
+    });
+
+    [
+      {
+        path: "/external-rewrite",
+        expectedRewrite: "https://api.github.com",
+        method: "GET",
+        expectedStatus: 200
+      },
+      {
+        path: "/api/external-rewrite",
+        expectedRewrite: "https://api.github.com",
+        method: "GET",
+        expectedStatus: 200
+      },
+      {
+        path: "/api/external-rewrite",
+        expectedRewrite: "https://api.github.com",
+        method: "POST",
+        expectedStatus: 404
+      },
+      {
+        path: "/external-rewrite-issues?page=1",
+        expectedRewrite:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        method: "GET",
+        expectedStatus: 200
+      },
+      {
+        path: "/external-rewrite-issues-with-query?page=1",
+        expectedRewrite:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        method: "GET",
+        expectedStatus: 200
+      },
+      {
+        path: "/api/external-rewrite-issues?page=1",
+        expectedRewrite:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        method: "GET",
+        expectedStatus: 200
+      },
+      {
+        path: "/api/external-rewrite-issues-with-query?page=1",
+        expectedRewrite:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        method: "GET",
+        expectedStatus: 200
+      }
+    ].forEach(({ path, expectedRewrite, method, expectedStatus }) => {
+      const headers = Cypress.env("GITHUB_TOKEN")
+        ? { Authorization: `Bearer ${Cypress.env("GITHUB_TOKEN")}` }
+        : undefined;
+
+      it(`externally rewrites path ${path} to ${expectedRewrite} for method ${method}`, () => {
+        cy.request({
+          url: path,
+          method: method,
+          failOnStatusCode: false,
+          headers: headers
+        }).then((response) => {
+          expect(response.status).to.equal(expectedStatus);
+          cy.request({
+            url: expectedRewrite,
+            method: method,
+            failOnStatusCode: false,
+            headers: headers
+          }).then((rewriteResponse) => {
+            // Check that the body of each page is the same, i.e it is actually rewritten
+            expect(response.body).to.deep.equal(rewriteResponse.body);
+          });
+        });
       });
     });
   });

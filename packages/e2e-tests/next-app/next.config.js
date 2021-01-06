@@ -121,8 +121,28 @@ module.exports = {
         destination: "https://api.github.com"
       },
       {
+        source: "/external-rewrite-issues",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+      },
+      {
+        source: "/external-rewrite-issues-with-query",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+      },
+      {
         source: "/api/external-rewrite",
         destination: "https://api.github.com"
+      },
+      {
+        source: "/api/external-rewrite-issues",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+      },
+      {
+        source: "/api/external-rewrite-issues-with-query",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
       }
     ];
   },

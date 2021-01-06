@@ -812,13 +812,15 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        uri                    | rewriteUri
-        ${"/external-rewrite"} | ${"https://external.com"}
+        uri                    | rewriteUri                | method
+        ${"/external-rewrite"} | ${"https://external.com"} | ${"GET"}
+        ${"/external-rewrite"} | ${"https://external.com"} | ${"POST"}
       `(
-        "serves external rewrite $rewriteUri for rewritten path $uri",
-        async ({ uri, rewriteUri }) => {
+        "serves external rewrite $rewriteUri for rewritten path $uri and method $method",
+        async ({ uri, rewriteUri, method }) => {
           const { default: fetchMock } = await import("node-fetch");
-          fetchMock.get(rewriteUri, {
+
+          const mockFetchResponse = {
             body: "external",
             headers: {
               "Content-Type": "text/plain",
@@ -826,7 +828,9 @@ describe("Lambda@Edge", () => {
               "x-amz-cf-pop": "SEA19-C1"
             }, // host and x-amz-cf-pop header are blacklisted and won't be added
             status: 200
-          });
+          };
+
+          fetchMock.mock(rewriteUri, mockFetchResponse);
 
           let [path, querystring] = uri.split("?");
 
@@ -838,7 +842,17 @@ describe("Lambda@Edge", () => {
           const event = createCloudFrontEvent({
             uri: path,
             querystring: querystring,
-            host: "mydistribution.cloudfront.net"
+            host: "mydistribution.cloudfront.net",
+            method: method,
+            body:
+              method === "POST"
+                ? {
+                    action: "read-only",
+                    data: "eyJhIjoiYiJ9",
+                    encoding: "base64",
+                    inputTruncated: false
+                  }
+                : undefined
           });
 
           const response: CloudFrontResultResponse = await handler(event);
@@ -856,6 +870,10 @@ describe("Lambda@Edge", () => {
             },
             status: 200,
             statusDescription: "OK"
+          });
+
+          expect(fetchMock).toHaveLastFetched("https://external.com", {
+            method: method
           });
 
           fetchMock.reset();
