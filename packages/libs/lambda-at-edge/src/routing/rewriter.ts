@@ -86,10 +86,35 @@ function isIgnoredHeader(name: string): boolean {
 export async function createExternalRewriteResponse(
   customRewrite: string,
   req: IncomingMessage,
-  res: ServerResponse
+  res: ServerResponse,
+  body?: string
 ): Promise<void> {
   const { default: fetch } = await import("node-fetch");
-  const fetchResponse = await fetch(customRewrite);
+
+  // Set request headers
+  let reqHeaders: any = {};
+  Object.assign(reqHeaders, req.headers);
+
+  // Delete host header otherwise request may fail due to host mismatch
+  if (reqHeaders.hasOwnProperty("host")) {
+    delete reqHeaders.host;
+  }
+
+  let fetchResponse;
+  if (body) {
+    const decodedBody = Buffer.from(body, "base64").toString("utf8");
+
+    fetchResponse = await fetch(customRewrite, {
+      headers: reqHeaders,
+      method: req.method,
+      body: JSON.parse(decodedBody)
+    });
+  } else {
+    fetchResponse = await fetch(customRewrite, {
+      headers: reqHeaders,
+      method: req.method
+    });
+  }
 
   for (const [name, val] of fetchResponse.headers.entries()) {
     if (!isIgnoredHeader(name)) {
