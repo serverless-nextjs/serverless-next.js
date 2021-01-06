@@ -22,7 +22,7 @@ import { getContentType, getExtension } from "./serveStatic";
 import isAnimated from "is-animated";
 import Stream from "stream";
 import { sendEtagResponse } from "../lib/sendEtagResponse";
-import { ImageConfig, ImagesManifest } from "../../types";
+import { ImageConfig, ImagesManifest } from "../types";
 import { imageConfigDefault } from "./imageConfig";
 import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
 import * as fs from "fs";

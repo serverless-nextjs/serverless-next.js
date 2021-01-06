@@ -7,7 +7,7 @@ import {
   OriginRequestApiHandlerManifest,
   OriginRequestEvent,
   RoutesManifest
-} from "../types";
+} from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
 import {
   createRedirectResponse,

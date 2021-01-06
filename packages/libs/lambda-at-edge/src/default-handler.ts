@@ -19,7 +19,7 @@ import {
   PerfLogger,
   PreRenderedManifest as PrerenderManifestType,
   RoutesManifest
-} from "../types";
+} from "./types";
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import type { Readable } from "stream";

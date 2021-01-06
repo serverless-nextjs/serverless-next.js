@@ -7,7 +7,7 @@ import { cleanupDir } from "../test-utils";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest
-} from "../../types";
+} from "../../src/types";
 
 jest.mock("execa");
 

@@ -10,7 +10,7 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest,
   OriginRequestImageHandlerManifest
-} from "../types";
+} from "./types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import {

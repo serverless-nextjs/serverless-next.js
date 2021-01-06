@@ -5,7 +5,7 @@ import {
   OriginRequestImageHandlerManifest,
   RedirectData,
   RoutesManifest
-} from "../../types";
+} from "../types";
 import * as http from "http";
 import { CloudFrontRequest } from "aws-lambda";
 import { CloudFrontResultResponse } from "aws-lambda";

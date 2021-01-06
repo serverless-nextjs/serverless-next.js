@@ -7,7 +7,7 @@ import {
   OriginRequestEvent,
   OriginRequestImageHandlerManifest,
   RoutesManifest
-} from "../types";
+} from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import { UrlWithParsedQuery } from "url";

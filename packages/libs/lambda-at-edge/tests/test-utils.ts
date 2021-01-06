@@ -5,7 +5,7 @@ import {
   CloudFrontEvent,
   CloudFrontResponse
 } from "aws-lambda";
-import { OriginRequestEvent } from "../types";
+import { OriginRequestEvent } from "../src/types";
 
 export const cleanupDir = (dir: string): Promise<void> => {
   return remove(dir);

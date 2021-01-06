@@ -12,7 +12,7 @@ import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   OriginRequestImageHandlerManifest
-} from "../../types";
+} from "../../src/types";
 
 jest.mock("execa");
 

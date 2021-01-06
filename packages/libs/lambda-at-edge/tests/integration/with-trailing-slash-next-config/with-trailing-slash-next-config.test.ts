@@ -6,7 +6,7 @@ import fse, { readFile, remove, pathExists } from "fs-extra";
 import {
   OriginRequestDefaultHandlerManifest,
   RoutesManifest
-} from "../../../types";
+} from "../../../src/types";
 
 jest.unmock("execa");
 
