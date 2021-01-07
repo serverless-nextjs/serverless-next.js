@@ -2,7 +2,7 @@ import {
   createRedirectResponse,
   getRedirectPath
 } from "../../src/routing/redirector";
-import { RoutesManifest } from "../../types";
+import { RoutesManifest } from "../../src/types";
 
 describe("Redirector Tests", () => {
   describe("getRedirectPath()", () => {

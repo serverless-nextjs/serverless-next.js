@@ -1,5 +1,5 @@
 import { getRewritePath } from "../../src/routing/rewriter";
-import { RoutesManifest } from "../../types";
+import { RoutesManifest } from "../../src/types";
 
 describe("Rewriter Tests", () => {
   describe("getRewritePath()", () => {

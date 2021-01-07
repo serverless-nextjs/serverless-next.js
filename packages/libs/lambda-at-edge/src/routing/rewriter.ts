@@ -1,5 +1,5 @@
 import { compileDestination, matchPath } from "./matcher";
-import { RewriteData, RoutesManifest } from "../../types";
+import { RewriteData, RoutesManifest } from "../types";
 import { IncomingMessage, ServerResponse } from "http";
 
 /**

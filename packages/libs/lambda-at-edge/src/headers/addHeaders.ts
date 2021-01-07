@@ -1,5 +1,5 @@
 import { CloudFrontResultResponse } from "aws-lambda";
-import { RoutesManifest } from "../../types";
+import { RoutesManifest } from "../types";
 import { matchPath } from "../routing/matcher";
 
 export function addHeadersToResponse(

@@ -2,13 +2,13 @@ import { Component } from "@serverless/core";
 import { readJSON, pathExists } from "fs-extra";
 import { resolve, join } from "path";
 import { Builder } from "@sls-next/lambda-at-edge";
-import {
+import type {
   OriginRequestDefaultHandlerManifest as BuildManifest,
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   RoutesManifest,
   OriginRequestImageHandlerManifest
-} from "@sls-next/lambda-at-edge/types";
+} from "@sls-next/lambda-at-edge";
 import {
   deleteOldStaticAssets,
   uploadStaticAssetsFromBuild,
