@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.18](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.17...@sls-next/lambda-at-edge@1.8.0-alpha.18) (2021-01-06)
+
+### Bug Fixes
+
+- **lambda-at-edge:** pass body correctly into external rewrite ([#867](https://github.com/serverless-nextjs/serverless-next.js/issues/867)) ([5fb175f](https://github.com/serverless-nextjs/serverless-next.js/commit/5fb175fed515dec2ebcd7396f03f27a0114e73be))
+
 # [1.8.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.16...@sls-next/lambda-at-edge@1.8.0-alpha.17) (2021-01-06)
 
 ### Bug Fixes

@@ -107,7 +107,7 @@ export async function createExternalRewriteResponse(
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
       method: req.method,
-      body: JSON.parse(decodedBody)
+      body: decodedBody // Must pass body as a string
     });
   } else {
     fetchResponse = await fetch(customRewrite, {
