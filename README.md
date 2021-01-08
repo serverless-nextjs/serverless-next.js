@@ -364,6 +364,7 @@ The exhaustive list of AWS actions required for a deployment:
   "iam:CreateRole",
   "iam:CreateServiceLinkedRole",
   "iam:GetRole",
+  "iam:PutRolePolicy",
   "iam:PassRole",
   "lambda:CreateFunction",
   "lambda:EnableReplication",
