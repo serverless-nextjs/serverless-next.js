@@ -65,8 +65,7 @@ const ignoredHeaders = [
   "content-length",
   "host",
   "transfer-encoding",
-  "via",
-  "content-encoding"
+  "via"
 ];
 
 const ignoredHeaderPrefixes = ["x-amz-cf-", "x-amzn-", "x-edge-"];
@@ -107,12 +106,14 @@ export async function createExternalRewriteResponse(
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
       method: req.method,
-      body: decodedBody // Must pass body as a string
+      body: decodedBody, // Must pass body as a string,
+      compress: false
     });
   } else {
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
-      method: req.method
+      method: req.method,
+      compress: false
     });
   }
 
@@ -122,6 +123,5 @@ export async function createExternalRewriteResponse(
     }
   }
   res.statusCode = fetchResponse.status;
-  const text = await fetchResponse.text();
-  res.end(text);
+  res.end(await fetchResponse.buffer());
 }
