@@ -187,8 +187,18 @@ const router = (
 interface RevalidationInterface {
   [key: string]: Date;
 }
-const REVALIDATE_IN =
-  PrerenderManifest.routes["/"]?.initialRevalidateSeconds || 20;
+
+interface RouteConfig {
+  initialRevalidateSeconds: number | false;
+}
+
+// find first revalidation interval and use it globally
+// if not exists, then will be undefined and may be used to detect if revalidation should be turned on
+const REVALIDATION_CONFIG = Object.values<RouteConfig>(
+  PrerenderManifest.routes
+).find((r) => typeof r.initialRevalidateSeconds === "number");
+
+const REVALIDATE_IN = REVALIDATION_CONFIG?.initialRevalidateSeconds || 4;
 
 const REVALIDATIONS: RevalidationInterface = {};
 
@@ -731,6 +741,8 @@ const handleOriginResponse = async ({
       debug(`[origin-response] isFallback: ${hasFallback}`);
 
       if (
+        // if REVALIDATION_CONFIG is undefined revalidation is off
+        REVALIDATION_CONFIG &&
         (isHTMLPage || hasFallback || isDataRequest(uri)) &&
         !isPreview &&
         !isPublicFile &&
