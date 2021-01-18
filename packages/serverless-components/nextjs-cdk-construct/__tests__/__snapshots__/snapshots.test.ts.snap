@@ -1,0 +1,2031 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`CDK Construct Snapshots creates boilerplate next app 1`] = `
+Object {
+  "Parameters": Object {
+    "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44ArtifactHashB7995E1D": Object {
+      "Description": "Artifact hash for asset \\"017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44\\"",
+      "Type": "String",
+    },
+    "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3Bucket18618D63": Object {
+      "Description": "S3 bucket for asset \\"017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44\\"",
+      "Type": "String",
+    },
+    "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3VersionKeyCB5488FF": Object {
+      "Description": "S3 key for asset version \\"017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44\\"",
+      "Type": "String",
+    },
+    "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24ArtifactHashBA91B77F": Object {
+      "Description": "Artifact hash for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
+      "Type": "String",
+    },
+    "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5": Object {
+      "Description": "S3 bucket for asset \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
+      "Type": "String",
+    },
+    "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861": Object {
+      "Description": "S3 key for asset version \\"67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24\\"",
+      "Type": "String",
+    },
+    "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3ArtifactHash62C7B2C0": Object {
+      "Description": "Artifact hash for asset \\"75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3\\"",
+      "Type": "String",
+    },
+    "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3BucketF78D27D5": Object {
+      "Description": "S3 bucket for asset \\"75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3\\"",
+      "Type": "String",
+    },
+    "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3VersionKeyDC7D66D8": Object {
+      "Description": "S3 key for asset version \\"75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3\\"",
+      "Type": "String",
+    },
+    "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1ArtifactHash78F94626": Object {
+      "Description": "Artifact hash for asset \\"7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1\\"",
+      "Type": "String",
+    },
+    "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3Bucket0004C4F2": Object {
+      "Description": "S3 bucket for asset \\"7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1\\"",
+      "Type": "String",
+    },
+    "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3VersionKey684177A8": Object {
+      "Description": "S3 key for asset version \\"7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1\\"",
+      "Type": "String",
+    },
+    "AssetParameters8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59aArtifactHash595EC1E7": Object {
+      "Description": "Artifact hash for asset \\"8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59a\\"",
+      "Type": "String",
+    },
+    "AssetParameters8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59aS3BucketFD1BBE00": Object {
+      "Description": "S3 bucket for asset \\"8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59a\\"",
+      "Type": "String",
+    },
+    "AssetParameters8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59aS3VersionKey6E54DC76": Object {
+      "Description": "S3 key for asset version \\"8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59a\\"",
+      "Type": "String",
+    },
+    "AssetParameters969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819ArtifactHash002418CD": Object {
+      "Description": "Artifact hash for asset \\"969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819\\"",
+      "Type": "String",
+    },
+    "AssetParameters969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819S3Bucket928FA75E": Object {
+      "Description": "S3 bucket for asset \\"969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819\\"",
+      "Type": "String",
+    },
+    "AssetParameters969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819S3VersionKey3C8A639D": Object {
+      "Description": "S3 key for asset version \\"969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819\\"",
+      "Type": "String",
+    },
+    "AssetParametersd5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308fArtifactHashB137ECA9": Object {
+      "Description": "Artifact hash for asset \\"d5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308f\\"",
+      "Type": "String",
+    },
+    "AssetParametersd5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308fS3Bucket7C30CEE1": Object {
+      "Description": "S3 bucket for asset \\"d5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308f\\"",
+      "Type": "String",
+    },
+    "AssetParametersd5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308fS3VersionKey727F28C8": Object {
+      "Description": "S3 key for asset version \\"d5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308f\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68ArtifactHashD9A515C3": Object {
+      "Description": "Artifact hash for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7": Object {
+      "Description": "S3 bucket for asset \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F": Object {
+      "Description": "S3 key for asset version \\"e9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68\\"",
+      "Type": "String",
+    },
+    "AssetParametersec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02ArtifactHash42AE7E30": Object {
+      "Description": "Artifact hash for asset \\"ec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02\\"",
+      "Type": "String",
+    },
+    "AssetParametersec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02S3BucketC0AB9189": Object {
+      "Description": "S3 bucket for asset \\"ec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02\\"",
+      "Type": "String",
+    },
+    "AssetParametersec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02S3VersionKey62882515": Object {
+      "Description": "S3 key for asset version \\"ec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02\\"",
+      "Type": "String",
+    },
+  },
+  "Resources": Object {
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536": Object {
+      "DependsOn": Array [
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59aS3BucketFD1BBE00",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59aS3VersionKey6E54DC76",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters8bda025b845a88fbeb54ef75e52048aa9f3378463116cb413f12f6014673a59aS3VersionKey6E54DC76",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Layers": Array [
+          Object {
+            "Ref": "StackAssetDeploymentnextStaticFilesPathAwsCliLayer08C52E6E",
+          },
+        ],
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+            "Arn",
+          ],
+        },
+        "Runtime": "python3.6",
+        "Timeout": 900,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3BucketF78D27D5",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3BucketF78D27D5",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "cloudfront:GetInvalidation",
+                "cloudfront:CreateInvalidation",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3Bucket0004C4F2",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3Bucket0004C4F2",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3Bucket18618D63",
+                      },
+                    ],
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "arn:",
+                      Object {
+                        "Ref": "AWS::Partition",
+                      },
+                      ":s3:::",
+                      Object {
+                        "Ref": "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3Bucket18618D63",
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRoleDefaultPolicy88902FDF",
+        "Roles": Array [
+          Object {
+            "Ref": "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756CServiceRole89A01265",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A": Object {
+      "DependsOn": Array [
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3Bucket4D46ABB5",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters67b7823b74bc135986aa72f889d6a8da058d0c4a20cbc2dfc6f78995fdd2fc24S3VersionKeyB0F28861",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "logs:PutRetentionPolicy",
+                "logs:DeleteRetentionPolicy",
+              ],
+              "Effect": "Allow",
+              "Resource": "*",
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRoleDefaultPolicyADDA7DEB",
+        "Roles": Array [
+          Object {
+            "Ref": "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aServiceRole9741ECFB",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
+    "StackAssetDeploymenthtmlPagesPathAwsCliLayer36755759": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "StackAssetDeploymenthtmlPagesPathCustomResource21E5289D": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketKeyPrefix": "static-pages",
+        "DestinationBucketName": Object {
+          "Ref": "StackPublicAssets8F0F4FE8",
+        },
+        "DistributionId": Object {
+          "Ref": "StackNextJSDistribution03A07E47",
+        },
+        "DistributionPaths": Array [
+          "/*",
+        ],
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3Bucket18618D63",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3VersionKeyCB5488FF",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters017e04cdff9f028d4cadfc53b73b785e35faad8558bae523643c0579dad36c44S3VersionKeyCB5488FF",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+        "SystemMetadata": Object {
+          "cache-control": "public, max-age=31536000, immutable",
+        },
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackAssetDeploymentnextDataFilesPathAwsCliLayer2B155E45": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "StackAssetDeploymentnextDataFilesPathCustomResourceAB833872": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketKeyPrefix": "_next/data",
+        "DestinationBucketName": Object {
+          "Ref": "StackPublicAssets8F0F4FE8",
+        },
+        "DistributionId": Object {
+          "Ref": "StackNextJSDistribution03A07E47",
+        },
+        "DistributionPaths": Array [
+          "/*",
+        ],
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3Bucket0004C4F2",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3VersionKey684177A8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3VersionKey684177A8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+        "SystemMetadata": Object {
+          "cache-control": "public, max-age=31536000, immutable",
+        },
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackAssetDeploymentnextStaticFilesPathAwsCliLayer08C52E6E": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "StackAssetDeploymentnextStaticFilesPathCustomResource2E97C399": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketKeyPrefix": "_next/static",
+        "DestinationBucketName": Object {
+          "Ref": "StackPublicAssets8F0F4FE8",
+        },
+        "DistributionId": Object {
+          "Ref": "StackNextJSDistribution03A07E47",
+        },
+        "DistributionPaths": Array [
+          "/*",
+        ],
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3BucketF78D27D5",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3VersionKeyDC7D66D8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters75747c01c8238f97cfebdb953d5cea88564b7e08ec0e4fe04619bc1df9792ce3S3VersionKeyDC7D66D8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+        "SystemMetadata": Object {
+          "cache-control": "public, max-age=31536000, immutable",
+        },
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackAssetDeploymentpublicFilesPathAwsCliLayer49446A62": Object {
+      "Properties": Object {
+        "Content": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3BucketAEADE8C7",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameterse9882ab123687399f934da0d45effe675ecc8ce13b40cb946f3e1d6141fe8d68S3VersionKeyE415415F",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "/opt/awscli/aws",
+      },
+      "Type": "AWS::Lambda::LayerVersion",
+    },
+    "StackAssetDeploymentpublicFilesPathCustomResource66C28015": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "DestinationBucketKeyPrefix": "public",
+        "DestinationBucketName": Object {
+          "Ref": "StackPublicAssets8F0F4FE8",
+        },
+        "DistributionId": Object {
+          "Ref": "StackNextJSDistribution03A07E47",
+        },
+        "DistributionPaths": Array [
+          "/*",
+        ],
+        "Prune": true,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "CustomCDKBucketDeployment8693BB64968944B69AAFB0CC9EB8756C81C01536",
+            "Arn",
+          ],
+        },
+        "SourceBucketNames": Array [
+          Object {
+            "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3Bucket0004C4F2",
+          },
+        ],
+        "SourceObjectKeys": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3VersionKey684177A8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters7a6ed021656ddea4e87a6e7003efc985b39a2f5e1d5b23c50d9c84a27c2fbcc1S3VersionKey684177A8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        ],
+        "SystemMetadata": Object {
+          "cache-control": "public, max-age=31536000, immutable",
+        },
+      },
+      "Type": "Custom::CDKBucketDeployment",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackImageOriginRequest30DFB17C": Object {
+      "Properties": Object {
+        "OriginRequestPolicyConfig": Object {
+          "CookiesConfig": Object {
+            "CookieBehavior": "none",
+          },
+          "HeadersConfig": Object {
+            "HeaderBehavior": "none",
+          },
+          "Name": "StackImageOriginRequestF06FCDA0",
+          "QueryStringsConfig": Object {
+            "QueryStringBehavior": "all",
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::OriginRequestPolicy",
+    },
+    "StackNextApiLambda8BE78FBE": Object {
+      "DependsOn": Array [
+        "StackNextEdgeLambdaRole02C429A6",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersd5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308fS3Bucket7C30CEE1",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersd5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308fS3VersionKey727F28C8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersd5197f93705642e64588211e91dadd3da88a5b21b70be2b3ce040a803599308fS3VersionKey727F28C8",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Default Lambda@Edge for Next API CloudFront distribution",
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "StackNextEdgeLambdaRole02C429A6",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "StackNextApiLambdaCurrentVersion09578A6Ab80145a30d19c6a0b5589dade547972d": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextApiLambda8BE78FBE",
+        },
+      },
+      "Type": "AWS::Lambda::Version",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackNextApiLambdaCurrentVersionAliaslive8AA37EB3": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextApiLambda8BE78FBE",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextApiLambdaCurrentVersion09578A6Ab80145a30d19c6a0b5589dade547972d",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
+    },
+    "StackNextApiLambdaCurrentVersionEventInvokeConfig473B707A": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextApiLambda8BE78FBE",
+        },
+        "MaximumRetryAttempts": 1,
+        "Qualifier": Object {
+          "Fn::GetAtt": Array [
+            "StackNextApiLambdaCurrentVersion09578A6Ab80145a30d19c6a0b5589dade547972d",
+            "Version",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "StackNextApiLambdaLogRetention2569EAED": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "StackNextApiLambda8BE78FBE",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "StackNextEdgeLambdaRole02C429A6": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": Array [
+                  "lambda.amazonaws.com",
+                  "edgelambda.amazonaws.com",
+                ],
+              },
+            },
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "edgelambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "StackNextImageCache169F453D": Object {
+      "Properties": Object {
+        "CachePolicyConfig": Object {
+          "DefaultTTL": 86400,
+          "MaxTTL": 31536000,
+          "MinTTL": 0,
+          "Name": "StackNextImageCache78CE64D5",
+          "ParametersInCacheKeyAndForwardedToOrigin": Object {
+            "CookiesConfig": Object {
+              "CookieBehavior": "none",
+            },
+            "EnableAcceptEncodingBrotli": true,
+            "EnableAcceptEncodingGzip": true,
+            "HeadersConfig": Object {
+              "HeaderBehavior": "whitelist",
+              "Headers": Array [
+                "Accept",
+              ],
+            },
+            "QueryStringsConfig": Object {
+              "QueryStringBehavior": "none",
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CachePolicy",
+    },
+    "StackNextImageLambda2847952D": Object {
+      "DependsOn": Array [
+        "StackNextEdgeLambdaRole02C429A6",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParametersec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02S3BucketC0AB9189",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02S3VersionKey62882515",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParametersec21642f95cbedf2c90bb32e49a60cbc2a73028e37e9aa0e777dfb8400e22c02S3VersionKey62882515",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Default Lambda@Edge for Next Image CloudFront distribution",
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "StackNextEdgeLambdaRole02C429A6",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "StackNextImageLambdaCurrentVersionAliasliveE4A66187": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextImageLambda2847952D",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextImageLambdaCurrentVersionDEC920BCe0255405323cfb65d9fea7113c49b3ee",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
+    },
+    "StackNextImageLambdaCurrentVersionDEC920BCe0255405323cfb65d9fea7113c49b3ee": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextImageLambda2847952D",
+        },
+      },
+      "Type": "AWS::Lambda::Version",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackNextImageLambdaCurrentVersionEventInvokeConfig3F977EB2": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextImageLambda2847952D",
+        },
+        "MaximumRetryAttempts": 1,
+        "Qualifier": Object {
+          "Fn::GetAtt": Array [
+            "StackNextImageLambdaCurrentVersionDEC920BCe0255405323cfb65d9fea7113c49b3ee",
+            "Version",
+          ],
+        },
+      },
+      "Type": "AWS::Lambda::EventInvokeConfig",
+    },
+    "StackNextImageLambdaLogRetentionF781777A": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "StackNextImageLambda2847952D",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "StackNextJSDistribution03A07E47": Object {
+      "Properties": Object {
+        "DistributionConfig": Object {
+          "CacheBehaviors": Array [
+            Object {
+              "AllowedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+                "PUT",
+                "PATCH",
+                "POST",
+                "DELETE",
+              ],
+              "CachePolicyId": Object {
+                "Ref": "StackNextImageCache169F453D",
+              },
+              "CachedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "Compress": true,
+              "LambdaFunctionAssociations": Array [
+                Object {
+                  "EventType": "origin-request",
+                  "LambdaFunctionARN": Object {
+                    "Ref": "StackNextImageLambdaCurrentVersionDEC920BCe0255405323cfb65d9fea7113c49b3ee",
+                  },
+                },
+              ],
+              "OriginRequestPolicyId": Object {
+                "Ref": "StackImageOriginRequest30DFB17C",
+              },
+              "PathPattern": "_next/image*",
+              "TargetOriginId": "StackNextJSDistributionOrigin227291135",
+              "ViewerProtocolPolicy": "redirect-to-https",
+            },
+            Object {
+              "AllowedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "CachePolicyId": Object {
+                "Ref": "StackNextLambdaCacheF214CEF2",
+              },
+              "CachedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "Compress": true,
+              "LambdaFunctionAssociations": Array [
+                Object {
+                  "EventType": "origin-request",
+                  "IncludeBody": true,
+                  "LambdaFunctionARN": Object {
+                    "Ref": "StackNextLambdaCurrentVersion21F01F87077afa049525c4925bcf4fa81225f1a0",
+                  },
+                },
+                Object {
+                  "EventType": "origin-response",
+                  "LambdaFunctionARN": Object {
+                    "Ref": "StackNextLambdaCurrentVersion21F01F87077afa049525c4925bcf4fa81225f1a0",
+                  },
+                },
+              ],
+              "PathPattern": "_next/data/*",
+              "TargetOriginId": "StackNextJSDistributionOrigin33202980A",
+              "ViewerProtocolPolicy": "redirect-to-https",
+            },
+            Object {
+              "AllowedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "CachePolicyId": Object {
+                "Ref": "StackNextStaticsCacheC4615915",
+              },
+              "CachedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "Compress": true,
+              "PathPattern": "_next/*",
+              "TargetOriginId": "StackNextJSDistributionOrigin4BE563FB7",
+              "ViewerProtocolPolicy": "redirect-to-https",
+            },
+            Object {
+              "AllowedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "CachePolicyId": Object {
+                "Ref": "StackNextStaticsCacheC4615915",
+              },
+              "CachedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "Compress": true,
+              "PathPattern": "static/*",
+              "TargetOriginId": "StackNextJSDistributionOrigin5E99C79BE",
+              "ViewerProtocolPolicy": "redirect-to-https",
+            },
+            Object {
+              "AllowedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "CachePolicyId": Object {
+                "Ref": "StackNextLambdaCacheF214CEF2",
+              },
+              "CachedMethods": Array [
+                "GET",
+                "HEAD",
+                "OPTIONS",
+              ],
+              "Compress": true,
+              "LambdaFunctionAssociations": Array [
+                Object {
+                  "EventType": "origin-request",
+                  "LambdaFunctionARN": Object {
+                    "Ref": "StackNextApiLambdaCurrentVersion09578A6Ab80145a30d19c6a0b5589dade547972d",
+                  },
+                },
+              ],
+              "PathPattern": "api/*",
+              "TargetOriginId": "StackNextJSDistributionOrigin6F399DA4B",
+              "ViewerProtocolPolicy": "redirect-to-https",
+            },
+          ],
+          "DefaultCacheBehavior": Object {
+            "AllowedMethods": Array [
+              "GET",
+              "HEAD",
+              "OPTIONS",
+            ],
+            "CachePolicyId": Object {
+              "Ref": "StackNextLambdaCacheF214CEF2",
+            },
+            "CachedMethods": Array [
+              "GET",
+              "HEAD",
+              "OPTIONS",
+            ],
+            "Compress": true,
+            "LambdaFunctionAssociations": Array [
+              Object {
+                "EventType": "origin-request",
+                "IncludeBody": true,
+                "LambdaFunctionARN": Object {
+                  "Ref": "StackNextLambdaCurrentVersion21F01F87077afa049525c4925bcf4fa81225f1a0",
+                },
+              },
+              Object {
+                "EventType": "origin-response",
+                "LambdaFunctionARN": Object {
+                  "Ref": "StackNextLambdaCurrentVersion21F01F87077afa049525c4925bcf4fa81225f1a0",
+                },
+              },
+            ],
+            "TargetOriginId": "StackNextJSDistributionOrigin164EFF789",
+            "ViewerProtocolPolicy": "redirect-to-https",
+          },
+          "DefaultRootObject": "",
+          "Enabled": true,
+          "HttpVersion": "http2",
+          "IPV6Enabled": true,
+          "Origins": Array [
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "StackPublicAssets8F0F4FE8",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "StackNextJSDistributionOrigin164EFF789",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "StackNextJSDistributionOrigin1S3OriginE5C3C6BA",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "StackPublicAssets8F0F4FE8",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "StackNextJSDistributionOrigin227291135",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "StackNextJSDistributionOrigin2S3OriginBE3A92C1",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "StackPublicAssets8F0F4FE8",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "StackNextJSDistributionOrigin33202980A",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "StackNextJSDistributionOrigin3S3Origin815895A3",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "StackPublicAssets8F0F4FE8",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "StackNextJSDistributionOrigin4BE563FB7",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "StackNextJSDistributionOrigin4S3Origin25CF633C",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "StackPublicAssets8F0F4FE8",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "StackNextJSDistributionOrigin5E99C79BE",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "StackNextJSDistributionOrigin5S3OriginF7CEDF65",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+            Object {
+              "DomainName": Object {
+                "Fn::GetAtt": Array [
+                  "StackPublicAssets8F0F4FE8",
+                  "RegionalDomainName",
+                ],
+              },
+              "Id": "StackNextJSDistributionOrigin6F399DA4B",
+              "S3OriginConfig": Object {
+                "OriginAccessIdentity": Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      "origin-access-identity/cloudfront/",
+                      Object {
+                        "Ref": "StackNextJSDistributionOrigin6S3Origin922D99DB",
+                      },
+                    ],
+                  ],
+                },
+              },
+            },
+          ],
+        },
+      },
+      "Type": "AWS::CloudFront::Distribution",
+    },
+    "StackNextJSDistributionOrigin1S3OriginE5C3C6BA": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for StackNextJSDistributionOrigin164EFF789",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "StackNextJSDistributionOrigin2S3OriginBE3A92C1": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for StackNextJSDistributionOrigin227291135",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "StackNextJSDistributionOrigin3S3Origin815895A3": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for StackNextJSDistributionOrigin33202980A",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "StackNextJSDistributionOrigin4S3Origin25CF633C": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for StackNextJSDistributionOrigin4BE563FB7",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "StackNextJSDistributionOrigin5S3OriginF7CEDF65": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for StackNextJSDistributionOrigin5E99C79BE",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "StackNextJSDistributionOrigin6S3Origin922D99DB": Object {
+      "Properties": Object {
+        "CloudFrontOriginAccessIdentityConfig": Object {
+          "Comment": "Identity for StackNextJSDistributionOrigin6F399DA4B",
+        },
+      },
+      "Type": "AWS::CloudFront::CloudFrontOriginAccessIdentity",
+    },
+    "StackNextLambdaCacheF214CEF2": Object {
+      "Properties": Object {
+        "CachePolicyConfig": Object {
+          "DefaultTTL": 0,
+          "MaxTTL": 31536000,
+          "MinTTL": 0,
+          "Name": "StackNextLambdaCache86499DCE",
+          "ParametersInCacheKeyAndForwardedToOrigin": Object {
+            "CookiesConfig": Object {
+              "CookieBehavior": "all",
+            },
+            "EnableAcceptEncodingBrotli": true,
+            "EnableAcceptEncodingGzip": true,
+            "HeadersConfig": Object {
+              "HeaderBehavior": "none",
+            },
+            "QueryStringsConfig": Object {
+              "QueryStringBehavior": "all",
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CachePolicy",
+    },
+    "StackNextLambdaCurrentVersion21F01F87077afa049525c4925bcf4fa81225f1a0": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextLambdaF64DCE99",
+        },
+      },
+      "Type": "AWS::Lambda::Version",
+      "UpdateReplacePolicy": "Delete",
+    },
+    "StackNextLambdaCurrentVersionAliasliveB07D2AA0": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextLambdaF64DCE99",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextLambdaCurrentVersion21F01F87077afa049525c4925bcf4fa81225f1a0",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
+    },
+    "StackNextLambdaF64DCE99": Object {
+      "DependsOn": Array [
+        "StackNextEdgeLambdaRole02C429A6",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819S3Bucket928FA75E",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819S3VersionKey3C8A639D",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters969959d5c7481c6a955d9fbf8bcfcd76526c77035e15c1b30bdc19c58286d819S3VersionKey3C8A639D",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Description": "Default Lambda@Edge for Next CloudFront distribution",
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "StackNextEdgeLambdaRole02C429A6",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs12.x",
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "StackNextLambdaLogRetention4645F5D1": Object {
+      "Properties": Object {
+        "LogGroupName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "/aws/lambda/",
+              Object {
+                "Ref": "StackNextLambdaF64DCE99",
+              },
+            ],
+          ],
+        },
+        "RetentionInDays": 3,
+        "ServiceToken": Object {
+          "Fn::GetAtt": Array [
+            "LogRetentionaae0aa3c5b4d4f87b02d85b201efdd8aFD4BFC8A",
+            "Arn",
+          ],
+        },
+      },
+      "Type": "Custom::LogRetention",
+    },
+    "StackNextStaticsCacheC4615915": Object {
+      "Properties": Object {
+        "CachePolicyConfig": Object {
+          "DefaultTTL": 2592000,
+          "MaxTTL": 2592000,
+          "MinTTL": 2592000,
+          "Name": "StackNextStaticsCacheBB90E053",
+          "ParametersInCacheKeyAndForwardedToOrigin": Object {
+            "CookiesConfig": Object {
+              "CookieBehavior": "none",
+            },
+            "EnableAcceptEncodingBrotli": true,
+            "EnableAcceptEncodingGzip": true,
+            "HeadersConfig": Object {
+              "HeaderBehavior": "none",
+            },
+            "QueryStringsConfig": Object {
+              "QueryStringBehavior": "none",
+            },
+          },
+        },
+      },
+      "Type": "AWS::CloudFront::CachePolicy",
+    },
+    "StackPublicAssets8F0F4FE8": Object {
+      "DeletionPolicy": "Retain",
+      "Type": "AWS::S3::Bucket",
+      "UpdateReplacePolicy": "Retain",
+    },
+    "StackPublicAssetsPolicy113B95FD": Object {
+      "Properties": Object {
+        "Bucket": Object {
+          "Ref": "StackPublicAssets8F0F4FE8",
+        },
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "s3:GetObject",
+              "Effect": "Allow",
+              "Principal": "*",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "StackNextJSDistributionOrigin1S3OriginE5C3C6BA",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "StackNextJSDistributionOrigin2S3OriginBE3A92C1",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "StackNextJSDistributionOrigin3S3Origin815895A3",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "StackNextJSDistributionOrigin4S3Origin25CF633C",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "StackNextJSDistributionOrigin5S3OriginF7CEDF65",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+              ],
+              "Effect": "Allow",
+              "Principal": Object {
+                "CanonicalUser": Object {
+                  "Fn::GetAtt": Array [
+                    "StackNextJSDistributionOrigin6S3Origin922D99DB",
+                    "S3CanonicalUserId",
+                  ],
+                },
+              },
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+  },
+}
+`;
