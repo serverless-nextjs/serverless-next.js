@@ -27,6 +27,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@aws-cdk/assert": ">=1.75.0 & < 2",
     "@aws-cdk/aws-certificatemanager": ">=1.75.0 & < 2",
     "@aws-cdk/aws-cloudfront": ">=1.75.0 & < 2",
     "@aws-cdk/aws-cloudfront-origins": ">=1.75.0 & < 2",

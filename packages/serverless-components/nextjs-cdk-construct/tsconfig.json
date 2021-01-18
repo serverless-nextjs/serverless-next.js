@@ -12,5 +12,5 @@
     "allowJs": true
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts", ".d.ts"]
+  "include": ["./src"]
 }
