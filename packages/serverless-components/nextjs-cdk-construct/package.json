@@ -38,6 +38,7 @@
     "@aws-cdk/aws-s3": ">=1.75.0 & < 2",
     "@aws-cdk/aws-s3-deployment": ">=1.75.0 & < 2",
     "@aws-cdk/core": ">=1.75.0 & < 2",
+    "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
     "fs-extra": "^9.0.1"
   },
   "devDependencies": {
