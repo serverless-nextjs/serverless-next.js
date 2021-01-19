@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.21...@sls-next/lambda-at-edge@1.8.0-alpha.22) (2021-01-19)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix redirect loop in Next 10.0.4 and up due to new internal redirect regexes ([#879](https://github.com/serverless-nextjs/serverless-next.js/issues/879)) ([36e5716](https://github.com/serverless-nextjs/serverless-next.js/commit/36e5716344efbc8ac163b5964b8139b811dad29e))
+
 # [1.8.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.20...@sls-next/lambda-at-edge@1.8.0-alpha.21) (2021-01-10)
 
 ### Performance Improvements
