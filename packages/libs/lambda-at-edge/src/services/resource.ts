@@ -43,7 +43,7 @@ export class Resource {
   }
 
   public getHtmlUri(): string {
-    return this.getCanonicalUri();
+    return `${this.basePath || ""}${this.getCanonicalUri()}`;
   }
 
   public getJsonKey(): string {

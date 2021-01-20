@@ -710,10 +710,6 @@ const handleOriginResponse = async ({
   const uri = normaliseUri(request.uri);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const isHTMLPage = prerenderManifest.routes[decodeURI(uri)];
-  const isPreview = isValidPreviewRequest(
-    request.headers.cookie,
-    prerenderManifest.preview.previewModeSigningKey
-  );
   const isPublicFile = manifest.publicFiles[decodeURI(uri)];
 
   // For PUT or DELETE just return the response as these should be unsupported S3 methods
@@ -744,7 +740,6 @@ const handleOriginResponse = async ({
         // if REVALIDATION_CONFIG is undefined revalidation is off
         REVALIDATION_CONFIG &&
         (isHTMLPage || hasFallback || isDataRequest(uri)) &&
-        !isPreview &&
         !isPublicFile &&
         isStale(revalidationKey)
       ) {
