@@ -11,6 +11,7 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest
 } from "@sls-next/lambda-at-edge";
+import { getAssetDirectoryFileCachePolicies } from "@sls-next/s3-static-assets";
 import * as fs from "fs-extra";
 import * as path from "path";
 import {
@@ -36,15 +37,16 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public distribution: cloudfront.Distribution;
 
+  public bucket: s3.Bucket;
+
   constructor(scope: cdk.Construct, id: string, private props: Props) {
     super(scope, id);
     this.apiBuildManifest = this.readApiBuildManifest();
     this.routesManifest = this.readRoutesManifest();
     this.imageManifest = this.readImageBuildManifest();
-    const bucket = new s3.Bucket(this, "PublicAssets", {
+    this.bucket = new s3.Bucket(this, "PublicAssets", {
       publicReadAccess: true
     });
-
     const edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
         new ServicePrincipal("lambda.amazonaws.com"),
@@ -202,7 +204,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
         defaultBehavior: {
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-          origin: new origins.S3Origin(bucket),
+          origin: new origins.S3Origin(this.bucket),
           allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
           cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
           compress: true,
@@ -215,7 +217,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
                 [this.pathPattern("_next/image*")]: {
                   viewerProtocolPolicy:
                     cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-                  origin: new origins.S3Origin(bucket),
+                  origin: new origins.S3Origin(this.bucket),
                   allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
                   cachedMethods:
                     cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
@@ -240,7 +242,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           [this.pathPattern("_next/data/*")]: {
             viewerProtocolPolicy:
               cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-            origin: new origins.S3Origin(bucket),
+            origin: new origins.S3Origin(this.bucket),
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
@@ -250,7 +252,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           [this.pathPattern("_next/*")]: {
             viewerProtocolPolicy:
               cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-            origin: new origins.S3Origin(bucket),
+            origin: new origins.S3Origin(this.bucket),
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
@@ -259,7 +261,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           [this.pathPattern("static/*")]: {
             viewerProtocolPolicy:
               cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-            origin: new origins.S3Origin(bucket),
+            origin: new origins.S3Origin(this.bucket),
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
@@ -270,7 +272,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
                 [this.pathPattern("api/*")]: {
                   viewerProtocolPolicy:
                     cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
-                  origin: new origins.S3Origin(bucket),
+                  origin: new origins.S3Origin(this.bucket),
                   allowedMethods:
                     cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
                   cachedMethods:
@@ -290,29 +292,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const staticAssets = this.getStaticAssetsFromBuild();
-    Object.keys(staticAssets).forEach((staticAssetKey) => {
-      const staticAsset =
-        staticAssets[staticAssetKey as keyof typeof staticAssets];
-      const assetPath = path.join(
-        this.props.serverlessBuildOutDir,
-        "assets",
-        staticAsset
-      );
-      if (!fs.existsSync(assetPath)) return;
-      new s3Deploy.BucketDeployment(this, `AssetDeployment_${staticAssetKey}`, {
-        destinationBucket: bucket,
-        distribution: this.distribution,
-        destinationKeyPrefix: staticAsset,
-        distributionPaths: ["/*"],
-        sources: [s3Deploy.Source.asset(assetPath)],
-        cacheControl: [
-          s3Deploy.CacheControl.setPublic(),
-          s3Deploy.CacheControl.maxAge(cdk.Duration.days(365)),
-          s3Deploy.CacheControl.fromString("immutable")
-        ]
-      });
+    const staticAssets = getAssetDirectoryFileCachePolicies({
+      basePath: "",
+      serverlessBuildOutDir: props.serverlessBuildOutDir
     });
+
+    this.createStaticAssetDeployments(staticAssets);
 
     if (props.domain) {
       new ARecord(this, "AliasRecord", {
@@ -321,6 +306,61 @@ export class NextJSLambdaEdge extends cdk.Construct {
         target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution))
       });
     }
+  }
+
+  /**
+   * Creates 'Deployments' for files in `/assets`, where each deployment has a
+   * different cache control header.
+   *
+   * CDK allows us to create a 'deployment' with a single cache-header config
+   * but with many files. So we take the out put from
+   * `getAssetDirectoryFileCachePolicies`, group them by cache-header and pass
+   * all files to be uploaded within the deployment.
+   */
+  private createStaticAssetDeployments(
+    staticAssets: ReturnType<typeof getAssetDirectoryFileCachePolicies>
+  ) {
+    const NO_CACHE = "NO_CACHE";
+    const staticAssetsGroupedByCache = staticAssets.reduce(
+      (groupedAssets, nextStaticAsset) => {
+        const key = nextStaticAsset.cacheControl || NO_CACHE;
+        return {
+          ...groupedAssets,
+          [key]: [...(groupedAssets[key] || []), nextStaticAsset]
+        };
+      },
+      {} as Record<string, typeof staticAssets[number][]>
+    );
+
+    const assetsPath = path.join(this.props.serverlessBuildOutDir, "assets");
+    Object.keys(staticAssetsGroupedByCache).forEach((cacheKey) => {
+      const assets = staticAssetsGroupedByCache[cacheKey];
+      // We have a unique BucketDeployment per cache-control header, so we
+      // reformat the cache key to be compatible as a construct ID
+      const cacheHash = cacheKey.replace(/[^0-9a-z]/gi, "");
+      new s3Deploy.BucketDeployment(this, `AssetDeployment${cacheHash}`, {
+        destinationBucket: this.bucket,
+        sources: [
+          // Slight ergonomic issue with the Asset API that we can't pass an
+          // array of files, only a single directory. as a work around
+          // we pass the entire assets directory, but `exclude` all and
+          // whitelist all the files under the directory that we want to upload
+          // for this cache-control key.
+          s3Deploy.Source.asset(assetsPath, {
+            exclude: [
+              "**",
+              ...assets.map((staticAsset) => {
+                return `!${staticAsset.path.relative}`;
+              })
+            ]
+          })
+        ],
+        cacheControl:
+          cacheKey == NO_CACHE
+            ? []
+            : [s3Deploy.CacheControl.fromString(cacheKey)]
+      });
+    });
   }
 
   private pathPattern(pattern: string): string {
@@ -357,20 +397,5 @@ export class NextJSLambdaEdge extends cdk.Construct {
     return fs.existsSync(imageLambdaPath)
       ? fs.readJSONSync(imageLambdaPath)
       : null;
-  }
-
-  private getStaticAssetsFromBuild() {
-    const nextStaticFilesPath = path.join("_next", "static");
-    const nextDataFilesPath = path.join("_next", "data");
-    const htmlPagesPath = path.join("static-pages");
-    const publicFilesPath = path.join("public");
-    const staticFilesPath = path.join("static");
-    return {
-      nextStaticFilesPath,
-      nextDataFilesPath,
-      htmlPagesPath,
-      publicFilesPath,
-      staticFilesPath
-    };
   }
 }

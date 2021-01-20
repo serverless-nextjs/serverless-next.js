@@ -33,13 +33,12 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
     "aws-sdk": "2.728.0",
+    "fast-glob": "^3.2.5",
     "fs-extra": "^9.0.1",
-    "klaw": "^3.0.0",
     "mime-types": "^2.1.27",
     "regex-parser": "^2.2.10"
   },
   "devDependencies": {
-    "@types/klaw": "^3.0.1",
     "@types/mime-types": "^2.1.0",
     "typescript": "^3.9.6"
   }
