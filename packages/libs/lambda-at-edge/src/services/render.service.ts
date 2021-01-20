@@ -17,11 +17,11 @@ class Page {
   }
 
   public getHtmlBody() {
-    return JSON.stringify(this.json);
+    return this.html;
   }
 
   public getJsonBody() {
-    return this.html;
+    return JSON.stringify(this.json);
   }
 }
 
