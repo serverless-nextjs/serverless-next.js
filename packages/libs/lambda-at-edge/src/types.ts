@@ -127,6 +127,7 @@ export type RedirectData = {
   source: string;
   destination: string;
   regex: string;
+  internal?: boolean;
 };
 
 export type RewriteData = {

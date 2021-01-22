@@ -20,6 +20,11 @@ export function isTrailingSlashRedirect(
   redirect: RedirectData,
   basePath: string
 ) {
+  // Remove internal trailing slash redirects (in Next.js 10.0.4 and up)
+  if (redirect.internal === true) {
+    return true;
+  }
+
   if (basePath !== "") {
     return (
       (redirect.statusCode === 308 &&
