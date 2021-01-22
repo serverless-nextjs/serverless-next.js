@@ -146,11 +146,17 @@ export type HeaderData = {
   regex: string;
 };
 
+export type I18nData = {
+  locales: string[];
+  defaultLocale: string;
+};
+
 export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
   rewrites: RewriteData[];
   headers: HeaderData[];
+  i18n?: I18nData;
 };
 
 export type PerfLogger = {
