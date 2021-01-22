@@ -704,63 +704,132 @@ class Builder {
       path.join(dotNextDirectory, "prerender-manifest.json")
     );
 
-    const prerenderManifestJSONPropFileAssets = Object.keys(
-      prerenderManifest.routes
-    ).map((key) => {
-      const source = path.join(
-        dotNextDirectory,
-        `serverless/pages/${
-          key.endsWith("/") ? key + "index.json" : key + ".json"
-        }`
+    let prerenderManifestJSONPropFileAssets: Promise<void>[] = [];
+    let prerenderManifestHTMLPageAssets: Promise<void>[] = [];
+    let fallbackHTMLPageAssets: Promise<void>[] = [];
+
+    // Copy locale-specific prerendered files if defined, otherwise use empty which works for no locale
+    const locales = routesManifest.i18n?.locales ?? [""];
+    const defaultLocale = routesManifest.i18n?.defaultLocale;
+
+    for (const locale of locales) {
+      prerenderManifestJSONPropFileAssets.concat(
+        Object.keys(prerenderManifest.routes).map((key) => {
+          const JSONFileName = key.endsWith("/")
+            ? key + "index.json"
+            : key + ".json";
+
+          const localePrefixedJSONFileName = locale + JSONFileName;
+
+          const source = path.join(
+            dotNextDirectory,
+            `serverless/pages/${localePrefixedJSONFileName}`
+          );
+          const destination = path.join(
+            assetOutputDirectory,
+            withBasePath(`_next/data/${buildId}/${localePrefixedJSONFileName}`)
+          );
+
+          if (defaultLocale && defaultLocale === locale) {
+            // If this is default locale, we need to copy to two destinations
+            // the locale-prefixed path and non-locale-prefixed path
+            const defaultDestination = path.join(
+              assetOutputDirectory,
+              withBasePath(`_next/data/${buildId}/${JSONFileName}`)
+            );
+
+            return new Promise(async () => {
+              await Promise.all([
+                copyIfExists(source, destination),
+                copyIfExists(source, defaultDestination)
+              ]);
+            });
+          } else {
+            return copyIfExists(source, destination);
+          }
+        })
       );
-      const destination = path.join(
-        assetOutputDirectory,
-        withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
+
+      prerenderManifestHTMLPageAssets.concat(
+        Object.keys(prerenderManifest.routes).map((key) => {
+          const pageFilePath = key.endsWith("/")
+            ? path.join(key, "index.html")
+            : key + ".html";
+
+          const localePrefixedPageFilePath = locale + pageFilePath;
+
+          const source = path.join(
+            dotNextDirectory,
+            `serverless/pages/${localePrefixedPageFilePath}`
+          );
+          const destination = path.join(
+            assetOutputDirectory,
+            withBasePath(
+              path.join("static-pages", buildId, localePrefixedPageFilePath)
+            )
+          );
+
+          if (defaultLocale && defaultLocale === locale) {
+            // If this is default locale, we need to copy to two destinations
+            // the locale-prefixed path and non-locale-prefixed path
+            const defaultDestination = path.join(
+              assetOutputDirectory,
+              withBasePath(path.join("static-pages", buildId, pageFilePath))
+            );
+
+            return new Promise(async () => {
+              await Promise.all([
+                copyIfExists(source, destination),
+                copyIfExists(source, defaultDestination)
+              ]);
+            });
+          } else {
+            return copyIfExists(source, destination);
+          }
+        })
       );
 
-      return copyIfExists(source, destination);
-    });
+      fallbackHTMLPageAssets.concat(
+        Object.values(prerenderManifest.dynamicRoutes || {})
+          .filter(({ fallback }) => {
+            return !!fallback;
+          })
+          .map((routeConfig) => {
+            const fallback = routeConfig.fallback as string;
+            const localePrefixedFallback = locale + fallback;
 
-    const prerenderManifestHTMLPageAssets = Object.keys(
-      prerenderManifest.routes
-    ).map((key) => {
-      const relativePageFilePath = key.endsWith("/")
-        ? path.join(key, "index.html")
-        : key + ".html";
+            const source = path.join(
+              dotNextDirectory,
+              `serverless/pages/${localePrefixedFallback}`
+            );
 
-      const source = path.join(
-        dotNextDirectory,
-        `serverless/pages/${relativePageFilePath}`
+            const destination = path.join(
+              assetOutputDirectory,
+              withBasePath(
+                path.join("static-pages", buildId, localePrefixedFallback)
+              )
+            );
+
+            if (defaultLocale && defaultLocale === locale) {
+              // If this is default locale, we need to copy to two destinations
+              // the locale-prefixed path and non-locale-prefixed path
+              const defaultDestination = path.join(
+                assetOutputDirectory,
+                withBasePath(path.join("static-pages", buildId, fallback))
+              );
+
+              return new Promise(async () => {
+                await Promise.all([
+                  copyIfExists(source, destination),
+                  copyIfExists(source, defaultDestination)
+                ]);
+              });
+            } else {
+              return copyIfExists(source, destination);
+            }
+          })
       );
-      const destination = path.join(
-        assetOutputDirectory,
-        withBasePath(path.join("static-pages", buildId, relativePageFilePath))
-      );
-
-      return copyIfExists(source, destination);
-    });
-
-    const fallbackHTMLPageAssets = Object.values(
-      prerenderManifest.dynamicRoutes || {}
-    )
-      .filter(({ fallback }) => {
-        return !!fallback;
-      })
-      .map((routeConfig) => {
-        const fallback = routeConfig.fallback as string;
-
-        const source = path.join(
-          dotNextDirectory,
-          `serverless/pages/${fallback}`
-        );
-
-        const destination = path.join(
-          assetOutputDirectory,
-          withBasePath(path.join("static-pages", buildId, fallback))
-        );
-
-        return copyIfExists(source, destination);
-      });
+    }
 
     // Check if public/static exists and fail build since this conflicts with static/* behavior.
     if (await fse.pathExists(path.join(nextStaticDir, "public", "static"))) {

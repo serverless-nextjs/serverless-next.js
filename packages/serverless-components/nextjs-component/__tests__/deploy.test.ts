@@ -331,7 +331,7 @@ describe("deploy tests", () => {
       );
     });
 
-    ["_next/data/zsWqBqLjpgRmswfQomanp/index.json"].forEach((file) => {
+    ["_next/data/test-build-id/index.json"].forEach((file) => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: file,
