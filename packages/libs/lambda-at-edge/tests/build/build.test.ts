@@ -342,7 +342,7 @@ describe("Builder Tests", () => {
         expect(staticFiles).toEqual(["donotdelete.txt"]);
 
         const nextDataFiles = await fse.readdir(
-          join(outputDir, `${ASSETS_DIR}/_next/data/zsWqBqLjpgRmswfQomanp`)
+          join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id`)
         );
         expect(nextDataFiles).toEqual(["contact.json", "index.json"]);
 
