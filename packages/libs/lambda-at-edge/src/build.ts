@@ -708,18 +708,11 @@ class Builder {
     let prerenderManifestHTMLPageAssets: Promise<void>[] = [];
     let fallbackHTMLPageAssets: Promise<void>[] = [];
 
-    // Copy locale-specific prerendered files if defined, otherwise use empty which signifies no locale
-    let locales: string[];
-    if (routesManifest.i18n) {
-      locales = routesManifest.i18n?.locales;
-      locales.push("defaultLocale"); // special value to push default locale
-    } else {
-      locales = [""]; // no locales defined
-    }
-
+    // Copy locale-specific prerendered files if defined, otherwise use empty which works for no locale
+    const locales = routesManifest.i18n?.locales ?? [""];
     const defaultLocale = routesManifest.i18n?.defaultLocale;
 
-    for (let locale of locales) {
+    for (const locale of locales) {
       prerenderManifestJSONPropFileAssets.concat(
         Object.keys(prerenderManifest.routes).map((key) => {
           const JSONFileName = key.endsWith("/")
