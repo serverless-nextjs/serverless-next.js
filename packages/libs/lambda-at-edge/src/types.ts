@@ -3,6 +3,7 @@ import type {
   CloudFrontEvent,
   CloudFrontResponse
 } from "aws-lambda";
+import { DynamicSsgRoute, SsgRoute } from "next/dist/build";
 
 export type DynamicPageKeyValue = {
   [key: string]: {
@@ -57,6 +58,14 @@ export type OriginRequestDefaultHandlerManifest = {
         [path: string]: string;
       };
       dynamic: DynamicPageKeyValue;
+    };
+    ssg: {
+      nonDynamic: {
+        [path: string]: SsgRoute;
+      };
+      dynamic: {
+        [path: string]: DynamicSsgRoute;
+      };
     };
   };
   publicFiles: {
