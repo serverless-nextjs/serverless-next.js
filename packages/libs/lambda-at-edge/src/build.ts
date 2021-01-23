@@ -641,7 +641,9 @@ class Builder {
 
           for (const key in ssrPages.dynamic) {
             const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-            localeSsrPages.dynamic[newKey] = {};
+
+            // Initial default value
+            localeSsrPages.dynamic[newKey] = { file: "", regex: "" };
             const newDynamicSsr = Object.assign(
               localeSsrPages.dynamic[newKey],
               ssrPages.dynamic[key]
@@ -670,7 +672,13 @@ class Builder {
 
           for (const key in ssgPages.nonDynamic) {
             const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-            localeSsgPages.nonDynamic[newKey] = {};
+
+            // Initial default value
+            localeSsgPages.nonDynamic[newKey] = {
+              initialRevalidateSeconds: false,
+              srcRoute: null,
+              dataRoute: ""
+            };
 
             const newSsgRoute = Object.assign(
               localeSsgPages.nonDynamic[newKey],

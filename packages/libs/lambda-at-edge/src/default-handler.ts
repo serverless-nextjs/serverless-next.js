@@ -621,7 +621,7 @@ const hasFallbackForUri = (
   let foundFallback:
     | {
         routeRegex: string;
-        fallback: string | false;
+        fallback: string | false | null;
         dataRoute: string;
         dataRouteRegex: string;
       }
