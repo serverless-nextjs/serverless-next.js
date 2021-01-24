@@ -36,7 +36,7 @@ describe("Builder Tests (with locales)", () => {
   afterEach(() => {
     fseEmptyDirSpy.mockRestore();
     fseRemoveSpy.mockRestore();
-    //return cleanupDir(outputDir);
+    return cleanupDir(outputDir);
   });
 
   describe("Cleanup", () => {
@@ -96,6 +96,26 @@ describe("Builder Tests (with locales)", () => {
         "/customers/:catchAll*": {
           file: "pages/customers/[...catchAll].js",
           regex: expect.any(String)
+        },
+        "/nl/:root": {
+          file: "pages/[root].js",
+          regex: expect.any(String)
+        },
+        "/nl/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
+          regex: expect.any(String)
+        },
+        "/nl/customers/:customer": {
+          file: "pages/customers/[customer].js",
+          regex: expect.any(String)
+        },
+        "/nl/customers/:customer/:post": {
+          file: "pages/customers/[customer]/[post].js",
+          regex: expect.any(String)
+        },
+        "/nl/customers/:customer/profile": {
+          file: "pages/customers/[customer]/profile.js",
+          regex: expect.any(String)
         }
       });
 
@@ -103,7 +123,11 @@ describe("Builder Tests (with locales)", () => {
         "/customers/new": "pages/customers/new.js",
         "/": "pages/index.js",
         "/_app": "pages/_app.js",
-        "/_document": "pages/_document.js"
+        "/_document": "pages/_document.js",
+        "/nl": "pages/index.js",
+        "/nl/_app": "pages/_app.js",
+        "/nl/_document": "pages/_document.js",
+        "/nl/customers/new": "pages/customers/new.js"
       });
 
       expect(html).toEqual({
@@ -191,38 +215,12 @@ describe("Builder Tests (with locales)", () => {
 
   describe("Assets", () => {
     it("copies locale-specific asset files", async () => {
-      expect.assertions(11);
+      expect.assertions(7);
       // Root
       const nextDataFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id`)
       );
-      expect(nextDataFiles).toEqual(["contact.json", "en", "index.json", "nl"]);
-
-      // English
-      const enNextDataFiles = await fse.readdir(
-        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en`)
-      );
-      expect(enNextDataFiles).toEqual(["contact.json", "index.json"]);
-
-      const enIndexJson = await fse.readFile(
-        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en/index.json`),
-        "utf8"
-      );
-      expect(enIndexJson).toBe('"en"');
-
-      const enPageFiles = await fse.readdir(
-        join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en`)
-      );
-      expect(enPageFiles).toEqual(["contact.html", "index.html"]);
-
-      const enIndexHtml = await fse.readFile(
-        join(
-          outputDir,
-          `${ASSETS_DIR}/static-pages/test-build-id/en/index.html`
-        ),
-        "utf8"
-      );
-      expect(enIndexHtml).toBe("en");
+      expect(nextDataFiles).toEqual(["contact.json", "index.json", "nl"]);
 
       // Dutch
       const nlNextDataFiles = await fse.readdir(
@@ -250,7 +248,7 @@ describe("Builder Tests (with locales)", () => {
       );
       expect(nlIndexHtml).toBe("nl");
 
-      // Default locale: English
+      // Default locale: English. Note it is not generated in /en/ directory
       const defaultIndexJson = await fse.readFile(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/index.json`),
         "utf8"

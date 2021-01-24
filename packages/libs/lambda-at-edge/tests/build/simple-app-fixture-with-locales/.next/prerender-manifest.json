@@ -11,5 +11,6 @@
       "srcRoute": null,
       "dataRoute": "/_next/data/test-build-id/contact.json"
     }
-  }
+  },
+  "dynamicRoutes": {}
 }

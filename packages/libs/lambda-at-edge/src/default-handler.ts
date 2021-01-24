@@ -331,7 +331,7 @@ const handleOriginRequest = async ({
   }
 
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
-  const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
+  const isPrerenderedPage = pages.ssg.nonDynamic[uri]; // prerendered/SSG pages are also static pages like "pages.html" above
   const origin = request.origin as CloudFrontOrigin;
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
@@ -373,7 +373,7 @@ const handleOriginRequest = async ({
         request.uri = pagePath.replace("pages", "");
       } else if (
         pagePath === "pages/_error.js" ||
-        (!prerenderManifest.routes[normalisedDataRequestUri] &&
+        (!pages.ssg.nonDynamic[normalisedDataRequestUri] &&
           !hasFallbackForUri(
             normalisedDataRequestUri,
             prerenderManifest,
@@ -611,7 +611,7 @@ const hasFallbackForUri = (
   manifest: OriginRequestDefaultHandlerManifest
 ) => {
   const {
-    pages: { ssr, html }
+    pages: { ssr, html, ssg }
   } = manifest;
   // Non-dynamic routes are prioritized over dynamic fallbacks, return false to ensure those get rendered instead
   if (ssr.nonDynamic[uri] || html.nonDynamic[uri]) {
@@ -621,7 +621,7 @@ const hasFallbackForUri = (
   let foundFallback:
     | {
         routeRegex: string;
-        fallback: string | false;
+        fallback: string | false | null;
         dataRoute: string;
         dataRouteRegex: string;
       }
@@ -641,19 +641,18 @@ const hasFallbackForUri = (
 
     // If any dynamic route matches, check that this isn't one of the fallback routes in prerender manifest
     if (matchesRegex) {
-      const matchesFallbackRoute = Object.keys(
-        prerenderManifest.dynamicRoutes
-      ).find((prerenderManifestRoute) => {
-        const fileMatchesPrerenderRoute =
-          dynamicRoute.file === `pages${prerenderManifestRoute}.js`;
+      const matchesFallbackRoute = Object.keys(ssg.dynamic).find(
+        (dynamicSsgRoute) => {
+          const fileMatchesPrerenderRoute =
+            dynamicRoute.file === `pages${dynamicSsgRoute}.js`;
 
-        if (fileMatchesPrerenderRoute) {
-          foundFallback =
-            prerenderManifest.dynamicRoutes[prerenderManifestRoute];
+          if (fileMatchesPrerenderRoute) {
+            foundFallback = ssg.dynamic[dynamicSsgRoute];
+          }
+
+          return fileMatchesPrerenderRoute;
         }
-
-        return fileMatchesPrerenderRoute;
-      });
+      );
 
       return !matchesFallbackRoute;
     } else {
@@ -671,7 +670,7 @@ const hasFallbackForUri = (
   }
 
   // Otherwise, try to match fallback against dynamic routes in prerender manifest
-  return Object.values(prerenderManifest.dynamicRoutes).find((routeConfig) => {
+  return Object.values(ssg.dynamic).find((routeConfig) => {
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);
   });

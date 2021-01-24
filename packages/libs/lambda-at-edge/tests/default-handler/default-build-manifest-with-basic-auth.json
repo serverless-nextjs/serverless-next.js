@@ -57,6 +57,39 @@
           "regex": "^/([^/]+?)/([^/]+?)(?:/)?$"
         }
       }
+    },
+    "ssg": {
+      "nonDynamic": {
+        "/": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/test-build-id/index.json"
+        },
+        "/tests/prerender-manifest/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/tests/prerender-manifest/[staticPageName]",
+          "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest/example-static-page.json"
+        },
+        "/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/preview.json"
+        }
+      },
+      "dynamic": {
+        "/tests/prerender-manifest/[staticPageName]": {
+          "routeRegex": "^/tests/prerender-manifest/(?:([^/]+?))/?$",
+          "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest/[staticPageName].json",
+          "fallback": false,
+          "dataRouteRegex": "^/_next/data/test-build-id/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+        },
+        "/tests/prerender-manifest-fallback/[fallback]": {
+          "routeRegex": "^/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
+          "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest-fallback/[staticPageName].json",
+          "fallback": "/tests/prerender-manifest-fallback/[fallback].html",
+          "dataRouteRegex": "^/_next/data/test-build-id/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+        }
+      }
     }
   },
   "publicFiles": {

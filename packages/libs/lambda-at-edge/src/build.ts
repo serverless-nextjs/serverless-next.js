@@ -9,7 +9,8 @@ import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   RoutesManifest,
-  OriginRequestImageHandlerManifest
+  OriginRequestImageHandlerManifest,
+  DynamicPageKeyValue
 } from "./types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -23,7 +24,7 @@ import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { PrerenderManifest } from "next/dist/build";
+import { DynamicSsgRoute, PrerenderManifest, SsgRoute } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 
@@ -456,7 +457,10 @@ class Builder {
     ]);
   }
 
-  async prepareBuildManifests(): Promise<{
+  async prepareBuildManifests(
+    routesManifest: RoutesManifest,
+    prerenderManifest: PrerenderManifest
+  ): Promise<{
     defaultBuildManifest: OriginRequestDefaultHandlerManifest;
     apiBuildManifest: OriginRequestApiHandlerManifest;
     imageBuildManifest: OriginRequestImageHandlerManifest;
@@ -487,6 +491,10 @@ class Builder {
         html: {
           dynamic: {},
           nonDynamic: {}
+        },
+        ssg: {
+          dynamic: {},
+          nonDynamic: {}
         }
       },
       publicFiles: {},
@@ -506,6 +514,7 @@ class Builder {
       enableHTTPCompression
     };
 
+    const ssgPages = defaultBuildManifest.pages.ssg;
     const ssrPages = defaultBuildManifest.pages.ssr;
     const htmlPages = defaultBuildManifest.pages.html;
     const apiPages = apiBuildManifest.apis;
@@ -581,6 +590,144 @@ class Builder {
         ssrPages.nonDynamic[route] = pageFile;
       }
     });
+
+    // Add non-dynamic SSG routes
+    Object.entries(prerenderManifest.routes).forEach(([route, ssgRoute]) => {
+      // Somehow Next.js generates prerender manifest with default locale prefixed, normalize it
+      const defaultLocale = routesManifest.i18n?.defaultLocale;
+      if (defaultLocale) {
+        const normalizedRoute = route.replace(`/${defaultLocale}/`, "/");
+        ssgRoute.dataRoute = ssgRoute.dataRoute.replace(
+          `/${defaultLocale}/`,
+          "/"
+        );
+        ssgPages.nonDynamic[normalizedRoute] = ssgRoute;
+      } else {
+        ssgPages.nonDynamic[route] = ssgRoute;
+      }
+    });
+
+    // Add dynamic SSG routes
+    Object.entries(prerenderManifest.dynamicRoutes ?? {}).forEach(
+      ([route, dynamicSsgRoute]) => {
+        ssgPages.dynamic[route] = dynamicSsgRoute;
+      }
+    );
+
+    // Copy routes for all specified locales
+    if (routesManifest.i18n) {
+      const defaultLocale = routesManifest.i18n.defaultLocale;
+      for (const locale of routesManifest.i18n.locales) {
+        if (locale !== defaultLocale) {
+          const localeSsrPages: {
+            nonDynamic: {
+              [key: string]: string;
+            };
+            dynamic: DynamicPageKeyValue;
+          } = {
+            nonDynamic: {},
+            dynamic: {}
+          };
+
+          for (const key in ssrPages.nonDynamic) {
+            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+            localeSsrPages.nonDynamic[newKey] = ssrPages.nonDynamic[key];
+          }
+
+          ssrPages.nonDynamic = {
+            ...ssrPages.nonDynamic,
+            ...localeSsrPages.nonDynamic
+          };
+
+          for (const key in ssrPages.dynamic) {
+            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+
+            // Initial default value
+            localeSsrPages.dynamic[newKey] = { file: "", regex: "" };
+            const newDynamicSsr = Object.assign(
+              localeSsrPages.dynamic[newKey],
+              ssrPages.dynamic[key]
+            );
+
+            // Need to update the regex
+            newDynamicSsr.regex = pathToRegexStr(newKey);
+          }
+
+          ssrPages.dynamic = {
+            ...ssrPages.dynamic,
+            ...localeSsrPages.dynamic
+          };
+
+          const localeSsgPages: {
+            dynamic: {
+              [key: string]: DynamicSsgRoute;
+            };
+            nonDynamic: {
+              [key: string]: SsgRoute;
+            };
+          } = {
+            dynamic: {},
+            nonDynamic: {}
+          };
+
+          for (const key in ssgPages.nonDynamic) {
+            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+
+            // Initial default value
+            localeSsgPages.nonDynamic[newKey] = {
+              initialRevalidateSeconds: false,
+              srcRoute: null,
+              dataRoute: ""
+            };
+
+            const newSsgRoute = Object.assign(
+              localeSsgPages.nonDynamic[newKey],
+              ssgPages.nonDynamic[key]
+            );
+
+            // Replace with localized value
+            newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
+              `/_next/data/${buildId}/`,
+              `/_next/data/${buildId}/${locale}/`
+            );
+          }
+
+          ssgPages.nonDynamic = {
+            ...ssgPages.nonDynamic,
+            ...localeSsgPages.nonDynamic
+          };
+
+          for (const key in ssgPages.dynamic) {
+            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+            localeSsgPages.dynamic[newKey] = ssgPages.dynamic[key];
+
+            const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
+
+            // Replace with localized values
+            newDynamicSsgRoute.dataRoute = newDynamicSsgRoute.dataRoute.replace(
+              `/_next/data/${buildId}/`,
+              `/_next/data/${buildId}/${locale}/`
+            );
+            newDynamicSsgRoute.dataRouteRegex = newDynamicSsgRoute.dataRouteRegex.replace(
+              `/_next/data/${buildId}/`,
+              `/_next/data/${buildId}/${locale}/`
+            );
+            newDynamicSsgRoute.fallback =
+              typeof newDynamicSsgRoute.fallback === "string"
+                ? newDynamicSsgRoute.fallback.replace("/", `/${locale}/`)
+                : newDynamicSsgRoute.fallback;
+            newDynamicSsgRoute.routeRegex = localeSsgPages.dynamic[
+              newKey
+            ].routeRegex.replace("^/", `^/${locale}/`);
+          }
+
+          ssgPages.dynamic = {
+            ...ssgPages.dynamic,
+            ...localeSsgPages.dynamic
+          };
+        }
+      }
+    }
 
     const publicFiles = await this.readPublicFiles();
 
@@ -727,26 +874,16 @@ class Builder {
           );
           const destination = path.join(
             assetOutputDirectory,
-            withBasePath(`_next/data/${buildId}/${localePrefixedJSONFileName}`)
+            withBasePath(
+              `_next/data/${buildId}/${
+                defaultLocale && defaultLocale === locale
+                  ? JSONFileName
+                  : localePrefixedJSONFileName
+              }`
+            )
           );
 
-          if (defaultLocale && defaultLocale === locale) {
-            // If this is default locale, we need to copy to two destinations
-            // the locale-prefixed path and non-locale-prefixed path
-            const defaultDestination = path.join(
-              assetOutputDirectory,
-              withBasePath(`_next/data/${buildId}/${JSONFileName}`)
-            );
-
-            return new Promise(async () => {
-              await Promise.all([
-                copyIfExists(source, destination),
-                copyIfExists(source, defaultDestination)
-              ]);
-            });
-          } else {
-            return copyIfExists(source, destination);
-          }
+          return copyIfExists(source, destination);
         })
       );
 
@@ -765,32 +902,22 @@ class Builder {
           const destination = path.join(
             assetOutputDirectory,
             withBasePath(
-              path.join("static-pages", buildId, localePrefixedPageFilePath)
+              path.join(
+                "static-pages",
+                buildId,
+                defaultLocale && defaultLocale === locale
+                  ? pageFilePath
+                  : localePrefixedPageFilePath
+              )
             )
           );
 
-          if (defaultLocale && defaultLocale === locale) {
-            // If this is default locale, we need to copy to two destinations
-            // the locale-prefixed path and non-locale-prefixed path
-            const defaultDestination = path.join(
-              assetOutputDirectory,
-              withBasePath(path.join("static-pages", buildId, pageFilePath))
-            );
-
-            return new Promise(async () => {
-              await Promise.all([
-                copyIfExists(source, destination),
-                copyIfExists(source, defaultDestination)
-              ]);
-            });
-          } else {
-            return copyIfExists(source, destination);
-          }
+          return copyIfExists(source, destination);
         })
       );
 
       fallbackHTMLPageAssets.concat(
-        Object.values(prerenderManifest.dynamicRoutes || {})
+        Object.values(prerenderManifest.dynamicRoutes ?? {})
           .filter(({ fallback }) => {
             return !!fallback;
           })
@@ -806,27 +933,17 @@ class Builder {
             const destination = path.join(
               assetOutputDirectory,
               withBasePath(
-                path.join("static-pages", buildId, localePrefixedFallback)
+                path.join(
+                  "static-pages",
+                  buildId,
+                  defaultLocale && defaultLocale === locale
+                    ? fallback
+                    : localePrefixedFallback
+                )
               )
             );
 
-            if (defaultLocale && defaultLocale === locale) {
-              // If this is default locale, we need to copy to two destinations
-              // the locale-prefixed path and non-locale-prefixed path
-              const defaultDestination = path.join(
-                assetOutputDirectory,
-                withBasePath(path.join("static-pages", buildId, fallback))
-              );
-
-              return new Promise(async () => {
-                await Promise.all([
-                  copyIfExists(source, destination),
-                  copyIfExists(source, defaultDestination)
-                ]);
-              });
-            } else {
-              return copyIfExists(source, destination);
-            }
+            return copyIfExists(source, destination);
           })
       );
     }
@@ -927,11 +1044,21 @@ class Builder {
       await restoreUserConfig();
     }
 
+    const routesManifest = require(join(
+      this.dotNextDir,
+      "routes-manifest.json"
+    ));
+
+    const prerenderManifest = require(join(
+      this.dotNextDir,
+      "prerender-manifest.json"
+    ));
+
     const {
       defaultBuildManifest,
       apiBuildManifest,
       imageBuildManifest
-    } = await this.prepareBuildManifests();
+    } = await this.prepareBuildManifests(routesManifest, prerenderManifest);
 
     await this.buildDefaultLambda(defaultBuildManifest);
 
@@ -953,10 +1080,6 @@ class Builder {
     }
 
     // Copy static assets to .serverless_nextjs directory
-    const routesManifest = require(join(
-      this.dotNextDir,
-      "routes-manifest.json"
-    ));
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
   }
 
