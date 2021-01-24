@@ -4,12 +4,12 @@
     "/": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
-      "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/index.json"
+      "dataRoute": "/_next/data/test-build-id/index.json"
     },
     "/contact": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
-      "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/contact.json"
+      "dataRoute": "/_next/data/test-build-id/contact.json"
     }
   },
   "dynamicRoutes": {}
