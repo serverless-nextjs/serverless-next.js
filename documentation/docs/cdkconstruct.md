@@ -54,7 +54,7 @@ To deploy your stack, use the `cdk` CLI as normal.
 
 Now you've deployed your app, you'll likely want to add a custom domain:
 
-```tsx
+```ts
 new NextJSLambdaEdge(this, "NextJsApp", {
   serverlessBuildOutDir: "./build",
   // `Certificate.fromCertificateArn` & `HostedZone.fromHostedZoneAttributes`
