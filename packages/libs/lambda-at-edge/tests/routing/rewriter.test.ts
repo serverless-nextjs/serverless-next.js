@@ -16,6 +16,11 @@ describe("Rewriter Tests", () => {
             regex: "^/old-blog(?:/([^/]+?))$"
           },
           { source: "/a", destination: "/b", regex: "^/a$" },
+          {
+            source: "/:nextInternalLocale(en|nl|fr)/a",
+            destination: "/:nextInternalLocale/b",
+            regex: "^(?:/(en|nl|fr))/a$"
+          },
           { source: "/c", destination: "/d", regex: "^/c$" },
           {
             source: "/old-users/:id(\\d{1,})",
@@ -51,6 +56,8 @@ describe("Rewriter Tests", () => {
       ${"/old-users/abc"}       | ${null}
       ${"/external"}            | ${"https://example.com"}
       ${"/invalid-destination"} | ${null}
+      ${"/en/a"}                | ${"/en/b"}
+      ${"/fr/a"}                | ${"/fr/b"}
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {

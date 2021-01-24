@@ -614,119 +614,175 @@ class Builder {
       }
     );
 
-    // Copy routes for all specified locales
+    // Duplicate routes for all specified locales. This is easy matching locale-prefixed routes in handler
     if (routesManifest.i18n) {
-      const defaultLocale = routesManifest.i18n.defaultLocale;
+      const localeHtmlPages: {
+        dynamic: DynamicPageKeyValue;
+        nonDynamic: {
+          [key: string]: string;
+        };
+      } = {
+        dynamic: {},
+        nonDynamic: {}
+      };
+
+      const localeSsgPages: {
+        dynamic: {
+          [key: string]: DynamicSsgRoute;
+        };
+        nonDynamic: {
+          [key: string]: SsgRoute;
+        };
+      } = {
+        dynamic: {},
+        nonDynamic: {}
+      };
+
+      const localeSsrPages: {
+        nonDynamic: {
+          [key: string]: string;
+        };
+        dynamic: DynamicPageKeyValue;
+      } = {
+        nonDynamic: {},
+        dynamic: {}
+      };
+
       for (const locale of routesManifest.i18n.locales) {
-        if (locale !== defaultLocale) {
-          const localeSsrPages: {
-            nonDynamic: {
-              [key: string]: string;
-            };
-            dynamic: DynamicPageKeyValue;
-          } = {
-            nonDynamic: {},
-            dynamic: {}
-          };
-
-          for (const key in ssrPages.nonDynamic) {
-            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-            localeSsrPages.nonDynamic[newKey] = ssrPages.nonDynamic[key];
+        htmlPagesNonDynamicLoop: for (const key in htmlPages.nonDynamic) {
+          // Locale-prefixed pages don't need to be duplicated
+          for (const locale of routesManifest.i18n.locales) {
+            if (key.startsWith(`/${locale}/`)) {
+              break htmlPagesNonDynamicLoop;
+            }
           }
 
-          ssrPages.nonDynamic = {
-            ...ssrPages.nonDynamic,
-            ...localeSsrPages.nonDynamic
+          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+          localeHtmlPages.nonDynamic[newKey] = htmlPages.nonDynamic[
+            key
+          ].replace("pages/", `pages/${locale}/`);
+        }
+
+        for (const key in htmlPages.dynamic) {
+          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+
+          // Initial default value
+          localeHtmlPages.dynamic[newKey] = { file: "", regex: "" };
+          const newDynamicHtml = Object.assign(
+            localeHtmlPages.dynamic[newKey],
+            htmlPages.dynamic[key]
+          );
+
+          // Need to update the file and regex
+          newDynamicHtml.file = newDynamicHtml.file.replace(
+            "pages/",
+            `pages/${locale}/`
+          );
+          newDynamicHtml.regex = pathToRegexStr(newKey);
+        }
+
+        for (const key in ssrPages.nonDynamic) {
+          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+          localeSsrPages.nonDynamic[newKey] = ssrPages.nonDynamic[key];
+        }
+
+        for (const key in ssrPages.dynamic) {
+          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+
+          // Initial default value
+          localeSsrPages.dynamic[newKey] = { file: "", regex: "" };
+          const newDynamicSsr = Object.assign(
+            localeSsrPages.dynamic[newKey],
+            ssrPages.dynamic[key]
+          );
+
+          // Need to update the regex
+          newDynamicSsr.regex = pathToRegexStr(newKey);
+        }
+
+        for (const key in ssgPages.nonDynamic) {
+          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+
+          // Initial default value
+          localeSsgPages.nonDynamic[newKey] = {
+            initialRevalidateSeconds: false,
+            srcRoute: null,
+            dataRoute: ""
           };
 
-          for (const key in ssrPages.dynamic) {
-            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+          const newSsgRoute = Object.assign(
+            localeSsgPages.nonDynamic[newKey],
+            ssgPages.nonDynamic[key]
+          );
 
-            // Initial default value
-            localeSsrPages.dynamic[newKey] = { file: "", regex: "" };
-            const newDynamicSsr = Object.assign(
-              localeSsrPages.dynamic[newKey],
-              ssrPages.dynamic[key]
-            );
+          // Replace with localized value
+          newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
+            `/_next/data/${buildId}/`,
+            `/_next/data/${buildId}/${locale}/`
+          );
 
-            // Need to update the regex
-            newDynamicSsr.regex = pathToRegexStr(newKey);
-          }
+          newSsgRoute.srcRoute = newSsgRoute.srcRoute
+            ? `/${locale}/${newSsgRoute.srcRoute}`
+            : newSsgRoute.srcRoute;
+        }
 
-          ssrPages.dynamic = {
-            ...ssrPages.dynamic,
-            ...localeSsrPages.dynamic
-          };
+        for (const key in ssgPages.dynamic) {
+          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+          localeSsgPages.dynamic[newKey] = ssgPages.dynamic[key];
 
-          const localeSsgPages: {
-            dynamic: {
-              [key: string]: DynamicSsgRoute;
-            };
-            nonDynamic: {
-              [key: string]: SsgRoute;
-            };
-          } = {
-            dynamic: {},
-            nonDynamic: {}
-          };
+          const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
 
-          for (const key in ssgPages.nonDynamic) {
-            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-
-            // Initial default value
-            localeSsgPages.nonDynamic[newKey] = {
-              initialRevalidateSeconds: false,
-              srcRoute: null,
-              dataRoute: ""
-            };
-
-            const newSsgRoute = Object.assign(
-              localeSsgPages.nonDynamic[newKey],
-              ssgPages.nonDynamic[key]
-            );
-
-            // Replace with localized value
-            newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
-              `/_next/data/${buildId}/`,
-              `/_next/data/${buildId}/${locale}/`
-            );
-          }
-
-          ssgPages.nonDynamic = {
-            ...ssgPages.nonDynamic,
-            ...localeSsgPages.nonDynamic
-          };
-
-          for (const key in ssgPages.dynamic) {
-            const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-            localeSsgPages.dynamic[newKey] = ssgPages.dynamic[key];
-
-            const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
-
-            // Replace with localized values
-            newDynamicSsgRoute.dataRoute = newDynamicSsgRoute.dataRoute.replace(
-              `/_next/data/${buildId}/`,
-              `/_next/data/${buildId}/${locale}/`
-            );
-            newDynamicSsgRoute.dataRouteRegex = newDynamicSsgRoute.dataRouteRegex.replace(
-              `/_next/data/${buildId}/`,
-              `/_next/data/${buildId}/${locale}/`
-            );
-            newDynamicSsgRoute.fallback =
-              typeof newDynamicSsgRoute.fallback === "string"
-                ? newDynamicSsgRoute.fallback.replace("/", `/${locale}/`)
-                : newDynamicSsgRoute.fallback;
-            newDynamicSsgRoute.routeRegex = localeSsgPages.dynamic[
-              newKey
-            ].routeRegex.replace("^/", `^/${locale}/`);
-          }
-
-          ssgPages.dynamic = {
-            ...ssgPages.dynamic,
-            ...localeSsgPages.dynamic
-          };
+          // Replace with localized values
+          newDynamicSsgRoute.dataRoute = newDynamicSsgRoute.dataRoute.replace(
+            `/_next/data/${buildId}/`,
+            `/_next/data/${buildId}/${locale}/`
+          );
+          newDynamicSsgRoute.dataRouteRegex = newDynamicSsgRoute.dataRouteRegex.replace(
+            `/_next/data/${buildId}/`,
+            `/_next/data/${buildId}/${locale}/`
+          );
+          newDynamicSsgRoute.fallback =
+            typeof newDynamicSsgRoute.fallback === "string"
+              ? newDynamicSsgRoute.fallback.replace("/", `/${locale}/`)
+              : newDynamicSsgRoute.fallback;
+          newDynamicSsgRoute.routeRegex = localeSsgPages.dynamic[
+            newKey
+          ].routeRegex.replace("^/", `^/${locale}/`);
         }
       }
+
+      defaultBuildManifest.pages.ssr = {
+        dynamic: {
+          ...ssrPages.dynamic,
+          ...localeSsrPages.dynamic
+        },
+        nonDynamic: {
+          ...ssrPages.nonDynamic,
+          ...localeSsrPages.nonDynamic
+        }
+      };
+
+      defaultBuildManifest.pages.ssg = {
+        nonDynamic: {
+          ...ssgPages.nonDynamic,
+          ...localeSsgPages.nonDynamic
+        },
+        dynamic: {
+          ...ssgPages.dynamic,
+          ...localeSsgPages.dynamic
+        }
+      };
+
+      defaultBuildManifest.pages.html = {
+        nonDynamic: {
+          ...htmlPages.nonDynamic,
+          ...localeHtmlPages.nonDynamic
+        },
+        dynamic: {
+          ...htmlPages.dynamic,
+          ...localeHtmlPages.dynamic
+        }
+      };
     }
 
     const publicFiles = await this.readPublicFiles();
@@ -874,16 +930,26 @@ class Builder {
           );
           const destination = path.join(
             assetOutputDirectory,
-            withBasePath(
-              `_next/data/${buildId}/${
-                defaultLocale && defaultLocale === locale
-                  ? JSONFileName
-                  : localePrefixedJSONFileName
-              }`
-            )
+            withBasePath(`_next/data/${buildId}/${localePrefixedJSONFileName}`)
           );
 
-          return copyIfExists(source, destination);
+          if (defaultLocale && defaultLocale === locale) {
+            // If this is default locale, we need to copy to two destinations
+            // the locale-prefixed path and non-locale-prefixed path
+            const defaultDestination = path.join(
+              assetOutputDirectory,
+              withBasePath(`_next/data/${buildId}/${JSONFileName}`)
+            );
+
+            return new Promise(async () => {
+              await Promise.all([
+                copyIfExists(source, destination),
+                copyIfExists(source, defaultDestination)
+              ]);
+            });
+          } else {
+            return copyIfExists(source, destination);
+          }
         })
       );
 
@@ -902,17 +968,27 @@ class Builder {
           const destination = path.join(
             assetOutputDirectory,
             withBasePath(
-              path.join(
-                "static-pages",
-                buildId,
-                defaultLocale && defaultLocale === locale
-                  ? pageFilePath
-                  : localePrefixedPageFilePath
-              )
+              path.join("static-pages", buildId, localePrefixedPageFilePath)
             )
           );
 
-          return copyIfExists(source, destination);
+          if (defaultLocale && defaultLocale === locale) {
+            // If this is default locale, we need to copy to two destinations
+            // the locale-prefixed path and non-locale-prefixed path
+            const defaultDestination = path.join(
+              assetOutputDirectory,
+              withBasePath(path.join("static-pages", buildId, pageFilePath))
+            );
+
+            return new Promise(async () => {
+              await Promise.all([
+                copyIfExists(source, destination),
+                copyIfExists(source, defaultDestination)
+              ]);
+            });
+          } else {
+            return copyIfExists(source, destination);
+          }
         })
       );
 
@@ -933,17 +1009,27 @@ class Builder {
             const destination = path.join(
               assetOutputDirectory,
               withBasePath(
-                path.join(
-                  "static-pages",
-                  buildId,
-                  defaultLocale && defaultLocale === locale
-                    ? fallback
-                    : localePrefixedFallback
-                )
+                path.join("static-pages", buildId, localePrefixedFallback)
               )
             );
 
-            return copyIfExists(source, destination);
+            if (defaultLocale && defaultLocale === locale) {
+              // If this is default locale, we need to copy to two destinations
+              // the locale-prefixed path and non-locale-prefixed path
+              const defaultDestination = path.join(
+                assetOutputDirectory,
+                withBasePath(path.join("static-pages", buildId, fallback))
+              );
+
+              return new Promise(async () => {
+                await Promise.all([
+                  copyIfExists(source, destination),
+                  copyIfExists(source, defaultDestination)
+                ]);
+              });
+            } else {
+              return copyIfExists(source, destination);
+            }
           })
       );
     }

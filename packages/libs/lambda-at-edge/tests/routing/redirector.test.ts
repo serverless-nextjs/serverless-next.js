@@ -19,6 +19,12 @@ describe("Redirector Tests", () => {
             regex: "^/old-blog(?:/([^/]+?))$"
           },
           { source: "/a", destination: "/b", statusCode: 308, regex: "^/a$" },
+          {
+            source: "/:nextInternalLocale(en|nl|fr)/a",
+            destination: "/:nextInternalLocale/b",
+            statusCode: 308,
+            regex: "^(?:/(en|nl|fr))/a$"
+          },
           { source: "/c", destination: "/d", statusCode: 302, regex: "^/c$" },
           {
             source: "/old-users/:id(\\d{1,})",
@@ -53,6 +59,8 @@ describe("Redirector Tests", () => {
       ${"/old-users/abc"}       | ${null}                  | ${null}
       ${"/external"}            | ${"https://example.com"} | ${308}
       ${"/invalid-destination"} | ${null}                  | ${null}
+      ${"/en/a"}                | ${"/en/b"}               | ${308}
+      ${"/fr/a"}                | ${"/fr/b"}               | ${308}
     `(
       "redirects path $path to $expectedRedirect",
       ({ path, expectedRedirect, expectedStatusCode }) => {

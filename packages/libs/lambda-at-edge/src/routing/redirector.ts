@@ -9,6 +9,7 @@ import {
 import * as http from "http";
 import { CloudFrontRequest } from "aws-lambda";
 import { CloudFrontResultResponse } from "aws-lambda";
+import { addDefaultLocaleToPath } from "./common-utils";
 
 /**
  * Whether this is the default trailing slash redirect.
@@ -75,6 +76,8 @@ export function getRedirectPath(
   path: string,
   routesManifest: RoutesManifest
 ): { redirectPath: string; statusCode: number } | null {
+  path = addDefaultLocaleToPath(path, routesManifest);
+
   const redirects: RedirectData[] = routesManifest.redirects;
 
   for (const redirect of redirects) {

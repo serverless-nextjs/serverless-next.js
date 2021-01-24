@@ -1,6 +1,8 @@
 import { compileDestination, matchPath } from "./matcher";
 import { RewriteData, RoutesManifest } from "../types";
 import { IncomingMessage, ServerResponse } from "http";
+import Accept from "@hapi/accept";
+import { addDefaultLocaleToPath } from "./common-utils";
 
 /**
  * Get the rewrite of the given path, if it exists. Otherwise return null.
@@ -15,6 +17,8 @@ export function getRewritePath(
   router: (uri: string) => string | null,
   normalisedPath: string
 ): string | null {
+  path = addDefaultLocaleToPath(path, routesManifest);
+
   const rewrites: RewriteData[] = routesManifest.rewrites;
 
   for (const rewrite of rewrites) {
@@ -124,4 +128,41 @@ export async function createExternalRewriteResponse(
   }
   res.statusCode = fetchResponse.status;
   res.end(await fetchResponse.buffer());
+}
+
+export function getLanguageRewrite(
+  acceptLanguageHeader: string | undefined,
+  normalisedUri: string,
+  routesManifest: RoutesManifest
+): string | undefined {
+  // Only rewrites root page and if accept language is defined
+  if (normalisedUri !== "/" || !acceptLanguageHeader) {
+    return undefined;
+  }
+
+  if (routesManifest.i18n) {
+    const locales = routesManifest.i18n.locales;
+    const defaultLocale = routesManifest.i18n.defaultLocale;
+    const basePath = routesManifest.basePath;
+
+    const preferredLanguage = Accept.language(acceptLanguageHeader);
+
+    let localeToUse = undefined;
+
+    // Find language in locale that matches preferred language
+    for (const locale of locales) {
+      if (preferredLanguage === locale) {
+        localeToUse = locale;
+        break;
+      }
+    }
+
+    if (!localeToUse || localeToUse === defaultLocale) {
+      return undefined;
+    } else {
+      return `${basePath}/${localeToUse}`;
+    }
+  }
+
+  return undefined;
 }

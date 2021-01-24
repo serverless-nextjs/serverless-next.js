@@ -756,5 +756,49 @@ describe("Lambda@Edge", () => {
         }
       );
     });
+
+    describe("Root Language Rewrite", () => {
+      it.each`
+        acceptLanguageHeader   | expectedPage
+        ${"nl"}                | ${"/nl/index.html"}
+        ${"en"}                | ${"/index.html"}
+        ${undefined}           | ${"/index.html"}
+        ${"fr,nl,en"}          | ${"/fr/index.html"}
+        ${"nl,fr"}             | ${"/nl/index.html"}
+        ${"fr,nl"}             | ${"/fr/index.html"}
+        ${"en,nl"}             | ${"/index.html"}
+        ${"en;q=1.0,nl;q=0.8"} | ${"/index.html"}
+        ${"en;q=0.5,nl;q=0.8"} | ${"/nl/index.html"}
+      `(
+        "rewrites / with accept-language [$acceptLanguageHeader] to $expectedPage",
+        async ({ acceptLanguageHeader, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: trailingSlash ? "/basepath/" : "/basepath",
+            host: "mydistribution.cloudfront.net",
+            requestHeaders: {
+              "accept-language": [
+                { key: "Accept-Language", value: acceptLanguageHeader }
+              ]
+            }
+          });
+
+          const request = await handler(event);
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/basepath/static-pages/build-id",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual(expectedPage);
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
+        }
+      );
+    });
   });
 });

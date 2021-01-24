@@ -4,84 +4,85 @@
   "basePath": "",
   "redirects": [
     {
-      "source": "/old-blog/:slug",
+      "source": "/en/old-blog/:slug",
       "destination": "/news/:slug",
       "statusCode": 308,
-      "regex": "^/old-blog(?:/([^/]+?))$"
+      "regex": "^/en/old-blog(?:/([^/]+?))$"
     },
     {
-      "source": "/terms-new",
+      "source": "/en/terms-new",
       "destination": "/terms",
       "statusCode": 308,
-      "regex": "^/terms-new$"
+      "regex": "^/en/terms-new$"
     },
     {
-      "source": "/old-users/:id(\\d{1,})",
+      "source": "/en/old-users/:id(\\d{1,})",
       "destination": "/users/:id",
       "statusCode": 307,
-      "regex": "^/old-users(?:/(\\d{1,}))$"
+      "regex": "^/en/old-users(?:/(\\d{1,}))$"
     },
     {
-      "source": "/external",
+      "source": "/en/external",
       "destination": "https://example.com",
       "statusCode": 308,
-      "regex": "^/external$"
+      "regex": "^/en/external$"
     },
     {
-      "source": "/terms-redirect-dest-query",
+      "source": "/en/terms-redirect-dest-query",
       "destination": "/terms?foo=bar",
       "statusCode": 308,
-      "regex": "^/terms-redirect-dest-query$"
+      "regex": "^/en/terms-redirect-dest-query$"
     }
   ],
   "rewrites": [
     {
-      "source": "/terms-rewrite",
+      "source": "/en/terms-rewrite",
       "destination": "/terms",
-      "regex": "^/terms-rewrite$"
+      "regex": "^/en/terms-rewrite$"
     },
     {
-      "source": "/index-rewrite",
+      "source": "/en/index-rewrite",
       "destination": "/",
-      "regex": "^/index-rewrite$"
+      "regex": "^/en/index-rewrite$"
     },
     {
-      "source": "/path-rewrite/:slug",
+      "source": "/en/path-rewrite/:slug",
       "destination": "/terms",
-      "regex": "^/path-rewrite(?:/([^/]+?))$"
+      "regex": "^/en/path-rewrite(?:/([^/]+?))$"
     },
     {
-      "source": "/terms",
+      "source": "/en/terms",
       "destination": "/",
-      "regex": "^/terms$"
+      "regex": "^/en/terms$"
     },
     {
-      "source": "/promise-page",
+      "source": "/en/promise-page",
       "destination": "/async-page",
-      "regex": "^/promise-page$"
+      "regex": "^/en/promise-page$"
     },
     {
-      "source": "/terms-rewrite-dest-query",
+      "source": "/en/terms-rewrite-dest-query",
       "destination": "/terms?foo=bar",
-      "regex": "^/terms-rewrite-dest-query$"
+      "regex": "^/en/terms-rewrite-dest-query$"
     },
     {
-      "source": "/external-rewrite",
+      "source": "/en/external-rewrite",
       "destination": "https://external.com",
-      "regex": "^/external-rewrite$"
+      "regex": "^/en/external-rewrite$"
     }
   ],
   "headers": [
     {
-      "source": "/customers/another",
+      "source": "/en/customers/another",
       "headers": [
         {
           "key": "x-custom-header",
           "value": "custom"
         }
       ],
-      "regex": "^/customers/another$"
+      "regex": "^/en/customers/another$"
     }
   ],
-  "dynamicRoutes": []
+  "dynamicRoutes": [],
+  "i18n": { "locales": ["en", "nl", "fr"], "defaultLocale": "en" }
 }

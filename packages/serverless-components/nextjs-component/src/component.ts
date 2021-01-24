@@ -676,6 +676,7 @@ class NextjsComponent extends Component {
         maxTTL: 31536000,
         ...cloudFrontDefaults,
         forward: {
+          headers: routesManifest.i18n ? ["Accept-Language"] : undefined,
           cookies: "all",
           queryString: true,
           ...cloudFrontDefaults.forward
