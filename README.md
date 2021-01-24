@@ -33,6 +33,7 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 - [AWS Permissions](#aws-permissions)
 - [Architecture](#architecture)
 - [Inputs](#inputs)
+- [CDK Construct](#cdk-construct)
 - [FAQ](#faq)
 
 > :warning: This README reflects the latest changes on the `master` branch. It may or may not yet be published to the `latest` (stable) or `alpha` release in npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information. If a feature is listed in this README but not working, please first try upgrading to the most recent `alpha` release in npm.
@@ -525,6 +526,14 @@ myNextApp:
     bucketName: my-bucket
 ```
 
+### CDK Construct
+
+> (experimental) - more work required to bring this construct up to speed and
+> also to reuse some of the serverless logic. As a result the construct is
+> likely to adapt/change accordingly.
+
+[Documentation can be found here.](https://serverless-nextjs.com/docs/cdkconstruct)
+
 ### FAQ
 
 #### My component doesn't deploy
@@ -681,10 +690,10 @@ It seems to be a bug in Serverless Components - it may be due to not using the l
 ```yml
 stage: ${env.STAGE}
 my-app:
-  component: '@sls-next/serverless-component@1.18.0'
+  component: "@sls-next/serverless-component@1.18.0"
   inputs:
     domain:
-      - '${stage}-front-end'
+      - "${stage}-front-end"
       - mydomain.com
 ```
 
