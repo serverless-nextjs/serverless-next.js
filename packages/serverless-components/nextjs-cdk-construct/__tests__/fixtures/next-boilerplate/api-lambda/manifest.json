@@ -1,1 +1,10 @@
-{"apis":{"dynamic":{},"nonDynamic":{"/api/users":"pages/api/users.js"}},"domainRedirects":{},"enableHTTPCompression":false}
+{
+  "apis": {
+    "dynamic": {},
+    "nonDynamic": {
+      "/api/users": "pages/api/users.js"
+    }
+  },
+  "domainRedirects": {},
+  "enableHTTPCompression": false
+}
