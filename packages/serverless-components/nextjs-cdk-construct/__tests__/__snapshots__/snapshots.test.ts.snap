@@ -860,6 +860,7 @@ Object {
           },
         },
         "Description": "Default Lambda@Edge for Next API CloudFront distribution",
+        "FunctionName": "NextApiLambda",
         "Handler": "index.handler",
         "Role": Object {
           "Fn::GetAtt": Array [
@@ -871,7 +872,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "StackNextApiLambdaCurrentVersion09578A6Ac956849642ad279abf220e630e91f02d": Object {
+    "StackNextApiLambdaCurrentVersion09578A6A0413e0b28857d1f30d0c4a4098d3a319": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "FunctionName": Object {
@@ -888,7 +889,7 @@ Object {
         },
         "FunctionVersion": Object {
           "Fn::GetAtt": Array [
-            "StackNextApiLambdaCurrentVersion09578A6Ac956849642ad279abf220e630e91f02d",
+            "StackNextApiLambdaCurrentVersion09578A6A0413e0b28857d1f30d0c4a4098d3a319",
             "Version",
           ],
         },
@@ -904,7 +905,7 @@ Object {
         "MaximumRetryAttempts": 1,
         "Qualifier": Object {
           "Fn::GetAtt": Array [
-            "StackNextApiLambdaCurrentVersion09578A6Ac956849642ad279abf220e630e91f02d",
+            "StackNextApiLambdaCurrentVersion09578A6A0413e0b28857d1f30d0c4a4098d3a319",
             "Version",
           ],
         },
@@ -970,7 +971,7 @@ Object {
           "DefaultTTL": 86400,
           "MaxTTL": 31536000,
           "MinTTL": 0,
-          "Name": "StackNextImageCache78CE64D5",
+          "Name": "NextImageCache",
           "ParametersInCacheKeyAndForwardedToOrigin": Object {
             "CookiesConfig": Object {
               "CookieBehavior": "none",
@@ -1035,6 +1036,7 @@ Object {
           },
         },
         "Description": "Default Lambda@Edge for Next Image CloudFront distribution",
+        "FunctionName": "NextImageLambda",
         "Handler": "index.handler",
         "Role": Object {
           "Fn::GetAtt": Array [
@@ -1053,7 +1055,7 @@ Object {
         },
         "FunctionVersion": Object {
           "Fn::GetAtt": Array [
-            "StackNextImageLambdaCurrentVersionDEC920BCe2501626653e5ed9d4294595a21900c2",
+            "StackNextImageLambdaCurrentVersionDEC920BC5ba4b84decce2136b4556635ae07c0bd",
             "Version",
           ],
         },
@@ -1061,7 +1063,7 @@ Object {
       },
       "Type": "AWS::Lambda::Alias",
     },
-    "StackNextImageLambdaCurrentVersionDEC920BCe2501626653e5ed9d4294595a21900c2": Object {
+    "StackNextImageLambdaCurrentVersionDEC920BC5ba4b84decce2136b4556635ae07c0bd": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "FunctionName": Object {
@@ -1079,7 +1081,7 @@ Object {
         "MaximumRetryAttempts": 1,
         "Qualifier": Object {
           "Fn::GetAtt": Array [
-            "StackNextImageLambdaCurrentVersionDEC920BCe2501626653e5ed9d4294595a21900c2",
+            "StackNextImageLambdaCurrentVersionDEC920BC5ba4b84decce2136b4556635ae07c0bd",
             "Version",
           ],
         },
@@ -1136,7 +1138,7 @@ Object {
                 Object {
                   "EventType": "origin-request",
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextImageLambdaCurrentVersionDEC920BCe2501626653e5ed9d4294595a21900c2",
+                    "Ref": "StackNextImageLambdaCurrentVersionDEC920BC5ba4b84decce2136b4556635ae07c0bd",
                   },
                 },
               ],
@@ -1167,13 +1169,13 @@ Object {
                   "EventType": "origin-request",
                   "IncludeBody": true,
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextLambdaCurrentVersion21F01F87cd1be1cb4ec0c171fef876c51376ee8d",
+                    "Ref": "StackNextLambdaCurrentVersion21F01F874c522519087c7a9996899c945b7af861",
                   },
                 },
                 Object {
                   "EventType": "origin-response",
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextLambdaCurrentVersion21F01F87cd1be1cb4ec0c171fef876c51376ee8d",
+                    "Ref": "StackNextLambdaCurrentVersion21F01F874c522519087c7a9996899c945b7af861",
                   },
                 },
               ],
@@ -1238,7 +1240,7 @@ Object {
                 Object {
                   "EventType": "origin-request",
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextApiLambdaCurrentVersion09578A6Ac956849642ad279abf220e630e91f02d",
+                    "Ref": "StackNextApiLambdaCurrentVersion09578A6A0413e0b28857d1f30d0c4a4098d3a319",
                   },
                 },
               ],
@@ -1267,13 +1269,13 @@ Object {
                 "EventType": "origin-request",
                 "IncludeBody": true,
                 "LambdaFunctionARN": Object {
-                  "Ref": "StackNextLambdaCurrentVersion21F01F87cd1be1cb4ec0c171fef876c51376ee8d",
+                  "Ref": "StackNextLambdaCurrentVersion21F01F874c522519087c7a9996899c945b7af861",
                 },
               },
               Object {
                 "EventType": "origin-response",
                 "LambdaFunctionARN": Object {
-                  "Ref": "StackNextLambdaCurrentVersion21F01F87cd1be1cb4ec0c171fef876c51376ee8d",
+                  "Ref": "StackNextLambdaCurrentVersion21F01F874c522519087c7a9996899c945b7af861",
                 },
               },
             ],
@@ -1476,7 +1478,7 @@ Object {
           "DefaultTTL": 0,
           "MaxTTL": 31536000,
           "MinTTL": 0,
-          "Name": "StackNextLambdaCache86499DCE",
+          "Name": "NextLambdaCache",
           "ParametersInCacheKeyAndForwardedToOrigin": Object {
             "CookiesConfig": Object {
               "CookieBehavior": "all",
@@ -1494,7 +1496,7 @@ Object {
       },
       "Type": "AWS::CloudFront::CachePolicy",
     },
-    "StackNextLambdaCurrentVersion21F01F87cd1be1cb4ec0c171fef876c51376ee8d": Object {
+    "StackNextLambdaCurrentVersion21F01F874c522519087c7a9996899c945b7af861": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "FunctionName": Object {
@@ -1511,7 +1513,7 @@ Object {
         },
         "FunctionVersion": Object {
           "Fn::GetAtt": Array [
-            "StackNextLambdaCurrentVersion21F01F87cd1be1cb4ec0c171fef876c51376ee8d",
+            "StackNextLambdaCurrentVersion21F01F874c522519087c7a9996899c945b7af861",
             "Version",
           ],
         },
@@ -1563,6 +1565,7 @@ Object {
           },
         },
         "Description": "Default Lambda@Edge for Next CloudFront distribution",
+        "FunctionName": "NextLambda",
         "Handler": "index.handler",
         "Role": Object {
           "Fn::GetAtt": Array [
@@ -1603,7 +1606,7 @@ Object {
           "DefaultTTL": 2592000,
           "MaxTTL": 2592000,
           "MinTTL": 2592000,
-          "Name": "StackNextStaticsCacheBB90E053",
+          "Name": "NextStaticsCache",
           "ParametersInCacheKeyAndForwardedToOrigin": Object {
             "CookiesConfig": Object {
               "CookieBehavior": "none",
