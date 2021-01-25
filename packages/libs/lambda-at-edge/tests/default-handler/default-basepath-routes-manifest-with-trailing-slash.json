@@ -4,63 +4,64 @@
   "basePath": "/basepath",
   "redirects": [
     {
-      "source": "/basepath/old-blog/:slug/",
+      "source": "/basepath/en/old-blog/:slug/",
       "destination": "/basepath/news/:slug/",
       "statusCode": 308,
-      "regex": "^/basepath/old-blog(?:/([^/]+?))/$"
+      "regex": "^/basepath/en/old-blog(?:/([^/]+?))/$"
     },
     {
-      "source": "/basepath/terms-new/",
+      "source": "/basepath/en/terms-new/",
       "destination": "/basepath/terms/",
       "statusCode": 308,
-      "regex": "^/basepath/terms-new/$"
+      "regex": "^/basepath/en/terms-new/$"
     },
     {
-      "source": "/basepath/old-users/:post(\\d{1,})/",
+      "source": "/basepath/en/old-users/:post(\\d{1,})/",
       "destination": "/basepath/users/:post/",
       "statusCode": 307,
-      "regex": "^/basepath/old-users(?:/(\\d{1,}))/$"
+      "regex": "^/basepath/en/old-users(?:/(\\d{1,}))/$"
     },
     {
-      "source": "/basepath/external/",
+      "source": "/basepath/en/external/",
       "destination": "https://example.com",
       "statusCode": 308,
-      "regex": "^/basepath/external/$"
+      "regex": "^/basepath/en/external/$"
     }
   ],
   "rewrites": [
     {
-      "source": "/basepath/terms-rewrite/",
+      "source": "/basepath/en/terms-rewrite/",
       "destination": "/basepath/terms/",
-      "regex": "^/basepath/terms-rewrite/$"
+      "regex": "^/basepath/en/terms-rewrite/$"
     },
     {
-      "source": "/basepath/index-rewrite/",
+      "source": "/basepath/en/index-rewrite/",
       "destination": "/basepath/",
-      "regex": "^/basepath/index-rewrite/$"
+      "regex": "^/basepath/en/index-rewrite/$"
     },
     {
-      "source": "/basepath/path-rewrite/:slug/",
+      "source": "/basepath/en/path-rewrite/:slug/",
       "destination": "/basepath/terms/",
-      "regex": "^/basepath/path-rewrite(?:/([^/]+?))/$"
+      "regex": "^/basepath/en/path-rewrite(?:/([^/]+?))/$"
     },
     {
-      "source": "/basepath/terms/",
+      "source": "/basepath/en/terms/",
       "destination": "/basepath/",
-      "regex": "^/basepath/terms/$"
+      "regex": "^/basepath/en/terms/$"
     }
   ],
   "headers": [
     {
-      "source": "/basepath/customers/another/",
+      "source": "/basepath/en/customers/another/",
       "headers": [
         {
           "key": "x-custom-header",
           "value": "custom"
         }
       ],
-      "regex": "^/basepath/customers/another/$"
+      "regex": "^/basepath/en/customers/another/$"
     }
   ],
-  "dynamicRoutes": []
+  "dynamicRoutes": [],
+  "i18n": { "locales": ["en", "nl", "fr"], "defaultLocale": "en" }
 }
