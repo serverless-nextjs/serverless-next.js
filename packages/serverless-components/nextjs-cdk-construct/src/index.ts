@@ -62,6 +62,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     const defaultNextLambda = new lambda.Function(this, "NextLambda", {
+      functionName: "NextLambda",
       description: `Default Lambda@Edge for Next CloudFront distribution`,
       handler: "index.handler",
       currentVersionOptions: {
@@ -90,6 +91,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     let nextApiLambda = null;
     if (hasAPIPages) {
       nextApiLambda = new lambda.Function(this, "NextApiLambda", {
+        functionName: "NextApiLambda",
         description: `Default Lambda@Edge for Next API CloudFront distribution`,
         handler: "index.handler",
         currentVersionOptions: {
@@ -113,6 +115,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     let nextImageLambda = null;
     if (this.imageManifest) {
       nextImageLambda = new lambda.Function(this, "NextImageLambda", {
+        functionName: "NextImageLambda",
         description: `Default Lambda@Edge for Next Image CloudFront distribution`,
         handler: "index.handler",
         currentVersionOptions: {
@@ -137,6 +140,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       this,
       "NextStaticsCache",
       {
+        cachePolicyName: "NextStaticsCache",
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
         headerBehavior: cloudfront.CacheHeaderBehavior.none(),
         cookieBehavior: cloudfront.CacheCookieBehavior.none(),
@@ -152,6 +156,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       this,
       "NextImageCache",
       {
+        cachePolicyName: "NextImageCache",
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
         headerBehavior: cloudfront.CacheHeaderBehavior.allowList("Accept"),
         cookieBehavior: cloudfront.CacheCookieBehavior.none(),
@@ -167,6 +172,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       this,
       "NextLambdaCache",
       {
+        cachePolicyName: "NextLambdaCache",
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
         headerBehavior: cloudfront.CacheHeaderBehavior.none(),
         cookieBehavior: {
