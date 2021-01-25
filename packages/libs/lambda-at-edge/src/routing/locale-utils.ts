@@ -40,7 +40,7 @@ export function isLocaleIndexUri(
         return true;
       }
     }
-
-    return false;
   }
+
+  return false;
 }
