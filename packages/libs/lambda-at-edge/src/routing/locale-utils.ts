@@ -29,3 +29,18 @@ export function addDefaultLocaleToPath(
 
   return path;
 }
+
+export function isLocaleIndexUri(
+  normalisedUri: string,
+  routesManifest: RoutesManifest
+) {
+  if (routesManifest.i18n) {
+    for (const locale of routesManifest.i18n.locales) {
+      if (normalisedUri === `/${locale}`) {
+        return true;
+      }
+    }
+  }
+
+  return false;
+}

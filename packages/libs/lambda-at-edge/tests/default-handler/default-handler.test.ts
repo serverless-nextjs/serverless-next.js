@@ -59,7 +59,8 @@ describe("Lambda@Edge", () => {
       expectedRedirect: string,
       statusCode: number,
       querystring?: string,
-      host?: string
+      host?: string,
+      requestHeaders?: { [p: string]: { key: string; value: string }[] }
     ) => Promise<void>;
     beforeEach(() => {
       jest.resetModules();
@@ -109,7 +110,8 @@ describe("Lambda@Edge", () => {
         expectedRedirect: string,
         statusCode: number,
         querystring?: string,
-        host?: string
+        host?: string,
+        requestHeaders?: { [p: string]: { key: string; value: string }[] }
       ): Promise<void> => {
         await runRedirectTestWithHandler(
           handler,
@@ -117,7 +119,8 @@ describe("Lambda@Edge", () => {
           expectedRedirect,
           statusCode,
           querystring,
-          host
+          host,
+          requestHeaders
         );
       };
     });
@@ -946,48 +949,70 @@ describe("Lambda@Edge", () => {
       );
     });
 
-    describe("Root Language Rewrite", () => {
+    describe("Root Locales Redirects", () => {
       it.each`
-        acceptLanguageHeader   | expectedPage
-        ${"nl"}                | ${"/nl/index.html"}
-        ${"en"}                | ${"/index.html"}
-        ${undefined}           | ${"/index.html"}
-        ${"fr,nl,en"}          | ${"/fr/index.html"}
-        ${"nl,fr"}             | ${"/nl/index.html"}
-        ${"fr,nl"}             | ${"/fr/index.html"}
-        ${"en,nl"}             | ${"/index.html"}
-        ${"en;q=1.0,nl;q=0.8"} | ${"/index.html"}
-        ${"en;q=0.5,nl;q=0.8"} | ${"/nl/index.html"}
+        acceptLanguageHeader   | expectedRedirect
+        ${"nl"}                | ${"/nl"}
+        ${"fr,nl,en"}          | ${"/fr"}
+        ${"nl,fr"}             | ${"/nl"}
+        ${"fr,nl"}             | ${"/fr"}
+        ${"en;q=0.5,nl;q=0.8"} | ${"/nl"}
       `(
-        "rewrites / with accept-language [$acceptLanguageHeader] to $expectedPage",
-        async ({ acceptLanguageHeader, expectedPage }) => {
-          const event = createCloudFrontEvent({
-            uri: "/",
-            host: "mydistribution.cloudfront.net",
-            requestHeaders: {
+        "redirects path / with accept-language [$acceptLanguageHeader] to $expectedRedirect",
+        async ({ acceptLanguageHeader, expectedRedirect }) => {
+          if (trailingSlash) {
+            expectedRedirect += "/";
+          }
+
+          await runRedirectTest(
+            "/",
+            expectedRedirect,
+            307,
+            undefined,
+            undefined,
+            {
               "accept-language": [
                 { key: "Accept-Language", value: acceptLanguageHeader }
               ]
             }
-          });
-
-          const request = await handler(event);
-
-          expect(request.origin).toEqual({
-            s3: {
-              authMethod: "origin-access-identity",
-              domainName: "my-bucket.s3.amazonaws.com",
-              path: "/static-pages/build-id",
-              region: "us-east-1"
-            }
-          });
-          expect(request.uri).toEqual(expectedPage);
-          expect(request.headers.host[0].key).toEqual("host");
-          expect(request.headers.host[0].value).toEqual(
-            "my-bucket.s3.amazonaws.com"
           );
         }
       );
+    });
+
+    describe("Locale Pages", () => {
+      it.each`
+        path     | expectedPage
+        ${"/"}   | ${"/index.html"}
+        ${"/en"} | ${"/en/index.html"}
+        ${"/fr"} | ${"/fr/index.html"}
+        ${"/nl"} | ${"/nl/index.html"}
+      `("path $path renders $expectedPage", async ({ path, expectedPage }) => {
+        if (trailingSlash && !path.endsWith("/")) {
+          path += "/";
+        }
+
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        const request = await handler(event);
+
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "/static-pages/build-id",
+            region: "us-east-1"
+          }
+        });
+        expect(request.uri).toEqual(expectedPage);
+        expect(request.headers.host[0].key).toEqual("host");
+        expect(request.headers.host[0].value).toEqual(
+          "my-bucket.s3.amazonaws.com"
+        );
+      });
     });
   });
 });

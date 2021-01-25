@@ -156,8 +156,10 @@
       "nonDynamic": {
         "/": "pages/index.html",
         "/terms": "pages/terms.html",
-        "/nl": "pages/index.html",
-        "/nl/terms": "pages/terms.html",
+        "/en": "pages/en/index.html",
+        "/en/terms": "pages/en/terms.html",
+        "/nl": "pages/nl/index.html",
+        "/nl/terms": "pages/nl/terms.html",
         "/fr": "pages/fr/index.html",
         "/fr/terms": "pages/fr/terms.html"
       },

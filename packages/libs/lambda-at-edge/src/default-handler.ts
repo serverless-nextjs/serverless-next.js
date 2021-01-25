@@ -26,11 +26,11 @@ import type { Readable } from "stream";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
+  getLanguageRedirect,
   getRedirectPath
 } from "./routing/redirector";
 import {
   createExternalRewriteResponse,
-  getLanguageRewrite,
   getRewritePath,
   isExternalRewrite
 } from "./routing/rewriter";
@@ -38,6 +38,7 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
+import { isLocaleIndexUri } from "./routing/locale-utils";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -374,16 +375,19 @@ const handleOriginRequest = async ({
 
   // Handle root language rewrite
   const languageHeader = request.headers["accept-language"];
-  const languageRewriteUri = getLanguageRewrite(
+  const languageRedirectUri = getLanguageRedirect(
     languageHeader ? languageHeader[0].value : undefined,
     uri,
-    routesManifest
+    routesManifest,
+    manifest
   );
 
-  if (languageRewriteUri) {
-    request.uri = languageRewriteUri;
-
-    uri = normaliseUri(request.uri);
+  if (languageRedirectUri) {
+    return createRedirectResponse(
+      languageRedirectUri,
+      request.querystring,
+      307
+    );
   }
 
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
@@ -417,7 +421,7 @@ const handleOriginRequest = async ({
     } else if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       let pageName;
-      if (languageRewriteUri) {
+      if (isLocaleIndexUri(uri, routesManifest)) {
         pageName = `${uri}/index`;
       } else {
         pageName = uri === "/" ? "/index" : uri;
