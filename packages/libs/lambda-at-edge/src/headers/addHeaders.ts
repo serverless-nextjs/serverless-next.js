@@ -1,7 +1,7 @@
 import { CloudFrontResultResponse } from "aws-lambda";
 import { RoutesManifest } from "../types";
 import { matchPath } from "../routing/matcher";
-import { addDefaultLocaleToPath } from "../routing/common-utils";
+import { addDefaultLocaleToPath } from "../routing/locale-utils";
 
 export function addHeadersToResponse(
   path: string,

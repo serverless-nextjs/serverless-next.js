@@ -1,7 +1,7 @@
 import { RoutesManifest } from "../../src/types";
-import { addDefaultLocaleToPath } from "../../src/routing/common-utils";
+import { addDefaultLocaleToPath } from "../../src/routing/locale-utils";
 
-describe("CommonUtils Tests", () => {
+describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
     let routesManifest: RoutesManifest;
 

@@ -9,7 +9,8 @@ import {
 import * as http from "http";
 import { CloudFrontRequest } from "aws-lambda";
 import { CloudFrontResultResponse } from "aws-lambda";
-import { addDefaultLocaleToPath } from "./common-utils";
+import { addDefaultLocaleToPath } from "./locale-utils";
+import Accept from "@hapi/accept";
 
 /**
  * Whether this is the default trailing slash redirect.
@@ -175,4 +176,42 @@ export function getDomainRedirectPath(
     }
   }
   return null;
+}
+
+export function getLanguageRedirect(
+  acceptLanguageHeader: string | undefined,
+  normalisedUri: string,
+  routesManifest: RoutesManifest,
+  manifest: OriginRequestDefaultHandlerManifest
+): string | undefined {
+  // Only redirect root page and if accept language is defined
+  if (normalisedUri !== "/" || !acceptLanguageHeader) {
+    return undefined;
+  }
+
+  if (routesManifest.i18n) {
+    const locales = routesManifest.i18n.locales;
+    const defaultLocale = routesManifest.i18n.defaultLocale;
+    const basePath = routesManifest.basePath;
+
+    const preferredLanguage = Accept.language(acceptLanguageHeader);
+
+    let localeToUse = undefined;
+
+    // Find language in locale that matches preferred language
+    for (const locale of locales) {
+      if (preferredLanguage === locale) {
+        localeToUse = locale;
+        break;
+      }
+    }
+
+    if (!localeToUse || localeToUse === defaultLocale) {
+      return undefined;
+    } else {
+      return `${basePath}/${localeToUse}${manifest.trailingSlash ? "/" : ""}`;
+    }
+  }
+
+  return undefined;
 }
