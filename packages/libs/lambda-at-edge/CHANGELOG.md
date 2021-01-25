@@ -3,6 +3,18 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.22...@sls-next/lambda-at-edge@1.8.0-alpha.23) (2021-01-25)
+
+### Bug Fixes
+
+- **lambda-at-edge:** use 307 redirect for root -> locale URI instead … ([#886](https://github.com/serverless-nextjs/serverless-next.js/issues/886)) ([98e963b](https://github.com/serverless-nextjs/serverless-next.js/commit/98e963b614f4be708156aada08654e115e43dc69))
+
+### Features
+
+- **lambda-at-edge:** initial support for routing to locale-specific … ([#884](https://github.com/serverless-nextjs/serverless-next.js/issues/884)) ([b4666d3](https://github.com/serverless-nextjs/serverless-next.js/commit/b4666d331e6dd84e3409d4ef2351ab31afd96953))
+- **lambda-at-edge:** start copying locale-specific page/data files t… ([#883](https://github.com/serverless-nextjs/serverless-next.js/issues/883)) ([8bc889c](https://github.com/serverless-nextjs/serverless-next.js/commit/8bc889cb3242e27057bc5f1260faad4e42ea0cfe))
+- **lambda-at-edge, nextjs-commponent:** rewrite from root using accept-language header, other minor bugfixes for locales ([#885](https://github.com/serverless-nextjs/serverless-next.js/issues/885)) ([828b9dd](https://github.com/serverless-nextjs/serverless-next.js/commit/828b9dde89a9cb2559c58ab4e798ee7cbcbdd5e6))
+
 # [1.8.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.21...@sls-next/lambda-at-edge@1.8.0-alpha.22) (2021-01-19)
 
 ### Bug Fixes

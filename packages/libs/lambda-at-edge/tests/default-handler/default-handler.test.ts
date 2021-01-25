@@ -59,7 +59,8 @@ describe("Lambda@Edge", () => {
       expectedRedirect: string,
       statusCode: number,
       querystring?: string,
-      host?: string
+      host?: string,
+      requestHeaders?: { [p: string]: { key: string; value: string }[] }
     ) => Promise<void>;
     beforeEach(() => {
       jest.resetModules();
@@ -109,7 +110,8 @@ describe("Lambda@Edge", () => {
         expectedRedirect: string,
         statusCode: number,
         querystring?: string,
-        host?: string
+        host?: string,
+        requestHeaders?: { [p: string]: { key: string; value: string }[] }
       ): Promise<void> => {
         await runRedirectTestWithHandler(
           handler,
@@ -117,7 +119,8 @@ describe("Lambda@Edge", () => {
           expectedRedirect,
           statusCode,
           querystring,
-          host
+          host,
+          requestHeaders
         );
       };
     });
@@ -445,7 +448,7 @@ describe("Lambda@Edge", () => {
       it.each`
         path                                                                           | expectedPage
         ${"/_next/data/build-id"}                                                      | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                                           | ${"pages/index.js"}
+        ${"/_next/data/build-id/index.json"}                                           | ${"pages/js"}
         ${"/_next/data/build-id/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
@@ -944,6 +947,72 @@ describe("Lambda@Edge", () => {
           }
         }
       );
+    });
+
+    describe("Root Locales Redirects", () => {
+      it.each`
+        acceptLanguageHeader   | expectedRedirect
+        ${"nl"}                | ${"/nl"}
+        ${"fr,nl,en"}          | ${"/fr"}
+        ${"nl,fr"}             | ${"/nl"}
+        ${"fr,nl"}             | ${"/fr"}
+        ${"en;q=0.5,nl;q=0.8"} | ${"/nl"}
+      `(
+        "redirects path / with accept-language [$acceptLanguageHeader] to $expectedRedirect",
+        async ({ acceptLanguageHeader, expectedRedirect }) => {
+          if (trailingSlash) {
+            expectedRedirect += "/";
+          }
+
+          await runRedirectTest(
+            "/",
+            expectedRedirect,
+            307,
+            undefined,
+            undefined,
+            {
+              "accept-language": [
+                { key: "Accept-Language", value: acceptLanguageHeader }
+              ]
+            }
+          );
+        }
+      );
+    });
+
+    describe("Locale Pages", () => {
+      it.each`
+        path     | expectedPage
+        ${"/"}   | ${"/index.html"}
+        ${"/en"} | ${"/en/index.html"}
+        ${"/fr"} | ${"/fr/index.html"}
+        ${"/nl"} | ${"/nl/index.html"}
+      `("path $path renders $expectedPage", async ({ path, expectedPage }) => {
+        if (trailingSlash && !path.endsWith("/")) {
+          path += "/";
+        }
+
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        const request = await handler(event);
+
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "/static-pages/build-id",
+            region: "us-east-1"
+          }
+        });
+        expect(request.uri).toEqual(expectedPage);
+        expect(request.headers.host[0].key).toEqual("host");
+        expect(request.headers.host[0].value).toEqual(
+          "my-bucket.s3.amazonaws.com"
+        );
+      });
     });
   });
 });

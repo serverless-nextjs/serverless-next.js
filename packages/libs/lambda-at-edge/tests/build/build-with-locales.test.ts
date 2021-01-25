@@ -70,6 +70,7 @@ describe("Builder Tests (with locales)", () => {
         publicFiles,
         pages: {
           ssr: { dynamic, nonDynamic },
+          ssg,
           html
         },
         trailingSlash
@@ -96,6 +97,28 @@ describe("Builder Tests (with locales)", () => {
         "/customers/:catchAll*": {
           file: "pages/customers/[...catchAll].js",
           regex: expect.any(String)
+        },
+        "/en/:root": {
+          file: "pages/[root].js",
+          regex: "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/en/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
+          regex:
+            "^\\/en\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/en/customers/:customer": {
+          file: "pages/customers/[customer].js",
+          regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/en/customers/:customer/:post": {
+          file: "pages/customers/[customer]/[post].js",
+          regex:
+            "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/en/customers/:customer/profile": {
+          file: "pages/customers/[customer]/profile.js",
+          regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
         },
         "/nl/:root": {
           file: "pages/[root].js",
@@ -124,6 +147,10 @@ describe("Builder Tests (with locales)", () => {
         "/": "pages/index.js",
         "/_app": "pages/_app.js",
         "/_document": "pages/_document.js",
+        "/en": "pages/index.js",
+        "/en/_app": "pages/_app.js",
+        "/en/_document": "pages/_document.js",
+        "/en/customers/new": "pages/customers/new.js",
         "/nl": "pages/index.js",
         "/nl/_app": "pages/_app.js",
         "/nl/_document": "pages/_document.js",
@@ -134,14 +161,64 @@ describe("Builder Tests (with locales)", () => {
         nonDynamic: {
           "/404": "pages/404.html",
           "/terms": "pages/terms.html",
-          "/about": "pages/about.html"
+          "/about": "pages/about.html",
+          "/en/404": "pages/en/404.html",
+          "/en/terms": "pages/en/terms.html",
+          "/en/about": "pages/en/about.html",
+          "/nl/404": "pages/nl/404.html",
+          "/nl/terms": "pages/nl/terms.html",
+          "/nl/about": "pages/nl/about.html"
         },
         dynamic: {
           "/blog/:post": {
             file: "pages/blog/[post].html",
             regex: expect.any(String)
+          },
+          "/en/blog/:post": {
+            file: "pages/en/blog/[post].html",
+            regex: expect.any(String)
+          },
+          "/nl/blog/:post": {
+            file: "pages/nl/blog/[post].html",
+            regex: expect.any(String)
           }
         }
+      });
+
+      expect(ssg).toEqual({
+        nonDynamic: {
+          "/": {
+            dataRoute: "/_next/data/test-build-id/index.json",
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/contact": {
+            dataRoute: "/_next/data/test-build-id/contact.json",
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/en": {
+            dataRoute: "/_next/data/test-build-id/en/index.json",
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/en/contact": {
+            dataRoute: "/_next/data/test-build-id/en/contact.json",
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/nl": {
+            dataRoute: "/_next/data/test-build-id/nl/index.json",
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/nl/contact": {
+            dataRoute: "/_next/data/test-build-id/nl/contact.json",
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          }
+        },
+        dynamic: {}
       });
 
       expect(publicFiles).toEqual({
@@ -215,12 +292,38 @@ describe("Builder Tests (with locales)", () => {
 
   describe("Assets", () => {
     it("copies locale-specific asset files", async () => {
-      expect.assertions(7);
+      expect.assertions(11);
       // Root
       const nextDataFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id`)
       );
-      expect(nextDataFiles).toEqual(["contact.json", "index.json", "nl"]);
+      expect(nextDataFiles).toEqual(["contact.json", "en", "index.json", "nl"]);
+
+      // English
+      const enNextDataFiles = await fse.readdir(
+        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en`)
+      );
+      expect(enNextDataFiles).toEqual(["contact.json", "index.json"]);
+
+      const enIndexJson = await fse.readFile(
+        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en/index.json`),
+        "utf8"
+      );
+      expect(enIndexJson).toBe('"en"');
+
+      const enPageFiles = await fse.readdir(
+        join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en`)
+      );
+      expect(enPageFiles).toEqual(["contact.html", "index.html"]);
+
+      const enIndexHtml = await fse.readFile(
+        join(
+          outputDir,
+          `${ASSETS_DIR}/static-pages/test-build-id/en/index.html`
+        ),
+        "utf8"
+      );
+      expect(enIndexHtml).toBe("en");
 
       // Dutch
       const nlNextDataFiles = await fse.readdir(
@@ -248,7 +351,7 @@ describe("Builder Tests (with locales)", () => {
       );
       expect(nlIndexHtml).toBe("nl");
 
-      // Default locale: English. Note it is not generated in /en/ directory
+      // Default locale: English.
       const defaultIndexJson = await fse.readFile(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/index.json`),
         "utf8"
