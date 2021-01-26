@@ -1,0 +1,88 @@
+{
+  "version": 1,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [
+    {
+      "source": "/en/old-blog/:slug/",
+      "destination": "/news/:slug/",
+      "statusCode": 308,
+      "regex": "^/en/old-blog(?:/([^/]+?))/$"
+    },
+    {
+      "source": "/en/terms-new/",
+      "destination": "/terms/",
+      "statusCode": 308,
+      "regex": "^/en/terms-new/$"
+    },
+    {
+      "source": "/en/old-users/:id(\\d{1,})/",
+      "destination": "/users/:id/",
+      "statusCode": 307,
+      "regex": "^/en/old-users(?:/(\\d{1,}))/$"
+    },
+    {
+      "source": "/en/external/",
+      "destination": "https://example.com",
+      "statusCode": 308,
+      "regex": "^/en/external/$"
+    },
+    {
+      "source": "/en/terms-redirect-dest-query/",
+      "destination": "/terms/?foo=bar",
+      "statusCode": 308,
+      "regex": "^/en/terms-redirect-dest-query/$"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/en/terms-rewrite/",
+      "destination": "/terms/",
+      "regex": "^/en/terms-rewrite/$"
+    },
+    {
+      "source": "/en/index-rewrite/",
+      "destination": "/",
+      "regex": "^/en/index-rewrite/$"
+    },
+    {
+      "source": "/en/path-rewrite/:slug/",
+      "destination": "/terms/",
+      "regex": "^/en/path-rewrite(?:/([^/]+?))/$"
+    },
+    {
+      "source": "/en/terms/",
+      "destination": "/",
+      "regex": "^/en/terms/$"
+    },
+    {
+      "source": "/en/promise-page/",
+      "destination": "/async-page/",
+      "regex": "^/en/promise-page/$"
+    },
+    {
+      "source": "/en/terms-rewrite-dest-query/",
+      "destination": "/terms/?foo=bar",
+      "regex": "^/en/terms-rewrite-dest-query/$"
+    },
+    {
+      "source": "/en/external-rewrite/",
+      "destination": "https://external.com",
+      "regex": "^/en/external-rewrite/$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/en/customers/another/",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/en/customers/another/$"
+    }
+  ],
+  "dynamicRoutes": [],
+  "i18n": { "locales": ["en", "nl", "fr"], "defaultLocale": "en" }
+}

@@ -652,7 +652,7 @@ class Builder {
         htmlPagesNonDynamicLoop: for (const key in htmlPages.nonDynamic) {
           // Locale-prefixed pages don't need to be duplicated
           for (const locale of routesManifest.i18n.locales) {
-            if (key.startsWith(`/${locale}/`)) {
+            if (key.startsWith(`/${locale}/`) || key === `/${locale}`) {
               break htmlPagesNonDynamicLoop;
             }
           }
@@ -715,11 +715,18 @@ class Builder {
             ssgPages.nonDynamic[key]
           );
 
-          // Replace with localized value
-          newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
-            `/_next/data/${buildId}/`,
-            `/_next/data/${buildId}/${locale}/`
-          );
+          // Replace with localized value. For non-dynamic index page, this is in format "en.json"
+          if (key === "/") {
+            newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
+              `/_next/data/${buildId}/index.json`,
+              `/_next/data/${buildId}/${locale}.json`
+            );
+          } else {
+            newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
+              `/_next/data/${buildId}/`,
+              `/_next/data/${buildId}/${locale}/`
+            );
+          }
 
           newSsgRoute.srcRoute = newSsgRoute.srcRoute
             ? `/${locale}/${newSsgRoute.srcRoute}`
@@ -911,9 +918,9 @@ class Builder {
     let prerenderManifestHTMLPageAssets: Promise<void>[] = [];
     let fallbackHTMLPageAssets: Promise<void>[] = [];
 
-    // Copy locale-specific prerendered files if defined, otherwise use empty which works for no locale
+    // Copy locale-specific prerendered files if defined, otherwise use empty locale
+    // which would copy to root only
     const locales = routesManifest.i18n?.locales ?? [""];
-    const defaultLocale = routesManifest.i18n?.defaultLocale;
 
     for (const locale of locales) {
       prerenderManifestJSONPropFileAssets.concat(
@@ -922,7 +929,15 @@ class Builder {
             ? key + "index.json"
             : key + ".json";
 
-          const localePrefixedJSONFileName = locale + JSONFileName;
+          let localePrefixedJSONFileName;
+
+          // If there are locales and index is SSG page
+          // Filename is <locale>.json e.g en.json, not index.json or en/index.json
+          if (locale && key === "/") {
+            localePrefixedJSONFileName = `${locale}.json`;
+          } else {
+            localePrefixedJSONFileName = locale + JSONFileName;
+          }
 
           const source = path.join(
             dotNextDirectory,
@@ -933,23 +948,7 @@ class Builder {
             withBasePath(`_next/data/${buildId}/${localePrefixedJSONFileName}`)
           );
 
-          if (defaultLocale && defaultLocale === locale) {
-            // If this is default locale, we need to copy to two destinations
-            // the locale-prefixed path and non-locale-prefixed path
-            const defaultDestination = path.join(
-              assetOutputDirectory,
-              withBasePath(`_next/data/${buildId}/${JSONFileName}`)
-            );
-
-            return new Promise(async () => {
-              await Promise.all([
-                copyIfExists(source, destination),
-                copyIfExists(source, defaultDestination)
-              ]);
-            });
-          } else {
-            return copyIfExists(source, destination);
-          }
+          return copyIfExists(source, destination);
         })
       );
 
@@ -959,7 +958,14 @@ class Builder {
             ? path.join(key, "index.html")
             : key + ".html";
 
-          const localePrefixedPageFilePath = locale + pageFilePath;
+          // If there are locales and index is SSG page,
+          // Filename is <locale>.html e.g en.html, not index.html or en/index.html
+          let localePrefixedPageFilePath;
+          if (locale && key === "/") {
+            localePrefixedPageFilePath = `${locale}.html`;
+          } else {
+            localePrefixedPageFilePath = locale + pageFilePath;
+          }
 
           const source = path.join(
             dotNextDirectory,
@@ -972,23 +978,7 @@ class Builder {
             )
           );
 
-          if (defaultLocale && defaultLocale === locale) {
-            // If this is default locale, we need to copy to two destinations
-            // the locale-prefixed path and non-locale-prefixed path
-            const defaultDestination = path.join(
-              assetOutputDirectory,
-              withBasePath(path.join("static-pages", buildId, pageFilePath))
-            );
-
-            return new Promise(async () => {
-              await Promise.all([
-                copyIfExists(source, destination),
-                copyIfExists(source, defaultDestination)
-              ]);
-            });
-          } else {
-            return copyIfExists(source, destination);
-          }
+          return copyIfExists(source, destination);
         })
       );
 
@@ -1013,23 +1003,7 @@ class Builder {
               )
             );
 
-            if (defaultLocale && defaultLocale === locale) {
-              // If this is default locale, we need to copy to two destinations
-              // the locale-prefixed path and non-locale-prefixed path
-              const defaultDestination = path.join(
-                assetOutputDirectory,
-                withBasePath(path.join("static-pages", buildId, fallback))
-              );
-
-              return new Promise(async () => {
-                await Promise.all([
-                  copyIfExists(source, destination),
-                  copyIfExists(source, defaultDestination)
-                ]);
-              });
-            } else {
-              return copyIfExists(source, destination);
-            }
+            return copyIfExists(source, destination);
           })
       );
     }

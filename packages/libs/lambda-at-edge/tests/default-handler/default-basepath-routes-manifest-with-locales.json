@@ -1,0 +1,67 @@
+{
+  "version": 1,
+  "pages404": true,
+  "basePath": "/basepath",
+  "redirects": [
+    {
+      "source": "/basepath/en/old-blog/:slug",
+      "destination": "/basepath/news/:slug",
+      "statusCode": 308,
+      "regex": "^/basepath/en/old-blog(?:/([^/]+?))$"
+    },
+    {
+      "source": "/basepath/en/terms-new",
+      "destination": "/basepath/terms",
+      "statusCode": 308,
+      "regex": "^/basepath/en/terms-new$"
+    },
+    {
+      "source": "/basepath/en/old-users/:post(\\d{1,})",
+      "destination": "/basepath/users/:post",
+      "statusCode": 307,
+      "regex": "^/basepath/en/old-users(?:/(\\d{1,}))$"
+    },
+    {
+      "source": "/basepath/en/external",
+      "destination": "https://example.com",
+      "statusCode": 308,
+      "regex": "^/basepath/en/external$"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/basepath/en/terms-rewrite",
+      "destination": "/basepath/terms",
+      "regex": "^/basepath/en/terms-rewrite$"
+    },
+    {
+      "source": "/basepath/en/index-rewrite",
+      "destination": "/basepath",
+      "regex": "^/basepath/en/index-rewrite$"
+    },
+    {
+      "source": "/basepath/en/path-rewrite/:slug",
+      "destination": "/basepath/terms",
+      "regex": "^/basepath/en/path-rewrite(?:/([^/]+?))$"
+    },
+    {
+      "source": "/basepath/en/terms",
+      "destination": "/basepath",
+      "regex": "^/basepath/en/terms$"
+    }
+  ],
+  "headers": [
+    {
+      "source": "/basepath/en/customers/another",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/basepath/en/customers/another$"
+    }
+  ],
+  "dynamicRoutes": [],
+  "i18n": { "locales": ["en", "nl", "fr"], "defaultLocale": "en" }
+}
