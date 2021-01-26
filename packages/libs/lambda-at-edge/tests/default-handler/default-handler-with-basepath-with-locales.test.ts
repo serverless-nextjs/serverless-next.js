@@ -6,23 +6,9 @@ import {
 } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 
-jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
-
-jest.mock("jsonwebtoken", () => ({
-  verify: jest.fn()
-}));
-
 jest.mock(
   "../../src/prerender-manifest.json",
   () => require("./prerender-manifest.json"),
-  {
-    virtual: true
-  }
-);
-
-jest.mock(
-  "../../src/images-manifest.json",
-  () => require("./images-manifest.json"),
   {
     virtual: true
   }
@@ -68,7 +54,8 @@ describe("Lambda@Edge", () => {
       if (trailingSlash) {
         jest.mock(
           "../../src/manifest.json",
-          () => require("./default-build-manifest-with-trailing-slash.json"),
+          () =>
+            require("./default-build-manifest-with-locales-with-trailing-slash.json"),
           {
             virtual: true
           }
@@ -77,7 +64,8 @@ describe("Lambda@Edge", () => {
         // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
-          () => require("./default-routes-manifest-with-trailing-slash.json"),
+          () =>
+            require("./default-basepath-routes-manifest-with-locales-with-trailing-slash.json"),
           {
             virtual: true
           }
@@ -85,7 +73,7 @@ describe("Lambda@Edge", () => {
       } else {
         jest.mock(
           "../../src/manifest.json",
-          () => require("./default-build-manifest.json"),
+          () => require("./default-build-manifest-with-locales.json"),
           {
             virtual: true
           }
@@ -94,7 +82,7 @@ describe("Lambda@Edge", () => {
         // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
-          () => require("./default-routes-manifest.json"),
+          () => require("./default-basepath-routes-manifest-with-locales.json"),
           {
             virtual: true
           }
@@ -131,19 +119,22 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                  | expectedPage
-        ${"/"}                                                | ${"/index.html"}
-        ${"/terms"}                                           | ${"/terms.html"}
-        ${"/users/batman"}                                    | ${"/users/[user].html"}
-        ${"/users/test/catch/all"}                            | ${"/users/[...user].html"}
-        ${"/john/123"}                                        | ${"/[username]/[id].html"}
-        ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
-        ${"/preview"}                                         | ${"/preview.html"}
+        path                                                           | expectedPage
+        ${"/basepath"}                                                 | ${"/en.html"}
+        ${"/basepath/terms"}                                           | ${"/en/terms.html"}
+        ${"/basepath/users/batman"}                                    | ${"/en/users/[user].html"}
+        ${"/basepath/users/test/catch/all"}                            | ${"/en/users/[...user].html"}
+        ${"/basepath/john/123"}                                        | ${"/en/[username]/[id].html"}
+        ${"/basepath/tests/prerender-manifest/example-static-page"}    | ${"/en/tests/prerender-manifest/example-static-page.html"}
+        ${"/basepath/nl"}                                              | ${"/nl.html"}
+        ${"/basepath/nl/terms"}                                        | ${"/nl/terms.html"}
+        ${"/basepath/nl/users/batman"}                                 | ${"/nl/users/[user].html"}
+        ${"/basepath/nl/users/test/catch/all"}                         | ${"/nl/users/[...user].html"}
+        ${"/basepath/nl/john/123"}                                     | ${"/nl/[username]/[id].html"}
+        ${"/basepath/nl/tests/prerender-manifest/example-static-page"} | ${"/nl/tests/prerender-manifest/example-static-page.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
-          // If trailingSlash = true, append "/" to get the non-redirected path
           if (trailingSlash && !path.endsWith("/")) {
             path += "/";
           }
@@ -161,7 +152,7 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/static-pages/build-id",
+              path: "/basepath/static-pages/build-id",
               region: "us-east-1"
             }
           });
@@ -175,13 +166,13 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path
-        ${"/terms"}
-        ${"/users/batman"}
-        ${"/users/test/catch/all"}
-        ${"/john/123"}
-        ${"/tests/prerender-manifest/example-static-page"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"}
-        ${"/preview"}
+        ${"/basepath"}
+        ${"/basepath/terms"}
+        ${"/basepath/users/batman"}
+        ${"/basepath/users/test/catch/all"}
+        ${"/basepath/john/123"}
+        ${"/basepath/tests/prerender-manifest/example-static-page"}
+        ${"/basepath/tests/prerender-manifest-fallback/not-yet-built"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
@@ -200,7 +191,7 @@ describe("Lambda@Edge", () => {
 
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
-          uri: "/terms.html",
+          uri: "/en/terms.html",
           host: "mydistribution.cloudfront.net",
           config: { eventType: "origin-response" } as any,
           response: {
@@ -212,44 +203,13 @@ describe("Lambda@Edge", () => {
 
         expect(response.status).toEqual("200");
       });
+    });
 
-      it("handles preview mode", async () => {
+    describe("Public files routing", () => {
+      it("serves public file from S3 /public folder", async () => {
         const event = createCloudFrontEvent({
-          uri: `/preview${trailingSlash ? "/" : ""}`,
-          host: "mydistribution.cloudfront.net",
-          requestHeaders: {
-            cookie: [
-              {
-                key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
-              }
-            ]
-          }
-        });
-
-        mockPageRequire("pages/preview.js");
-        const result = await handler(event);
-        const response = result as CloudFrontResultResponse;
-        const decodedBody = Buffer.from(
-          response.body as string,
-          "base64"
-        ).toString("utf8");
-        expect(decodedBody).toBe("pages/preview.js");
-        expect(response.status).toBe(200);
-      });
-
-      it("HTML page without any props served from S3 on preview mode", async () => {
-        const event = createCloudFrontEvent({
-          uri: `/terms${trailingSlash ? "/" : ""}`,
-          host: "mydistribution.cloudfront.net",
-          requestHeaders: {
-            cookie: [
-              {
-                key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
-              }
-            ]
-          }
+          uri: "/basepath/manifest.json",
+          host: "mydistribution.cloudfront.net"
         });
 
         const result = await handler(event);
@@ -260,46 +220,12 @@ describe("Lambda@Edge", () => {
           s3: {
             authMethod: "origin-access-identity",
             domainName: "my-bucket.s3.amazonaws.com",
-            path: "/static-pages/build-id",
+            path: "/basepath/public",
             region: "us-east-1"
           }
         });
-        expect(request.uri).toEqual("/terms.html");
-        expect(request.headers.host[0].key).toEqual("host");
-        expect(request.headers.host[0].value).toEqual(
-          "my-bucket.s3.amazonaws.com"
-        );
+        expect(request.uri).toEqual("/manifest.json");
       });
-    });
-
-    describe("Public files routing", () => {
-      it.each`
-        path
-        ${"/manifest.json"}
-        ${"/file%20with%20spaces.json"}
-      `(
-        "serves public file at path $path from S3 /public folder",
-        async ({ path }) => {
-          const event = createCloudFrontEvent({
-            uri: path,
-            host: "mydistribution.cloudfront.net"
-          });
-
-          const result = await handler(event);
-
-          const request = result as CloudFrontRequest;
-
-          expect(request.origin).toEqual({
-            s3: {
-              authMethod: "origin-access-identity",
-              domainName: "my-bucket.s3.amazonaws.com",
-              path: "/public",
-              region: "us-east-1"
-            }
-          });
-          expect(request.uri).toEqual(path);
-        }
-      );
 
       it("public file should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
@@ -317,9 +243,9 @@ describe("Lambda@Edge", () => {
       });
 
       it.each`
-        path                 | expectedRedirect
-        ${"/favicon.ico/"}   | ${"/favicon.ico"}
-        ${"/manifest.json/"} | ${"/manifest.json"}
+        path                          | expectedRedirect
+        ${"/basepath/favicon.ico/"}   | ${"/basepath/favicon.ico"}
+        ${"/basepath/manifest.json/"} | ${"/basepath/manifest.json"}
       `(
         "public files always redirect to path without trailing slash: $path -> $expectedRedirect",
         async ({ path, expectedRedirect }) => {
@@ -330,18 +256,24 @@ describe("Lambda@Edge", () => {
 
     describe("SSR pages routing", () => {
       it.each`
-        path                              | expectedPage
-        ${"/abc"}                         | ${"pages/[root].js"}
-        ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/customers"}                   | ${"pages/customers/index.js"}
-        ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
-        ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
-        ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
-        ${"/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
+        path                                          | expectedPage
+        ${"/basepath/abc"}                            | ${"pages/[root].js"}
+        ${"/basepath/blog/foo"}                       | ${"pages/blog/[id].js"}
+        ${"/basepath/customers"}                      | ${"pages/customers/index.js"}
+        ${"/basepath/customers/superman"}             | ${"pages/customers/[customer].js"}
+        ${"/basepath/customers/superman/howtofly"}    | ${"pages/customers/[customer]/[post].js"}
+        ${"/basepath/customers/superman/profile"}     | ${"pages/customers/[customer]/profile.js"}
+        ${"/basepath/customers/test/catch/all"}       | ${"pages/customers/[...catchAll].js"}
+        ${"/basepath/nl/abc"}                         | ${"pages/[root].js"}
+        ${"/basepath/nl/blog/foo"}                    | ${"pages/blog/[id].js"}
+        ${"/basepath/nl/customers"}                   | ${"pages/customers/index.js"}
+        ${"/basepath/nl/customers/superman"}          | ${"pages/customers/[customer].js"}
+        ${"/basepath/nl/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
+        ${"/basepath/nl/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
+        ${"/basepath/nl/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
       `(
         "renders page $expectedPage for path $path",
         async ({ path, expectedPage }) => {
-          // If trailingSlash = true, append "/" to get the non-redirected path
           if (trailingSlash && !path.endsWith("/")) {
             path += "/";
           }
@@ -368,13 +300,20 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path
-        ${"/abc"}
-        ${"/blog/foo"}
-        ${"/customers"}
-        ${"/customers/superman"}
-        ${"/customers/superman/howtofly"}
-        ${"/customers/superman/profile"}
-        ${"/customers/test/catch/all"}
+        ${"/basepath/abc"}
+        ${"/basepath/blog/foo"}
+        ${"/basepath/customers"}
+        ${"/basepath/customers/superman"}
+        ${"/basepath/customers/superman/howtofly"}
+        ${"/basepath/customers/superman/profile"}
+        ${"/basepath/customers/test/catch/all"}
+        ${"/basepath/nl/abc"}
+        ${"/basepath/nl/blog/foo"}
+        ${"/basepath/nl/customers"}
+        ${"/basepath/nl/customers/superman"}
+        ${"/basepath/nl/customers/superman/howtofly"}
+        ${"/basepath/nl/customers/superman/profile"}
+        ${"/basepath/nl/customers/test/catch/all"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
@@ -393,13 +332,20 @@ describe("Lambda@Edge", () => {
 
       it.each`
         path
-        ${"/abc"}
-        ${"/blog/foo"}
-        ${"/customers"}
-        ${"/customers/superman"}
-        ${"/customers/superman/howtofly"}
-        ${"/customers/superman/profile"}
-        ${"/customers/test/catch/all"}
+        ${"/basepath/abc"}
+        ${"/basepath/blog/foo"}
+        ${"/basepath/customers"}
+        ${"/basepath/customers/superman"}
+        ${"/basepath/customers/superman/howtofly"}
+        ${"/basepath/customers/superman/profile"}
+        ${"/basepath/customers/test/catch/all"}
+        ${"/basepath/nl/abc"}
+        ${"/basepath/nl/blog/foo"}
+        ${"/basepath/nl/customers"}
+        ${"/basepath/nl/customers/superman"}
+        ${"/basepath/nl/customers/superman/howtofly"}
+        ${"/basepath/nl/customers/superman/profile"}
+        ${"/basepath/nl/customers/test/catch/all"}
       `("path $path passes querystring to redirected URL", async ({ path }) => {
         const querystring = "a=1&b=2";
 
@@ -417,10 +363,10 @@ describe("Lambda@Edge", () => {
 
     describe("Data Requests", () => {
       it.each`
-        path                                                      | expectedPage
-        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
-        ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
-        ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+        path                                                                  | expectedPage
+        ${"/basepath/_next/data/build-id/en/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/basepath/_next/data/build-id/en/customers/superman.json"}         | ${"pages/customers/[customer].js"}
+        ${"/basepath/_next/data/build-id/en/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `(
         "serves json data via SSR for SSR path $path",
         async ({ path, expectedPage }) => {
@@ -446,10 +392,8 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                                           | expectedPage
-        ${"/_next/data/build-id"}                                                      | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                                           | ${"pages/js"}
-        ${"/_next/data/build-id/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
+        path                                       | expectedPage
+        ${"/basepath/_next/data/build-id/en.json"} | ${"pages/index.js"}
       `(
         "serves json data via S3 for SSG path $path",
         async ({ path, expectedPage }) => {
@@ -478,52 +422,22 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                       | expectedRedirect
-        ${"/_next/data/build-id/"}                                 | ${"/_next/data/build-id"}
-        ${"/_next/data/build-id/index.json/"}                      | ${"/_next/data/build-id/index.json"}
-        ${"/_next/data/build-id/customers.json/"}                  | ${"/_next/data/build-id/customers.json"}
-        ${"/_next/data/build-id/customers/superman.json/"}         | ${"/_next/data/build-id/customers/superman.json"}
-        ${"/_next/data/build-id/customers/superman/profile.json/"} | ${"/_next/data/build-id/customers/superman/profile.json"}
+        path                                                                | expectedRedirect
+        ${"/basepath/_next/data/build-id/en.json/"}                         | ${"/basepath/_next/data/build-id/en.json"}
+        ${"/basepath/_next/data/build-id/customers.json/"}                  | ${"/basepath/_next/data/build-id/customers.json"}
+        ${"/basepath/_next/data/build-id/customers/superman.json/"}         | ${"/basepath/_next/data/build-id/customers/superman.json"}
+        ${"/basepath/_next/data/build-id/customers/superman/profile.json/"} | ${"/basepath/_next/data/build-id/customers/superman/profile.json"}
       `(
         "data requests always redirect to path without trailing slash: $path -> $expectedRedirect",
         async ({ path, expectedRedirect }) => {
           await runRedirectTest(path, expectedRedirect, 308);
         }
       );
-
-      it("handles preview mode", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/_next/data/build-id/preview.json",
-          host: "mydistribution.cloudfront.net",
-          requestHeaders: {
-            cookie: [
-              {
-                key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
-              }
-            ]
-          }
-        });
-
-        mockPageRequire("/pages/preview.js");
-        const result = await handler(event);
-        const response = result as CloudFrontResultResponse;
-        const decodedBody = Buffer.from(
-          response.body as string,
-          "base64"
-        ).toString("utf8");
-        expect(decodedBody).toBe(
-          JSON.stringify({
-            page: "pages/preview.js"
-          })
-        );
-        expect(response.status).toBe(200);
-      });
     });
 
     it("uses default s3 endpoint when bucket region is us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: trailingSlash ? "/terms/" : "/terms",
+        uri: trailingSlash ? "/basepath/terms/" : "/basepath/terms",
         host: "mydistribution.cloudfront.net",
         s3Region: "us-east-1"
       });
@@ -546,7 +460,7 @@ describe("Lambda@Edge", () => {
 
     it("uses regional endpoint for static page when bucket region is not us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: trailingSlash ? "/terms/" : "/terms",
+        uri: trailingSlash ? "/basepath/terms/" : "/basepath/terms",
         host: "mydistribution.cloudfront.net",
         s3DomainName: "my-bucket.s3.amazonaws.com",
         s3Region: "eu-west-1"
@@ -561,11 +475,11 @@ describe("Lambda@Edge", () => {
         s3: {
           authMethod: "origin-access-identity",
           domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
-          path: "/static-pages/build-id",
+          path: "/basepath/static-pages/build-id",
           region: "eu-west-1"
         }
       });
-      expect(request.uri).toEqual("/terms.html");
+      expect(request.uri).toEqual("/en/terms.html");
       expect(request.headers.host[0].key).toEqual("host");
       expect(request.headers.host[0].value).toEqual(
         "my-bucket.s3.eu-west-1.amazonaws.com"
@@ -574,7 +488,7 @@ describe("Lambda@Edge", () => {
 
     it("uses regional endpoint for public asset when bucket region is not us-east-1", async () => {
       const event = createCloudFrontEvent({
-        uri: "/favicon.ico",
+        uri: "/basepath/favicon.ico",
         host: "mydistribution.cloudfront.net",
         s3DomainName: "my-bucket.s3.amazonaws.com",
         s3Region: "eu-west-1"
@@ -589,7 +503,7 @@ describe("Lambda@Edge", () => {
         s3: {
           authMethod: "origin-access-identity",
           domainName: "my-bucket.s3.eu-west-1.amazonaws.com",
-          path: "/public",
+          path: "/basepath/public",
           region: "eu-west-1"
         }
       });
@@ -603,7 +517,9 @@ describe("Lambda@Edge", () => {
     describe("404 page", () => {
       it("renders 404 page if request path can't be matched to any page / api routes", async () => {
         const event = createCloudFrontEvent({
-          uri: trailingSlash ? "/page/does/not/exist/" : "/page/does/not/exist",
+          uri: trailingSlash
+            ? "/basepath/page/does/not/exist/"
+            : "/basepath/page/does/not/exist",
           host: "mydistribution.cloudfront.net"
         });
 
@@ -618,7 +534,7 @@ describe("Lambda@Edge", () => {
       });
 
       it("redirects unmatched request path", async () => {
-        let path = "/page/does/not/exist";
+        let path = "/basepath/page/does/not/exist";
         let expectedRedirect;
         if (trailingSlash) {
           expectedRedirect = path + "/";
@@ -629,9 +545,46 @@ describe("Lambda@Edge", () => {
         await runRedirectTest(path, expectedRedirect, 308);
       });
 
+      // Next.js serves 404 on pages that do not have basepath prefix. It doesn't redirect whether there is trailing slash or not.
       it.each`
         path
-        ${"/_next/data/unmatched"}
+        ${"/terms"}
+        ${"/not/found"}
+        ${"/manifest.json"}
+        ${"/terms/"}
+        ${"/not/found/"}
+        ${"/manifest.json/"}
+      `(
+        "serves 404 page from S3 for path without basepath prefix: $path",
+        async ({ path, expectedPage }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/basepath/static-pages/build-id",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual("/en/404.html");
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
+          );
+        }
+      );
+
+      it.each`
+        path
+        ${"/basepath/_next/data/unmatched"}
       `(
         "renders 404 page if data request can't be matched for path: $path",
         async ({ path }) => {
@@ -679,12 +632,14 @@ describe("Lambda@Edge", () => {
     describe("500 page", () => {
       it("renders 500 page if page render has an error", async () => {
         const event = createCloudFrontEvent({
-          uri: trailingSlash ? "/erroredPage/" : "/erroredPage",
+          uri: trailingSlash
+            ? "/basepath/erroredPage/"
+            : "/basepath/erroredPage",
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/erroredPage.js");
         mockPageRequire("pages/_error.js");
+        mockPageRequire("pages/erroredPage.js");
 
         const response = (await handler(event)) as CloudFrontResultResponse;
         const body = response.body as string;
@@ -698,45 +653,43 @@ describe("Lambda@Edge", () => {
     describe("Custom Redirects", () => {
       if (trailingSlash) {
         it.each`
-          uri                                  | expectedRedirect         | expectedRedirectStatusCode
-          ${"/terms-new/"}                     | ${"/terms/"}             | ${308}
-          ${"/old-blog/abc/"}                  | ${"/news/abc/"}          | ${308}
-          ${"/old-users/1234/"}                | ${"/users/1234/"}        | ${307}
-          ${"/external/"}                      | ${"https://example.com"} | ${308}
-          ${"/terms-redirect-dest-query/"}     | ${"/terms/?foo=bar"}     | ${308}
-          ${"/terms-redirect-dest-query/?a=b"} | ${"/terms/?a=b&foo=bar"} | ${308}
+          path                              | expectedRedirect           | expectedRedirectStatusCode
+          ${"/basepath/terms-new/"}         | ${"/basepath/terms/"}      | ${308}
+          ${"/basepath/old-blog/abc/"}      | ${"/basepath/news/abc/"}   | ${308}
+          ${"/basepath/old-users/1234/"}    | ${"/basepath/users/1234/"} | ${307}
+          ${"/basepath/external/"}          | ${"https://example.com"}   | ${308}
+          ${"/basepath/en/terms-new/"}      | ${"/basepath/terms/"}      | ${308}
+          ${"/basepath/en/old-blog/abc/"}   | ${"/basepath/news/abc/"}   | ${308}
+          ${"/basepath/en/old-users/1234/"} | ${"/basepath/users/1234/"} | ${307}
+          ${"/basepath/en/external/"}       | ${"https://example.com"}   | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
-          async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
-            const [path, querystring] = uri.split("?");
-
+          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
             await runRedirectTest(
               path,
               expectedRedirect,
-              expectedRedirectStatusCode,
-              querystring
+              expectedRedirectStatusCode
             );
           }
         );
       } else {
         it.each`
-          uri                                 | expectedRedirect         | expectedRedirectStatusCode
-          ${"/terms-new"}                     | ${"/terms"}              | ${308}
-          ${"/old-blog/abc"}                  | ${"/news/abc"}           | ${308}
-          ${"/old-users/1234"}                | ${"/users/1234"}         | ${307}
-          ${"/external"}                      | ${"https://example.com"} | ${308}
-          ${"/terms-redirect-dest-query"}     | ${"/terms?foo=bar"}      | ${308}
-          ${"/terms-redirect-dest-query?a=b"} | ${"/terms?a=b&foo=bar"}  | ${308}
+          path                             | expectedRedirect          | expectedRedirectStatusCode
+          ${"/basepath/terms-new"}         | ${"/basepath/terms"}      | ${308}
+          ${"/basepath/old-blog/abc"}      | ${"/basepath/news/abc"}   | ${308}
+          ${"/basepath/old-users/1234"}    | ${"/basepath/users/1234"} | ${307}
+          ${"/basepath/external"}          | ${"https://example.com"}  | ${308}
+          ${"/basepath/en/terms-new"}      | ${"/basepath/terms"}      | ${308}
+          ${"/basepath/en/old-blog/abc"}   | ${"/basepath/news/abc"}   | ${308}
+          ${"/basepath/en/old-users/1234"} | ${"/basepath/users/1234"} | ${307}
+          ${"/basepath/en/external"}       | ${"https://example.com"}  | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
-          async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
-            const [path, querystring] = uri.split("?");
-
+          "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
             await runRedirectTest(
               path,
               expectedRedirect,
-              expectedRedirectStatusCode,
-              querystring
+              expectedRedirectStatusCode
             );
           }
         );
@@ -745,10 +698,10 @@ describe("Lambda@Edge", () => {
 
     describe("Domain Redirects", () => {
       it.each`
-        path        | querystring | expectedRedirect                     | expectedRedirectStatusCode
-        ${"/"}      | ${""}       | ${"https://www.example.com/"}        | ${308}
-        ${"/"}      | ${"a=1234"} | ${"https://www.example.com/?a=1234"} | ${308}
-        ${"/terms"} | ${""}       | ${"https://www.example.com/terms"}   | ${308}
+        path                 | querystring | expectedRedirect                              | expectedRedirectStatusCode
+        ${"/basepath/"}      | ${""}       | ${"https://www.example.com/basepath/"}        | ${308}
+        ${"/basepath/"}      | ${"a=1234"} | ${"https://www.example.com/basepath/?a=1234"} | ${308}
+        ${"/basepath/terms"} | ${""}       | ${"https://www.example.com/basepath/terms"}   | ${308}
       `(
         "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
         async ({
@@ -770,18 +723,18 @@ describe("Lambda@Edge", () => {
 
     describe("Custom Rewrites", () => {
       it.each`
-        uri                                | expectedPage     | expectedQuerystring
-        ${"/index-rewrite"}                | ${"/index.html"} | ${""}
-        ${"/terms-rewrite"}                | ${"/terms.html"} | ${""}
-        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${""}
-        ${"/terms"}                        | ${"/terms.html"} | ${""}
-        ${"/terms-rewrite-dest-query"}     | ${"/terms.html"} | ${"foo=bar"}
-        ${"/terms-rewrite-dest-query?a=b"} | ${"/terms.html"} | ${"a=b&foo=bar"}
+        path                               | expectedPage
+        ${"/basepath/index-rewrite"}       | ${"/en.html"}
+        ${"/basepath/terms-rewrite"}       | ${"/en/terms.html"}
+        ${"/basepath/path-rewrite/123"}    | ${"/en/terms.html"}
+        ${"/basepath/terms"}               | ${"/en/terms.html"}
+        ${"/basepath/en/index-rewrite"}    | ${"/en.html"}
+        ${"/basepath/en/terms-rewrite"}    | ${"/en/terms.html"}
+        ${"/basepath/en/path-rewrite/123"} | ${"/en/terms.html"}
+        ${"/basepath/en/terms"}            | ${"/en/terms.html"}
       `(
-        "serves page $expectedPage from S3 for rewritten path $uri",
-        async ({ uri, expectedPage, expectedQuerystring }) => {
-          let [path, querystring] = uri.split("?");
-
+        "serves page $expectedPage from S3 for rewritten path $path",
+        async ({ path, expectedPage }) => {
           // If trailingSlash = true, append "/" to get the non-redirected path
           if (trailingSlash && !path.endsWith("/")) {
             path += "/";
@@ -789,7 +742,6 @@ describe("Lambda@Edge", () => {
 
           const event = createCloudFrontEvent({
             uri: path,
-            querystring: querystring,
             host: "mydistribution.cloudfront.net"
           });
 
@@ -801,126 +753,24 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "/static-pages/build-id",
+              path: "/basepath/static-pages/build-id",
               region: "us-east-1"
             }
           });
           expect(request.uri).toEqual(expectedPage);
-          expect(request.querystring).toEqual(expectedQuerystring);
           expect(request.headers.host[0].key).toEqual("host");
           expect(request.headers.host[0].value).toEqual(
             "my-bucket.s3.amazonaws.com"
           );
         }
       );
-
-      it.each`
-        uri                    | rewriteUri                | method
-        ${"/external-rewrite"} | ${"https://external.com"} | ${"GET"}
-        ${"/external-rewrite"} | ${"https://external.com"} | ${"POST"}
-      `(
-        "serves external rewrite $rewriteUri for rewritten path $uri and method $method",
-        async ({ uri, rewriteUri, method }) => {
-          const { default: fetchMock } = await import("node-fetch");
-
-          const mockFetchResponse = {
-            body: "external",
-            headers: {
-              "Content-Type": "text/plain",
-              Host: "external.com",
-              "x-amz-cf-pop": "SEA19-C1"
-            }, // host and x-amz-cf-pop header are blacklisted and won't be added
-            status: 200
-          };
-
-          fetchMock.mock(rewriteUri, mockFetchResponse);
-
-          let [path, querystring] = uri.split("?");
-
-          // If trailingSlash = true, append "/" to get the non-redirected path
-          if (trailingSlash && !path.endsWith("/")) {
-            path += "/";
-          }
-
-          const event = createCloudFrontEvent({
-            uri: path,
-            querystring: querystring,
-            host: "mydistribution.cloudfront.net",
-            method: method,
-            body:
-              method === "POST"
-                ? {
-                    action: "read-only",
-                    data: "eyJhIjoiYiJ9",
-                    encoding: "base64",
-                    inputTruncated: false
-                  }
-                : undefined
-          });
-
-          const response: CloudFrontResultResponse = await handler(event);
-
-          expect(response).toEqual({
-            body: "ZXh0ZXJuYWw=",
-            bodyEncoding: "base64",
-            headers: {
-              "content-type": [
-                {
-                  key: "content-type",
-                  value: "text/plain"
-                }
-              ]
-            },
-            status: 200,
-            statusDescription: "OK"
-          });
-
-          expect(fetchMock).toHaveLastFetched("https://external.com", {
-            method: method
-          });
-
-          fetchMock.reset();
-        }
-      );
-    });
-
-    describe("Custom Rewrites pass correct Request URL to page render", () => {
-      it.each`
-        path               | expectedPage
-        ${"/promise-page"} | ${"pages/async-page.js"}
-      `(
-        "serves page $expectedPage for rewritten path $path with correct request url",
-        async ({ path, expectedPage }) => {
-          // If trailingSlash = true, append "/" to get the non-redirected path
-          if (trailingSlash && !path.endsWith("/")) {
-            path += "/";
-          }
-
-          mockPageRequire(expectedPage);
-          // eslint-disable-next-line @typescript-eslint/no-var-requires
-          const page = require(`../../src/${expectedPage}`);
-          const event = createCloudFrontEvent({
-            uri: path,
-            host: "mydistribution.cloudfront.net"
-          });
-
-          const result = await handler(event);
-          const call = page.render.mock.calls[0];
-          const firstArgument = call[0];
-          expect(firstArgument).toMatchObject({ url: path });
-          const decodedBody = Buffer.from(
-            result.body as string,
-            "base64"
-          ).toString("utf8");
-          expect(decodedBody).toEqual(expectedPage);
-        }
-      );
     });
 
     describe("Custom Headers", () => {
       it.each`
-        path                    | expectedHeaders                    | expectedPage
-        ${"/customers/another"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
+        path                                | expectedHeaders                    | expectedPage
+        ${"/basepath/customers/another"}    | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
+        ${"/basepath/en/customers/another"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
       `(
         "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
         async ({ path, expectedHeaders, expectedPage }) => {
@@ -945,6 +795,37 @@ describe("Lambda@Edge", () => {
               value: expectedHeaders[header]
             });
           }
+        }
+      );
+    });
+
+    describe("Root Locale Redirect", () => {
+      it.each`
+        acceptLanguageHeader   | expectedRedirect
+        ${"nl"}                | ${"/basepath/nl"}
+        ${"fr,nl,en"}          | ${"/basepath/fr"}
+        ${"nl,fr"}             | ${"/basepath/nl"}
+        ${"fr,nl"}             | ${"/basepath/fr"}
+        ${"en;q=0.5,nl;q=0.8"} | ${"/basepath/nl"}
+      `(
+        "redirects path /basepath with accept-language [$acceptLanguageHeader] to $expectedRedirect",
+        async ({ acceptLanguageHeader, expectedRedirect }) => {
+          if (trailingSlash) {
+            expectedRedirect += "/";
+          }
+
+          await runRedirectTest(
+            trailingSlash ? "/basepath/" : "/basepath",
+            expectedRedirect,
+            307,
+            undefined,
+            undefined,
+            {
+              "accept-language": [
+                { key: "Accept-Language", value: acceptLanguageHeader }
+              ]
+            }
+          );
         }
       );
     });

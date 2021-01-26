@@ -38,7 +38,10 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
-import { isLocaleIndexUri } from "./routing/locale-utils";
+import {
+  isLocalePrefixedUri,
+  removeLocalePrefixFromUri
+} from "./routing/locale-utils";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -67,13 +70,17 @@ const addS3HostHeader = (
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
-const normaliseUri = (uri: string): string => {
+const normaliseUri = (uri: string, routesManifest: RoutesManifest): string => {
   if (basePath) {
     if (uri.startsWith(basePath)) {
       uri = uri.slice(basePath.length);
     } else {
       // basePath set but URI does not start with basePath, return 404
-      return "/404";
+      if (routesManifest.i18n?.defaultLocale) {
+        return `/${routesManifest.i18n?.defaultLocale}/404`;
+      } else {
+        return "/404";
+      }
     }
   }
 
@@ -217,7 +224,8 @@ export const handler = async (
     response = await handleOriginResponse({
       event,
       manifest,
-      prerenderManifest
+      prerenderManifest,
+      routesManifest
     });
   } else {
     response = await handleOriginRequest({
@@ -277,7 +285,7 @@ const handleOriginRequest = async ({
   }
 
   const basePath = routesManifest.basePath;
-  let uri = normaliseUri(request.uri);
+  let uri = normaliseUri(request.uri, routesManifest);
   const decodedUri = decodeURI(uri);
   const { pages, publicFiles } = manifest;
 
@@ -294,7 +302,11 @@ const handleOriginRequest = async ({
     if (newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
-  } else if (request.uri !== "/" && request.uri !== "" && uri !== "/404") {
+  } else if (
+    request.uri !== "/" &&
+    request.uri !== "" &&
+    !uri.endsWith("/404")
+  ) {
     // HTML/SSR pages get redirected based on trailingSlash in next.config.js
     // We do not redirect:
     // 1. Unnormalised URI is "/" or "" as this could cause a redirect loop due to browsers appending trailing slash
@@ -322,6 +334,34 @@ const handleOriginRequest = async ({
       request.querystring,
       customRedirect.statusCode
     );
+  }
+
+  // Handle root language redirect
+  const languageHeader = request.headers["accept-language"];
+  const languageRedirectUri = getLanguageRedirect(
+    languageHeader ? languageHeader[0].value : undefined,
+    uri,
+    routesManifest,
+    manifest
+  );
+
+  if (languageRedirectUri) {
+    return createRedirectResponse(
+      languageRedirectUri,
+      request.querystring,
+      307
+    );
+  }
+
+  // Always add default locale prefix to URIs without it that are not public files or data requests
+  const defaultLocale = routesManifest.i18n?.defaultLocale;
+  if (
+    defaultLocale &&
+    !isLocalePrefixedUri(uri, routesManifest) &&
+    !isPublicFile &&
+    !isDataReq
+  ) {
+    uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
   }
 
   // Check for non-dynamic pages before rewriting
@@ -369,25 +409,17 @@ const handleOriginRequest = async ({
         return await responsePromise;
       }
 
-      uri = normaliseUri(request.uri);
+      uri = normaliseUri(request.uri, routesManifest);
+
+      if (
+        defaultLocale &&
+        !isLocalePrefixedUri(uri, routesManifest) &&
+        !isPublicFile &&
+        !isDataReq
+      ) {
+        uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
+      }
     }
-  }
-
-  // Handle root language rewrite
-  const languageHeader = request.headers["accept-language"];
-  const languageRedirectUri = getLanguageRedirect(
-    languageHeader ? languageHeader[0].value : undefined,
-    uri,
-    routesManifest,
-    manifest
-  );
-
-  if (languageRedirectUri) {
-    return createRedirectResponse(
-      languageRedirectUri,
-      request.querystring,
-      307
-    );
   }
 
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
@@ -396,7 +428,7 @@ const handleOriginRequest = async ({
   const s3Origin = origin.s3 as CloudFrontS3Origin;
   const isHTMLPage = isStaticPage || isPrerenderedPage;
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
-  const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
+  const hasFallback = hasFallbackForUri(uri, manifest, routesManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
   const isPreviewRequest = isValidPreviewRequest(
     request.headers.cookie,
@@ -420,12 +452,7 @@ const handleOriginRequest = async ({
       }
     } else if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
-      let pageName;
-      if (isLocaleIndexUri(uri, routesManifest)) {
-        pageName = `${uri}/index`;
-      } else {
-        pageName = uri === "/" ? "/index" : uri;
-      }
+      const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
@@ -441,8 +468,8 @@ const handleOriginRequest = async ({
         (!pages.ssg.nonDynamic[normalisedDataRequestUri] &&
           !hasFallbackForUri(
             normalisedDataRequestUri,
-            prerenderManifest,
-            manifest
+            manifest,
+            routesManifest
           ))
       ) {
         // Break to continue to SSR render in two cases:
@@ -526,11 +553,13 @@ const handleOriginRequest = async ({
 const handleOriginResponse = async ({
   event,
   manifest,
-  prerenderManifest
+  prerenderManifest,
+  routesManifest
 }: {
   event: OriginResponseEvent;
   manifest: OriginRequestDefaultHandlerManifest;
   prerenderManifest: PrerenderManifestType;
+  routesManifest: RoutesManifest;
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
@@ -549,7 +578,7 @@ const handleOriginResponse = async ({
     return response;
   }
 
-  const uri = normaliseUri(request.uri);
+  const uri = normaliseUri(request.uri, routesManifest);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
@@ -615,7 +644,7 @@ const handleOriginResponse = async ({
     res.end(JSON.stringify(renderOpts.pageData));
     return await responsePromise;
   } else {
-    const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
+    const hasFallback = hasFallbackForUri(uri, manifest, routesManifest);
     if (!hasFallback) return response;
 
     // If route has fallback, return that page from S3, otherwise return 404 page
@@ -675,8 +704,8 @@ const isOriginResponse = (
 
 const hasFallbackForUri = (
   uri: string,
-  prerenderManifest: PrerenderManifestType,
-  manifest: OriginRequestDefaultHandlerManifest
+  manifest: OriginRequestDefaultHandlerManifest,
+  routesManifest: RoutesManifest
 ) => {
   const {
     pages: { ssr, html, ssg }
@@ -712,7 +741,11 @@ const hasFallbackForUri = (
       const matchesFallbackRoute = Object.keys(ssg.dynamic).find(
         (dynamicSsgRoute) => {
           const fileMatchesPrerenderRoute =
-            dynamicRoute.file === `pages${dynamicSsgRoute}.js`;
+            dynamicRoute.file ===
+            `pages${removeLocalePrefixFromUri(
+              dynamicSsgRoute,
+              routesManifest
+            )}.js`;
 
           if (fileMatchesPrerenderRoute) {
             foundFallback = ssg.dynamic[dynamicSsgRoute];

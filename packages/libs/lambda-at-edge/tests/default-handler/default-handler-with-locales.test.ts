@@ -68,7 +68,8 @@ describe("Lambda@Edge", () => {
       if (trailingSlash) {
         jest.mock(
           "../../src/manifest.json",
-          () => require("./default-build-manifest-with-trailing-slash.json"),
+          () =>
+            require("./default-build-manifest-with-locales-with-trailing-slash.json"),
           {
             virtual: true
           }
@@ -77,7 +78,8 @@ describe("Lambda@Edge", () => {
         // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
-          () => require("./default-routes-manifest-with-trailing-slash.json"),
+          () =>
+            require("./default-routes-manifest-with-locales-with-trailing-slash.json"),
           {
             virtual: true
           }
@@ -85,7 +87,7 @@ describe("Lambda@Edge", () => {
       } else {
         jest.mock(
           "../../src/manifest.json",
-          () => require("./default-build-manifest.json"),
+          () => require("./default-build-manifest-with-locales.json"),
           {
             virtual: true
           }
@@ -94,7 +96,7 @@ describe("Lambda@Edge", () => {
         // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
         jest.mock(
           "../../src/routes-manifest.json",
-          () => require("./default-routes-manifest.json"),
+          () => require("./default-routes-manifest-with-locales.json"),
           {
             virtual: true
           }
@@ -131,15 +133,24 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                  | expectedPage
-        ${"/"}                                                | ${"/index.html"}
-        ${"/terms"}                                           | ${"/terms.html"}
-        ${"/users/batman"}                                    | ${"/users/[user].html"}
-        ${"/users/test/catch/all"}                            | ${"/users/[...user].html"}
-        ${"/john/123"}                                        | ${"/[username]/[id].html"}
-        ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
-        ${"/preview"}                                         | ${"/preview.html"}
+        path                                                     | expectedPage
+        ${"/"}                                                   | ${"/en.html"}
+        ${"/en"}                                                 | ${"/en.html"}
+        ${"/nl"}                                                 | ${"/nl.html"}
+        ${"/en/terms"}                                           | ${"/en/terms.html"}
+        ${"/en/users/batman"}                                    | ${"/en/users/[user].html"}
+        ${"/en/users/test/catch/all"}                            | ${"/en/users/[...user].html"}
+        ${"/en/john/123"}                                        | ${"/en/[username]/[id].html"}
+        ${"/en/tests/prerender-manifest/example-static-page"}    | ${"/en/tests/prerender-manifest/example-static-page.html"}
+        ${"/en/tests/prerender-manifest-fallback/not-yet-built"} | ${"/en/tests/prerender-manifest-fallback/not-yet-built.html"}
+        ${"/nl/preview"}                                         | ${"/nl/preview.html"}
+        ${"/nl/terms"}                                           | ${"/nl/terms.html"}
+        ${"/nl/users/batman"}                                    | ${"/nl/users/[user].html"}
+        ${"/nl/users/test/catch/all"}                            | ${"/nl/users/[...user].html"}
+        ${"/nl/john/123"}                                        | ${"/nl/[username]/[id].html"}
+        ${"/nl/tests/prerender-manifest/example-static-page"}    | ${"/nl/tests/prerender-manifest/example-static-page.html"}
+        ${"/nl/tests/prerender-manifest-fallback/not-yet-built"} | ${"/nl/tests/prerender-manifest-fallback/not-yet-built.html"}
+        ${"/nl/preview"}                                         | ${"/nl/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -200,7 +211,7 @@ describe("Lambda@Edge", () => {
 
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
-          uri: "/terms.html",
+          uri: "/en/terms.html",
           host: "mydistribution.cloudfront.net",
           config: { eventType: "origin-response" } as any,
           response: {
@@ -264,7 +275,7 @@ describe("Lambda@Edge", () => {
             region: "us-east-1"
           }
         });
-        expect(request.uri).toEqual("/terms.html");
+        expect(request.uri).toEqual("/en/terms.html");
         expect(request.headers.host[0].key).toEqual("host");
         expect(request.headers.host[0].value).toEqual(
           "my-bucket.s3.amazonaws.com"
@@ -330,14 +341,21 @@ describe("Lambda@Edge", () => {
 
     describe("SSR pages routing", () => {
       it.each`
-        path                              | expectedPage
-        ${"/abc"}                         | ${"pages/[root].js"}
-        ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/customers"}                   | ${"pages/customers/index.js"}
-        ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
-        ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
-        ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
-        ${"/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
+        path                                 | expectedPage
+        ${"/abc"}                            | ${"pages/[root].js"}
+        ${"/blog/foo"}                       | ${"pages/blog/[id].js"}
+        ${"/customers"}                      | ${"pages/customers/index.js"}
+        ${"/customers/superman"}             | ${"pages/customers/[customer].js"}
+        ${"/customers/superman/howtofly"}    | ${"pages/customers/[customer]/[post].js"}
+        ${"/customers/superman/profile"}     | ${"pages/customers/[customer]/profile.js"}
+        ${"/customers/test/catch/all"}       | ${"pages/customers/[...catchAll].js"}
+        ${"/nl/abc"}                         | ${"pages/[root].js"}
+        ${"/nl/blog/foo"}                    | ${"pages/blog/[id].js"}
+        ${"/nl/customers"}                   | ${"pages/customers/index.js"}
+        ${"/nl/customers/superman"}          | ${"pages/customers/[customer].js"}
+        ${"/nl/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
+        ${"/nl/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
+        ${"/nl/customers/test/catch/all"}    | ${"pages/customers/[...catchAll].js"}
       `(
         "renders page $expectedPage for path $path",
         async ({ path, expectedPage }) => {
@@ -417,10 +435,10 @@ describe("Lambda@Edge", () => {
 
     describe("Data Requests", () => {
       it.each`
-        path                                                      | expectedPage
-        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
-        ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
-        ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+        path                                                         | expectedPage
+        ${"/_next/data/build-id/en/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/_next/data/build-id/en/customers/superman.json"}         | ${"pages/customers/[customer].js"}
+        ${"/_next/data/build-id/en/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `(
         "serves json data via SSR for SSR path $path",
         async ({ path, expectedPage }) => {
@@ -446,10 +464,10 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                                           | expectedPage
-        ${"/_next/data/build-id"}                                                      | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                                           | ${"pages/js"}
-        ${"/_next/data/build-id/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
+        path                                                                              | expectedPage
+        ${"/_next/data/build-id/en.json"}                                                 | ${"pages/index.js"}
+        ${"/_next/data/build-id/nl.json"}                                                 | ${"pages/index.js"}
+        ${"/_next/data/build-id/en/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
         async ({ path, expectedPage }) => {
@@ -480,7 +498,7 @@ describe("Lambda@Edge", () => {
       it.each`
         path                                                       | expectedRedirect
         ${"/_next/data/build-id/"}                                 | ${"/_next/data/build-id"}
-        ${"/_next/data/build-id/index.json/"}                      | ${"/_next/data/build-id/index.json"}
+        ${"/_next/data/build-id/en.json/"}                         | ${"/_next/data/build-id/en.json"}
         ${"/_next/data/build-id/customers.json/"}                  | ${"/_next/data/build-id/customers.json"}
         ${"/_next/data/build-id/customers/superman.json/"}         | ${"/_next/data/build-id/customers/superman.json"}
         ${"/_next/data/build-id/customers/superman/profile.json/"} | ${"/_next/data/build-id/customers/superman/profile.json"}
@@ -493,7 +511,7 @@ describe("Lambda@Edge", () => {
 
       it("handles preview mode", async () => {
         const event = createCloudFrontEvent({
-          uri: "/_next/data/build-id/preview.json",
+          uri: "/_next/data/build-id/en/preview.json",
           host: "mydistribution.cloudfront.net",
           requestHeaders: {
             cookie: [
@@ -565,7 +583,7 @@ describe("Lambda@Edge", () => {
           region: "eu-west-1"
         }
       });
-      expect(request.uri).toEqual("/terms.html");
+      expect(request.uri).toEqual("/en/terms.html");
       expect(request.headers.host[0].key).toEqual("host");
       expect(request.headers.host[0].value).toEqual(
         "my-bucket.s3.eu-west-1.amazonaws.com"
@@ -706,7 +724,7 @@ describe("Lambda@Edge", () => {
           ${"/terms-redirect-dest-query/"}     | ${"/terms/?foo=bar"}     | ${308}
           ${"/terms-redirect-dest-query/?a=b"} | ${"/terms/?a=b&foo=bar"} | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
             const [path, querystring] = uri.split("?");
 
@@ -728,7 +746,7 @@ describe("Lambda@Edge", () => {
           ${"/terms-redirect-dest-query"}     | ${"/terms?foo=bar"}      | ${308}
           ${"/terms-redirect-dest-query?a=b"} | ${"/terms?a=b&foo=bar"}  | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
             const [path, querystring] = uri.split("?");
 
@@ -770,13 +788,13 @@ describe("Lambda@Edge", () => {
 
     describe("Custom Rewrites", () => {
       it.each`
-        uri                                | expectedPage     | expectedQuerystring
-        ${"/index-rewrite"}                | ${"/index.html"} | ${""}
-        ${"/terms-rewrite"}                | ${"/terms.html"} | ${""}
-        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${""}
-        ${"/terms"}                        | ${"/terms.html"} | ${""}
-        ${"/terms-rewrite-dest-query"}     | ${"/terms.html"} | ${"foo=bar"}
-        ${"/terms-rewrite-dest-query?a=b"} | ${"/terms.html"} | ${"a=b&foo=bar"}
+        uri                                | expectedPage        | expectedQuerystring
+        ${"/index-rewrite"}                | ${"/en.html"}       | ${""}
+        ${"/terms-rewrite"}                | ${"/en/terms.html"} | ${""}
+        ${"/path-rewrite/123"}             | ${"/en/terms.html"} | ${""}
+        ${"/terms"}                        | ${"/en/terms.html"} | ${""}
+        ${"/terms-rewrite-dest-query"}     | ${"/en/terms.html"} | ${"foo=bar"}
+        ${"/terms-rewrite-dest-query?a=b"} | ${"/en/terms.html"} | ${"a=b&foo=bar"}
       `(
         "serves page $expectedPage from S3 for rewritten path $uri",
         async ({ uri, expectedPage, expectedQuerystring }) => {
@@ -945,6 +963,37 @@ describe("Lambda@Edge", () => {
               value: expectedHeaders[header]
             });
           }
+        }
+      );
+    });
+
+    describe("Root Locales Redirects", () => {
+      it.each`
+        acceptLanguageHeader   | expectedRedirect
+        ${"nl"}                | ${"/nl"}
+        ${"fr,nl,en"}          | ${"/fr"}
+        ${"nl,fr"}             | ${"/nl"}
+        ${"fr,nl"}             | ${"/fr"}
+        ${"en;q=0.5,nl;q=0.8"} | ${"/nl"}
+      `(
+        "redirects path / with accept-language [$acceptLanguageHeader] to $expectedRedirect",
+        async ({ acceptLanguageHeader, expectedRedirect }) => {
+          if (trailingSlash) {
+            expectedRedirect += "/";
+          }
+
+          await runRedirectTest(
+            "/",
+            expectedRedirect,
+            307,
+            undefined,
+            undefined,
+            {
+              "accept-language": [
+                { key: "Accept-Language", value: acceptLanguageHeader }
+              ]
+            }
+          );
         }
       );
     });
