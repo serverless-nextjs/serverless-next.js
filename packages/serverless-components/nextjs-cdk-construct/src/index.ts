@@ -279,8 +279,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   viewerProtocolPolicy:
                     cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
                   origin: new origins.S3Origin(this.bucket),
-                  allowedMethods:
-                    cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+                  allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
                   cachedMethods:
                     cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
                   compress: true,
