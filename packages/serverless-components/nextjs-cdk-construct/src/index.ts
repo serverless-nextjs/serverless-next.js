@@ -157,7 +157,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       "NextImageCache",
       {
         cachePolicyName: "NextImageCache",
-        queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
+        queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
         headerBehavior: cloudfront.CacheHeaderBehavior.allowList("Accept"),
         cookieBehavior: cloudfront.CacheCookieBehavior.none(),
         defaultTtl: Duration.days(1),
@@ -293,7 +293,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   ]
                 }
               }
-            : {})
+            : {}),
+          ...(props.behaviours || {})
         }
       }
     );
@@ -339,13 +340,19 @@ export class NextJSLambdaEdge extends cdk.Construct {
     );
 
     const assetsPath = path.join(this.props.serverlessBuildOutDir, "assets");
+
     Object.keys(staticAssetsGroupedByCache).forEach((cacheKey) => {
       const assets = staticAssetsGroupedByCache[cacheKey];
       // We have a unique BucketDeployment per cache-control header, so we
       // reformat the cache key to be compatible as a construct ID
       const cacheHash = cacheKey.replace(/[^0-9a-z]/gi, "");
       new s3Deploy.BucketDeployment(this, `AssetDeployment${cacheHash}`, {
+        // Unfortunately we can't rely on `prune` as we have multiple
+        // distributions from the same source, each with a different behaviour.
+        // https://docs.aws.amazon.com/cdk/api/latest/docs/aws-s3-deployment-readme.html#prune
+        prune: false,
         destinationBucket: this.bucket,
+        distribution: this.distribution,
         sources: [
           // Slight ergonomic issue with the Asset API that we can't pass an
           // array of files, only a single directory. as a work around
@@ -354,7 +361,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           // for this cache-control key.
           s3Deploy.Source.asset(assetsPath, {
             exclude: [
-              "**",
+              "*.*",
               ...assets.map((staticAsset) => {
                 return `!${staticAsset.path.relative}`;
               })

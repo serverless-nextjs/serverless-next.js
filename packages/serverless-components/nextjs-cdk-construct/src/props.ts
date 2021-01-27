@@ -1,5 +1,5 @@
 import { ICertificate } from "@aws-cdk/aws-certificatemanager";
-import { Behavior } from "@aws-cdk/aws-cloudfront";
+import { Behavior, BehaviorOptions } from "@aws-cdk/aws-cloudfront";
 import { Runtime } from "@aws-cdk/aws-lambda";
 import { IHostedZone } from "@aws-cdk/aws-route53";
 import { Duration, StackProps } from "@aws-cdk/core";
@@ -59,7 +59,5 @@ export interface Props extends StackProps {
    * This is handy if you want to adjust how certain assets are cached, or add
    * another `lambda@edge` endpoint.
    */
-  behaviours?: Partial<
-    Omit<Behavior, "lambdaFunctionAssociations" | "isDefaultBehavior">
-  >[];
+  behaviours?: Record<string, BehaviorOptions>;
 }
