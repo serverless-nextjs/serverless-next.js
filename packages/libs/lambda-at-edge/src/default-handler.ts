@@ -26,6 +26,7 @@ import type { Readable } from "stream";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
+  getLanguageRedirect,
   getRedirectPath
 } from "./routing/redirector";
 import {
@@ -37,6 +38,7 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
+import { isLocaleIndexUri } from "./routing/locale-utils";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -156,6 +158,47 @@ const router = (
 
     return "pages/_error.js";
   };
+};
+
+/**
+ * Remove valid locale and accept-language header from request and move it to query params.
+ * Needed for SSR pages otherwise there will be a redirect loop or issue rendering.
+ * @param request
+ * @param routesManifest
+ */
+const normaliseRequestForLocale = (
+  request: CloudFrontRequest,
+  routesManifest: RoutesManifest
+) => {
+  const locales = routesManifest.i18n?.locales;
+  if (locales) {
+    for (const locale of locales) {
+      if (request.uri === `${basePath}/${locale}`) {
+        request.uri = "/";
+
+        request.querystring += `${
+          request.querystring === "" ? "" : "&"
+        }nextInternalLocale=${locale}`;
+
+        delete request.headers["accept-language"];
+
+        break;
+      } else if (request.uri.startsWith(`${basePath}/${locale}/`)) {
+        request.uri = request.uri.replace(
+          `${basePath}/${locale}/`,
+          `${basePath}/`
+        );
+
+        request.querystring += `${
+          request.querystring === "" ? "" : "&"
+        }nextInternalLocale=${locale}`;
+
+        delete request.headers["accept-language"];
+
+        break;
+      }
+    }
+  }
 };
 
 export const handler = async (
@@ -330,6 +373,23 @@ const handleOriginRequest = async ({
     }
   }
 
+  // Handle root language rewrite
+  const languageHeader = request.headers["accept-language"];
+  const languageRedirectUri = getLanguageRedirect(
+    languageHeader ? languageHeader[0].value : undefined,
+    uri,
+    routesManifest,
+    manifest
+  );
+
+  if (languageRedirectUri) {
+    return createRedirectResponse(
+      languageRedirectUri,
+      request.querystring,
+      307
+    );
+  }
+
   const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
   const isPrerenderedPage = pages.ssg.nonDynamic[uri]; // prerendered/SSG pages are also static pages like "pages.html" above
   const origin = request.origin as CloudFrontOrigin;
@@ -360,7 +420,12 @@ const handleOriginRequest = async ({
       }
     } else if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
-      const pageName = uri === "/" ? "/index" : uri;
+      let pageName;
+      if (isLocaleIndexUri(uri, routesManifest)) {
+        pageName = `${uri}/index`;
+      } else {
+        pageName = uri === "/" ? "/index" : uri;
+      }
       request.uri = `${pageName}.html`;
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
@@ -411,6 +476,9 @@ const handleOriginRequest = async ({
   log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
 
   const tBeforeSSR = now();
+
+  normaliseRequestForLocale(request, routesManifest);
+
   const { req, res, responsePromise } = lambdaAtEdgeCompat(
     event.Records[0].cf,
     {

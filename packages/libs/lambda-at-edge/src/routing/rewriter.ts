@@ -1,6 +1,7 @@
 import { compileDestination, matchPath } from "./matcher";
 import { RewriteData, RoutesManifest } from "../types";
 import { IncomingMessage, ServerResponse } from "http";
+import { addDefaultLocaleToPath } from "./locale-utils";
 
 /**
  * Get the rewrite of the given path, if it exists. Otherwise return null.
@@ -15,6 +16,8 @@ export function getRewritePath(
   router: (uri: string) => string | null,
   normalisedPath: string
 ): string | null {
+  path = addDefaultLocaleToPath(path, routesManifest);
+
   const rewrites: RewriteData[] = routesManifest.rewrites;
 
   for (const rewrite of rewrites) {
