@@ -20,7 +20,9 @@ const builder = new Builder(
     env: {},
     args: ['build'],
     minifyHandlers: true,
-    enableHTTPCompression: true
+    // it is recommended to let your CF distribution do the compression (see [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html))
+    // however there have been issues in the past where CF doesn't compress lambda@edge responses, so you can use the flag below to use our own compression implementation
+    enableHTTPCompression: false
   }
 );
 
@@ -33,6 +35,7 @@ await builder.build()
       process.exit(1);
     });
 ```
+
 You can configure more options regarding building process. Configurable inputs you can find in 'build.ts' file ('packages/libs/lambda-at-edge/src/build.ts'). If you want to see debug logs during building, use 'await builder.build(true)' instead.
 After running the above, the output directory will contain the Lambda@Edge handlers necessary to server side render at the edge.
 
