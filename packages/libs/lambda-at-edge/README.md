@@ -20,8 +20,8 @@ const builder = new Builder(
     env: {},
     args: ['build'],
     minifyHandlers: true,
-    // it is recommended to let your CF distribution do the compression (see [here](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html))
-    // however there have been issues in the past where CF doesn't compress lambda@edge responses, so you can use the flag below to use our own compression implementation
+    // it is recommended to let your CF distribution do the compression as per the [docs](https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/ServingCompressedFiles.html)
+    // however there have been issues in the past where CF doesn't compress lambda@edge responses, so we provide our own implementation in case is needed
     enableHTTPCompression: false
   }
 );
