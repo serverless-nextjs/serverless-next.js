@@ -54,6 +54,11 @@ export interface Props extends StackProps {
    */
   whiteListedCookies?: string[];
   /**
+   * Provide a subset (or all) of the props to override the CloudFront
+   * distributions default props.
+   */
+  defaultBehavior?: Partial<BehaviorOptions>;
+  /**
    * Optionally pass one or many custom CloudFront behaviours.
    *
    * This is handy if you want to adjust how certain assets are cached, or add

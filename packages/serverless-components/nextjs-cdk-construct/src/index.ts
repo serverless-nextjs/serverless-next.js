@@ -11,7 +11,7 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest
 } from "@sls-next/lambda-at-edge";
-import { getAssetDirectoryFileCachePolicies } from "@sls-next/s3-static-assets";
+import { getAssetDirectoryFileCachePolicies } from "@planes/s3-static-assets";
 import * as fs from "fs-extra";
 import * as path from "path";
 import {
@@ -45,8 +45,15 @@ export class NextJSLambdaEdge extends cdk.Construct {
     this.routesManifest = this.readRoutesManifest();
     this.imageManifest = this.readImageBuildManifest();
     this.bucket = new s3.Bucket(this, "PublicAssets", {
-      publicReadAccess: true
+      publicReadAccess: true,
+
+      // Given this resource is created internally and also should only contain
+      // assets uploaded by this library we should be able to safely delete all
+      // contents along with the bucket its self upon stack deletion.
+      autoDeleteObjects: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY
     });
+
     const edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
         new ServicePrincipal("lambda.amazonaws.com"),
@@ -215,7 +222,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
           cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
           compress: true,
           cachePolicy: nextLambdaCachePolicy,
-          edgeLambdas
+          edgeLambdas,
+          ...(props.defaultBehavior || {})
         },
         additionalBehaviors: {
           ...(nextImageLambda
