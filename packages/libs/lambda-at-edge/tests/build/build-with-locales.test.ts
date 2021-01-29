@@ -198,7 +198,7 @@ describe("Builder Tests (with locales)", () => {
             srcRoute: null
           },
           "/en": {
-            dataRoute: "/_next/data/test-build-id/en/index.json",
+            dataRoute: "/_next/data/test-build-id/en.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
@@ -208,7 +208,7 @@ describe("Builder Tests (with locales)", () => {
             srcRoute: null
           },
           "/nl": {
-            dataRoute: "/_next/data/test-build-id/nl/index.json",
+            dataRoute: "/_next/data/test-build-id/nl.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
@@ -273,12 +273,18 @@ describe("Builder Tests (with locales)", () => {
 
       // HTML Prerendered pages or JSON static props files
       // should not be included in the default lambda
-      expect(pages).not.toContain(["blog.json", "index.json", "contact.json"]);
+      expect(pages).not.toContain([
+        "blog.json",
+        "nl.json",
+        "contact.json",
+        "en.json"
+      ]);
       expect(pages).not.toContain([
         "about.html",
         "terms.html",
         "contact.html",
-        "index.html"
+        "en.html",
+        "nl.html"
       ]);
 
       // JS files used only for prerendering at build time (contact.js, index.js) are not included since there are no API routes
@@ -292,35 +298,35 @@ describe("Builder Tests (with locales)", () => {
 
   describe("Assets", () => {
     it("copies locale-specific asset files", async () => {
-      expect.assertions(11);
+      expect.assertions(9);
       // Root
       const nextDataFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id`)
       );
-      expect(nextDataFiles).toEqual(["contact.json", "en", "index.json", "nl"]);
+      expect(nextDataFiles).toEqual(["en", "en.json", "nl", "nl.json"]);
 
       // English
       const enNextDataFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en`)
       );
-      expect(enNextDataFiles).toEqual(["contact.json", "index.json"]);
+      expect(enNextDataFiles).toEqual(["contact.json"]);
 
-      const enIndexJson = await fse.readFile(
-        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en/index.json`),
+      const enContactJson = await fse.readFile(
+        join(
+          outputDir,
+          `${ASSETS_DIR}/_next/data/test-build-id/en/contact.json`
+        ),
         "utf8"
       );
-      expect(enIndexJson).toBe('"en"');
+      expect(enContactJson).toBe('"en"');
 
       const enPageFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en`)
       );
-      expect(enPageFiles).toEqual(["contact.html", "index.html"]);
+      expect(enPageFiles).toEqual(["contact.html"]);
 
       const enIndexHtml = await fse.readFile(
-        join(
-          outputDir,
-          `${ASSETS_DIR}/static-pages/test-build-id/en/index.html`
-        ),
+        join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en.html`),
         "utf8"
       );
       expect(enIndexHtml).toBe("en");
@@ -329,40 +335,30 @@ describe("Builder Tests (with locales)", () => {
       const nlNextDataFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/nl`)
       );
-      expect(nlNextDataFiles).toEqual(["contact.json", "index.json"]);
+      expect(nlNextDataFiles).toEqual(["contact.json"]);
 
-      const nlIndexJson = await fse.readFile(
-        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/nl/index.json`),
+      const nlContactJson = await fse.readFile(
+        join(
+          outputDir,
+          `${ASSETS_DIR}/_next/data/test-build-id/nl/contact.json`
+        ),
         "utf8"
       );
-      expect(nlIndexJson).toBe('"nl"');
+      expect(nlContactJson).toBe('"nl"');
 
       const nlPageFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/nl`)
       );
-      expect(nlPageFiles).toEqual(["contact.html", "index.html"]);
+      expect(nlPageFiles).toEqual(["contact.html"]);
 
       const nlIndexHtml = await fse.readFile(
         join(
           outputDir,
-          `${ASSETS_DIR}/static-pages/test-build-id/nl/index.html`
+          `${ASSETS_DIR}/static-pages/test-build-id/nl/contact.html`
         ),
         "utf8"
       );
       expect(nlIndexHtml).toBe("nl");
-
-      // Default locale: English.
-      const defaultIndexJson = await fse.readFile(
-        join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/index.json`),
-        "utf8"
-      );
-      expect(defaultIndexJson).toBe('"en"');
-
-      const defaultIndexHtml = await fse.readFile(
-        join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/index.html`),
-        "utf8"
-      );
-      expect(defaultIndexHtml).toBe("en");
     });
   });
 });
