@@ -69,7 +69,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     const defaultNextLambda = new lambda.Function(this, "NextLambda", {
-      functionName: "NextLambda",
+      functionName:
+        toLambdaOption("defaultLambda", props.name) || "NextDefaultLambda",
       description: `Default Lambda@Edge for Next CloudFront distribution`,
       handler: "index.handler",
       currentVersionOptions: {
@@ -98,7 +99,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
     let nextApiLambda = null;
     if (hasAPIPages) {
       nextApiLambda = new lambda.Function(this, "NextApiLambda", {
-        functionName: "NextApiLambda",
+        functionName:
+          toLambdaOption("apiLambda", props.name) || "NextApiLambda",
         description: `Default Lambda@Edge for Next API CloudFront distribution`,
         handler: "index.handler",
         currentVersionOptions: {
@@ -122,7 +124,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
     let nextImageLambda = null;
     if (this.imageManifest) {
       nextImageLambda = new lambda.Function(this, "NextImageLambda", {
-        functionName: "NextImageLambda",
+        functionName:
+          toLambdaOption("imageLambda", props.name) || "NextImageLambda",
         description: `Default Lambda@Edge for Next Image CloudFront distribution`,
         handler: "index.handler",
         currentVersionOptions: {
