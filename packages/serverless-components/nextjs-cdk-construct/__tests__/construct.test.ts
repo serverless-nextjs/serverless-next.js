@@ -17,7 +17,7 @@ describe("CDK Construct", () => {
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
     expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
-      FunctionName: "NextLambda",
+      FunctionName: "NextDefaultLambda",
       Runtime: Runtime.NODEJS_10_X.name
     });
     expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
@@ -43,7 +43,7 @@ describe("CDK Construct", () => {
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
     expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
-      FunctionName: "NextLambda",
+      FunctionName: "NextDefaultLambda",
       Runtime: Runtime.PYTHON_3_8.name
     });
     expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
