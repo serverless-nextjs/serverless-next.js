@@ -1,4 +1,4 @@
-import { toLambdaOption } from "../src/utils";
+import { toLambdaOption } from "../src/utils/toLambdaOption";
 
 describe("CDK Utils", () => {
   it.each`

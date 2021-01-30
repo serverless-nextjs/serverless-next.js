@@ -1,5 +1,5 @@
 import { ICertificate } from "@aws-cdk/aws-certificatemanager";
-import { Behavior, BehaviorOptions } from "@aws-cdk/aws-cloudfront";
+import { BehaviorOptions } from "@aws-cdk/aws-cloudfront";
 import { Runtime } from "@aws-cdk/aws-lambda";
 import { IHostedZone } from "@aws-cdk/aws-route53";
 import { Duration, StackProps } from "@aws-cdk/core";

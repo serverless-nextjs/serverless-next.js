@@ -9,9 +9,9 @@ import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
 import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
+  OriginRequestDefaultHandlerManifest,
   RoutesManifest
 } from "@sls-next/lambda-at-edge";
-import { getAssetDirectoryFileCachePolicies } from "@planes/s3-static-assets";
 import * as fs from "fs-extra";
 import * as path from "path";
 import {
@@ -24,7 +24,9 @@ import { Duration, RemovalPolicy } from "@aws-cdk/core";
 import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
 import { OriginRequestQueryStringBehavior } from "@aws-cdk/aws-cloudfront";
 import { Props } from "./props";
-import { toLambdaOption } from "./utils";
+import { toLambdaOption } from "./utils/toLambdaOption";
+import { readAssetsDirectory } from "./utils/readAssetsDirectory";
+import { readInvalidationPathsFromManifest } from "./utils/readInvalidationPathsFromManifest";
 
 export * from "./props";
 
@@ -35,6 +37,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   private imageManifest: OriginRequestImageHandlerManifest | null;
 
+  private defaultManifest: OriginRequestDefaultHandlerManifest;
+
   public distribution: cloudfront.Distribution;
 
   public bucket: s3.Bucket;
@@ -44,6 +48,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     this.apiBuildManifest = this.readApiBuildManifest();
     this.routesManifest = this.readRoutesManifest();
     this.imageManifest = this.readImageBuildManifest();
+    this.defaultManifest = this.readDefaultManifest();
     this.bucket = new s3.Bucket(this, "PublicAssets", {
       publicReadAccess: true,
 
@@ -309,12 +314,44 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const staticAssets = getAssetDirectoryFileCachePolicies({
-      basePath: "",
-      serverlessBuildOutDir: props.serverlessBuildOutDir
+    const assetsDirectory = path.join(props.serverlessBuildOutDir, "assets");
+    const assets = readAssetsDirectory({ assetsDirectory });
+
+    // This `BucketDeployment` deploys just the BUILD_ID file. We don't actually
+    // use the BUILD_ID file at runtime, however in this case we use it as a
+    // file to allow us to create an invalidation of all the routes as evaluated
+    // in the function `readInvalidationPathsFromManifest`.
+    new s3Deploy.BucketDeployment(this, `AssetDeploymentBuildID`, {
+      destinationBucket: this.bucket,
+      sources: [
+        s3Deploy.Source.asset(assetsDirectory, { exclude: ["**", "!BUILD_ID"] })
+      ],
+      // This will actually cause the file to exist at BUILD_ID, we do this so
+      // that the prune will only prune /BUILD_ID/*, rather than all files fromm
+      // the root upwards.
+      destinationKeyPrefix: "/BUILD_ID",
+      distribution: this.distribution,
+      distributionPaths: readInvalidationPathsFromManifest(this.defaultManifest)
     });
 
-    this.createStaticAssetDeployments(staticAssets);
+    Object.keys(assets).forEach((key) => {
+      const { path: assetPath, cacheControl } = assets[key];
+      new s3Deploy.BucketDeployment(this, `AssetDeployment_${key}`, {
+        destinationBucket: this.bucket,
+        sources: [s3Deploy.Source.asset(assetPath)],
+        cacheControl: [s3Deploy.CacheControl.fromString(cacheControl)],
+
+        // The source contents will be unzipped to and loaded into the S3 bucket
+        // at the root '/', we don't want this, we want to maintain the same
+        // path on S3 as their local path.
+        destinationKeyPrefix: path.relative(assetsDirectory, assetPath),
+
+        // Source directories are uploaded with `--sync` this means that any
+        // files that don't exist in the source directory, but do in the S3
+        // bucket, will be removed.
+        prune: true
+      });
+    });
 
     if (props.domain) {
       new ARecord(this, "AliasRecord", {
@@ -323,67 +360,6 @@ export class NextJSLambdaEdge extends cdk.Construct {
         target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution))
       });
     }
-  }
-
-  /**
-   * Creates 'Deployments' for files in `/assets`, where each deployment has a
-   * different cache control header.
-   *
-   * CDK allows us to create a 'deployment' with a single cache-header config
-   * but with many files. So we take the out put from
-   * `getAssetDirectoryFileCachePolicies`, group them by cache-header and pass
-   * all files to be uploaded within the deployment.
-   */
-  private createStaticAssetDeployments(
-    staticAssets: ReturnType<typeof getAssetDirectoryFileCachePolicies>
-  ) {
-    const NO_CACHE = "NO_CACHE";
-    const staticAssetsGroupedByCache = staticAssets.reduce(
-      (groupedAssets, nextStaticAsset) => {
-        const key = nextStaticAsset.cacheControl || NO_CACHE;
-        return {
-          ...groupedAssets,
-          [key]: [...(groupedAssets[key] || []), nextStaticAsset]
-        };
-      },
-      {} as Record<string, typeof staticAssets[number][]>
-    );
-
-    const assetsPath = path.join(this.props.serverlessBuildOutDir, "assets");
-
-    Object.keys(staticAssetsGroupedByCache).forEach((cacheKey) => {
-      const assets = staticAssetsGroupedByCache[cacheKey];
-      // We have a unique BucketDeployment per cache-control header, so we
-      // reformat the cache key to be compatible as a construct ID
-      const cacheHash = cacheKey.replace(/[^0-9a-z]/gi, "");
-      new s3Deploy.BucketDeployment(this, `AssetDeployment${cacheHash}`, {
-        // Unfortunately we can't rely on `prune` as we have multiple
-        // distributions from the same source, each with a different behaviour.
-        // https://docs.aws.amazon.com/cdk/api/latest/docs/aws-s3-deployment-readme.html#prune
-        prune: false,
-        destinationBucket: this.bucket,
-        distribution: this.distribution,
-        sources: [
-          // Slight ergonomic issue with the Asset API that we can't pass an
-          // array of files, only a single directory. as a work around
-          // we pass the entire assets directory, but `exclude` all and
-          // whitelist all the files under the directory that we want to upload
-          // for this cache-control key.
-          s3Deploy.Source.asset(assetsPath, {
-            exclude: [
-              "*.*",
-              ...assets.map((staticAsset) => {
-                return `!${staticAsset.path.relative}`;
-              })
-            ]
-          })
-        ],
-        cacheControl:
-          cacheKey == NO_CACHE
-            ? []
-            : [s3Deploy.CacheControl.fromString(cacheKey)]
-      });
-    });
   }
 
   private pathPattern(pattern: string): string {
@@ -398,6 +374,15 @@ export class NextJSLambdaEdge extends cdk.Construct {
       path.join(
         this.props.serverlessBuildOutDir,
         "default-lambda/routes-manifest.json"
+      )
+    );
+  }
+
+  private readDefaultManifest(): OriginRequestDefaultHandlerManifest {
+    return fs.readJSONSync(
+      path.join(
+        this.props.serverlessBuildOutDir,
+        "default-lambda/manifest.json"
       )
     );
   }

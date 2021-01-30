@@ -1,4 +1,4 @@
-import { LambdaOption } from "./props";
+import { LambdaOption } from "../props";
 
 export const toLambdaOption = <T extends unknown>(
   key: "defaultLambda" | "apiLambda" | "imageLambda",
