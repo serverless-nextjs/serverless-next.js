@@ -3,7 +3,7 @@ import { OriginRequestDefaultHandlerManifest } from "@sls-next/lambda-at-edge";
 
 const dynamicPathToInvalidationPath = (dynamicPath: string) => {
   const [firstSegment] = dynamicPath.split("/:");
-  return path.join(firstSegment, "*");
+  return path.join(firstSegment || "/", "*");
 };
 
 export const readInvalidationPathsFromManifest = (
@@ -17,6 +17,10 @@ export const readInvalidationPathsFromManifest = (
     ...Object.keys(manifest.pages.ssr.dynamic).map(
       dynamicPathToInvalidationPath
     ),
-    ...Object.keys(manifest.pages.ssr.nonDynamic)
+    ...Object.keys(manifest.pages.ssr.nonDynamic),
+    ...Object.keys(manifest.pages.ssg?.dynamic || {}).map(
+      dynamicPathToInvalidationPath
+    ),
+    ...Object.keys(manifest.pages.ssg?.nonDynamic || {})
   ];
 };
