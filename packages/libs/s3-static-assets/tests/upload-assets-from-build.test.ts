@@ -174,6 +174,14 @@ describe.each`
 
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
+          Key: "_next/data/zsWqBqLjpgRmswfQomanp/fr/todos/terms/c.json",
+          ContentType: "application/json",
+          CacheControl: SERVER_CACHE_CONTROL_HEADER
+        })
+      );
+
+      expect(mockUpload).toBeCalledWith(
+        expect.objectContaining({
           Key: "_next/data/zsWqBqLjpgRmswfQomanp/todos/terms/a.json",
           ContentType: "application/json",
           CacheControl: SERVER_CACHE_CONTROL_HEADER
