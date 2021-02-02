@@ -302,6 +302,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   cachePolicy: nextLambdaCachePolicy,
                   edgeLambdas: [
                     {
+                      includeBody: true,
                       eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
                       functionVersion: nextApiLambda.currentVersion
                     }
