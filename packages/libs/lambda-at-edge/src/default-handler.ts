@@ -57,6 +57,13 @@ import { debug } from "./lib/console";
 
 process.env.PRERENDER = "true";
 
+interface FoundFallbackInterface {
+  routeRegex: string;
+  fallback: string | false | null;
+  dataRoute: string;
+  dataRouteRegex: string;
+}
+
 const resourceService = new ResourceService(
   Manifest,
   PrerenderManifest,
@@ -753,20 +760,139 @@ const handleOriginResponse = async ({
 
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
-
-  // Lazily import only S3Client to reduce init times until actually needed
-  //const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+  const pagePath = router(manifest)(uri);
 
   const s3 = new S3Client({
     region,
     maxAttempts: 3,
     retryStrategy: await buildS3RetryStrategy()
   });
-  let pagePath;
+
+  /**
+   *  Blocking fallback flow
+   */
+  debug(`[origin-response] has fallback: ${JSON.stringify(hasFallback)}`);
+  debug(`[origin-response] pagePath: ${pagePath}`);
+  debug(`[origin-response] uri: ${uri}`);
+  debug(`[origin-response] isDataRequest: ${isDataRequest(uri)}`);
+
   if (
-    isDataRequest(uri) &&
-    !(pagePath = router(manifest)(uri)).endsWith(".html")
+    hasFallback &&
+    hasFallback.fallback === null &&
+    uri.endsWith(".html") &&
+    !isDataRequest(uri)
   ) {
+    // eslint-disable-next-line
+    const page = require(`./${pagePath}`);
+    const jsonPath = `${(basePath || "").replace(/^\//, "")}${
+      basePath === "" ? "" : "/"
+    }_next/data/${manifest.buildId}${decodeURI(uri).replace(".html", ".json")}`;
+
+    const cf = {
+      ...event.Records[0].cf,
+      request: {
+        ...event.Records[0].cf.request,
+        uri: `/${jsonPath}`
+      }
+    };
+    debug(`[blocking-fallback] cf to json: ${JSON.stringify(cf)}`);
+
+    const { req, res } = lambdaAtEdgeCompat(cf, {
+      enableHTTPCompression: manifest.enableHTTPCompression
+    });
+
+    const isSSG = !!page.getStaticProps;
+    const renderedRes = await page.renderReqToHTML(req, res, "passthrough");
+
+    debug(`[blocking-fallback] rendered res: ${JSON.stringify(renderedRes)}`);
+
+    const { renderOpts, html } = renderedRes;
+
+    debug(
+      `[blocking-fallback] rendered page, uri: ${uri}, ${
+        request.uri
+      } pagePath: ${pagePath}, opts: ${JSON.stringify(
+        renderOpts
+      )}, html: ${JSON.stringify(html)}`
+    );
+
+    const pageProps = renderOpts?.pageData?.pageProps;
+
+    if (pageProps.__N_REDIRECT) {
+      const redirectResp = createRedirectResponse(
+        `${basePath || ""}${pageProps.__N_REDIRECT}`,
+        request.querystring,
+        pageProps.__N_REDIRECT_STATUS
+      );
+
+      const location = redirectResp?.headers?.location[0].value || "";
+
+      // Hack around 'read only' header changed error from aws
+      response.headers["location"] = [
+        {
+          key: "Location",
+          value: location
+        }
+      ];
+
+      return {
+        ...redirectResp,
+        headers: response.headers
+      };
+    }
+
+    if (isSSG) {
+      const s3JsonParams = {
+        Bucket: bucketName,
+        Key: jsonPath,
+        Body: JSON.stringify(renderOpts.pageData),
+        ContentType: "application/json",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      };
+      const s3HtmlParams = {
+        Bucket: bucketName,
+        Key: `${(basePath || "").replace(/^\//, "")}${
+          basePath === "" ? "" : "/"
+        }static-pages/${manifest.buildId}${decodeURI(uri)}`,
+        Body: html,
+        ContentType: "text/html",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      };
+
+      debug(`[blocking-fallback] json to s3: ${JSON.stringify(s3JsonParams)}`);
+      debug(`[blocking-fallback] html to s3: ${JSON.stringify(s3HtmlParams)}`);
+      await Promise.all([
+        s3.send(new PutObjectCommand(s3JsonParams)),
+        s3.send(new PutObjectCommand(s3HtmlParams))
+      ]);
+    }
+    const htmlOut = {
+      status: "200",
+      statusDescription: "OK",
+      headers: {
+        ...response.headers,
+        "content-type": [
+          {
+            key: "Content-Type",
+            value: "text/html"
+          }
+        ],
+        "cache-control": [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+          }
+        ]
+      },
+      body: html
+    };
+    debug(
+      `[blocking-fallback] responded with html: ${JSON.stringify(htmlOut)}`
+    );
+    return htmlOut;
+  }
+
+  if (isDataRequest(uri) && !pagePath.endsWith(".html")) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
 
@@ -911,14 +1037,7 @@ const hasFallbackForUri = (
     return false;
   }
 
-  let foundFallback:
-    | {
-        routeRegex: string;
-        fallback: string | false;
-        dataRoute: string;
-        dataRouteRegex: string;
-      }
-    | undefined = undefined; // for later use to reduce duplicate work
+  let foundFallback: FoundFallbackInterface | undefined = undefined; // for later use to reduce duplicate work
 
   // Dynamic routes that does not have fallback are prioritized over dynamic fallback
   const isNonFallbackDynamicRoute = Object.values({
