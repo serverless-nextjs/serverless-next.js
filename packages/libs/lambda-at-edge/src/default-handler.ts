@@ -788,17 +788,9 @@ const handleOriginResponse = async ({
       basePath === "" ? "" : "/"
     }_next/data/${manifest.buildId}${decodeURI(uri).replace(".html", ".json")}`;
 
-    const cf = {
-      ...event.Records[0].cf,
-      request: {
-        ...event.Records[0].cf.request,
-        uri: `/${jsonPath}`
-      }
-    };
-    debug(`[blocking-fallback] cf to json: ${JSON.stringify(cf)}`);
-
-    const { req, res } = lambdaAtEdgeCompat(cf, {
-      enableHTTPCompression: manifest.enableHTTPCompression
+    const { req, res } = lambdaAtEdgeCompat(event.Records[0].cf, {
+      enableHTTPCompression: manifest.enableHTTPCompression,
+      rewrittenUri: jsonPath
     });
 
     const isSSG = !!page.getStaticProps;
@@ -820,7 +812,7 @@ const handleOriginResponse = async ({
 
     if (pageProps.__N_REDIRECT) {
       const redirectResp = createRedirectResponse(
-        `${basePath || ""}${pageProps.__N_REDIRECT}`,
+        pageProps.__N_REDIRECT,
         request.querystring,
         pageProps.__N_REDIRECT_STATUS
       );
