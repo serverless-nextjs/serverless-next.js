@@ -6,6 +6,11 @@
       "srcRoute": null,
       "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/index.json"
     },
+    "fr/todos/terms/c": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/todos/terms/[section]",
+      "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/fr/todos/terms/c.json"
+    },
     "/todos/terms/a": {
       "initialRevalidateSeconds": false,
       "srcRoute": "/todos/terms/[section]",
