@@ -790,7 +790,7 @@ const handleOriginResponse = async ({
 
     const { req, res } = lambdaAtEdgeCompat(event.Records[0].cf, {
       enableHTTPCompression: manifest.enableHTTPCompression,
-      rewrittenUri: jsonPath
+      rewrittenUri: `/${jsonPath}`
     });
 
     const isSSG = !!page.getStaticProps;
