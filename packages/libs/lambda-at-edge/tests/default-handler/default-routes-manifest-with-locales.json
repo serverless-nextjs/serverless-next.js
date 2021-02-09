@@ -84,5 +84,22 @@
     }
   ],
   "dynamicRoutes": [],
-  "i18n": { "locales": ["en", "nl", "fr"], "defaultLocale": "en" }
+  "dataRoutes": [
+    {
+      "page": "/auth/[type]",
+      "routeKeys": {
+        "type": "type"
+      },
+      "dataRouteRegex": "^/_next/data/2LDrmAoKr1z0u_WU2cgTp/auth/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/2LDrmAoKr1z0u_WU2cgTp/auth/(?<type>[^/]+?)\\.json$"
+    }
+  ],
+  "i18n": {
+    "locales": [
+      "en",
+      "nl",
+      "fr"
+    ],
+    "defaultLocale": "en"
+  }
 }
