@@ -2,12 +2,12 @@ import readDirectoryFiles from "../src/lib/readDirectoryFiles";
 import * as path from "path";
 
 describe("readDirectoryFiles", () => {
-  it("returns an empty array when the file is not found", async () => {
+  it("returns an empty array when the file is not found", () => {
     const files = readDirectoryFiles("/this/path/does/not/exist");
     expect(files).toStrictEqual([]);
   });
 
-  it("returns all files from fixture without directories", async () => {
+  it("returns all files from fixture without directories", () => {
     const files = readDirectoryFiles(
       path.join(__dirname, "./fixtures/app-basic")
     );
