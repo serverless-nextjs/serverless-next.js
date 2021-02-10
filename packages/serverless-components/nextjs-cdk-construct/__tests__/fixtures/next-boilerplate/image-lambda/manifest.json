@@ -1,1 +1,4 @@
-{"domainRedirects":{},"enableHTTPCompression":false}
+{
+  "domainRedirects": {},
+  "enableHTTPCompression": false
+}
