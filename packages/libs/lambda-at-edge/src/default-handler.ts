@@ -33,6 +33,7 @@ import {
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import type { Readable } from "stream";
+import { createNotFoundResponse } from "./routing/notfound";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
@@ -807,6 +808,18 @@ const handleOriginResponse = async ({
         renderOpts
       )}, html: ${JSON.stringify(html)}`
     );
+
+    // Check if it is a `notFound` response. Return 404 in that case.
+    if (renderOpts?.isNotFound) {
+      debug(`[blocking-fallback] 'not found' response received. Sending 404.`);
+      return createNotFoundResponse(
+        response,
+        basePath,
+        manifest,
+        s3,
+        bucketName
+      );
+    }
 
     const pageProps = renderOpts?.pageData?.pageProps;
 
