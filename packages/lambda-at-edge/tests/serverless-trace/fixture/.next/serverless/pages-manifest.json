@@ -1,8 +1,0 @@
-{
-  "/api/test-page": "pages/api/test-api-page.js",
-  "/api/sub/[dynamic-test-api-page]": "pages/api/sub/[dynamic-test-api-page].js",
-  "/test-page": "pages/test-page.js",
-  "/sub/[dynamic-test-page]": "pages/sub/[dynamic-test-page].js",
-  "/_app": "pages/_app.js",
-  "/_document": "pages/_document.js"
-}

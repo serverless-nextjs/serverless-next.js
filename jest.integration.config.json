@@ -1,5 +1,0 @@
-{
-  "testMatch": ["**/integration/**/*.test.[jt]s?(x)"],
-  "watchPathIgnorePatterns": ["/fixture/"],
-  "modulePathIgnorePatterns": ["<rootDir>/integration/basic-app"]
-}

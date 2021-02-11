@@ -1,8 +1,0 @@
-{
-  "apis": {
-    "dynamic": {},
-    "nonDynamic": {
-      "/api/getCustomers": "pages/api/getCustomers.js"
-    }
-  }
-}

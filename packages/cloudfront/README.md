@@ -1,1 +1,0 @@
-### AWS CloudFront helper library
