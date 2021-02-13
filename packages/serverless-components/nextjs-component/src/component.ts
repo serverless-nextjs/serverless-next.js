@@ -523,10 +523,14 @@ class NextjsComponent extends Component {
           : "Image Lambda@Edge for Next CloudFront distribution",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, IMAGE_LAMBDA_CODE_DIR),
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy
-        },
+        role: inputs.roleArn
+          ? {
+              arn: inputs.roleArn
+            }
+          : {
+              service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+              policy
+            },
         memory: readLambdaInputValue("memory", "imageLambda", 512) as number,
         timeout: readLambdaInputValue("timeout", "imageLambda", 10) as number,
         runtime: readLambdaInputValue(

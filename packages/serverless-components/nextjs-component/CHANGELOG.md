@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.31](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.30...@sls-next/serverless-component@1.19.0-alpha.31) (2021-02-11)
+
+### Bug Fixes
+
+- **nextjs-component:** image lambda role should also use inputs.roleArn if it exists ([#903](https://github.com/serverless-nextjs/serverless-next.js/issues/903)) ([93f2562](https://github.com/serverless-nextjs/serverless-next.js/commit/93f2562919827fed6881da5134fc695e4d992e0b))
+
 # [1.19.0-alpha.30](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.29...@sls-next/serverless-component@1.19.0-alpha.30) (2021-01-26)
 
 **Note:** Version bump only for package @sls-next/serverless-component
