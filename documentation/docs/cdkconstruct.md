@@ -94,3 +94,5 @@ new NextJSLambdaEdge(this, "NextJsApp", {
   default behavior
 - `behaviours?: Array<cloudfront.Behaviour>` - an array of Cloudfront
   distribution behaviours.
+- `invalidationPaths?: string[]` - an array of invalidation paths, by default we
+  invalidate all pages found in manifest

@@ -1,9 +1,10 @@
 import { toLambdaOption } from "../src/utils/toLambdaOption";
 import { readInvalidationPathsFromManifest } from "../src/utils/readInvalidationPathsFromManifest";
 import { OriginRequestDefaultHandlerManifest } from "@sls-next/lambda-at-edge";
+import { reduceInvalidationPaths } from "../src/utils/reduceInvalidationPaths";
 
 describe("CDK Utils", () => {
-  it.each`
+  test.each`
     args                                                | expectedReturn
     ${["defaultLambda", { defaultLambda: 1 }]}          | ${1}
     ${["apiLambda", { defaultLambda: 1 }]}              | ${undefined}
@@ -60,5 +61,17 @@ describe("CDK Utils", () => {
         "/ssg-page" // /ssg-page
       ].sort()
     );
+  });
+
+  test.each`
+    paths                                                        | expectedReturn
+    ${["/*", "/users", "/users/*"]}                              | ${["/*"]}
+    ${["/users", "/users/*"]}                                    | ${["/users", "/users/*"]}
+    ${["/users", "/users/*", "/posts", "/posts/*"]}              | ${["/users", "/users/*", "/posts", "/posts/*"]}
+    ${["/users", "/users/list", "/users/details/*", "/users/*"]} | ${["/users", "/users/*"]}
+    ${["/users", "/users/list", "/users/details/info", "/*"]}    | ${["/*"]}
+    ${["/users*", "/users/*", "/users/test/*"]}                  | ${["/users*", "/users/*"]}
+  `("reduceInvalidationPaths", ({ paths, expectedReturn }) => {
+    expect(reduceInvalidationPaths(paths)).toStrictEqual(expectedReturn);
   });
 });

@@ -27,6 +27,7 @@ import { Props } from "./props";
 import { toLambdaOption } from "./utils/toLambdaOption";
 import { readAssetsDirectory } from "./utils/readAssetsDirectory";
 import { readInvalidationPathsFromManifest } from "./utils/readInvalidationPathsFromManifest";
+import { reduceInvalidationPaths } from "./utils/reduceInvalidationPaths";
 
 export * from "./props";
 
@@ -332,7 +333,11 @@ export class NextJSLambdaEdge extends cdk.Construct {
       // the root upwards.
       destinationKeyPrefix: "/BUILD_ID",
       distribution: this.distribution,
-      distributionPaths: readInvalidationPathsFromManifest(this.defaultManifest)
+      distributionPaths:
+        props.invalidationPaths ||
+        reduceInvalidationPaths(
+          readInvalidationPathsFromManifest(this.defaultManifest)
+        )
     });
 
     Object.keys(assets).forEach((key) => {

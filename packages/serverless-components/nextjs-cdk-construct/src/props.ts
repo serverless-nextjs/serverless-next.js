@@ -65,4 +65,13 @@ export interface Props extends StackProps {
    * another `lambda@edge` endpoint.
    */
   behaviours?: Record<string, BehaviorOptions>;
+  /**
+   * Pass an array of invalidation paths. By default this construct  will
+   * invalidate all paths found in your pages manifest. You can reduce the
+   * number of invalidations created by invalidating all paths using:
+   * ```ts
+   * invalidationPaths: ["/*"]
+   * ```
+   */
+  invalidationPaths?: string[];
 }
