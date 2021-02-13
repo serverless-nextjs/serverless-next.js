@@ -74,7 +74,7 @@ new NextJSLambdaEdge(this, "NextJsApp", {
 ## Available Props
 
 - `serverlessBuildOutDir` - the output directory of the `Builder`.
-- `domain?: Object` - if yoou'd like to add a custom domain, provide the
+- `domain?: Object` - if you'd like to add a custom domain, provide the
   following three fields on the `domain` object.
   - `hostedZone: IHostedZone;`
   - `certificate: ICertificate;`
