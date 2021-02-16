@@ -4,7 +4,7 @@
     "access": "public"
   },
   "description": "Serverless Next.js powered by AWS CDK",
-  "version": "1.19.0-alpha.27",
+  "version": "1.19.0-alpha.28",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Henry Kirkness <henry@planes.studio>",
@@ -39,8 +39,8 @@
     "@aws-cdk/aws-s3-deployment": "^1.75.0",
     "@aws-cdk/core": "^1.75.0",
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
-    "fs-extra": "^9.0.1",
-    "fast-glob": "^3.2.5"
+    "fast-glob": "^3.2.5",
+    "fs-extra": "^9.0.1"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^1.75.0",

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.4.0-alpha.1...@sls-next/s3-static-assets@1.4.0-alpha.2) (2021-02-16)
+
+### Features
+
+- **experimental:** CDK Construct ([#878](https://github.com/serverless-nextjs/serverless-next.js/issues/878)) ([d38e2aa](https://github.com/serverless-nextjs/serverless-next.js/commit/d38e2aa70816c3204727fda4c9e379c73e1b2f2e))
+
 # [1.4.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.4.0-alpha.0...@sls-next/s3-static-assets@1.4.0-alpha.1) (2021-02-11)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
