@@ -1,0 +1,32 @@
+{
+  "buildId": "IOjzqKr7ylEZVL7Xy7FMd",
+  "logLambdaExecutionTimes": true,
+  "pages": {
+    "ssr": {
+      "dynamic": {
+        "/users/:id": {
+          "file": "pages/users/[id].js",
+          "regex": "^\\/users(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        }
+      },
+      "nonDynamic": {
+        "/users": "pages/users.js",
+        "/_error": "pages/_error.js"
+      }
+    },
+    "html": {
+      "dynamic": {},
+      "nonDynamic": {
+        "/about": "pages/about.html",
+        "/": "pages/index.html",
+        "/404": "pages/404.html"
+      }
+    }
+  },
+  "publicFiles": {
+    "/planes.jpg": "planes.jpg"
+  },
+  "trailingSlash": false,
+  "domainRedirects": {},
+  "enableHTTPCompression": false
+}

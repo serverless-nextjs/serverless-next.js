@@ -1,21 +1,16 @@
-import klaw, { Item } from "klaw";
-
 import fse from "fs-extra";
+import path from "path";
+import glob, { Entry } from "fast-glob";
 
-const readDirectoryFiles = async (directory: string): Promise<Array<Item>> => {
-  const directoryExists = await fse.pathExists(directory);
+const readDirectoryFiles = (directory: string): Array<Entry> => {
+  const directoryExists = fse.pathExistsSync(directory);
   if (!directoryExists) {
-    return Promise.resolve([]);
+    return [];
   }
 
-  const items: Item[] = [];
-  return new Promise((resolve, reject) => {
-    klaw(directory.trim())
-      .on("data", (item) => items.push(item))
-      .on("end", () => {
-        resolve(items);
-      })
-      .on("error", reject);
+  return glob.sync(path.join(directory, "**/*"), {
+    onlyFiles: true,
+    stats: true
   });
 };
 

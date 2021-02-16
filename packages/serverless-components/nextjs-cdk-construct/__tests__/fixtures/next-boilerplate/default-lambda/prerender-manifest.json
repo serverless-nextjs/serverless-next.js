@@ -1,0 +1,44 @@
+{
+  "version": 2,
+  "routes": {
+    "/users": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users.json"
+    },
+    "/users/101": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/users/[id]",
+      "dataRoute": "/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/101.json"
+    },
+    "/users/102": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/users/[id]",
+      "dataRoute": "/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/102.json"
+    },
+    "/users/103": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/users/[id]",
+      "dataRoute": "/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/103.json"
+    },
+    "/users/104": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/users/[id]",
+      "dataRoute": "/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/104.json"
+    }
+  },
+  "dynamicRoutes": {
+    "/users/[id]": {
+      "routeRegex": "^/users/([^/]+?)(?:/)?$",
+      "dataRoute": "/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/[id].json",
+      "fallback": false,
+      "dataRouteRegex": "^/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/([^/]+?)\\.json$"
+    }
+  },
+  "notFoundRoutes": [],
+  "preview": {
+    "previewModeId": "64a40f77826dd9cb91c1f640436433dd",
+    "previewModeSigningKey": "b362d55f91531d2c2a13bff0a008e47b4954b90ec8110e3607b6f810b174f8d1",
+    "previewModeEncryptionKey": "31bfd880a98a525f77d3edb3d7cc184b9ef10297f5b7db77d0b9a75057c84733"
+  }
+}
