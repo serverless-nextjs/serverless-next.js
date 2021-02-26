@@ -575,7 +575,7 @@ class NextjsComponent extends Component {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
       ] = {
-        cachePolicyId: staticCachePolicyId,
+        cachePolicyId: cloudFrontDefaultsInputs.cachePolicyId,
         originRequestPolicyId: staticOriginRequestPolicyId,
         minTTL: 0,
         defaultTTL: 60,

@@ -205,7 +205,7 @@ export async function imageOptimizer(
     try {
       let s3Key;
 
-      if (href.startsWith(`${basePath}/static`)) {
+      if (href.startsWith(`${basePath}/_next/static`)) {
         s3Key = href; // static files' URL map to the S3 key directly e.g /static/ -> static
       } else {
         s3Key = `${basePath}/public` + href; // public file URLs map from /public.png -> public/public.png
@@ -384,7 +384,7 @@ function parseCacheControl(str: string | null): Map<string, string> {
 }
 
 export function getMaxAge(str: string | null): number {
-  const minimum = 60;
+  const minimum = 2678400;
   const map = parseCacheControl(str);
   if (map) {
     let age = map.get("s-maxage") || map.get("max-age") || "";
