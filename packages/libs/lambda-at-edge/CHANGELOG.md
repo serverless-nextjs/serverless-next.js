@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.26](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.25...@sls-next/lambda-at-edge@1.8.0-alpha.26) (2021-03-02)
+
+### Bug Fixes
+
+- **lambda-at-edge:** handle prerender-manifest v3 locales properly ([#910](https://github.com/serverless-nextjs/serverless-next.js/issues/910)) ([5200d74](https://github.com/serverless-nextjs/serverless-next.js/commit/5200d74a0d6b33b746fbea1d69ea3f1653bd74ba))
+
 # [1.8.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.24...@sls-next/lambda-at-edge@1.8.0-alpha.25) (2021-02-11)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
