@@ -920,7 +920,16 @@ class Builder {
 
     // Copy locale-specific prerendered files if defined, otherwise use empty locale
     // which would copy to root only
-    const locales = routesManifest.i18n?.locales ?? [""];
+    let locales;
+
+    // @ts-ignore
+    if (prerenderManifest.version > 2) {
+      // In newer Next.js 10 versions with prerender manifest version 3, it has one entry for each locale: https://github.com/vercel/next.js/pull/21404
+      // So we don't need to iterate through each locale and prefix manually
+      locales = [""];
+    } else {
+      locales = routesManifest.i18n?.locales ?? [""];
+    }
 
     for (const locale of locales) {
       prerenderManifestJSONPropFileAssets.concat(
