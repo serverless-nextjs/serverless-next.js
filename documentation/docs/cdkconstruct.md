@@ -34,7 +34,7 @@ import { Builder } from "@sls-next/lambda-at-edge";
 import { MyStack } from "./stack";
 
 // Run the serverless builder, this could be done elsewhere in your workflow
-const builder = new Builder(".", "./build");
+const builder = new Builder(".", "./build", {args: ['build']});
 
 builder
   .build()
