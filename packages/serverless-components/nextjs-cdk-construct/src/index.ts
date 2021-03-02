@@ -75,8 +75,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     const defaultNextLambda = new lambda.Function(this, "NextLambda", {
-      functionName:
-        toLambdaOption("defaultLambda", props.name) || "NextDefaultLambda",
+      functionName: toLambdaOption("defaultLambda", props.name),
       description: `Default Lambda@Edge for Next CloudFront distribution`,
       handler: "index.handler",
       currentVersionOptions: {
@@ -105,8 +104,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     let nextApiLambda = null;
     if (hasAPIPages) {
       nextApiLambda = new lambda.Function(this, "NextApiLambda", {
-        functionName:
-          toLambdaOption("apiLambda", props.name) || "NextApiLambda",
+        functionName: toLambdaOption("apiLambda", props.name),
         description: `Default Lambda@Edge for Next API CloudFront distribution`,
         handler: "index.handler",
         currentVersionOptions: {
@@ -130,8 +128,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     let nextImageLambda = null;
     if (this.imageManifest) {
       nextImageLambda = new lambda.Function(this, "NextImageLambda", {
-        functionName:
-          toLambdaOption("imageLambda", props.name) || "NextImageLambda",
+        functionName: toLambdaOption("imageLambda", props.name),
         description: `Default Lambda@Edge for Next Image CloudFront distribution`,
         handler: "index.handler",
         currentVersionOptions: {
@@ -156,7 +153,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       this,
       "NextStaticsCache",
       {
-        cachePolicyName: "NextStaticsCache",
+        cachePolicyName: props.cachePolicyName?.staticsCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
         headerBehavior: cloudfront.CacheHeaderBehavior.none(),
         cookieBehavior: cloudfront.CacheCookieBehavior.none(),
@@ -172,7 +169,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       this,
       "NextImageCache",
       {
-        cachePolicyName: "NextImageCache",
+        cachePolicyName: props.cachePolicyName?.imageCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
         headerBehavior: cloudfront.CacheHeaderBehavior.allowList("Accept"),
         cookieBehavior: cloudfront.CacheCookieBehavior.none(),
@@ -188,7 +185,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       this,
       "NextLambdaCache",
       {
-        cachePolicyName: "NextLambdaCache",
+        cachePolicyName: props.cachePolicyName?.lambdaCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
         headerBehavior: cloudfront.CacheHeaderBehavior.none(),
         cookieBehavior: {

@@ -34,7 +34,7 @@ import { Builder } from "@sls-next/lambda-at-edge";
 import { MyStack } from "./stack";
 
 // Run the serverless builder, this could be done elsewhere in your workflow
-const builder = new Builder(".", "./build", {args: ['build']});
+const builder = new Builder(".", "./build", { args: ["build"] });
 
 builder
   .build()
@@ -96,3 +96,4 @@ new NextJSLambdaEdge(this, "NextJsApp", {
   distribution behaviours.
 - `invalidationPaths?: string[]` - an array of invalidation paths, by default we
   invalidate all pages found in manifest
+- `cachePolicyName?: Object`: configure the name given to the cache policies
