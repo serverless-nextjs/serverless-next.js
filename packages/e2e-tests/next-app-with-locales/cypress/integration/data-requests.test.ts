@@ -2,7 +2,13 @@ describe("Data Requests", () => {
   const buildId = Cypress.env("NEXT_BUILD_ID");
 
   describe("SSG data requests", () => {
-    [{ path: "/ssg-page.json" }].forEach(({ path }) => {
+    [
+      { path: "/ssg-page.json" },
+      { path: "/en/ssg-page.json" },
+      { path: "/fr/ssg-page.json" },
+      { path: "/en.json" },
+      { path: "/fr.json" }
+    ].forEach(({ path }) => {
       const fullPath = `/_next/data/${buildId}${path}`;
 
       it(`serves the SSG data request for path ${fullPath}`, () => {
@@ -48,7 +54,11 @@ describe("Data Requests", () => {
   });
 
   describe("SSR data requests", () => {
-    [{ path: "" }, { path: "/index.json" }].forEach(({ path }) => {
+    [
+      { path: "/ssr-page-2.json" },
+      { path: "/en/ssr-page-2.json" },
+      { path: "/fr/ssr-page-2.json" }
+    ].forEach(({ path }) => {
       const fullPath = `/_next/data/${buildId}${path}`;
 
       it(`serves the SSR data request for path ${fullPath}`, () => {
