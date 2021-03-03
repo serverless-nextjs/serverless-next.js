@@ -40,6 +40,8 @@ const MODERN_TYPES = [/* AVIF, */ WEBP];
 const ANIMATABLE_TYPES = [WEBP, PNG, GIF];
 const VECTOR_TYPES = [SVG];
 
+const DEFAULT_CACHE_CONTROL = "public, max-age=60, s-maxage=2678400, immutable";
+
 export async function imageOptimizer(
   {
     basePath,
@@ -161,15 +163,17 @@ export async function imageOptimizer(
 
   if (fs.existsSync(hashDir)) {
     const files = await promises.readdir(hashDir);
-    for (let file of files) {
+    for (const file of files) {
       const [prefix, etag, extension] = file.split(".");
       const expireAt = Number(prefix);
       const contentType = getContentType(extension);
       const fsPath = join(hashDir, file);
       if (now < expireAt) {
-        if (!res.getHeader("Cache-Control")) {
-          res.setHeader("Cache-Control", "public, max-age=60");
-        }
+        // if (!res.getHeader("Cache-Control")) {
+        //   res.setHeader("Cache-Control", "public, max-age=60");
+        // }
+        // Enforce default cache control
+        res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
         if (sendEtagResponse(req, res, etag)) {
           return { finished: true };
         }
@@ -200,7 +204,8 @@ export async function imageOptimizer(
     res.statusCode = upstreamRes.status;
     upstreamBuffer = Buffer.from(await upstreamRes.arrayBuffer());
     upstreamType = upstreamRes.headers.get("Content-Type");
-    maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control"));
+    // maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control"));
+    maxAge = getMaxAge(DEFAULT_CACHE_CONTROL);
   } else {
     try {
       let s3Key;
@@ -236,7 +241,7 @@ export async function imageOptimizer(
         new GetObjectCommand(s3Params)
       );
       const s3chunks = [];
-      for await (let s3Chunk of Body as Stream.Readable) {
+      for await (const s3Chunk of Body as Stream.Readable) {
         s3chunks.push(s3Chunk);
       }
       res.statusCode = 200;
@@ -246,9 +251,10 @@ export async function imageOptimizer(
       maxAge = getMaxAge(CacheControl ?? null);
 
       // If S3 image provides cache control header, use that
-      if (CacheControl) {
-        res.setHeader("Cache-Control", CacheControl);
-      }
+      // if (CacheControl) {
+      // }
+      // Enforce default cache control
+      res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
     } catch (err) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
@@ -338,9 +344,12 @@ function sendResponse(
   buffer: Buffer
 ) {
   const etag = getHash([buffer]);
-  if (!res.getHeader("Cache-Control")) {
-    res.setHeader("Cache-Control", "public, max-age=60");
-  }
+  // if (!res.getHeader("Cache-Control")) {
+  //   res.setHeader("Cache-Control", "public, max-age=60");
+  // }
+  // Enforce default cache control
+  res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
+
   if (sendEtagResponse(req, res, etag)) {
     return;
   }
