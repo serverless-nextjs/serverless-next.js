@@ -791,7 +791,7 @@ describe("Lambda@Edge", () => {
         uri                                | expectedPage        | expectedQuerystring
         ${"/index-rewrite"}                | ${"/en.html"}       | ${""}
         ${"/terms-rewrite"}                | ${"/en/terms.html"} | ${""}
-        ${"/path-rewrite/123"}             | ${"/en/terms.html"} | ${""}
+        ${"/path-rewrite/123"}             | ${"/en/terms.html"} | ${"slug=123"}
         ${"/terms"}                        | ${"/en/terms.html"} | ${""}
         ${"/terms-rewrite-dest-query"}     | ${"/en/terms.html"} | ${"foo=bar"}
         ${"/terms-rewrite-dest-query?a=b"} | ${"/en/terms.html"} | ${"a=b&foo=bar"}
