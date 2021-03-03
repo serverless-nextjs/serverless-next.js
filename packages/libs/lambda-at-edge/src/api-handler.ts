@@ -144,6 +144,7 @@ export const handler = async (
 
       request.uri = customRewriteUriPath;
       uri = normaliseUri(request.uri);
+      uri = removeLocalePrefixFromUri(uri, routesManifest);
     }
   }
 
