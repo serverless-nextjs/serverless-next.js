@@ -72,8 +72,7 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {
-      // TODO: fix these tests for locale rewrites
-      xit(`rewrites path ${path} to ${expectedRewrite}`, () => {
+      it(`rewrites path ${path} to ${expectedRewrite}`, () => {
         if (expectedRewrite) {
           cy.request({
             url: path

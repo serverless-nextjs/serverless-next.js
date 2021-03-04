@@ -22,6 +22,7 @@ import {
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import { removeLocalePrefixFromUri } from "./routing/locale-utils";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -101,6 +102,7 @@ export const handler = async (
     buildManifest.apis.nonDynamic[normaliseUri(request.uri)];
 
   let uri = normaliseUri(request.uri);
+  uri = removeLocalePrefixFromUri(uri, routesManifest);
 
   if (!isNonDynamicRoute) {
     const customRewrite = getRewritePath(
@@ -110,20 +112,19 @@ export const handler = async (
       uri
     );
     if (customRewrite) {
+      const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
+        "?"
+      );
+
+      if (request.querystring) {
+        request.querystring = `${request.querystring}${
+          customRewriteUriQuery ? `&${customRewriteUriQuery}` : ""
+        }`;
+      } else {
+        request.querystring = `${customRewriteUriQuery ?? ""}`;
+      }
+
       if (isExternalRewrite(customRewrite)) {
-        const [
-          customRewriteUriPath,
-          customRewriteUriQuery
-        ] = customRewrite.split("?");
-
-        if (request.querystring) {
-          request.querystring = `${request.querystring}${
-            customRewriteUriQuery ? `&${customRewriteUriQuery}` : ""
-          }`;
-        } else {
-          request.querystring = `${customRewriteUriQuery ?? ""}`;
-        }
-
         const { req, res, responsePromise } = lambdaAtEdgeCompat(
           event.Records[0].cf,
           {
@@ -141,8 +142,9 @@ export const handler = async (
         return await responsePromise;
       }
 
-      request.uri = customRewrite;
+      request.uri = customRewriteUriPath;
       uri = normaliseUri(request.uri);
+      uri = removeLocalePrefixFromUri(uri, routesManifest);
     }
   }
 

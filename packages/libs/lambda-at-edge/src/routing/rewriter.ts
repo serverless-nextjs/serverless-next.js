@@ -1,7 +1,7 @@
 import { compileDestination, matchPath } from "./matcher";
 import { RewriteData, RoutesManifest } from "../types";
 import { IncomingMessage, ServerResponse } from "http";
-import { addDefaultLocaleToPath } from "./locale-utils";
+import { addDefaultLocaleToPath, isLocalePrefixedUri } from "./locale-utils";
 
 /**
  * Get the rewrite of the given path, if it exists. Otherwise return null.
@@ -24,7 +24,7 @@ export function getRewritePath(
     const match = matchPath(path, rewrite.source);
 
     if (match) {
-      const destination = compileDestination(rewrite.destination, match.params);
+      let destination = compileDestination(rewrite.destination, match.params);
 
       // No-op rewrite support: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
       if (path === destination) {
@@ -32,6 +32,31 @@ export function getRewritePath(
 
         if (url === "pages/404.html" || url === "pages/_error.js") {
           continue;
+        }
+      }
+
+      // Pass params to destination for locale rewrites
+      // Except nextInternalLocale param since it's already in path prefix
+      if (destination && isLocalePrefixedUri(path, routesManifest)) {
+        const querystring = Object.keys(match.params)
+          .filter((key) => key !== "nextInternalLocale")
+          // @ts-ignore
+          .map((key) => {
+            // @ts-ignore
+            const param = match.params[key];
+            if (typeof param === "string") {
+              return `${key}=${param}`;
+            } else {
+              return param.map((val: string) => `${key}=${val}`).join("&");
+            }
+          })
+          .filter((key) => key)
+          .join("&");
+
+        if (querystring) {
+          destination += destination.includes("?")
+            ? `&${querystring}`
+            : `?${querystring}`;
         }
       }
 
