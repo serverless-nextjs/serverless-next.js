@@ -23,6 +23,7 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import { removeLocalePrefixFromUri } from "./routing/locale-utils";
+import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -168,6 +169,10 @@ export const handler = async (
 
   // Add custom headers before returning response
   addHeadersToResponse(request.uri, response, routesManifest);
+
+  if (response.headers) {
+    removeBlacklistedHeaders(response.headers);
+  }
 
   return response;
 };
