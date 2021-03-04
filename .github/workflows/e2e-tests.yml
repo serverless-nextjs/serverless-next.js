@@ -115,6 +115,7 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
+          AWS_DEFAULT_REGION: us-east-1
           WAIT_TIMEOUT: 600
           APP_NAME: ${{ matrix.app }}
           CYPRESS_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for testing external rewrites to GitHub API without getting throttled
