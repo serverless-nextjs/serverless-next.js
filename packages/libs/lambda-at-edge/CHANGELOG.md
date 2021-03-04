@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.27](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.26...@sls-next/lambda-at-edge@1.8.0-alpha.27) (2021-03-04)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix locale rewrites, enable rewrite tests for lo… ([#916](https://github.com/serverless-nextjs/serverless-next.js/issues/916)) ([6c34aa4](https://github.com/serverless-nextjs/serverless-next.js/commit/6c34aa4711a38038280a7de9e47c6433e95bb396))
+- **lambda-at-edge:** remove blacklisted CloudFront headers before returning api/default/image handler response ([#923](https://github.com/serverless-nextjs/serverless-next.js/issues/923)) ([3fcb59d](https://github.com/serverless-nextjs/serverless-next.js/commit/3fcb59d72d91e4aba8eb01bef24f67a01c93272b))
+
 # [1.8.0-alpha.26](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.25...@sls-next/lambda-at-edge@1.8.0-alpha.26) (2021-03-02)
 
 ### Bug Fixes
