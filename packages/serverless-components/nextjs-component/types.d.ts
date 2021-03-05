@@ -36,6 +36,7 @@ export type ServerlessComponentInputs = {
   authentication?: { username: string; password: string };
   imageOptimizer?: boolean;
   certificateArn?: string;
+  enableS3Acceleration?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;
