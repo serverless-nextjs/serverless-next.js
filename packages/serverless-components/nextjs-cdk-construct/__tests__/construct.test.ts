@@ -12,7 +12,12 @@ describe("CDK Construct", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
       serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
-      runtime: Runtime.NODEJS_10_X
+      runtime: Runtime.NODEJS_10_X,
+      name: {
+        defaultLambda: "NextDefaultLambda",
+        apiLambda: "NextApiLambda",
+        imageLambda: "NextImageLambda"
+      }
     });
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
@@ -34,6 +39,11 @@ describe("CDK Construct", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
       serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      name: {
+        defaultLambda: "NextDefaultLambda",
+        apiLambda: "NextApiLambda",
+        imageLambda: "NextImageLambda"
+      },
       runtime: {
         defaultLambda: Runtime.PYTHON_3_8,
         apiLambda: Runtime.GO_1_X,
@@ -60,7 +70,10 @@ describe("CDK Construct", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
       serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
-      whiteListedCookies: ["my-cookie"]
+      whiteListedCookies: ["my-cookie"],
+      cachePolicyName: {
+        lambdaCache: "NextLambdaCache"
+      }
     });
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
@@ -83,7 +96,10 @@ describe("CDK Construct", () => {
   it("lambda cache policy passes all cookies to origin when not specified", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate")
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      cachePolicyName: {
+        lambdaCache: "NextLambdaCache"
+      }
     });
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
