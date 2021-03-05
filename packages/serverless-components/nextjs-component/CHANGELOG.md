@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.35](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.34...@sls-next/serverless-component@1.19.0-alpha.35) (2021-03-05)
+
+### Features
+
+- **nextjs-component:** allow disabling s3 transfer acceleration ([#926](https://github.com/serverless-nextjs/serverless-next.js/issues/926)) ([9aaeec7](https://github.com/serverless-nextjs/serverless-next.js/commit/9aaeec7c3e9ab6c6c70389801c155477ae7cd456))
+
 # [1.19.0-alpha.34](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.33...@sls-next/serverless-component@1.19.0-alpha.34) (2021-03-04)
 
 **Note:** Version bump only for package @sls-next/serverless-component
