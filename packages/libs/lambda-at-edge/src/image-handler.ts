@@ -19,6 +19,7 @@ import {
   getDomainRedirectPath
 } from "./routing/redirector";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
+import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -101,6 +102,10 @@ export const handler = async (
     const response = await responsePromise;
 
     addHeadersToResponse(request.uri, response, routesManifest);
+
+    if (response.headers) {
+      removeBlacklistedHeaders(response.headers);
+    }
 
     return response;
   } else {

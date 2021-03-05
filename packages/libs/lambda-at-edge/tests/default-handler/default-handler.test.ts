@@ -5,6 +5,7 @@ import {
   CloudFrontOrigin
 } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
+import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders";
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
@@ -363,6 +364,11 @@ describe("Lambda@Edge", () => {
 
           expect(decodedBody).toEqual(expectedPage);
           expect(cfResponse.status).toEqual(200);
+
+          // Verify no blacklisted headers are present
+          for (const header in response.headers) {
+            expect(isBlacklistedHeader(header)).toBe(false);
+          }
         }
       );
 

@@ -3,6 +3,7 @@ import { handler } from "../../src/api-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import { CloudFrontResultResponse } from "aws-lambda";
+import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders";
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
@@ -230,6 +231,11 @@ describe("API lambda handler", () => {
             key: header,
             value: expectedHeaders[header]
           });
+        }
+
+        // Verify no blacklisted headers are present
+        for (const header in response.headers) {
+          expect(isBlacklistedHeader(header)).toBe(false);
         }
       }
     );

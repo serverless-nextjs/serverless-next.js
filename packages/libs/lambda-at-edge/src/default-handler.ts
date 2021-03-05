@@ -42,6 +42,7 @@ import {
   isLocalePrefixedUri,
   removeLocalePrefixFromUri
 } from "./routing/locale-utils";
+import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -246,6 +247,11 @@ export const handler = async (
       response as CloudFrontResultResponse,
       routesManifest
     );
+  }
+
+  // Remove blacklisted headers
+  if (response.headers) {
+    removeBlacklistedHeaders(response.headers);
   }
 
   const tHandlerEnd = now();
