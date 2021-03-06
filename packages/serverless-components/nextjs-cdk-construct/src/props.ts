@@ -41,6 +41,14 @@ export interface Props extends StackProps {
    */
   runtime?: LambdaOption<Runtime>;
   /**
+   * Cache Policy Name(s)
+   */
+  cachePolicyName?: {
+    staticsCache?: string;
+    imageCache?: string;
+    lambdaCache?: string;
+  };
+  /**
    * Enable logging on the cloudfront distribution
    */
   withLogging?: boolean;
