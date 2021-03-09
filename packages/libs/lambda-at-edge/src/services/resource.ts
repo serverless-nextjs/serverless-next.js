@@ -66,6 +66,10 @@ export class Resource {
       normalizedUri = normalizedUri.slice(0, -1);
     }
     // Empty path should be normalised to "/" as there is no Next.js route for ""
+    return ["/index", ""].includes(normalizedUri)
+      ? "/"
+      : decodeURI(normalizedUri);
+
     return normalizedUri === "" ? "/" : decodeURI(normalizedUri);
   }
 
