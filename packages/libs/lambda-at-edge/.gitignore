@@ -1,2 +1,3 @@
 !tests/**
-dist/
+!sharp_node_modules/**/dist
+/dist
