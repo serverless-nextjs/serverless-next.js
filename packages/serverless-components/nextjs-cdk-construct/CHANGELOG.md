@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.31](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.30...@sls-next/cdk-construct@1.19.0-alpha.31) (2021-03-10)
+
+### Bug Fixes
+
+- **cdk:** resources should not be assigned names ([#912](https://github.com/serverless-nextjs/serverless-next.js/issues/912)) ([81d9d18](https://github.com/serverless-nextjs/serverless-next.js/commit/81d9d18f0bd82c36be47c4bda8fa51d1b7e422b0))
+
 # [1.19.0-alpha.30](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.29...@sls-next/cdk-construct@1.19.0-alpha.30) (2021-03-04)
 
 **Note:** Version bump only for package @sls-next/cdk-construct

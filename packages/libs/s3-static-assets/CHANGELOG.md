@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.4.0-alpha.2...@sls-next/s3-static-assets@1.4.0-alpha.3) (2021-03-10)
+
+### Bug Fixes
+
+- **s3-static-assets:** always use posix path join for fast-glob in re… ([#940](https://github.com/serverless-nextjs/serverless-next.js/issues/940)) ([d513192](https://github.com/serverless-nextjs/serverless-next.js/commit/d5131922c2bef84d6298229dfa434128df334ccc))
+
 # [1.4.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.4.0-alpha.1...@sls-next/s3-static-assets@1.4.0-alpha.2) (2021-02-16)
 
 ### Features
