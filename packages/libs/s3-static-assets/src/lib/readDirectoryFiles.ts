@@ -8,7 +8,7 @@ const readDirectoryFiles = (directory: string): Array<Entry> => {
     return [];
   }
 
-  return glob.sync(path.join(directory, "**/*"), {
+  return glob.sync(path.posix.join(directory, "**/*"), {
     onlyFiles: true,
     stats: true
   });
