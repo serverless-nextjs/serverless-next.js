@@ -8,6 +8,7 @@ const readDirectoryFiles = (directory: string): Array<Entry> => {
     return [];
   }
 
+  // fast-glob only accepts posix paths, hence why we don't use path.join, which will cause empty directory list on Windows filesystems.
   return glob.sync(path.posix.join(directory, "**/*"), {
     onlyFiles: true,
     stats: true
