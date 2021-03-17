@@ -195,6 +195,13 @@ class NextjsComponent extends Component {
         ? nextConfigPath
         : resolve(inputs.build.cwd);
 
+    const buildBaseDir =
+      typeof inputs.build === "boolean" ||
+      typeof inputs.build === "undefined" ||
+      !inputs.build.baseDir
+        ? nextConfigPath
+        : resolve(inputs.build.baseDir);
+
     const buildConfig: BuildOptions = {
       enabled: inputs.build
         ? // @ts-ignore
@@ -203,7 +210,8 @@ class NextjsComponent extends Component {
       cmd: "node_modules/.bin/next",
       args: ["build"],
       ...(typeof inputs.build === "object" ? inputs.build : {}),
-      cwd: buildCwd
+      cwd: buildCwd,
+      baseDir: buildBaseDir
     };
 
     if (buildConfig.enabled) {
@@ -223,7 +231,8 @@ class NextjsComponent extends Component {
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,
-          authentication: inputs.authentication ?? undefined
+          authentication: inputs.authentication ?? undefined,
+          baseDir: buildConfig.baseDir
         },
         nextStaticPath
       );
