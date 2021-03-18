@@ -44,6 +44,22 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public bucket: s3.Bucket;
 
+  public edgeLambdaRole: Role;
+
+  public defaultNextLambda: lambda.Function;
+
+  public nextApiLambda: lambda.Function | null;
+
+  public nextImageLambda: lambda.Function | null;
+
+  public nextStaticsCachePolicy: cloudfront.CachePolicy;
+
+  public nextImageCachePolicy: cloudfront.CachePolicy;
+
+  public nextLambdaCachePolicy: cloudfront.CachePolicy;
+
+  public aRecord?: ARecord;
+
   constructor(scope: cdk.Construct, id: string, private props: Props) {
     super(scope, id);
     this.apiBuildManifest = this.readApiBuildManifest();
@@ -57,10 +73,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
       // assets uploaded by this library we should be able to safely delete all
       // contents along with the bucket its self upon stack deletion.
       autoDeleteObjects: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      // Override props.
+      ...(props.s3Props || {})
     });
 
-    const edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
+    this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
         new ServicePrincipal("lambda.amazonaws.com"),
         new ServicePrincipal("edgelambda.amazonaws.com")
@@ -74,7 +92,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       ]
     });
 
-    const defaultNextLambda = new lambda.Function(this, "NextLambda", {
+    this.defaultNextLambda = new lambda.Function(this, "NextLambda", {
       functionName: toLambdaOption("defaultLambda", props.name),
       description: `Default Lambda@Edge for Next CloudFront distribution`,
       handler: "index.handler",
@@ -85,7 +103,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       code: lambda.Code.fromAsset(
         path.join(this.props.serverlessBuildOutDir, "default-lambda")
       ),
-      role: edgeLambdaRole,
+      role: this.edgeLambdaRole,
       runtime:
         toLambdaOption("defaultLambda", props.runtime) ||
         lambda.Runtime.NODEJS_12_X,
@@ -93,7 +111,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       timeout: toLambdaOption("defaultLambda", props.timeout)
     });
 
-    defaultNextLambda.currentVersion.addAlias("live");
+    this.defaultNextLambda.currentVersion.addAlias("live");
 
     const apis = this.apiBuildManifest?.apis;
     const hasAPIPages =
@@ -101,9 +119,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
       (Object.keys(apis.nonDynamic).length > 0 ||
         Object.keys(apis.dynamic).length > 0);
 
-    let nextApiLambda = null;
+    this.nextApiLambda = null;
     if (hasAPIPages) {
-      nextApiLambda = new lambda.Function(this, "NextApiLambda", {
+      this.nextApiLambda = new lambda.Function(this, "NextApiLambda", {
         functionName: toLambdaOption("apiLambda", props.name),
         description: `Default Lambda@Edge for Next API CloudFront distribution`,
         handler: "index.handler",
@@ -115,19 +133,19 @@ export class NextJSLambdaEdge extends cdk.Construct {
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "api-lambda")
         ),
-        role: edgeLambdaRole,
+        role: this.edgeLambdaRole,
         runtime:
           toLambdaOption("apiLambda", props.runtime) ||
           lambda.Runtime.NODEJS_12_X,
         memorySize: toLambdaOption("apiLambda", props.memory),
         timeout: toLambdaOption("apiLambda", props.timeout)
       });
-      nextApiLambda.currentVersion.addAlias("live");
+      this.nextApiLambda.currentVersion.addAlias("live");
     }
 
-    let nextImageLambda = null;
+    this.nextImageLambda = null;
     if (this.imageManifest) {
-      nextImageLambda = new lambda.Function(this, "NextImageLambda", {
+      this.nextImageLambda = new lambda.Function(this, "NextImageLambda", {
         functionName: toLambdaOption("imageLambda", props.name),
         description: `Default Lambda@Edge for Next Image CloudFront distribution`,
         handler: "index.handler",
@@ -139,17 +157,17 @@ export class NextJSLambdaEdge extends cdk.Construct {
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "image-lambda")
         ),
-        role: edgeLambdaRole,
+        role: this.edgeLambdaRole,
         runtime:
           toLambdaOption("imageLambda", props.runtime) ||
           lambda.Runtime.NODEJS_12_X,
         memorySize: toLambdaOption("imageLambda", props.memory),
         timeout: toLambdaOption("imageLambda", props.timeout)
       });
-      nextImageLambda.currentVersion.addAlias("live");
+      this.nextImageLambda.currentVersion.addAlias("live");
     }
 
-    const nextStaticsCachePolicy = new cloudfront.CachePolicy(
+    this.nextStaticsCachePolicy = new cloudfront.CachePolicy(
       this,
       "NextStaticsCache",
       {
@@ -165,7 +183,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const nextImageCachePolicy = new cloudfront.CachePolicy(
+    this.nextImageCachePolicy = new cloudfront.CachePolicy(
       this,
       "NextImageCache",
       {
@@ -181,7 +199,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const nextLambdaCachePolicy = new cloudfront.CachePolicy(
+    this.nextLambdaCachePolicy = new cloudfront.CachePolicy(
       this,
       "NextLambdaCache",
       {
@@ -204,11 +222,11 @@ export class NextJSLambdaEdge extends cdk.Construct {
       {
         includeBody: true,
         eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-        functionVersion: defaultNextLambda.currentVersion
+        functionVersion: this.defaultNextLambda.currentVersion
       },
       {
         eventType: cloudfront.LambdaEdgeEventType.ORIGIN_RESPONSE,
-        functionVersion: defaultNextLambda.currentVersion
+        functionVersion: this.defaultNextLambda.currentVersion
       }
     ];
 
@@ -227,12 +245,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
           allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
           cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
           compress: true,
-          cachePolicy: nextLambdaCachePolicy,
+          cachePolicy: this.nextLambdaCachePolicy,
           edgeLambdas,
           ...(props.defaultBehavior || {})
         },
         additionalBehaviors: {
-          ...(nextImageLambda
+          ...(this.nextImageLambda
             ? {
                 [this.pathPattern("_next/image*")]: {
                   viewerProtocolPolicy:
@@ -242,7 +260,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   cachedMethods:
                     cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
                   compress: true,
-                  cachePolicy: nextImageCachePolicy,
+                  cachePolicy: this.nextImageCachePolicy,
                   originRequestPolicy: new cloudfront.OriginRequestPolicy(
                     this,
                     "ImageOriginRequest",
@@ -253,7 +271,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   edgeLambdas: [
                     {
                       eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-                      functionVersion: nextImageLambda.currentVersion
+                      functionVersion: this.nextImageLambda.currentVersion
                     }
                   ]
                 }
@@ -266,7 +284,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
-            cachePolicy: nextLambdaCachePolicy,
+            cachePolicy: this.nextLambdaCachePolicy,
             edgeLambdas
           },
           [this.pathPattern("_next/*")]: {
@@ -276,7 +294,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
-            cachePolicy: nextStaticsCachePolicy
+            cachePolicy: this.nextStaticsCachePolicy
           },
           [this.pathPattern("static/*")]: {
             viewerProtocolPolicy:
@@ -285,9 +303,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
-            cachePolicy: nextStaticsCachePolicy
+            cachePolicy: this.nextStaticsCachePolicy
           },
-          ...(nextApiLambda
+          ...(this.nextApiLambda
             ? {
                 [this.pathPattern("api/*")]: {
                   viewerProtocolPolicy:
@@ -297,12 +315,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   cachedMethods:
                     cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
                   compress: true,
-                  cachePolicy: nextLambdaCachePolicy,
+                  cachePolicy: this.nextLambdaCachePolicy,
                   edgeLambdas: [
                     {
                       includeBody: true,
                       eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-                      functionVersion: nextApiLambda.currentVersion
+                      functionVersion: this.nextApiLambda.currentVersion
                     }
                   ]
                 }
@@ -357,7 +375,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     if (props.domain) {
-      new ARecord(this, "AliasRecord", {
+      this.aRecord = new ARecord(this, "AliasRecord", {
         recordName: props.domain.domainName,
         zone: props.domain.hostedZone,
         target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution))
