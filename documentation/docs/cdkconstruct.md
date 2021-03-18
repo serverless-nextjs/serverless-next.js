@@ -88,6 +88,7 @@ new NextJSLambdaEdge(this, "NextJsApp", {
 - `runtime?: lambda.Runtime | Record<string, lambda.Runtime>` - configure the runtime of all lambdas
   or individually.
 - `withLogging?: boolean` - set debug logging on the lambda.
+- `s3Props?: Partial<BucketProps>` - pass custom s3 props
 - `whiteListedCookies?: string[]` - provide a list of cookies to forward to the
   CloudFront origin.
 - `defaultBehavior?: Partial<cloudfront.Behaviour>` - provide overrides for the
