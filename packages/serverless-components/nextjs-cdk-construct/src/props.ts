@@ -2,6 +2,7 @@ import { ICertificate } from "@aws-cdk/aws-certificatemanager";
 import { BehaviorOptions } from "@aws-cdk/aws-cloudfront";
 import { Runtime } from "@aws-cdk/aws-lambda";
 import { IHostedZone } from "@aws-cdk/aws-route53";
+import { BucketProps } from "@aws-cdk/aws-s3";
 import { Duration, StackProps } from "@aws-cdk/core";
 
 export type LambdaOption<T> =
@@ -24,6 +25,10 @@ export interface Props extends StackProps {
     certificate: ICertificate;
     domainName: string;
   };
+  /**
+   * Override props passed to the underlying s3 bucket
+   */
+  s3Props?: Partial<BucketProps>;
   /**
    * Lambda memory limit(s)
    */
