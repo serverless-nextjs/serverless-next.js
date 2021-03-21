@@ -135,13 +135,15 @@ export async function createExternalRewriteResponse(
       headers: reqHeaders,
       method: req.method,
       body: decodedBody, // Must pass body as a string,
-      compress: false
+      compress: false,
+      redirect: "manual"
     });
   } else {
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
       method: req.method,
-      compress: false
+      compress: false,
+      redirect: "manual"
     });
   }
 
