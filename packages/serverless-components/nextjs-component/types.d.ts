@@ -48,6 +48,7 @@ export type BuildOptions = {
   args: string[];
   env?: Record<string, string>;
   postBuildCommands?: string[];
+  baseDir?: string;
 };
 
 export type LambdaType = "defaultLambda" | "apiLambda" | "imageLambda";
