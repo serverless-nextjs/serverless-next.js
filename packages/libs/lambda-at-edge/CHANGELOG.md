@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.28](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.27...@sls-next/lambda-at-edge@1.8.0-alpha.28) (2021-03-22)
+
+### Bug Fixes
+
+- **lambda-at-edge:** do not follow redirect in fetch during rewrite ([#942](https://github.com/serverless-nextjs/serverless-next.js/issues/942)) ([0383cf2](https://github.com/serverless-nextjs/serverless-next.js/commit/0383cf20673cf354f24ce7d607a2d93193574e87))
+
 # [1.8.0-alpha.27](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.26...@sls-next/lambda-at-edge@1.8.0-alpha.27) (2021-03-04)
 
 ### Bug Fixes

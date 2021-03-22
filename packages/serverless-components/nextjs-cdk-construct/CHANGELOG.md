@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.33](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.32...@sls-next/cdk-construct@1.19.0-alpha.33) (2021-03-22)
+
+### Bug Fixes
+
+- **cdk-construct:** [#943](https://github.com/serverless-nextjs/serverless-next.js/issues/943) give access to underlying resources and enable custom s3 props ([#955](https://github.com/serverless-nextjs/serverless-next.js/issues/955)) ([026901b](https://github.com/serverless-nextjs/serverless-next.js/commit/026901b1b5008d11e35de0f710c484e60941ef08))
+
 # [1.19.0-alpha.32](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.30...@sls-next/cdk-construct@1.19.0-alpha.32) (2021-03-10)
 
 ### Bug Fixes
