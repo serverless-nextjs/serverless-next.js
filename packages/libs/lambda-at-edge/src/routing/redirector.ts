@@ -194,13 +194,13 @@ export function getLanguageRedirect(
     const defaultLocale = routesManifest.i18n.defaultLocale;
     const basePath = routesManifest.basePath;
 
-    const preferredLanguage = Accept.language(acceptLanguageHeader);
+    const preferredLanguage = Accept.language(acceptLanguageHeader, locales);
 
     let localeToUse = undefined;
 
     // Find language in locale that matches preferred language
     for (const locale of locales) {
-      if (preferredLanguage === locale) {
+      if (preferredLanguage.toLowerCase() === locale.toLowerCase()) {
         localeToUse = locale;
         break;
       }
