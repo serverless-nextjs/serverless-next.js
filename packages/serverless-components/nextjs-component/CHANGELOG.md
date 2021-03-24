@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.39](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.38...@sls-next/serverless-component@1.19.0-alpha.39) (2021-03-24)
+
+### Features
+
+- **nextjs-component:** add baseDir from [#779](https://github.com/serverless-nextjs/serverless-next.js/issues/779) to component to facilitate usage in monorepos ([#953](https://github.com/serverless-nextjs/serverless-next.js/issues/953)) ([86844e6](https://github.com/serverless-nextjs/serverless-next.js/commit/86844e60cdb46b64315abab76d03b24d8c8c770d))
+
 # [1.19.0-alpha.38](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.37...@sls-next/serverless-component@1.19.0-alpha.38) (2021-03-22)
 
 **Note:** Version bump only for package @sls-next/serverless-component
