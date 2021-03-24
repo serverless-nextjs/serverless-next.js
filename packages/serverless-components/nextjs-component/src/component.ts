@@ -295,6 +295,7 @@ class NextjsComponent extends Component {
 
     const staticCachePolicyId = inputs.staticCachePolicyId;
     const staticOriginRequestPolicyId = inputs.staticOriginRequestPolicyId;
+    const nextImageLoader = inputs.nextImageLoader;
     const dynamicCachePolicyId = inputs.dynamicCachePolicyId;
     const dynamicOriginRequestPolicyId = inputs.dynamicOriginRequestPolicyId;
 
@@ -575,8 +576,11 @@ class NextjsComponent extends Component {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
       ] = {
-        cachePolicyId: cloudFrontDefaultsInputs.cachePolicyId,
-        originRequestPolicyId: staticOriginRequestPolicyId,
+        cachePolicyId:
+          nextImageLoader?.cachePolicyId ||
+          cloudFrontDefaultsInputs.cachePolicyId,
+        originRequestPolicyId:
+          nextImageLoader?.originRequestPolicyId || staticOriginRequestPolicyId,
         minTTL: 0,
         defaultTTL: 60,
         maxTTL: 31536000,

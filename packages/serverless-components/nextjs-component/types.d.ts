@@ -39,6 +39,10 @@ export type ServerlessComponentInputs = {
   staticOriginRequestPolicyId?: string;
   dynamicCachePolicyId?: string;
   dynamicOriginRequestPolicyId?: string;
+  nextImageLoader?: {
+    cachePolicyId?: string;
+    originRequestPolicyId?: string;
+  };
 
   cloudfront?: CloudfrontOptions;
   minifyHandlers?: boolean;
