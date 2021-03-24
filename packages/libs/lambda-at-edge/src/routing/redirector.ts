@@ -200,7 +200,7 @@ export function getLanguageRedirect(
 
     // Find language in locale that matches preferred language
     for (const locale of locales) {
-      if (preferredLanguage === locale) {
+      if (preferredLanguage.toLowerCase() === locale.toLowerCase()) {
         localeToUse = locale;
         break;
       }
