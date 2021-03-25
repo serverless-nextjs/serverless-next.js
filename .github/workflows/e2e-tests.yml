@@ -66,6 +66,7 @@ jobs:
           - next-app-with-base-path
           - next-app-dynamic-routes
           - next-app-with-locales
+          - next-app-with-locales-using-serverless-trace
           # Previous minor version of Next.js
           - prev-next-app
           - prev-next-app-with-trailing-slash
