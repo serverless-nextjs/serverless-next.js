@@ -1,0 +1,13 @@
+next-app-with-locales-using-serverless-trace:
+  component: "../../serverless-components/nextjs-component"
+  inputs:
+    useServerlessTraceTarget: true
+    build:
+      postBuildCommands: ["node scripts/post-build-test.js"]
+    cloudfront:
+      defaults:
+        forward:
+          headers: [Authorization]
+      api/*:
+        forward:
+          headers: [Authorization]
