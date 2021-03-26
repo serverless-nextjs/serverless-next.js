@@ -369,7 +369,7 @@ The exhaustive list of AWS actions required for a deployment:
   "iam:PassRole",
   "lambda:CreateFunction",
   "lambda:EnableReplication",
-  "lambda:DeleteFunction",            // only for custom domains
+  "lambda:DeleteFunction",
   "lambda:GetFunction",
   "lambda:GetFunctionConfiguration",
   "lambda:PublishVersion",
