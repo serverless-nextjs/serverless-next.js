@@ -1,13 +1,13 @@
 import path from "path";
 import fse from "fs-extra";
 import { mockS3 } from "@serverless/aws-s3";
-import { mockCloudFront } from "@sls-next/aws-cloudfront";
-import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import mockCreateInvalidation from "@sls-next/cloudfront";
+import { mockCloudFront } from "@getjerry/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
+import mockCreateInvalidation from "@getjerry/cloudfront";
 import NextjsComponent from "../src/component";
 import {
-  DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
+  DEFAULT_LAMBDA_CODE_DIR,
   IMAGE_LAMBDA_CODE_DIR
 } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";

@@ -1,15 +1,15 @@
 import fse from "fs-extra";
 import path from "path";
-import { mockDomain } from "@sls-next/domain";
+import { mockDomain } from "@getjerry/domain";
 import { mockS3 } from "@serverless/aws-s3";
 import { mockUpload } from "aws-sdk";
-import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import mockCreateInvalidation from "@sls-next/cloudfront";
-import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
+import mockCreateInvalidation from "@getjerry/cloudfront";
+import { mockCloudFront } from "@getjerry/aws-cloudfront";
 
 import NextjsComponent, { DeploymentResult } from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
+import { API_LAMBDA_CODE_DIR, DEFAULT_LAMBDA_CODE_DIR } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
 const createNextComponent = () => {
