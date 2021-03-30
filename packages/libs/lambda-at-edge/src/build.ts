@@ -486,6 +486,7 @@ class Builder {
       pages: {
         ssr: {
           dynamic: {},
+          catchAll: {},
           nonDynamic: {}
         },
         html: {
@@ -758,11 +759,29 @@ class Builder {
         }
       }
 
+      const allDynamicRoutes = {
+        ...ssrPages.dynamic,
+        ...localeSsrPages.dynamic
+      };
+
+      // Split into regular dynamic routes and catch all dynamic routes for deterministic route precedence
+      const nonCatchAllRoutes = Object.keys(allDynamicRoutes)
+        .filter((key) => !key.endsWith("*"))
+        .reduce((obj: DynamicPageKeyValue, key) => {
+          obj[key] = allDynamicRoutes[key];
+          return obj;
+        }, {});
+
+      const catchAllRoutes = Object.keys(allDynamicRoutes)
+        .filter((key) => !key.endsWith("*"))
+        .reduce((obj: DynamicPageKeyValue, key) => {
+          obj[key] = allDynamicRoutes[key];
+          return obj;
+        }, {});
+
       defaultBuildManifest.pages.ssr = {
-        dynamic: {
-          ...ssrPages.dynamic,
-          ...localeSsrPages.dynamic
-        },
+        dynamic: nonCatchAllRoutes,
+        catchAll: catchAllRoutes,
         nonDynamic: {
           ...ssrPages.nonDynamic,
           ...localeSsrPages.nonDynamic

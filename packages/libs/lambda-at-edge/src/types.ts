@@ -49,6 +49,7 @@ export type OriginRequestDefaultHandlerManifest = {
   pages: {
     ssr: {
       dynamic: DynamicPageKeyValue;
+      catchAll: DynamicPageKeyValue;
       nonDynamic: {
         [key: string]: string;
       };

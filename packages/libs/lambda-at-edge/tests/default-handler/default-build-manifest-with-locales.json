@@ -23,10 +23,6 @@
           "file": "pages/customers/[customer]/[post].js",
           "regex": "^/en/customers/([^/]+?)/([^/]+?)(?:/)?$"
         },
-        "/en/customers/:catchAll*": {
-          "file": "pages/customers/[...catchAll].js",
-          "regex": "^/en/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
-        },
         "/en/tests/prerender-manifest-fallback/:fallback": {
           "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
           "regex": "^/en/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
@@ -50,10 +46,6 @@
         "/fr/customers/:customer/:post": {
           "file": "pages/customers/[customer]/[post].js",
           "regex": "^/fr/customers/([^/]+?)/([^/]+?)(?:/)?$"
-        },
-        "/fr/customers/:catchAll*": {
-          "file": "pages/customers/[...catchAll].js",
-          "regex": "^/fr/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
         },
         "/fr/tests/prerender-manifest-fallback/:fallback": {
           "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
@@ -79,13 +71,23 @@
           "file": "pages/customers/[customer]/[post].js",
           "regex": "^/nl/customers/([^/]+?)/([^/]+?)(?:/)?$"
         },
-        "/nl/customers/:catchAll*": {
-          "file": "pages/customers/[...catchAll].js",
-          "regex": "^/nl/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
-        },
         "/nl/tests/prerender-manifest-fallback/:fallback": {
           "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
           "regex": "^/nl/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
+        }
+      },
+      "catchAll": {
+        "/en/customers/:catchAll*": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^/en/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+        },
+        "/fr/customers/:catchAll*": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^/fr/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+        },
+        "/nl/customers/:catchAll*": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^/nl/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
         }
       },
       "nonDynamic": {
