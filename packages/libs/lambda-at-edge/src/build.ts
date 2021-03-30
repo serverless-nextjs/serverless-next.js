@@ -769,6 +769,7 @@ class Builder {
 
       defaultBuildManifest.pages.ssr = {
         dynamic: allDynamicRoutes,
+        catchAll: {},
         nonDynamic: {
           ...ssrPages.nonDynamic,
           ...localeSsrPages.nonDynamic
