@@ -767,21 +767,8 @@ class Builder {
         ...localeSsrPages.dynamic
       };
 
-      // Split into regular dynamic routes and catch all dynamic routes for deterministic route precedence
-      const nonCatchAllRoutes: DynamicPageKeyValue = {};
-      const catchAllRoutes: DynamicPageKeyValue = {};
-
-      for (const key in allDynamicRoutes) {
-        if (key.endsWith("*")) {
-          catchAllRoutes[key] = allDynamicRoutes[key];
-        } else {
-          nonCatchAllRoutes[key] = allDynamicRoutes[key];
-        }
-      }
-
       defaultBuildManifest.pages.ssr = {
-        dynamic: nonCatchAllRoutes,
-        catchAll: catchAllRoutes,
+        dynamic: allDynamicRoutes,
         nonDynamic: {
           ...ssrPages.nonDynamic,
           ...localeSsrPages.nonDynamic
@@ -810,6 +797,26 @@ class Builder {
         }
       };
     }
+
+    // Split dynamic routes to non-catch all and catch all dynamic routes for later use for route precedence
+    const nonCatchAllRoutes: DynamicPageKeyValue = {};
+    const catchAllRoutes: DynamicPageKeyValue = {};
+    const allDynamicRoutes: DynamicPageKeyValue =
+      defaultBuildManifest.pages.ssr.dynamic;
+
+    for (const key in allDynamicRoutes) {
+      if (key.endsWith("*")) {
+        catchAllRoutes[key] = allDynamicRoutes[key];
+      } else {
+        nonCatchAllRoutes[key] = allDynamicRoutes[key];
+      }
+    }
+
+    defaultBuildManifest.pages.ssr = {
+      ...defaultBuildManifest.pages.ssr,
+      dynamic: nonCatchAllRoutes,
+      catchAll: catchAllRoutes
+    };
 
     const publicFiles = await this.readPublicFiles();
 
