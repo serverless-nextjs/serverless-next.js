@@ -768,8 +768,8 @@ class Builder {
       };
 
       // Split into regular dynamic routes and catch all dynamic routes for deterministic route precedence
-      const nonCatchAllRoutes: { [key: string]: DynamicPageKeyValue } = {};
-      const catchAllRoutes: { [key: string]: DynamicPageKeyValue } = {};
+      const nonCatchAllRoutes: DynamicPageKeyValue = {};
+      const catchAllRoutes: DynamicPageKeyValue = {};
 
       for (const key in allDynamicRoutes) {
         if (key.endsWith("*")) {
