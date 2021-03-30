@@ -98,11 +98,6 @@ describe("Builder Tests (with locales)", () => {
           file: "pages/[root].js",
           regex: "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/en/customers/:catchAll*": {
-          file: "pages/customers/[...catchAll].js",
-          regex:
-            "^\\/en\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-        },
         "/en/customers/:customer": {
           file: "pages/customers/[customer].js",
           regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
@@ -136,6 +131,10 @@ describe("Builder Tests (with locales)", () => {
 
       expect(catchAll).toEqual({
         "/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
+          regex: expect.any(String)
+        },
+        "/en/customers/:catchAll*": {
           file: "pages/customers/[...catchAll].js",
           regex: expect.any(String)
         },
