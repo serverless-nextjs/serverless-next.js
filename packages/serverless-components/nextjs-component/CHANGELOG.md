@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.41](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.40...@sls-next/serverless-component@1.19.0-alpha.41) (2021-03-30)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix dynamic vs. catch-all route precedence ([#974](https://github.com/serverless-nextjs/serverless-next.js/issues/974)) ([2a3140a](https://github.com/serverless-nextjs/serverless-next.js/commit/2a3140a7fc68d40840e65a1af85b79c8da9e3a31))
+
 # [1.19.0-alpha.40](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.39...@sls-next/serverless-component@1.19.0-alpha.40) (2021-03-24)
 
 **Note:** Version bump only for package @sls-next/serverless-component
