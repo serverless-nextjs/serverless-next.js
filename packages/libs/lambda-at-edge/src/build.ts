@@ -766,14 +766,18 @@ class Builder {
 
       // Split into regular dynamic routes and catch all dynamic routes for deterministic route precedence
       const nonCatchAllRoutes = Object.keys(allDynamicRoutes)
-        .filter((key) => !key.endsWith("*"))
+        .filter((key) => {
+          return !key.endsWith("*");
+        })
         .reduce((obj: DynamicPageKeyValue, key) => {
           obj[key] = allDynamicRoutes[key];
           return obj;
         }, {});
 
       const catchAllRoutes = Object.keys(allDynamicRoutes)
-        .filter((key) => !key.endsWith("*"))
+        .filter((key) => {
+          return key.endsWith("*");
+        })
         .reduce((obj: DynamicPageKeyValue, key) => {
           obj[key] = allDynamicRoutes[key];
           return obj;
