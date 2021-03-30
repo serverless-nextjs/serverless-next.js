@@ -22,7 +22,9 @@
         "/customers/:customer/:post": {
           "file": "pages/customers/[customer]/[post].js",
           "regex": "^/customers/([^/]+?)/([^/]+?)(?:/)?$"
-        },
+        }
+      },
+      "catchAll": {
         "/customers/:catchAll*": {
           "file": "pages/customers/[...catchAll].js",
           "regex": "^/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"

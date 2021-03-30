@@ -69,7 +69,7 @@ describe("Builder Tests (with locales)", () => {
         buildId,
         publicFiles,
         pages: {
-          ssr: { dynamic, nonDynamic },
+          ssr: { dynamic, catchAll, nonDynamic },
           ssg,
           html
         },
@@ -94,18 +94,9 @@ describe("Builder Tests (with locales)", () => {
           file: "pages/customers/[customer]/profile.js",
           regex: expect.any(String)
         },
-        "/customers/:catchAll*": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
-        },
         "/en/:root": {
           file: "pages/[root].js",
           regex: "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/en/customers/:catchAll*": {
-          file: "pages/customers/[...catchAll].js",
-          regex:
-            "^\\/en\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
         "/en/customers/:customer": {
           file: "pages/customers/[customer].js",
@@ -124,10 +115,6 @@ describe("Builder Tests (with locales)", () => {
           file: "pages/[root].js",
           regex: expect.any(String)
         },
-        "/nl/customers/:catchAll*": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
-        },
         "/nl/customers/:customer": {
           file: "pages/customers/[customer].js",
           regex: expect.any(String)
@@ -138,6 +125,21 @@ describe("Builder Tests (with locales)", () => {
         },
         "/nl/customers/:customer/profile": {
           file: "pages/customers/[customer]/profile.js",
+          regex: expect.any(String)
+        }
+      });
+
+      expect(catchAll).toEqual({
+        "/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
+          regex: expect.any(String)
+        },
+        "/en/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
+          regex: expect.any(String)
+        },
+        "/nl/customers/:catchAll*": {
+          file: "pages/customers/[...catchAll].js",
           regex: expect.any(String)
         }
       });

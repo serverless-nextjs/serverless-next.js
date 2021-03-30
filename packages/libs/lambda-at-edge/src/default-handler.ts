@@ -148,8 +148,21 @@ const router = (
       return html.nonDynamic[normalisedUri];
     }
 
+    // Dynamic routes are matched first
     for (const route in allDynamicRoutes) {
       const { file, regex } = allDynamicRoutes[route];
+
+      const re = new RegExp(regex, "i");
+      const pathMatchesRoute = re.test(normalisedUri);
+
+      if (pathMatchesRoute) {
+        return file;
+      }
+    }
+
+    // Then catch all routes are matched
+    for (const route in ssr.catchAll) {
+      const { file, regex } = ssr.catchAll[route];
 
       const re = new RegExp(regex, "i");
       const pathMatchesRoute = re.test(normalisedUri);

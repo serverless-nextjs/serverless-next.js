@@ -258,6 +258,9 @@ class Builder {
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
         ...Object.values(buildManifest.pages.ssr.dynamic).map(
           (entry) => entry.file
+        ),
+        ...Object.values(buildManifest.pages.ssr.catchAll).map(
+          (entry) => entry.file
         )
       ].filter(ignoreAppAndDocumentPages);
 
@@ -486,6 +489,7 @@ class Builder {
       pages: {
         ssr: {
           dynamic: {},
+          catchAll: {},
           nonDynamic: {}
         },
         html: {
@@ -758,11 +762,14 @@ class Builder {
         }
       }
 
+      const allDynamicRoutes = {
+        ...ssrPages.dynamic,
+        ...localeSsrPages.dynamic
+      };
+
       defaultBuildManifest.pages.ssr = {
-        dynamic: {
-          ...ssrPages.dynamic,
-          ...localeSsrPages.dynamic
-        },
+        dynamic: allDynamicRoutes,
+        catchAll: {},
         nonDynamic: {
           ...ssrPages.nonDynamic,
           ...localeSsrPages.nonDynamic
@@ -791,6 +798,26 @@ class Builder {
         }
       };
     }
+
+    // Split dynamic routes to non-catch all and catch all dynamic routes for later use for route precedence
+    const nonCatchAllRoutes: DynamicPageKeyValue = {};
+    const catchAllRoutes: DynamicPageKeyValue = {};
+    const allDynamicRoutes: DynamicPageKeyValue =
+      defaultBuildManifest.pages.ssr.dynamic;
+
+    for (const key in allDynamicRoutes) {
+      if (key.endsWith("*")) {
+        catchAllRoutes[key] = allDynamicRoutes[key];
+      } else {
+        nonCatchAllRoutes[key] = allDynamicRoutes[key];
+      }
+    }
+
+    defaultBuildManifest.pages.ssr = {
+      ...defaultBuildManifest.pages.ssr,
+      dynamic: nonCatchAllRoutes,
+      catchAll: catchAllRoutes
+    };
 
     const publicFiles = await this.readPublicFiles();
 
