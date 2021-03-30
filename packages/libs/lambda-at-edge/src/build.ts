@@ -258,6 +258,9 @@ class Builder {
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
         ...Object.values(buildManifest.pages.ssr.dynamic).map(
           (entry) => entry.file
+        ),
+        ...Object.values(buildManifest.pages.ssr.catchAll).map(
+          (entry) => entry.file
         )
       ].filter(ignoreAppAndDocumentPages);
 
@@ -765,23 +768,16 @@ class Builder {
       };
 
       // Split into regular dynamic routes and catch all dynamic routes for deterministic route precedence
-      const nonCatchAllRoutes = Object.keys(allDynamicRoutes)
-        .filter((key) => {
-          return !key.endsWith("*");
-        })
-        .reduce((obj: DynamicPageKeyValue, key) => {
-          obj[key] = allDynamicRoutes[key];
-          return obj;
-        }, {});
+      const nonCatchAllRoutes = {};
+      const catchAllRoutes = {};
 
-      const catchAllRoutes = Object.keys(allDynamicRoutes)
-        .filter((key) => {
-          return key.endsWith("*");
-        })
-        .reduce((obj: DynamicPageKeyValue, key) => {
-          obj[key] = allDynamicRoutes[key];
-          return obj;
-        }, {});
+      for (const key in allDynamicRoutes) {
+        if (key.endsWith("*")) {
+          catchAllRoutes[key] = allDynamicRoutes[key];
+        } else {
+          nonCatchAllRoutes[key] = allDynamicRoutes[key];
+        }
+      }
 
       defaultBuildManifest.pages.ssr = {
         dynamic: nonCatchAllRoutes,
