@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.31](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.30...@sls-next/lambda-at-edge@1.8.0-alpha.31) (2021-04-02)
+
+### Bug Fixes
+
+- **lambda-at-edge:** ensure dist/sharp_node_modules empty before copying ([#980](https://github.com/serverless-nextjs/serverless-next.js/issues/980)) ([c43b2f8](https://github.com/serverless-nextjs/serverless-next.js/commit/c43b2f86e0fb8923114bd71fb94545afd5861405))
+
 # [1.8.0-alpha.30](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.29...@sls-next/lambda-at-edge@1.8.0-alpha.30) (2021-03-30)
 
 ### Bug Fixes
