@@ -1,11 +1,8 @@
 import path from "path";
 import fse from "fs-extra";
-import { mockS3 } from "../__mocks__/@serverless/aws-s3";
-import { mockCloudFront } from "../__mocks__/@getjerry/aws-cloudfront";
-import {
-  mockLambda,
-  mockLambdaPublish
-} from "../__mocks__/@getjerry/aws-lambda";
+import { mockS3 } from "@serverless/aws-s3";
+import { mockCloudFront } from "@getjerry/aws-cloudfront";
+import { mockLambda, mockLambdaPublish } from "@getjerry/aws-lambda";
 import NextjsComponent from "../src/component";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
@@ -13,7 +10,6 @@ describe("basepath tests", () => {
   let tmpCwd;
   let componentOutputs;
   let consoleWarnSpy;
-
   const fixturePath = path.join(__dirname, "./fixtures/basepath-app");
 
   beforeEach(async () => {
@@ -82,7 +78,8 @@ describe("basepath tests", () => {
         "custom_base/static/*",
         "custom_base/api/*",
         "custom_base/_next/image*",
-        "custom_base/_next/data/*"
+        "custom_base/_next/data/*",
+        "custom_base*"
       ]);
     });
   });
