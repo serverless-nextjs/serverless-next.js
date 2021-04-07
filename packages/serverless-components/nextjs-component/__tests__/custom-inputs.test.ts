@@ -759,6 +759,8 @@ describe("Custom inputs", () => {
         minTTL: 0,
         defaultTTL: 0,
         maxTTL: 31536000,
+        originRequestPolicyId: undefined,
+        viewerProtocolPolicy: "redirect-to-https",
         allowedHttpMethods: [
           "HEAD",
           "DELETE",
