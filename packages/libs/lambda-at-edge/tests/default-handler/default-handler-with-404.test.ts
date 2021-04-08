@@ -26,6 +26,18 @@ jest.mock(
   }
 );
 
+jest.mock("@aws-sdk/client-cloudfront/CloudFrontClient", () =>
+  require("../mocks/cloudfront/aws-sdk-cloudfront-client.mock")
+);
+
+jest.mock("@aws-sdk/client-lambda/LambdaClient", () =>
+  require("../mocks/lambda/aws-sdk-lambda-client.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/S3Client", () =>
+  require("../mocks/s3/aws-sdk-s3-client.mock")
+);
+
 describe("Lambda@Edge", () => {
   it("renders a static 404 page if request path can't be matched to any page / api routes and a 404.html was generated", async () => {
     const event = createCloudFrontEvent({

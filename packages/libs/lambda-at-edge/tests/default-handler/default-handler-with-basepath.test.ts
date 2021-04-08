@@ -13,7 +13,17 @@ jest.mock(
     virtual: true
   }
 );
+jest.mock("@aws-sdk/client-cloudfront/CloudFrontClient", () =>
+  require("../mocks/cloudfront/aws-sdk-cloudfront-client.mock")
+);
 
+jest.mock("@aws-sdk/client-lambda/LambdaClient", () =>
+  require("../mocks/lambda/aws-sdk-lambda-client.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/S3Client", () =>
+  require("../mocks/s3/aws-sdk-s3-client.mock")
+);
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../../src/${mockPagePath}`,
