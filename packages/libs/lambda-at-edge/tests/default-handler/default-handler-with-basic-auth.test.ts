@@ -37,6 +37,14 @@ jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.mock")
 );
 
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-put-object-command.mock")
+);
+
 describe("Lambda@Edge", () => {
   describe("Basic Authentication", () => {
     it.each`

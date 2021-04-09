@@ -38,6 +38,14 @@ jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.mock")
 );
 
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-put-object-command.mock")
+);
+
 describe("Lambda@Edge", () => {
   it("renders a static 404 page if request path can't be matched to any page / api routes and a 404.html was generated", async () => {
     const event = createCloudFrontEvent({
