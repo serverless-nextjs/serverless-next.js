@@ -202,12 +202,6 @@ describe("Working with an existing distribution", () => {
     });
 
     assertHasCacheBehavior(mockUpdateDistribution, {
-      PathPattern: "/existing/path1",
-      MinTTL: 10,
-      TargetOriginId: "existingorigin1.com"
-    });
-
-    assertHasCacheBehavior(mockUpdateDistribution, {
       PathPattern: "/existing/path2",
       MinTTL: 10,
       TargetOriginId: "existingorigin2.com"
