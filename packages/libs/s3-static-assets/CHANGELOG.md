@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.4.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.4.0-alpha.4...@sls-next/s3-static-assets@1.4.0-alpha.5) (2021-04-10)
+
+### Bug Fixes
+
+- **s3-static-assets:** fix s3 directory read for fast-glob on windows ([#986](https://github.com/serverless-nextjs/serverless-next.js/issues/986)) ([7218008](https://github.com/serverless-nextjs/serverless-next.js/commit/72180085642b260df459bdb715d2cb446860a79e))
+
 # [1.4.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/s3-static-assets@1.4.0-alpha.2...@sls-next/s3-static-assets@1.4.0-alpha.4) (2021-03-10)
 
 ### Bug Fixes
