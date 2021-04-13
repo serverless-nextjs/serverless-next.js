@@ -51,7 +51,7 @@ module.exports = (originId, defaults = {}) => {
   }
 
   if (originRequestPolicyId) {
-    cacheBehaviour.OriginRequestPolicyId = originRequestPolicyId;
+    defaultCacheBehavior.OriginRequestPolicyId = originRequestPolicyId;
   }
 
   addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);
