@@ -43,6 +43,14 @@ jest.mock(
   }
 );
 
+jest.mock("@aws-sdk/client-cloudfront/CloudFrontClient", () =>
+  require("../mocks/cloudfront/aws-sdk-cloudfront-client.mock")
+);
+
+jest.mock("@aws-sdk/client-lambda/LambdaClient", () =>
+  require("../mocks/lambda/aws-sdk-lambda-client.mock")
+);
+
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../../src/${mockPagePath}`,

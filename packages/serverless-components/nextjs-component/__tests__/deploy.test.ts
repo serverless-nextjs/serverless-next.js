@@ -111,9 +111,19 @@ describe("deploy tests", () => {
                 ]
               },
               {
+                Action: ["lambda:InvokeFunction"],
                 Effect: "Allow",
-                Resource: `arn:aws:s3:::bucket-xyz/*`,
-                Action: ["s3:GetObject", "s3:PutObject"]
+                Resource: "*"
+              },
+              {
+                Action: ["cloudfront:CreateInvalidation"],
+                Effect: "Allow",
+                Resource: "*"
+              },
+              {
+                Action: ["s3:GetObject", "s3:PutObject"],
+                Effect: "Allow",
+                Resource: "arn:aws:s3:::bucket-xyz/*"
               }
             ]
           }
@@ -142,6 +152,16 @@ describe("deploy tests", () => {
                   "logs:CreateLogStream",
                   "logs:PutLogEvents"
                 ]
+              },
+              {
+                Action: ["lambda:InvokeFunction"],
+                Effect: "Allow",
+                Resource: "*"
+              },
+              {
+                Action: ["cloudfront:CreateInvalidation"],
+                Effect: "Allow",
+                Resource: "*"
               },
               {
                 Effect: "Allow",
@@ -177,6 +197,16 @@ describe("deploy tests", () => {
                 ]
               },
               {
+                Action: ["lambda:InvokeFunction"],
+                Effect: "Allow",
+                Resource: "*"
+              },
+              {
+                Action: ["cloudfront:CreateInvalidation"],
+                Effect: "Allow",
+                Resource: "*"
+              },
+              {
                 Effect: "Allow",
                 Resource: `arn:aws:s3:::bucket-xyz/*`,
                 Action: ["s3:GetObject", "s3:PutObject"]
@@ -204,7 +234,8 @@ describe("deploy tests", () => {
             "origin-response":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
           },
-          compress: true
+          compress: true,
+          viewerProtocolPolicy: "redirect-to-https"
         },
         origins: [
           {
@@ -274,13 +305,7 @@ describe("deploy tests", () => {
     });
 
     it("invalidates distribution cache", () => {
-      expect(mockCreateInvalidation).toBeCalledWith({
-        credentials: {
-          accessKeyId: "123",
-          secretAccessKey: "456"
-        },
-        distributionId: "cloudfrontdistrib"
-      });
+      expect(mockCreateInvalidation).toBeCalledTimes(0);
     });
   });
 

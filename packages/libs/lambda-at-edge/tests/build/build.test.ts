@@ -371,7 +371,7 @@ describe("Builder Tests", () => {
     });
   });
 
-  describe("Minified handlers build", () => {
+  describe("Minified handlers not build", () => {
     beforeEach(async () => {
       const mockExeca = execa as jest.Mock;
       mockExeca.mockResolvedValueOnce();
@@ -382,33 +382,33 @@ describe("Builder Tests", () => {
       fseEmptyDirSpy = jest.spyOn(fse, "emptyDir");
 
       const builder = new Builder(fixturePath, outputDir, {
-        minifyHandlers: true
+        minifyHandlers: false
       });
       await builder.build();
     });
 
-    it("default handler is minified", async () => {
+    it("default handler is not minified", async () => {
       const defaultHandler = await fse.readFile(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/index.js`)
       );
 
-      expect(countLines(defaultHandler.toString())).toEqual(2);
+      expect(countLines(defaultHandler.toString())).toBeGreaterThan(1);
     });
 
-    it("API handler is minified", async () => {
+    it("API handler is not minified", async () => {
       const apiHandler = await fse.readFile(
         join(outputDir, `${API_LAMBDA_CODE_DIR}/index.js`)
       );
 
-      expect(countLines(apiHandler.toString())).toEqual(2);
+      expect(countLines(apiHandler.toString())).toBeGreaterThan(1);
     });
 
-    it("Image handler is minified", async () => {
+    it("Image handler is not minified", async () => {
       const imageHandler = await fse.readFile(
         join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}/index.js`)
       );
 
-      expect(countLines(imageHandler.toString())).toEqual(2);
+      expect(countLines(imageHandler.toString())).toBeGreaterThan(1);
     });
   });
 

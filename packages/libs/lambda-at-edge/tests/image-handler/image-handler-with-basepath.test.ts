@@ -63,7 +63,7 @@ describe("Image lambda handler", () => {
           "cache-control": [
             {
               key: "cache-control",
-              value: "public, max-age=60"
+              value: "public, max-age=60, s-maxage=2678400, immutable"
             }
           ],
           etag: [
@@ -122,7 +122,7 @@ describe("Image lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,

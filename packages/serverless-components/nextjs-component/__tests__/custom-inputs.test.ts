@@ -503,7 +503,7 @@ describe("Custom inputs", () => {
     inputName                                                     | expectedName
     ${undefined}                                                  | ${{ defaultName: undefined, apiName: undefined }}
     ${{}}                                                         | ${{ defaultName: undefined, apiName: undefined }}
-    ${"fooFunction"}                                              | ${{ defaultName: "fooFunction", apiName: "fooFunction" }}
+    ${"fooFunction"}                                              | ${{ defaultName: "fooFunction-default-dev", apiName: "fooFunction-api-dev" }}
     ${{ defaultLambda: "fooFunction" }}                           | ${{ defaultName: "fooFunction", apiName: undefined }}
     ${{ apiLambda: "fooFunction" }}                               | ${{ defaultName: undefined, apiName: "fooFunction" }}
     ${{ defaultLambda: "fooFunction", apiLambda: "barFunction" }} | ${{ defaultName: "fooFunction", apiName: "barFunction" }}
@@ -759,6 +759,7 @@ describe("Custom inputs", () => {
         minTTL: 0,
         defaultTTL: 0,
         maxTTL: 31536000,
+        viewerProtocolPolicy: "redirect-to-https",
         allowedHttpMethods: [
           "HEAD",
           "DELETE",

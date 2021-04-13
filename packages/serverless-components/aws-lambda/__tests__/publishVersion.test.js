@@ -12,7 +12,7 @@ const {
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
 const mockIamRole = jest.fn();
-jest.mock("@serverless/aws-iam-role", () =>
+jest.mock("@getjerry/aws-iam-role", () =>
   jest.fn(() => {
     const iamRole = mockIamRole;
     iamRole.init = () => {};
@@ -47,13 +47,16 @@ describe("publishVersion", () => {
     const tmpFolder = await createTmpDir();
 
     await component.default({
-      code: tmpFolder
+      code: tmpFolder,
+      role: {
+        name: "name",
+        arn: "arn"
+      }
     });
 
     const versionResult = await component.publishVersion();
 
     expect(mockPublishVersion).toBeCalledWith({
-      FunctionName: expect.any(String),
       CodeSha256: "LQT0VA="
     });
 
@@ -85,17 +88,24 @@ describe("publishVersion", () => {
     const tmpFolder = await createTmpDir();
 
     await component.default({
-      code: tmpFolder
+      code: tmpFolder,
+      role: {
+        name: "name",
+        arn: "arn"
+      }
     });
 
     await component.default({
-      code: tmpFolder
+      code: tmpFolder,
+      role: {
+        name: "name",
+        arn: "arn"
+      }
     });
 
     const versionResult = await component.publishVersion();
 
     expect(mockPublishVersion).toBeCalledWith({
-      FunctionName: expect.any(String),
       CodeSha256: "XYZ0VA=" // compare against the hash received from the function update, *not* create
     });
 

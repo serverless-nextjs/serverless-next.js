@@ -13,6 +13,25 @@ jest.mock(
     virtual: true
   }
 );
+jest.mock("@aws-sdk/client-cloudfront/CloudFrontClient", () =>
+  require("../mocks/cloudfront/aws-sdk-cloudfront-client.mock")
+);
+
+jest.mock("@aws-sdk/client-lambda/LambdaClient", () =>
+  require("../mocks/lambda/aws-sdk-lambda-client.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/S3Client", () =>
+  require("../mocks/s3/aws-sdk-s3-client.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
+);
+
+jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
+  require("../mocks/s3/aws-sdk-s3-client-put-object-command.mock")
+);
 
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
@@ -483,121 +502,6 @@ describe("Lambda@Edge", () => {
       expect(request.headers.host[0].value).toEqual(
         "my-bucket.s3.eu-west-1.amazonaws.com"
       );
-    });
-
-    describe("404 page", () => {
-      it("renders 404 page if request path can't be matched to any page / api routes", async () => {
-        const event = createCloudFrontEvent({
-          uri: trailingSlash
-            ? "/basepath/page/does/not/exist/"
-            : "/basepath/page/does/not/exist",
-          host: "mydistribution.cloudfront.net"
-        });
-
-        mockPageRequire("pages/_error.js");
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
-      });
-
-      it("redirects unmatched request path", async () => {
-        let path = "/basepath/page/does/not/exist";
-        let expectedRedirect;
-        if (trailingSlash) {
-          expectedRedirect = path + "/";
-        } else {
-          expectedRedirect = path;
-          path += "/";
-        }
-        await runRedirectTest(path, expectedRedirect, 308);
-      });
-
-      // Next.js serves 404 on pages that do not have basepath prefix. It doesn't redirect whether there is trailing slash or not.
-      it.each`
-        path
-        ${"/terms"}
-        ${"/not/found"}
-        ${"/manifest.json"}
-        ${"/terms/"}
-        ${"/not/found/"}
-        ${"/manifest.json/"}
-      `(
-        "serves 404 page from S3 for path without basepath prefix: $path",
-        async ({ path, expectedPage }) => {
-          const event = createCloudFrontEvent({
-            uri: path,
-            host: "mydistribution.cloudfront.net"
-          });
-
-          const result = await handler(event);
-
-          const request = result as CloudFrontRequest;
-
-          expect(request.origin).toEqual({
-            s3: {
-              authMethod: "origin-access-identity",
-              domainName: "my-bucket.s3.amazonaws.com",
-              path: "/basepath/static-pages/build-id",
-              region: "us-east-1"
-            }
-          });
-          expect(request.uri).toEqual("/404.html");
-          expect(request.headers.host[0].key).toEqual("host");
-          expect(request.headers.host[0].value).toEqual(
-            "my-bucket.s3.amazonaws.com"
-          );
-        }
-      );
-
-      it.each`
-        path
-        ${"/basepath/_next/data/unmatched"}
-      `(
-        "renders 404 page if data request can't be matched for path: $path",
-        async ({ path }) => {
-          const event = createCloudFrontEvent({
-            uri: path,
-            origin: {
-              s3: {
-                domainName: "my-bucket.s3.amazonaws.com"
-              }
-            },
-            config: { eventType: "origin-request" } as any
-          });
-
-          mockPageRequire("./pages/_error.js");
-
-          const response = (await handler(event)) as CloudFrontResultResponse;
-          const body = response.body as string;
-          const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-          expect(decodedBody).toEqual(
-            JSON.stringify({
-              page: "pages/_error.js - 404"
-            })
-          );
-          expect(response.status).toEqual("404");
-        }
-      );
-
-      it("404.html should return 404 status after successful S3 Origin response", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/404.html",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200"
-          } as any
-        });
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-
-        expect(response.status).toEqual("404");
-      });
     });
 
     describe("500 page", () => {

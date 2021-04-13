@@ -16,7 +16,7 @@ module.exports = (originId, defaults = {}) => {
     originRequestPolicyId
   } = defaults;
 
-  const cacheBehavior = {
+  const defaultCacheBehavior = {
     TargetOriginId: originId,
     TrustedSigners: {
       Enabled: false,
@@ -42,19 +42,19 @@ module.exports = (originId, defaults = {}) => {
   };
 
   if (cachePolicyId) {
-    cacheBehaviour.CachePolicyId = cachePolicyId;
+    defaultCacheBehavior.CachePolicyId = cachePolicyId;
   } else {
-    cacheBehaviour.ForwardedValues = getForwardedValues(forward);
-    cacheBehaviour.MinTTL = minTTL;
-    cacheBehaviour.DefaultTTL = defaultTTL;
-    cacheBehaviour.MaxTTL = maxTTL;
+    defaultCacheBehavior.ForwardedValues = getForwardedValues(forward);
+    defaultCacheBehavior.MinTTL = minTTL;
+    defaultCacheBehavior.DefaultTTL = defaultTTL;
+    defaultCacheBehavior.MaxTTL = maxTTL;
   }
 
   if (originRequestPolicyId) {
     cacheBehaviour.OriginRequestPolicyId = originRequestPolicyId;
   }
 
-  addLambdaAtEdgeToCacheBehavior(cacheBehavior, defaults["lambda@edge"]);
+  addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);
 
-  return cacheBehavior;
+  return defaultCacheBehavior;
 };

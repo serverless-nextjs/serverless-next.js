@@ -16,7 +16,9 @@ import {
 
 import { CloudFrontClient } from "@aws-sdk/client-cloudfront/CloudFrontClient";
 import { LambdaClient } from "@aws-sdk/client-lambda/LambdaClient";
-import { PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
+import { PutObjectCommand } from "@aws-sdk/client-s3/commands/PutObjectCommand";
+import { GetObjectCommand } from "@aws-sdk/client-s3/commands/GetObjectCommand";
+
 import { S3Client } from "@aws-sdk/client-s3/S3Client";
 
 import { InvokeCommand } from "@aws-sdk/client-lambda";
@@ -25,9 +27,9 @@ import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestEvent,
   OriginResponseEvent,
-  RevalidationEvent,
   PerfLogger,
   PreRenderedManifest as PrerenderManifestType,
+  RevalidationEvent,
   RoutesManifest
 } from "../types";
 import { performance } from "perf_hooks";
