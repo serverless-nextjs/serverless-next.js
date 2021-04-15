@@ -125,6 +125,8 @@ describe("Lambda@Edge", () => {
         ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
         ${"/basepath/john/123"}                                     | ${"/[username]/[id].html"}
         ${"/basepath/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
+        ${"/basepath/tests/prerender-manifest-fallback/not-built"}  | ${"/tests/prerender-manifest-fallback/not-built.html"}
+        ${"/basepath/preview"}                                      | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -386,11 +388,11 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "",
+              path: "/basepath",
               region: "us-east-1"
             }
           });
-          expect(request.uri).toEqual(path);
+          expect(request.uri).toEqual(path.slice(9));
         }
       );
 

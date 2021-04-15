@@ -495,10 +495,12 @@ const handleOriginRequest = async ({
         // 1. URI routes to _error.js
         // 2. URI is not unmatched, but it's not in prerendered routes nor is for an SSG fallback, i.e this is an SSR data request, we need to SSR render the JSON
         break S3Check;
+      } else {
+        // Otherwise, this is an SSG data request, so continue to get to try to get the JSON from S3.
+        // For fallback SSG, this will fail the first time but the origin response handler will render and store in S3.
+        s3Origin.path = basePath;
+        request.uri = uri;
       }
-
-      // Otherwise, this is an SSG data request, so continue to get to try to get the JSON from S3.
-      // For fallback SSG, this will fail the first time but the origin response handler will render and store in S3.
     }
 
     addS3HostHeader(request, normalisedS3DomainName);
@@ -582,10 +584,11 @@ const handleOriginResponse = async ({
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
+  const { uri } = request;
   const { status } = response;
   if (status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (request.uri === "/404.html") {
+    if (uri === "/404.html") {
       response.status = "404";
       response.statusDescription = "Not Found";
     }
@@ -597,7 +600,6 @@ const handleOriginResponse = async ({
     return response;
   }
 
-  const uri = normaliseUri(request.uri, routesManifest);
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
@@ -609,6 +611,7 @@ const handleOriginResponse = async ({
     maxAttempts: 3,
     retryStrategy: await buildS3RetryStrategy()
   });
+  const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
   let pagePath;
   if (
     isDataRequest(uri) &&
@@ -629,23 +632,20 @@ const handleOriginResponse = async ({
       "passthrough"
     );
     if (isSSG) {
+      const jsonKey = uri.replace(/^\//, "");
+      const htmlKey = uri
+        .replace(/^\/?_next\/data/, "static-pages")
+        .replace(/.json$/, ".html");
       const s3JsonParams = {
         Bucket: bucketName,
-        Key: `${basePath}${basePath === "" ? "" : "/"}${uri.replace(
-          /^\//,
-          ""
-        )}`,
+        Key: `${s3BasePath}${jsonKey}`,
         Body: JSON.stringify(renderOpts.pageData),
         ContentType: "application/json",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
       const s3HtmlParams = {
         Bucket: bucketName,
-        Key: `${basePath}${basePath === "" ? "" : "/"}static-pages/${
-          manifest.buildId
-        }/${request.uri
-          .replace(`/_next/data/${manifest.buildId}/`, "")
-          .replace(".json", ".html")}`,
+        Key: `${s3BasePath}${htmlKey}`,
         Body: html,
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
@@ -667,9 +667,9 @@ const handleOriginResponse = async ({
     if (!hasFallback) return response;
 
     // If route has fallback, return that page from S3, otherwise return 404 page
-    const s3Key = `${basePath}${basePath === "" ? "" : "/"}static-pages/${
-      manifest.buildId
-    }${hasFallback.fallback || "/404.html"}`;
+    const s3Key = `${s3BasePath}static-pages/${manifest.buildId}${
+      hasFallback.fallback || "/404.html"
+    }`;
 
     const { GetObjectCommand } = await import(
       "@aws-sdk/client-s3/commands/GetObjectCommand"
