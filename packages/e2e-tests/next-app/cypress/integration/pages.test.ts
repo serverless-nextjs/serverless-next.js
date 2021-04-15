@@ -116,8 +116,8 @@ describe("Pages Tests", () => {
           cy.ensureRouteHasStatusCode(path, 404);
           cy.visit(path, { failOnStatusCode: false });
 
-          // Default Next.js 404 page
-          cy.contains("404");
+          // Render custom Next.js 404 page
+          cy.contains("Custom 404");
         });
       }
     );
