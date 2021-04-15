@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.44](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.43...@sls-next/serverless-component@1.19.0-alpha.44) (2021-04-15)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
 # [1.19.0-alpha.43](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.42...@sls-next/serverless-component@1.19.0-alpha.43) (2021-04-10)
 
 **Note:** Version bump only for package @sls-next/serverless-component
