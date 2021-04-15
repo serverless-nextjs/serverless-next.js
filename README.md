@@ -770,10 +770,10 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
 <a href="https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors">
-<img src="https://contributors-img.web.app/image?repo=serverless-nextjs/serverless-next.js" />
+  <img src="https://contrib.rocks/image?repo=serverless-nextjs/serverless-next.js" />
 </a>
 
-Made with [contributors-img](https://contributors-img.web.app).
+Made with [contributors-img](https://contrib.rocks).
 
 ### Financial Contributors
 
