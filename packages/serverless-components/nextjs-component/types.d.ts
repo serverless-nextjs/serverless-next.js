@@ -31,7 +31,7 @@ export type ServerlessComponentInputs = {
   cloudfront?: CloudfrontOptions;
   minifyHandlers?: boolean;
   uploadStaticAssetsFromBuild?: boolean;
-  deploy?: boolean;
+  deploy?: boolean | string;
   enableHTTPCompression?: boolean;
   authentication?: { username: string; password: string };
   imageOptimizer?: boolean;
@@ -43,7 +43,7 @@ type CloudfrontOptions = Record<string, any>;
 
 export type BuildOptions = {
   cwd?: string;
-  enabled?: boolean;
+  enabled?: boolean | string;
   cmd: string;
   args: string[];
   env?: Record<string, string>;

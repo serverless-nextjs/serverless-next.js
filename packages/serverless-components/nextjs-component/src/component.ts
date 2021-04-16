@@ -205,7 +205,9 @@ class NextjsComponent extends Component {
     const buildConfig: BuildOptions = {
       enabled: inputs.build
         ? // @ts-ignore
-          inputs.build !== false && inputs.build.enabled !== false
+          inputs.build !== false && // @ts-ignore
+          inputs.build.enabled !== false && // @ts-ignore
+          inputs.build.enabled !== "false"
         : true,
       cmd: "node_modules/.bin/next",
       args: ["build"],
@@ -262,7 +264,7 @@ class NextjsComponent extends Component {
   ): Promise<DeploymentResult> {
     // Skip deployment if user explicitly set deploy input to false.
     // Useful when they just want the build outputs to deploy themselves.
-    if (inputs.deploy === false) {
+    if (inputs.deploy === "false" || inputs.deploy === false) {
       return {
         appUrl: SKIPPED_DEPLOY,
         bucketName: SKIPPED_DEPLOY,
