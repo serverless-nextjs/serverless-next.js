@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.45](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.44...@sls-next/serverless-component@1.19.0-alpha.45) (2021-04-16)
+
+### Features
+
+- **nextjs-component:** change ServerlessComponentInputs.deploy and BuildOptions.enabled to a union type ([#999](https://github.com/serverless-nextjs/serverless-next.js/issues/999)) ([#1000](https://github.com/serverless-nextjs/serverless-next.js/issues/1000)) ([3896b12](https://github.com/serverless-nextjs/serverless-next.js/commit/3896b12d7cc85ac44ab4b680c0efe096f7238f8b))
+
 # [1.19.0-alpha.44](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.0-alpha.43...@sls-next/serverless-component@1.19.0-alpha.44) (2021-04-15)
 
 **Note:** Version bump only for package @sls-next/serverless-component

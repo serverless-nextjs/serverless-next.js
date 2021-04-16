@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.33](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.32...@sls-next/lambda-at-edge@1.8.0-alpha.33) (2021-04-16)
+
+### Bug Fixes
+
+- **lambda-at-edge:** various 404 page fixes: ([#1001](https://github.com/serverless-nextjs/serverless-next.js/issues/1001)) ([719f767](https://github.com/serverless-nextjs/serverless-next.js/commit/719f767f504e5ecfc1a4be7b74daa2205acef6a1))
+
 # [1.8.0-alpha.32](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.31...@sls-next/lambda-at-edge@1.8.0-alpha.32) (2021-04-15)
 
 ### Bug Fixes
