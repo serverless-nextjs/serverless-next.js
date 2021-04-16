@@ -72,6 +72,11 @@
     },
     "ssg": {
       "nonDynamic": {
+        "/404": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/test-build-id/404.json"
+        },
         "/": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
