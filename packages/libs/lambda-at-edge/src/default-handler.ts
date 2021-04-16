@@ -699,7 +699,7 @@ const handleOriginResponse = async ({
     // If 404 page does not exist based on manifest, then don't bother trying to retrieve from S3 as it will fail
     if (
       !hasFallback.fallback &&
-      !doesStaticPageExist(`${localePrefix}/404.html`, manifest)
+      !doesStaticPageExist(`${localePrefix}/404`, manifest)
     ) {
       bodyString = "";
       cacheControl = undefined;
