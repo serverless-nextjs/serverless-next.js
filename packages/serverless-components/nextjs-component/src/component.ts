@@ -262,7 +262,7 @@ class NextjsComponent extends Component {
   ): Promise<DeploymentResult> {
     // Skip deployment if user explicitly set deploy input to false.
     // Useful when they just want the build outputs to deploy themselves.
-    if (inputs.deploy === false) {
+    if (inputs.deploy === "false" || inputs.deploy === false) {
       return {
         appUrl: SKIPPED_DEPLOY,
         bucketName: SKIPPED_DEPLOY,
