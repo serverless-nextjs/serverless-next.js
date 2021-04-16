@@ -40,7 +40,8 @@ import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import {
   isLocalePrefixedUri,
-  removeLocalePrefixFromUri
+  removeLocalePrefixFromUri,
+  getLocalePrefixFromUri
 } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
@@ -125,7 +126,8 @@ const normaliseDataRequestUri = (
 };
 
 const router = (
-  manifest: OriginRequestDefaultHandlerManifest
+  manifest: OriginRequestDefaultHandlerManifest,
+  routesManifest: RoutesManifestJson
 ): ((uri: string) => string) => {
   const {
     pages: { ssr, html }
@@ -174,7 +176,7 @@ const router = (
 
     // only use the 404 page if the project exports it
     if (html.nonDynamic["/404"] !== undefined) {
-      return "pages/404.html";
+      return `pages${getLocalePrefixFromUri(uri, routesManifest)}/404.html`;
     }
 
     return "pages/_error.js";
@@ -220,6 +222,21 @@ const normaliseRequestForLocale = (
       }
     }
   }
+};
+
+/**
+ * Checks whether static page exists (HTML/SSG) in the manifest.
+ * @param route
+ * @param manifest
+ */
+const doesStaticPageExist = (
+  route: string,
+  manifest: OriginRequestDefaultHandlerManifest
+) => {
+  return (
+    manifest.pages.html.nonDynamic[route] ||
+    manifest.pages.ssg.nonDynamic[route]
+  );
 };
 
 export const handler = async (
@@ -393,7 +410,7 @@ const handleOriginRequest = async ({
     const customRewrite = getRewritePath(
       request.uri,
       routesManifest,
-      router(manifest),
+      router(manifest, routesManifest),
       uri
     );
     if (customRewrite) {
@@ -476,9 +493,12 @@ const handleOriginRequest = async ({
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
       const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
-      const pagePath = router(manifest)(normalisedDataRequestUri);
+      const pagePath = router(
+        manifest,
+        routesManifest
+      )(normalisedDataRequestUri);
 
-      if (pagePath === "pages/404.html") {
+      if (pagePath.endsWith("/404.html")) {
         // Request static 404 page from s3
         s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
         request.uri = pagePath.replace("pages", "");
@@ -507,7 +527,7 @@ const handleOriginRequest = async ({
     return request;
   }
 
-  const pagePath = router(manifest)(uri);
+  const pagePath = router(manifest, routesManifest)(uri);
 
   if (pagePath.endsWith(".html") && !isPreviewRequest) {
     s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
@@ -588,7 +608,7 @@ const handleOriginResponse = async ({
   const { status } = response;
   if (status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (uri === "/404.html") {
+    if (uri.endsWith("/404.html")) {
       response.status = "404";
       response.statusDescription = "Not Found";
     }
@@ -615,7 +635,7 @@ const handleOriginResponse = async ({
   let pagePath;
   if (
     isDataRequest(uri) &&
-    !(pagePath = router(manifest)(uri)).endsWith(".html")
+    !(pagePath = router(manifest, routesManifest)(uri)).endsWith(".html")
   ) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
@@ -666,27 +686,39 @@ const handleOriginResponse = async ({
     const hasFallback = hasFallbackForUri(uri, manifest, routesManifest);
     if (!hasFallback) return response;
 
+    // Make sure we get locale-specific S3 page
+    const localePrefix = getLocalePrefixFromUri(uri, routesManifest);
+
     // If route has fallback, return that page from S3, otherwise return 404 page
     const s3Key = `${s3BasePath}static-pages/${manifest.buildId}${
-      hasFallback.fallback || "/404.html"
+      hasFallback.fallback || `${localePrefix}/404.html`
     }`;
 
-    const { GetObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/GetObjectCommand"
-    );
-    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
-    const getStream = await import("get-stream");
-    let bodyString;
+    let bodyString, cacheControl;
 
-    const s3Params = {
-      Bucket: bucketName,
-      Key: s3Key
-    };
+    // If 404 page does not exist based on manifest, then don't bother trying to retrieve from S3 as it will fail
+    if (
+      !hasFallback.fallback &&
+      !doesStaticPageExist(`${localePrefix}/404`, manifest)
+    ) {
+      bodyString = "";
+      cacheControl = undefined;
+    } else {
+      const { GetObjectCommand } = await import(
+        "@aws-sdk/client-s3/commands/GetObjectCommand"
+      );
+      // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+      const getStream = await import("get-stream");
 
-    const { Body, CacheControl } = await s3.send(
-      new GetObjectCommand(s3Params)
-    );
-    bodyString = await getStream.default(Body as Readable);
+      const s3Params = {
+        Bucket: bucketName,
+        Key: s3Key
+      };
+
+      const response = await s3.send(new GetObjectCommand(s3Params));
+      bodyString = await getStream.default(response.Body as Readable);
+      cacheControl = response.CacheControl;
+    }
 
     return {
       status: hasFallback.fallback ? "200" : "404",
@@ -703,7 +735,7 @@ const handleOriginResponse = async ({
           {
             key: "Cache-Control",
             value:
-              CacheControl ??
+              cacheControl ??
               (hasFallback.fallback // Use cache-control from S3 response if possible, otherwise use defaults
                 ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
                 : "public, max-age=0, s-maxage=2678400, must-revalidate")

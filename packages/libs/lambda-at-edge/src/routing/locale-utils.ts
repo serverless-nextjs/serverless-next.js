@@ -61,3 +61,18 @@ export function removeLocalePrefixFromUri(
 
   return uri;
 }
+
+export function getLocalePrefixFromUri(
+  uri: string,
+  routesManifest: RoutesManifest
+) {
+  if (routesManifest.i18n) {
+    for (const locale of routesManifest.i18n.locales) {
+      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
+        return `/${locale}`;
+      }
+    }
+  }
+
+  return "";
+}
