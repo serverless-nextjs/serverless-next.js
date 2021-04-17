@@ -125,10 +125,8 @@ describe("Pages Tests", () => {
     [
       { path: "/fallback/a" },
       { path: "/en/fallback/a" },
-      { path: "/fr/fallback/a" },
       { path: "/no-fallback/a" },
-      { path: "/en/no-fallback/a" },
-      { path: "/fr/no-fallback/a" }
+      { path: "/en/no-fallback/a" }
     ].forEach(({ path }) => {
       it(`serves page ${path} with correct content`, () => {
         cy.visit(path);
@@ -142,7 +140,8 @@ describe("Pages Tests", () => {
     [
       { path: "/fallback/c" },
       { path: "/en/fallback/d" },
-      { path: "/fr/fallback/e" }
+      { path: "/fr/fallback/e" },
+      { path: "/fr/fallback/a" }
     ].forEach(({ path }) => {
       it(`serves page ${path} with fallback at first`, () => {
         cy.visit(path);
@@ -154,7 +153,8 @@ describe("Pages Tests", () => {
     [
       { path: "/fallback/c" },
       { path: "/en/fallback/d" },
-      { path: "/fr/fallback/e" }
+      { path: "/fr/fallback/e" },
+      { path: "/fr/fallback/a" }
     ].forEach(({ path }) => {
       it(`serves page ${path} with correct content soon`, () => {
         cy.visit(path);
@@ -168,7 +168,8 @@ describe("Pages Tests", () => {
     [
       { path: "/no-fallback/c" },
       { path: "/en/no-fallback/c" },
-      { path: "/fr/no-fallback/c" }
+      { path: "/fr/no-fallback/c" },
+      { path: "/fr/no-fallback/a" }
     ].forEach(({ path }) => {
       it(`serves 404 page for ${path}`, () => {
         cy.ensureRouteHasStatusCode(path, 404);
