@@ -1017,7 +1017,10 @@ class Builder {
           return copyIfExists(source, destination);
         })
       );
+    }
 
+    // Dynamic routes are unlocalized even in version 3
+    for (const locale of routesManifest.i18n?.locales ?? [""]) {
       fallbackHTMLPageAssets.concat(
         Object.values(prerenderManifest.dynamicRoutes ?? {})
           .filter(({ fallback }) => {
