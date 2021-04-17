@@ -733,13 +733,13 @@ class Builder {
           }
 
           newSsgRoute.srcRoute = newSsgRoute.srcRoute
-            ? `/${locale}/${newSsgRoute.srcRoute}`
+            ? `/${locale}${newSsgRoute.srcRoute}`
             : newSsgRoute.srcRoute;
         }
 
         for (const key in ssgPages.dynamic) {
           const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-          localeSsgPages.dynamic[newKey] = ssgPages.dynamic[key];
+          localeSsgPages.dynamic[newKey] = { ...ssgPages.dynamic[key] };
 
           const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
 
