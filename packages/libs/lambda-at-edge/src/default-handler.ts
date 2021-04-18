@@ -683,7 +683,12 @@ const handleOriginResponse = async ({
     res.end(JSON.stringify(renderOpts.pageData));
     return await responsePromise;
   } else {
-    const hasFallback = hasFallbackForUri(uri, manifest, routesManifest);
+    const hasFallback = Object.values(manifest.pages.ssg.dynamic).find(
+      (routeConfig) => {
+        const re = new RegExp(routeConfig.routeRegex);
+        return re.test(uri);
+      }
+    );
     if (!hasFallback) return response;
 
     // Make sure we get locale-specific S3 page

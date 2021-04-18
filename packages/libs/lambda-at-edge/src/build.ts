@@ -733,13 +733,13 @@ class Builder {
           }
 
           newSsgRoute.srcRoute = newSsgRoute.srcRoute
-            ? `/${locale}/${newSsgRoute.srcRoute}`
+            ? `/${locale}${newSsgRoute.srcRoute}`
             : newSsgRoute.srcRoute;
         }
 
         for (const key in ssgPages.dynamic) {
           const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-          localeSsgPages.dynamic[newKey] = ssgPages.dynamic[key];
+          localeSsgPages.dynamic[newKey] = { ...ssgPages.dynamic[key] };
 
           const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
 
@@ -1017,7 +1017,10 @@ class Builder {
           return copyIfExists(source, destination);
         })
       );
+    }
 
+    // Dynamic routes are unlocalized even in version 3
+    for (const locale of routesManifest.i18n?.locales ?? [""]) {
       fallbackHTMLPageAssets.concat(
         Object.values(prerenderManifest.dynamicRoutes ?? {})
           .filter(({ fallback }) => {

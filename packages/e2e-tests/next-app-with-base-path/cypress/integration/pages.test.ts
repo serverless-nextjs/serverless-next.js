@@ -87,6 +87,60 @@ describe("Pages Tests", () => {
     });
   });
 
+  describe("Dynamic SSG pages", () => {
+    [
+      { path: "/basepath/fallback/a" },
+      { path: "/basepath/fallback/b" },
+      { path: "/basepath/no-fallback/a" },
+      { path: "/basepath/no-fallback/b" }
+    ].forEach(({ path }) => {
+      it(`serves page ${path} with correct content`, () => {
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.contains(`Hello ${path.slice(-1)}`);
+      });
+    });
+  });
+
+  describe("Dynamic SSG fallback", () => {
+    [
+      { path: "/basepath/fallback/c" },
+      { path: "/basepath/fallback/d" }
+    ].forEach(({ path }) => {
+      it(`serves page ${path} with fallback at first`, () => {
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.contains("Hello fallback");
+      });
+    });
+
+    [
+      { path: "/basepath/fallback/c" },
+      { path: "/basepath/fallback/d" }
+    ].forEach(({ path }) => {
+      it(`serves page ${path} with correct content soon`, () => {
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.contains(`Hello ${path.slice(-1)}`);
+      });
+    });
+  });
+
+  describe("Dynamic SSG no fallback", () => {
+    [
+      { path: "/basepath/no-fallback/c" },
+      { path: "/basepath/no-fallback/d" }
+    ].forEach(({ path }) => {
+      it(`serves 404 page for ${path}`, () => {
+        cy.ensureRouteHasStatusCode(path, 404);
+        cy.visit(path, { failOnStatusCode: false });
+
+        // Default Next.js 404 page
+        cy.contains("404");
+      });
+    });
+  });
+
   describe("404 pages", () => {
     [{ path: "/basepath/unmatched" }, { path: "/unmatched/nested" }].forEach(
       ({ path }) => {
