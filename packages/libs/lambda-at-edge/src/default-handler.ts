@@ -699,15 +699,36 @@ const handleOriginResponse = async ({
       hasFallback.fallback || `${localePrefix}/404.html`
     }`;
 
-    let bodyString, cacheControl;
-
     // If 404 page does not exist based on manifest, then don't bother trying to retrieve from S3 as it will fail
+    // Instead render 404 page via SSR
     if (
       !hasFallback.fallback &&
       !doesStaticPageExist(`${localePrefix}/404`, manifest)
     ) {
-      bodyString = "";
-      cacheControl = undefined;
+      const { req, res } = lambdaAtEdgeCompat(event.Records[0].cf, {
+        enableHTTPCompression: manifest.enableHTTPCompression
+      });
+
+      // Render 404 page using _error.js
+      // TODO: Ideally this should be done in request handler but we will refactor at later time
+      // FIXME: somehow not able to get the headers from the SSR'd response to return correctly
+      const page = require("./pages/_error.js");
+      const { html } = await page.renderReqToHTML(req, res, "passthrough");
+
+      return {
+        status: "404",
+        statusDescription: "Not Found",
+        headers: {
+          ...response.headers,
+          "content-type": [
+            {
+              key: "Content-Type",
+              value: "text/html"
+            }
+          ]
+        },
+        body: html
+      };
     } else {
       const { GetObjectCommand } = await import(
         "@aws-sdk/client-s3/commands/GetObjectCommand"
@@ -720,35 +741,34 @@ const handleOriginResponse = async ({
         Key: s3Key
       };
 
-      const response = await s3.send(new GetObjectCommand(s3Params));
-      bodyString = await getStream.default(response.Body as Readable);
-      cacheControl = response.CacheControl;
-    }
+      const s3Response = await s3.send(new GetObjectCommand(s3Params));
+      const bodyString = await getStream.default(s3Response.Body as Readable);
 
-    return {
-      status: hasFallback.fallback ? "200" : "404",
-      statusDescription: hasFallback.fallback ? "OK" : "Not Found",
-      headers: {
-        ...response.headers,
-        "content-type": [
-          {
-            key: "Content-Type",
-            value: "text/html"
-          }
-        ],
-        "cache-control": [
-          {
-            key: "Cache-Control",
-            value:
-              cacheControl ??
-              (hasFallback.fallback // Use cache-control from S3 response if possible, otherwise use defaults
-                ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
-                : "public, max-age=0, s-maxage=2678400, must-revalidate")
-          }
-        ]
-      },
-      body: bodyString
-    };
+      return {
+        status: hasFallback.fallback ? "200" : "404",
+        statusDescription: hasFallback.fallback ? "OK" : "Not Found",
+        headers: {
+          ...response.headers,
+          "content-type": [
+            {
+              key: "Content-Type",
+              value: "text/html"
+            }
+          ],
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value:
+                s3Response.CacheControl ??
+                (hasFallback.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+                  ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+                  : "public, max-age=0, s-maxage=2678400, must-revalidate")
+            }
+          ]
+        },
+        body: bodyString
+      };
+    }
   }
 };
 
