@@ -80,6 +80,10 @@ describe("Builder Tests (dynamic)", () => {
 
       // These could be removed from build?
       expect(dynamic).toEqual({
+        "/en/fallback-blocking/:slug": {
+          file: "pages/fallback-blocking/[slug].js",
+          regex: "^\\/en\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
         "/en/fallback/:slug": {
           file: "pages/fallback/[slug].js",
           regex: "^\\/en\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
@@ -88,9 +92,17 @@ describe("Builder Tests (dynamic)", () => {
           file: "pages/no-fallback/[slug].js",
           regex: "^\\/en\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
+        "/fallback-blocking/:slug": {
+          file: "pages/fallback-blocking/[slug].js",
+          regex: "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
         "/fallback/:slug": {
           file: "pages/fallback/[slug].js",
           regex: "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/nl/fallback-blocking/:slug": {
+          file: "pages/fallback-blocking/[slug].js",
+          regex: "^\\/nl\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/nl/fallback/:slug": {
           file: "pages/fallback/[slug].js",
@@ -174,6 +186,14 @@ describe("Builder Tests (dynamic)", () => {
       // Should non-localized variants be removed?
       expect(ssg).toEqual({
         dynamic: {
+          "/en/fallback-blocking/[slug]": {
+            dataRoute:
+              "/_next/data/test-build-id/en/fallback-blocking/[slug].json",
+            dataRouteRegex:
+              "^/_next/data/test-build-id/en/fallback\\-blocking/([^/]+?)\\.json$",
+            fallback: null,
+            routeRegex: "^/en/fallback\\-blocking/([^/]+?)(?:/)?$"
+          },
           "/en/fallback/[slug]": {
             dataRoute: "/_next/data/test-build-id/en/fallback/[slug].json",
             dataRouteRegex:
@@ -188,12 +208,28 @@ describe("Builder Tests (dynamic)", () => {
             fallback: false,
             routeRegex: "^/en/no\\-fallback/([^/]+?)(?:/)?$"
           },
+          "/fallback-blocking/[slug]": {
+            dataRoute:
+              "/_next/data/test-build-id/fallback-blocking/[slug].json",
+            dataRouteRegex:
+              "^/_next/data/test-build-id/fallback\\-blocking/([^/]+?)\\.json$",
+            fallback: null,
+            routeRegex: "^/fallback\\-blocking/([^/]+?)(?:/)?$"
+          },
           "/fallback/[slug]": {
             dataRoute: "/_next/data/test-build-id/fallback/[slug].json",
             dataRouteRegex:
               "^/_next/data/test-build-id/fallback/([^/]+?)\\.json$",
             fallback: "/fallback/[slug].html",
             routeRegex: "^/fallback/([^/]+?)(?:/)?$"
+          },
+          "/nl/fallback-blocking/[slug]": {
+            dataRoute:
+              "/_next/data/test-build-id/nl/fallback-blocking/[slug].json",
+            dataRouteRegex:
+              "^/_next/data/test-build-id/nl/fallback\\-blocking/([^/]+?)\\.json$",
+            fallback: null,
+            routeRegex: "^/nl/fallback\\-blocking/([^/]+?)(?:/)?$"
           },
           "/nl/fallback/[slug]": {
             dataRoute: "/_next/data/test-build-id/nl/fallback/[slug].json",
@@ -228,6 +264,11 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: false,
             srcRoute: null
           },
+          "/en/fallback-blocking/a": {
+            dataRoute: "/_next/data/test-build-id/en/fallback-blocking/a.json",
+            initialRevalidateSeconds: false,
+            srcRoute: "/en/fallback-blocking/[slug]"
+          },
           "/en/fallback/a": {
             dataRoute: "/_next/data/test-build-id/en/fallback/a.json",
             initialRevalidateSeconds: false,
@@ -253,6 +294,11 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: false,
             srcRoute: null
           },
+          "/fallback-blocking/a": {
+            dataRoute: "/_next/data/test-build-id/fallback-blocking/a.json",
+            initialRevalidateSeconds: false,
+            srcRoute: "/fallback-blocking/[slug]"
+          },
           "/fallback/a": {
             dataRoute: "/_next/data/test-build-id/fallback/a.json",
             initialRevalidateSeconds: false,
@@ -267,6 +313,11 @@ describe("Builder Tests (dynamic)", () => {
             dataRoute: "/_next/data/test-build-id/nl/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
+          },
+          "/nl/fallback-blocking/a": {
+            dataRoute: "/_next/data/test-build-id/nl/fallback-blocking/a.json",
+            initialRevalidateSeconds: false,
+            srcRoute: "/nl/fallback-blocking/[slug]"
           },
           "/nl/fallback/a": {
             dataRoute: "/_next/data/test-build-id/nl/fallback/a.json",
@@ -340,6 +391,9 @@ describe("Builder Tests (dynamic)", () => {
       const enFallbackPages = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/en/fallback`)
       );
+      const enFallbackBlockingPages = await fse.readdir(
+        join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/en/fallback-blocking`)
+      );
       const enNoFallbackPages = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/en/no-fallback`)
       );
@@ -351,6 +405,9 @@ describe("Builder Tests (dynamic)", () => {
       );
       const fallbackPages = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/fallback`)
+      );
+      const fallbackBlockingPages = await fse.readdir(
+        join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/fallback-blocking`)
       );
       const nofallbackPages = await fse.readdir(
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/no-fallback`)
@@ -376,6 +433,7 @@ describe("Builder Tests (dynamic)", () => {
         "catchall",
         "en",
         "fallback",
+        "fallback-blocking",
         "index.js",
         "nl",
         "no-fallback",
@@ -385,14 +443,16 @@ describe("Builder Tests (dynamic)", () => {
       ]);
 
       // These could be removed
-      expect(enPages).toEqual(["fallback", "no-fallback"]);
+      expect(enPages).toEqual(["fallback", "fallback-blocking", "no-fallback"]);
       expect(enFallbackPages).toEqual([]);
+      expect(enFallbackBlockingPages).toEqual([]);
       expect(enNoFallbackPages).toEqual([]);
 
       expect(catchallPages).toEqual(["[...slug].js"]);
       expect(optionalCatchallPages).toEqual(["[[...slug]].js"]);
 
       expect(fallbackPages).toEqual(["[slug].js"]);
+      expect(fallbackBlockingPages).toEqual(["[slug].js"]);
       expect(nofallbackPages).toEqual(["[slug].js"]);
     });
   });
@@ -414,7 +474,12 @@ describe("Builder Tests (dynamic)", () => {
       const enNextDataFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id/en`)
       );
-      expect(enNextDataFiles).toEqual(["fallback", "no-fallback", "ssg.json"]);
+      expect(enNextDataFiles).toEqual([
+        "fallback",
+        "fallback-blocking",
+        "no-fallback",
+        "ssg.json"
+      ]);
 
       const enPageFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en`)
@@ -423,6 +488,7 @@ describe("Builder Tests (dynamic)", () => {
         "404.html",
         "500.html",
         "fallback",
+        "fallback-blocking",
         "no-fallback",
         "ssg.html",
         "static.html"
@@ -432,6 +498,14 @@ describe("Builder Tests (dynamic)", () => {
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en/fallback`)
       );
       expect(enFallbackFiles).toEqual(["[slug].html", "a.html"]);
+
+      const enFallbackBlockingFiles = await fse.readdir(
+        join(
+          outputDir,
+          `${ASSETS_DIR}/static-pages/test-build-id/en/fallback-blocking`
+        )
+      );
+      expect(enFallbackBlockingFiles).toEqual(["a.html"]);
 
       const enNoFallbackFiles = await fse.readdir(
         join(

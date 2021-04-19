@@ -23,6 +23,10 @@
           "file": "pages/customers/[customer]/[post].js",
           "regex": "^/customers/([^/]+?)/([^/]+?)(?:/)?$"
         },
+        "/fallback-blocking/:slug": {
+          "file": "pages/fallback-blocking/[slug].js",
+          "regex": "^/fallback-blocking/([^/]+?)(?:/)?$"
+        },
         "/tests/prerender-manifest-fallback/:fallback": {
           "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
           "regex": "^/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
@@ -94,6 +98,12 @@
         }
       },
       "dynamic": {
+        "/fallback-blocking/[slug]": {
+          "routeRegex": "^/fallback-blocking/(?:([^/]+?))/?$",
+          "dataRoute": "/_next/data/test-build-id/fallback-blocking/[slug].json",
+          "fallback": null,
+          "dataRouteRegex": "^/_next/data/test-build-id/fallback-blocking/(?:([^/]+?)).json/?$"
+        },
         "/tests/prerender-manifest/[staticPageName]": {
           "routeRegex": "^/tests/prerender-manifest/(?:([^/]+?))/?$",
           "dataRoute": "/_next/data/test-build-id/tests/prerender-manifest/[staticPageName].json",

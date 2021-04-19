@@ -31,6 +31,14 @@
             "namedRegex": "^/fallback/(?<slug>[^/]+?)(?:/)?$"
         },
         {
+            "page": "/fallback-blocking/[slug]",
+            "regex": "^/fallback\\-blocking/([^/]+?)(?:/)?$",
+            "routeKeys": {
+                "slug": "slug"
+            },
+            "namedRegex": "^/fallback\\-blocking/(?<slug>[^/]+?)(?:/)?$"
+        },
+        {
             "page": "/no-fallback/[slug]",
             "regex": "^/no\\-fallback/([^/]+?)(?:/)?$",
             "routeKeys": {
@@ -67,6 +75,14 @@
             },
             "dataRouteRegex": "^/_next/data/test-build-id/fallback/([^/]+?)\\.json$",
             "namedDataRouteRegex": "^/_next/data/test-build-id/fallback/(?<slug>[^/]+?)\\.json$"
+        },
+        {
+            "page": "/fallback-blocking/[slug]",
+            "routeKeys": {
+                "slug": "slug"
+            },
+            "dataRouteRegex": "^/_next/data/test-build-id/fallback\\-blocking/([^/]+?)\\.json$",
+            "namedDataRouteRegex": "^/_next/data/test-build-id/fallback\\-blocking/(?<slug>[^/]+?)\\.json$"
         },
         {
             "page": "/no-fallback/[slug]",

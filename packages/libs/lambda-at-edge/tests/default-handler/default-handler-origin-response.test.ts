@@ -140,6 +140,52 @@ describe("Lambda@Edge origin response", () => {
       });
     });
 
+    it("renders and uploads HTML and JSON for fallback: blocking", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/fallback-blocking/not-yet-built.html",
+        host: "mydistribution.cloudfront.net",
+        config: { eventType: "origin-response" } as any,
+        response: {
+          headers: {},
+          status: "403"
+        } as any
+      });
+
+      mockPageRequire("pages/fallback-blocking/[slug].js");
+
+      const response = await handler(event);
+
+      const cfResponse = response as CloudFrontResultResponse;
+      const decodedBody = Buffer.from(
+        cfResponse.body as string,
+        "base64"
+      ).toString("utf8");
+
+      const headers = response.headers as CloudFrontHeaders;
+      expect(headers["content-type"][0].value).toEqual("text/html");
+      expect(decodedBody).toEqual("<div>Rendered Page</div>");
+      expect(cfResponse.status).toEqual(200);
+
+      expect(s3Client.send).toHaveBeenNthCalledWith(1, {
+        Command: "PutObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "_next/data/build-id/fallback-blocking/not-yet-built.json",
+        Body: JSON.stringify({
+          page: "pages/fallback-blocking/[slug].js"
+        }),
+        ContentType: "application/json",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      });
+      expect(s3Client.send).toHaveBeenNthCalledWith(2, {
+        Command: "PutObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "static-pages/build-id/fallback-blocking/not-yet-built.html",
+        Body: "<div>Rendered Page</div>",
+        ContentType: "text/html",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      });
+    });
+
     it("renders and uploads HTML and JSON for fallback SSG data requests", async () => {
       const event = createCloudFrontEvent({
         uri: "/_next/data/build-id/fallback/not-yet-built.json",
