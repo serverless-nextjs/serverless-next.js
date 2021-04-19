@@ -236,7 +236,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       {
         enableLogging: props.withLogging ? true : undefined,
         certificate: props.domain?.certificate,
-        domainNames: props.domain ? [props.domain.domainName] : undefined,
+        domainNames: props.domain ? props.domain.domainNames : undefined,
         defaultRootObject: "",
         defaultBehavior: {
           viewerProtocolPolicy:
@@ -375,10 +375,14 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     if (props.domain) {
-      this.aRecord = new ARecord(this, "AliasRecord", {
-        recordName: props.domain.domainName,
-        zone: props.domain.hostedZone,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution))
+      props.domain.domainNames.forEach((domainName) => {
+        this.aRecord = new ARecord(this, "AliasRecord", {
+          recordName: domainName,
+          zone: props.domain.hostedZone,
+          target: RecordTarget.fromAlias(
+            new CloudFrontTarget(this.distribution)
+          )
+        });
       });
     }
   }
