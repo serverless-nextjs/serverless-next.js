@@ -179,33 +179,6 @@ describe("Pages Tests", () => {
     });
   });
 
-  describe("Dynamic SSG fallback blocking", () => {
-    [
-      { path: "/fallback/c" },
-      { path: "/en/fallback/d" },
-      { path: "/fr/fallback/e" }
-    ].forEach(({ path }) => {
-      it(`serves page ${path} with fallback at first`, () => {
-        cy.visit(path);
-        cy.location("pathname").should("eq", path);
-        cy.contains("Hello fallback");
-      });
-    });
-
-    [
-      { path: "/fallback/c" },
-      { path: "/en/fallback/d" },
-      { path: "/fr/fallback/e" },
-      { path: "/fr/fallback/a" }
-    ].forEach(({ path }) => {
-      it(`serves page ${path} with correct content soon`, () => {
-        cy.visit(path);
-        cy.location("pathname").should("eq", path);
-        cy.contains(`Hello ${path.slice(-1)}`);
-      });
-    });
-  });
-
   describe("Dynamic SSG no fallback", () => {
     [
       { path: "/no-fallback/c" },
