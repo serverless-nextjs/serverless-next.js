@@ -21,7 +21,7 @@ import {
   RoutesManifest
 } from "./types";
 import { performance } from "perf_hooks";
-import { ServerResponse } from "http";
+import { OutgoingHttpHeaders, ServerResponse } from "http";
 import type { Readable } from "stream";
 import {
   createRedirectResponse,
@@ -687,7 +687,11 @@ const handleOriginResponse = async ({
         s3.send(new PutObjectCommand(s3HtmlParams))
       ]);
     }
-    res.writeHead(200, response.headers as any);
+    const outHeaders: OutgoingHttpHeaders = {};
+    Object.entries(response.headers).map(([name, headers]) => {
+      outHeaders[name] = headers.map(({ value }) => value);
+    });
+    res.writeHead(200, outHeaders);
     if (isDataRequest(uri)) {
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
