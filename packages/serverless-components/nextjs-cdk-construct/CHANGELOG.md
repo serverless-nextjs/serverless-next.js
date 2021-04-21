@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.40](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.39...@sls-next/cdk-construct@1.19.0-alpha.40) (2021-04-21)
+
+### Bug Fixes
+
+- **cdk-construct:** fix build error in cdk-construct ([d708265](https://github.com/serverless-nextjs/serverless-next.js/commit/d708265ddda808f7340e1257390097e8c1f2663d))
+
 # [1.19.0-alpha.39](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.38...@sls-next/cdk-construct@1.19.0-alpha.39) (2021-04-21)
 
 ### Features
