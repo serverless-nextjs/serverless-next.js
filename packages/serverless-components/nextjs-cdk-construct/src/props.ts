@@ -18,12 +18,12 @@ export interface Props extends StackProps {
   serverlessBuildOutDir: string;
   /**
    * Is you'd like a custom domain for your site, you'll need to pass in a
-   * `hostedZone`, `certificate` and full `domainName`
+   * `hostedZone`, `certificate` and a list of full `domainNames`
    */
   domain?: {
     hostedZone: IHostedZone;
     certificate: ICertificate;
-    domainName: string;
+    domainNames: string[];
   };
   /**
    * Override props passed to the underlying s3 bucket
