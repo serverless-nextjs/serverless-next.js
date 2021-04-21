@@ -134,7 +134,7 @@ describe("CDK Construct", () => {
       serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
       domain: {
         certificate,
-        domainName,
+        domainNames: [domainName],
         hostedZone
       }
     });

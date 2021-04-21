@@ -3,6 +3,22 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.41](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.40...@sls-next/cdk-construct@1.19.0-alpha.41) (2021-04-21)
+
+**Note:** Version bump only for package @sls-next/cdk-construct
+
+# [1.19.0-alpha.40](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.39...@sls-next/cdk-construct@1.19.0-alpha.40) (2021-04-21)
+
+### Bug Fixes
+
+- **cdk-construct:** fix build error in cdk-construct ([d708265](https://github.com/serverless-nextjs/serverless-next.js/commit/d708265ddda808f7340e1257390097e8c1f2663d))
+
+# [1.19.0-alpha.39](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.38...@sls-next/cdk-construct@1.19.0-alpha.39) (2021-04-21)
+
+### Features
+
+- **cdk-construct:** adding support for multiple domainNames ([#1009](https://github.com/serverless-nextjs/serverless-next.js/issues/1009)) ([c9e87fc](https://github.com/serverless-nextjs/serverless-next.js/commit/c9e87fc5b4bfb7207895f81557533f6eaf401208))
+
 # [1.19.0-alpha.38](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.37...@sls-next/cdk-construct@1.19.0-alpha.38) (2021-04-16)
 
 **Note:** Version bump only for package @sls-next/cdk-construct
