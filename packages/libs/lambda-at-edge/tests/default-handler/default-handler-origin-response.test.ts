@@ -192,7 +192,14 @@ describe("Lambda@Edge origin response", () => {
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
-          headers: {},
+          headers: {
+            date: [
+              {
+                name: "date",
+                value: "Wed, 21 Apr 2021 03:47:27 GMT"
+              }
+            ]
+          },
           status: "403"
         } as any
       });
@@ -208,6 +215,7 @@ describe("Lambda@Edge origin response", () => {
       ).toString("utf8");
 
       const headers = response.headers as CloudFrontHeaders;
+      expect(headers["date"][0].value).toEqual("Wed, 21 Apr 2021 03:47:27 GMT");
       expect(headers["content-type"][0].value).toEqual("application/json");
       expect(JSON.parse(decodedBody)).toEqual({
         page: "pages/fallback/[slug].js"
