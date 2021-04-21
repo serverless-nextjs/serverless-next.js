@@ -174,7 +174,7 @@ const router = (
       }
     }
 
-    // only use the 404 page if the project exports it
+    // Only use the 404 page if the project exports it
     if (html.nonDynamic["/404"] !== undefined) {
       return `pages${getLocalePrefixFromUri(uri, routesManifest)}/404.html`;
     }
