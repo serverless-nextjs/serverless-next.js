@@ -136,6 +136,21 @@ describe("Pages Tests", () => {
     });
   });
 
+  describe("Dynamic SSG fallback blocking", () => {
+    [
+      { path: "/fallback-blocking/a" },
+      { path: "/en/fallback-blocking/a" },
+      { path: "/en/fallback-blocking/c" },
+      { path: "/fr/fallback-blocking/a" }
+    ].forEach(({ path }) => {
+      it(`serves page ${path} with correct content immediately`, () => {
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.contains(`Hello ${path.slice(-1)}`);
+      });
+    });
+  });
+
   describe("Dynamic SSG fallback", () => {
     [
       { path: "/fallback/c" },

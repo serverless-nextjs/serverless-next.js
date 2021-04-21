@@ -1,5 +1,6 @@
 {
     "/catchall/[...slug]": "pages/catchall/[...slug].js",
+    "/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
     "/fallback/[slug]": "pages/fallback/[slug].js",
     "/": "pages/index.js",
     "/no-fallback/[slug]": "pages/no-fallback/[slug].js",

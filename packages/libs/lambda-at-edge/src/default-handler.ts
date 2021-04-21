@@ -21,7 +21,7 @@ import {
   RoutesManifest
 } from "./types";
 import { performance } from "perf_hooks";
-import { ServerResponse } from "http";
+import { OutgoingHttpHeaders, ServerResponse } from "http";
 import type { Readable } from "stream";
 import {
   createRedirectResponse,
@@ -633,8 +633,15 @@ const handleOriginResponse = async ({
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
   let pagePath;
+  const hasFallback = Object.values(manifest.pages.ssg.dynamic).find(
+    (routeConfig) => {
+      const re = new RegExp(routeConfig.routeRegex);
+      return re.test(uri);
+    }
+  );
+  const isFallbackBlocking = hasFallback?.fallback === null;
   if (
-    isDataRequest(uri) &&
+    (isDataRequest(uri) || isFallbackBlocking) &&
     !(pagePath = router(manifest, routesManifest)(uri)).endsWith(".html")
   ) {
     // eslint-disable-next-line
@@ -652,10 +659,12 @@ const handleOriginResponse = async ({
       "passthrough"
     );
     if (isSSG) {
-      const jsonKey = uri.replace(/^\//, "");
-      const htmlKey = uri
-        .replace(/^\/?_next\/data/, "static-pages")
-        .replace(/.json$/, ".html");
+      const baseKey = uri
+        .replace(/^\//, "")
+        .replace(/\.(json|html)$/, "")
+        .replace(/^_next\/data\/[^\/]*\//, "");
+      const jsonKey = `_next/data/${manifest.buildId}/${baseKey}.json`;
+      const htmlKey = `static-pages/${manifest.buildId}/${baseKey}.html`;
       const s3JsonParams = {
         Bucket: bucketName,
         Key: `${s3BasePath}${jsonKey}`,
@@ -678,17 +687,24 @@ const handleOriginResponse = async ({
         s3.send(new PutObjectCommand(s3HtmlParams))
       ]);
     }
-    res.writeHead(200, response.headers as any);
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(renderOpts.pageData));
+    const outHeaders: OutgoingHttpHeaders = {};
+    Object.entries(response.headers).map(([name, headers]) => {
+      outHeaders[name] = headers.map(({ value }) => value);
+    });
+    res.writeHead(200, outHeaders);
+    res.setHeader(
+      "Cache-Control",
+      "public, max-age=0, s-maxage=2678400, must-revalidate"
+    );
+    if (isDataRequest(uri)) {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(renderOpts.pageData));
+    } else {
+      res.setHeader("Content-Type", "text/html");
+      res.end(html);
+    }
     return await responsePromise;
   } else {
-    const hasFallback = Object.values(manifest.pages.ssg.dynamic).find(
-      (routeConfig) => {
-        const re = new RegExp(routeConfig.routeRegex);
-        return re.test(uri);
-      }
-    );
     if (!hasFallback) return response;
 
     // Make sure we get locale-specific S3 page
