@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.34](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.33...@sls-next/lambda-at-edge@1.8.0-alpha.34) (2021-04-21)
+
+### Bug Fixes
+
+- **lambda-at-edge:** render 404 SSR page when there is no static 404 page during fallback response ([9f430dc](https://github.com/serverless-nextjs/serverless-next.js/commit/9f430dca6e88c7c99d560fbb78704de8a97acd16))
+- **lambda-at-edge, e2e-test:** fixes for fallback and fallback e2e tests ([#997](https://github.com/serverless-nextjs/serverless-next.js/issues/997)) ([aad8536](https://github.com/serverless-nextjs/serverless-next.js/commit/aad8536f21cc45a9ddb33a48cb2750d6265a8de1))
+
 # [1.8.0-alpha.33](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.32...@sls-next/lambda-at-edge@1.8.0-alpha.33) (2021-04-16)
 
 ### Bug Fixes
