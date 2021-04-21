@@ -216,6 +216,9 @@ describe("Lambda@Edge origin response", () => {
 
       const headers = response.headers as CloudFrontHeaders;
       expect(headers["date"][0].value).toEqual("Wed, 21 Apr 2021 03:47:27 GMT");
+      expect(headers["cache-control"][0].value).toEqual(
+        "public, max-age=0, s-maxage=2678400, must-revalidate"
+      );
       expect(headers["content-type"][0].value).toEqual("application/json");
       expect(JSON.parse(decodedBody)).toEqual({
         page: "pages/fallback/[slug].js"

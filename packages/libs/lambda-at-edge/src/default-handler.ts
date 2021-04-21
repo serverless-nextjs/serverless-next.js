@@ -692,6 +692,10 @@ const handleOriginResponse = async ({
       outHeaders[name] = headers.map(({ value }) => value);
     });
     res.writeHead(200, outHeaders);
+    res.setHeader(
+      "Cache-Control",
+      "public, max-age=0, s-maxage=2678400, must-revalidate"
+    );
     if (isDataRequest(uri)) {
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
