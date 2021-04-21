@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.36](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.35...@sls-next/lambda-at-edge@1.8.0-alpha.36) (2021-04-21)
+
+### Features
+
+- **lambda-at-edge:** fallback: "blocking" ([#1007](https://github.com/serverless-nextjs/serverless-next.js/issues/1007)) ([ef3c9ad](https://github.com/serverless-nextjs/serverless-next.js/commit/ef3c9adf4e991d23b6b13e550a757747790a55f2))
+
 # [1.8.0-alpha.35](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.34...@sls-next/lambda-at-edge@1.8.0-alpha.35) (2021-04-21)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
