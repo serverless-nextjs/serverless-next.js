@@ -338,11 +338,7 @@ const handleOriginRequest = async ({
     if (newUri.endsWith("/")) {
       newUri = newUri.slice(0, -1);
     }
-  } else if (
-    request.uri !== "/" &&
-    request.uri !== "" &&
-    !uri.endsWith("/404")
-  ) {
+  } else if (/^\/[^/]/.test(request.uri) && !uri.endsWith("/404")) {
     // HTML/SSR pages get redirected based on trailingSlash in next.config.js
     // We do not redirect:
     // 1. Unnormalised URI is "/" or "" as this could cause a redirect loop due to browsers appending trailing slash
