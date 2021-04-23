@@ -199,6 +199,24 @@ describe("Lambda@Edge", () => {
         }
       );
 
+      it.each`
+        path
+        ${"//example.com"}
+        ${"//example.com/"}
+      `(`returns 404 without redirect for $path`, async ({ path }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockPageRequire("pages/_error.js");
+        const response = (await handler(event)) as CloudFrontResultResponse;
+        expect(response.status).toEqual("404");
+        const body = response.body as string;
+        const decodedBody = Buffer.from(body, "base64").toString("utf8");
+        expect(decodedBody).toEqual("pages/_error.js - 404");
+      });
+
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
           uri: "/terms.html",
