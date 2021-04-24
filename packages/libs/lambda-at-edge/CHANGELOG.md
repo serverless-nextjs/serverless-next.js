@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.37](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.36...@sls-next/lambda-at-edge@1.8.0-alpha.37) (2021-04-24)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix vulnerability in trailing slash redirect ([#1018](https://github.com/serverless-nextjs/serverless-next.js/issues/1018)) ([f31931c](https://github.com/serverless-nextjs/serverless-next.js/commit/f31931c4903a1ae87092745beb42047597b4dcad))
+
 # [1.8.0-alpha.36](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.35...@sls-next/lambda-at-edge@1.8.0-alpha.36) (2021-04-21)
 
 ### Features
