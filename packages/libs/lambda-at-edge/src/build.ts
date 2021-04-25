@@ -1170,9 +1170,17 @@ class Builder {
     }
 
     // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
-    const hasImageOptimizer = fse.existsSync(
+    const hasImagesManifest = fse.existsSync(
       join(this.dotNextDir, "images-manifest.json")
     );
+
+    // However if using a non-default loader, the lambda is not needed
+    const imagesManifest = hasImagesManifest
+      ? await fse.readJSON(join(this.dotNextDir, "images-manifest.json"))
+      : null;
+    const imageLoader = imagesManifest?.images?.loader;
+    const isDefaultLoader = !imageLoader || imageLoader === "default";
+    const hasImageOptimizer = hasImagesManifest && isDefaultLoader;
 
     if (hasImageOptimizer) {
       await this.buildImageLambda(imageBuildManifest);
