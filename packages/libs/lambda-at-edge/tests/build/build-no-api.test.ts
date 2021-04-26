@@ -2,7 +2,11 @@ import { join } from "path";
 import fse from "fs-extra";
 import execa from "execa";
 import Builder from "../../src/build";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../../src/build";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
+} from "../../src/build";
 import { cleanupDir, removeNewLineChars } from "../test-utils";
 import { OriginRequestDefaultHandlerManifest } from "../../src/types";
 
@@ -139,6 +143,18 @@ describe("Builder Tests (no API routes)", () => {
 
       const apiDir = await fse.readdir(
         join(outputDir, `${API_LAMBDA_CODE_DIR}`)
+      );
+
+      expect(apiDir).toEqual([]);
+    });
+  });
+
+  describe("Images Handler", () => {
+    it("has empty images handler directory", async () => {
+      expect.assertions(1);
+
+      const apiDir = await fse.readdir(
+        join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}`)
       );
 
       expect(apiDir).toEqual([]);
