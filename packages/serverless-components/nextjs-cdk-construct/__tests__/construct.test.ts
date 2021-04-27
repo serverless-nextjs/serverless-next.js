@@ -3,9 +3,10 @@ import { SynthUtils } from "@aws-cdk/assert";
 import { Stack } from "@aws-cdk/core";
 import path from "path";
 import { NextJSLambdaEdge } from "../src";
-import { Runtime } from "@aws-cdk/aws-lambda";
+import { Runtime, Function, Code } from "@aws-cdk/aws-lambda";
 import { Certificate } from "@aws-cdk/aws-certificatemanager";
 import { HostedZone } from "@aws-cdk/aws-route53";
+import { LambdaEdgeEventType } from "@aws-cdk/aws-cloudfront";
 
 describe("CDK Construct", () => {
   it("passes correct lambda options to underlying lambdas when single value passed", () => {
@@ -181,5 +182,57 @@ describe("CDK Construct", () => {
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
     expect(synthesizedStack).toCountResources("AWS::Route53::RecordSet", 0);
+  });
+
+  it("concatenates edgeLambdas passed to defaultBehavior", () => {
+    const stack = new Stack();
+
+    const viewerRequestFunction = new Function(
+      stack,
+      "ViewerRequestEdgeFunction",
+      {
+        code: Code.fromInline(`module.handler = () => {}`),
+        handler: "index.handler",
+        runtime: Runtime.NODEJS_10_X,
+        functionName: "viewerRequest-test"
+      }
+    );
+
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      runtime: Runtime.NODEJS_10_X,
+      defaultBehavior: {
+        edgeLambdas: [
+          {
+            functionVersion: viewerRequestFunction.currentVersion,
+            eventType: LambdaEdgeEventType.VIEWER_REQUEST
+          }
+        ]
+      }
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::Distribution",
+      {
+        DistributionConfig: {
+          DefaultCacheBehavior: {
+            LambdaFunctionAssociations: [
+              {
+                IncludeBody: true,
+                EventType: LambdaEdgeEventType.ORIGIN_REQUEST.toString()
+              },
+              {
+                EventType: LambdaEdgeEventType.ORIGIN_RESPONSE.toString()
+              },
+              {
+                EventType: LambdaEdgeEventType.VIEWER_REQUEST.toString()
+              }
+            ]
+          }
+        }
+      }
+    );
   });
 });
