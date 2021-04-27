@@ -642,6 +642,13 @@ const handleOriginResponse = async ({
   ) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
+    // Reconstruct original uri for next/router
+    if (uri.endsWith(".html")) {
+      request.uri = uri.slice(0, uri.length - 5);
+      if (manifest.trailingSlash) {
+        request.uri += "/";
+      }
+    }
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
       event.Records[0].cf,
       {

@@ -147,6 +147,12 @@ describe("Pages Tests", () => {
         cy.visit(path);
         cy.location("pathname").should("eq", path);
         cy.contains(`Hello ${path.slice(-1)}`);
+        cy.request({ url: path }).then((response) => {
+          // Next.js asPath does not include locale prefixes or basepath
+          expect(response.body).to.contain(
+            `|/fallback-blocking/${path.slice(-1)}|`
+          );
+        });
       });
     });
   });
