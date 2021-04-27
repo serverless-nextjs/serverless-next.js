@@ -218,7 +218,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const edgeLambdas = [
+    const edgeLambdas: cloudfront.EdgeLambda[] = [
       {
         includeBody: true,
         eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
@@ -229,6 +229,13 @@ export class NextJSLambdaEdge extends cdk.Construct {
         functionVersion: this.defaultNextLambda.currentVersion
       }
     ];
+
+    const { edgeLambdas: additionalDefaultEdgeLambdas, ...defaultBehavior } =
+      props.defaultBehavior || {};
+
+    if (additionalDefaultEdgeLambdas) {
+      edgeLambdas.push(...additionalDefaultEdgeLambdas);
+    }
 
     this.distribution = new cloudfront.Distribution(
       this,
@@ -247,7 +254,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           compress: true,
           cachePolicy: this.nextLambdaCachePolicy,
           edgeLambdas,
-          ...(props.defaultBehavior || {})
+          ...(defaultBehavior || {})
         },
         additionalBehaviors: {
           ...(this.nextImageLambda
