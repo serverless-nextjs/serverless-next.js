@@ -3,7 +3,8 @@ import { OriginRequestDefaultHandlerManifest } from "@sls-next/lambda-at-edge";
 
 const dynamicPathToInvalidationPath = (dynamicPath: string) => {
   const [firstSegment] = dynamicPath.split("/:");
-  return path.join(firstSegment || "/", "*");
+  // Ensure this is posix path as CloudFront needs forward slash in invalidation
+  return path.posix.join(firstSegment || "/", "*");
 };
 
 export const readInvalidationPathsFromManifest = (

@@ -33,11 +33,12 @@ const readAssetsDirectory = (options: {
   assetsDirectory: string;
 }): CacheConfig => {
   const { assetsDirectory } = options;
-  const publicFiles = path.join(assetsDirectory, "public");
-  const staticFiles = path.join(assetsDirectory, "static");
-  const staticPages = path.join(assetsDirectory, "static-pages");
-  const nextData = path.join(assetsDirectory, "_next", "data");
-  const nextStatic = path.join(assetsDirectory, "_next", "static");
+  // Ensure these are posix paths so they are compatible with AWS S3
+  const publicFiles = path.posix.join(assetsDirectory, "public");
+  const staticFiles = path.posix.join(assetsDirectory, "static");
+  const staticPages = path.posix.join(assetsDirectory, "static-pages");
+  const nextData = path.posix.join(assetsDirectory, "_next", "data");
+  const nextStatic = path.posix.join(assetsDirectory, "_next", "static");
 
   return filterNonExistentPathKeys({
     publicFiles: {
