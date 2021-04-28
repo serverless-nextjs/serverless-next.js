@@ -6,6 +6,8 @@ import * as s3Deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as origins from "@aws-cdk/aws-cloudfront-origins";
 import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
+import * as sqs from "@aws-cdk/aws-sqs";
+import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
@@ -60,6 +62,10 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public aRecord?: ARecord;
 
+  public regenerationQueue: sqs.Queue;
+
+  public regenerationFunction: lambda.Function;
+
   constructor(scope: cdk.Construct, id: string, private props: Props) {
     super(scope, id);
     this.apiBuildManifest = this.readApiBuildManifest();
@@ -77,6 +83,31 @@ export class NextJSLambdaEdge extends cdk.Construct {
       // Override props.
       ...(props.s3Props || {})
     });
+
+    this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
+      // We call the queue the same name as the bucket so that we can easily
+      // reference it from within the lambda@edge, given we can't use env vars
+      // in a lambda@edge
+      queueName: `${this.bucket.bucketName}.fifo`,
+      fifo: true,
+      removalPolicy: cdk.RemovalPolicy.DESTROY
+    });
+
+    this.regenerationFunction = new lambda.Function(
+      this,
+      "RegenerationFunction",
+      {
+        handler: "index.handler",
+        runtime: lambda.Runtime.NODEJS_14_X,
+        code: lambda.Code.fromAsset(
+          path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
+        )
+      }
+    );
+
+    this.regenerationFunction.addEventSource(
+      new lambdaEventSources.SqsEventSource(this.regenerationQueue)
+    );
 
     this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
@@ -111,6 +142,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
       timeout: toLambdaOption("defaultLambda", props.timeout)
     });
 
+    this.bucket.grantRead(this.defaultNextLambda);
+    this.bucket.grantReadWrite(this.regenerationFunction);
+    this.regenerationQueue.grantSendMessages(this.defaultNextLambda);
     this.defaultNextLambda.currentVersion.addAlias("live");
 
     const apis = this.apiBuildManifest?.apis;
@@ -375,10 +409,11 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     if (props.domain) {
-      props.domain.domainNames.forEach((domainName, index) => {
+      const domain = props.domain;
+      domain.domainNames.forEach((domainName, index) => {
         this.aRecord = new ARecord(this, `AliasRecord_${index}`, {
           recordName: domainName,
-          zone: props.domain!.hostedZone, // not sure why ! is needed here
+          zone: domain.hostedZone,
           target: RecordTarget.fromAlias(
             new CloudFrontTarget(this.distribution)
           )

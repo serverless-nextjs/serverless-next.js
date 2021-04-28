@@ -325,8 +325,8 @@ const handleOriginRequest = async ({
   const decodedUri = decodeURI(uri);
   const { pages, publicFiles } = manifest;
 
-  let isPublicFile = publicFiles[decodedUri];
-  let isDataReq = isDataRequest(uri);
+  const isPublicFile = publicFiles[decodedUri];
+  const isDataReq = isDataRequest(uri);
 
   // Handle redirects
   // TODO: refactor redirect logic to another file since this is getting quite large
@@ -602,12 +602,95 @@ const handleOriginResponse = async ({
   const request = event.Records[0].cf.request;
   const { uri } = request;
   const { status } = response;
+  const { region, domainName } = request.origin?.s3 || {};
+  const bucketName = domainName?.replace(`.s3.${region}.amazonaws.com`, "");
+
   if (status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
     if (uri.endsWith("/404.html")) {
       response.status = "404";
       response.statusDescription = "Not Found";
+      return response;
     }
+
+    const initialRevalidateSeconds =
+      manifest.pages.ssg.nonDynamic?.[uri.replace(".html", "")]
+        ?.initialRevalidateSeconds;
+    const lastModifiedHeaderString =
+      response.headers?.["last-modified"]?.[0]?.value;
+    const lastModifiedAt = lastModifiedHeaderString
+      ? new Date(lastModifiedHeaderString)
+      : null;
+    if (typeof initialRevalidateSeconds === "number" && lastModifiedAt) {
+      const createdAgo =
+        // LastModified should always be defined
+        (Date.now() - (lastModifiedAt.getTime() || Date.now())) / 1000;
+
+      const timeToRevalidate = Math.floor(
+        initialRevalidateSeconds - createdAgo
+      );
+
+      response.headers["cache-control"] = [
+        {
+          key: "Cache-Control",
+          value:
+            timeToRevalidate < 0
+              ? "public, max-age=0, s-maxage=0, must-revalidate"
+              : `public, max-age=0, s-maxage=${timeToRevalidate}, must-revalidate`
+        }
+      ];
+
+      if (timeToRevalidate < 0) {
+        const { SQSClient, SendMessageCommand } = await import(
+          "@aws-sdk/client-sqs"
+        );
+        const sqs = new SQSClient({
+          region,
+          maxAttempts: 3,
+          retryStrategy: await buildS3RetryStrategy()
+        });
+        await sqs.send(
+          new SendMessageCommand({
+            QueueUrl: `https://sqs.${region}.amazonaws.com/${bucketName}.fifo`,
+            MessageBody: uri,
+            MessageAttributes: {
+              BucketRegion: {
+                DataType: "String",
+                StringValue: region
+              },
+              BucketName: {
+                DataType: "String",
+                StringValue: bucketName
+              },
+              CloudFrontEventRequest: {
+                DataType: "String",
+                StringValue: JSON.stringify(request)
+              },
+              Manifest: {
+                DataType: "String",
+                StringValue: JSON.stringify(manifest)
+              },
+              ...(basePath
+                ? {
+                    BasePath: {
+                      DataType: "String",
+                      StringValue: basePath
+                    }
+                  }
+                : {})
+            },
+            // We only want to trigger the regeneration once for every previous
+            // update. This will prevent the case where this page is being
+            // requested again whilst its already started to regenerate.
+            MessageDeduplicationId: lastModifiedAt.getTime().toString(),
+            // Only deduplicate based on the object, i.e. we can generate
+            // different pages in parallel, just not the same one
+            MessageGroupId: uri
+          })
+        );
+      }
+    }
+
     return response;
   }
 
@@ -615,9 +698,6 @@ const handleOriginResponse = async ({
   if (request.method === "PUT" || request.method === "DELETE") {
     return response;
   }
-
-  const { domainName, region } = request.origin!.s3!;
-  const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
   // Lazily import only S3Client to reduce init times until actually needed
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
