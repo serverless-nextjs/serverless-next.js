@@ -421,7 +421,8 @@ describe("Builder Tests (dynamic)", () => {
         "manifest.json",
         "pages",
         "prerender-manifest.json",
-        "routes-manifest.json"
+        "routes-manifest.json",
+        "s3-client.js"
       ]);
 
       // api pages should not be included in the default lambda

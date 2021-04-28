@@ -9,7 +9,8 @@ const LOCAL_EXTERNALS = [
   "./manifest.json",
   "./routes-manifest.json",
   "./prerender-manifest.json",
-  "./images-manifest.json"
+  "./images-manifest.json",
+  "./s3-client.js"
 ];
 const NPM_EXTERNALS = ["aws-lambda", "aws-sdk/clients/s3"];
 
