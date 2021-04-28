@@ -230,7 +230,11 @@ class Builder {
    * @param shouldMinify
    */
   async processAndCopyHandler(
-    handlerType: "api-handler" | "default-handler" | "image-handler",
+    handlerType:
+      | "api-handler"
+      | "default-handler"
+      | "image-handler"
+      | "s3-client",
     destination: string,
     shouldMinify: boolean
   ) {
@@ -296,6 +300,11 @@ class Builder {
       this.processAndCopyHandler(
         "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        !!this.buildOptions.minifyHandlers
+      ),
+      this.processAndCopyHandler(
+        "s3-client",
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "s3-client.js"),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler

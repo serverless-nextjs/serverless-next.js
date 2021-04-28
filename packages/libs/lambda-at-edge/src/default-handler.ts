@@ -620,7 +620,7 @@ const handleOriginResponse = async ({
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
   // Lazily import only S3Client to reduce init times until actually needed
-  const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+  const { S3Client } = require("./s3-client.js");
 
   const s3 = new S3Client({
     region: request.origin?.s3?.region,
@@ -675,9 +675,7 @@ const handleOriginResponse = async ({
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
-      const { PutObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/PutObjectCommand"
-      );
+      const { PutObjectCommand } = require("./s3-client.js");
       await Promise.all([
         s3.send(new PutObjectCommand(s3JsonParams)),
         s3.send(new PutObjectCommand(s3HtmlParams))
@@ -742,9 +740,7 @@ const handleOriginResponse = async ({
         body: html
       };
     } else {
-      const { GetObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/GetObjectCommand"
-      );
+      const { GetObjectCommand } = require("./s3-client.js");
       // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
       const getStream = await import("get-stream");
 

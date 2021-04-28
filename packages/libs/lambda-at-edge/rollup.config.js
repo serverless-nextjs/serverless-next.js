@@ -47,5 +47,7 @@ export default [
   { filename: "api-handler", minify: false },
   { filename: "api-handler", minify: true },
   { filename: "image-handler", minify: false },
-  { filename: "image-handler", minify: true }
+  { filename: "image-handler", minify: true },
+  { filename: "s3-client", minify: false },
+  { filename: "s3-client", minify: true }
 ].map(generateConfig);
