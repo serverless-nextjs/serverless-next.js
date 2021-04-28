@@ -99,6 +99,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       {
         handler: "index.handler",
         runtime: lambda.Runtime.NODEJS_14_X,
+        timeout: Duration.minutes(1),
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
         )

@@ -41,15 +41,17 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
       );
 
       const baseKey = cloudFrontEventRequest.uri
-        .replace(/^\//, "")
         .replace(/\.(json|html)$/, "")
         .replace(/^_next\/data\/[^\/]*\//, "");
 
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const page = require(`./pages/${baseKey}`);
+      const ssgRoute = manifest.pages.ssg.nonDynamic[baseKey];
+      const srcPath = ssgRoute.srcRoute || baseKey;
 
-      const jsonKey = `_next/data/${manifest.buildId}/${baseKey}.json`;
-      const htmlKey = `static-pages/${manifest.buildId}/${baseKey}.html`;
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const page = require(`./pages${srcPath}`);
+
+      const jsonKey = `_next/data/${manifest.buildId}${baseKey}.json`;
+      const htmlKey = `static-pages/${manifest.buildId}${baseKey}.html`;
 
       const { renderOpts, html } = await page.renderReqToHTML(
         req,

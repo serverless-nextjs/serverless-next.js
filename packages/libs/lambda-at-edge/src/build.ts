@@ -426,11 +426,6 @@ class Builder {
   async buildRegenerationHandler(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void> {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const prerenderManifest = require(join(
-      this.dotNextDir,
-      "prerender-manifest.json"
-    ));
     await Promise.all([
       this.copyTraces(buildManifest),
       this.processAndCopyHandler(
@@ -442,22 +437,15 @@ class Builder {
         join(this.serverlessDir, "pages"),
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "pages"),
         {
-          recursive: true,
           filter: (file: string) => {
             const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
-            const isDirectory = fse.statSync(file).isDirectory();
-            const isPrerenderedJSFile = this.isPrerenderedJSFile(
-              prerenderManifest,
-              path.relative(join(this.serverlessDir, "pages"), file)
-            );
 
             return (
-              isNotApiPage &&
               isNotPrerenderedHTMLPage &&
               isNotStaticPropsJSONFile &&
-              (isPrerenderedJSFile || isDirectory)
+              isNotApiPage
             );
           }
         }

@@ -623,7 +623,6 @@ const handleOriginResponse = async ({
       : null;
     if (typeof initialRevalidateSeconds === "number" && lastModifiedAt) {
       const createdAgo =
-        // LastModified should always be defined
         (Date.now() - (lastModifiedAt.getTime() || Date.now())) / 1000;
 
       const timeToRevalidate = Math.floor(
