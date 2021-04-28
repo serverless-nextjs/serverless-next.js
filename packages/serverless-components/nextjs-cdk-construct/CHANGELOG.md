@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.47](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.46...@sls-next/cdk-construct@1.19.0-alpha.47) (2021-04-28)
+
+### Bug Fixes
+
+- **nextjs-cdk-construct:** use posix paths for s3 assets and invalidations ([#1025](https://github.com/serverless-nextjs/serverless-next.js/issues/1025)) ([b8b4393](https://github.com/serverless-nextjs/serverless-next.js/commit/b8b439348ffd4f8e526645801df101f715e53797))
+
 # [1.19.0-alpha.46](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.45...@sls-next/cdk-construct@1.19.0-alpha.46) (2021-04-27)
 
 ### Features

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.39](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.38...@sls-next/lambda-at-edge@1.8.0-alpha.39) (2021-04-28)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix router path in fallback SSG ([#1026](https://github.com/serverless-nextjs/serverless-next.js/issues/1026)) ([9772397](https://github.com/serverless-nextjs/serverless-next.js/commit/9772397fb15c2cf87ee45797aa52c92cd6b6c485))
+
 # [1.8.0-alpha.38](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.37...@sls-next/lambda-at-edge@1.8.0-alpha.38) (2021-04-26)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
