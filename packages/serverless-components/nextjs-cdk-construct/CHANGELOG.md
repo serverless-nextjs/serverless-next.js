@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.48](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.47...@sls-next/cdk-construct@1.19.0-alpha.48) (2021-04-29)
+
+### Bug Fixes
+
+- **sls-next/cdk-construct:** defaultBehavior.edgeLambdas only applied to defaultBehavior ([#1031](https://github.com/serverless-nextjs/serverless-next.js/issues/1031)) ([a5a0ccd](https://github.com/serverless-nextjs/serverless-next.js/commit/a5a0ccd0d3d8c90d0cf221eb5dfaa6598625e1b9))
+
 # [1.19.0-alpha.47](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.46...@sls-next/cdk-construct@1.19.0-alpha.47) (2021-04-28)
 
 ### Bug Fixes
