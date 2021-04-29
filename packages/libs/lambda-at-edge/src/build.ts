@@ -236,7 +236,7 @@ class Builder {
   ) {
     const source = path.dirname(
       require.resolve(
-        `@sls-next/lambda-at-edge/dist/${handlerType}${
+        `@sls-next/lambda-at-edge/dist/${handlerType}/${
           shouldMinify ? "minified" : "standard"
         }`
       )
