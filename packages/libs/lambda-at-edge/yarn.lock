@@ -1501,9 +1501,9 @@ fast-base64-decode@^1.0.0:
   integrity sha512-qwaScUgUGBYeDNRnbc/KyllVU88Jk1pRHPStuF/lO7B0/RTRLj7U0lkdTAutlBblY08rwZDff6tNU9cjv6j//Q==
 
 fast-xml-parser@^3.16.0:
-  version "3.17.4"
-  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-3.17.4.tgz#d668495fb3e4bbcf7970f3c24ac0019d82e76477"
-  integrity sha512-qudnQuyYBgnvzf5Lj/yxMcf4L9NcVWihXJg7CiU1L+oUCq8MUnFEfH2/nXR/W5uq+yvUN1h7z6s7vs2v1WkL1A==
+  version "3.19.0"
+  resolved "https://registry.yarnpkg.com/fast-xml-parser/-/fast-xml-parser-3.19.0.tgz#cb637ec3f3999f51406dd8ff0e6fc4d83e520d01"
+  integrity sha512-4pXwmBplsCPv8FOY1WRakF970TjNGnGnfbOnLqjlYvMiF1SR3yOHyxMR/YCXpPTOspNF5gwudqktIP4VsWkvBg==
 
 fetch-mock-jest@^1.5.1:
   version "1.5.1"
@@ -2399,9 +2399,9 @@ rc@^1.2.7:
     strip-json-comments "~2.0.1"
 
 react-native-get-random-values@^1.4.0:
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.5.0.tgz#91cda18f0e66e3d9d7660ba80c61c914030c1e05"
-  integrity sha512-LK+Wb8dEimJkd/dub7qziDmr9Tw4chhpzVeQ6JDo4czgfG4VXbptRyOMdu8503RiMF6y9pTH6ZUTkrrpprqT7w==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/react-native-get-random-values/-/react-native-get-random-values-1.7.0.tgz#86d9d1960828b606392dba4540bf760605448530"
+  integrity sha512-zDhmpWUekGRFb9I+MQkxllHcqXN9HBSsgPwBQfrZ1KZYpzDspWLZ6/yLMMZrtq4pVqNR7C7N96L3SuLpXv1nhQ==
   dependencies:
     fast-base64-decode "^1.0.0"
 

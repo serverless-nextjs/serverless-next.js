@@ -59,7 +59,9 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
         "passthrough"
       );
 
-      const expires = new Date(Date.now() + renderOpts.revalidate * 1000);
+      const revalidate =
+        renderOpts.revalidate ?? ssgRoute.initialRevalidateSeconds;
+      const expires = new Date(Date.now() + revalidate * 1000);
       const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
       const s3JsonParams = {
         Bucket: bucketName,

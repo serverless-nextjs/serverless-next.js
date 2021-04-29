@@ -178,6 +178,46 @@
     fast-xml-parser "^3.16.0"
     tslib "^2.0.0"
 
+"@aws-sdk/client-sqs@1.0.0-rc.3":
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/client-sqs/-/client-sqs-1.0.0-rc.3.tgz#aca468b52f77db00ffdf27d825022124d802da4d"
+  integrity sha512-qEXJ++GJ46sPboyhRUJIv03buEvmXT5lLgjUdWjZKwzHaU34GPH0B7xxlLOUWmA+JvyPaK91ESjGqLc/82GLaA==
+  dependencies:
+    "@aws-crypto/sha256-browser" "^1.0.0"
+    "@aws-crypto/sha256-js" "^1.0.0"
+    "@aws-sdk/config-resolver" "1.0.0-rc.3"
+    "@aws-sdk/credential-provider-node" "1.0.0-rc.3"
+    "@aws-sdk/fetch-http-handler" "1.0.0-rc.3"
+    "@aws-sdk/hash-node" "1.0.0-rc.3"
+    "@aws-sdk/invalid-dependency" "1.0.0-rc.3"
+    "@aws-sdk/md5-js" "1.0.0-rc.3"
+    "@aws-sdk/middleware-content-length" "1.0.0-rc.3"
+    "@aws-sdk/middleware-host-header" "1.0.0-rc.3"
+    "@aws-sdk/middleware-logger" "1.0.0-rc.3"
+    "@aws-sdk/middleware-retry" "1.0.0-rc.3"
+    "@aws-sdk/middleware-sdk-sqs" "1.0.0-rc.3"
+    "@aws-sdk/middleware-serde" "1.0.0-rc.3"
+    "@aws-sdk/middleware-signing" "1.0.0-rc.3"
+    "@aws-sdk/middleware-stack" "1.0.0-rc.3"
+    "@aws-sdk/middleware-user-agent" "1.0.0-rc.3"
+    "@aws-sdk/node-config-provider" "1.0.0-rc.3"
+    "@aws-sdk/node-http-handler" "1.0.0-rc.3"
+    "@aws-sdk/protocol-http" "1.0.0-rc.3"
+    "@aws-sdk/smithy-client" "1.0.0-rc.3"
+    "@aws-sdk/types" "1.0.0-rc.3"
+    "@aws-sdk/url-parser-browser" "1.0.0-rc.3"
+    "@aws-sdk/url-parser-node" "1.0.0-rc.3"
+    "@aws-sdk/util-base64-browser" "1.0.0-rc.3"
+    "@aws-sdk/util-base64-node" "1.0.0-rc.3"
+    "@aws-sdk/util-body-length-browser" "1.0.0-rc.3"
+    "@aws-sdk/util-body-length-node" "1.0.0-rc.3"
+    "@aws-sdk/util-user-agent-browser" "1.0.0-rc.3"
+    "@aws-sdk/util-user-agent-node" "1.0.0-rc.3"
+    "@aws-sdk/util-utf8-browser" "1.0.0-rc.3"
+    "@aws-sdk/util-utf8-node" "1.0.0-rc.3"
+    fast-xml-parser "^3.16.0"
+    tslib "^2.0.0"
+
 "@aws-sdk/config-resolver@1.0.0-rc.3":
   version "1.0.0-rc.3"
   resolved "https://registry.yarnpkg.com/@aws-sdk/config-resolver/-/config-resolver-1.0.0-rc.3.tgz#0eb877cdabffb75ba3ed89f14e86301faeec12d2"
@@ -439,6 +479,15 @@
   dependencies:
     "@aws-sdk/protocol-http" "1.0.0-rc.3"
     "@aws-sdk/util-arn-parser" "1.0.0-rc.3"
+    tslib "^1.8.0"
+
+"@aws-sdk/middleware-sdk-sqs@1.0.0-rc.3":
+  version "1.0.0-rc.3"
+  resolved "https://registry.yarnpkg.com/@aws-sdk/middleware-sdk-sqs/-/middleware-sdk-sqs-1.0.0-rc.3.tgz#5f02a97b0f34a4848ef8769e1e21d09d178d3cd8"
+  integrity sha512-d3kL0IDQtXf/kP3RXMH6+AsjYS69tPC+9r9O28ri/qPDQFUdeHVFxybneAA/5JWikDM6tZ4htgkm+Tm4PUm5hA==
+  dependencies:
+    "@aws-sdk/types" "1.0.0-rc.3"
+    "@aws-sdk/util-hex-encoding" "1.0.0-rc.3"
     tslib "^1.8.0"
 
 "@aws-sdk/middleware-serde@1.0.0-rc.3":

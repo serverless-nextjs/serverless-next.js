@@ -44,6 +44,9 @@ import {
   getLocalePrefixFromUri
 } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
+import { getStaticRegenerationResponse } from "./lib/getStaticRegenerationResponse";
+import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
+import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -590,7 +593,6 @@ const handleOriginRequest = async ({
 const handleOriginResponse = async ({
   event,
   manifest,
-  prerenderManifest,
   routesManifest
 }: {
   event: OriginResponseEvent;
@@ -602,8 +604,7 @@ const handleOriginResponse = async ({
   const request = event.Records[0].cf.request;
   const { uri } = request;
   const { status } = response;
-  const { region, domainName } = request.origin?.s3 || {};
-  const bucketName = domainName?.replace(`.s3.${region}.amazonaws.com`, "");
+  const bucketName = s3BucketNameFromEventRequest(request);
 
   if (status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
@@ -613,83 +614,32 @@ const handleOriginResponse = async ({
       return response;
     }
 
-    const initialRevalidateSeconds =
-      manifest.pages.ssg.nonDynamic?.[uri.replace(".html", "")]
-        ?.initialRevalidateSeconds;
-    const lastModifiedHeaderString =
-      response.headers?.["last-modified"]?.[0]?.value;
-    const lastModifiedAt = lastModifiedHeaderString
-      ? new Date(lastModifiedHeaderString)
-      : null;
-    if (typeof initialRevalidateSeconds === "number" && lastModifiedAt) {
-      /**
-       * TODO: Refactor to use the returned `Expired` header.
-       */
-      const createdAgo =
-        (Date.now() - (lastModifiedAt.getTime() || Date.now())) / 1000;
+    const staticRegenerationResponse = getStaticRegenerationResponse({
+      requestedOriginUri: uri,
+      expiresHeader: response.headers.expires?.[0]?.value || "",
+      manifest
+    });
 
-      const timeToRevalidate = Math.floor(
-        initialRevalidateSeconds - createdAgo
-      );
-
+    if (staticRegenerationResponse) {
       response.headers["cache-control"] = [
         {
           key: "Cache-Control",
-          value:
-            timeToRevalidate < 0
-              ? "public, max-age=0, s-maxage=0, must-revalidate"
-              : `public, max-age=0, s-maxage=${timeToRevalidate}, must-revalidate`
+          value: staticRegenerationResponse.cacheControl
         }
       ];
 
-      if (timeToRevalidate < 0) {
-        const { SQSClient, SendMessageCommand } = await import(
-          "@aws-sdk/client-sqs"
-        );
-        const sqs = new SQSClient({
-          region,
-          maxAttempts: 3,
-          retryStrategy: await buildS3RetryStrategy()
+      // We don't want the `expires` header to be sent to the client we manage
+      // the cache at the edge using the s-maxage directive in the cache-control
+      // header
+      delete response.headers.expires;
+
+      if (staticRegenerationResponse.secondsRemainingUntilRevalidation === 0) {
+        await triggerStaticRegeneration({
+          basePath,
+          manifest,
+          request,
+          response
         });
-        await sqs.send(
-          new SendMessageCommand({
-            QueueUrl: `https://sqs.${region}.amazonaws.com/${bucketName}.fifo`,
-            MessageBody: uri,
-            MessageAttributes: {
-              BucketRegion: {
-                DataType: "String",
-                StringValue: region
-              },
-              BucketName: {
-                DataType: "String",
-                StringValue: bucketName
-              },
-              CloudFrontEventRequest: {
-                DataType: "String",
-                StringValue: JSON.stringify(request)
-              },
-              Manifest: {
-                DataType: "String",
-                StringValue: JSON.stringify(manifest)
-              },
-              ...(basePath
-                ? {
-                    BasePath: {
-                      DataType: "String",
-                      StringValue: basePath
-                    }
-                  }
-                : {})
-            },
-            // We only want to trigger the regeneration once for every previous
-            // update. This will prevent the case where this page is being
-            // requested again whilst its already started to regenerate.
-            MessageDeduplicationId: lastModifiedAt.getTime().toString(),
-            // Only deduplicate based on the object, i.e. we can generate
-            // different pages in parallel, just not the same one
-            MessageGroupId: uri
-          })
-        );
       }
     }
 

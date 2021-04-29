@@ -20,6 +20,7 @@ import {
 } from "./routing/redirector";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
+import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -88,11 +89,11 @@ export const handler = async (
       true
     );
 
-    const { domainName, region } = request.origin!.s3!;
-    const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+    const { region } = request.origin!.s3!;
+    const bucketName = s3BucketNameFromEventRequest(request);
 
     await imageOptimizer(
-      { basePath: basePath, bucketName: bucketName, region: region },
+      { basePath: basePath, bucketName: bucketName || "", region: region },
       imagesManifest,
       req,
       res,
