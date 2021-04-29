@@ -1,7 +1,6 @@
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import { OriginRequestDefaultHandlerManifest } from "./types";
-import { S3Client } from "@aws-sdk/client-s3";
-import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
+import { s3StorePage } from "./s3/s3StorePage";
 
 export const handler: AWSLambda.SQSHandler = async (event) => {
   await Promise.all(
@@ -29,12 +28,6 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
         manifestString
       );
 
-      const s3 = new S3Client({
-        region: cloudFrontEventRequest.origin?.s3?.region,
-        maxAttempts: 3,
-        retryStrategy: await buildS3RetryStrategy()
-      });
-
       const { req, res } = lambdaAtEdgeCompat(
         { request: cloudFrontEventRequest },
         { enableHTTPCompression: manifest.enableHTTPCompression }
@@ -50,44 +43,22 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const page = require(`./pages${srcPath}`);
 
-      const jsonKey = `_next/data/${manifest.buildId}${baseKey}.json`;
-      const htmlKey = `static-pages/${manifest.buildId}${baseKey}.html`;
-
       const { renderOpts, html } = await page.renderReqToHTML(
         req,
         res,
         "passthrough"
       );
 
-      const revalidate =
-        renderOpts.revalidate ?? ssgRoute.initialRevalidateSeconds;
-      const expires = new Date(Date.now() + revalidate * 1000);
-      const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-      const s3JsonParams = {
-        Bucket: bucketName,
-        Key: `${s3BasePath}${jsonKey}`,
-        Body: JSON.stringify(renderOpts.pageData),
-        ContentType: "application/json",
-        Expires: expires,
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-
-      const s3HtmlParams = {
-        Bucket: bucketName,
-        Key: `${s3BasePath}${htmlKey}`,
-        Body: html,
-        ContentType: "text/html",
-        Expires: expires,
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-
-      const { PutObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/PutObjectCommand"
-      );
-      await Promise.all([
-        s3.send(new PutObjectCommand(s3JsonParams)),
-        s3.send(new PutObjectCommand(s3HtmlParams))
-      ]);
+      await s3StorePage({
+        html,
+        uri: cloudFrontEventRequest.uri,
+        basePath,
+        bucketName: bucketName || "",
+        buildId: manifest.buildId,
+        pageData: renderOpts.pageData,
+        region: cloudFrontEventRequest.origin?.s3?.region || "",
+        revalidate: renderOpts.revalidate
+      });
     })
   );
 };

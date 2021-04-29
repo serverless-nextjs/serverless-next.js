@@ -5,6 +5,7 @@ interface StaticRegenerationResponseOptions {
   requestedOriginUri: string;
   // Header as set on the origin object
   expiresHeader: string;
+  lastModifiedHeader: string;
   manifest: OriginRequestDefaultHandlerManifest;
 }
 
@@ -13,6 +14,15 @@ interface StaticRegenerationResponseValue {
   cacheControl: string;
   secondsRemainingUntilRevalidation: number;
 }
+
+const firstRegenerateExpiryDate = (
+  lastModifiedHeader: string,
+  initialRevalidateSeconds: number
+) => {
+  return new Date(
+    new Date(lastModifiedHeader).getTime() + initialRevalidateSeconds * 1000
+  );
+};
 
 /**
  * Function called within an origin response as part of the Incremental Static
@@ -27,13 +37,26 @@ const getStaticRegenerationResponse = (
       options.requestedOriginUri.replace(".html", "")
     ]?.initialRevalidateSeconds;
 
-  // If this page did not write a revalidate value at build time it is not an
-  // ISR page
-  if (typeof initialRevalidateSeconds !== "number") {
+  // ISR pages that were either previously regenerated or generated
+  // post-initial-build, will have an `Expires` header set. However ISR pages
+  // that have not been regenerated but at build-time resolved a revalidate
+  // property will not have an `Expires` header and therefore we check using the
+  // manifest.
+  if (
+    !options.expiresHeader &&
+    !(
+      options.lastModifiedHeader && typeof initialRevalidateSeconds === "number"
+    )
+  ) {
     return false;
   }
 
-  const expiresAt = new Date(options.expiresHeader);
+  const expiresAt = options.expiresHeader
+    ? new Date(options.expiresHeader)
+    : firstRegenerateExpiryDate(
+        options.lastModifiedHeader,
+        initialRevalidateSeconds as number
+      );
 
   // isNaN will resolve true on initial load of this page (as the expiresHeader
   // won't be set), in which case we trigger a regeneration now

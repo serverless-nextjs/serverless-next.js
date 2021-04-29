@@ -47,6 +47,7 @@ import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { getStaticRegenerationResponse } from "./lib/getStaticRegenerationResponse";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
+import { s3StorePage } from "./s3/s3StorePage";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -617,6 +618,7 @@ const handleOriginResponse = async ({
     const staticRegenerationResponse = getStaticRegenerationResponse({
       requestedOriginUri: uri,
       expiresHeader: response.headers.expires?.[0]?.value || "",
+      lastModifiedHeader: response.headers["last-modified"]?.[0]?.value || "",
       manifest
     });
 
@@ -694,33 +696,16 @@ const handleOriginResponse = async ({
       "passthrough"
     );
     if (isSSG) {
-      const baseKey = uri
-        .replace(/^\//, "")
-        .replace(/\.(json|html)$/, "")
-        .replace(/^_next\/data\/[^\/]*\//, "");
-      const jsonKey = `_next/data/${manifest.buildId}/${baseKey}.json`;
-      const htmlKey = `static-pages/${manifest.buildId}/${baseKey}.html`;
-      const s3JsonParams = {
-        Bucket: bucketName,
-        Key: `${s3BasePath}${jsonKey}`,
-        Body: JSON.stringify(renderOpts.pageData),
-        ContentType: "application/json",
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-      const s3HtmlParams = {
-        Bucket: bucketName,
-        Key: `${s3BasePath}${htmlKey}`,
-        Body: html,
-        ContentType: "text/html",
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-      const { PutObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/PutObjectCommand"
-      );
-      await Promise.all([
-        s3.send(new PutObjectCommand(s3JsonParams)),
-        s3.send(new PutObjectCommand(s3HtmlParams))
-      ]);
+      await s3StorePage({
+        html,
+        uri,
+        basePath,
+        bucketName: bucketName || "",
+        buildId: manifest.buildId,
+        pageData: renderOpts.pageData,
+        region: request.origin?.s3?.region || "",
+        revalidate: renderOpts.revalidate
+      });
     }
     const outHeaders: OutgoingHttpHeaders = {};
     Object.entries(response.headers).map(([name, headers]) => {
