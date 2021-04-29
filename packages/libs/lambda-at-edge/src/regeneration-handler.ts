@@ -59,12 +59,14 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
         "passthrough"
       );
 
+      const expires = new Date(Date.now() + renderOpts.revalidate * 1000);
       const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
       const s3JsonParams = {
         Bucket: bucketName,
         Key: `${s3BasePath}${jsonKey}`,
         Body: JSON.stringify(renderOpts.pageData),
         ContentType: "application/json",
+        Expires: expires,
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 
@@ -73,6 +75,7 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
         Key: `${s3BasePath}${htmlKey}`,
         Body: html,
         ContentType: "text/html",
+        Expires: expires,
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 

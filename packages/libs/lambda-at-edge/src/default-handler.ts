@@ -622,6 +622,9 @@ const handleOriginResponse = async ({
       ? new Date(lastModifiedHeaderString)
       : null;
     if (typeof initialRevalidateSeconds === "number" && lastModifiedAt) {
+      /**
+       * TODO: Refactor to use the returned `Expired` header.
+       */
       const createdAgo =
         (Date.now() - (lastModifiedAt.getTime() || Date.now())) / 1000;
 
