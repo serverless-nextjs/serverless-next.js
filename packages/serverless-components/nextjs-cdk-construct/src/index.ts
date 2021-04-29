@@ -253,7 +253,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const edgeLambdas = [
+    const edgeLambdas: cloudfront.EdgeLambda[] = [
       {
         includeBody: true,
         eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
@@ -264,6 +264,13 @@ export class NextJSLambdaEdge extends cdk.Construct {
         functionVersion: this.defaultNextLambda.currentVersion
       }
     ];
+
+    const { edgeLambdas: additionalDefaultEdgeLambdas, ...defaultBehavior } =
+      props.defaultBehavior || {};
+
+    if (additionalDefaultEdgeLambdas) {
+      edgeLambdas.push(...additionalDefaultEdgeLambdas);
+    }
 
     this.distribution = new cloudfront.Distribution(
       this,
@@ -282,7 +289,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           compress: true,
           cachePolicy: this.nextLambdaCachePolicy,
           edgeLambdas,
-          ...(props.defaultBehavior || {})
+          ...(defaultBehavior || {})
         },
         additionalBehaviors: {
           ...(this.nextImageLambda
@@ -400,7 +407,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
         // The source contents will be unzipped to and loaded into the S3 bucket
         // at the root '/', we don't want this, we want to maintain the same
         // path on S3 as their local path.
-        destinationKeyPrefix: path.relative(assetsDirectory, assetPath),
+        destinationKeyPrefix: path.posix.relative(assetsDirectory, assetPath),
 
         // Source directories are uploaded with `--sync` this means that any
         // files that don't exist in the source directory, but do in the S3
