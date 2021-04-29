@@ -217,13 +217,15 @@ describe("Builder Tests", () => {
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
         );
 
-        expect(files).toEqual([
-          "index.js",
-          "manifest.json",
-          "pages",
-          "prerender-manifest.json",
-          "routes-manifest.json"
-        ]);
+        expect(files).toEqual(
+          expect.arrayContaining([
+            "index.js", // there are more chunks but it should at least contain the entry point
+            "manifest.json",
+            "pages",
+            "prerender-manifest.json",
+            "routes-manifest.json"
+          ])
+        );
 
         // api pages should not be included in the default lambda
         expect(apiDirExists).toEqual(false);
@@ -260,7 +262,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(defaultHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+        expect(countLines(defaultHandler.toString())).toBeGreaterThan(10); // Arbitrary choice
       });
     });
 
@@ -275,12 +277,14 @@ describe("Builder Tests", () => {
           join(outputDir, `${API_LAMBDA_CODE_DIR}/pages`)
         );
 
-        expect(files).toEqual([
-          "index.js",
-          "manifest.json",
-          "pages",
-          "routes-manifest.json"
-        ]);
+        expect(files).toEqual(
+          expect.arrayContaining([
+            "index.js",
+            "manifest.json",
+            "pages",
+            "routes-manifest.json"
+          ])
+        );
         expect(pages).toEqual(["api"]);
       });
 
@@ -289,7 +293,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${API_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(apiHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+        expect(countLines(apiHandler.toString())).toBeGreaterThan(10); // Arbitrary choice
       });
     });
 
@@ -314,13 +318,15 @@ describe("Builder Tests", () => {
           join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}`)
         );
 
-        expect(files).toEqual([
-          "images-manifest.json", // Next.js default images manifest
-          "index.js",
-          "manifest.json",
-          "node_modules", // Contains sharp node modules built for Lambda Node.js 12.x
-          "routes-manifest.json"
-        ]);
+        expect(files).toEqual(
+          expect.arrayContaining([
+            "images-manifest.json", // Next.js default images manifest
+            "index.js",
+            "manifest.json",
+            "node_modules", // Contains sharp node modules built for Lambda Node.js 12.x
+            "routes-manifest.json"
+          ])
+        );
       });
 
       it("image handler is not minified", async () => {
@@ -328,7 +334,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(imageHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+        expect(countLines(imageHandler.toString())).toBeGreaterThan(10); // Arbitrary choice
       });
     });
 
@@ -484,26 +490,30 @@ describe("Builder Tests", () => {
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
       );
 
-      expect(defaultFiles).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "prerender-manifest.json",
-        "routes-manifest.json",
-        "testFile.js"
-      ]);
+      expect(defaultFiles).toEqual(
+        expect.arrayContaining([
+          "index.js",
+          "manifest.json",
+          "pages",
+          "prerender-manifest.json",
+          "routes-manifest.json",
+          "testFile.js"
+        ])
+      );
 
       const apiFiles = await fse.readdir(
         join(outputDir, `${API_LAMBDA_CODE_DIR}`)
       );
 
-      expect(apiFiles).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "routes-manifest.json",
-        "testFile.js"
-      ]);
+      expect(apiFiles).toEqual(
+        expect.arrayContaining([
+          "index.js",
+          "manifest.json",
+          "pages",
+          "routes-manifest.json",
+          "testFile.js"
+        ])
+      );
     });
   });
 });
