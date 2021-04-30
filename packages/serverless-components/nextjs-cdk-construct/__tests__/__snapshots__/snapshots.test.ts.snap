@@ -3,6 +3,18 @@
 exports[`CDK Construct Snapshots creates boilerplate next app 1`] = `
 Object {
   "Parameters": Object {
+    "AssetParameters0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313ArtifactHash099A8DD1": Object {
+      "Description": "Artifact hash for asset \\"0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313\\"",
+      "Type": "String",
+    },
+    "AssetParameters0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313S3BucketF4667C02": Object {
+      "Description": "S3 bucket for asset \\"0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313\\"",
+      "Type": "String",
+    },
+    "AssetParameters0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313S3VersionKeyC4818F9D": Object {
+      "Description": "S3 key for asset version \\"0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313\\"",
+      "Type": "String",
+    },
     "AssetParameters25410cc84f19c90d1be36cf1ab651b490f5b65832cb03e0a63e1ae33d8fdf748ArtifactHashE2D1074E": Object {
       "Description": "Artifact hash for asset \\"25410cc84f19c90d1be36cf1ab651b490f5b65832cb03e0a63e1ae33d8fdf748\\"",
       "Type": "String",
@@ -492,6 +504,18 @@ Object {
               ],
             ],
           },
+        },
+        "Description": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              "Lambda function for auto-deleting objects in ",
+              Object {
+                "Ref": "StackPublicAssets8F0F4FE8",
+              },
+              " S3 bucket.",
+            ],
+          ],
         },
         "Handler": "__entrypoint__.handler",
         "MemorySize": 128,
@@ -1190,6 +1214,7 @@ Object {
     },
     "StackNextApiLambda8BE78FBE": Object {
       "DependsOn": Array [
+        "StackNextEdgeLambdaRoleDefaultPolicy28BC6A5D",
         "StackNextEdgeLambdaRole02C429A6",
       ],
       "Properties": Object {
@@ -1243,7 +1268,7 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
-    "StackNextApiLambdaCurrentVersion09578A6A82abd7c4731937bb8d06c77c511a0f1f": Object {
+    "StackNextApiLambdaCurrentVersion09578A6A7ebfa2a8eff512e3e13102dd0fbe01d0": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "FunctionName": Object {
@@ -1260,7 +1285,7 @@ Object {
         },
         "FunctionVersion": Object {
           "Fn::GetAtt": Array [
-            "StackNextApiLambdaCurrentVersion09578A6A82abd7c4731937bb8d06c77c511a0f1f",
+            "StackNextApiLambdaCurrentVersion09578A6A7ebfa2a8eff512e3e13102dd0fbe01d0",
             "Version",
           ],
         },
@@ -1276,7 +1301,7 @@ Object {
         "MaximumRetryAttempts": 1,
         "Qualifier": Object {
           "Fn::GetAtt": Array [
-            "StackNextApiLambdaCurrentVersion09578A6A82abd7c4731937bb8d06c77c511a0f1f",
+            "StackNextApiLambdaCurrentVersion09578A6A7ebfa2a8eff512e3e13102dd0fbe01d0",
             "Version",
           ],
         },
@@ -1336,13 +1361,86 @@ Object {
       },
       "Type": "AWS::IAM::Role",
     },
+    "StackNextEdgeLambdaRoleDefaultPolicy28BC6A5D": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
+              "Resource": Array [
+                Object {
+                  "Fn::GetAtt": Array [
+                    "StackPublicAssets8F0F4FE8",
+                    "Arn",
+                  ],
+                },
+                Object {
+                  "Fn::Join": Array [
+                    "",
+                    Array [
+                      Object {
+                        "Fn::GetAtt": Array [
+                          "StackPublicAssets8F0F4FE8",
+                          "Arn",
+                        ],
+                      },
+                      "/*",
+                    ],
+                  ],
+                },
+              ],
+            },
+            Object {
+              "Action": Array [
+                "sqs:SendMessage",
+                "sqs:GetQueueAttributes",
+                "sqs:GetQueueUrl",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "StackRegenerationQueue2F4428B8",
+                  "Arn",
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "PolicyName": "StackNextEdgeLambdaRoleDefaultPolicy28BC6A5D",
+        "Roles": Array [
+          Object {
+            "Ref": "StackNextEdgeLambdaRole02C429A6",
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Policy",
+    },
     "StackNextImageCache169F453D": Object {
       "Properties": Object {
         "CachePolicyConfig": Object {
           "DefaultTTL": 86400,
           "MaxTTL": 31536000,
           "MinTTL": 0,
-          "Name": "StackNextImageCache78CE64D5",
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "StackNextImageCache78CE64D5-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
           "ParametersInCacheKeyAndForwardedToOrigin": Object {
             "CookiesConfig": Object {
               "CookieBehavior": "none",
@@ -1365,6 +1463,7 @@ Object {
     },
     "StackNextImageLambda2847952D": Object {
       "DependsOn": Array [
+        "StackNextEdgeLambdaRoleDefaultPolicy28BC6A5D",
         "StackNextEdgeLambdaRole02C429A6",
       ],
       "Properties": Object {
@@ -1425,7 +1524,7 @@ Object {
         },
         "FunctionVersion": Object {
           "Fn::GetAtt": Array [
-            "StackNextImageLambdaCurrentVersionDEC920BCbbf2bd116d8722fe4e3be87fa33cb530",
+            "StackNextImageLambdaCurrentVersionDEC920BCb7482786b9f167e17f95c2a094b761b0",
             "Version",
           ],
         },
@@ -1433,7 +1532,7 @@ Object {
       },
       "Type": "AWS::Lambda::Alias",
     },
-    "StackNextImageLambdaCurrentVersionDEC920BCbbf2bd116d8722fe4e3be87fa33cb530": Object {
+    "StackNextImageLambdaCurrentVersionDEC920BCb7482786b9f167e17f95c2a094b761b0": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "FunctionName": Object {
@@ -1451,7 +1550,7 @@ Object {
         "MaximumRetryAttempts": 1,
         "Qualifier": Object {
           "Fn::GetAtt": Array [
-            "StackNextImageLambdaCurrentVersionDEC920BCbbf2bd116d8722fe4e3be87fa33cb530",
+            "StackNextImageLambdaCurrentVersionDEC920BCb7482786b9f167e17f95c2a094b761b0",
             "Version",
           ],
         },
@@ -1508,7 +1607,7 @@ Object {
                 Object {
                   "EventType": "origin-request",
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextImageLambdaCurrentVersionDEC920BCbbf2bd116d8722fe4e3be87fa33cb530",
+                    "Ref": "StackNextImageLambdaCurrentVersionDEC920BCb7482786b9f167e17f95c2a094b761b0",
                   },
                 },
               ],
@@ -1539,13 +1638,13 @@ Object {
                   "EventType": "origin-request",
                   "IncludeBody": true,
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextLambdaCurrentVersion21F01F872bc3e35b6261e19f63c9943962d7ff65",
+                    "Ref": "StackNextLambdaCurrentVersion21F01F8771ef2c132584be251714bdf9076e3f05",
                   },
                 },
                 Object {
                   "EventType": "origin-response",
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextLambdaCurrentVersion21F01F872bc3e35b6261e19f63c9943962d7ff65",
+                    "Ref": "StackNextLambdaCurrentVersion21F01F8771ef2c132584be251714bdf9076e3f05",
                   },
                 },
               ],
@@ -1615,7 +1714,7 @@ Object {
                   "EventType": "origin-request",
                   "IncludeBody": true,
                   "LambdaFunctionARN": Object {
-                    "Ref": "StackNextApiLambdaCurrentVersion09578A6A82abd7c4731937bb8d06c77c511a0f1f",
+                    "Ref": "StackNextApiLambdaCurrentVersion09578A6A7ebfa2a8eff512e3e13102dd0fbe01d0",
                   },
                 },
               ],
@@ -1644,13 +1743,13 @@ Object {
                 "EventType": "origin-request",
                 "IncludeBody": true,
                 "LambdaFunctionARN": Object {
-                  "Ref": "StackNextLambdaCurrentVersion21F01F872bc3e35b6261e19f63c9943962d7ff65",
+                  "Ref": "StackNextLambdaCurrentVersion21F01F8771ef2c132584be251714bdf9076e3f05",
                 },
               },
               Object {
                 "EventType": "origin-response",
                 "LambdaFunctionARN": Object {
-                  "Ref": "StackNextLambdaCurrentVersion21F01F872bc3e35b6261e19f63c9943962d7ff65",
+                  "Ref": "StackNextLambdaCurrentVersion21F01F8771ef2c132584be251714bdf9076e3f05",
                 },
               },
             ],
@@ -1853,7 +1952,17 @@ Object {
           "DefaultTTL": 0,
           "MaxTTL": 31536000,
           "MinTTL": 0,
-          "Name": "StackNextLambdaCache86499DCE",
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "StackNextLambdaCache86499DCE-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
           "ParametersInCacheKeyAndForwardedToOrigin": Object {
             "CookiesConfig": Object {
               "CookieBehavior": "all",
@@ -1871,7 +1980,7 @@ Object {
       },
       "Type": "AWS::CloudFront::CachePolicy",
     },
-    "StackNextLambdaCurrentVersion21F01F872bc3e35b6261e19f63c9943962d7ff65": Object {
+    "StackNextLambdaCurrentVersion21F01F8771ef2c132584be251714bdf9076e3f05": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
         "FunctionName": Object {
@@ -1888,7 +1997,7 @@ Object {
         },
         "FunctionVersion": Object {
           "Fn::GetAtt": Array [
-            "StackNextLambdaCurrentVersion21F01F872bc3e35b6261e19f63c9943962d7ff65",
+            "StackNextLambdaCurrentVersion21F01F8771ef2c132584be251714bdf9076e3f05",
             "Version",
           ],
         },
@@ -1898,6 +2007,7 @@ Object {
     },
     "StackNextLambdaF64DCE99": Object {
       "DependsOn": Array [
+        "StackNextEdgeLambdaRoleDefaultPolicy28BC6A5D",
         "StackNextEdgeLambdaRole02C429A6",
       ],
       "Properties": Object {
@@ -1980,7 +2090,17 @@ Object {
           "DefaultTTL": 2592000,
           "MaxTTL": 2592000,
           "MinTTL": 2592000,
-          "Name": "StackNextStaticsCacheBB90E053",
+          "Name": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "StackNextStaticsCacheBB90E053-",
+                Object {
+                  "Ref": "AWS::Region",
+                },
+              ],
+            ],
+          },
           "ParametersInCacheKeyAndForwardedToOrigin": Object {
             "CookiesConfig": Object {
               "CookieBehavior": "none",
@@ -2088,11 +2208,7 @@ Object {
               ],
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -2102,35 +2218,23 @@ Object {
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "StackPublicAssets8F0F4FE8",
-                    "Arn",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
                   ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "StackPublicAssets8F0F4FE8",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+                ],
+              },
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -2140,35 +2244,23 @@ Object {
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "StackPublicAssets8F0F4FE8",
-                    "Arn",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
                   ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "StackPublicAssets8F0F4FE8",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+                ],
+              },
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -2178,35 +2270,23 @@ Object {
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "StackPublicAssets8F0F4FE8",
-                    "Arn",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
                   ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "StackPublicAssets8F0F4FE8",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+                ],
+              },
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -2216,35 +2296,23 @@ Object {
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "StackPublicAssets8F0F4FE8",
-                    "Arn",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
                   ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "StackPublicAssets8F0F4FE8",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+                ],
+              },
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -2254,35 +2322,23 @@ Object {
                   ],
                 },
               },
-              "Resource": Array [
-                Object {
-                  "Fn::GetAtt": Array [
-                    "StackPublicAssets8F0F4FE8",
-                    "Arn",
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
                   ],
-                },
-                Object {
-                  "Fn::Join": Array [
-                    "",
-                    Array [
-                      Object {
-                        "Fn::GetAtt": Array [
-                          "StackPublicAssets8F0F4FE8",
-                          "Arn",
-                        ],
-                      },
-                      "/*",
-                    ],
-                  ],
-                },
-              ],
+                ],
+              },
             },
             Object {
-              "Action": Array [
-                "s3:GetObject*",
-                "s3:GetBucket*",
-                "s3:List*",
-              ],
+              "Action": "s3:GetObject",
               "Effect": "Allow",
               "Principal": Object {
                 "CanonicalUser": Object {
@@ -2292,6 +2348,144 @@ Object {
                   ],
                 },
               },
+              "Resource": Object {
+                "Fn::Join": Array [
+                  "",
+                  Array [
+                    Object {
+                      "Fn::GetAtt": Array [
+                        "StackPublicAssets8F0F4FE8",
+                        "Arn",
+                      ],
+                    },
+                    "/*",
+                  ],
+                ],
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+      },
+      "Type": "AWS::S3::BucketPolicy",
+    },
+    "StackRegenerationFunctionCAB79AA6": Object {
+      "DependsOn": Array [
+        "StackRegenerationFunctionServiceRoleDefaultPolicyC7FB67BD",
+        "StackRegenerationFunctionServiceRole15AFC289",
+      ],
+      "Properties": Object {
+        "Code": Object {
+          "S3Bucket": Object {
+            "Ref": "AssetParameters0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313S3BucketF4667C02",
+          },
+          "S3Key": Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                Object {
+                  "Fn::Select": Array [
+                    0,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313S3VersionKeyC4818F9D",
+                        },
+                      ],
+                    },
+                  ],
+                },
+                Object {
+                  "Fn::Select": Array [
+                    1,
+                    Object {
+                      "Fn::Split": Array [
+                        "||",
+                        Object {
+                          "Ref": "AssetParameters0369075cfb8d0347e778b12f9ff9c889fe7e861793fc2e9a74170a6991fd2313S3VersionKeyC4818F9D",
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            ],
+          },
+        },
+        "Handler": "index.handler",
+        "Role": Object {
+          "Fn::GetAtt": Array [
+            "StackRegenerationFunctionServiceRole15AFC289",
+            "Arn",
+          ],
+        },
+        "Runtime": "nodejs14.x",
+        "Timeout": 60,
+      },
+      "Type": "AWS::Lambda::Function",
+    },
+    "StackRegenerationFunctionServiceRole15AFC289": Object {
+      "Properties": Object {
+        "AssumeRolePolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": "sts:AssumeRole",
+              "Effect": "Allow",
+              "Principal": Object {
+                "Service": "lambda.amazonaws.com",
+              },
+            },
+          ],
+          "Version": "2012-10-17",
+        },
+        "ManagedPolicyArns": Array [
+          Object {
+            "Fn::Join": Array [
+              "",
+              Array [
+                "arn:",
+                Object {
+                  "Ref": "AWS::Partition",
+                },
+                ":iam::aws:policy/service-role/AWSLambdaBasicExecutionRole",
+              ],
+            ],
+          },
+        ],
+      },
+      "Type": "AWS::IAM::Role",
+    },
+    "StackRegenerationFunctionServiceRoleDefaultPolicyC7FB67BD": Object {
+      "Properties": Object {
+        "PolicyDocument": Object {
+          "Statement": Array [
+            Object {
+              "Action": Array [
+                "sqs:ReceiveMessage",
+                "sqs:ChangeMessageVisibility",
+                "sqs:GetQueueUrl",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes",
+              ],
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "StackRegenerationQueue2F4428B8",
+                  "Arn",
+                ],
+              },
+            },
+            Object {
+              "Action": Array [
+                "s3:GetObject*",
+                "s3:GetBucket*",
+                "s3:List*",
+                "s3:DeleteObject*",
+                "s3:PutObject*",
+                "s3:Abort*",
+              ],
+              "Effect": "Allow",
               "Resource": Array [
                 Object {
                   "Fn::GetAtt": Array [
@@ -2318,8 +2512,47 @@ Object {
           ],
           "Version": "2012-10-17",
         },
+        "PolicyName": "StackRegenerationFunctionServiceRoleDefaultPolicyC7FB67BD",
+        "Roles": Array [
+          Object {
+            "Ref": "StackRegenerationFunctionServiceRole15AFC289",
+          },
+        ],
       },
-      "Type": "AWS::S3::BucketPolicy",
+      "Type": "AWS::IAM::Policy",
+    },
+    "StackRegenerationFunctionSqsEventSourceStackRegenerationQueueA0F3D7FC227F9DB2": Object {
+      "Properties": Object {
+        "EventSourceArn": Object {
+          "Fn::GetAtt": Array [
+            "StackRegenerationQueue2F4428B8",
+            "Arn",
+          ],
+        },
+        "FunctionName": Object {
+          "Ref": "StackRegenerationFunctionCAB79AA6",
+        },
+      },
+      "Type": "AWS::Lambda::EventSourceMapping",
+    },
+    "StackRegenerationQueue2F4428B8": Object {
+      "DeletionPolicy": "Delete",
+      "Properties": Object {
+        "FifoQueue": true,
+        "QueueName": Object {
+          "Fn::Join": Array [
+            "",
+            Array [
+              Object {
+                "Ref": "StackPublicAssets8F0F4FE8",
+              },
+              ".fifo",
+            ],
+          ],
+        },
+      },
+      "Type": "AWS::SQS::Queue",
+      "UpdateReplacePolicy": "Delete",
     },
   },
 }
