@@ -416,13 +416,15 @@ describe("Builder Tests (dynamic)", () => {
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
       );
 
-      expect(files).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "prerender-manifest.json",
-        "routes-manifest.json"
-      ]);
+      expect(files).toEqual(
+        expect.arrayContaining([
+          "index.js", // there are more chunks but it should at least contain the entry point
+          "manifest.json",
+          "pages",
+          "prerender-manifest.json",
+          "routes-manifest.json"
+        ])
+      );
 
       // api pages should not be included in the default lambda
       expect(apiDirExists).toEqual(false);

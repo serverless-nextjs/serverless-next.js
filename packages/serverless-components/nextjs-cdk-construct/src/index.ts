@@ -265,12 +265,10 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     ];
 
-    const { edgeLambdas: additionalDefaultEdgeLambdas, ...defaultBehavior } =
-      props.defaultBehavior || {};
-
-    if (additionalDefaultEdgeLambdas) {
-      edgeLambdas.push(...additionalDefaultEdgeLambdas);
-    }
+    const {
+      edgeLambdas: additionalDefaultEdgeLambdas = [],
+      ...defaultBehavior
+    } = props.defaultBehavior || {};
 
     this.distribution = new cloudfront.Distribution(
       this,
@@ -288,7 +286,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
           compress: true,
           cachePolicy: this.nextLambdaCachePolicy,
-          edgeLambdas,
+          edgeLambdas: [...edgeLambdas, ...additionalDefaultEdgeLambdas],
           ...(defaultBehavior || {})
         },
         additionalBehaviors: {

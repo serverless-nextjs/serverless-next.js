@@ -239,10 +239,12 @@ class Builder {
     destination: string,
     shouldMinify: boolean
   ) {
-    const source = require.resolve(
-      `@sls-next/lambda-at-edge/dist/${handlerType}${
-        shouldMinify ? ".min" : ""
-      }.js`
+    const source = path.dirname(
+      require.resolve(
+        `@sls-next/lambda-at-edge/dist/${handlerType}/${
+          shouldMinify ? "minified" : "standard"
+        }`
+      )
     );
 
     await fse.copy(source, destination);
@@ -306,7 +308,7 @@ class Builder {
       this.copyTraces(buildManifest),
       this.processAndCopyHandler(
         "default-handler",
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
@@ -399,7 +401,7 @@ class Builder {
       ...copyTraces,
       this.processAndCopyHandler(
         "api-handler",
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, API_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
@@ -463,7 +465,7 @@ class Builder {
     return Promise.all([
       this.processAndCopyHandler(
         "image-handler",
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler

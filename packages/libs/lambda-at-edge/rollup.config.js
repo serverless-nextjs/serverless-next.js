@@ -16,7 +16,8 @@ const NPM_EXTERNALS = ["aws-lambda", "aws-sdk/clients/s3"];
 const generateConfig = (input) => ({
   input: `./src/${input.filename}.ts`,
   output: {
-    file: `./dist/${input.filename}${input.minify ? ".min" : ""}.js`,
+    dir: `./dist/${input.filename}/${input.minify ? "minified" : "standard"}`,
+    entryFileNames: `index.js`,
     format: "cjs"
   },
   plugins: [
@@ -37,8 +38,7 @@ const generateConfig = (input) => ({
         })
       : undefined
   ],
-  external: [...NPM_EXTERNALS, ...LOCAL_EXTERNALS],
-  inlineDynamicImports: true
+  external: [...NPM_EXTERNALS, ...LOCAL_EXTERNALS]
 });
 
 export default [
