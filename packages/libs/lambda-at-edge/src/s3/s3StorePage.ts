@@ -20,7 +20,7 @@ interface S3StorePageOptions {
  */
 export const s3StorePage = async (
   options: S3StorePageOptions
-): Promise<void> => {
+): Promise<{ cacheControl: string | undefined; expires: Date | undefined }> => {
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
 
   const s3 = new S3Client({
@@ -70,4 +70,9 @@ export const s3StorePage = async (
     s3.send(new PutObjectCommand(s3JsonParams)),
     s3.send(new PutObjectCommand(s3HtmlParams))
   ]);
+
+  return {
+    cacheControl,
+    expires
+  };
 };

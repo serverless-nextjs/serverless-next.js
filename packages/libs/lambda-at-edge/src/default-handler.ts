@@ -48,6 +48,7 @@ import { getStaticRegenerationResponse } from "./lib/getStaticRegenerationRespon
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 import { s3StorePage } from "./s3/s3StorePage";
+import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -677,12 +678,7 @@ const handleOriginResponse = async ({
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
     // Reconstruct original uri for next/router
-    if (uri.endsWith(".html")) {
-      request.uri = uri.slice(0, uri.length - 5);
-      if (manifest.trailingSlash) {
-        request.uri += "/";
-      }
-    }
+    request.uri = cleanRequestUriForRouter(request.uri, manifest.trailingSlash);
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
       event.Records[0].cf,
       {
@@ -695,8 +691,9 @@ const handleOriginResponse = async ({
       res,
       "passthrough"
     );
+    let cacheControl = "public, max-age=0, s-maxage=2678400, must-revalidate";
     if (isSSG) {
-      await s3StorePage({
+      const { expires } = await s3StorePage({
         html,
         uri,
         basePath,
@@ -706,16 +703,30 @@ const handleOriginResponse = async ({
         region: request.origin?.s3?.region || "",
         revalidate: renderOpts.revalidate
       });
+
+      const isrResponse = expires
+        ? getStaticRegenerationResponse({
+            expiresHeader: expires.toJSON(),
+            manifest,
+            requestedOriginUri: uri,
+            lastModifiedHeader: undefined
+          })
+        : null;
+
+      cacheControl = (isrResponse && isrResponse.cacheControl) || cacheControl;
     }
     const outHeaders: OutgoingHttpHeaders = {};
     Object.entries(response.headers).map(([name, headers]) => {
       outHeaders[name] = headers.map(({ value }) => value);
     });
     res.writeHead(200, outHeaders);
-    res.setHeader(
-      "Cache-Control",
-      "public, max-age=0, s-maxage=2678400, must-revalidate"
-    );
+
+    if (cacheControl) {
+      res.setHeader("Cache-Control", cacheControl);
+    } else {
+      res.removeHeader("Cache-Control");
+    }
+
     if (isDataRequest(uri)) {
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));

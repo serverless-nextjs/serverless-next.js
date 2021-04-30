@@ -143,7 +143,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       timeout: toLambdaOption("defaultLambda", props.timeout)
     });
 
-    this.bucket.grantRead(this.defaultNextLambda);
+    this.bucket.grantReadWrite(this.defaultNextLambda);
     this.bucket.grantReadWrite(this.regenerationFunction);
     this.regenerationQueue.grantSendMessages(this.defaultNextLambda);
     this.defaultNextLambda.currentVersion.addAlias("live");

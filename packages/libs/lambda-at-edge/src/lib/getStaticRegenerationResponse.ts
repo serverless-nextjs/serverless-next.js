@@ -5,7 +5,7 @@ interface StaticRegenerationResponseOptions {
   requestedOriginUri: string;
   // Header as set on the origin object
   expiresHeader: string;
-  lastModifiedHeader: string;
+  lastModifiedHeader: string | undefined;
   manifest: OriginRequestDefaultHandlerManifest;
 }
 
@@ -54,7 +54,7 @@ const getStaticRegenerationResponse = (
   const expiresAt = options.expiresHeader
     ? new Date(options.expiresHeader)
     : firstRegenerateExpiryDate(
-        options.lastModifiedHeader,
+        options.lastModifiedHeader as string,
         initialRevalidateSeconds as number
       );
 

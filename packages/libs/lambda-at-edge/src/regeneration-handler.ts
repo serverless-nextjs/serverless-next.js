@@ -1,6 +1,7 @@
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import { OriginRequestDefaultHandlerManifest } from "./types";
 import { s3StorePage } from "./s3/s3StorePage";
+import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
 export const handler: AWSLambda.SQSHandler = async (event) => {
   await Promise.all(
@@ -28,6 +29,10 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
         manifestString
       );
 
+      cloudFrontEventRequest.uri = cleanRequestUriForRouter(
+        cloudFrontEventRequest.uri,
+        manifest.trailingSlash
+      );
       const { req, res } = lambdaAtEdgeCompat(
         { request: cloudFrontEventRequest },
         { enableHTTPCompression: manifest.enableHTTPCompression }
@@ -37,8 +42,24 @@ export const handler: AWSLambda.SQSHandler = async (event) => {
         .replace(/\.(json|html)$/, "")
         .replace(/^_next\/data\/[^\/]*\//, "");
 
-      const ssgRoute = manifest.pages.ssg.nonDynamic[baseKey];
-      const srcPath = ssgRoute.srcRoute || baseKey;
+      let srcRoute = manifest.pages.ssg.nonDynamic[baseKey]?.srcRoute;
+      if (!srcRoute) {
+        const matchedDynamicRoute = Object.entries(
+          manifest.pages.ssg.dynamic
+        ).find(([, dynamicSsgRoute]) => {
+          return new RegExp(dynamicSsgRoute.routeRegex).test(
+            cloudFrontEventRequest.uri
+          );
+        });
+
+        if (matchedDynamicRoute) {
+          [srcRoute] = matchedDynamicRoute;
+        }
+      }
+
+      // We probably should not get to this point without `srcRoute` being
+      // defined
+      const srcPath = srcRoute || baseKey;
 
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const page = require(`./pages${srcPath}`);
