@@ -4,6 +4,7 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import externals from "rollup-plugin-node-externals";
 import json from "@rollup/plugin-json";
 import { terser } from "rollup-plugin-terser";
+import del from "rollup-plugin-delete";
 
 const LOCAL_EXTERNALS = [
   "./manifest.json",
@@ -21,6 +22,11 @@ const generateConfig = (input) => ({
     format: "cjs"
   },
   plugins: [
+    del({
+      targets: `./dist/${input.filename}/${
+        input.minify ? "minified" : "standard"
+      }`
+    }),
     json(),
     commonjs(),
     externals({

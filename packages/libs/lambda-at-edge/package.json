@@ -52,6 +52,7 @@
     "@types/sharp": "^0.26.1",
     "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.46.0",
+    "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-node-externals": "^2.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.27.2",
