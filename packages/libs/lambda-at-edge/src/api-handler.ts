@@ -10,18 +10,17 @@ import {
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
 import {
-  createRedirectResponse,
-  getDomainRedirectPath,
-  getRedirectPath
-} from "./routing/redirector";
-import {
   createExternalRewriteResponse,
   getRewritePath,
   isExternalRewrite
 } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
-import { getUnauthenticatedResponse } from "./auth/authenticator";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import {
+  handleAuth,
+  handleCustomRedirects,
+  handleDomainRedirects
+} from "@sls-next/routing";
 import { removeLocalePrefixFromUri } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
@@ -72,30 +71,23 @@ export const handler = async (
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
 
-  // Handle basic auth
-  const authorization = request.headers.authorization;
-  const unauthResponse = getUnauthenticatedResponse(
-    authorization ? authorization[0].value : null,
-    manifest.authentication
-  );
-  if (unauthResponse) {
-    return unauthResponse;
+  // Basic authentication
+
+  const authResponse = handleAuth(request, buildManifest);
+  if (authResponse) {
+    return authResponse;
   }
 
-  // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, buildManifest);
+  // Redirects
+
+  const domainRedirect = handleDomainRedirects(request, buildManifest);
   if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+    return domainRedirect;
   }
 
-  // Handle custom redirects
-  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  const customRedirect = handleCustomRedirects(request, routesManifest);
   if (customRedirect) {
-    return createRedirectResponse(
-      customRedirect.redirectPath,
-      request.querystring,
-      customRedirect.statusCode
-    );
+    return customRedirect;
   }
 
   // Handle custom rewrites but not for non-dynamic routes

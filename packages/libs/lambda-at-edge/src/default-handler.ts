@@ -5,6 +5,13 @@ import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import {
+  handleAuth,
+  handleCustomRedirects,
+  handleDomainRedirects,
+  handleLanguageRedirect,
+  handleTrailingSlash
+} from "@sls-next/routing";
 
 import {
   CloudFrontOrigin,
@@ -24,19 +31,12 @@ import { performance } from "perf_hooks";
 import { OutgoingHttpHeaders, ServerResponse } from "http";
 import type { Readable } from "stream";
 import {
-  createRedirectResponse,
-  getDomainRedirectPath,
-  getLanguageRedirect,
-  getRedirectPath
-} from "./routing/redirector";
-import {
   createExternalRewriteResponse,
   getRewritePath,
   isExternalRewrite
 } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
-import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import {
   isLocalePrefixedUri,
@@ -305,19 +305,16 @@ const handleOriginRequest = async ({
   const request = event.Records[0].cf.request;
 
   // Handle basic auth
-  const authorization = request.headers.authorization;
-  const unauthResponse = getUnauthenticatedResponse(
-    authorization ? authorization[0].value : null,
-    manifest.authentication
-  );
-  if (unauthResponse) {
-    return unauthResponse;
+  const authResponse = handleAuth(request, manifest);
+  if (authResponse) {
+    return authResponse;
   }
 
-  // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, manifest);
+  // Redirects
+
+  const domainRedirect = handleDomainRedirects(request, manifest);
   if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+    return domainRedirect;
   }
 
   const basePath = routesManifest.basePath;
@@ -325,64 +322,33 @@ const handleOriginRequest = async ({
   const decodedUri = decodeURI(uri);
   const { pages, publicFiles } = manifest;
 
-  let isPublicFile = publicFiles[decodedUri];
+  let isPublicFile = !!publicFiles[decodedUri];
   let isDataReq = isDataRequest(uri);
 
-  // Handle redirects
-  // TODO: refactor redirect logic to another file since this is getting quite large
-
-  // Handle any trailing slash redirects
-  let newUri = request.uri;
-  if (isDataReq || isPublicFile) {
-    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL
-    if (newUri.endsWith("/")) {
-      newUri = newUri.slice(0, -1);
-    }
-  } else if (/^\/[^/]/.test(request.uri) && !uri.endsWith("/404")) {
-    // HTML/SSR pages get redirected based on trailingSlash in next.config.js
-    // We do not redirect:
-    // 1. Unnormalised URI is "/" or "" as this could cause a redirect loop due to browsers appending trailing slash
-    // 2. "/404" pages due to basePath normalisation
-    const trailingSlash = manifest.trailingSlash;
-
-    if (!trailingSlash && newUri.endsWith("/")) {
-      newUri = newUri.slice(0, -1);
-    }
-
-    if (trailingSlash && !newUri.endsWith("/")) {
-      newUri += "/";
-    }
-  }
-
-  if (newUri !== request.uri) {
-    return createRedirectResponse(newUri, request.querystring, 308);
-  }
-
-  // Handle other custom redirects on the original URI
-  const customRedirect = getRedirectPath(request.uri, routesManifest);
-  if (customRedirect) {
-    return createRedirectResponse(
-      customRedirect.redirectPath,
-      request.querystring,
-      customRedirect.statusCode
+  if (!uri.endsWith("/404")) {
+    const trailingSlashRedirect = handleTrailingSlash(
+      request,
+      manifest,
+      isDataReq || isPublicFile
     );
+    if (trailingSlashRedirect) {
+      return trailingSlashRedirect;
+    }
+  }
+
+  const customRedirect = handleCustomRedirects(request, routesManifest);
+  if (customRedirect) {
+    return customRedirect;
   }
 
   // Handle root language redirect
-  const languageHeader = request.headers["accept-language"];
-  const languageRedirectUri = getLanguageRedirect(
-    languageHeader ? languageHeader[0].value : undefined,
-    uri,
-    routesManifest,
-    manifest
+  const languageRedirect = handleLanguageRedirect(
+    request,
+    manifest,
+    routesManifest
   );
-
-  if (languageRedirectUri) {
-    return createRedirectResponse(
-      languageRedirectUri,
-      request.querystring,
-      307
-    );
+  if (languageRedirect) {
+    return languageRedirect;
   }
 
   // Always add default locale prefix to URIs without it that are not public files or data requests
