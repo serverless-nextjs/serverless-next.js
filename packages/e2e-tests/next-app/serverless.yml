@@ -1,4 +1,4 @@
-my-next-app:
+next-app:
   component: "../../serverless-components/nextjs-component"
   inputs:
     build:
