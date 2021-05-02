@@ -260,7 +260,6 @@ export const handler = async (
     response = await handleOriginResponse({
       event,
       manifest,
-      prerenderManifest,
       routesManifest
     });
   } else {
@@ -599,7 +598,6 @@ const handleOriginResponse = async ({
 }: {
   event: OriginResponseEvent;
   manifest: OriginRequestDefaultHandlerManifest;
-  prerenderManifest: PrerenderManifestType;
   routesManifest: RoutesManifest;
 }) => {
   const response = event.Records[0].cf.response;
