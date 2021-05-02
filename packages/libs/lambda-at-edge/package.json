@@ -11,7 +11,6 @@
     "build-lambda-at-edge": "dist/command.js"
   },
   "scripts": {
-    "preinstall": "yarn clean",
     "prepare": "yarn build",
     "clean": "ts-node scripts/clean-dist.ts",
     "copy-sharp-modules": "ts-node scripts/copy-sharp-modules.ts",
