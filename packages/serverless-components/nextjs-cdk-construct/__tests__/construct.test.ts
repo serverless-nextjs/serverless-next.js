@@ -184,6 +184,39 @@ describe("CDK Construct", () => {
     expect(synthesizedStack).toCountResources("AWS::Route53::RecordSet", 0);
   });
 
+  it("configure distribution, but not Route53 records, with custom domain outside AWS", () => {
+    const stack = new Stack();
+    const certificate = Certificate.fromCertificateArn(
+      stack,
+      "Cert",
+      "arn:partition:service:us-east-1:1234578:abc"
+    );
+    const domainName = "domain.com";
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      domain: {
+        certificate,
+        domainNames: [domainName]
+      }
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::Distribution",
+      {
+        DistributionConfig: {
+          Aliases: ["domain.com"],
+          ViewerCertificate: {
+            AcmCertificateArn: "arn:partition:service:us-east-1:1234578:abc"
+          }
+        }
+      }
+    );
+
+    expect(synthesizedStack).toCountResources("AWS::Route53::RecordSet", 0);
+  });
+
   it("concatenates edgeLambdas passed to defaultBehavior", () => {
     const stack = new Stack();
 
