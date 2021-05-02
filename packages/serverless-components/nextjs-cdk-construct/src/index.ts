@@ -6,8 +6,6 @@ import * as s3Deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as origins from "@aws-cdk/aws-cloudfront-origins";
 import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
@@ -62,8 +60,6 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public aRecord?: ARecord;
 
-  public regenerationQueue: sqs.Queue;
-
   public regenerationFunction: lambda.Function;
 
   constructor(scope: cdk.Construct, id: string, private props: Props) {
@@ -84,19 +80,14 @@ export class NextJSLambdaEdge extends cdk.Construct {
       ...(props.s3Props || {})
     });
 
-    this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
-      // We call the queue the same name as the bucket so that we can easily
-      // reference it from within the lambda@edge, given we can't use env vars
-      // in a lambda@edge
-      queueName: `${this.bucket.bucketName}.fifo`,
-      fifo: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY
-    });
-
     this.regenerationFunction = new lambda.Function(
       this,
       "RegenerationFunction",
       {
+        // We call the lambda the same name as the bucket so that we can easily
+        // reference it from within the lambda@edge, given we can't use env vars
+        // in a lambda@edge
+        functionName: this.bucket.bucketName,
         handler: "index.handler",
         runtime: lambda.Runtime.NODEJS_14_X,
         timeout: Duration.minutes(1),
@@ -104,10 +95,6 @@ export class NextJSLambdaEdge extends cdk.Construct {
           path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
         )
       }
-    );
-
-    this.regenerationFunction.addEventSource(
-      new lambdaEventSources.SqsEventSource(this.regenerationQueue)
     );
 
     this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
@@ -145,7 +132,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
     this.bucket.grantReadWrite(this.defaultNextLambda);
     this.bucket.grantReadWrite(this.regenerationFunction);
-    this.regenerationQueue.grantSendMessages(this.defaultNextLambda);
+    this.regenerationFunction.grantInvoke(this.defaultNextLambda);
     this.defaultNextLambda.currentVersion.addAlias("live");
 
     const apis = this.apiBuildManifest?.apis;

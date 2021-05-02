@@ -1,85 +1,64 @@
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
-import { OriginRequestDefaultHandlerManifest } from "./types";
+// @ts-ignore
+import Manifest from "./manifest.json";
+import {
+  OriginRequestDefaultHandlerManifest,
+  RegenerationEvent
+} from "./types";
 import { s3StorePage } from "./s3/s3StorePage";
 import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
-export const handler: AWSLambda.SQSHandler = async (event) => {
-  await Promise.all(
-    event.Records.map(async (record) => {
-      const bucketName = record.messageAttributes.BucketName?.stringValue;
-      const bucketRegion = record.messageAttributes.BucketRegion?.stringValue;
-      const manifestString = record.messageAttributes.Manifest?.stringValue;
-      const basePath = record.messageAttributes.BasePath?.stringValue;
-      const cloudFrontEventRequestString =
-        record.messageAttributes.CloudFrontEventRequest?.stringValue;
-      if (
-        !bucketName ||
-        !bucketRegion ||
-        !cloudFrontEventRequestString ||
-        !manifestString
-      ) {
-        throw new Error(
-          "Expected BucketName, BucketRegion, CloudFrontEventRequest & EnableHTTPCompression message attributes"
+export const handler: AWSLambda.Handler<RegenerationEvent> = async (event) => {
+  const manifest: OriginRequestDefaultHandlerManifest = Manifest;
+  event.cloudFrontEventRequest.uri = cleanRequestUriForRouter(
+    event.cloudFrontEventRequest.uri,
+    manifest.trailingSlash
+  );
+  const { req, res } = lambdaAtEdgeCompat(
+    { request: event.cloudFrontEventRequest },
+    { enableHTTPCompression: manifest.enableHTTPCompression }
+  );
+
+  const baseKey = event.cloudFrontEventRequest.uri
+    .replace(/\.(json|html)$/, "")
+    .replace(/^_next\/data\/[^\/]*\//, "");
+
+  let srcRoute = manifest.pages.ssg.nonDynamic[baseKey]?.srcRoute;
+  if (!srcRoute) {
+    const matchedDynamicRoute = Object.entries(manifest.pages.ssg.dynamic).find(
+      ([, dynamicSsgRoute]) => {
+        return new RegExp(dynamicSsgRoute.routeRegex).test(
+          event.cloudFrontEventRequest.uri
         );
       }
-      const cloudFrontEventRequest: AWSLambda.CloudFrontRequest = JSON.parse(
-        cloudFrontEventRequestString
-      );
-      const manifest: OriginRequestDefaultHandlerManifest = JSON.parse(
-        manifestString
-      );
+    );
 
-      cloudFrontEventRequest.uri = cleanRequestUriForRouter(
-        cloudFrontEventRequest.uri,
-        manifest.trailingSlash
-      );
-      const { req, res } = lambdaAtEdgeCompat(
-        { request: cloudFrontEventRequest },
-        { enableHTTPCompression: manifest.enableHTTPCompression }
-      );
+    if (matchedDynamicRoute) {
+      [srcRoute] = matchedDynamicRoute;
+    }
+  }
 
-      const baseKey = cloudFrontEventRequest.uri
-        .replace(/\.(json|html)$/, "")
-        .replace(/^_next\/data\/[^\/]*\//, "");
+  // We probably should not get to this point without `srcRoute` being
+  // defined
+  const srcPath = srcRoute || baseKey;
 
-      let srcRoute = manifest.pages.ssg.nonDynamic[baseKey]?.srcRoute;
-      if (!srcRoute) {
-        const matchedDynamicRoute = Object.entries(
-          manifest.pages.ssg.dynamic
-        ).find(([, dynamicSsgRoute]) => {
-          return new RegExp(dynamicSsgRoute.routeRegex).test(
-            cloudFrontEventRequest.uri
-          );
-        });
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  const page = require(`./pages${srcPath}`);
 
-        if (matchedDynamicRoute) {
-          [srcRoute] = matchedDynamicRoute;
-        }
-      }
-
-      // We probably should not get to this point without `srcRoute` being
-      // defined
-      const srcPath = srcRoute || baseKey;
-
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const page = require(`./pages${srcPath}`);
-
-      const { renderOpts, html } = await page.renderReqToHTML(
-        req,
-        res,
-        "passthrough"
-      );
-
-      await s3StorePage({
-        html,
-        uri: cloudFrontEventRequest.uri,
-        basePath,
-        bucketName: bucketName || "",
-        buildId: manifest.buildId,
-        pageData: renderOpts.pageData,
-        region: cloudFrontEventRequest.origin?.s3?.region || "",
-        revalidate: renderOpts.revalidate
-      });
-    })
+  const { renderOpts, html } = await page.renderReqToHTML(
+    req,
+    res,
+    "passthrough"
   );
+
+  await s3StorePage({
+    html,
+    uri: event.cloudFrontEventRequest.uri,
+    basePath: event.basePath,
+    bucketName: event.bucketName,
+    buildId: manifest.buildId,
+    pageData: renderOpts.pageData,
+    region: event.cloudFrontEventRequest.origin?.s3?.region || "",
+    revalidate: renderOpts.revalidate
+  });
 };

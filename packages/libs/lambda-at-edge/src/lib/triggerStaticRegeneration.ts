@@ -1,11 +1,10 @@
 import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest";
 import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
-import { OriginRequestDefaultHandlerManifest } from "../types";
+import { RegenerationEvent } from "../types";
 
 interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
   response: AWSLambda.CloudFrontResponse;
-  manifest: OriginRequestDefaultHandlerManifest;
   basePath: string | undefined;
 }
 
@@ -15,56 +14,34 @@ export const triggerStaticRegeneration = async (
   const { region } = options.request.origin?.s3 || {};
   const bucketName = s3BucketNameFromEventRequest(options.request);
 
-  const { SQSClient, SendMessageCommand } = await import("@aws-sdk/client-sqs");
-  const sqs = new SQSClient({
+  if (!bucketName) {
+    throw new Error("Expected bucket name to be defined");
+  }
+
+  if (!region) {
+    throw new Error("Expected region to be defined");
+  }
+
+  const { LambdaClient, InvokeAsyncCommand } = await import(
+    "@aws-sdk/client-lambda"
+  );
+  const lambda = new LambdaClient({
     region,
     maxAttempts: 3,
     retryStrategy: await buildS3RetryStrategy()
   });
 
-  const lastModifiedAt = new Date(
-    options.response.headers["last-modified"]?.[0].value
-  )
-    .getTime()
-    .toString();
+  const regenerationEvent: RegenerationEvent = {
+    region,
+    bucketName,
+    cloudFrontEventRequest: options.request,
+    basePath: options.basePath
+  };
 
-  await sqs.send(
-    new SendMessageCommand({
-      QueueUrl: `https://sqs.${region}.amazonaws.com/${bucketName}.fifo`,
-      MessageBody: options.request.uri, // This is not used, however it is a required property
-      MessageAttributes: {
-        BucketRegion: {
-          DataType: "String",
-          StringValue: region
-        },
-        BucketName: {
-          DataType: "String",
-          StringValue: bucketName
-        },
-        CloudFrontEventRequest: {
-          DataType: "String",
-          StringValue: JSON.stringify(options.request)
-        },
-        Manifest: {
-          DataType: "String",
-          StringValue: JSON.stringify(options.manifest)
-        },
-        ...(options.basePath
-          ? {
-              BasePath: {
-                DataType: "String",
-                StringValue: options.basePath
-              }
-            }
-          : {})
-      },
-      // We only want to trigger the regeneration once for every previous
-      // update. This will prevent the case where this page is being
-      // requested again whilst its already started to regenerate.
-      MessageDeduplicationId: lastModifiedAt,
-      // Only deduplicate based on the object, i.e. we can generate
-      // different pages in parallel, just not the same one
-      MessageGroupId: options.request.uri
+  await lambda.send(
+    new InvokeAsyncCommand({
+      FunctionName: bucketName,
+      InvokeArgs: JSON.stringify(regenerationEvent)
     })
   );
 };

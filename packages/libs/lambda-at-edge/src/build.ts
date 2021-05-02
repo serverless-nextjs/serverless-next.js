@@ -430,9 +430,13 @@ class Builder {
   ): Promise<void> {
     await Promise.all([
       this.copyTraces(buildManifest),
+      fse.writeJson(
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
       this.processAndCopyHandler(
         "regeneration-handler",
-        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       fse.copy(

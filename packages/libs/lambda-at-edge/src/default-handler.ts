@@ -639,7 +639,6 @@ const handleOriginResponse = async ({
       if (staticRegenerationResponse.secondsRemainingUntilRevalidation === 0) {
         await triggerStaticRegeneration({
           basePath,
-          manifest,
           request,
           response
         });
