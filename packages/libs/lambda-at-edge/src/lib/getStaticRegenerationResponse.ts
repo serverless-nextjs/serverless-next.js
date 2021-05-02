@@ -58,13 +58,9 @@ const getStaticRegenerationResponse = (
         initialRevalidateSeconds as number
       );
 
-  // isNaN will resolve true on initial load of this page (as the expiresHeader
-  // won't be set), in which case we trigger a regeneration now
-  const secondsRemainingUntilRevalidation = isNaN(expiresAt.getTime())
-    ? 0
-    : // Never return a negative amount of seconds if revalidation could have
-      // happened sooner
-      Math.floor(Math.max(0, (expiresAt.getTime() - Date.now()) / 1000));
+  const secondsRemainingUntilRevalidation = Math.floor(
+    Math.max(0, (expiresAt.getTime() - Date.now()) / 1000)
+  );
 
   return {
     secondsRemainingUntilRevalidation,
