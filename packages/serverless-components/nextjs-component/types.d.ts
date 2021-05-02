@@ -11,16 +11,36 @@ export type ServerlessComponentInputs = {
   publicDirectoryCache?: PublicDirectoryCache;
   memory?:
     | number
-    | { defaultLambda?: number; apiLambda?: number; imageLambda?: number };
+    | {
+        defaultLambda?: number;
+        apiLambda?: number;
+        imageLambda?: number;
+        regenerationLambda?: string;
+      };
   timeout?:
     | number
-    | { defaultLambda?: number; apiLambda?: number; imageLambda?: number };
+    | {
+        defaultLambda?: number;
+        apiLambda?: number;
+        imageLambda?: number;
+        regenerationLambda?: string;
+      };
   name?:
     | string
-    | { defaultLambda?: string; apiLambda?: string; imageLambda?: string };
+    | {
+        defaultLambda?: string;
+        apiLambda?: string;
+        imageLambda?: string;
+        regenerationLambda?: string;
+      };
   runtime?:
     | string
-    | { defaultLambda?: string; apiLambda?: string; imageLambda?: string };
+    | {
+        defaultLambda?: string;
+        apiLambda?: string;
+        imageLambda?: string;
+        regenerationLambda?: string;
+      };
   handler?: string;
   description?: string;
   policy?: string;
@@ -51,7 +71,11 @@ export type BuildOptions = {
   baseDir?: string;
 };
 
-export type LambdaType = "defaultLambda" | "apiLambda" | "imageLambda";
+export type LambdaType =
+  | "defaultLambda"
+  | "apiLambda"
+  | "imageLambda"
+  | "regenerationLambda";
 
 export type LambdaInput = {
   description: string;

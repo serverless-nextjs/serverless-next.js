@@ -19,7 +19,8 @@ import obtainDomains from "./lib/obtainDomains";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
-  IMAGE_LAMBDA_CODE_DIR
+  IMAGE_LAMBDA_CODE_DIR,
+  REGENERATION_LAMBDA_CODE_DIR
 } from "./constants";
 import type {
   BuildOptions,
@@ -315,13 +316,15 @@ class NextjsComponent extends Component {
       cloudFront,
       defaultEdgeLambda,
       apiEdgeLambda,
-      imageEdgeLambda
+      imageEdgeLambda,
+      regenerationLambda
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
       this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
       this.load("@sls-next/aws-lambda", "apiEdgeLambda"),
-      this.load("@sls-next/aws-lambda", "imageEdgeLambda")
+      this.load("@sls-next/aws-lambda", "imageEdgeLambda"),
+      this.load("@sls-next/aws-lambda", "regenerationLambda")
     ]);
 
     const bucketOutputs = await bucket({
@@ -462,6 +465,13 @@ class NextjsComponent extends Component {
           Effect: "Allow",
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
           Action: ["s3:GetObject", "s3:PutObject"]
+        },
+        {
+          Effect: "Allow",
+          // The regeneration lambda has the same name as the bucket, so this
+          // policy statement allow invocation of the regeneration lambda
+          Resource: `arn:aws:lambda:*:*:function:${bucketOutputs.name}`,
+          Action: ["lambda:InvokeFunction"]
         }
       ]
     };
@@ -473,6 +483,41 @@ class NextjsComponent extends Component {
         policy = inputs.policy;
       }
     }
+
+    const regenerationLambdaInput: LambdaInput = {
+      description: inputs.description
+        ? `${inputs.description} (API)`
+        : "Next.js Regeneration Lambda",
+      handler: inputs.handler || "index.handler",
+      code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
+      role: inputs.roleArn
+        ? {
+            arn: inputs.roleArn
+          }
+        : {
+            service: ["lambda.amazonaws.com"],
+            policy
+          },
+      memory: readLambdaInputValue(
+        "memory",
+        "regenerationLambda",
+        512
+      ) as number,
+      timeout: readLambdaInputValue(
+        "timeout",
+        "regenerationLambda",
+        10
+      ) as number,
+      runtime: readLambdaInputValue(
+        "runtime",
+        "regenerationLambda",
+        "nodejs12.x"
+      ) as string,
+      name: bucketOutputs.name
+    };
+
+    await regenerationLambda(regenerationLambdaInput);
+    await regenerationLambda.publishVersion();
 
     if (hasAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {

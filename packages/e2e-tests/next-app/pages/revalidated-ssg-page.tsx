@@ -9,7 +9,7 @@ export default function RevalidatedSSGPage(props: SSGPageProps): JSX.Element {
   return (
     <React.Fragment>
       <div>
-        <p>{`The date is ${props.date}!`}</p>
+        <p data-cy="date-text">{props.date}</p>
       </div>
     </React.Fragment>
   );
@@ -21,7 +21,7 @@ export async function getStaticProps(): Promise<
   return {
     revalidate: 10,
     props: {
-      date: new Date().toLocaleString()
+      date: new Date().toJSON()
     }
   };
 }
