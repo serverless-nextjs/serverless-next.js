@@ -75,7 +75,8 @@
       "<rootDir>/packages/**/*.{js,ts}"
     ],
     "moduleNameMapper": {
-      "fs-extra": "<rootDir>/node_modules/fs-extra"
+      "fs-extra": "<rootDir>/node_modules/fs-extra",
+      "@sls-next/core": "<rootDir>/packages/libs/core/src/index.ts"
     },
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
