@@ -6,11 +6,10 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
-  handleAuth,
-  handleCustomRedirects,
-  handleDomainRedirects,
-  handleLanguageRedirect,
-  handleTrailingSlash
+  PublicFileRoute,
+  RedirectRoute,
+  routeDefault,
+  UnauthorizedRoute
 } from "@sls-next/core";
 
 import {
@@ -304,59 +303,39 @@ const handleOriginRequest = async ({
 }) => {
   const request = event.Records[0].cf.request;
 
-  // Handle basic auth
-  const authResponse = handleAuth(request, manifest);
-  if (authResponse) {
-    return authResponse;
-  }
-
-  // Redirects
-
-  const domainRedirect = handleDomainRedirects(request, manifest);
-  if (domainRedirect) {
-    return domainRedirect;
+  const route = routeDefault(request, manifest, routesManifest);
+  if (route) {
+    if (route.isPublicFile) {
+      const { file } = route as PublicFileRoute;
+      const s3Origin = request.origin?.s3 as CloudFrontS3Origin;
+      const s3Domain = normaliseS3OriginDomain(s3Origin);
+      s3Origin.domainName = s3Domain;
+      s3Origin.path = `${routesManifest.basePath}/public`;
+      request.uri = encodeURI(file);
+      addS3HostHeader(request, s3Domain);
+      return request;
+    }
+    if (route.isRedirect) {
+      const { isRedirect, status, ...response } = route as RedirectRoute;
+      return { ...response, status: status.toString() };
+    }
+    // No if lets typescript check this is the only option
+    const unauthorized: UnauthorizedRoute = route;
+    const { isUnauthorized, status, ...response } = unauthorized;
+    return { ...response, status: status.toString() };
   }
 
   const basePath = routesManifest.basePath;
   let uri = normaliseUri(request.uri, routesManifest);
-  const decodedUri = decodeURI(uri);
-  const { pages, publicFiles } = manifest;
+  const { pages } = manifest;
 
-  let isPublicFile = !!publicFiles[decodedUri];
   let isDataReq = isDataRequest(uri);
-
-  if (!uri.endsWith("/404")) {
-    const trailingSlashRedirect = handleTrailingSlash(
-      request,
-      manifest,
-      isDataReq || isPublicFile
-    );
-    if (trailingSlashRedirect) {
-      return trailingSlashRedirect;
-    }
-  }
-
-  const customRedirect = handleCustomRedirects(request, routesManifest);
-  if (customRedirect) {
-    return customRedirect;
-  }
-
-  // Handle root language redirect
-  const languageRedirect = handleLanguageRedirect(
-    request,
-    manifest,
-    routesManifest
-  );
-  if (languageRedirect) {
-    return languageRedirect;
-  }
 
   // Always add default locale prefix to URIs without it that are not public files or data requests
   const defaultLocale = routesManifest.i18n?.defaultLocale;
   if (
     defaultLocale &&
     !isLocalePrefixedUri(uri, routesManifest) &&
-    !isPublicFile &&
     !isDataReq
   ) {
     uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
@@ -364,7 +343,7 @@ const handleOriginRequest = async ({
 
   // Check for non-dynamic pages before rewriting
   const isNonDynamicRoute =
-    pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri] || isPublicFile;
+    pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri];
 
   let rewrittenUri;
   // Handle custom rewrites, but don't rewrite non-dynamic pages, public files or data requests per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
@@ -412,7 +391,6 @@ const handleOriginRequest = async ({
       if (
         defaultLocale &&
         !isLocalePrefixedUri(uri, routesManifest) &&
-        !isPublicFile &&
         !isDataReq
       ) {
         uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
@@ -436,19 +414,13 @@ const handleOriginRequest = async ({
   s3Origin.domainName = normalisedS3DomainName;
 
   S3Check: if (
-    // Note: public files and static pages (HTML pages with no props) don't have JS files needed for preview mode, always serve from S3.
-    isPublicFile ||
+    // Note: static pages (HTML pages with no props) don't have JS files needed for preview mode, always serve from S3.
     isStaticPage ||
     (isHTMLPage && !isPreviewRequest) ||
     (hasFallback && !isPreviewRequest) ||
     (isDataReq && !isPreviewRequest)
   ) {
-    if (isPublicFile) {
-      s3Origin.path = `${basePath}/public`;
-      if (basePath) {
-        request.uri = request.uri.replace(basePath, "");
-      }
-    } else if (isHTMLPage || hasFallback) {
+    if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;

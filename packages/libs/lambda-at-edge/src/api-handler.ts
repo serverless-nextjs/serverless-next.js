@@ -73,21 +73,20 @@ export const handler = async (
 
   // Basic authentication
 
-  const authResponse = handleAuth(request, buildManifest);
-  if (authResponse) {
-    return authResponse;
+  const authRoute = handleAuth(request, buildManifest);
+  if (authRoute) {
+    const { isUnauthorized, status, ...response } = authRoute;
+    return { ...response, status: status.toString() };
   }
 
   // Redirects
 
-  const domainRedirect = handleDomainRedirects(request, buildManifest);
-  if (domainRedirect) {
-    return domainRedirect;
-  }
-
-  const customRedirect = handleCustomRedirects(request, routesManifest);
-  if (customRedirect) {
-    return customRedirect;
+  const redirectRoute =
+    handleDomainRedirects(request, buildManifest) ||
+    handleCustomRedirects(request, routesManifest);
+  if (redirectRoute) {
+    const { isRedirect, status, ...response } = redirectRoute;
+    return { ...response, status: status.toString() };
   }
 
   // Handle custom rewrites but not for non-dynamic routes

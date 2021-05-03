@@ -78,7 +78,8 @@ describe("Redirector Tests", () => {
     it("does a permanent redirect", () => {
       const response = createRedirectResponse("/terms", "", 308);
       expect(response).toEqual({
-        status: "308",
+        isRedirect: true,
+        status: 308,
         statusDescription: "Permanent Redirect",
         headers: {
           location: [
@@ -101,7 +102,8 @@ describe("Redirector Tests", () => {
     it("does a temporary redirect with query parameters", () => {
       const response = createRedirectResponse("/terms", "a=123", 307);
       expect(response).toEqual({
-        status: "307",
+        isRedirect: true,
+        status: 307,
         statusDescription: "Temporary Redirect",
         headers: {
           location: [

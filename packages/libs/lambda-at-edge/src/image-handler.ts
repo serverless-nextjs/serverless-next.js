@@ -38,15 +38,17 @@ export const handler = async (
   const buildManifest: OriginRequestImageHandlerManifest = manifest;
 
   // Handle basic auth
-  const authResponse = handleAuth(request, buildManifest);
-  if (authResponse) {
-    return authResponse;
+  const authRoute = handleAuth(request, buildManifest);
+  if (authRoute) {
+    const { isUnauthorized, status, ...response } = authRoute;
+    return { ...response, status: status.toString() };
   }
 
   // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = handleDomainRedirects(request, buildManifest);
-  if (domainRedirect) {
-    return domainRedirect;
+  const redirectRoute = handleDomainRedirects(request, manifest);
+  if (redirectRoute) {
+    const { isRedirect, status, ...response } = redirectRoute;
+    return { ...response, status: status.toString() };
   }
 
   // No other redirects or rewrites supported for now as it's assumed one is accessing this directly.

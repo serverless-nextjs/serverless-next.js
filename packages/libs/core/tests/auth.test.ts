@@ -17,7 +17,7 @@ describe("Basic Authenticator Tests", () => {
     };
     const unauthResponse = getUnauthenticatedResponse([header], authentication);
 
-    expect(unauthResponse).toBeNull();
+    expect(unauthResponse).toBeUndefined();
   });
 
   it("rejects invalid username and password", () => {
@@ -27,7 +27,8 @@ describe("Basic Authenticator Tests", () => {
     const unauthResponse = getUnauthenticatedResponse([header], authentication);
 
     expect(unauthResponse).toEqual({
-      status: "401",
+      isUnauthorized: true,
+      status: 401,
       statusDescription: "Unauthorized",
       body: "Unauthorized",
       headers: {

@@ -1,9 +1,9 @@
-import { Header, Response } from "./types";
+import { Header, UnauthorizedRoute } from "./types";
 
 export function getUnauthenticatedResponse(
   authorizationHeaders: Header[] | null,
   authentication: { username: string; password: string } | undefined
-): Response | null {
+): UnauthorizedRoute | undefined {
   if (authentication && authentication.username && authentication.password) {
     const validAuth =
       "Basic " +
@@ -13,7 +13,8 @@ export function getUnauthenticatedResponse(
 
     if (!authorizationHeaders || authorizationHeaders[0]?.value !== validAuth) {
       return {
-        status: "401",
+        isUnauthorized: true,
+        status: 401,
         statusDescription: "Unauthorized",
         body: "Unauthorized",
         headers: {
@@ -22,6 +23,4 @@ export function getUnauthenticatedResponse(
       };
     }
   }
-
-  return null;
 }

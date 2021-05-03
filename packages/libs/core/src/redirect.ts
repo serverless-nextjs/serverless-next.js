@@ -1,7 +1,7 @@
 import * as http from "http";
 import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "./locale";
 import { compileDestination, matchPath } from "./match";
-import { Manifest, Request, Response, RoutesManifest } from "./types";
+import { Manifest, Request, RedirectRoute, RoutesManifest } from "./types";
 
 /**
  * Create a redirect response with the given status code
@@ -13,7 +13,7 @@ export function createRedirectResponse(
   uri: string,
   querystring: string | undefined,
   statusCode: number
-): Response {
+): RedirectRoute {
   let location;
 
   // Properly join query strings
@@ -24,7 +24,7 @@ export function createRedirectResponse(
     location = uri;
   }
 
-  const status = statusCode.toString();
+  const status = statusCode;
   const statusDescription = http.STATUS_CODES[status];
 
   const refresh =
@@ -39,6 +39,7 @@ export function createRedirectResponse(
       : [];
 
   return {
+    isRedirect: true,
     status: status,
     statusDescription: statusDescription || "",
     headers: {
