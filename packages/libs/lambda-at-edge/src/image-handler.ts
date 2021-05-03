@@ -10,7 +10,7 @@ import {
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
-import { handleAuth, handleDomainRedirects } from "@sls-next/routing";
+import { handleAuth, handleDomainRedirects } from "@sls-next/core";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
 import { addHeadersToResponse } from "./headers/addHeaders";

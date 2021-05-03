@@ -11,7 +11,7 @@ import {
   handleDomainRedirects,
   handleLanguageRedirect,
   handleTrailingSlash
-} from "@sls-next/routing";
+} from "@sls-next/core";
 
 import {
   CloudFrontOrigin,

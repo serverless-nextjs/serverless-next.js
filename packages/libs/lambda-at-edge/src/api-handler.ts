@@ -20,7 +20,7 @@ import {
   handleAuth,
   handleCustomRedirects,
   handleDomainRedirects
-} from "@sls-next/routing";
+} from "@sls-next/core";
 import { removeLocalePrefixFromUri } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
