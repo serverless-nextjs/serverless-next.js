@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.19.0-alpha.51](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.50...@sls-next/cdk-construct@1.19.0-alpha.51) (2021-05-03)
+
+### Features
+
+- **cdk-construct:** Support for outside hosted domain ([#1037](https://github.com/serverless-nextjs/serverless-next.js/issues/1037)) ([dcc6bd2](https://github.com/serverless-nextjs/serverless-next.js/commit/dcc6bd24481ac31e1b9c6012d2365b62bf0cafad)), closes [#1027](https://github.com/serverless-nextjs/serverless-next.js/issues/1027)
+
 # [1.19.0-alpha.50](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.19.0-alpha.49...@sls-next/cdk-construct@1.19.0-alpha.50) (2021-05-01)
 
 **Note:** Version bump only for package @sls-next/cdk-construct
