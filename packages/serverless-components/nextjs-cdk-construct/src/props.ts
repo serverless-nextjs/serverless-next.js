@@ -17,11 +17,16 @@ export interface Props extends StackProps {
    */
   serverlessBuildOutDir: string;
   /**
-   * Is you'd like a custom domain for your site, you'll need to pass in a
-   * `hostedZone`, `certificate` and a list of full `domainNames`
+   * If you'd like a custom domain for your site, you'll need to pass in a list
+   * of full `domainNames` and a `certificate`.
+   *
+   * If your domain is hosted on Route53, you can pass a `hostedZone`, for
+   * which an A record will be automatically created. Otherwise, you can access
+   * the distribution information via the `distribution` property on the
+   * `NextJSLambdaEdge` construct instance, for external DNS configuration.
    */
   domain?: {
-    hostedZone: IHostedZone;
+    hostedZone?: IHostedZone;
     certificate: ICertificate;
     domainNames: string[];
   };

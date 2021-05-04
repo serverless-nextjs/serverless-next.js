@@ -415,12 +415,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
       });
     });
 
-    if (props.domain) {
-      const domain = props.domain;
-      domain.domainNames.forEach((domainName, index) => {
+    if (props.domain?.hostedZone) {
+      const hostedZone = props.domain.hostedZone;
+      props.domain.domainNames.forEach((domainName, index) => {
         this.aRecord = new ARecord(this, `AliasRecord_${index}`, {
           recordName: domainName,
-          zone: domain.hostedZone,
+          zone: hostedZone,
           target: RecordTarget.fromAlias(
             new CloudFrontTarget(this.distribution)
           )
