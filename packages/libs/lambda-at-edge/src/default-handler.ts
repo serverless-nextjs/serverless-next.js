@@ -44,7 +44,10 @@ import {
   getLocalePrefixFromUri
 } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
-import { getStaticRegenerationResponse } from "./lib/getStaticRegenerationResponse";
+import {
+  getStaticRegenerationResponse,
+  getThrottledStaticRegenerationCachePolicy
+} from "./lib/getStaticRegenerationResponse";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 import { s3StorePage } from "./s3/s3StorePage";
@@ -635,11 +638,23 @@ const handleOriginResponse = async ({
       delete response.headers.expires;
 
       if (staticRegenerationResponse.secondsRemainingUntilRevalidation === 0) {
-        await triggerStaticRegeneration({
+        const { throttle } = await triggerStaticRegeneration({
           basePath,
           request,
           response
         });
+
+        // Occasionally we will get rate-limited by the Queue (in the event we
+        // send it too many messages) and so we we use the cache to reduce
+        // requests to the queue for a short period.
+        if (throttle) {
+          response.headers["cache-control"] = [
+            {
+              key: "Cache-Control",
+              value: getThrottledStaticRegenerationCachePolicy(1).cacheControl
+            }
+          ];
+        }
       }
     }
 

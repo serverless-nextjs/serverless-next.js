@@ -69,4 +69,16 @@ const getStaticRegenerationResponse = (
   };
 };
 
-export { getStaticRegenerationResponse };
+const getThrottledStaticRegenerationCachePolicy = (
+  expiresInSeconds: number
+): StaticRegenerationResponseValue => {
+  return {
+    secondsRemainingUntilRevalidation: expiresInSeconds,
+    cacheControl: `public, max-age=0, s-maxage=${expiresInSeconds}, must-revalidate`
+  };
+};
+
+export {
+  getStaticRegenerationResponse,
+  getThrottledStaticRegenerationCachePolicy
+};

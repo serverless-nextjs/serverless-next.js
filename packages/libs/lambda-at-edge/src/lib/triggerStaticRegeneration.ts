@@ -10,7 +10,7 @@ interface TriggerStaticRegenerationOptions {
 
 export const triggerStaticRegeneration = async (
   options: TriggerStaticRegenerationOptions
-): Promise<void> => {
+): Promise<{ throttle: boolean }> => {
   const { region } = options.request.origin?.s3 || {};
   const bucketName = s3BucketNameFromEventRequest(options.request);
 
@@ -22,12 +22,10 @@ export const triggerStaticRegeneration = async (
     throw new Error("Expected region to be defined");
   }
 
-  const { LambdaClient, InvokeAsyncCommand } = await import(
-    "@aws-sdk/client-lambda"
-  );
-  const lambda = new LambdaClient({
+  const { SQSClient, SendMessageCommand } = await import("@aws-sdk/client-sqs");
+  const sqs = new SQSClient({
     region,
-    maxAttempts: 3,
+    maxAttempts: 1,
     retryStrategy: await buildS3RetryStrategy()
   });
 
@@ -38,10 +36,30 @@ export const triggerStaticRegeneration = async (
     basePath: options.basePath
   };
 
-  await lambda.send(
-    new InvokeAsyncCommand({
-      FunctionName: bucketName,
-      InvokeArgs: JSON.stringify(regenerationEvent)
-    })
-  );
+  try {
+    await sqs.send(
+      new SendMessageCommand({
+        QueueUrl: `https://sqs.${region}.amazonaws.com/${bucketName}.fifo`,
+        MessageBody: JSON.stringify(regenerationEvent), // This is not used, however it is a required property
+        // We only want to trigger the regeneration once for every previous
+        // update. This will prevent the case where this page is being
+        // requested again whilst its already started to regenerate.
+        MessageDeduplicationId:
+          options.response.headers["etag"]?.[0].value ||
+          new Date(options.response.headers["last-modified"]?.[0].value)
+            .getTime()
+            .toString(),
+        // Only deduplicate based on the object, i.e. we can generate
+        // different pages in parallel, just not the same one
+        MessageGroupId: options.request.uri
+      })
+    );
+    return { throttle: false };
+  } catch (error) {
+    if (error.code === "RequestThrottled") {
+      return { throttle: true };
+    } else {
+      throw error;
+    }
+  }
 };
