@@ -1,5 +1,5 @@
 {
-  "name": "@sls-next/routing",
+  "name": "@sls-next/core",
   "version": "1.0.0-alpha.1",
   "description": "Handles Next.js routing independent of provider",
   "publishConfig": {
@@ -13,7 +13,7 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
-    "directory": "packages/libs/routing"
+    "directory": "packages/libs/core"
   },
   "scripts": {
     "prepare": "yarn build",
