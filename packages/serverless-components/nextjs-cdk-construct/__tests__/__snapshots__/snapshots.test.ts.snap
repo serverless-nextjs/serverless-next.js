@@ -1412,6 +1412,16 @@ Object {
                 ],
               },
             },
+            Object {
+              "Action": "lambda:InvokeFunction",
+              "Effect": "Allow",
+              "Resource": Object {
+                "Fn::GetAtt": Array [
+                  "StackRegenerationFunctionCAB79AA6",
+                  "Arn",
+                ],
+              },
+            },
           ],
           "Version": "2012-10-17",
         },
@@ -2421,7 +2431,7 @@ Object {
           ],
         },
         "Runtime": "nodejs14.x",
-        "Timeout": 60,
+        "Timeout": 30,
       },
       "Type": "AWS::Lambda::Function",
     },
