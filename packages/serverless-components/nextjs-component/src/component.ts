@@ -485,6 +485,7 @@ class NextjsComponent extends Component {
     }
 
     const regenerationLambdaInput: LambdaInput = {
+      region: bucketRegion,
       description: inputs.description
         ? `${inputs.description} (API)`
         : "Next.js Regeneration Lambda",

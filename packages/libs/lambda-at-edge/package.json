@@ -54,15 +54,15 @@
     "rollup": "^2.46.0",
     "rollup-plugin-node-externals": "^2.2.0",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.27.2",
+    "rollup-plugin-typescript2": "^0.30.0",
     "sharp": "^0.26.3",
     "ts-loader": "^7.0.5",
     "ts-node": "^9.0.0",
-    "typescript": "^3.9.6"
+    "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "1.0.0-rc.3",
-    "@aws-sdk/client-lambda": "1.0.0-rc.3",
+    "@aws-sdk/client-lambda": "3.14.0",
+    "@aws-sdk/client-s3": "3.14.0",
     "@hapi/accept": "5.0.1",
     "@vercel/nft": "^0.9.3",
     "cookie": "^0.4.1",
