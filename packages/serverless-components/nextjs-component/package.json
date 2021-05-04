@@ -34,6 +34,7 @@
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
     "@sls-next/aws-cloudfront": "link:../aws-cloudfront",
+    "@sls-next/aws-sqs": "link:../aws-sqs",
     "@sls-next/aws-lambda": "link:../aws-lambda",
     "@sls-next/cloudfront": "link:../../libs/cloudfront",
     "@sls-next/domain": "link:../domain",

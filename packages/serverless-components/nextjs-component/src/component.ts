@@ -314,6 +314,7 @@ class NextjsComponent extends Component {
     const [
       bucket,
       cloudFront,
+      sqs,
       defaultEdgeLambda,
       apiEdgeLambda,
       imageEdgeLambda,
@@ -321,6 +322,7 @@ class NextjsComponent extends Component {
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
+      this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
       this.load("@sls-next/aws-lambda", "apiEdgeLambda"),
       this.load("@sls-next/aws-lambda", "imageEdgeLambda"),
@@ -448,8 +450,14 @@ class NextjsComponent extends Component {
       return inputValue[lambdaType] || defaultValue;
     };
 
+    const queue = await sqs({
+      name: `${bucketOutputs.name}.fifo`,
+      visibilityTimeout: "30",
+      fifoQueue: true
+    });
+
     // default policy
-    let policy: Record<string, unknown> = {
+    const defaultLambdaPolicy: Record<string, unknown> = {
       Version: "2012-10-17",
       Statement: [
         {
@@ -468,14 +476,13 @@ class NextjsComponent extends Component {
         },
         {
           Effect: "Allow",
-          // The regeneration lambda has the same name as the bucket, so this
-          // policy statement allow invocation of the regeneration lambda
-          Resource: `arn:aws:lambda:*:*:function:${bucketOutputs.name}`,
-          Action: ["lambda:InvokeFunction"]
+          Resource: queue.arn,
+          Action: ["sqs:SendMessage"]
         }
       ]
     };
 
+    let policy = defaultLambdaPolicy;
     if (inputs.policy) {
       if (typeof inputs.policy === "string") {
         policy = { arn: inputs.policy };
@@ -491,14 +498,24 @@ class NextjsComponent extends Component {
         : "Next.js Regeneration Lambda",
       handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
-      role: inputs.roleArn
-        ? {
-            arn: inputs.roleArn
-          }
-        : {
-            service: ["lambda.amazonaws.com"],
-            policy
-          },
+      role: {
+        service: ["lambda.amazonaws.com"],
+        policy: {
+          ...defaultLambdaPolicy,
+          Statement: [
+            ...(defaultLambdaPolicy.Statement as Record<string, unknown>[]),
+            {
+              Effect: "Allow",
+              Resource: queue.arn,
+              Action: [
+                "sqs:ReceiveMessage",
+                "sqs:DeleteMessage",
+                "sqs:GetQueueAttributes"
+              ]
+            }
+          ]
+        }
+      },
       memory: readLambdaInputValue(
         "memory",
         "regenerationLambda",
@@ -517,8 +534,12 @@ class NextjsComponent extends Component {
       name: bucketOutputs.name
     };
 
-    await regenerationLambda(regenerationLambdaInput);
+    const regenerationLambdaResult = await regenerationLambda(
+      regenerationLambdaInput
+    );
     await regenerationLambda.publishVersion();
+
+    await sqs.addEventSource(regenerationLambdaResult.name);
 
     if (hasAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {
@@ -810,15 +831,17 @@ class NextjsComponent extends Component {
   }
 
   async remove(): Promise<void> {
-    const [bucket, cloudfront, domain] = await Promise.all([
+    const [bucket, cloudfront, sqs, domain] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
+      this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/domain")
     ]);
 
     await bucket.remove();
     await cloudfront.remove();
     await domain.remove();
+    await sqs.remove();
   }
 }
 
