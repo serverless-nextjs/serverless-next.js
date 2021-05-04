@@ -1,4 +1,5 @@
 import { OriginRequestDefaultHandlerManifest } from "../types";
+import { cleanRequestUriForRouter } from "./cleanRequestUriForRouter";
 
 interface StaticRegenerationResponseOptions {
   // URI of the origin object
@@ -34,7 +35,7 @@ const getStaticRegenerationResponse = (
 ): StaticRegenerationResponseValue | false => {
   const initialRevalidateSeconds =
     options.manifest.pages.ssg.nonDynamic?.[
-      options.requestedOriginUri.replace(".html", "")
+      cleanRequestUriForRouter(options.requestedOriginUri)
     ]?.initialRevalidateSeconds;
 
   // ISR pages that were either previously regenerated or generated
@@ -58,7 +59,7 @@ const getStaticRegenerationResponse = (
         initialRevalidateSeconds as number
       );
 
-  const secondsRemainingUntilRevalidation = Math.floor(
+  const secondsRemainingUntilRevalidation = Math.ceil(
     Math.max(0, (expiresAt.getTime() - Date.now()) / 1000)
   );
 
