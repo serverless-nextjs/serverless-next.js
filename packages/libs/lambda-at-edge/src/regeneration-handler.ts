@@ -8,7 +8,7 @@ import {
 import { s3StorePage } from "./s3/s3StorePage";
 import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
-export const handler: AWSLambda.Handler<RegenerationEvent> = async (event) => {
+export const handler = async (event: RegenerationEvent): Promise<void> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
   event.cloudFrontEventRequest.uri = cleanRequestUriForRouter(
     event.cloudFrontEventRequest.uri,
