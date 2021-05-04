@@ -40,11 +40,11 @@ export const getAcceptLanguageLocale = (
     const locales = routesManifest.i18n.locales;
     const defaultLocale = routesManifest.i18n.defaultLocale;
 
-    const preferredLanguage = Accept.language(acceptLanguage);
+    const preferredLanguage = Accept.language(acceptLanguage).toLowerCase();
 
     // Find language in locale that matches preferred language
     for (const locale of locales) {
-      if (preferredLanguage.toLowerCase() === locale.toLowerCase()) {
+      if (preferredLanguage === locale.toLowerCase()) {
         if (locale !== defaultLocale) {
           return `${routesManifest.basePath}/${locale}${
             manifest.trailingSlash ? "/" : ""
