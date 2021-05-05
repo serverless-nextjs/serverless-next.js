@@ -95,4 +95,13 @@ describe("sqs component", () => {
     await component.addEventSource("arn");
     expect(mockCreateEventSourceMappingPromise).toBeCalledTimes(1);
   });
+
+  it("calls the delete handler when component is deleted", async () => {
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.remove();
+    expect(mockDeleteQueue).toBeCalledTimes(1);
+  });
 });

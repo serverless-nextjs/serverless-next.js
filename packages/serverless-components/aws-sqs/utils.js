@@ -2,7 +2,6 @@ const { clone } = require("ramda");
 
 const getDefaults = ({ defaults }) => {
   const response = clone(defaults);
-
   return response;
 };
 
