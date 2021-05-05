@@ -619,8 +619,8 @@ const handleOriginResponse = async ({
 
     const staticRegenerationResponse = getStaticRegenerationResponse({
       requestedOriginUri: uri,
-      expiresHeader: response.headers.expires?.[0]?.value || "",
-      lastModifiedHeader: response.headers["last-modified"]?.[0]?.value || "",
+      expiresHeader: response.headers?.expires?.[0]?.value || "",
+      lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
       manifest
     });
 

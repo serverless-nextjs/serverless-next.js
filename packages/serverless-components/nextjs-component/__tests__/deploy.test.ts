@@ -5,6 +5,7 @@ import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import mockCreateInvalidation from "@sls-next/cloudfront";
 import NextjsComponent from "../src/component";
+import { mockSQS } from "@sls-next/aws-sqs";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
@@ -38,6 +39,10 @@ describe("deploy tests", () => {
     });
     mockLambda.mockResolvedValueOnce({
       arn:
+        "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn:
         "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
@@ -54,6 +59,9 @@ describe("deploy tests", () => {
     mockCloudFront.mockResolvedValueOnce({
       id: "cloudfrontdistrib",
       url: "https://cloudfrontdistrib.amazonaws.com"
+    });
+    mockSQS.mockResolvedValue({
+      arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
     });
 
     const component = new NextjsComponent();

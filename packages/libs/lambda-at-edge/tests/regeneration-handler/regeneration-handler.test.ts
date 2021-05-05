@@ -24,11 +24,11 @@ jest.mock(
   }
 );
 
-const sqsHandlerEvent = async (body: RegenerationEvent) => {
+const sqsHandlerEvent = (body: RegenerationEvent) => {
   return {
     Records: [
       {
-        MessageBody: JSON.stringify(body)
+        body: JSON.stringify(body)
       }
     ]
   };
