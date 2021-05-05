@@ -149,7 +149,7 @@ const router = (
       return html.nonDynamic[normalisedUri];
     }
 
-    // dynamic routes are matched first
+    // Dynamic routes are matched first
     for (const route in allDynamicRoutes) {
       const { file, regex } = allDynamicRoutes[route];
 
