@@ -336,7 +336,7 @@ const handleOriginRequest = async ({
   let uri = normaliseUri(request.uri, routesManifest);
   const { pages } = manifest;
 
-  let isDataReq = isDataRequest(uri);
+  const isDataReq = isDataRequest(uri);
 
   // Always add default locale prefix to URIs without it that are not public files or data requests
   const defaultLocale = routesManifest.i18n?.defaultLocale;
