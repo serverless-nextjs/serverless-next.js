@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0...@sls-next/lambda-at-edge@1.8.1-alpha.0) (2021-05-05)
+
+### Bug Fixes
+
+- **core:** extend locale matching to secondary languages ([#1040](https://github.com/serverless-nextjs/serverless-next.js/issues/1040)) ([a2c476c](https://github.com/serverless-nextjs/serverless-next.js/commit/a2c476cb923b3a2a382541c7ff9327c0861bfd1c))
+
 # [1.8.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.43...@sls-next/lambda-at-edge@1.8.0) (2021-05-03)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
