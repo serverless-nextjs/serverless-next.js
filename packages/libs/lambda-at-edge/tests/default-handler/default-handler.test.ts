@@ -56,6 +56,7 @@ describe("Lambda@Edge", () => {
   `("Routing with trailingSlash = $trailingSlash", ({ trailingSlash }) => {
     let handler: any;
     let mockTriggerStaticRegeneration: jest.Mock;
+    let mockS3StorePage: jest.Mock;
     let runRedirectTest: (
       path: string,
       expectedRedirect: string,
@@ -107,6 +108,12 @@ describe("Lambda@Edge", () => {
       jest.mock("../../src/lib/triggerStaticRegeneration", () => ({
         __esModule: true,
         triggerStaticRegeneration: mockTriggerStaticRegeneration
+      }));
+
+      mockS3StorePage = jest.fn();
+      jest.mock("../../src/s3/s3StorePage", () => ({
+        __esModule: true,
+        s3StorePage: mockS3StorePage
       }));
 
       // Handler needs to be dynamically required to use above mocked manifests
@@ -630,7 +637,7 @@ describe("Lambda@Edge", () => {
         );
       });
 
-      it.only("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
+      it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
         mockTriggerStaticRegeneration.mockReturnValueOnce(
           Promise.resolve({ throttle: true })
         );
