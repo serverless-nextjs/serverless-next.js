@@ -1,3 +1,4 @@
+import { RegenerationEvent } from "../../src";
 import { createCloudFrontEvent } from "../test-utils";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -22,6 +23,16 @@ jest.mock(
     virtual: true
   }
 );
+
+const sqsHandlerEvent = async (body: RegenerationEvent) => {
+  return {
+    Records: [
+      {
+        MessageBody: JSON.stringify(body)
+      }
+    ]
+  };
+};
 
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
@@ -79,12 +90,14 @@ describe("Regeneration Handler", () => {
         requestHeaders: {}
       });
 
-      await regenerationHandler({
-        basePath,
-        bucketName: "my-bucket",
-        cloudFrontEventRequest: event.Records[0].cf.request,
-        region: "us-east-1"
-      });
+      await regenerationHandler(
+        sqsHandlerEvent({
+          basePath,
+          bucketName: "my-bucket",
+          cloudFrontEventRequest: event.Records[0].cf.request,
+          region: "us-east-1"
+        })
+      );
 
       expect(s3StorePage).toBeCalledTimes(1);
       expect(s3StorePage).toBeCalledWith(
@@ -116,12 +129,14 @@ describe("Regeneration Handler", () => {
       requestHeaders: {}
     });
 
-    await regenerationHandler({
-      basePath: undefined,
-      bucketName: "my-bucket",
-      cloudFrontEventRequest: event.Records[0].cf.request,
-      region: "us-east-1"
-    });
+    await regenerationHandler(
+      sqsHandlerEvent({
+        basePath: undefined,
+        bucketName: "my-bucket",
+        cloudFrontEventRequest: event.Records[0].cf.request,
+        region: "us-east-1"
+      })
+    );
 
     expect(s3StorePage).toBeCalledTimes(1);
     expect(s3StorePage).toBeCalledWith(
