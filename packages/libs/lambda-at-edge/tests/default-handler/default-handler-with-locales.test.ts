@@ -974,6 +974,8 @@ describe("Lambda@Edge", () => {
         ${"fr,nl,en"}          | ${"/fr"}
         ${"nl,fr"}             | ${"/nl"}
         ${"fr,nl"}             | ${"/fr"}
+        ${"de,nl"}             | ${"/nl"}
+        ${"fr;q=0.5,de;q=0.8"} | ${"/fr"}
         ${"en;q=0.5,nl;q=0.8"} | ${"/nl"}
       `(
         "redirects path / with accept-language [$acceptLanguageHeader] to $expectedRedirect",
