@@ -669,13 +669,9 @@ const handleOriginResponse = async ({
     Object.entries(response.headers).map(([name, headers]) => {
       outHeaders[name] = headers.map(({ value }) => value);
     });
-    res.writeHead(200, outHeaders);
 
-    if (cacheControl) {
-      res.setHeader("Cache-Control", cacheControl);
-    } else {
-      res.removeHeader("Cache-Control");
-    }
+    res.writeHead(200, outHeaders);
+    res.setHeader("Cache-Control", cacheControl);
 
     if (isDataRequest(uri)) {
       res.setHeader("Content-Type", "application/json");
