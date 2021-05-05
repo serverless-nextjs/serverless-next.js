@@ -1,4 +1,5 @@
-import { getUnauthenticatedResponse } from "../../src/auth/authenticator";
+import { getUnauthenticatedResponse } from "../src/auth";
+import { Header } from "../src";
 
 describe("Basic Authenticator Tests", () => {
   let authentication: { username: string; password: string };
@@ -11,22 +12,23 @@ describe("Basic Authenticator Tests", () => {
   });
 
   it("authenticates valid username and password", () => {
-    const unauthResponse = getUnauthenticatedResponse(
-      "Basic " + Buffer.from("test:1234").toString("base64"),
-      authentication
-    );
+    const header: Header = {
+      value: "Basic " + Buffer.from("test:1234").toString("base64")
+    };
+    const unauthResponse = getUnauthenticatedResponse([header], authentication);
 
-    expect(unauthResponse).toBeNull();
+    expect(unauthResponse).toBeUndefined();
   });
 
   it("rejects invalid username and password", () => {
-    const unauthResponse = getUnauthenticatedResponse(
-      "Basic " + Buffer.from("test:wrong").toString("base64"),
-      authentication
-    );
+    const header: Header = {
+      value: "Basic " + Buffer.from("test:wrong").toString("base64")
+    };
+    const unauthResponse = getUnauthenticatedResponse([header], authentication);
 
     expect(unauthResponse).toEqual({
-      status: "401",
+      isUnauthorized: true,
+      status: 401,
       statusDescription: "Unauthorized",
       body: "Unauthorized",
       headers: {
