@@ -10,15 +10,11 @@ import {
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import { handleAuth, handleDomainRedirects } from "@sls-next/core";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { imageOptimizer } from "./images/imageOptimizer";
-import {
-  createRedirectResponse,
-  getDomainRedirectPath
-} from "./routing/redirector";
-import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 const basePath = RoutesManifestJson.basePath;
@@ -42,19 +38,17 @@ export const handler = async (
   const buildManifest: OriginRequestImageHandlerManifest = manifest;
 
   // Handle basic auth
-  const authorization = request.headers.authorization;
-  const unauthResponse = getUnauthenticatedResponse(
-    authorization ? authorization[0].value : null,
-    manifest.authentication
-  );
-  if (unauthResponse) {
-    return unauthResponse;
+  const authRoute = handleAuth(request, buildManifest);
+  if (authRoute) {
+    const { isUnauthorized, status, ...response } = authRoute;
+    return { ...response, status: status.toString() };
   }
 
   // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, buildManifest);
-  if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  const redirectRoute = handleDomainRedirects(request, manifest);
+  if (redirectRoute) {
+    const { isRedirect, status, ...response } = redirectRoute;
+    return { ...response, status: status.toString() };
   }
 
   // No other redirects or rewrites supported for now as it's assumed one is accessing this directly.
