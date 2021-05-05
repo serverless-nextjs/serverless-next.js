@@ -48,6 +48,49 @@ describe("triggerStaticRegeneration()", () => {
     expect(staticRegeneratedResponse.throttle).toBe(true);
   });
 
+  it("should rethrow an unknown error", async () => {
+    mockSendMessageCommand.mockImplementationOnce(() => {
+      throw new Error("Unknown error");
+    });
+    expect(triggerStaticRegeneration(options)).rejects.toEqual({
+      error: "Unknown error"
+    });
+  });
+
+  it("should reject when corrupt s3 name is passed", async () => {
+    expect(
+      triggerStaticRegeneration({
+        ...options,
+        request: {
+          ...options.request,
+          origin: {
+            ...options.request.origin,
+            s3: { domainName: "unknown", region: "us-east-1" }
+          }
+        } as AWSLambda.CloudFrontRequest
+      })
+    ).rejects.toEqual({
+      error: "Expected bucket name to be defined"
+    });
+  });
+
+  it("should reject when no region is passed", async () => {
+    expect(
+      triggerStaticRegeneration({
+        ...options,
+        request: {
+          ...options.request,
+          origin: {
+            ...options.request.origin,
+            s3: { ...options.request.origin?.s3, region: "" }
+          }
+        } as AWSLambda.CloudFrontRequest
+      })
+    ).rejects.toEqual({
+      error: "Expected region to be defined"
+    });
+  });
+
   it.each`
     lastModified                  | etag         | expected
     ${"2021-05-05T17:15:04.472Z"} | ${"tag"}     | ${"tag"}
