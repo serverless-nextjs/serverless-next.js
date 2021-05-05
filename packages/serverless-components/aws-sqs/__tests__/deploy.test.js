@@ -1,8 +1,12 @@
 const fse = require("fs-extra");
 const os = require("os");
 const path = require("path");
+const {
+  mockListEventSourceMappingsPromise,
+  mockCreateEventSourceMappingPromise
+} = require("aws-sdk");
 
-describe("publishVersion", () => {
+describe("sqs component", () => {
   const mockCreateQueue = jest.fn();
   const mockDeleteQueue = jest.fn();
   const mockGetDefaults = jest.fn();
@@ -22,6 +26,7 @@ describe("publishVersion", () => {
     setAttributes: mockSetAttributes
   }));
   const tmpStateFolder = () => fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
+
   const AwsSqsQueue = require("../serverless");
 
   it("creates a new queue", async () => {
@@ -65,5 +70,29 @@ describe("publishVersion", () => {
     expect(mockCreateQueue).toBeCalledTimes(0);
     expect(mockSetAttributes).toBeCalledTimes(1);
     expect(mockDeleteQueue).toBeCalledTimes(0);
+  });
+
+  it("does not create a lambda mapping when a mapping is found", async () => {
+    mockListEventSourceMappingsPromise.mockResolvedValueOnce({
+      EventSourceMappings: [1]
+    });
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.addEventSource("arn");
+    expect(mockCreateEventSourceMappingPromise).toBeCalledTimes(0);
+  });
+
+  it("creates lambda mapping when no mapping is found", async () => {
+    mockListEventSourceMappingsPromise.mockResolvedValueOnce({
+      EventSourceMappings: []
+    });
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.addEventSource("arn");
+    expect(mockCreateEventSourceMappingPromise).toBeCalledTimes(1);
   });
 });

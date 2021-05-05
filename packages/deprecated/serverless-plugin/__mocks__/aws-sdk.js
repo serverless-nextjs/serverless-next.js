@@ -88,6 +88,9 @@ const mockMetadataRequest = jest
   .mockImplementation((path, cb) => cb(null, {}));
 MockMetadataService.prototype.request = mockMetadataRequest;
 
+const mockListEventSourceMappingsPromise = jest.fn();
+const mockCreateEventSourceMappingPromise = jest.fn();
+
 module.exports = {
   EnvironmentCredentials: MockEnvironmentCredentials,
   S3: jest.fn(() => {
@@ -100,10 +103,20 @@ module.exports = {
   CloudWatchLogs: MockCloudWatchLogs,
   STS: MockSTS,
   SQS: MockSQS,
+  Lambda: jest.fn().mockImplementation(() => ({
+    listEventSourceMappings: jest.fn().mockReturnValue({
+      promise: mockListEventSourceMappingsPromise
+    }),
+    createEventSourceMapping: jest.fn().mockReturnValue({
+      promise: mockCreateEventSourceMappingPromise
+    })
+  })),
   APIGateway: MockAPIGateway,
   SharedIniFileCredentials: MockSharedIniFileCredentials,
   MetadataService: MockMetadataService,
 
+  mockListEventSourceMappingsPromise,
+  mockCreateEventSourceMappingPromise,
   mockDescribeStacks,
   mockDescribeStacksPromise,
   mockCreateStack,
