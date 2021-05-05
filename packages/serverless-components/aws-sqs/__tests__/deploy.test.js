@@ -1,0 +1,69 @@
+const fse = require("fs-extra");
+const os = require("os");
+const path = require("path");
+
+describe("publishVersion", () => {
+  const mockCreateQueue = jest.fn();
+  const mockDeleteQueue = jest.fn();
+  const mockGetDefaults = jest.fn();
+  const mockGetQueue = jest.fn();
+  const mockGetAccountId = jest.fn();
+  const mockGetArn = jest.fn();
+  const mockGetUrl = jest.fn();
+  const mockSetAttributes = jest.fn();
+  jest.mock("../utils", () => ({
+    createQueue: mockCreateQueue,
+    deleteQueue: mockDeleteQueue,
+    getDefaults: mockGetDefaults,
+    getQueue: mockGetQueue,
+    getAccountId: mockGetAccountId,
+    getArn: mockGetArn,
+    getUrl: mockGetUrl,
+    setAttributes: mockSetAttributes
+  }));
+  const tmpStateFolder = () => fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
+  const AwsSqsQueue = require("../serverless");
+
+  it("creates a new queue", async () => {
+    mockGetQueue.mockReturnValueOnce({});
+    mockGetAccountId.mockResolvedValueOnce("id");
+    mockGetArn.mockResolvedValueOnce("arn");
+    mockGetUrl.mockResolvedValueOnce("url");
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default();
+    expect(mockCreateQueue).toBeCalledTimes(1);
+    expect(mockDeleteQueue).toBeCalledTimes(0);
+  });
+
+  it("deletes and recreates a queue", async () => {
+    mockGetQueue.mockReturnValueOnce({ not: "empty" });
+    mockGetAccountId.mockResolvedValueOnce("id");
+    mockGetArn.mockResolvedValueOnce("arn");
+    mockGetUrl.mockResolvedValueOnce("url");
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default();
+    expect(mockCreateQueue).toBeCalledTimes(1);
+    expect(mockDeleteQueue).toBeCalledTimes(1);
+  });
+
+  it("updates an existing queue", async () => {
+    mockGetQueue.mockReturnValueOnce({ not: "empty" });
+    mockGetAccountId.mockResolvedValueOnce("id");
+    mockGetArn.mockResolvedValueOnce("arn");
+    mockGetUrl.mockReturnValueOnce(undefined);
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default();
+    expect(mockCreateQueue).toBeCalledTimes(0);
+    expect(mockSetAttributes).toBeCalledTimes(1);
+    expect(mockDeleteQueue).toBeCalledTimes(0);
+  });
+});

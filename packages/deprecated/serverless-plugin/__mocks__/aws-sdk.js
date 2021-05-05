@@ -71,6 +71,8 @@ const {
 } = promisify(jest.fn());
 MockSTS.prototype.getCallerIdentity = mockGetCallerIdentity;
 
+const MockSQS = jest.fn();
+
 const MockAPIGateway = function () {};
 const {
   mockFunction: mockGetRestApis,
@@ -97,6 +99,7 @@ module.exports = {
   CloudFormation: MockCloudFormation,
   CloudWatchLogs: MockCloudWatchLogs,
   STS: MockSTS,
+  SQS: MockSQS,
   APIGateway: MockAPIGateway,
   SharedIniFileCredentials: MockSharedIniFileCredentials,
   MetadataService: MockMetadataService,
