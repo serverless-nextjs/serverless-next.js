@@ -47,9 +47,11 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      acceptLang | expectedPath
-      ${"fr"}    | ${"/fr/"}
-      ${"nl"}    | ${"/nl/"}
+      acceptLang              | expectedPath
+      ${"fr"}                 | ${"/fr/"}
+      ${"nl"}                 | ${"/nl/"}
+      ${"de, fr"}             | ${"/fr/"}
+      ${"fr;q=0.7, nl;q=0.9"} | ${"/nl/"}
     `(
       "returns $expectedPath for $acceptLang",
       ({ acceptLang, expectedPath }) => {
@@ -66,7 +68,7 @@ describe("Locale Utils Tests", () => {
     it.each`
       acceptLang
       ${"en"}
-      ${"en-Uk"}
+      ${"nl;q=0.7, en;q=0.9"}
     `("returns nothing for $acceptLang", ({ acceptLang }) => {
       const newPath = getAcceptLanguageLocale(
         acceptLang,
