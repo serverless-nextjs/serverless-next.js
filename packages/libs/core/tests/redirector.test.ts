@@ -1,8 +1,5 @@
-import {
-  createRedirectResponse,
-  getRedirectPath
-} from "../../src/routing/redirector";
-import { RoutesManifest } from "../../src/types";
+import { createRedirectResponse, getRedirectPath } from "../src/redirect";
+import { Request, RoutesManifest } from "../src/types";
 
 describe("Redirector Tests", () => {
   describe("getRedirectPath()", () => {
@@ -44,9 +41,7 @@ describe("Redirector Tests", () => {
             statusCode: 308,
             regex: "^/invalid-destination$"
           }
-        ],
-        rewrites: [],
-        headers: []
+        ]
       };
     });
 
@@ -64,11 +59,12 @@ describe("Redirector Tests", () => {
     `(
       "redirects path $path to $expectedRedirect",
       ({ path, expectedRedirect, expectedStatusCode }) => {
-        const redirect = getRedirectPath(path, routesManifest);
+        const request = ({ uri: path } as unknown) as Request;
+        const redirect = getRedirectPath(request, routesManifest);
 
         if (expectedRedirect) {
           expect(redirect).toEqual({
-            redirectPath: expectedRedirect,
+            path: expectedRedirect,
             statusCode: expectedStatusCode
           });
         } else {
@@ -82,7 +78,8 @@ describe("Redirector Tests", () => {
     it("does a permanent redirect", () => {
       const response = createRedirectResponse("/terms", "", 308);
       expect(response).toEqual({
-        status: "308",
+        isRedirect: true,
+        status: 308,
         statusDescription: "Permanent Redirect",
         headers: {
           location: [
@@ -105,7 +102,8 @@ describe("Redirector Tests", () => {
     it("does a temporary redirect with query parameters", () => {
       const response = createRedirectResponse("/terms", "a=123", 307);
       expect(response).toEqual({
-        status: "307",
+        isRedirect: true,
+        status: 307,
         statusDescription: "Temporary Redirect",
         headers: {
           location: [

@@ -1,9 +1,9 @@
-import { CloudFrontResultResponse } from "aws-lambda";
+import { Header, UnauthorizedRoute } from "./types";
 
 export function getUnauthenticatedResponse(
-  authorizationHeader: string | null,
+  authorizationHeaders: Header[] | null,
   authentication: { username: string; password: string } | undefined
-): CloudFrontResultResponse | null {
+): UnauthorizedRoute | undefined {
   if (authentication && authentication.username && authentication.password) {
     const validAuth =
       "Basic " +
@@ -11,9 +11,10 @@ export function getUnauthenticatedResponse(
         authentication.username + ":" + authentication.password
       ).toString("base64");
 
-    if (authorizationHeader !== validAuth) {
+    if (!authorizationHeaders || authorizationHeaders[0]?.value !== validAuth) {
       return {
-        status: "401",
+        isUnauthorized: true,
+        status: 401,
         statusDescription: "Unauthorized",
         body: "Unauthorized",
         headers: {
@@ -22,6 +23,4 @@ export function getUnauthenticatedResponse(
       };
     }
   }
-
-  return null;
 }
