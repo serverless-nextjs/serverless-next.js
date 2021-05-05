@@ -3,73 +3,50 @@ const os = require("os");
 const path = require("path");
 const {
   mockListEventSourceMappingsPromise,
-  mockCreateEventSourceMappingPromise
+  mockCreateEventSourceMappingPromise,
+  mockGetCallerIdentityPromise,
+  mockGetQueueAttributesPromise,
+  mockCreateQueuePromise,
+  mockDeleteQueuePromise
 } = require("aws-sdk");
 
 describe("sqs component", () => {
-  const mockCreateQueue = jest.fn();
-  const mockDeleteQueue = jest.fn();
-  const mockGetDefaults = jest.fn();
-  const mockGetQueue = jest.fn();
-  const mockGetAccountId = jest.fn();
-  const mockGetArn = jest.fn();
-  const mockGetUrl = jest.fn();
-  const mockSetAttributes = jest.fn();
-  jest.mock("../utils", () => ({
-    createQueue: mockCreateQueue,
-    deleteQueue: mockDeleteQueue,
-    getDefaults: mockGetDefaults,
-    getQueue: mockGetQueue,
-    getAccountId: mockGetAccountId,
-    getArn: mockGetArn,
-    getUrl: mockGetUrl,
-    setAttributes: mockSetAttributes
-  }));
   const tmpStateFolder = () => fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
+  mockGetCallerIdentityPromise.mockResolvedValue({ Account: "123" });
+  mockGetQueueAttributesPromise.mockResolvedValue({ Attributes: {} });
+  mockCreateQueuePromise.mockResolvedValue({ QueueArn: "arn" });
 
   const AwsSqsQueue = require("../serverless");
 
+  beforeEach(() => {
+    jest.restoreAllMocks();
+  });
+
   it("creates a new queue", async () => {
-    mockGetQueue.mockReturnValueOnce({});
-    mockGetAccountId.mockResolvedValueOnce("id");
-    mockGetArn.mockResolvedValueOnce("arn");
-    mockGetUrl.mockResolvedValueOnce("url");
+    // mockGetQueue.mockReturnValueOnce({});
+    // mockGetAccountId.mockResolvedValueOnce("id");
+    // mockGetArn.mockResolvedValueOnce("arn");
+    // mockGetUrl.mockResolvedValueOnce("url");
     const component = new AwsSqsQueue("TestLambda", {
       stateRoot: tmpStateFolder()
     });
     await component.init();
     await component.default();
-    expect(mockCreateQueue).toBeCalledTimes(1);
-    expect(mockDeleteQueue).toBeCalledTimes(0);
+    expect(mockCreateQueuePromise).toBeCalledTimes(1);
+    expect(mockDeleteQueuePromise).toBeCalledTimes(0);
   });
 
   it("deletes and recreates a queue", async () => {
-    mockGetQueue.mockReturnValueOnce({ not: "empty" });
-    mockGetAccountId.mockResolvedValueOnce("id");
-    mockGetArn.mockResolvedValueOnce("arn");
-    mockGetUrl.mockResolvedValueOnce("url");
+    mockGetQueueAttributesPromise.mockResolvedValueOnce({
+      Attributes: { not: "empty" }
+    });
     const component = new AwsSqsQueue("TestLambda", {
       stateRoot: tmpStateFolder()
     });
     await component.init();
     await component.default();
-    expect(mockCreateQueue).toBeCalledTimes(1);
-    expect(mockDeleteQueue).toBeCalledTimes(1);
-  });
-
-  it("updates an existing queue", async () => {
-    mockGetQueue.mockReturnValueOnce({ not: "empty" });
-    mockGetAccountId.mockResolvedValueOnce("id");
-    mockGetArn.mockResolvedValueOnce("arn");
-    mockGetUrl.mockReturnValueOnce(undefined);
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
-    await component.default();
-    expect(mockCreateQueue).toBeCalledTimes(0);
-    expect(mockSetAttributes).toBeCalledTimes(1);
-    expect(mockDeleteQueue).toBeCalledTimes(0);
+    expect(mockCreateQueuePromise).toBeCalledTimes(1);
+    expect(mockDeleteQueuePromise).toBeCalledTimes(1);
   });
 
   it("does not create a lambda mapping when a mapping is found", async () => {
@@ -102,6 +79,6 @@ describe("sqs component", () => {
     });
     await component.init();
     await component.remove();
-    expect(mockDeleteQueue).toBeCalledTimes(1);
+    expect(mockDeleteQueuePromise).toBeCalledTimes(1);
   });
 });

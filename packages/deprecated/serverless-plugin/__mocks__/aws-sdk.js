@@ -1,5 +1,5 @@
-const promisify = (mockFunction) => {
-  const mockPromise = jest.fn(() => Promise.resolve());
+const promisify = (mockFunction, mockResolvedValue) => {
+  const mockPromise = jest.fn(() => Promise.resolve(mockResolvedValue));
   mockFunction.mockReturnValue({
     promise: mockPromise
   });
@@ -72,6 +72,21 @@ const {
 MockSTS.prototype.getCallerIdentity = mockGetCallerIdentity;
 
 const MockSQS = jest.fn();
+const {
+  mockFunction: mockGetQueueAttributes,
+  mockPromise: mockGetQueueAttributesPromise
+} = promisify(jest.fn());
+const {
+  mockFunction: mockCreateQueue,
+  mockPromise: mockCreateQueuePromise
+} = promisify(jest.fn());
+const {
+  mockFunction: mockDeleteQueue,
+  mockPromise: mockDeleteQueuePromise
+} = promisify(jest.fn());
+MockSQS.prototype.createQueue = mockCreateQueue;
+MockSQS.prototype.deleteQueue = mockDeleteQueue;
+MockSQS.prototype.getQueueAttributes = mockGetQueueAttributes;
 
 const MockAPIGateway = function () {};
 const {
@@ -115,6 +130,12 @@ module.exports = {
   SharedIniFileCredentials: MockSharedIniFileCredentials,
   MetadataService: MockMetadataService,
 
+  mockDeleteQueue,
+  mockDeleteQueuePromise,
+  mockCreateQueue,
+  mockCreateQueuePromise,
+  mockGetQueueAttributes,
+  mockGetQueueAttributesPromise,
   mockListEventSourceMappingsPromise,
   mockCreateEventSourceMappingPromise,
   mockDescribeStacks,
