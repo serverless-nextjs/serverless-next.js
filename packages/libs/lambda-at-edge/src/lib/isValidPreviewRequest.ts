@@ -1,4 +1,4 @@
-import cookie from "cookie";
+import { parse } from "cookie";
 
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
@@ -48,7 +48,7 @@ const getPreviewCookies = (cookies: Cookies): DefaultPreviewCookies => {
   const targetCookie = cookies || [];
 
   return targetCookie.reduce((previewCookies, cookieObj) => {
-    const parsedCookie = cookie.parse(cookieObj.value);
+    const parsedCookie = parse(cookieObj.value);
 
     if (hasPreviewCookies(parsedCookie)) {
       return parsedCookie as DefaultPreviewCookies;

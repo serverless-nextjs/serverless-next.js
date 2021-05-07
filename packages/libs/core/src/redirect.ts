@@ -1,4 +1,4 @@
-import * as http from "http";
+import { STATUS_CODES } from "http";
 import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "./locale";
 import { compileDestination, matchPath } from "./match";
 import { Manifest, Request, RedirectRoute, RoutesManifest } from "./types";
@@ -25,7 +25,7 @@ export function createRedirectResponse(
   }
 
   const status = statusCode;
-  const statusDescription = http.STATUS_CODES[status];
+  const statusDescription = STATUS_CODES[status];
 
   const refresh =
     statusCode === 308
