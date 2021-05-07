@@ -303,7 +303,7 @@ const handleOriginRequest = async ({
 }) => {
   const request = event.Records[0].cf.request;
 
-  const route = routeDefault(request, manifest, routesManifest);
+  const route = await routeDefault(request, manifest, routesManifest);
   if (route) {
     if (route.isPublicFile) {
       const { file } = route as PublicFileRoute;

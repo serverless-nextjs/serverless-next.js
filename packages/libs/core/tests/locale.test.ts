@@ -54,8 +54,8 @@ describe("Locale Utils Tests", () => {
       ${"fr;q=0.7, nl;q=0.9"} | ${"/nl/"}
     `(
       "returns $expectedPath for $acceptLang",
-      ({ acceptLang, expectedPath }) => {
-        const newPath = getAcceptLanguageLocale(
+      async ({ acceptLang, expectedPath }) => {
+        const newPath = await getAcceptLanguageLocale(
           acceptLang,
           manifest,
           routesManifest
@@ -69,8 +69,8 @@ describe("Locale Utils Tests", () => {
       acceptLang
       ${"en"}
       ${"nl;q=0.7, en;q=0.9"}
-    `("returns nothing for $acceptLang", ({ acceptLang }) => {
-      const newPath = getAcceptLanguageLocale(
+    `("returns nothing for $acceptLang", async ({ acceptLang }) => {
+      const newPath = await getAcceptLanguageLocale(
         acceptLang,
         manifest,
         routesManifest
