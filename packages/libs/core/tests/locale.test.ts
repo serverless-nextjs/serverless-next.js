@@ -34,6 +34,7 @@ describe("Locale Utils Tests", () => {
 
     beforeAll(() => {
       manifest = {
+        buildId: "test-build-id",
         trailingSlash: true
       };
       routesManifest = {

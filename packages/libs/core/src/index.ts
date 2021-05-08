@@ -1,4 +1,6 @@
 import { getUnauthenticatedResponse } from "./auth";
+import { handleDataReq } from "./data";
+import { isValidPreviewRequest } from "./preview";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
@@ -7,12 +9,13 @@ import {
   getTrailingSlashPath
 } from "./redirect";
 import {
-  UnauthorizedRoute,
   Manifest,
+  PrerenderManifest,
   RedirectRoute,
   Request,
   Route,
-  RoutesManifest
+  RoutesManifest,
+  UnauthorizedRoute
 } from "./types";
 
 export const handleAuth = (
@@ -121,6 +124,7 @@ const normalise = (uri: string, routesManifest: RoutesManifest): string => {
 export const routeDefault = async (
   req: Request,
   manifest: Manifest,
+  prerenderManifest: PrerenderManifest,
   routesManifest: RoutesManifest
 ): Promise<Route | undefined> => {
   const auth = handleAuth(req, manifest);
@@ -145,11 +149,25 @@ export const routeDefault = async (
     return trailingSlash;
   }
 
-  return (
-    publicFile ||
+  if (publicFile) {
+    return publicFile;
+  }
+
+  const otherRedirect =
     handleCustomRedirects(req, routesManifest) ||
-    (await handleLanguageRedirect(req, manifest, routesManifest))
+    (await handleLanguageRedirect(req, manifest, routesManifest));
+  if (otherRedirect) {
+    return otherRedirect;
+  }
+
+  const isPreview = isValidPreviewRequest(
+    req.headers.cookie,
+    prerenderManifest.preview.previewModeSigningKey
   );
+
+  if (isDataReq) {
+    return handleDataReq(uri, manifest, isPreview);
+  }
 };
 
 export * from "./types";

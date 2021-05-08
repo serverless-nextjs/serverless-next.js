@@ -9,9 +9,8 @@ import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders"
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
-jest.mock("jsonwebtoken", () => ({
-  verify: jest.fn()
-}));
+const previewToken =
+  "eyJhbGciOiJIUzI1NiJ9.dGVzdA.bi6AtyJgYL7FimOTVSoV6Htx9XNLe2PINsOadEDYmwI";
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -240,7 +239,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -265,7 +264,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -523,7 +522,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }

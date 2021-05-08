@@ -70,10 +70,14 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
+  const combinedManifest = {
+    ...buildManifest,
+    buildId: ""
+  };
 
   // Basic authentication
 
-  const authRoute = handleAuth(request, buildManifest);
+  const authRoute = handleAuth(request, combinedManifest);
   if (authRoute) {
     const { isUnauthorized, status, ...response } = authRoute;
     return { ...response, status: status.toString() };
@@ -82,7 +86,7 @@ export const handler = async (
   // Redirects
 
   const redirectRoute =
-    handleDomainRedirects(request, buildManifest) ||
+    handleDomainRedirects(request, combinedManifest) ||
     handleCustomRedirects(request, routesManifest);
   if (redirectRoute) {
     const { isRedirect, status, ...response } = redirectRoute;

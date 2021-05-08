@@ -8,13 +8,16 @@ import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   PublicFileRoute,
   RedirectRoute,
+  RenderRoute,
   routeDefault,
+  StaticRoute,
   UnauthorizedRoute
 } from "@sls-next/core";
 
 import {
   CloudFrontOrigin,
   CloudFrontRequest,
+  CloudFrontResponse,
   CloudFrontResultResponse,
   CloudFrontS3Origin
 } from "aws-lambda";
@@ -290,6 +293,78 @@ export const handler = async (
   return response;
 };
 
+const staticRequest = (
+  request: CloudFrontRequest,
+  file: string,
+  path: string
+) => {
+  const s3Origin = request.origin?.s3 as CloudFrontS3Origin;
+  const s3Domain = normaliseS3OriginDomain(s3Origin);
+  s3Origin.domainName = s3Domain;
+  s3Origin.path = path;
+  request.uri = encodeURI(file);
+  addS3HostHeader(request, s3Domain);
+  return request;
+};
+
+const renderResponse = async (
+  event: OriginRequestEvent,
+  manifest: OriginRequestDefaultHandlerManifest,
+  pagePath: string,
+  isData: boolean
+) => {
+  const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
+  const tBeforePageRequire = now();
+  const page = require(`./${pagePath}`); // eslint-disable-line
+  const tAfterPageRequire = now();
+
+  log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
+
+  const tBeforeSSR = now();
+
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression: manifest.enableHTTPCompression
+    }
+  );
+  try {
+    // If page is _error.js, set status to 404 so _error.js will render a 404 page
+    if (pagePath === "pages/_error.js") {
+      res.statusCode = 404;
+    }
+
+    // Render page
+    if (isData) {
+      const { renderOpts } = await page.renderReqToHTML(
+        req,
+        res,
+        "passthrough"
+      );
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(renderOpts.pageData));
+    } else {
+      await Promise.race([page.render(req, res), responsePromise]);
+    }
+  } catch (error) {
+    // Set status to 500 so _error.js will render a 500 page
+    console.error(
+      `Error rendering page: ${pagePath}. Error:\n${error}\nRendering Next.js error page.`
+    );
+    res.statusCode = 500;
+    const errorPage = require("./pages/_error.js"); // eslint-disable-line
+    await errorPage.render(req, res);
+  }
+  const response = await responsePromise;
+  const tAfterSSR = now();
+
+  log("SSR execution time", tBeforeSSR, tAfterSSR);
+
+  setCloudFrontResponseStatus(response, res);
+
+  return response;
+};
+
 const handleOriginRequest = async ({
   event,
   manifest,
@@ -303,17 +378,28 @@ const handleOriginRequest = async ({
 }) => {
   const request = event.Records[0].cf.request;
 
-  const route = await routeDefault(request, manifest, routesManifest);
+  const route = await routeDefault(
+    request,
+    manifest,
+    prerenderManifest,
+    routesManifest
+  );
   if (route) {
     if (route.isPublicFile) {
       const { file } = route as PublicFileRoute;
-      const s3Origin = request.origin?.s3 as CloudFrontS3Origin;
-      const s3Domain = normaliseS3OriginDomain(s3Origin);
-      s3Origin.domainName = s3Domain;
-      s3Origin.path = `${routesManifest.basePath}/public`;
-      request.uri = encodeURI(file);
-      addS3HostHeader(request, s3Domain);
-      return request;
+      return staticRequest(request, file, `${routesManifest.basePath}/public`);
+    }
+    if (route.isStatic) {
+      const { file, isData } = route as StaticRoute;
+      const path = isData
+        ? `${routesManifest.basePath}`
+        : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
+      return staticRequest(request, file, path);
+    }
+    if (route.isRender) {
+      const { page, isData } = route as RenderRoute;
+      normaliseRequestForLocale(request, routesManifest);
+      return renderResponse(event, manifest, page, isData);
     }
     if (route.isRedirect) {
       const { isRedirect, status, ...response } = route as RedirectRoute;
@@ -329,15 +415,9 @@ const handleOriginRequest = async ({
   let uri = normaliseUri(request.uri, routesManifest);
   const { pages } = manifest;
 
-  let isDataReq = isDataRequest(uri);
-
   // Always add default locale prefix to URIs without it that are not public files or data requests
   const defaultLocale = routesManifest.i18n?.defaultLocale;
-  if (
-    defaultLocale &&
-    !isLocalePrefixedUri(uri, routesManifest) &&
-    !isDataReq
-  ) {
+  if (defaultLocale && !isLocalePrefixedUri(uri, routesManifest)) {
     uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
   }
 
@@ -346,8 +426,8 @@ const handleOriginRequest = async ({
     pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri];
 
   let rewrittenUri;
-  // Handle custom rewrites, but don't rewrite non-dynamic pages, public files or data requests per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
-  if (!isNonDynamicRoute && !isDataReq) {
+  // Handle custom rewrites, but don't rewrite non-dynamic pages per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
+  if (!isNonDynamicRoute) {
     const customRewrite = getRewritePath(
       request.uri,
       routesManifest,
@@ -388,11 +468,7 @@ const handleOriginRequest = async ({
 
       uri = normaliseUri(request.uri, routesManifest);
 
-      if (
-        defaultLocale &&
-        !isLocalePrefixedUri(uri, routesManifest) &&
-        !isDataReq
-      ) {
+      if (defaultLocale && !isLocalePrefixedUri(uri, routesManifest)) {
         uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
       }
     }
@@ -413,48 +489,16 @@ const handleOriginRequest = async ({
 
   s3Origin.domainName = normalisedS3DomainName;
 
-  S3Check: if (
+  if (
     // Note: static pages (HTML pages with no props) don't have JS files needed for preview mode, always serve from S3.
     isStaticPage ||
     (isHTMLPage && !isPreviewRequest) ||
-    (hasFallback && !isPreviewRequest) ||
-    (isDataReq && !isPreviewRequest)
+    (hasFallback && !isPreviewRequest)
   ) {
     if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
-    } else if (isDataReq) {
-      // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
-      const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
-      const pagePath = router(
-        manifest,
-        routesManifest
-      )(normalisedDataRequestUri);
-
-      if (pagePath.endsWith("/404.html")) {
-        // Request static 404 page from s3
-        s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
-        request.uri = pagePath.replace("pages", "");
-      } else if (
-        pagePath === "pages/_error.js" ||
-        (!pages.ssg.nonDynamic[normalisedDataRequestUri] &&
-          !hasFallbackForUri(
-            normalisedDataRequestUri,
-            manifest,
-            routesManifest
-          ))
-      ) {
-        // Break to continue to SSR render in two cases:
-        // 1. URI routes to _error.js
-        // 2. URI is not unmatched, but it's not in prerendered routes nor is for an SSG fallback, i.e this is an SSR data request, we need to SSR render the JSON
-        break S3Check;
-      } else {
-        // Otherwise, this is an SSG data request, so continue to get to try to get the JSON from S3.
-        // For fallback SSG, this will fail the first time but the origin response handler will render and store in S3.
-        s3Origin.path = basePath;
-        request.uri = uri;
-      }
     }
 
     addS3HostHeader(request, normalisedS3DomainName);
@@ -495,17 +539,7 @@ const handleOriginRequest = async ({
     }
 
     // Render page
-    if (isDataReq) {
-      const { renderOpts } = await page.renderReqToHTML(
-        req,
-        res,
-        "passthrough"
-      );
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify(renderOpts.pageData));
-    } else {
-      await Promise.race([page.render(req, res), responsePromise]);
-    }
+    await Promise.race([page.render(req, res), responsePromise]);
   } catch (error) {
     // Set status to 500 so _error.js will render a 500 page
     console.error(
