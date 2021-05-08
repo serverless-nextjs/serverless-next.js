@@ -23,10 +23,6 @@ describe("sqs component", () => {
   });
 
   it("creates a new queue", async () => {
-    // mockGetQueue.mockReturnValueOnce({});
-    // mockGetAccountId.mockResolvedValueOnce("id");
-    // mockGetArn.mockResolvedValueOnce("arn");
-    // mockGetUrl.mockResolvedValueOnce("url");
     const component = new AwsSqsQueue("TestLambda", {
       stateRoot: tmpStateFolder()
     });
