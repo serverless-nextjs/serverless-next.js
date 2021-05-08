@@ -231,7 +231,7 @@
           "dataRouteRegex": "^/_next/data/build-id/en/tests/prerender-manifest/(?:([^/]+?)).json/?$"
         },
         "/en/tests/prerender-manifest-fallback/[fallback]": {
-          "routeRegex": "^/en/tests/prerender-manifest-f/(?:([^/]+?))/?$",
+          "routeRegex": "^/en/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
           "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest-fallback/[staticPageName].json",
           "fallback": "/en/tests/prerender-manifest-fallback/[fallback].html",
           "dataRouteRegex": "^/_next/data/build-id/en/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"

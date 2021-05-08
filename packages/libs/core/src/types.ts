@@ -21,6 +21,12 @@ export type RedirectData = {
   internal?: boolean;
 };
 
+export type RewriteData = {
+  source: string;
+  destination: string;
+  regex: string;
+};
+
 export type DynamicSSG = {
   dataRoute: string;
   dataRouteRegex: string;
@@ -89,6 +95,7 @@ export type I18nData = {
 export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
+  rewrites: RewriteData[];
   i18n?: I18nData;
 };
 
@@ -105,11 +112,18 @@ export type PrerenderManifest = {
 export interface AnyRoute {
   file?: string;
   headers?: { [key: string]: Header[] };
+  querystring?: string;
+  isExternal?: boolean;
   isPublicFile?: boolean;
   isRedirect?: boolean;
   isRender?: boolean;
   isStatic?: boolean;
   isUnauthorized?: boolean;
+}
+
+export interface ExternalRoute extends AnyRoute {
+  isExternal: true;
+  path: string;
 }
 
 export interface PublicFileRoute extends AnyRoute {
@@ -148,9 +162,14 @@ export type DataRoute = (RenderRoute | StaticRoute) & {
   isData: true;
 };
 
+export type PageRoute = (RenderRoute | StaticRoute) & {
+  isData: false;
+};
+
 export type Route =
-  | DataRoute
+  | ExternalRoute
   | PublicFileRoute
   | RedirectRoute
+  | RenderRoute
   | StaticRoute
   | UnauthorizedRoute;

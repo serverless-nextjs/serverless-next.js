@@ -208,12 +208,8 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        expect(response.status).toEqual("404");
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-        expect(decodedBody).toEqual("pages/_error.js - 404");
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
       });
 
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
@@ -624,20 +620,14 @@ describe("Lambda@Edge", () => {
     });
 
     describe("404 page", () => {
-      it("renders 404 page if request path can't be matched to any page / api routes", async () => {
+      it("returns 404 page if request path can't be matched to any page / api routes", async () => {
         const event = createCloudFrontEvent({
           uri: trailingSlash ? "/page/does/not/exist/" : "/page/does/not/exist",
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
       });
 
       it("redirects unmatched request path", async () => {
@@ -656,7 +646,7 @@ describe("Lambda@Edge", () => {
         path
         ${"/_next/data/unmatched"}
       `(
-        "renders 404 page if data request can't be matched for path: $path",
+        "returns 404 page if data request can't be matched for path: $path",
         async ({ path }) => {
           const event = createCloudFrontEvent({
             uri: path,
@@ -668,18 +658,8 @@ describe("Lambda@Edge", () => {
             config: { eventType: "origin-request" } as any
           });
 
-          mockPageRequire("./pages/_error.js");
-
-          const response = (await handler(event)) as CloudFrontResultResponse;
-          const body = response.body as string;
-          const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-          expect(decodedBody).toEqual(
-            JSON.stringify({
-              page: "pages/_error.js - 404"
-            })
-          );
-          expect(response.status).toEqual("404");
+          const request = (await handler(event)) as CloudFrontRequest;
+          expect(request.uri).toEqual("/404.html");
         }
       );
 

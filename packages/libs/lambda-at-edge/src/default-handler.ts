@@ -6,6 +6,7 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
+  ExternalRoute,
   PublicFileRoute,
   RedirectRoute,
   RenderRoute,
@@ -15,9 +16,7 @@ import {
 } from "@sls-next/core";
 
 import {
-  CloudFrontOrigin,
   CloudFrontRequest,
-  CloudFrontResponse,
   CloudFrontResultResponse,
   CloudFrontS3Origin
 } from "aws-lambda";
@@ -32,19 +31,10 @@ import {
 import { performance } from "perf_hooks";
 import { OutgoingHttpHeaders, ServerResponse } from "http";
 import type { Readable } from "stream";
-import {
-  createExternalRewriteResponse,
-  getRewritePath,
-  isExternalRewrite
-} from "./routing/rewriter";
+import { createExternalRewriteResponse } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
-import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
-import {
-  isLocalePrefixedUri,
-  removeLocalePrefixFromUri,
-  getLocalePrefixFromUri
-} from "./routing/locale-utils";
+import { getLocalePrefixFromUri } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 const basePath = RoutesManifestJson.basePath;
@@ -73,29 +63,6 @@ const addS3HostHeader = (
 };
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
-
-const normaliseUri = (uri: string, routesManifest: RoutesManifest): string => {
-  if (basePath) {
-    if (uri.startsWith(basePath)) {
-      uri = uri.slice(basePath.length);
-    } else {
-      // basePath set but URI does not start with basePath, return 404
-      if (routesManifest.i18n?.defaultLocale) {
-        return `/${routesManifest.i18n?.defaultLocale}/404`;
-      } else {
-        return "/404";
-      }
-    }
-  }
-
-  // Remove trailing slash for all paths
-  if (uri.endsWith("/")) {
-    uri = uri.slice(0, -1);
-  }
-
-  // Empty path should be normalised to "/" as there is no Next.js route for ""
-  return uri === "" ? "/" : uri;
-};
 
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   if (s3Origin.region === "us-east-1") {
@@ -293,6 +260,27 @@ export const handler = async (
   return response;
 };
 
+const externalRewrite = async (
+  event: OriginRequestEvent,
+  manifest: OriginRequestDefaultHandlerManifest,
+  rewrite: string
+) => {
+  const request = event.Records[0].cf.request;
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression: manifest.enableHTTPCompression
+    }
+  );
+  await createExternalRewriteResponse(
+    rewrite + (request.querystring ? "?" : "") + request.querystring,
+    req,
+    res,
+    request.body?.data
+  );
+  return await responsePromise;
+};
+
 const staticRequest = (
   request: CloudFrontRequest,
   file: string,
@@ -302,7 +290,7 @@ const staticRequest = (
   const s3Domain = normaliseS3OriginDomain(s3Origin);
   s3Origin.domainName = s3Domain;
   s3Origin.path = path;
-  request.uri = encodeURI(file);
+  request.uri = file;
   addS3HostHeader(request, s3Domain);
   return request;
 };
@@ -384,179 +372,40 @@ const handleOriginRequest = async ({
     prerenderManifest,
     routesManifest
   );
-  if (route) {
-    if (route.isPublicFile) {
-      const { file } = route as PublicFileRoute;
-      return staticRequest(request, file, `${routesManifest.basePath}/public`);
-    }
-    if (route.isStatic) {
-      const { file, isData } = route as StaticRoute;
-      const path = isData
-        ? `${routesManifest.basePath}`
-        : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
-      return staticRequest(request, file, path);
-    }
-    if (route.isRender) {
-      const { page, isData } = route as RenderRoute;
-      normaliseRequestForLocale(request, routesManifest);
-      return renderResponse(event, manifest, page, isData);
-    }
-    if (route.isRedirect) {
-      const { isRedirect, status, ...response } = route as RedirectRoute;
-      return { ...response, status: status.toString() };
-    }
-    // No if lets typescript check this is the only option
-    const unauthorized: UnauthorizedRoute = route;
-    const { isUnauthorized, status, ...response } = unauthorized;
+  if (route.isPublicFile) {
+    const { file } = route as PublicFileRoute;
+    return staticRequest(request, file, `${routesManifest.basePath}/public`);
+  }
+  if (route.querystring) {
+    request.querystring = `${
+      request.querystring ? request.querystring + "&" : ""
+    }${route.querystring}`;
+  }
+  if (route.isStatic) {
+    const { file, isData } = route as StaticRoute;
+    const path = isData
+      ? `${routesManifest.basePath}`
+      : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
+    const relativeFile = isData ? file : file.slice("pages".length);
+    return staticRequest(request, relativeFile, path);
+  }
+  if (route.isRender) {
+    const { page, isData } = route as RenderRoute;
+    normaliseRequestForLocale(request, routesManifest);
+    return renderResponse(event, manifest, page, isData);
+  }
+  if (route.isRedirect) {
+    const { isRedirect, status, ...response } = route as RedirectRoute;
     return { ...response, status: status.toString() };
   }
-
-  const basePath = routesManifest.basePath;
-  let uri = normaliseUri(request.uri, routesManifest);
-  const { pages } = manifest;
-
-  // Always add default locale prefix to URIs without it that are not public files or data requests
-  const defaultLocale = routesManifest.i18n?.defaultLocale;
-  if (defaultLocale && !isLocalePrefixedUri(uri, routesManifest)) {
-    uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
+  if (route.isExternal) {
+    const { path } = route as ExternalRoute;
+    return externalRewrite(event, manifest, path);
   }
-
-  // Check for non-dynamic pages before rewriting
-  const isNonDynamicRoute =
-    pages.html.nonDynamic[uri] || pages.ssr.nonDynamic[uri];
-
-  let rewrittenUri;
-  // Handle custom rewrites, but don't rewrite non-dynamic pages per Next.js docs: https://nextjs.org/docs/api-reference/next.config.js/rewrites
-  if (!isNonDynamicRoute) {
-    const customRewrite = getRewritePath(
-      request.uri,
-      routesManifest,
-      router(manifest, routesManifest),
-      uri
-    );
-    if (customRewrite) {
-      rewrittenUri = request.uri;
-      const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
-        "?"
-      );
-      request.uri = customRewriteUriPath;
-      if (request.querystring) {
-        request.querystring = `${request.querystring}${
-          customRewriteUriQuery ? `&${customRewriteUriQuery}` : ""
-        }`;
-      } else {
-        request.querystring = `${customRewriteUriQuery ?? ""}`;
-      }
-
-      if (isExternalRewrite(customRewriteUriPath)) {
-        const { req, res, responsePromise } = lambdaAtEdgeCompat(
-          event.Records[0].cf,
-          {
-            enableHTTPCompression: manifest.enableHTTPCompression
-          }
-        );
-        await createExternalRewriteResponse(
-          customRewriteUriPath +
-            (request.querystring ? "?" : "") +
-            request.querystring,
-          req,
-          res,
-          request.body?.data
-        );
-        return await responsePromise;
-      }
-
-      uri = normaliseUri(request.uri, routesManifest);
-
-      if (defaultLocale && !isLocalePrefixedUri(uri, routesManifest)) {
-        uri = uri === "/" ? `/${defaultLocale}` : `/${defaultLocale}${uri}`;
-      }
-    }
-  }
-
-  const isStaticPage = pages.html.nonDynamic[uri]; // plain page without any props
-  const isPrerenderedPage = pages.ssg.nonDynamic[uri]; // prerendered/SSG pages are also static pages like "pages.html" above
-  const origin = request.origin as CloudFrontOrigin;
-  const s3Origin = origin.s3 as CloudFrontS3Origin;
-  const isHTMLPage = isStaticPage || isPrerenderedPage;
-  const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
-  const hasFallback = hasFallbackForUri(uri, manifest, routesManifest);
-  const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const isPreviewRequest = await isValidPreviewRequest(
-    request.headers.cookie,
-    prerenderManifest.preview.previewModeSigningKey
-  );
-
-  s3Origin.domainName = normalisedS3DomainName;
-
-  if (
-    // Note: static pages (HTML pages with no props) don't have JS files needed for preview mode, always serve from S3.
-    isStaticPage ||
-    (isHTMLPage && !isPreviewRequest) ||
-    (hasFallback && !isPreviewRequest)
-  ) {
-    if (isHTMLPage || hasFallback) {
-      s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
-      const pageName = uri === "/" ? "/index" : uri;
-      request.uri = `${pageName}.html`;
-    }
-
-    addS3HostHeader(request, normalisedS3DomainName);
-    return request;
-  }
-
-  const pagePath = router(manifest, routesManifest)(uri);
-
-  if (pagePath.endsWith(".html") && !isPreviewRequest) {
-    s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
-    request.uri = pagePath.replace("pages", "");
-    addS3HostHeader(request, normalisedS3DomainName);
-
-    return request;
-  }
-
-  const tBeforePageRequire = now();
-  let page = require(`./${pagePath}`); // eslint-disable-line
-  const tAfterPageRequire = now();
-
-  log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
-
-  const tBeforeSSR = now();
-
-  normaliseRequestForLocale(request, routesManifest);
-
-  const { req, res, responsePromise } = lambdaAtEdgeCompat(
-    event.Records[0].cf,
-    {
-      enableHTTPCompression: manifest.enableHTTPCompression,
-      rewrittenUri
-    }
-  );
-  try {
-    // If page is _error.js, set status to 404 so _error.js will render a 404 page
-    if (pagePath === "pages/_error.js") {
-      res.statusCode = 404;
-    }
-
-    // Render page
-    await Promise.race([page.render(req, res), responsePromise]);
-  } catch (error) {
-    // Set status to 500 so _error.js will render a 500 page
-    console.error(
-      `Error rendering page: ${pagePath}. Error:\n${error}\nRendering Next.js error page.`
-    );
-    res.statusCode = 500;
-    page = require("./pages/_error.js"); // eslint-disable-line
-    await page.render(req, res);
-  }
-  const response = await responsePromise;
-  const tAfterSSR = now();
-
-  log("SSR execution time", tBeforeSSR, tAfterSSR);
-
-  setCloudFrontResponseStatus(response, res);
-
-  return response;
+  // No if lets typescript check this is the only option
+  const unauthorized: UnauthorizedRoute = route;
+  const { isUnauthorized, status, ...response } = unauthorized;
+  return { ...response, status: status.toString() };
 };
 
 const handleOriginResponse = async ({
@@ -767,81 +616,6 @@ const isOriginResponse = (
   event: OriginRequestEvent | OriginResponseEvent
 ): event is OriginResponseEvent => {
   return event.Records[0].cf.config.eventType === "origin-response";
-};
-
-const hasFallbackForUri = (
-  uri: string,
-  manifest: OriginRequestDefaultHandlerManifest,
-  routesManifest: RoutesManifest
-) => {
-  const {
-    pages: { ssr, html, ssg }
-  } = manifest;
-  // Non-dynamic routes are prioritized over dynamic fallbacks, return false to ensure those get rendered instead
-  if (ssr.nonDynamic[uri] || html.nonDynamic[uri]) {
-    return false;
-  }
-
-  let foundFallback:
-    | {
-        routeRegex: string;
-        fallback: string | false | null;
-        dataRoute: string;
-        dataRouteRegex: string;
-      }
-    | undefined = undefined; // for later use to reduce duplicate work
-
-  // Dynamic routes that does not have fallback are prioritized over dynamic fallback
-  const isNonFallbackDynamicRoute = Object.values({
-    ...ssr.dynamic,
-    ...html.dynamic
-  }).find((dynamicRoute) => {
-    if (foundFallback) {
-      return false;
-    }
-
-    const re = new RegExp(dynamicRoute.regex);
-    const matchesRegex = re.test(uri);
-
-    // If any dynamic route matches, check that this isn't one of the fallback routes in prerender manifest
-    if (matchesRegex) {
-      const matchesFallbackRoute = Object.keys(ssg.dynamic).find(
-        (dynamicSsgRoute) => {
-          const fileMatchesPrerenderRoute =
-            dynamicRoute.file ===
-            `pages${removeLocalePrefixFromUri(
-              dynamicSsgRoute,
-              routesManifest
-            )}.js`;
-
-          if (fileMatchesPrerenderRoute) {
-            foundFallback = ssg.dynamic[dynamicSsgRoute];
-          }
-
-          return fileMatchesPrerenderRoute;
-        }
-      );
-
-      return !matchesFallbackRoute;
-    } else {
-      return false;
-    }
-  });
-
-  if (isNonFallbackDynamicRoute) {
-    return false;
-  }
-
-  // If fallback previously found, return it to prevent additional regex matching
-  if (foundFallback) {
-    return foundFallback;
-  }
-
-  // Otherwise, try to match fallback against dynamic routes in prerender manifest
-  return Object.values(ssg.dynamic).find((routeConfig) => {
-    const re = new RegExp(routeConfig.routeRegex);
-    return re.test(uri);
-  });
 };
 
 // This sets CloudFront response for 404 or 500 statuses

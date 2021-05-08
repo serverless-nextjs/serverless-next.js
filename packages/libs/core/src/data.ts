@@ -22,24 +22,28 @@ export const handleDataReq = (
   uri: string,
   manifest: Manifest,
   isPreview: boolean
-): DataRoute | StaticRoute | undefined => {
+): DataRoute | StaticRoute => {
   const { buildId, pages } = manifest;
   if (!pages) {
-    return;
+    return {
+      isData: true,
+      isRender: true,
+      page: "pages/_error.js"
+    };
   }
   const normalisedUri = normaliseDataUri(uri, buildId);
   if (pages.html.nonDynamic[normalisedUri]) {
     return {
       isData: true,
       isStatic: true,
-      file: decodeURI(uri)
+      file: uri
     };
   }
   if (pages.ssg.nonDynamic[normalisedUri] && !isPreview) {
     return {
       isData: true,
       isStatic: true,
-      file: decodeURI(uri)
+      file: uri
     };
   }
   if (
@@ -59,7 +63,7 @@ export const handleDataReq = (
     return {
       isData: true,
       isStatic: true,
-      file: decodeURI(uri)
+      file: uri
     };
   }
   const dynamicSSR = matchDynamic(
@@ -99,7 +103,7 @@ export const handleDataReq = (
     return {
       isData: false,
       isStatic: true,
-      file: "/404.html"
+      file: "pages/404.html"
     };
   }
   return {

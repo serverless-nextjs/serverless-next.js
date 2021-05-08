@@ -35,8 +35,7 @@
         "/customers": "pages/customers/index.js",
         "/customers/new": "pages/customers/new.js",
         "/api/getCustomers": "pages/api/getCustomers.js",
-        "/_error": "pages/_error.js",
-        "/404": "pages/404.html"
+        "/_error": "pages/_error.js"
       }
     },
     "html": {

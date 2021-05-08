@@ -1,5 +1,4 @@
 import cookie from "cookie";
-import jsonwebtoken from "jsonwebtoken";
 
 const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
 const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
@@ -20,14 +19,15 @@ export type Cookies = {
  * @param cookies - Cookies header with cookies in RFC 6265 compliant format
  * @param previewModeSigningKey - Next build key generated in the preRenderManifest
  */
-export const isValidPreviewRequest = (
+export const isValidPreviewRequest = async (
   cookies: Cookies,
   previewModeSigningKey: string
-): boolean => {
+): Promise<boolean> => {
   const previewCookies = getPreviewCookies(cookies);
 
   if (hasPreviewCookies(previewCookies)) {
     try {
+      const jsonwebtoken = await import("jsonwebtoken");
       jsonwebtoken.verify(
         previewCookies[NEXT_PREVIEW_DATA_COOKIE],
         previewModeSigningKey

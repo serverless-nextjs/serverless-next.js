@@ -1,5 +1,7 @@
 import { getUnauthenticatedResponse } from "./auth";
+import { normalise } from "./basepath";
 import { handleDataReq } from "./data";
+import { handlePageReq } from "./page";
 import { isValidPreviewRequest } from "./preview";
 import {
   createRedirectResponse,
@@ -50,7 +52,7 @@ export const handleDomainRedirects = (
   }
 };
 
-export const handleLanguageRedirect = async (
+const handleLanguageRedirect = async (
   req: Request,
   manifest: Manifest,
   routesManifest: RoutesManifest
@@ -75,12 +77,12 @@ const handlePublicFiles = (
   if (isPublicFile) {
     return {
       isPublicFile: true,
-      file: decodedUri
+      file: uri
     };
   }
 };
 
-export const handleTrailingSlash = (
+const handleTrailingSlash = (
   req: Request,
   manifest: Manifest,
   isFile: boolean
@@ -91,42 +93,20 @@ export const handleTrailingSlash = (
   }
 };
 
-const normalise = (uri: string, routesManifest: RoutesManifest): string => {
-  const { basePath, i18n } = routesManifest;
-  if (basePath) {
-    if (uri.startsWith(basePath)) {
-      uri = uri.slice(basePath.length);
-    } else {
-      // basePath set but URI does not start with basePath, return 404
-      if (i18n?.defaultLocale) {
-        return `/${i18n.defaultLocale}/404`;
-      } else {
-        return "/404";
-      }
-    }
-  }
-
-  // Remove trailing slash for all paths
-  if (uri.endsWith("/")) {
-    uri = uri.slice(0, -1);
-  }
-
-  // Empty path should be normalised to "/" as there is no Next.js route for ""
-  return uri === "" ? "/" : uri;
-};
-
 /*
  * Routes:
  * - auth
  * - redirects
  * - public files
+ * - data routes
+ * - pages
  */
 export const routeDefault = async (
   req: Request,
   manifest: Manifest,
   prerenderManifest: PrerenderManifest,
   routesManifest: RoutesManifest
-): Promise<Route | undefined> => {
+): Promise<Route> => {
   const auth = handleAuth(req, manifest);
   if (auth) {
     return auth;
@@ -160,13 +140,15 @@ export const routeDefault = async (
     return otherRedirect;
   }
 
-  const isPreview = isValidPreviewRequest(
+  const isPreview = await isValidPreviewRequest(
     req.headers.cookie,
     prerenderManifest.preview.previewModeSigningKey
   );
 
   if (isDataReq) {
     return handleDataReq(uri, manifest, isPreview);
+  } else {
+    return handlePageReq(req.uri, manifest, routesManifest, isPreview);
   }
 };
 
