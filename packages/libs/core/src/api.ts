@@ -1,18 +1,15 @@
 import { normalise } from "./basepath";
 import { matchDynamic } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
-import { ApiRoute, ExternalRoute, Manifest, RoutesManifest } from "./types";
+import { ApiManifest, ApiRoute, ExternalRoute, RoutesManifest } from "./types";
 
 export const handleApiReq = (
   uri: string,
-  manifest: Manifest,
+  manifest: ApiManifest,
   routesManifest: RoutesManifest,
   isRewrite?: boolean
 ): ExternalRoute | ApiRoute | undefined => {
   const { apis } = manifest;
-  if (!apis) {
-    return;
-  }
   const normalisedUri = normalise(uri, routesManifest);
 
   const nonDynamic = apis.nonDynamic[normalisedUri];

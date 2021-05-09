@@ -52,12 +52,8 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
-  const combinedManifest = {
-    ...buildManifest,
-    buildId: ""
-  };
 
-  const route = routeApi(request, combinedManifest, routesManifest);
+  const route = routeApi(request, buildManifest, routesManifest);
   if (!route) {
     return {
       status: "404"

@@ -1,5 +1,5 @@
 import { matchDynamic, matchDynamicSSG } from "./match";
-import { DataRoute, Manifest, StaticRoute } from "./types";
+import { DataRoute, PageManifest, StaticRoute } from "./types";
 
 /*
  * Get page name from data route
@@ -20,17 +20,10 @@ const normaliseDataUri = (uri: string, buildId: string) => {
  */
 export const handleDataReq = (
   uri: string,
-  manifest: Manifest,
+  manifest: PageManifest,
   isPreview: boolean
 ): DataRoute | StaticRoute => {
   const { buildId, pages } = manifest;
-  if (!pages) {
-    return {
-      isData: true,
-      isRender: true,
-      page: "pages/_error.js"
-    };
-  }
   const normalisedUri = normaliseDataUri(uri, buildId);
   if (pages.html.nonDynamic[normalisedUri]) {
     return {

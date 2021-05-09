@@ -40,21 +40,31 @@ export type DynamicSSG = {
 };
 
 export type Manifest = {
-  apis?: {
+  authentication?: {
+    username: string;
+    password: string;
+  };
+  domainRedirects?: {
+    [key: string]: string;
+  };
+  publicFiles?: {
+    [key: string]: string;
+  };
+  trailingSlash?: boolean;
+};
+
+export type ApiManifest = Manifest & {
+  apis: {
     dynamic: {
       [key: string]: Dynamic;
     };
     nonDynamic: { [key: string]: string };
   };
-  authentication?: {
-    username: string;
-    password: string;
-  };
+};
+
+export type PageManifest = Manifest & {
   buildId: string;
-  domainRedirects?: {
-    [key: string]: string;
-  };
-  pages?: {
+  pages: {
     html: {
       dynamic: {
         [key: string]: Dynamic;
@@ -83,10 +93,6 @@ export type Manifest = {
       nonDynamic: { [key: string]: string };
     };
   };
-  publicFiles?: {
-    [key: string]: string;
-  };
-  trailingSlash?: boolean;
 };
 
 export type I18nData = {

@@ -2,23 +2,21 @@ import { normalise } from "./basepath";
 import { addDefaultLocaleToPath } from "./locale";
 import { matchDynamic, matchDynamicSSG } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
-import { ExternalRoute, Manifest, PageRoute, RoutesManifest } from "./types";
+import {
+  ExternalRoute,
+  PageManifest,
+  PageRoute,
+  RoutesManifest
+} from "./types";
 
 export const handlePageReq = (
   uri: string,
-  manifest: Manifest,
+  manifest: PageManifest,
   routesManifest: RoutesManifest,
   isPreview: boolean,
   isRewrite?: boolean
 ): ExternalRoute | PageRoute => {
   const { pages } = manifest;
-  if (!pages) {
-    return {
-      isData: false,
-      isRender: true,
-      page: "pages/_error.js"
-    };
-  }
   const localeUri = normalise(
     addDefaultLocaleToPath(uri, routesManifest),
     routesManifest
@@ -62,13 +60,10 @@ export const handlePageReq = (
       isPreview,
       true
     );
-    if (route) {
-      return {
-        ...route,
-        querystring
-      };
-    }
-    return route;
+    return {
+      ...route,
+      querystring
+    };
   }
 
   // TODO: this order reproduces default-handler logic
