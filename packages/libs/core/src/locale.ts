@@ -57,18 +57,3 @@ export const getAcceptLanguageLocale = async (
     }
   }
 };
-
-export function isLocalePrefixedUri(
-  uri: string,
-  routesManifest: RoutesManifest
-) {
-  if (routesManifest.i18n) {
-    for (const locale of routesManifest.i18n.locales) {
-      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}

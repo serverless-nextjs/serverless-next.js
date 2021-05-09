@@ -40,6 +40,16 @@ describe("Rewriter Tests", () => {
             source: "/invalid-destination",
             destination: "ftp://example.com",
             regex: "^/invalid-destination$"
+          },
+          {
+            source: "/query/:path",
+            destination: "/target?a=b",
+            regex: "^/query(?:/([^/]+?))$"
+          },
+          {
+            source: "/manual-query/:path",
+            destination: "/target?key=:path",
+            regex: "^/manual-query(?:/([^/]+?))$"
           }
         ],
         redirects: []
@@ -58,6 +68,8 @@ describe("Rewriter Tests", () => {
       ${"/invalid-destination"} | ${null}
       ${"/en/a"}                | ${"/en/b"}
       ${"/fr/a"}                | ${"/fr/b"}
+      ${"/query/foo"}           | ${"/target?a=b&path=foo"}
+      ${"/manual-query/foo"}    | ${"/target?key=foo"}
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {

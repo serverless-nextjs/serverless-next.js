@@ -1,6 +1,6 @@
 import { compileDestination, matchPath } from "./match";
 import { RewriteData, RoutesManifest } from "./types";
-import { addDefaultLocaleToPath, isLocalePrefixedUri } from "./locale";
+import { addDefaultLocaleToPath } from "./locale";
 
 /**
  * Get the rewrite of the given path, if it exists. Otherwise return null.
@@ -23,12 +23,16 @@ export function getRewritePath(
     if (match) {
       let destination = compileDestination(rewrite.destination, match.params);
 
-      // Pass params to destination for locale rewrites
+      // Pass unused params to destination
       // Except nextInternalLocale param since it's already in path prefix
-      if (destination && isLocalePrefixedUri(path, routesManifest)) {
+      if (destination) {
         const querystring = Object.keys(match.params)
           .filter((key) => key !== "nextInternalLocale")
-          // @ts-ignore
+          .filter(
+            (key) =>
+              !rewrite.destination.endsWith(`:${key}`) &&
+              !rewrite.destination.includes(`${key}/`)
+          )
           .map((key) => {
             // @ts-ignore
             const param = match.params[key];
