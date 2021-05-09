@@ -1,3 +1,4 @@
+import { handleApiReq } from "./api";
 import { getUnauthenticatedResponse } from "./auth";
 import { normalise } from "./basepath";
 import { handleDataReq } from "./data";
@@ -11,6 +12,8 @@ import {
   getTrailingSlashPath
 } from "./redirect";
 import {
+  ApiRoute,
+  ExternalRoute,
   Manifest,
   PrerenderManifest,
   RedirectRoute,
@@ -31,7 +34,7 @@ export const handleAuth = (
   );
 };
 
-export const handleCustomRedirects = (
+const handleCustomRedirects = (
   req: Request,
   routesManifest: RoutesManifest
 ): RedirectRoute | undefined => {
@@ -97,9 +100,37 @@ const handleTrailingSlash = (
  * Routes:
  * - auth
  * - redirects
+ * - api routes
+ * - rewrites (external and api)
+ */
+export const routeApi = (
+  req: Request,
+  manifest: Manifest,
+  routesManifest: RoutesManifest
+): ApiRoute | ExternalRoute | RedirectRoute | UnauthorizedRoute | undefined => {
+  const auth = handleAuth(req, manifest);
+  if (auth) {
+    return auth;
+  }
+
+  const redirect =
+    handleDomainRedirects(req, manifest) ||
+    handleCustomRedirects(req, routesManifest);
+  if (redirect) {
+    return redirect;
+  }
+
+  return handleApiReq(req.uri, manifest, routesManifest);
+};
+
+/*
+ * Routes:
+ * - auth
+ * - redirects
  * - public files
  * - data routes
  * - pages
+ * - rewrites (external and page)
  */
 export const routeDefault = async (
   req: Request,

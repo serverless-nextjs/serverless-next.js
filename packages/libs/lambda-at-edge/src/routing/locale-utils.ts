@@ -30,38 +30,6 @@ export function addDefaultLocaleToPath(
   return path;
 }
 
-export function isLocalePrefixedUri(
-  uri: string,
-  routesManifest: RoutesManifest
-) {
-  if (routesManifest.i18n) {
-    for (const locale of routesManifest.i18n.locales) {
-      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
-        return true;
-      }
-    }
-  }
-
-  return false;
-}
-
-export function removeLocalePrefixFromUri(
-  uri: string,
-  routesManifest: RoutesManifest
-) {
-  if (routesManifest.i18n) {
-    for (const locale of routesManifest.i18n.locales) {
-      if (uri === `/${locale}`) {
-        return "/";
-      } else if (uri.startsWith(`/${locale}/`)) {
-        return uri.replace(`/${locale}`, "");
-      }
-    }
-  }
-
-  return uri;
-}
-
 export function getLocalePrefixFromUri(
   uri: string,
   routesManifest: RoutesManifest

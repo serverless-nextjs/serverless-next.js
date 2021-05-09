@@ -40,6 +40,12 @@ export type DynamicSSG = {
 };
 
 export type Manifest = {
+  apis?: {
+    dynamic: {
+      [key: string]: Dynamic;
+    };
+    nonDynamic: { [key: string]: string };
+  };
   authentication?: {
     username: string;
     password: string;
@@ -109,12 +115,18 @@ export interface AnyRoute {
   file?: string;
   headers?: { [key: string]: Header[] };
   querystring?: string;
+  isApi?: boolean;
   isExternal?: boolean;
   isPublicFile?: boolean;
   isRedirect?: boolean;
   isRender?: boolean;
   isStatic?: boolean;
   isUnauthorized?: boolean;
+}
+
+export interface ApiRoute extends AnyRoute {
+  isApi: true;
+  page: string;
 }
 
 export interface ExternalRoute extends AnyRoute {

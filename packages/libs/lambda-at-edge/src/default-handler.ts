@@ -31,7 +31,7 @@ import {
 import { performance } from "perf_hooks";
 import { OutgoingHttpHeaders, ServerResponse } from "http";
 import type { Readable } from "stream";
-import { createExternalRewriteResponse } from "./routing/rewriter";
+import { externalRewrite } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import { getLocalePrefixFromUri } from "./routing/locale-utils";
@@ -219,27 +219,6 @@ export const handler = async (
   return response;
 };
 
-const externalRewrite = async (
-  event: OriginRequestEvent,
-  manifest: OriginRequestDefaultHandlerManifest,
-  rewrite: string
-) => {
-  const request = event.Records[0].cf.request;
-  const { req, res, responsePromise } = lambdaAtEdgeCompat(
-    event.Records[0].cf,
-    {
-      enableHTTPCompression: manifest.enableHTTPCompression
-    }
-  );
-  await createExternalRewriteResponse(
-    rewrite + (request.querystring ? "?" : "") + request.querystring,
-    req,
-    res,
-    request.body?.data
-  );
-  return await responsePromise;
-};
-
 const staticRequest = (
   request: CloudFrontRequest,
   file: string,
@@ -358,7 +337,7 @@ const handleOriginRequest = async ({
   }
   if (route.isExternal) {
     const { path } = route as ExternalRoute;
-    return externalRewrite(event, manifest, path);
+    return externalRewrite(event, manifest.enableHTTPCompression, path);
   }
   // No if lets typescript check this is the only option
   const unauthorized: UnauthorizedRoute = route;

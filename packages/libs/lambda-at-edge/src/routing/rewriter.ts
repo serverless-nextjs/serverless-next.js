@@ -1,77 +1,6 @@
-import { compileDestination, matchPath } from "./matcher";
-import { RewriteData, RoutesManifest } from "../types";
 import { IncomingMessage, ServerResponse } from "http";
-import { addDefaultLocaleToPath, isLocalePrefixedUri } from "./locale-utils";
-
-/**
- * Get the rewrite of the given path, if it exists. Otherwise return null.
- * @param path
- * @param routesManifest
- * @param router
- * @param normalisedPath
- */
-export function getRewritePath(
-  path: string,
-  routesManifest: RoutesManifest,
-  router: (uri: string) => string | null,
-  normalisedPath: string
-): string | null {
-  path = addDefaultLocaleToPath(path, routesManifest);
-
-  const rewrites: RewriteData[] = routesManifest.rewrites;
-
-  for (const rewrite of rewrites) {
-    const match = matchPath(path, rewrite.source);
-
-    if (match) {
-      let destination = compileDestination(rewrite.destination, match.params);
-
-      // No-op rewrite support: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
-      if (path === destination) {
-        const url = router(normalisedPath);
-
-        if (url === "pages/404.html" || url === "pages/_error.js") {
-          continue;
-        }
-      }
-
-      // Pass params to destination for locale rewrites
-      // Except nextInternalLocale param since it's already in path prefix
-      if (destination && isLocalePrefixedUri(path, routesManifest)) {
-        const querystring = Object.keys(match.params)
-          .filter((key) => key !== "nextInternalLocale")
-          // @ts-ignore
-          .map((key) => {
-            // @ts-ignore
-            const param = match.params[key];
-            if (typeof param === "string") {
-              return `${key}=${param}`;
-            } else {
-              return param.map((val: string) => `${key}=${val}`).join("&");
-            }
-          })
-          .filter((key) => key)
-          .join("&");
-
-        if (querystring) {
-          destination += destination.includes("?")
-            ? `&${querystring}`
-            : `?${querystring}`;
-        }
-      }
-
-      return destination;
-    }
-  }
-
-  return null;
-}
-
-export function isExternalRewrite(customRewrite: string): boolean {
-  return (
-    customRewrite.startsWith("http://") || customRewrite.startsWith("https://")
-  );
-}
+import { OriginRequestEvent } from "../types";
+import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 
 // Blacklisted or read-only headers in CloudFront
 const ignoredHeaders = [
@@ -110,7 +39,7 @@ function isIgnoredHeader(name: string): boolean {
   return ignoredHeaders.includes(lowerCaseName);
 }
 
-export async function createExternalRewriteResponse(
+async function createExternalRewriteResponse(
   customRewrite: string,
   req: IncomingMessage,
   res: ServerResponse,
@@ -155,3 +84,24 @@ export async function createExternalRewriteResponse(
   res.statusCode = fetchResponse.status;
   res.end(await fetchResponse.buffer());
 }
+
+export const externalRewrite = async (
+  event: OriginRequestEvent,
+  enableHTTPCompression: boolean,
+  rewrite: string
+) => {
+  const request = event.Records[0].cf.request;
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression
+    }
+  );
+  await createExternalRewriteResponse(
+    rewrite + (request.querystring ? "?" : "") + request.querystring,
+    req,
+    res,
+    request.body?.data
+  );
+  return await responsePromise;
+};
