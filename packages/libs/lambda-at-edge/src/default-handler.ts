@@ -153,47 +153,6 @@ const router = (
 };
 
 /**
- * Remove valid locale and accept-language header from request and move it to query params.
- * Needed for SSR pages otherwise there will be a redirect loop or issue rendering.
- * @param request
- * @param routesManifest
- */
-const normaliseRequestForLocale = (
-  request: CloudFrontRequest,
-  routesManifest: RoutesManifest
-) => {
-  const locales = routesManifest.i18n?.locales;
-  if (locales) {
-    for (const locale of locales) {
-      if (request.uri === `${basePath}/${locale}`) {
-        request.uri = "/";
-
-        request.querystring += `${
-          request.querystring === "" ? "" : "&"
-        }nextInternalLocale=${locale}`;
-
-        delete request.headers["accept-language"];
-
-        break;
-      } else if (request.uri.startsWith(`${basePath}/${locale}/`)) {
-        request.uri = request.uri.replace(
-          `${basePath}/${locale}/`,
-          `${basePath}/`
-        );
-
-        request.querystring += `${
-          request.querystring === "" ? "" : "&"
-        }nextInternalLocale=${locale}`;
-
-        delete request.headers["accept-language"];
-
-        break;
-      }
-    }
-  }
-};
-
-/**
  * Checks whether static page exists (HTML/SSG) in the manifest.
  * @param route
  * @param manifest
@@ -391,7 +350,6 @@ const handleOriginRequest = async ({
   }
   if (route.isRender) {
     const { page, isData } = route as RenderRoute;
-    normaliseRequestForLocale(request, routesManifest);
     return renderResponse(event, manifest, page, isData);
   }
   if (route.isRedirect) {
