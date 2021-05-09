@@ -50,6 +50,11 @@ describe("Rewriter Tests", () => {
             source: "/manual-query/:path",
             destination: "/target?key=:path",
             regex: "^/manual-query(?:/([^/]+?))$"
+          },
+          {
+            source: "/multi-query/:path*",
+            destination: "/target",
+            regex: "^/multi-query(?:/([^/]+?))$"
           }
         ],
         redirects: []
@@ -70,6 +75,7 @@ describe("Rewriter Tests", () => {
       ${"/fr/a"}                | ${"/fr/b"}
       ${"/query/foo"}           | ${"/target?a=b&path=foo"}
       ${"/manual-query/foo"}    | ${"/target?key=foo"}
+      ${"/multi-query/foo/bar"} | ${"/target?path=foo&path=bar"}
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {
