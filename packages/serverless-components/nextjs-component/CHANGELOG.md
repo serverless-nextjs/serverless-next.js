@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.19.1-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.1-alpha.2...@sls-next/serverless-component@1.19.1-alpha.3) (2021-05-09)
+
+### Bug Fixes
+
+- **nextjs-component:** allow custom cache behavior for \_next/image\* ([#1046](https://github.com/serverless-nextjs/serverless-next.js/issues/1046)) ([a6325c2](https://github.com/serverless-nextjs/serverless-next.js/commit/a6325c2462a1351eecb1c533d922767799d3f2f8))
+
 ## [1.19.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.19.1-alpha.1...@sls-next/serverless-component@1.19.1-alpha.2) (2021-05-05)
 
 **Note:** Version bump only for package @sls-next/serverless-component
