@@ -72,20 +72,3 @@ export function isLocalePrefixedUri(
 
   return false;
 }
-
-export function removeLocalePrefixFromUri(
-  uri: string,
-  routesManifest: RoutesManifest
-) {
-  if (routesManifest.i18n) {
-    for (const locale of routesManifest.i18n.locales) {
-      if (uri === `/${locale}`) {
-        return "/";
-      } else if (uri.startsWith(`/${locale}/`)) {
-        return uri.replace(`/${locale}`, "");
-      }
-    }
-  }
-
-  return uri;
-}
