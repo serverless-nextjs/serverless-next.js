@@ -27,6 +27,11 @@ export type RewriteData = {
   regex: string;
 };
 
+export type Dynamic = {
+  file: string;
+  regex: string;
+};
+
 export type DynamicSSG = {
   dataRoute: string;
   dataRouteRegex: string;
@@ -46,10 +51,7 @@ export type Manifest = {
   pages?: {
     html: {
       dynamic: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
+        [key: string]: Dynamic;
       };
       nonDynamic: { [key: string]: string };
     };
@@ -67,16 +69,10 @@ export type Manifest = {
     };
     ssr: {
       catchAll: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
+        [key: string]: Dynamic;
       };
       dynamic: {
-        [key: string]: {
-          file: string;
-          regex: string;
-        };
+        [key: string]: Dynamic;
       };
       nonDynamic: { [key: string]: string };
     };

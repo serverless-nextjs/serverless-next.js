@@ -1,14 +1,8 @@
 import { normalise } from "./basepath";
-import { addDefaultLocaleToPath, removeLocalePrefixFromUri } from "./locale";
+import { addDefaultLocaleToPath } from "./locale";
 import { matchDynamic, matchDynamicSSG } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
-import {
-  ExternalRoute,
-  Manifest,
-  PageRoute,
-  RenderRoute,
-  RoutesManifest
-} from "./types";
+import { ExternalRoute, Manifest, PageRoute, RoutesManifest } from "./types";
 
 export const handlePageReq = (
   uri: string,

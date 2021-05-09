@@ -3,7 +3,7 @@
  */
 
 import { compile, Match, match } from "path-to-regexp";
-import { DynamicSSG } from "./types";
+import { Dynamic, DynamicSSG } from "./types";
 
 /**
  * Match the given path against a source path.
@@ -59,7 +59,7 @@ export function compileDestination(
 
 export const matchDynamic = (
   uri: string,
-  routes: { file: string; regex: string }[]
+  routes: Dynamic[]
 ): string | undefined => {
   for (const { file, regex } of routes) {
     const re = new RegExp(regex, "i");
