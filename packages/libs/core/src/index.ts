@@ -47,12 +47,12 @@ export const handleDomainRedirects = (
   }
 };
 
-export const handleLanguageRedirect = (
+export const handleLanguageRedirect = async (
   req: Request,
   manifest: Manifest,
   routesManifest: RoutesManifest
-): RedirectRoute | undefined => {
-  const languageRedirectUri = getLanguageRedirectPath(
+): Promise<RedirectRoute | undefined> => {
+  const languageRedirectUri = await getLanguageRedirectPath(
     req,
     manifest,
     routesManifest
@@ -118,11 +118,11 @@ const normalise = (uri: string, routesManifest: RoutesManifest): string => {
  * - redirects
  * - public files
  */
-export const routeDefault = (
+export const routeDefault = async (
   req: Request,
   manifest: Manifest,
   routesManifest: RoutesManifest
-): Route | undefined => {
+): Promise<Route | undefined> => {
   const auth = handleAuth(req, manifest);
   if (auth) {
     return auth;
@@ -148,7 +148,7 @@ export const routeDefault = (
   return (
     publicFile ||
     handleCustomRedirects(req, routesManifest) ||
-    handleLanguageRedirect(req, manifest, routesManifest)
+    (await handleLanguageRedirect(req, manifest, routesManifest))
   );
 };
 

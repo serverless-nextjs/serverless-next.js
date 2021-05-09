@@ -1,4 +1,3 @@
-import Accept from "@hapi/accept";
 import { Manifest, RoutesManifest } from "./types";
 
 export function addDefaultLocaleToPath(
@@ -31,7 +30,7 @@ export function addDefaultLocaleToPath(
   return path;
 }
 
-export const getAcceptLanguageLocale = (
+export const getAcceptLanguageLocale = async (
   acceptLanguage: string,
   manifest: Manifest,
   routesManifest: RoutesManifest
@@ -44,6 +43,7 @@ export const getAcceptLanguageLocale = (
 
     // Accept.language(header, locales) prefers the locales order,
     // so we ask for all to find the order preferred by user.
+    const Accept = await import("@hapi/accept");
     for (const language of Accept.languages(acceptLanguage)) {
       const locale = language.toLowerCase();
       if (locale === defaultLocale) {

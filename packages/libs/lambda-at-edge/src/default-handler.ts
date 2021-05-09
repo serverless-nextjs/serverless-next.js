@@ -303,7 +303,7 @@ const handleOriginRequest = async ({
 }) => {
   const request = event.Records[0].cf.request;
 
-  const route = routeDefault(request, manifest, routesManifest);
+  const route = await routeDefault(request, manifest, routesManifest);
   if (route) {
     if (route.isPublicFile) {
       const { file } = route as PublicFileRoute;
@@ -406,7 +406,7 @@ const handleOriginRequest = async ({
   const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
   const hasFallback = hasFallbackForUri(uri, manifest, routesManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const isPreviewRequest = isValidPreviewRequest(
+  const isPreviewRequest = await isValidPreviewRequest(
     request.headers.cookie,
     prerenderManifest.preview.previewModeSigningKey
   );
