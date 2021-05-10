@@ -440,6 +440,7 @@ describe("Lambda@Edge", () => {
         ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+        ${"/_next/data/build-id/customers/test/catch/all.json"}   | ${"pages/customers/[...catchAll].js"}
       `(
         "serves json data via SSR for SSR path $path",
         async ({ path, expectedPage }) => {
