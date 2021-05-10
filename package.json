@@ -49,7 +49,7 @@
     "@types/webpack": "^4.41.18",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^3.5.0",
-    "adm-zip": "^0.4.16",
+    "adm-zip": "^0.5.5",
     "coveralls": "^3.1.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
