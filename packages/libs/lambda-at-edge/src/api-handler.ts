@@ -59,6 +59,11 @@ export const handler = async (
       status: "404"
     };
   }
+  if (route.querystring) {
+    request.querystring = `${
+      request.querystring ? request.querystring + "&" : ""
+    }${route.querystring}`;
+  }
   if (route.isApi) {
     const { page } = route as ApiRoute;
     return renderApi(event, manifest, routesManifest, page);
