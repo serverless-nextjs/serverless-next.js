@@ -25,13 +25,6 @@ export const handleDataReq = (
 ): DataRoute | StaticRoute => {
   const { buildId, pages } = manifest;
   const normalisedUri = normaliseDataUri(uri, buildId);
-  if (pages.html.nonDynamic[normalisedUri]) {
-    return {
-      isData: true,
-      isStatic: true,
-      file: uri
-    };
-  }
   if (pages.ssg.nonDynamic[normalisedUri] && !isPreview) {
     return {
       isData: true,
@@ -68,17 +61,6 @@ export const handleDataReq = (
       isData: true,
       isRender: true,
       page: dynamicSSR
-    };
-  }
-  const dynamicHTML = matchDynamic(
-    normalisedUri,
-    Object.values(pages.html.dynamic)
-  );
-  if (dynamicHTML) {
-    return {
-      isData: true,
-      isStatic: true,
-      file: dynamicHTML
     };
   }
   const catchAll = matchDynamic(
