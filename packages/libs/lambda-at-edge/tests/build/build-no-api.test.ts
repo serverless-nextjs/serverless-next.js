@@ -153,11 +153,11 @@ describe("Builder Tests (no API routes)", () => {
     it("has empty images handler directory", async () => {
       expect.assertions(1);
 
-      const apiDir = await fse.readdir(
+      const imageDir = await fse.readdir(
         join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}`)
       );
 
-      expect(apiDir).toEqual([]);
+      expect(imageDir).toEqual([]);
     });
   });
 

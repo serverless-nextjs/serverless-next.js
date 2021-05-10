@@ -1184,7 +1184,15 @@ class Builder {
     const isDefaultLoader = !imageLoader || imageLoader === "default";
     const hasImageOptimizer = hasImagesManifest && isDefaultLoader;
 
-    if (hasImageOptimizer) {
+    // ...nor if the image component is not used
+    const exportMarker = fse.existsSync(
+      join(this.dotNextDir, "export-marker.json")
+    )
+      ? await fse.readJSON(path.join(this.dotNextDir, "export-marker.json"))
+      : {};
+    const isNextImageImported = exportMarker.isNextImageImported !== false;
+
+    if (hasImageOptimizer && isNextImageImported) {
       await this.buildImageLambda(imageBuildManifest);
     }
 
