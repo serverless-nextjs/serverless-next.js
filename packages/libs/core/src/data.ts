@@ -16,6 +16,17 @@ const normaliseDataUri = (uri: string, buildId: string) => {
 };
 
 /*
+ * Get full data route uri from page name
+ */
+const fullDataUri = (uri: string, buildId: string) => {
+  const prefix = `/_next/data/${buildId}`;
+  if (uri === "/") {
+    return `${prefix}/index.js`;
+  }
+  return `${prefix}${uri}.json`;
+};
+
+/*
  * Handles a data route
  */
 export const handleDataReq = (
@@ -44,12 +55,16 @@ export const handleDataReq = (
   }
   // TODO: this order reproduces default-handler logic,
   // should sort all dynamic routes together in build
-  const dynamicSSG = matchDynamicSSG(uri, pages.ssg.dynamic, true);
+  const dynamicSSG = matchDynamicSSG(
+    fullDataUri(normalisedUri, buildId),
+    pages.ssg.dynamic,
+    true
+  );
   if (dynamicSSG) {
     return {
       isData: true,
       isStatic: true,
-      file: uri
+      file: fullDataUri(normalisedUri, buildId)
     };
   }
   const dynamicSSR = matchDynamic(
