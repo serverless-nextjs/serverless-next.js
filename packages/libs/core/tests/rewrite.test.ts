@@ -67,10 +67,10 @@ describe("Rewriter Tests", () => {
       ${"/c"}                   | ${"/d"}
       ${"/old-blog/abc"}        | ${"/news/abc"}
       ${"/old-users/1234"}      | ${"/users/1234"}
-      ${"/old-users/abc"}       | ${null}
+      ${"/old-users/abc"}       | ${undefined}
       ${"/external"}            | ${"https://example.com"}
       ${"/external-http"}       | ${"http://example.com"}
-      ${"/invalid-destination"} | ${null}
+      ${"/invalid-destination"} | ${undefined}
       ${"/en/a"}                | ${"/en/b"}
       ${"/fr/a"}                | ${"/fr/b"}
       ${"/query/foo"}           | ${"/target?a=b&path=foo"}
@@ -84,7 +84,7 @@ describe("Rewriter Tests", () => {
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);
         } else {
-          expect(rewrite).toBeNull();
+          expect(rewrite).toBeUndefined();
         }
       }
     );
