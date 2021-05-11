@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/serverless-cli",
-  "version": "1.5.3",
+  "version": "1.5.4-alpha.0",
   "description": "Serverless Components CLI (forked)",
   "main": "./src/index.js",
   "bin": {
@@ -29,7 +29,7 @@
     "strip-ansi": "^5.2.0"
   },
   "devDependencies": {
-    "babel-eslint": "9.0.0",
+    "babel-eslint": "10.1.0",
     "eslint": "5.6.0",
     "eslint-config-prettier": "^3.6.0",
     "eslint-plugin-import": "^2.22.0",

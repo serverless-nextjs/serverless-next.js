@@ -123,6 +123,7 @@ jobs:
         run: |
           cd packages/e2e-tests/$APP_NAME
           yarn --frozen-lockfile
+          sleep $[($RANDOM % 15) + 1]s # Sleep 1-15 seconds to try to avoid throttling
           yarn e2e:ci
 
       - name: Mark end-to-end tests as failed

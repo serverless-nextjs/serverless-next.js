@@ -1,4 +1,4 @@
-import * as http from "http";
+import { STATUS_CODES } from "http";
 import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "./locale";
 import { compileDestination, matchPath } from "./match";
 import { Manifest, Request, RedirectRoute, RoutesManifest } from "./types";
@@ -25,7 +25,7 @@ export function createRedirectResponse(
   }
 
   const status = statusCode;
-  const statusDescription = http.STATUS_CODES[status];
+  const statusDescription = STATUS_CODES[status];
 
   const refresh =
     statusCode === 308
@@ -80,11 +80,11 @@ export function getDomainRedirectPath(
  * @param routesManifest
  * @param manifest
  */
-export function getLanguageRedirectPath(
+export async function getLanguageRedirectPath(
   req: Request,
   manifest: Manifest,
   routesManifest: RoutesManifest
-): string | undefined {
+): Promise<string | undefined> {
   const languageHeader = req.headers["accept-language"];
   const acceptLanguage = languageHeader && languageHeader[0]?.value;
   const basePath = routesManifest.basePath;
@@ -92,7 +92,11 @@ export function getLanguageRedirectPath(
   const rootUri = basePath ? `${basePath}${trailingSlash ? "/" : ""}` : "/";
 
   if (req.uri === rootUri || acceptLanguage) {
-    return getAcceptLanguageLocale(acceptLanguage, manifest, routesManifest);
+    return await getAcceptLanguageLocale(
+      acceptLanguage,
+      manifest,
+      routesManifest
+    );
   }
 }
 
