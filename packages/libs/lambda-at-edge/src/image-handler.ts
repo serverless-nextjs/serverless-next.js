@@ -36,13 +36,9 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestImageHandlerManifest = manifest;
-  const combinedManifest = {
-    ...buildManifest,
-    buildId: ""
-  };
 
   // Handle basic auth
-  const authRoute = handleAuth(request, combinedManifest);
+  const authRoute = handleAuth(request, buildManifest);
   if (authRoute) {
     const { isUnauthorized, status, ...response } = authRoute;
     return { ...response, status: status.toString() };
