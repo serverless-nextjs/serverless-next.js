@@ -43,10 +43,7 @@ export const handleDataReq = (
       file: uri
     };
   }
-  if (
-    pages.ssr.nonDynamic[normalisedUri] ||
-    pages.ssg.nonDynamic[normalisedUri]
-  ) {
+  if (pages.ssr.nonDynamic[normalisedUri]) {
     return {
       isData: true,
       isRender: true,
