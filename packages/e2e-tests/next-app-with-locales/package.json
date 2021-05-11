@@ -20,7 +20,7 @@
   "homepage": "https://github.com/serverless-next.js/serverless-next.js",
   "dependencies": {
     "isomorphic-fetch": "2.2.1",
-    "next": "~10.0.7",
+    "next": "^10.0.9",
     "react": "17.0.1",
     "react-dom": "17.0.1"
   },
