@@ -109,7 +109,15 @@ describe("Pages Tests", () => {
         cy.getCookies().should("have.length", 0); // Preview cookies are now removed
         cy.ensureRouteCached(path);
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/ssg-page") {
+          cy.location("pathname").should("eq", "/ssg-page");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
+
         cy.get("[data-cy=preview-mode]").contains("false");
       });
 
