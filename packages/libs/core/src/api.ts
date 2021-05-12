@@ -1,4 +1,5 @@
 import { normalise } from "./basepath";
+import { dropLocaleFromPath } from "./locale";
 import { matchDynamic } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import { ApiManifest, ApiRoute, ExternalRoute, RoutesManifest } from "./types";
@@ -22,7 +23,9 @@ export const handleApiReq = (
 
   const rewrite = !isRewrite && getRewritePath(uri, routesManifest);
   if (rewrite) {
-    const [path, querystring] = rewrite.split("?");
+    // Rewrites include locales even for api routes
+    const apiRewrite = dropLocaleFromPath(rewrite, routesManifest);
+    const [path, querystring] = apiRewrite.split("?");
     if (isExternalRewrite(path)) {
       return {
         isExternal: true,
