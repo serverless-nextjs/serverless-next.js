@@ -385,6 +385,11 @@ The exhaustive list of AWS actions required for a deployment:
   "s3:PutAccelerateConfiguration",
   "s3:PutBucketPolicy",
   "s3:PutObject"
+  "lambda:ListEventSourceMappings",
+  "lambda:CreateEventSourceMapping",
+  "iam:UpdateAssumeRolePolicy",
+  "iam:DeleteRolePolicy",
+  "sqs:*"
 ```
 
 ### Lambda At Edge Configuration
