@@ -40,7 +40,7 @@ describe("Redirects Tests", () => {
       {
         path: "//example.com",
         expectedPath: "/example.com/",
-        expectedStatus: 404
+        expectedStatus: 308
       }
     ].forEach(({ path, expectedPath, expectedStatus }) => {
       it(`does not redirect page ${path}`, () => {
