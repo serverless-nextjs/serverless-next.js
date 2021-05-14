@@ -185,22 +185,22 @@
         "/en": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
-          "dataRoute": "/_next/data/test-build-id/en.json"
+          "dataRoute": "/_next/data/build-id/en.json"
         },
         "/en/tests/prerender-manifest/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/en/tests/prerender-manifest/[staticPageName]",
-          "dataRoute": "/_next/data/test-build-id/en/tests/prerender-manifest/example-static-page.json"
+          "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest/example-static-page.json"
         },
         "/fr": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
-          "dataRoute": "/_next/data/test-build-id/fr.json"
+          "dataRoute": "/_next/data/build-id/fr.json"
         },
         "/fr/tests/prerender-manifest/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/fr/tests/prerender-manifest/[staticPageName]",
-          "dataRoute": "/_next/data/test-build-id/fr/tests/prerender-manifest/example-static-page.json"
+          "dataRoute": "/_next/data/build-id/fr/tests/prerender-manifest/example-static-page.json"
         },
         "/fr/preview": {
           "initialRevalidateSeconds": false,
@@ -210,12 +210,12 @@
         "/nl": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
-          "dataRoute": "/_next/data/test-build-id/nl.json"
+          "dataRoute": "/_next/data/build-id/nl.json"
         },
         "/nl/tests/prerender-manifest/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/nl/tests/prerender-manifest/[staticPageName]",
-          "dataRoute": "/_next/data/test-build-id/nl/tests/prerender-manifest/example-static-page.json"
+          "dataRoute": "/_next/data/build-id/nl/tests/prerender-manifest/example-static-page.json"
         },
         "/nl/preview": {
           "initialRevalidateSeconds": false,
@@ -226,39 +226,39 @@
       "dynamic": {
         "/en/tests/prerender-manifest/[staticPageName]": {
           "routeRegex": "^/en/tests/prerender-manifest/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/test-build-id/en/tests/prerender-manifest/[staticPageName].json",
+          "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest/[staticPageName].json",
           "fallback": false,
-          "dataRouteRegex": "^/_next/data/test-build-id/en/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build-id/en/tests/prerender-manifest/(?:([^/]+?)).json/?$"
         },
         "/en/tests/prerender-manifest-fallback/[fallback]": {
-          "routeRegex": "^/en/tests/prerender-manifest-f/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/test-build-id/en/tests/prerender-manifest-fallback/[staticPageName].json",
+          "routeRegex": "^/en/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
+          "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest-fallback/[staticPageName].json",
           "fallback": "/en/tests/prerender-manifest-fallback/[fallback].html",
-          "dataRouteRegex": "^/_next/data/test-build-id/en/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build-id/en/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
         },
         "/fr/tests/prerender-manifest/[staticPageName]": {
           "routeRegex": "^/fr/tests/prerender-manifest/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/test-build-id/fr/tests/prerender-manifest/[staticPageName].json",
+          "dataRoute": "/_next/data/build-id/fr/tests/prerender-manifest/[staticPageName].json",
           "fallback": false,
-          "dataRouteRegex": "^/_next/data/test-build-id/fr/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build-id/fr/tests/prerender-manifest/(?:([^/]+?)).json/?$"
         },
         "/fr/tests/prerender-manifest-fallback/[fallback]": {
           "routeRegex": "^/fr/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/test-build-id/fr/tests/prerender-manifest-fallback/[staticPageName].json",
+          "dataRoute": "/_next/data/build-id/fr/tests/prerender-manifest-fallback/[staticPageName].json",
           "fallback": "/fr/tests/prerender-manifest-fallback/[fallback].html",
-          "dataRouteRegex": "^/_next/data/test-build-id/fr/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build-id/fr/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
         },
         "/nl/tests/prerender-manifest/[staticPageName]": {
           "routeRegex": "^/nl/tests/prerender-manifest/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/test-build-id/nl/tests/prerender-manifest/[staticPageName].json",
+          "dataRoute": "/_next/data/build-id/nl/tests/prerender-manifest/[staticPageName].json",
           "fallback": false,
-          "dataRouteRegex": "^/_next/data/test-build-id/nl/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build-id/nl/tests/prerender-manifest/(?:([^/]+?)).json/?$"
         },
         "/nl/tests/prerender-manifest-fallback/[fallback]": {
           "routeRegex": "^/nl/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/test-build-id/nl/tests/prerender-manifest-fallback/[staticPageName].json",
+          "dataRoute": "/_next/data/build-id/nl/tests/prerender-manifest-fallback/[staticPageName].json",
           "fallback": "/nl/tests/prerender-manifest-fallback/[fallback].html",
-          "dataRouteRegex": "^/_next/data/test-build-id/nl/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build-id/nl/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
         }
       }
     }

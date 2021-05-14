@@ -76,7 +76,14 @@ describe("Pages Tests", () => {
     ].forEach(({ path }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/ssg-page") {
+          cy.location("pathname").should("eq", "/ssg-page");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
 
         cy.ensureRouteCached(path);
         cy.visit(path);
@@ -87,14 +94,30 @@ describe("Pages Tests", () => {
         cy.getCookies().should("have.length", 2); // Preview cookies are now set
         // FIXME: Not sure why adding cy.ensureRouteNotCached(path) here fails as a preview response should be uncached?
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/ssg-page") {
+          cy.location("pathname").should("eq", "/ssg-page");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
+
         cy.get("[data-cy=preview-mode]").contains("true");
 
         cy.request("/api/preview/disabled");
         cy.getCookies().should("have.length", 0); // Preview cookies are now removed
         cy.ensureRouteCached(path);
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/ssg-page") {
+          cy.location("pathname").should("eq", "/ssg-page");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
+
         cy.get("[data-cy=preview-mode]").contains("false");
       });
 
@@ -130,7 +153,17 @@ describe("Pages Tests", () => {
     ].forEach(({ path }) => {
       it(`serves page ${path} with correct content`, () => {
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/fallback/a") {
+          cy.location("pathname").should("eq", "/fallback/a");
+        } else if (path === "/en/no-fallback/a") {
+          cy.location("pathname").should("eq", "/no-fallback/a");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
+
         cy.contains(`Hello ${path.slice(-1)}`);
       });
     });
@@ -145,7 +178,17 @@ describe("Pages Tests", () => {
     ].forEach(({ path }) => {
       it(`serves page ${path} with correct content immediately`, () => {
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/fallback-blocking/a") {
+          cy.location("pathname").should("eq", "/fallback-blocking/a");
+        } else if (path === "/en/fallback-blocking/c") {
+          cy.location("pathname").should("eq", "/fallback-blocking/c");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
+
         cy.contains(`Hello ${path.slice(-1)}`);
         cy.request({ url: path }).then((response) => {
           // Next.js asPath does not include locale prefixes or basepath

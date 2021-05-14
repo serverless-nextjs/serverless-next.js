@@ -21,6 +21,24 @@ export type RedirectData = {
   internal?: boolean;
 };
 
+export type RewriteData = {
+  source: string;
+  destination: string;
+  regex: string;
+};
+
+export type Dynamic = {
+  file: string;
+  regex: string;
+};
+
+export type DynamicSSG = {
+  dataRoute: string;
+  dataRouteRegex: string;
+  fallback: false | null | string;
+  routeRegex: string;
+};
+
 export type Manifest = {
   authentication?: {
     username: string;
@@ -35,6 +53,48 @@ export type Manifest = {
   trailingSlash?: boolean;
 };
 
+export type ApiManifest = Manifest & {
+  apis: {
+    dynamic: {
+      [key: string]: Dynamic;
+    };
+    nonDynamic: { [key: string]: string };
+  };
+};
+
+export type PageManifest = Manifest & {
+  buildId: string;
+  pages: {
+    html: {
+      dynamic: {
+        [key: string]: Dynamic;
+      };
+      nonDynamic: { [key: string]: string };
+    };
+    ssg: {
+      dynamic: {
+        [key: string]: DynamicSSG;
+      };
+      nonDynamic: {
+        [key: string]: {
+          initialRevalidateSeconds?: false | number;
+          srcRoute: string | null;
+          dataRoute: string;
+        };
+      };
+    };
+    ssr: {
+      catchAll: {
+        [key: string]: Dynamic;
+      };
+      dynamic: {
+        [key: string]: Dynamic;
+      };
+      nonDynamic: { [key: string]: string };
+    };
+  };
+};
+
 export type I18nData = {
   locales: string[];
   defaultLocale: string;
@@ -43,7 +103,16 @@ export type I18nData = {
 export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
+  rewrites: RewriteData[];
   i18n?: I18nData;
+};
+
+export type PrerenderManifest = {
+  preview: {
+    previewModeId: string;
+    previewModeSigningKey: string;
+    previewModeEncryptionKey: string;
+  };
 };
 
 // Returned routes
@@ -51,9 +120,24 @@ export type RoutesManifest = {
 export interface AnyRoute {
   file?: string;
   headers?: { [key: string]: Header[] };
+  querystring?: string;
+  isApi?: boolean;
+  isExternal?: boolean;
   isPublicFile?: boolean;
   isRedirect?: boolean;
+  isRender?: boolean;
+  isStatic?: boolean;
   isUnauthorized?: boolean;
+}
+
+export interface ApiRoute extends AnyRoute {
+  isApi: true;
+  page: string;
+}
+
+export interface ExternalRoute extends AnyRoute {
+  isExternal: true;
+  path: string;
 }
 
 export interface PublicFileRoute extends AnyRoute {
@@ -67,6 +151,20 @@ export interface RedirectRoute extends AnyRoute {
   statusDescription: string;
 }
 
+// Render route, like SSR, preview etc.
+export interface RenderRoute extends AnyRoute {
+  isRender: true;
+  isData: boolean;
+  page: string;
+}
+
+// Static route, whether HTML or SSG (non-preview)
+export interface StaticRoute extends AnyRoute {
+  isStatic: true;
+  isData: boolean;
+  file: string;
+}
+
 export interface UnauthorizedRoute extends AnyRoute {
   isUnauthorized: true;
   status: number;
@@ -74,4 +172,18 @@ export interface UnauthorizedRoute extends AnyRoute {
   body: string;
 }
 
-export type Route = PublicFileRoute | RedirectRoute | UnauthorizedRoute;
+export type DataRoute = (RenderRoute | StaticRoute) & {
+  isData: true;
+};
+
+export type PageRoute = (RenderRoute | StaticRoute) & {
+  isData: false;
+};
+
+export type Route =
+  | ExternalRoute
+  | PublicFileRoute
+  | RedirectRoute
+  | RenderRoute
+  | StaticRoute
+  | UnauthorizedRoute;

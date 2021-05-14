@@ -1,5 +1,9 @@
 import { Manifest, RoutesManifest } from "../src/types";
-import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "../src/locale";
+import {
+  addDefaultLocaleToPath,
+  dropLocaleFromPath,
+  getAcceptLanguageLocale
+} from "../src/locale";
 
 describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
@@ -9,6 +13,7 @@ describe("Locale Utils Tests", () => {
       routesManifest = {
         basePath: "",
         redirects: [],
+        rewrites: [],
         i18n: {
           locales: ["en", "fr", "nl"],
           defaultLocale: "en"
@@ -28,6 +33,45 @@ describe("Locale Utils Tests", () => {
     });
   });
 
+  describe("dropLocaleFromPath()", () => {
+    let routesManifest: RoutesManifest;
+
+    beforeAll(() => {
+      routesManifest = {
+        basePath: "/base",
+        redirects: [],
+        rewrites: [],
+        i18n: {
+          locales: ["en", "fr"],
+          defaultLocale: "en"
+        }
+      };
+    });
+
+    it.each`
+      path                  | expectedPath
+      ${"/base/en"}         | ${"/base"}
+      ${"/base/en/test"}    | ${"/base/test"}
+      ${"/base/fr/api/foo"} | ${"/base/api/foo"}
+    `("changes path $path to $expectedPath", ({ path, expectedPath }) => {
+      const newPath = dropLocaleFromPath(path, routesManifest);
+
+      expect(newPath).toBe(expectedPath);
+    });
+
+    it.each`
+      path
+      ${"/none"}
+      ${"/base/nolocale"}
+      ${"/base/english"}
+      ${"/base/fra/test"}
+    `("keeps path $path unchanged", ({ path }) => {
+      const newPath = dropLocaleFromPath(path, routesManifest);
+
+      expect(newPath).toBe(path);
+    });
+  });
+
   describe("getAcceptLanguageLocale()", () => {
     let manifest: Manifest;
     let routesManifest: RoutesManifest;
@@ -39,6 +83,7 @@ describe("Locale Utils Tests", () => {
       routesManifest = {
         basePath: "",
         redirects: [],
+        rewrites: [],
         i18n: {
           locales: ["en", "fr", "nl"],
           defaultLocale: "en"

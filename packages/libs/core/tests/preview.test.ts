@@ -1,7 +1,4 @@
-import {
-  isValidPreviewRequest,
-  Cookies
-} from "../../src/lib/isValidPreviewRequest";
+import { isValidPreviewRequest, Cookies } from "../src/preview";
 
 import jsonwebtoken from "jsonwebtoken";
 

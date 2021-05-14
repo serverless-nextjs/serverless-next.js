@@ -56,6 +56,27 @@ describe("API lambda handler", () => {
       expect(response.status).toEqual(200);
     });
 
+    it("serves dynamic api request", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/users/123",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
+        }
+      });
+
+      mockPageRequire("pages/api/users/[id].js");
+
+      const response = (await handler(event)) as CloudFrontResponseResult;
+
+      const decodedBody = Buffer.from(response.body, "base64").toString("utf8");
+
+      expect(decodedBody).toEqual("pages/api/[id]");
+      expect(response.status).toEqual(200);
+    });
+
     it("returns 404 for not-found api routes", async () => {
       const event = createCloudFrontEvent({
         uri: "/foo/bar",
@@ -163,6 +184,42 @@ describe("API lambda handler", () => {
         expect(response.status).toEqual(expectedStatus);
       }
     );
+
+    it("serves API with query param for rewritten path /api/customers/123", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/user/123",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
+        }
+      });
+
+      mockPageRequire("pages/api/getUser.js");
+      const response: CloudFrontResultResponse = await handler(event);
+      expect(response.status).toEqual(200);
+
+      const page = require(`../../src/pages/api/getUser.js`);
+      const call = page.default.mock.calls[0];
+      const req = call[0];
+      expect(req.url).toEqual("/api/user/123?id=123");
+    });
+
+    it("serves API with 404 for rewritten path /api/notfound", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/notfound",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
+        }
+      });
+
+      const response: CloudFrontResultResponse = await handler(event);
+      expect(response.status).toEqual("404");
+    });
 
     it.each`
       uri                        | rewriteUri

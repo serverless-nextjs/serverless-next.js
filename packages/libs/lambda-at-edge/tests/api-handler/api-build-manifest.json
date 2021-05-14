@@ -1,8 +1,14 @@
 {
   "apis": {
-    "dynamic": {},
+    "dynamic": {
+      "/api/users/:id": {
+        "file": "pages/api/users/[id].js",
+        "regex": "^\\/api\\/users(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+      }
+    },
     "nonDynamic": {
-      "/api/getCustomers": "pages/api/getCustomers.js"
+      "/api/getCustomers": "pages/api/getCustomers.js",
+      "/api/getUser": "pages/api/getUser.js"
     }
   },
   "domainRedirects": {

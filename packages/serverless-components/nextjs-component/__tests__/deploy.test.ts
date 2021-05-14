@@ -205,12 +205,6 @@ describe.each`
     });
 
     it("provisions api lambda", () => {
-      console.log(
-        2 - Number(!expectsQueueDeployment),
-        expectsQueueDeployment,
-        Number(!expectsQueueDeployment),
-        expectsQueueDeployment
-      );
       expect(mockLambda).toHaveBeenNthCalledWith(
         1 + Number(expectsQueueDeployment),
         {

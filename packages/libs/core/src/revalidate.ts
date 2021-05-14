@@ -1,5 +1,5 @@
-import { OriginRequestDefaultHandlerManifest } from "../types";
-import { cleanRequestUriForRouter } from "./cleanRequestUriForRouter";
+import { normalise } from "./basepath";
+import { PageManifest, RoutesManifest } from "./types";
 
 interface StaticRegenerationResponseOptions {
   // URI of the origin object
@@ -7,7 +7,8 @@ interface StaticRegenerationResponseOptions {
   // Header as set on the origin object
   expiresHeader: string;
   lastModifiedHeader: string | undefined;
-  manifest: OriginRequestDefaultHandlerManifest;
+  manifest: PageManifest;
+  routesManifest: RoutesManifest;
 }
 
 interface StaticRegenerationResponseValue {
@@ -30,13 +31,16 @@ const firstRegenerateExpiryDate = (
  * Regeneration logic. Returns required headers for the response, or false if
  * this response is not compatible with ISR.
  */
-const getStaticRegenerationResponse = (
+export const getStaticRegenerationResponse = (
   options: StaticRegenerationResponseOptions
 ): StaticRegenerationResponseValue | false => {
+  const normalisedUri = normalise(
+    options.requestedOriginUri,
+    options.routesManifest
+  );
   const initialRevalidateSeconds =
-    options.manifest.pages.ssg.nonDynamic?.[
-      cleanRequestUriForRouter(options.requestedOriginUri)
-    ]?.initialRevalidateSeconds;
+    options.manifest.pages.ssg.nonDynamic?.[normalisedUri]
+      ?.initialRevalidateSeconds;
 
   // ISR pages that were either previously regenerated or generated
   // post-initial-build, will have an `Expires` header set. However ISR pages
@@ -69,16 +73,11 @@ const getStaticRegenerationResponse = (
   };
 };
 
-const getThrottledStaticRegenerationCachePolicy = (
+export const getThrottledStaticRegenerationCachePolicy = (
   expiresInSeconds: number
 ): StaticRegenerationResponseValue => {
   return {
     secondsRemainingUntilRevalidation: expiresInSeconds,
     cacheControl: `public, max-age=0, s-maxage=${expiresInSeconds}, must-revalidate`
   };
-};
-
-export {
-  getStaticRegenerationResponse,
-  getThrottledStaticRegenerationCachePolicy
 };
