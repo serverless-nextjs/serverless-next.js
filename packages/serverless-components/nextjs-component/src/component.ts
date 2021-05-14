@@ -433,6 +433,14 @@ class NextjsComponent extends Component {
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
+    const hasISRPages = Object.keys(
+      defaultBuildManifest.pages.ssg.nonDynamic
+    ).some(
+      (key) =>
+        typeof defaultBuildManifest.pages.ssg.nonDynamic[key]
+          .initialRevalidateSeconds === "number"
+    );
+
     const readLambdaInputValue = (
       inputKey: "memory" | "timeout" | "name" | "runtime",
       lambdaType: LambdaType,
@@ -451,11 +459,14 @@ class NextjsComponent extends Component {
       return inputValue[lambdaType] || defaultValue;
     };
 
-    const queue = await sqs({
-      name: `${bucketOutputs.name}.fifo`,
-      visibilityTimeout: "30",
-      fifoQueue: true
-    });
+    let queue;
+    if (hasISRPages) {
+      queue = await sqs({
+        name: `${bucketOutputs.name}.fifo`,
+        visibilityTimeout: "30",
+        fifoQueue: true
+      });
+    }
 
     // default policy
     const defaultLambdaPolicy: Record<string, unknown> = {
@@ -475,11 +486,15 @@ class NextjsComponent extends Component {
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
           Action: ["s3:GetObject", "s3:PutObject"]
         },
-        {
-          Effect: "Allow",
-          Resource: queue.arn,
-          Action: ["sqs:SendMessage"]
-        }
+        ...(queue
+          ? [
+              {
+                Effect: "Allow",
+                Resource: queue.arn,
+                Action: ["sqs:SendMessage"]
+              }
+            ]
+          : [])
       ]
     };
 
@@ -492,55 +507,57 @@ class NextjsComponent extends Component {
       }
     }
 
-    const regenerationLambdaInput: LambdaInput = {
-      region: bucketRegion,
-      description: inputs.description
-        ? `${inputs.description} (API)`
-        : "Next.js Regeneration Lambda",
-      handler: inputs.handler || "index.handler",
-      code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
-      role: {
-        service: ["lambda.amazonaws.com"],
-        policy: {
-          ...defaultLambdaPolicy,
-          Statement: [
-            ...(defaultLambdaPolicy.Statement as Record<string, unknown>[]),
-            {
-              Effect: "Allow",
-              Resource: queue.arn,
-              Action: [
-                "sqs:ReceiveMessage",
-                "sqs:DeleteMessage",
-                "sqs:GetQueueAttributes"
-              ]
-            }
-          ]
-        }
-      },
-      memory: readLambdaInputValue(
-        "memory",
-        "regenerationLambda",
-        512
-      ) as number,
-      timeout: readLambdaInputValue(
-        "timeout",
-        "regenerationLambda",
-        10
-      ) as number,
-      runtime: readLambdaInputValue(
-        "runtime",
-        "regenerationLambda",
-        "nodejs12.x"
-      ) as string,
-      name: bucketOutputs.name
-    };
+    if (hasISRPages) {
+      const regenerationLambdaInput: LambdaInput = {
+        region: bucketRegion,
+        description: inputs.description
+          ? `${inputs.description} (API)`
+          : "Next.js Regeneration Lambda",
+        handler: inputs.handler || "index.handler",
+        code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
+        role: {
+          service: ["lambda.amazonaws.com"],
+          policy: {
+            ...defaultLambdaPolicy,
+            Statement: [
+              ...(defaultLambdaPolicy.Statement as Record<string, unknown>[]),
+              {
+                Effect: "Allow",
+                Resource: queue.arn,
+                Action: [
+                  "sqs:ReceiveMessage",
+                  "sqs:DeleteMessage",
+                  "sqs:GetQueueAttributes"
+                ]
+              }
+            ]
+          }
+        },
+        memory: readLambdaInputValue(
+          "memory",
+          "regenerationLambda",
+          512
+        ) as number,
+        timeout: readLambdaInputValue(
+          "timeout",
+          "regenerationLambda",
+          10
+        ) as number,
+        runtime: readLambdaInputValue(
+          "runtime",
+          "regenerationLambda",
+          "nodejs12.x"
+        ) as string,
+        name: bucketOutputs.name
+      };
 
-    const regenerationLambdaResult = await regenerationLambda(
-      regenerationLambdaInput
-    );
-    await regenerationLambda.publishVersion();
+      const regenerationLambdaResult = await regenerationLambda(
+        regenerationLambdaInput
+      );
+      await regenerationLambda.publishVersion();
 
-    await sqs.addEventSource(regenerationLambdaResult.name);
+      await sqs.addEventSource(regenerationLambdaResult.name);
+    }
 
     if (hasAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {

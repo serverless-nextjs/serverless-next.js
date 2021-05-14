@@ -12,7 +12,8 @@ import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
-  RoutesManifest
+  RoutesManifest,
+  PreRenderedManifest
 } from "@sls-next/lambda-at-edge";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -42,6 +43,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   private defaultManifest: OriginRequestDefaultHandlerManifest;
 
+  private prerenderManifest: PreRenderedManifest;
+
   public distribution: cloudfront.Distribution;
 
   public bucket: s3.Bucket;
@@ -62,9 +65,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public aRecord?: ARecord;
 
-  public regenerationQueue: sqs.Queue;
+  public regenerationQueue?: sqs.Queue;
 
-  public regenerationFunction: lambda.Function;
+  public regenerationFunction?: lambda.Function;
 
   constructor(scope: cdk.Construct, id: string, private props: Props) {
     super(scope, id);
@@ -72,6 +75,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     this.routesManifest = this.readRoutesManifest();
     this.imageManifest = this.readImageBuildManifest();
     this.defaultManifest = this.readDefaultManifest();
+    this.prerenderManifest = this.readPrerenderManifest();
     this.bucket = new s3.Bucket(this, "PublicAssets", {
       publicReadAccess: true,
 
@@ -84,31 +88,39 @@ export class NextJSLambdaEdge extends cdk.Construct {
       ...(props.s3Props || {})
     });
 
-    this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
-      // We call the queue the same name as the bucket so that we can easily
-      // reference it from within the lambda@edge, given we can't use env vars
-      // in a lambda@edge
-      queueName: `${this.bucket.bucketName}.fifo`,
-      fifo: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY
-    });
-
-    this.regenerationFunction = new lambda.Function(
-      this,
-      "RegenerationFunction",
-      {
-        handler: "index.handler",
-        runtime: lambda.Runtime.NODEJS_14_X,
-        timeout: Duration.seconds(30),
-        code: lambda.Code.fromAsset(
-          path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
-        )
-      }
+    const hasISRPages = Object.keys(this.prerenderManifest.routes).some(
+      (key) =>
+        typeof this.prerenderManifest.routes[key].initialRevalidateSeconds ===
+        "number"
     );
 
-    this.regenerationFunction.addEventSource(
-      new lambdaEventSources.SqsEventSource(this.regenerationQueue)
-    );
+    if (hasISRPages) {
+      this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
+        // We call the queue the same name as the bucket so that we can easily
+        // reference it from within the lambda@edge, given we can't use env vars
+        // in a lambda@edge
+        queueName: `${this.bucket.bucketName}.fifo`,
+        fifo: true,
+        removalPolicy: cdk.RemovalPolicy.DESTROY
+      });
+
+      this.regenerationFunction = new lambda.Function(
+        this,
+        "RegenerationFunction",
+        {
+          handler: "index.handler",
+          runtime: lambda.Runtime.NODEJS_14_X,
+          timeout: Duration.seconds(30),
+          code: lambda.Code.fromAsset(
+            path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
+          )
+        }
+      );
+
+      this.regenerationFunction.addEventSource(
+        new lambdaEventSources.SqsEventSource(this.regenerationQueue)
+      );
+    }
 
     this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
@@ -144,10 +156,13 @@ export class NextJSLambdaEdge extends cdk.Construct {
     });
 
     this.bucket.grantReadWrite(this.defaultNextLambda);
-    this.bucket.grantReadWrite(this.regenerationFunction);
-    this.regenerationQueue.grantSendMessages(this.defaultNextLambda);
-    this.regenerationFunction.grantInvoke(this.defaultNextLambda);
     this.defaultNextLambda.currentVersion.addAlias("live");
+
+    if (hasISRPages && this.regenerationFunction) {
+      this.bucket.grantReadWrite(this.regenerationFunction);
+      this.regenerationQueue?.grantSendMessages(this.defaultNextLambda);
+      this.regenerationFunction?.grantInvoke(this.defaultNextLambda);
+    }
 
     const apis = this.apiBuildManifest?.apis;
     const hasAPIPages =
@@ -450,6 +465,15 @@ export class NextJSLambdaEdge extends cdk.Construct {
       path.join(
         this.props.serverlessBuildOutDir,
         "default-lambda/manifest.json"
+      )
+    );
+  }
+
+  private readPrerenderManifest(): PreRenderedManifest {
+    return fs.readJSONSync(
+      path.join(
+        this.props.serverlessBuildOutDir,
+        "default-lambda/prerender-manifest.json"
       )
     );
   }
