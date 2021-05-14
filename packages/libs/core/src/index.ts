@@ -1,4 +1,9 @@
+import { handleApiReq } from "./api";
 import { getUnauthenticatedResponse } from "./auth";
+import { normalise } from "./basepath";
+import { handleDataReq } from "./data";
+import { handlePageReq } from "./page";
+import { isValidPreviewRequest } from "./preview";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
@@ -7,12 +12,17 @@ import {
   getTrailingSlashPath
 } from "./redirect";
 import {
-  UnauthorizedRoute,
+  ApiManifest,
+  ApiRoute,
+  ExternalRoute,
   Manifest,
+  PageManifest,
+  PrerenderManifest,
   RedirectRoute,
   Request,
   Route,
-  RoutesManifest
+  RoutesManifest,
+  UnauthorizedRoute
 } from "./types";
 
 export const handleAuth = (
@@ -26,7 +36,7 @@ export const handleAuth = (
   );
 };
 
-export const handleCustomRedirects = (
+const handleCustomRedirects = (
   req: Request,
   routesManifest: RoutesManifest
 ): RedirectRoute | undefined => {
@@ -47,7 +57,7 @@ export const handleDomainRedirects = (
   }
 };
 
-export const handleLanguageRedirect = async (
+const handleLanguageRedirect = async (
   req: Request,
   manifest: Manifest,
   routesManifest: RoutesManifest
@@ -72,12 +82,12 @@ const handlePublicFiles = (
   if (isPublicFile) {
     return {
       isPublicFile: true,
-      file: decodedUri
+      file: uri
     };
   }
 };
 
-export const handleTrailingSlash = (
+const handleTrailingSlash = (
   req: Request,
   manifest: Manifest,
   isFile: boolean
@@ -88,28 +98,31 @@ export const handleTrailingSlash = (
   }
 };
 
-const normalise = (uri: string, routesManifest: RoutesManifest): string => {
-  const { basePath, i18n } = routesManifest;
-  if (basePath) {
-    if (uri.startsWith(basePath)) {
-      uri = uri.slice(basePath.length);
-    } else {
-      // basePath set but URI does not start with basePath, return 404
-      if (i18n?.defaultLocale) {
-        return `/${i18n.defaultLocale}/404`;
-      } else {
-        return "/404";
-      }
-    }
+/*
+ * Routes:
+ * - auth
+ * - redirects
+ * - api routes
+ * - rewrites (external and api)
+ */
+export const routeApi = (
+  req: Request,
+  manifest: ApiManifest,
+  routesManifest: RoutesManifest
+): ApiRoute | ExternalRoute | RedirectRoute | UnauthorizedRoute | undefined => {
+  const auth = handleAuth(req, manifest);
+  if (auth) {
+    return auth;
   }
 
-  // Remove trailing slash for all paths
-  if (uri.endsWith("/")) {
-    uri = uri.slice(0, -1);
+  const redirect =
+    handleDomainRedirects(req, manifest) ||
+    handleCustomRedirects(req, routesManifest);
+  if (redirect) {
+    return redirect;
   }
 
-  // Empty path should be normalised to "/" as there is no Next.js route for ""
-  return uri === "" ? "/" : uri;
+  return handleApiReq(req.uri, manifest, routesManifest);
 };
 
 /*
@@ -117,12 +130,16 @@ const normalise = (uri: string, routesManifest: RoutesManifest): string => {
  * - auth
  * - redirects
  * - public files
+ * - data routes
+ * - pages
+ * - rewrites (external and page)
  */
 export const routeDefault = async (
   req: Request,
-  manifest: Manifest,
+  manifest: PageManifest,
+  prerenderManifest: PrerenderManifest,
   routesManifest: RoutesManifest
-): Promise<Route | undefined> => {
+): Promise<Route> => {
   const auth = handleAuth(req, manifest);
   if (auth) {
     return auth;
@@ -145,11 +162,27 @@ export const routeDefault = async (
     return trailingSlash;
   }
 
-  return (
-    publicFile ||
+  if (publicFile) {
+    return publicFile;
+  }
+
+  const otherRedirect =
     handleCustomRedirects(req, routesManifest) ||
-    (await handleLanguageRedirect(req, manifest, routesManifest))
+    (await handleLanguageRedirect(req, manifest, routesManifest));
+  if (otherRedirect) {
+    return otherRedirect;
+  }
+
+  const isPreview = await isValidPreviewRequest(
+    req.headers.cookie,
+    prerenderManifest.preview.previewModeSigningKey
   );
+
+  if (isDataReq) {
+    return handleDataReq(uri, manifest, isPreview);
+  } else {
+    return handlePageReq(req.uri, manifest, routesManifest, isPreview);
+  }
 };
 
 export * from "./types";

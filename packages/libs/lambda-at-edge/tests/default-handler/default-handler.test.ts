@@ -9,9 +9,8 @@ import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders"
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
-jest.mock("jsonwebtoken", () => ({
-  verify: jest.fn()
-}));
+const previewToken =
+  "eyJhbGciOiJIUzI1NiJ9.dGVzdA.bi6AtyJgYL7FimOTVSoV6Htx9XNLe2PINsOadEDYmwI";
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -209,12 +208,8 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        expect(response.status).toEqual("404");
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-        expect(decodedBody).toEqual("pages/_error.js - 404");
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
       });
 
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
@@ -240,7 +235,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -265,7 +260,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -445,6 +440,7 @@ describe("Lambda@Edge", () => {
         ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+        ${"/_next/data/build-id/customers/test/catch/all.json"}   | ${"pages/customers/[...catchAll].js"}
       `(
         "serves json data via SSR for SSR path $path",
         async ({ path, expectedPage }) => {
@@ -523,7 +519,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -625,20 +621,14 @@ describe("Lambda@Edge", () => {
     });
 
     describe("404 page", () => {
-      it("renders 404 page if request path can't be matched to any page / api routes", async () => {
+      it("returns 404 page if request path can't be matched to any page / api routes", async () => {
         const event = createCloudFrontEvent({
           uri: trailingSlash ? "/page/does/not/exist/" : "/page/does/not/exist",
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
       });
 
       it("redirects unmatched request path", async () => {
@@ -657,7 +647,7 @@ describe("Lambda@Edge", () => {
         path
         ${"/_next/data/unmatched"}
       `(
-        "renders 404 page if data request can't be matched for path: $path",
+        "returns 404 page if data request can't be matched for path: $path",
         async ({ path }) => {
           const event = createCloudFrontEvent({
             uri: path,
@@ -669,18 +659,8 @@ describe("Lambda@Edge", () => {
             config: { eventType: "origin-request" } as any
           });
 
-          mockPageRequire("./pages/_error.js");
-
-          const response = (await handler(event)) as CloudFrontResultResponse;
-          const body = response.body as string;
-          const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-          expect(decodedBody).toEqual(
-            JSON.stringify({
-              page: "pages/_error.js - 404"
-            })
-          );
-          expect(response.status).toEqual("404");
+          const request = (await handler(event)) as CloudFrontRequest;
+          expect(request.uri).toEqual("/404.html");
         }
       );
 
@@ -797,7 +777,7 @@ describe("Lambda@Edge", () => {
         uri                                | expectedPage     | expectedQuerystring
         ${"/index-rewrite"}                | ${"/index.html"} | ${""}
         ${"/terms-rewrite"}                | ${"/terms.html"} | ${""}
-        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${""}
+        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${"slug=123"}
         ${"/terms"}                        | ${"/terms.html"} | ${""}
         ${"/terms-rewrite-dest-query"}     | ${"/terms.html"} | ${"foo=bar"}
         ${"/terms-rewrite-dest-query?a=b"} | ${"/terms.html"} | ${"a=b&foo=bar"}

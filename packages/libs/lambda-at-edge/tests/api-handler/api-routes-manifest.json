@@ -22,6 +22,16 @@
       "regex": "^/api/getCustomers$"
     },
     {
+      "source": "/api/notfound",
+      "destination": "/api/missing",
+      "regex": "^/api/notfound$"
+    },
+    {
+      "source": "/api/user/:id",
+      "destination": "/api/getUser",
+      "regex": "^/api/user(?:/([^/]+?))$"
+    },
+    {
       "source": "/api/external-rewrite",
       "destination": "https://external.com",
       "regex": "^/api/external-rewrite$"

@@ -12,8 +12,8 @@ export function addDefaultLocaleToPath(
     // If prefixed with a locale, return that path
     for (const locale of locales) {
       if (
-        path === `${routesManifest.basePath}/${locale}` ||
-        path.startsWith(`${routesManifest.basePath}/${locale}/`)
+        path === `${basePath}/${locale}` ||
+        path.startsWith(`${basePath}/${locale}/`)
       ) {
         return path;
       }
@@ -24,6 +24,26 @@ export function addDefaultLocaleToPath(
       return `${basePath}/${defaultLocale}`;
     } else {
       return path.replace(`${basePath}/`, `${basePath}/${defaultLocale}/`);
+    }
+  }
+
+  return path;
+}
+
+export function dropLocaleFromPath(
+  path: string,
+  routesManifest: RoutesManifest
+): string {
+  if (routesManifest.i18n) {
+    const locales = routesManifest.i18n.locales;
+    const basePath = routesManifest.basePath;
+
+    // If prefixed with a locale, return path without
+    for (const locale of locales) {
+      const prefix = `${basePath}/${locale}`;
+      if (path === prefix || path.startsWith(`${prefix}/`)) {
+        return `${basePath}${path.slice(prefix.length)}`;
+      }
     }
   }
 

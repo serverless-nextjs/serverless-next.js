@@ -1,10 +1,9 @@
-import { getRewritePath } from "../../src/routing/rewriter";
-import { RoutesManifest } from "../../src/types";
+import { getRewritePath, isExternalRewrite } from "../src/rewrite";
+import { RoutesManifest } from "../src/types";
 
 describe("Rewriter Tests", () => {
   describe("getRewritePath()", () => {
     let routesManifest: RoutesManifest;
-    let router: (path: string) => string | null;
 
     beforeAll(() => {
       routesManifest = {
@@ -33,17 +32,32 @@ describe("Rewriter Tests", () => {
             regex: "^/external$"
           },
           {
+            source: "/external-http",
+            destination: "http://example.com",
+            regex: "^/external$"
+          },
+          {
             source: "/invalid-destination",
             destination: "ftp://example.com",
             regex: "^/invalid-destination$"
+          },
+          {
+            source: "/query/:path",
+            destination: "/target?a=b",
+            regex: "^/query(?:/([^/]+?))$"
+          },
+          {
+            source: "/manual-query/:path",
+            destination: "/target?key=:path",
+            regex: "^/manual-query(?:/([^/]+?))$"
+          },
+          {
+            source: "/multi-query/:path*",
+            destination: "/target",
+            regex: "^/multi-query(?:/([^/]+?))$"
           }
         ],
-        redirects: [],
-        headers: []
-      };
-
-      router = (path: string): string | null => {
-        return path;
+        redirects: []
       };
     });
 
@@ -53,67 +67,38 @@ describe("Rewriter Tests", () => {
       ${"/c"}                   | ${"/d"}
       ${"/old-blog/abc"}        | ${"/news/abc"}
       ${"/old-users/1234"}      | ${"/users/1234"}
-      ${"/old-users/abc"}       | ${null}
+      ${"/old-users/abc"}       | ${undefined}
       ${"/external"}            | ${"https://example.com"}
-      ${"/invalid-destination"} | ${null}
+      ${"/external-http"}       | ${"http://example.com"}
+      ${"/invalid-destination"} | ${undefined}
       ${"/en/a"}                | ${"/en/b"}
       ${"/fr/a"}                | ${"/fr/b"}
+      ${"/query/foo"}           | ${"/target?a=b&path=foo"}
+      ${"/manual-query/foo"}    | ${"/target?key=foo"}
+      ${"/multi-query/foo/bar"} | ${"/target?path=foo&path=bar"}
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {
-        const rewrite = getRewritePath(path, routesManifest, router, path);
+        const rewrite = getRewritePath(path, routesManifest);
 
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);
         } else {
-          expect(rewrite).toBeNull();
+          expect(rewrite).toBeUndefined();
         }
       }
     );
+  });
 
+  describe("isExternalRewrite()", () => {
     it.each`
-      path    | expectedRewrite
-      ${"/a"} | ${"/a"}
-      ${"/b"} | ${"/another/b"}
-    `(
-      "no-op rewrite: rewrites $path to $expectedRewrite",
-      ({ path, expectedRewrite }) => {
-        routesManifest = {
-          basePath: "",
-          rewrites: [
-            {
-              source: "/:path*",
-              destination: "/:path*",
-              regex: "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$"
-            },
-            {
-              source: "/:path*",
-              destination: "/another/:path*",
-              regex: "^/path(?:/([^/]+?))$"
-            }
-          ],
-          redirects: [],
-          headers: []
-        };
-
-        router = (path: string): string | null => {
-          if (path === "/a") {
-            return "pages/a.html";
-          } else if (path === "/b") {
-            return "pages/404.html";
-          } else {
-            return null;
-          }
-        };
-
-        const rewrite = getRewritePath(path, routesManifest, router, path);
-
-        if (expectedRewrite) {
-          expect(rewrite).toEqual(expectedRewrite);
-        } else {
-          expect(rewrite).toBeNull();
-        }
-      }
-    );
+      path                     | expected
+      ${"http://example.com"}  | ${true}
+      ${"https://example.com"} | ${true}
+      ${"ftp://example.com"}   | ${false}
+      ${"//example.com"}       | ${false}
+    `("evaluates path $path as $expected", ({ path, expected }) => {
+      expect(isExternalRewrite(path)).toBe(expected);
+    });
   });
 });

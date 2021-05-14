@@ -971,13 +971,6 @@
     "@types/minimatch" "*"
     "@types/node" "*"
 
-"@types/jsonwebtoken@^8.5.0":
-  version "8.5.0"
-  resolved "https://registry.yarnpkg.com/@types/jsonwebtoken/-/jsonwebtoken-8.5.0.tgz#2531d5e300803aa63279b232c014acf780c981c5"
-  integrity sha512-9bVao7LvyorRGZCw0VmH/dr7Og+NdjYSsKAxB43OQoComFbBgsEpoR9JW6+qSq/ogwVBg8GI2MfAlk4SYI4OLg==
-  dependencies:
-    "@types/node" "*"
-
 "@types/klaw@^3.0.1":
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/@types/klaw/-/klaw-3.0.1.tgz#29f90021c0234976aa4eb97efced9cb6db9fa8b3"

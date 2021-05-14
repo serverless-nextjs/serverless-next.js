@@ -1,7 +1,4 @@
-import {
-  isValidPreviewRequest,
-  Cookies
-} from "../../src/lib/isValidPreviewRequest";
+import { isValidPreviewRequest, Cookies } from "../src/preview";
 
 import jsonwebtoken from "jsonwebtoken";
 
@@ -17,9 +14,9 @@ describe("isValidPreviewRequest", () => {
         }
       ];
 
-      expect(
-        isValidPreviewRequest(cookies, previewModeSigningKey)
-      ).resolves.toEqual(false);
+      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).resolves.toEqual(
+        false
+      );
     });
 
     it("is falsey for invalid preview cookies", () => {
@@ -31,9 +28,9 @@ describe("isValidPreviewRequest", () => {
         }
       ];
 
-      expect(
-        isValidPreviewRequest(cookies, previewModeSigningKey)
-      ).resolves.toEqual(false);
+      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).resolves.toEqual(
+        false
+      );
     });
   });
 
@@ -48,9 +45,9 @@ describe("isValidPreviewRequest", () => {
         }
       ];
 
-      expect(
-        isValidPreviewRequest(cookies, previewModeSigningKey)
-      ).resolves.toEqual(true);
+      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).resolves.toEqual(
+        true
+      );
     });
   });
 });
