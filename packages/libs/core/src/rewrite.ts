@@ -28,7 +28,7 @@ export function getRewritePath(
     }
 
     // Pass unused params to destination
-    // Except nextInternalLocale param since it's already in path prefix
+    // except nextInternalLocale param since it's already in path prefix
     const querystring = Object.keys(params)
       .filter((key) => key !== "nextInternalLocale")
       .filter(
