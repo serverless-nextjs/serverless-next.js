@@ -13,5 +13,6 @@
   },
   "domainRedirects": {
     "example.com": "https://www.example.com"
-  }
+  },
+  "enableHTTPCompression": false
 }
