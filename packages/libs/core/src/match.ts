@@ -71,12 +71,10 @@ export const matchDynamic = (
 
 export const matchDynamicSSG = (
   uri: string,
-  routes: { [key: string]: DynamicSSG },
-  isData: boolean
+  routes: { [key: string]: DynamicSSG }
 ): string | undefined => {
   for (const [key, route] of Object.entries(routes)) {
-    const regex = isData ? route.dataRouteRegex : route.routeRegex;
-    const re = new RegExp(regex, "i");
+    const re = new RegExp(route.routeRegex, "i");
     if (re.test(uri)) {
       return key;
     }

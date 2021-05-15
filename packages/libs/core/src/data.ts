@@ -52,11 +52,7 @@ export const handleDataReq = (
   }
   // TODO: this order reproduces default-handler logic,
   // should sort all dynamic routes together in build
-  const dynamicSSG = matchDynamicSSG(
-    fullDataUri(normalisedUri, buildId),
-    pages.ssg.dynamic,
-    true
-  );
+  const dynamicSSG = matchDynamicSSG(normalisedUri, pages.ssg.dynamic);
   if (dynamicSSG) {
     return {
       isData: true,

@@ -9,6 +9,13 @@ import {
   RoutesManifest
 } from "./types";
 
+const pageHtml = (localeUri: string) => {
+  if (localeUri == "/") {
+    return "pages/index.html";
+  }
+  return `pages${localeUri}.html`;
+};
+
 export const handlePageReq = (
   uri: string,
   manifest: PageManifest,
@@ -32,7 +39,7 @@ export const handlePageReq = (
     return {
       isData: false,
       isStatic: true,
-      file: `pages${localeUri}.html`
+      file: pageHtml(localeUri)
     };
   }
   if (pages.ssr.nonDynamic[localeUri]) {
@@ -67,12 +74,12 @@ export const handlePageReq = (
   }
 
   // TODO: this order reproduces default-handler logic
-  const dynamicSSG = matchDynamicSSG(localeUri, pages.ssg.dynamic, false);
+  const dynamicSSG = matchDynamicSSG(localeUri, pages.ssg.dynamic);
   if (dynamicSSG) {
     return {
       isData: false,
       isStatic: true,
-      file: `pages${localeUri}.html`
+      file: pageHtml(localeUri)
     };
   }
   const dynamicSSR = matchDynamic(localeUri, Object.values(pages.ssr.dynamic));
