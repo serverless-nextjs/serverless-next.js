@@ -132,24 +132,22 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                     | expectedPage
-        ${"/"}                                                   | ${"/en.html"}
-        ${"/en"}                                                 | ${"/en.html"}
-        ${"/nl"}                                                 | ${"/nl.html"}
-        ${"/en/terms"}                                           | ${"/en/terms.html"}
-        ${"/en/users/batman"}                                    | ${"/en/users/[user].html"}
-        ${"/en/users/test/catch/all"}                            | ${"/en/users/[...user].html"}
-        ${"/en/john/123"}                                        | ${"/en/[username]/[id].html"}
-        ${"/en/tests/prerender-manifest/example-static-page"}    | ${"/en/tests/prerender-manifest/example-static-page.html"}
-        ${"/en/tests/prerender-manifest-fallback/not-yet-built"} | ${"/en/tests/prerender-manifest-fallback/not-yet-built.html"}
-        ${"/nl/preview"}                                         | ${"/nl/preview.html"}
-        ${"/nl/terms"}                                           | ${"/nl/terms.html"}
-        ${"/nl/users/batman"}                                    | ${"/nl/users/[user].html"}
-        ${"/nl/users/test/catch/all"}                            | ${"/nl/users/[...user].html"}
-        ${"/nl/john/123"}                                        | ${"/nl/[username]/[id].html"}
-        ${"/nl/tests/prerender-manifest/example-static-page"}    | ${"/nl/tests/prerender-manifest/example-static-page.html"}
-        ${"/nl/tests/prerender-manifest-fallback/not-yet-built"} | ${"/nl/tests/prerender-manifest-fallback/not-yet-built.html"}
-        ${"/nl/preview"}                                         | ${"/nl/preview.html"}
+        path                                     | expectedPage
+        ${"/"}                                   | ${"/en.html"}
+        ${"/en"}                                 | ${"/en.html"}
+        ${"/nl"}                                 | ${"/nl.html"}
+        ${"/en/terms"}                           | ${"/en/terms.html"}
+        ${"/en/users/batman"}                    | ${"/en/users/[...user].html"}
+        ${"/en/users/test/catch/all"}            | ${"/en/users/[...user].html"}
+        ${"/en/no-fallback/example-static-page"} | ${"/en/no-fallback/example-static-page.html"}
+        ${"/en/fallback/not-yet-built"}          | ${"/en/fallback/not-yet-built.html"}
+        ${"/nl/preview"}                         | ${"/nl/preview.html"}
+        ${"/nl/terms"}                           | ${"/nl/terms.html"}
+        ${"/nl/users/batman"}                    | ${"/nl/users/[...user].html"}
+        ${"/nl/users/test/catch/all"}            | ${"/nl/users/[...user].html"}
+        ${"/nl/no-fallback/example-static-page"} | ${"/nl/no-fallback/example-static-page.html"}
+        ${"/nl/fallback/not-yet-built"}          | ${"/nl/fallback/not-yet-built.html"}
+        ${"/nl/preview"}                         | ${"/nl/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -189,8 +187,8 @@ describe("Lambda@Edge", () => {
         ${"/users/batman"}
         ${"/users/test/catch/all"}
         ${"/john/123"}
-        ${"/tests/prerender-manifest/example-static-page"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/no-fallback/example-static-page"}
+        ${"/fallback/not-yet-built"}
         ${"/preview"}
       `(
         `path $path redirects if it ${
@@ -343,14 +341,14 @@ describe("Lambda@Edge", () => {
         path                                 | expectedPage
         ${"/abc"}                            | ${"pages/[root].js"}
         ${"/blog/foo"}                       | ${"pages/blog/[id].js"}
-        ${"/customers"}                      | ${"pages/customers/index.js"}
+        ${"/customers"}                      | ${"pages/customers.js"}
         ${"/customers/superman"}             | ${"pages/customers/[customer].js"}
         ${"/customers/superman/howtofly"}    | ${"pages/customers/[customer]/[post].js"}
         ${"/customers/superman/profile"}     | ${"pages/customers/[customer]/profile.js"}
         ${"/customers/test/catch/all"}       | ${"pages/customers/[...catchAll].js"}
         ${"/nl/abc"}                         | ${"pages/[root].js"}
         ${"/nl/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/nl/customers"}                   | ${"pages/customers/index.js"}
+        ${"/nl/customers"}                   | ${"pages/customers.js"}
         ${"/nl/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/nl/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/nl/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -435,7 +433,7 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                         | expectedPage
-        ${"/_next/data/build-id/en/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/_next/data/build-id/en/customers.json"}                  | ${"pages/customers.js"}
         ${"/_next/data/build-id/en/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/en/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `(
@@ -463,10 +461,10 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                                              | expectedPage
-        ${"/_next/data/build-id/en.json"}                                                 | ${"pages/index.js"}
-        ${"/_next/data/build-id/nl.json"}                                                 | ${"pages/index.js"}
-        ${"/_next/data/build-id/en/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
+        path                                                     | expectedPage
+        ${"/_next/data/build-id/en.json"}                        | ${"pages/index.js"}
+        ${"/_next/data/build-id/nl.json"}                        | ${"pages/index.js"}
+        ${"/_next/data/build-id/en/fallback/not-yet-built.json"} | ${"pages/fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
         async ({ path, expectedPage }) => {

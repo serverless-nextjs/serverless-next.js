@@ -119,19 +119,17 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                           | expectedPage
-        ${"/basepath"}                                                 | ${"/en.html"}
-        ${"/basepath/terms"}                                           | ${"/en/terms.html"}
-        ${"/basepath/users/batman"}                                    | ${"/en/users/[user].html"}
-        ${"/basepath/users/test/catch/all"}                            | ${"/en/users/[...user].html"}
-        ${"/basepath/john/123"}                                        | ${"/en/[username]/[id].html"}
-        ${"/basepath/tests/prerender-manifest/example-static-page"}    | ${"/en/tests/prerender-manifest/example-static-page.html"}
-        ${"/basepath/nl"}                                              | ${"/nl.html"}
-        ${"/basepath/nl/terms"}                                        | ${"/nl/terms.html"}
-        ${"/basepath/nl/users/batman"}                                 | ${"/nl/users/[user].html"}
-        ${"/basepath/nl/users/test/catch/all"}                         | ${"/nl/users/[...user].html"}
-        ${"/basepath/nl/john/123"}                                     | ${"/nl/[username]/[id].html"}
-        ${"/basepath/nl/tests/prerender-manifest/example-static-page"} | ${"/nl/tests/prerender-manifest/example-static-page.html"}
+        path                                              | expectedPage
+        ${"/basepath"}                                    | ${"/en.html"}
+        ${"/basepath/terms"}                              | ${"/en/terms.html"}
+        ${"/basepath/users/batman"}                       | ${"/en/users/[...user].html"}
+        ${"/basepath/users/test/catch/all"}               | ${"/en/users/[...user].html"}
+        ${"/basepath/no-fallback/example-static-page"}    | ${"/en/no-fallback/example-static-page.html"}
+        ${"/basepath/nl"}                                 | ${"/nl.html"}
+        ${"/basepath/nl/terms"}                           | ${"/nl/terms.html"}
+        ${"/basepath/nl/users/batman"}                    | ${"/nl/users/[...user].html"}
+        ${"/basepath/nl/users/test/catch/all"}            | ${"/nl/users/[...user].html"}
+        ${"/basepath/nl/no-fallback/example-static-page"} | ${"/nl/no-fallback/example-static-page.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -171,8 +169,8 @@ describe("Lambda@Edge", () => {
         ${"/basepath/users/batman"}
         ${"/basepath/users/test/catch/all"}
         ${"/basepath/john/123"}
-        ${"/basepath/tests/prerender-manifest/example-static-page"}
-        ${"/basepath/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/basepath/no-fallback/example-static-page"}
+        ${"/basepath/fallback/not-yet-built"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
@@ -259,14 +257,14 @@ describe("Lambda@Edge", () => {
         path                                          | expectedPage
         ${"/basepath/abc"}                            | ${"pages/[root].js"}
         ${"/basepath/blog/foo"}                       | ${"pages/blog/[id].js"}
-        ${"/basepath/customers"}                      | ${"pages/customers/index.js"}
+        ${"/basepath/customers"}                      | ${"pages/customers.js"}
         ${"/basepath/customers/superman"}             | ${"pages/customers/[customer].js"}
         ${"/basepath/customers/superman/howtofly"}    | ${"pages/customers/[customer]/[post].js"}
         ${"/basepath/customers/superman/profile"}     | ${"pages/customers/[customer]/profile.js"}
         ${"/basepath/customers/test/catch/all"}       | ${"pages/customers/[...catchAll].js"}
         ${"/basepath/nl/abc"}                         | ${"pages/[root].js"}
         ${"/basepath/nl/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/basepath/nl/customers"}                   | ${"pages/customers/index.js"}
+        ${"/basepath/nl/customers"}                   | ${"pages/customers.js"}
         ${"/basepath/nl/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/basepath/nl/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/basepath/nl/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -364,7 +362,7 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                                  | expectedPage
-        ${"/basepath/_next/data/build-id/en/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/basepath/_next/data/build-id/en/customers.json"}                  | ${"pages/customers.js"}
         ${"/basepath/_next/data/build-id/en/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/basepath/_next/data/build-id/en/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `(

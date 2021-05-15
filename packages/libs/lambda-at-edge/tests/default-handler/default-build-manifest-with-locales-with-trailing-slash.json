@@ -1,275 +1,487 @@
 {
   "buildId": "build-id",
+  "logLambdaExecutionTimes": false,
   "pages": {
     "ssr": {
       "dynamic": {
-        "/en/:root": {
+        "/blog/:id": {
+          "file": "pages/blog/[id].js",
+          "regex": "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/customers/:customer": {
+          "file": "pages/customers/[customer].js",
+          "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/customers/:customer/profile": {
+          "file": "pages/customers/[customer]/profile.js",
+          "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
+        },
+        "/customers/:customer/:post": {
+          "file": "pages/customers/[customer]/[post].js",
+          "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fallback/:slug": {
+          "file": "pages/fallback/[slug].js",
+          "regex": "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fallback-blocking/:slug": {
+          "file": "pages/fallback-blocking/[slug].js",
+          "regex": "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/no-fallback/:slug": {
+          "file": "pages/no-fallback/[slug].js",
+          "regex": "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/:root": {
           "file": "pages/[root].js",
-          "regex": "^/en/([^/]+?)(?:/)?$"
+          "regex": "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/en/blog/:id": {
           "file": "pages/blog/[id].js",
-          "regex": "^/en/blog/([^/]+?)(?:/)?$"
+          "regex": "^\\/en\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/en/customers/:customer": {
           "file": "pages/customers/[customer].js",
-          "regex": "^/en/customers/([^/]+?)(?:/)?$"
+          "regex": "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/en/customers/:customer/profile": {
           "file": "pages/customers/[customer]/profile.js",
-          "regex": "^/en/customers/([^/]+?)/profile(?:/)?$"
+          "regex": "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
         },
         "/en/customers/:customer/:post": {
           "file": "pages/customers/[customer]/[post].js",
-          "regex": "^/en/customers/([^/]+?)/([^/]+?)(?:/)?$"
+          "regex": "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/en/tests/prerender-manifest-fallback/:fallback": {
-          "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
-          "regex": "^/en/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
+        "/en/fallback/:slug": {
+          "file": "pages/fallback/[slug].js",
+          "regex": "^\\/en\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/fr/:root": {
+        "/en/fallback-blocking/:slug": {
+          "file": "pages/fallback-blocking/[slug].js",
+          "regex": "^\\/en\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/en/no-fallback/:slug": {
+          "file": "pages/no-fallback/[slug].js",
+          "regex": "^\\/en\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/en/:root": {
           "file": "pages/[root].js",
-          "regex": "^/fr/([^/]+?)(?:/)?$"
-        },
-        "/fr/blog/:id": {
-          "file": "pages/blog/[id].js",
-          "regex": "^/fr/blog/([^/]+?)(?:/)?$"
-        },
-        "/fr/customers/:customer": {
-          "file": "pages/customers/[customer].js",
-          "regex": "^/fr/customers/([^/]+?)(?:/)?$"
-        },
-        "/fr/customers/:customer/profile": {
-          "file": "pages/customers/[customer]/profile.js",
-          "regex": "^/fr/customers/([^/]+?)/profile(?:/)?$"
-        },
-        "/fr/customers/:customer/:post": {
-          "file": "pages/customers/[customer]/[post].js",
-          "regex": "^/fr/customers/([^/]+?)/([^/]+?)(?:/)?$"
-        },
-        "/fr/tests/prerender-manifest-fallback/:fallback": {
-          "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
-          "regex": "^/fr/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
-        },
-        "/nl/:root": {
-          "file": "pages/[root].js",
-          "regex": "^/nl/([^/]+?)(?:/)?$"
+          "regex": "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/nl/blog/:id": {
           "file": "pages/blog/[id].js",
-          "regex": "^/nl/blog/([^/]+?)(?:/)?$"
+          "regex": "^\\/nl\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/nl/customers/:customer": {
           "file": "pages/customers/[customer].js",
-          "regex": "^/nl/customers/([^/]+?)(?:/)?$"
+          "regex": "^\\/nl\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
         "/nl/customers/:customer/profile": {
           "file": "pages/customers/[customer]/profile.js",
-          "regex": "^/nl/customers/([^/]+?)/profile(?:/)?$"
+          "regex": "^\\/nl\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
         },
         "/nl/customers/:customer/:post": {
           "file": "pages/customers/[customer]/[post].js",
-          "regex": "^/nl/customers/([^/]+?)/([^/]+?)(?:/)?$"
+          "regex": "^\\/nl\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/nl/tests/prerender-manifest-fallback/:fallback": {
-          "file": "pages/tests/prerender-manifest-fallback/[fallback].js",
-          "regex": "^/nl/tests/prerender-manifest-fallback/([^/]+?)(?:/)?$"
+        "/nl/fallback/:slug": {
+          "file": "pages/fallback/[slug].js",
+          "regex": "^\\/nl\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/nl/fallback-blocking/:slug": {
+          "file": "pages/fallback-blocking/[slug].js",
+          "regex": "^\\/nl\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/nl/no-fallback/:slug": {
+          "file": "pages/no-fallback/[slug].js",
+          "regex": "^\\/nl\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/nl/:root": {
+          "file": "pages/[root].js",
+          "regex": "^\\/nl(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/blog/:id": {
+          "file": "pages/blog/[id].js",
+          "regex": "^\\/fr\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/customers/:customer": {
+          "file": "pages/customers/[customer].js",
+          "regex": "^\\/fr\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/customers/:customer/profile": {
+          "file": "pages/customers/[customer]/profile.js",
+          "regex": "^\\/fr\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
+        },
+        "/fr/customers/:customer/:post": {
+          "file": "pages/customers/[customer]/[post].js",
+          "regex": "^\\/fr\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/fallback/:slug": {
+          "file": "pages/fallback/[slug].js",
+          "regex": "^\\/fr\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/fallback-blocking/:slug": {
+          "file": "pages/fallback-blocking/[slug].js",
+          "regex": "^\\/fr\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/no-fallback/:slug": {
+          "file": "pages/no-fallback/[slug].js",
+          "regex": "^\\/fr\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        "/fr/:root": {
+          "file": "pages/[root].js",
+          "regex": "^\\/fr(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         }
       },
       "catchAll": {
+        "/customers/:catchAll*": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
         "/en/customers/:catchAll*": {
           "file": "pages/customers/[...catchAll].js",
-          "regex": "^/en/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
-        },
-        "/fr/customers/:catchAll*": {
-          "file": "pages/customers/[...catchAll].js",
-          "regex": "^/fr/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+          "regex": "^\\/en\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
         "/nl/customers/:catchAll*": {
           "file": "pages/customers/[...catchAll].js",
-          "regex": "^/nl/customers(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+          "regex": "^\\/nl\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/fr/customers/:catchAll*": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^\\/fr\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         }
       },
       "nonDynamic": {
-        "/en": "pages/index.js",
-        "/en/customers": "pages/customers/index.js",
-        "/en/customers/new": "pages/customers/new.js",
-        "/en/api/getCustomers": "pages/api/getCustomers.js",
-        "/en/_error": "pages/_error.js",
-        "/en/erroredPage": "pages/erroredPage.js",
-        "/en/preview": "pages/preview.js",
+        "/async-page": "pages/async-page.js",
+        "/customers": "pages/customers.js",
+        "/customers/new": "pages/customers/new.js",
+        "/erroredPage": "pages/erroredPage.js",
+        "/": "pages/index.js",
+        "/preview": "pages/preview.js",
+        "/_error": "pages/_error.js",
         "/en/async-page": "pages/async-page.js",
-        "/fr": "pages/index.js",
-        "/fr/customers": "pages/customers/index.js",
-        "/fr/customers/new": "pages/customers/new.js",
-        "/fr/api/getCustomers": "pages/api/getCustomers.js",
-        "/fr/_error": "pages/_error.js",
-        "/fr/erroredPage": "pages/erroredPage.js",
-        "/fr/preview": "pages/preview.js",
-        "/fr/async-page": "pages/async-page.js",
-        "/nl": "pages/index.js",
-        "/nl/customers": "pages/customers/index.js",
+        "/en/customers": "pages/customers.js",
+        "/en/customers/new": "pages/customers/new.js",
+        "/en/erroredPage": "pages/erroredPage.js",
+        "/en": "pages/index.js",
+        "/en/preview": "pages/preview.js",
+        "/en/_error": "pages/_error.js",
+        "/nl/async-page": "pages/async-page.js",
+        "/nl/customers": "pages/customers.js",
         "/nl/customers/new": "pages/customers/new.js",
-        "/nl/api/getCustomers": "pages/api/getCustomers.js",
-        "/nl/_error": "pages/_error.js",
         "/nl/erroredPage": "pages/erroredPage.js",
+        "/nl": "pages/index.js",
         "/nl/preview": "pages/preview.js",
-        "/nl/async-page": "pages/async-page.js"
+        "/nl/_error": "pages/_error.js",
+        "/fr/async-page": "pages/async-page.js",
+        "/fr/customers": "pages/customers.js",
+        "/fr/customers/new": "pages/customers/new.js",
+        "/fr/erroredPage": "pages/erroredPage.js",
+        "/fr": "pages/index.js",
+        "/fr/preview": "pages/preview.js",
+        "/fr/_error": "pages/_error.js"
       }
     },
     "html": {
       "nonDynamic": {
-        "/en": "pages/en.html",
-        "/en/terms": "pages/en/terms.html",
-        "/nl": "pages/nl.html",
-        "/nl/terms": "pages/nl/terms.html",
-        "/fr": "pages/fr.html",
-        "/fr/terms": "pages/fr/terms.html",
         "/en/404": "pages/en/404.html",
         "/nl/404": "pages/nl/404.html",
-        "/fr/404": "pages/fr/404.html"
+        "/fr/404": "pages/fr/404.html",
+        "/en/500": "pages/en/500.html",
+        "/nl/500": "pages/nl/500.html",
+        "/fr/500": "pages/fr/500.html",
+        "/en/terms": "pages/en/terms.html",
+        "/nl/terms": "pages/nl/terms.html",
+        "/fr/terms": "pages/fr/terms.html"
       },
       "dynamic": {
-        "/en/users/:user": {
-          "file": "pages/en/users/[user].html",
-          "regex": "^/en/users/([^/]+?)(?:/)?$"
-        },
         "/en/users/:user*": {
           "file": "pages/en/users/[...user].html",
-          "regex": "^/en/users(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
-        },
-        "/en/fallback/:slug": {
-          "file": "pages/fallback/[slug].js",
-          "regex": "^\\/en/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/en/:username/:id": {
-          "file": "pages/en/[username]/[id].html",
-          "regex": "^/en/([^/]+?)/([^/]+?)(?:/)?$"
-        },
-        "/fr/users/:user": {
-          "file": "pages/fr/users/[user].html",
-          "regex": "^/fr/users/([^/]+?)(?:/)?$"
+          "regex": "^\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
         "/fr/users/:user*": {
           "file": "pages/fr/users/[...user].html",
-          "regex": "^/fr/users(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
-        },
-        "/fr/fallback/:slug": {
-          "file": "pages/fallback/[slug].js",
-          "regex": "^\\/fr/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/fr/:username/:id": {
-          "file": "pages/fr/[username]/[id].html",
-          "regex": "^/fr/([^/]+?)/([^/]+?)(?:/)?$"
-        },
-        "/nl/users/:user": {
-          "file": "pages/nl/users/[user].html",
-          "regex": "^/nl/users/([^/]+?)(?:/)?$"
+          "regex": "^\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
         "/nl/users/:user*": {
           "file": "pages/nl/users/[...user].html",
-          "regex": "^/nl/users(?:/((?:[^/#?]+?)(?:/(?:[^/#?]+?))*))?[/#?]?$"
+          "regex": "^\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/nl/fallback/:slug": {
-          "file": "pages/fallback/[slug].js",
-          "regex": "^\\/nl/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        "/en/en/users/:user*": {
+          "file": "pages/en/en/users/[...user].html",
+          "regex": "^\\/en\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/nl/:username/:id": {
-          "file": "pages/nl/[username]/[id].html",
-          "regex": "^/nl/([^/]+?)/([^/]+?)(?:/)?$"
+        "/en/fr/users/:user*": {
+          "file": "pages/en/fr/users/[...user].html",
+          "regex": "^\\/en\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/en/nl/users/:user*": {
+          "file": "pages/en/nl/users/[...user].html",
+          "regex": "^\\/en\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/nl/en/users/:user*": {
+          "file": "pages/nl/en/users/[...user].html",
+          "regex": "^\\/nl\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/nl/fr/users/:user*": {
+          "file": "pages/nl/fr/users/[...user].html",
+          "regex": "^\\/nl\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/nl/nl/users/:user*": {
+          "file": "pages/nl/nl/users/[...user].html",
+          "regex": "^\\/nl\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/fr/en/users/:user*": {
+          "file": "pages/fr/en/users/[...user].html",
+          "regex": "^\\/fr\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/fr/fr/users/:user*": {
+          "file": "pages/fr/fr/users/[...user].html",
+          "regex": "^\\/fr\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        "/fr/nl/users/:user*": {
+          "file": "pages/fr/nl/users/[...user].html",
+          "regex": "^\\/fr\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         }
       }
     },
     "ssg": {
       "nonDynamic": {
+        "/fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/fallback/example-static-page.json"
+        },
         "/en": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/en.json"
+          "dataRoute": "/_next/data/build-id/index.json"
         },
-        "/en/tests/prerender-manifest/example-static-page": {
+        "/nl": {
           "initialRevalidateSeconds": false,
-          "srcRoute": "/en/tests/prerender-manifest/[staticPageName]",
-          "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest/example-static-page.json"
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/index.json"
         },
         "/fr": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/fr.json"
+          "dataRoute": "/_next/data/build-id/index.json"
         },
-        "/fr/tests/prerender-manifest/example-static-page": {
+        "/no-fallback/example-static-page": {
           "initialRevalidateSeconds": false,
-          "srcRoute": "/fr/tests/prerender-manifest/[staticPageName]",
-          "dataRoute": "/_next/data/build-id/fr/tests/prerender-manifest/example-static-page.json"
+          "srcRoute": "/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
+        },
+        "/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/preview.json"
+        },
+        "/nl/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/preview.json"
         },
         "/fr/preview": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/fr/preview.json"
         },
-        "/nl": {
+        "/en/fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/en/fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/en/fallback/example-static-page.json"
+        },
+        "/en/en": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/nl.json"
+          "dataRoute": "/_next/data/build-id/en/index.json"
         },
-        "/nl/tests/prerender-manifest/example-static-page": {
+        "/en/nl": {
           "initialRevalidateSeconds": false,
-          "srcRoute": "/nl/tests/prerender-manifest/[staticPageName]",
-          "dataRoute": "/_next/data/build-id/nl/tests/prerender-manifest/example-static-page.json"
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/index.json"
         },
-        "/nl/preview": {
+        "/en/fr": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/index.json"
+        },
+        "/en/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/en/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/en/no-fallback/example-static-page.json"
+        },
+        "/en/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/preview.json"
+        },
+        "/en/nl/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/preview.json"
+        },
+        "/en/fr/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/preview.json"
+        },
+        "/nl/fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/nl/fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/nl/fallback/example-static-page.json"
+        },
+        "/nl/en": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/index.json"
+        },
+        "/nl/nl": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/index.json"
+        },
+        "/nl/fr": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/index.json"
+        },
+        "/nl/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/nl/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/nl/no-fallback/example-static-page.json"
+        },
+        "/nl/nl/preview": {
           "initialRevalidateSeconds": false,
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/nl/preview.json"
+        },
+        "/nl/fr/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/preview.json"
+        },
+        "/fr/fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/fr/fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/fr/fallback/example-static-page.json"
+        },
+        "/fr/en": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/index.json"
+        },
+        "/fr/nl": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/index.json"
+        },
+        "/fr/fr": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/index.json"
+        },
+        "/fr/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/fr/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/fr/no-fallback/example-static-page.json"
+        },
+        "/fr/nl/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/preview.json"
+        },
+        "/fr/fr/preview": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/preview.json"
         }
       },
       "dynamic": {
-        "/en/tests/prerender-manifest/[staticPageName]": {
-          "routeRegex": "^/en/tests/prerender-manifest/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest/[staticPageName].json",
+        "/fallback-blocking/[slug]": {
+          "routeRegex": "^/fallback\\-blocking/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/fallback-blocking/[slug].json",
+          "fallback": null,
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback\\-blocking/([^/]+?)\\.json$"
+        },
+        "/fallback/[slug]": {
+          "routeRegex": "^/fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/fallback/[slug].json",
+          "fallback": "/fallback/[slug].html",
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
+        },
+        "/no-fallback/[slug]": {
+          "routeRegex": "^/no\\-fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/no-fallback/[slug].json",
           "fallback": false,
-          "dataRouteRegex": "^/_next/data/build-id/en/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build\\-id/no\\-fallback/([^/]+?)\\.json$"
         },
-        "/en/tests/prerender-manifest-fallback/[fallback]": {
-          "routeRegex": "^/en/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/build-id/en/tests/prerender-manifest-fallback/[staticPageName].json",
-          "fallback": "/en/tests/prerender-manifest-fallback/[fallback].html",
-          "dataRouteRegex": "^/_next/data/build-id/en/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+        "/en/fallback-blocking/[slug]": {
+          "routeRegex": "^/en/fallback\\-blocking/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/en/fallback-blocking/[slug].json",
+          "fallback": null,
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback\\-blocking/([^/]+?)\\.json$"
         },
-        "/fr/tests/prerender-manifest/[staticPageName]": {
-          "routeRegex": "^/fr/tests/prerender-manifest/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/build-id/fr/tests/prerender-manifest/[staticPageName].json",
+        "/en/fallback/[slug]": {
+          "routeRegex": "^/en/fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/en/fallback/[slug].json",
+          "fallback": "/en/fallback/[slug].html",
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
+        },
+        "/en/no-fallback/[slug]": {
+          "routeRegex": "^/en/no\\-fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/en/no-fallback/[slug].json",
           "fallback": false,
-          "dataRouteRegex": "^/_next/data/build-id/fr/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build\\-id/no\\-fallback/([^/]+?)\\.json$"
         },
-        "/fr/tests/prerender-manifest-fallback/[fallback]": {
-          "routeRegex": "^/fr/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/build-id/fr/tests/prerender-manifest-fallback/[staticPageName].json",
-          "fallback": "/fr/tests/prerender-manifest-fallback/[fallback].html",
-          "dataRouteRegex": "^/_next/data/build-id/fr/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+        "/nl/fallback-blocking/[slug]": {
+          "routeRegex": "^/nl/fallback\\-blocking/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/nl/fallback-blocking/[slug].json",
+          "fallback": null,
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback\\-blocking/([^/]+?)\\.json$"
         },
-        "/nl/tests/prerender-manifest/[staticPageName]": {
-          "routeRegex": "^/nl/tests/prerender-manifest/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/build-id/nl/tests/prerender-manifest/[staticPageName].json",
+        "/nl/fallback/[slug]": {
+          "routeRegex": "^/nl/fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/nl/fallback/[slug].json",
+          "fallback": "/nl/fallback/[slug].html",
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
+        },
+        "/nl/no-fallback/[slug]": {
+          "routeRegex": "^/nl/no\\-fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/nl/no-fallback/[slug].json",
           "fallback": false,
-          "dataRouteRegex": "^/_next/data/build-id/nl/tests/prerender-manifest/(?:([^/]+?)).json/?$"
+          "dataRouteRegex": "^/_next/data/build\\-id/no\\-fallback/([^/]+?)\\.json$"
         },
-        "/nl/tests/prerender-manifest-fallback/[fallback]": {
-          "routeRegex": "^/nl/tests/prerender-manifest-fallback/(?:([^/]+?))/?$",
-          "dataRoute": "/_next/data/build-id/nl/tests/prerender-manifest-fallback/[staticPageName].json",
-          "fallback": "/nl/tests/prerender-manifest-fallback/[fallback].html",
-          "dataRouteRegex": "^/_next/data/build-id/nl/tests/prerender-manifest-fallback/(?:([^/]+?)).json/?$"
+        "/fr/fallback-blocking/[slug]": {
+          "routeRegex": "^/fr/fallback\\-blocking/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/fr/fallback-blocking/[slug].json",
+          "fallback": null,
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback\\-blocking/([^/]+?)\\.json$"
+        },
+        "/fr/fallback/[slug]": {
+          "routeRegex": "^/fr/fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/fr/fallback/[slug].json",
+          "fallback": "/fr/fallback/[slug].html",
+          "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
+        },
+        "/fr/no-fallback/[slug]": {
+          "routeRegex": "^/fr/no\\-fallback/([^/]+?)(?:/)?$",
+          "dataRoute": "/_next/data/build-id/fr/no-fallback/[slug].json",
+          "fallback": false,
+          "dataRouteRegex": "^/_next/data/build\\-id/no\\-fallback/([^/]+?)\\.json$"
         }
       }
     }
   },
   "publicFiles": {
     "/favicon.ico": "favicon.ico",
-    "/manifest.json": "manifest.json",
-    "/file with spaces.json": "file with spaces.json"
+    "/file with spaces.json": "file with spaces.json",
+    "/manifest.json": "manifest.json"
   },
   "trailingSlash": true,
   "domainRedirects": {
     "example.com": "https://www.example.com"
-  }
+  },
+  "enableHTTPCompression": false
 }

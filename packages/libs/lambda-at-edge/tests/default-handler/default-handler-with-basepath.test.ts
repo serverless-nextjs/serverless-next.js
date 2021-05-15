@@ -118,15 +118,14 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                        | expectedPage
-        ${"/basepath"}                                              | ${"/index.html"}
-        ${"/basepath/terms"}                                        | ${"/terms.html"}
-        ${"/basepath/users/batman"}                                 | ${"/users/[user].html"}
-        ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
-        ${"/basepath/john/123"}                                     | ${"/[username]/[id].html"}
-        ${"/basepath/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
-        ${"/basepath/tests/prerender-manifest-fallback/not-built"}  | ${"/tests/prerender-manifest-fallback/not-built.html"}
-        ${"/basepath/preview"}                                      | ${"/preview.html"}
+        path                                           | expectedPage
+        ${"/basepath"}                                 | ${"/index.html"}
+        ${"/basepath/terms"}                           | ${"/terms.html"}
+        ${"/basepath/users/batman"}                    | ${"/users/[...user].html"}
+        ${"/basepath/users/test/catch/all"}            | ${"/users/[...user].html"}
+        ${"/basepath/no-fallback/example-static-page"} | ${"/no-fallback/example-static-page.html"}
+        ${"/basepath/fallback/not-built"}              | ${"/fallback/not-built.html"}
+        ${"/basepath/preview"}                         | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -166,8 +165,8 @@ describe("Lambda@Edge", () => {
         ${"/basepath/users/batman"}
         ${"/basepath/users/test/catch/all"}
         ${"/basepath/john/123"}
-        ${"/basepath/tests/prerender-manifest/example-static-page"}
-        ${"/basepath/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/basepath/no-fallback/example-static-page"}
+        ${"/basepath/fallback/not-yet-built"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
@@ -254,7 +253,7 @@ describe("Lambda@Edge", () => {
         path                                       | expectedPage
         ${"/basepath/abc"}                         | ${"pages/[root].js"}
         ${"/basepath/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/basepath/customers"}                   | ${"pages/customers/index.js"}
+        ${"/basepath/customers"}                   | ${"pages/customers.js"}
         ${"/basepath/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/basepath/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/basepath/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -338,7 +337,7 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                               | expectedPage
-        ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers.js"}
         ${"/basepath/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/basepath/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `(
