@@ -19,7 +19,7 @@ describe("ISR Tests", () => {
         if (initialWaitSeconds) {
           cy.ensureRouteNotCached(path);
           cy.visit(path);
-          cy.wait(initialWaitSeconds);
+          cy.wait(initialWaitSeconds * 1000);
         }
 
         // The initial load will have expired in the cache
