@@ -77,7 +77,7 @@ export type PageManifest = Manifest & {
       };
       nonDynamic: {
         [key: string]: {
-          initialRevalidateSeconds?: false | number;
+          initialRevalidateSeconds: false | number;
           srcRoute: string | null;
           dataRoute: string;
         };
@@ -93,6 +93,10 @@ export type PageManifest = Manifest & {
       nonDynamic: { [key: string]: string };
     };
   };
+  publicFiles: {
+    [key: string]: string;
+  };
+  trailingSlash: boolean;
 };
 
 export type I18nData = {

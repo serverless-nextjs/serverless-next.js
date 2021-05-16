@@ -3,7 +3,7 @@ import type {
   CloudFrontEvent,
   CloudFrontResponse
 } from "aws-lambda";
-import { DynamicSsgRoute, SsgRoute } from "next/dist/build";
+import { ApiManifest, PageManifest } from "@sls-next/core";
 
 export type DynamicPageKeyValue = {
   [key: string]: {
@@ -26,66 +26,18 @@ export type ImagesManifest = {
   images: ImageConfig;
 };
 
-export type OriginRequestApiHandlerManifest = {
-  apis: {
-    dynamic: DynamicPageKeyValue;
-    nonDynamic: {
-      [key: string]: string;
-    };
-  };
-  domainRedirects: {
-    [key: string]: string;
-  };
-  enableHTTPCompression: boolean;
-  authentication?: {
-    username: string;
-    password: string;
-  };
+export type OriginRequestApiHandlerManifest = ApiManifest & {
+  enableHTTPCompression?: boolean;
 };
 
-export type OriginRequestDefaultHandlerManifest = {
-  buildId: string;
-  logLambdaExecutionTimes: boolean;
-  pages: {
-    ssr: {
-      dynamic: DynamicPageKeyValue;
-      catchAll: DynamicPageKeyValue;
-      nonDynamic: {
-        [key: string]: string;
-      };
-    };
-    html: {
-      nonDynamic: {
-        [path: string]: string;
-      };
-      dynamic: DynamicPageKeyValue;
-    };
-    ssg: {
-      nonDynamic: {
-        [path: string]: SsgRoute;
-      };
-      dynamic: {
-        [path: string]: DynamicSsgRoute;
-      };
-    };
-  };
-  publicFiles: {
-    [key: string]: string;
-  };
-  trailingSlash: boolean;
-  enableHTTPCompression: boolean;
-  domainRedirects: {
-    [key: string]: string;
-  };
-  authentication?: {
-    username: string;
-    password: string;
-  };
+export type OriginRequestDefaultHandlerManifest = PageManifest & {
+  logLambdaExecutionTimes?: boolean;
+  enableHTTPCompression?: boolean;
 };
 
 export type OriginRequestImageHandlerManifest = {
-  enableHTTPCompression: boolean;
-  domainRedirects: {
+  enableHTTPCompression?: boolean;
+  domainRedirects?: {
     [key: string]: string;
   };
 };

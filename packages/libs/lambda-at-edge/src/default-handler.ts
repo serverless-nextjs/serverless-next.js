@@ -39,7 +39,7 @@ import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 const basePath = RoutesManifestJson.basePath;
 
-const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
+const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
     return {
       now: () => performance.now(),

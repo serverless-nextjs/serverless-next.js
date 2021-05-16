@@ -2,7 +2,7 @@ import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
 import { IncomingMessage, ServerResponse } from "http";
 
 type CompatOptions = {
-  enableHTTPCompression: boolean;
+  enableHTTPCompression?: boolean;
   rewrittenUri?: string;
 };
 
