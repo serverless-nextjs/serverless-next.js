@@ -7,13 +7,21 @@ describe("ISR Tests", () => {
   // runs
   describe("SSG page", { retries: 0 }, () => {
     [
-      "/revalidated-ssg-page",
+      { path: "/revalidated-ssg-page", initialWaitSeconds: 0 },
       // Pre-rendered ISR page
-      "/revalidated-ssg-pages/101",
-      // Blocking dynamic generated page
-      "/revalidated-ssg-pages/105"
-    ].forEach((path) => {
+      { path: "/revalidated-ssg-pages/101", initialWaitSeconds: 0 },
+      // Blocking dynamic generated page. As the page will be created and cached
+      // on first request, we'll need to wait another 10+1 seconds to be sure
+      // that we have exceeded the revalidate window.
+      { path: "/revalidated-ssg-pages/105", initialWaitSeconds: 11 }
+    ].forEach(({ path, initialWaitSeconds }) => {
       it(`serves the cached re-rendered page "${path}" after 2 reloads`, () => {
+        if (initialWaitSeconds) {
+          cy.ensureRouteNotCached(path);
+          cy.visit(path);
+          cy.wait(initialWaitSeconds);
+        }
+
         // The initial load will have expired in the cache
         cy.ensureRouteNotCached(path);
         cy.visit(path);
