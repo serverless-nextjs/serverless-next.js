@@ -43,7 +43,7 @@ export const handleApiReq = (
     return route;
   }
 
-  const dynamic = matchDynamic(normalisedUri, Object.values(apis.dynamic));
+  const dynamic = matchDynamic(normalisedUri, apis.dynamic);
   if (dynamic) {
     return {
       isApi: true,

@@ -3,7 +3,7 @@
  */
 
 import { compile, Match, match } from "path-to-regexp";
-import { Dynamic, DynamicSSG } from "./types";
+import { Dynamic, DynamicRoute, DynamicSSG } from "./types";
 
 /**
  * Match the given path against a source path.
@@ -69,14 +69,14 @@ export const matchDynamic = (
   }
 };
 
-export const matchDynamicSSG = (
+export const matchDynamicRoute = (
   uri: string,
-  routes: { [key: string]: DynamicSSG }
+  routes: DynamicRoute[]
 ): string | undefined => {
-  for (const [key, route] of Object.entries(routes)) {
-    const re = new RegExp(route.routeRegex, "i");
+  for (const { route, regex } of routes) {
+    const re = new RegExp(regex, "i");
     if (re.test(uri)) {
-      return key;
+      return route;
     }
   }
 };

@@ -111,30 +111,30 @@ describe("Builder Tests", () => {
 
         expect(removeNewLineChars(buildId)).toEqual("test-build-id");
         expect(dynamic).toEqual({
-          "/:root": {
+          "/[root]": {
             file: "pages/[root].js",
             regex: expect.any(String)
           },
-          "/customers/:customer": {
+          "/customers/[customer]": {
             file: "pages/customers/[customer].js",
             regex: expect.any(String)
           },
-          "/customers/:customer/:post": {
+          "/customers/[customer]/[post]": {
             file: "pages/customers/[customer]/[post].js",
             regex: expect.any(String)
           },
-          "/customers/:customer/profile": {
+          "/customers/[customer]/profile": {
             file: "pages/customers/[customer]/profile.js",
             regex: expect.any(String)
           }
         });
 
         expect(catchAll).toEqual({
-          "/customers/:catchAll*": {
+          "/customers/[...catchAll]": {
             file: "pages/customers/[...catchAll].js",
             regex: expect.any(String)
           },
-          "/products/:optionalCatchAll*": {
+          "/products/[[...optionalCatchAll]]": {
             file: "pages/products/[[...optionalCatchAll]].js",
             regex: expect.any(String)
           }
@@ -155,7 +155,7 @@ describe("Builder Tests", () => {
             "/about": "pages/about.html"
           },
           dynamic: {
-            "/blog/:post": {
+            "/blog/[post]": {
               file: "pages/blog/[post].html",
               regex: expect.any(String)
             }
@@ -188,12 +188,12 @@ describe("Builder Tests", () => {
           "/api/customers": "pages/api/customers.js",
           "/api/customers/new": "pages/api/customers/new.js"
         });
-        expect(dynamic).toEqual({
-          "/api/customers/:id": {
+        expect(dynamic).toEqual([
+          {
             file: "pages/api/customers/[id].js",
             regex: expect.any(String)
           }
-        });
+        ]);
       });
     });
 

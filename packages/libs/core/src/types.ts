@@ -27,6 +27,11 @@ export type RewriteData = {
   regex: string;
 };
 
+export type DynamicRoute = {
+  route: string;
+  regex: string;
+};
+
 export type Dynamic = {
   file: string;
   regex: string;
@@ -55,9 +60,7 @@ export type Manifest = {
 
 export type ApiManifest = Manifest & {
   apis: {
-    dynamic: {
-      [key: string]: Dynamic;
-    };
+    dynamic: Dynamic[];
     nonDynamic: { [key: string]: string };
   };
 };
@@ -65,6 +68,7 @@ export type ApiManifest = Manifest & {
 export type PageManifest = Manifest & {
   buildId: string;
   pages: {
+    dynamic: DynamicRoute[];
     html: {
       dynamic: {
         [key: string]: Dynamic;

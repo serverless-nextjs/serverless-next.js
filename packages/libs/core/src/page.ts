@@ -1,6 +1,6 @@
 import { normalise } from "./basepath";
 import { addDefaultLocaleToPath } from "./locale";
-import { matchDynamic, matchDynamicSSG } from "./match";
+import { matchDynamic, matchDynamicRoute } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import {
   ExternalRoute,
@@ -14,6 +14,21 @@ const pageHtml = (localeUri: string) => {
     return "pages/index.html";
   }
   return `pages${localeUri}.html`;
+};
+
+const handle404 = (manifest: PageManifest): PageRoute => {
+  if (manifest.pages.html.nonDynamic["/404"]) {
+    return {
+      isData: false,
+      isStatic: true,
+      file: "pages/404.html"
+    };
+  }
+  return {
+    isData: false,
+    isRender: true,
+    page: "pages/_error.js"
+  };
 };
 
 export const handlePageReq = (
@@ -73,8 +88,12 @@ export const handlePageReq = (
     };
   }
 
-  // TODO: this order reproduces default-handler logic
-  const dynamicSSG = matchDynamicSSG(localeUri, pages.ssg.dynamic);
+  const dynamic = matchDynamicRoute(localeUri, pages.dynamic);
+  if (!dynamic) {
+    return handle404(manifest);
+  }
+
+  const dynamicSSG = pages.ssg.dynamic[dynamic];
   if (dynamicSSG) {
     return {
       isData: false,
@@ -82,43 +101,30 @@ export const handlePageReq = (
       file: pageHtml(localeUri)
     };
   }
-  const dynamicSSR = matchDynamic(localeUri, Object.values(pages.ssr.dynamic));
+  const dynamicSSR = pages.ssr.dynamic[dynamic];
   if (dynamicSSR) {
     return {
       isData: false,
       isRender: true,
-      page: dynamicSSR
+      page: dynamicSSR.file
     };
   }
-  const dynamicHTML = matchDynamic(
-    localeUri,
-    Object.values(pages.html.dynamic)
-  );
+  const dynamicHTML = pages.html.dynamic[dynamic];
   if (dynamicHTML) {
     return {
       isData: false,
       isStatic: true,
-      file: dynamicHTML
+      file: dynamicHTML.file
     };
   }
-  const catchAll = matchDynamic(localeUri, Object.values(pages.ssr.catchAll));
+  const catchAll = pages.ssr.catchAll[dynamic];
   if (catchAll) {
     return {
       isData: false,
       isRender: true,
-      page: catchAll
+      page: catchAll.file
     };
   }
-  if (pages.html.nonDynamic["/404"]) {
-    return {
-      isData: false,
-      isStatic: true,
-      file: "pages/404.html"
-    };
-  }
-  return {
-    isData: false,
-    isRender: true,
-    page: "pages/_error.js"
-  };
+
+  return handle404(manifest);
 };

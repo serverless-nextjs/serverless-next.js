@@ -1,4 +1,4 @@
-import { matchDynamic, matchDynamicSSG } from "./match";
+import { matchDynamicRoute } from "./match";
 import { DataRoute, PageManifest, StaticRoute } from "./types";
 
 /*
@@ -26,6 +26,21 @@ const fullDataUri = (uri: string, buildId: string) => {
   return `${prefix}${uri}.json`;
 };
 
+const handle404 = (manifest: PageManifest): DataRoute | StaticRoute => {
+  if (manifest.pages.html.nonDynamic["/404"]) {
+    return {
+      isData: false,
+      isStatic: true,
+      file: "pages/404.html"
+    };
+  }
+  return {
+    isData: true,
+    isRender: true,
+    page: "pages/_error.js"
+  };
+};
+
 /*
  * Handles a data route
  */
@@ -50,9 +65,13 @@ export const handleDataReq = (
       page: pages.ssr.nonDynamic[normalisedUri]
     };
   }
-  // TODO: this order reproduces default-handler logic,
-  // should sort all dynamic routes together in build
-  const dynamicSSG = matchDynamicSSG(normalisedUri, pages.ssg.dynamic);
+
+  const dynamic = matchDynamicRoute(normalisedUri, pages.dynamic);
+  if (!dynamic) {
+    return handle404(manifest);
+  }
+
+  const dynamicSSG = pages.ssg.dynamic[dynamic];
   if (dynamicSSG) {
     return {
       isData: true,
@@ -60,38 +79,21 @@ export const handleDataReq = (
       file: fullDataUri(normalisedUri, buildId)
     };
   }
-  const dynamicSSR = matchDynamic(
-    normalisedUri,
-    Object.values(pages.ssr.dynamic)
-  );
+  const dynamicSSR = pages.ssr.dynamic[dynamic];
   if (dynamicSSR) {
     return {
       isData: true,
       isRender: true,
-      page: dynamicSSR
+      page: dynamicSSR.file
     };
   }
-  const catchAll = matchDynamic(
-    normalisedUri,
-    Object.values(pages.ssr.catchAll)
-  );
+  const catchAll = pages.ssr.catchAll[dynamic];
   if (catchAll) {
     return {
       isData: true,
       isRender: true,
-      page: catchAll
+      page: catchAll.file
     };
   }
-  if (pages.html.nonDynamic["/404"]) {
-    return {
-      isData: false,
-      isStatic: true,
-      file: "pages/404.html"
-    };
-  }
-  return {
-    isData: true,
-    isRender: true,
-    page: "pages/_error.js"
-  };
+  return handle404(manifest);
 };

@@ -4,14 +4,12 @@ import fse from "fs-extra";
 import { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
-import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   RoutesManifest,
   OriginRequestImageHandlerManifest
 } from "./types";
-import { isDynamicRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
@@ -110,30 +108,7 @@ class Builder {
       );
     }
 
-    const pagesManifest = await fse.readJSON(path);
-    const pagesManifestWithoutDynamicRoutes = Object.keys(pagesManifest).reduce(
-      (acc: { [key: string]: string }, route: string) => {
-        if (isDynamicRoute(route)) {
-          return acc;
-        }
-
-        acc[route] = pagesManifest[route];
-        return acc;
-      },
-      {}
-    );
-
-    const dynamicRoutedPages = Object.keys(pagesManifest).filter(
-      isDynamicRoute
-    );
-    const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
-    const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
-
-    sortedDynamicRoutedPages.forEach((route) => {
-      sortedPagesManifest[route] = pagesManifest[route];
-    });
-
-    return sortedPagesManifest;
+    return await fse.readJSON(path);
   }
 
   copyLambdaHandlerDependencies(

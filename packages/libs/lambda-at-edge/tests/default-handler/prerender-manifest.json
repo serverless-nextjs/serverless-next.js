@@ -1,20 +1,20 @@
 {
   "version": 3,
   "routes": {
-    "/": {
+    "/preview": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
-      "dataRoute": "/_next/data/build-id/index.json"
+      "dataRoute": "/_next/data/build-id/preview.json"
     },
     "/no-fallback/example-static-page": {
       "initialRevalidateSeconds": false,
       "srcRoute": "/no-fallback/[slug]",
       "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
     },
-    "/preview": {
+    "/": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
-      "dataRoute": "/_next/data/build-id/preview.json"
+      "dataRoute": "/_next/data/build-id/index.json"
     },
     "/fallback/example-static-page": {
       "initialRevalidateSeconds": false,
