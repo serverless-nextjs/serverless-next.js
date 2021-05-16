@@ -1,11 +1,6 @@
 import { BuildOptions, DynamicPageKeyValue, NextConfig } from "./types";
 import { ApiManifest, Manifest, PageManifest, RoutesManifest } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./isDynamicRoute";
-import {
-  expressifyAnyDynamicRoute,
-  expressifyDynamicRoute,
-  expressifyOptionalCatchAllDynamicRoute
-} from "./expressifyDynamicRoute";
 import { normaliseDomainRedirects } from "./normaliseDomainRedirects";
 import { pathToRegexStr } from "./pathToRegexStr";
 import { DynamicSsgRoute, PrerenderManifest, SsgRoute } from "next/dist/build";
@@ -79,26 +74,21 @@ export const prepareBuildManifests = async (
     const isOtherDynamicRoute =
       !isOptionalCatchAllDynamicRoute && isDynamicRoute(route);
 
-    let expressRoute = "";
-    let optionalBaseRoute = "";
-    if (isOtherDynamicRoute) {
-      expressRoute = expressifyDynamicRoute(route);
-    } else if (isOptionalCatchAllDynamicRoute) {
-      expressRoute = expressifyOptionalCatchAllDynamicRoute(route);
-      optionalBaseRoute = route.split("/[[")[0]; // The base path of optional catch-all without parameter
-      optionalBaseRoute = optionalBaseRoute === "" ? "/" : optionalBaseRoute;
-    }
+    // The base path of optional catch-all without parameter
+    const optionalBaseRoute = isOptionalCatchAllDynamicRoute
+      ? route.split("/[[")[0] || "/"
+      : "";
 
     if (isHtmlPage(pageFile)) {
       if (isOtherDynamicRoute) {
         htmlPages.dynamic[route] = {
           file: pageFile,
-          regex: pathToRegexStr(expressRoute)
+          regex: pathToRegexStr(route)
         };
       } else if (isOptionalCatchAllDynamicRoute) {
         htmlPages.dynamic[route] = {
           file: pageFile,
-          regex: pathToRegexStr(expressRoute)
+          regex: pathToRegexStr(route)
         };
         htmlPages.nonDynamic[optionalBaseRoute] = pageFile;
       } else {
@@ -108,12 +98,12 @@ export const prepareBuildManifests = async (
       if (isOtherDynamicRoute) {
         dynamicApi[route] = {
           file: pageFile,
-          regex: pathToRegexStr(expressRoute)
+          regex: pathToRegexStr(route)
         };
       } else if (isOptionalCatchAllDynamicRoute) {
         dynamicApi[route] = {
           file: pageFile,
-          regex: pathToRegexStr(expressRoute)
+          regex: pathToRegexStr(route)
         };
         apiPages.nonDynamic[optionalBaseRoute] = pageFile;
       } else {
@@ -122,12 +112,12 @@ export const prepareBuildManifests = async (
     } else if (isOtherDynamicRoute) {
       ssrPages.dynamic[route] = {
         file: pageFile,
-        regex: pathToRegexStr(expressRoute)
+        regex: pathToRegexStr(route)
       };
     } else if (isOptionalCatchAllDynamicRoute) {
       ssrPages.dynamic[route] = {
         file: pageFile,
-        regex: pathToRegexStr(expressRoute)
+        regex: pathToRegexStr(route)
       };
       ssrPages.nonDynamic[optionalBaseRoute] = pageFile;
     } else {
@@ -223,9 +213,7 @@ export const prepareBuildManifests = async (
           "pages/",
           `pages/${locale}/`
         );
-        newDynamicHtml.regex = pathToRegexStr(
-          expressifyAnyDynamicRoute(newKey)
-        );
+        newDynamicHtml.regex = pathToRegexStr(newKey);
       }
 
       for (const key in ssrPages.nonDynamic) {
@@ -244,7 +232,7 @@ export const prepareBuildManifests = async (
         );
 
         // Need to update the regex
-        newDynamicSsr.regex = pathToRegexStr(expressifyAnyDynamicRoute(newKey));
+        newDynamicSsr.regex = pathToRegexStr(newKey);
       }
 
       for (const key in ssgPages.nonDynamic) {
@@ -368,20 +356,18 @@ export const prepareBuildManifests = async (
     .concat(Object.keys(pageManifest.pages.ssr.catchAll));
   const sortedRoutes = getSortedRoutes(dynamicRoutes);
   pageManifest.pages.dynamic = sortedRoutes.map((route) => {
-    const expressRoute = expressifyAnyDynamicRoute(route);
     return {
       route: route,
-      regex: pathToRegexStr(expressRoute)
+      regex: pathToRegexStr(route)
     };
   });
 
   // Sort api routes
   const sortedApi = getSortedRoutes(Object.keys(dynamicApi));
   apiManifest.apis.dynamic = sortedApi.map((route) => {
-    const expressRoute = expressifyAnyDynamicRoute(route);
     return {
       file: dynamicApi[route].file,
-      regex: pathToRegexStr(expressRoute)
+      regex: pathToRegexStr(route)
     };
   });
 
