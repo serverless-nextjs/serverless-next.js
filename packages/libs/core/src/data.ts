@@ -67,11 +67,8 @@ export const handleDataReq = (
   }
 
   const dynamic = matchDynamicRoute(normalisedUri, pages.dynamic);
-  if (!dynamic) {
-    return handle404(manifest);
-  }
 
-  const dynamicSSG = pages.ssg.dynamic[dynamic];
+  const dynamicSSG = dynamic && pages.ssg.dynamic[dynamic];
   if (dynamicSSG) {
     return {
       isData: true,
@@ -79,7 +76,7 @@ export const handleDataReq = (
       file: fullDataUri(normalisedUri, buildId)
     };
   }
-  const dynamicSSR = pages.ssr.dynamic[dynamic];
+  const dynamicSSR = dynamic && pages.ssr.dynamic[dynamic];
   if (dynamicSSR) {
     return {
       isData: true,
@@ -87,7 +84,7 @@ export const handleDataReq = (
       page: dynamicSSR.file
     };
   }
-  const catchAll = pages.ssr.catchAll[dynamic];
+  const catchAll = dynamic && pages.ssr.catchAll[dynamic];
   if (catchAll) {
     return {
       isData: true,
@@ -95,5 +92,6 @@ export const handleDataReq = (
       page: catchAll.file
     };
   }
+
   return handle404(manifest);
 };
