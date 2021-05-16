@@ -377,8 +377,7 @@ const handleOriginResponse = async ({
       requestedOriginUri: uri,
       expiresHeader: response.headers?.expires?.[0]?.value || "",
       lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
-      manifest,
-      routesManifest
+      manifest
     });
 
     if (staticRegenerationResponse) {
@@ -478,8 +477,7 @@ const handleOriginResponse = async ({
             expiresHeader: expires.toJSON(),
             manifest,
             requestedOriginUri: uri,
-            lastModifiedHeader: undefined,
-            routesManifest
+            lastModifiedHeader: undefined
           })
         : null;
 

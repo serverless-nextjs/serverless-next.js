@@ -1,5 +1,4 @@
-import { normalise } from "./basepath";
-import { PageManifest, RoutesManifest } from "./types";
+import { PageManifest } from "./types";
 
 interface StaticRegenerationResponseOptions {
   // URI of the origin object
@@ -8,7 +7,6 @@ interface StaticRegenerationResponseOptions {
   expiresHeader: string;
   lastModifiedHeader: string | undefined;
   manifest: PageManifest;
-  routesManifest: RoutesManifest;
 }
 
 interface StaticRegenerationResponseValue {
@@ -34,10 +32,9 @@ const firstRegenerateExpiryDate = (
 export const getStaticRegenerationResponse = (
   options: StaticRegenerationResponseOptions
 ): StaticRegenerationResponseValue | false => {
-  const normalisedUri = normalise(
-    options.requestedOriginUri,
-    options.routesManifest
-  );
+  const normalisedUri = options.requestedOriginUri.endsWith(".html")
+    ? options.requestedOriginUri.slice(0, options.requestedOriginUri.length - 5)
+    : options.requestedOriginUri;
   const initialRevalidateSeconds =
     options.manifest.pages.ssg.nonDynamic?.[normalisedUri]
       ?.initialRevalidateSeconds;

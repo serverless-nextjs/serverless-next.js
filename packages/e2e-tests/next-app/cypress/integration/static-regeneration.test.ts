@@ -25,6 +25,7 @@ describe("ISR Tests", () => {
             // When we reload again the page still should not be cached as this
             // should be the first time its being served from the origin
             cy.ensureRouteNotCached(path);
+            cy.wait(1000);
             cy.reload();
             cy.get("[data-cy=date-text]")
               .invoke("text")
