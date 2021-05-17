@@ -3502,13 +3502,14 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "1.0.0-alpha.3"
+  version "1.0.0-alpha.6"
   dependencies:
     "@hapi/accept" "^5.0.1"
+    jsonwebtoken "^8.5.1"
     regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "1.8.1-alpha.4"
+  version "1.8.1-alpha.7"
   dependencies:
     "@aws-sdk/client-s3" "1.0.0-rc.3"
     "@hapi/accept" "5.0.1"
@@ -3520,7 +3521,6 @@
     fs-extra "^9.0.1"
     get-stream "^6.0.0"
     is-animated "^2.0.1"
-    jsonwebtoken "^8.5.1"
     klaw "^3.0.0"
     node-fetch "^2.6.1"
     path-to-regexp "^6.1.0"
@@ -7051,9 +7051,9 @@ eslint-config-prettier@^6.11.0:
     get-stdin "^6.0.0"
 
 eslint-plugin-prettier@^3.1.4:
-  version "3.1.4"
-  resolved "https://registry.npmjs.org/eslint-plugin-prettier/-/eslint-plugin-prettier-3.1.4.tgz#168ab43154e2ea57db992a2cd097c828171f75c2"
-  integrity sha512-jZDa8z76klRqo+TdGDTFJSavwbnWK2ZpqGKNZ+VvweMW516pDUMmQ2koXvxEE4JhzNvTv+radye/bWGBmA6jmg==
+  version "3.4.0"
+  resolved "https://registry.yarnpkg.com/eslint-plugin-prettier/-/eslint-plugin-prettier-3.4.0.tgz#cdbad3bf1dbd2b177e9825737fe63b476a08f0c7"
+  integrity sha512-UDK6rJT6INSfcOo545jiaOwB701uAIt2/dR7WnFQoGCVl1/EMqdANBmwUaqqQ45aXprsTGzSa39LI1PyuRBxxw==
   dependencies:
     prettier-linter-helpers "^1.0.0"
 
