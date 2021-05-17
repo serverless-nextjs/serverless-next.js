@@ -3,7 +3,7 @@
  */
 
 import { compile, Match, match } from "path-to-regexp";
-import { Dynamic, DynamicRoute, DynamicSSG } from "./types";
+import { Dynamic, DynamicRoute } from "./types";
 
 /**
  * Match the given path against a source path.

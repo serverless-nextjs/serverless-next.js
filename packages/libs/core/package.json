@@ -7,6 +7,7 @@
   },
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
+  "module": "dist/module/index.js",
   "directories": {
     "dist": "dist"
   },
@@ -17,7 +18,7 @@
   },
   "scripts": {
     "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.module.json"
   },
   "keywords": [
     "Next.js",
