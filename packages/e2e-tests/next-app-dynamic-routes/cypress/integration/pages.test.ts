@@ -152,7 +152,10 @@ describe("Pages Tests", () => {
       );
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
         const dataRequestParam = path.replace("/", "");
 
         cy.request({ url: fullPath, method: "GET" }).then((response) => {
@@ -201,7 +204,10 @@ describe("Pages Tests", () => {
       );
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
 
         cy.request({ url: fullPath, method: "GET" }).then((response) => {
           expect(response.status).to.equal(200);
@@ -265,7 +271,10 @@ describe("Pages Tests", () => {
       });
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
 
         cy.request({ url: fullPath, method: "GET" }).then((response) => {
           expect(response.status).to.equal(200);
@@ -309,7 +318,10 @@ describe("Pages Tests", () => {
 
         it(`serve data request for ${path}`, () => {
           // TODO: page itself is 404 but data request can still be served if requested.
-          const fullPath = `/_next/data/${buildId}${path}`;
+          const fullPath = `/_next/data/${buildId}${path.replace(
+            /\/$/,
+            "/index"
+          )}.json`;
 
           cy.request({
             url: fullPath,
@@ -389,7 +401,10 @@ describe("Pages Tests", () => {
       });
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
         const dataRequestParam = path
           .replace("/optional-catch-all-ssg-with-fallback", "")
           .replace("/", "");
