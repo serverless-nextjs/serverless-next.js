@@ -96,13 +96,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - run: yarn --frozen-lockfile
+      - run: yarn --cache-folder=~/.yc/${{ matrix.app }}/root --frozen-lockfile
       # TODO: build once and cache for all e2e tests
 
       - name: Install test utils
         run: |
           cd packages/e2e-tests/test-utils
-          yarn --frozen-lockfile
+          yarn --cache-folder=~/.yc/${{ matrix.app }}/test-utils --frozen-lockfile
 
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
@@ -122,7 +122,7 @@ jobs:
           CYPRESS_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for testing external rewrites to GitHub API without getting throttled
         run: |
           cd packages/e2e-tests/$APP_NAME
-          yarn --frozen-lockfile
+          yarn --cache-folder=~/.yc/${{ matrix.app }}/app --frozen-lockfile
           sleep $[($RANDOM % 15) + 1]s # Sleep 1-15 seconds to try to avoid throttling
           yarn e2e:ci
 
