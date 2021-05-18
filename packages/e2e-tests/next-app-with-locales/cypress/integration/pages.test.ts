@@ -209,7 +209,15 @@ describe("Pages Tests", () => {
     ].forEach(({ path }) => {
       it(`serves page ${path} with fallback at first`, () => {
         cy.visit(path);
-        cy.location("pathname").should("eq", path);
+
+        // Next.js currently behaves inconsistently here,
+        // dropping the default locale for static pages
+        if (path === "/en/fallback/d") {
+          cy.location("pathname").should("eq", "/fallback/d");
+        } else {
+          cy.location("pathname").should("eq", path);
+        }
+
         cy.contains("Hello fallback");
       });
     });
