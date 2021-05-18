@@ -20,6 +20,12 @@ jobs:
       pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
 
     steps:
+      # For non-fork PRs
+      - uses: actions/checkout@v2
+        if: ${{ github.event.inputs.pull_request_id == '' }}
+        with:
+          ref: ${{ github.event.inputs.sha || github.ref }}
+
       # For manually run PRs
       - name: Initialize empty git repository
         if: ${{ github.event.inputs.pull_request_id != '' }}
@@ -49,6 +55,37 @@ jobs:
           state: "pending"
           sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12.x"
+
+      - name: Build
+        run: yarn --frozen-lockfile
+
+      - name: Install test utils
+        run: |
+          cd packages/e2e-tests/test-utils
+          yarn --frozen-lockfile
+
+      - name: "Compress build"
+        run: tar -caf build.tar.gz ./packages ./node_modules
+
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 15
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: "Upload build"
+        uses: actions/upload-artifact@v2
+        with:
+          name: build.tar.gz
+          path: build.tar.gz
+          retention-days: 1
 
   run-e2e-tests:
     needs: [initialize]
@@ -96,21 +133,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - run: yarn --frozen-lockfile
-      # TODO: build once and cache for all e2e tests
-
-      - name: Install test utils
-        run: |
-          cd packages/e2e-tests/test-utils
-          yarn --frozen-lockfile
-
-      - name: Wait for existing workflow to complete before e2e tests
-        uses: softprops/turnstyle@v1
+      - name: "Download build"
+        uses: actions/download-artifact@v2
         with:
-          poll-interval-seconds: 15
-          same-branch-only: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          name: build.tar.gz
+
+      - name: "Uncompress build"
+        run: tar -xf build.tar.gz
 
       - name: Run e2e tests
         env:
@@ -125,6 +154,7 @@ jobs:
           yarn --frozen-lockfile
           sleep $[($RANDOM % 15) + 1]s # Sleep 1-15 seconds to try to avoid throttling
           yarn e2e:ci
+        timeout-minutes: 30 # In case something goes wrong
 
       - name: Mark end-to-end tests as failed
         # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
