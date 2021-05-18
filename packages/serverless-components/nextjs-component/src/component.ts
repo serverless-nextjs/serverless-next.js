@@ -65,11 +65,15 @@ class NextjsComponent extends Component {
     return readJSON(join(nextConfigPath, ".next/routes-manifest.json"));
   }
 
+  // for preview mode, if we do not set basePath, we need 'api/preview/*' instead of 'api/*'
+  // Because we should always keep 'api/*' point to backend project
   pathPattern(pattern: string, routesManifest: RoutesManifest): string {
     const basePath = routesManifest.basePath;
     return basePath && basePath.length > 0
       ? `${basePath.slice(1)}/${pattern}`
-      : pattern;
+      : pattern !== "api/*"
+      ? pattern
+      : "api/preview/*";
   }
 
   validatePathPatterns(
