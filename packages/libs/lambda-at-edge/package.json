@@ -49,7 +49,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/path-to-regexp": "^1.7.0",
     "@types/send": "^0.14.5",
-    "@types/sharp": "^0.26.1",
+    "@types/sharp": "^0.28.1",
     "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.46.0",
     "rollup-plugin-delete": "^2.0.0",
