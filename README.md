@@ -390,7 +390,10 @@ The exhaustive list of AWS actions required for a deployment:
   "lambda:CreateEventSourceMapping",
   "iam:UpdateAssumeRolePolicy",
   "iam:DeleteRolePolicy",
-  "sqs:*"
+  "sqs:CreateQueue", // SQS permissions only needed if you use Incremental Static Regeneration. Corresponding SQS.SendMessage permission needed in the Lambda role
+  "sqs:DeleteQueue",
+  "sqs:GetQueueAttributes",
+  "sqs:SetQueueAttributes"
 ```
 
 ### Lambda At Edge Configuration
