@@ -86,7 +86,8 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). Caveat: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them.
 - [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details).
 - [x] [Image Optimization](https://nextjs.org/docs/basic-features/image-optimization) Available in the latest 1.19 alpha version. Please try it out and let us know if there are any bugs.
-- [ ] [Next.js 10 Features](https://nextjs.org/blog/next-10). A few issues such as https://github.com/serverless-nextjs/serverless-next.js/issues/721 are in progress, aiming for 1.19 release.
+- [x] [Next.js 10 Localization](https://nextjs.org/blog/next-10). See: https://github.com/serverless-nextjs/serverless-next.js/issues/721 for more details and tips.
+- [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions (to be documented) on your deployment user. See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work. **Available in latest alpha version only. Please try out and help report any issues!**
 
 ### Getting started
 
