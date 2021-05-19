@@ -88,6 +88,9 @@ async function cleanupVersions(
         if (version.Version && version.Version !== fn.Version) {
           if (removeIt) {
             try {
+              console.log(
+                `Removing function: ${fn.FunctionName} - ${version.Version}`
+              );
               await removeLambdaVersion(
                 lambda,
                 fn.FunctionName,
@@ -100,7 +103,9 @@ async function cleanupVersions(
               );
             }
           } else {
-            console.log(`${fn.FunctionName} - ${version.Version}`);
+            console.log(
+              `Listing function only: ${fn.FunctionName} - ${version.Version}`
+            );
             i++;
           }
         }
@@ -116,7 +121,7 @@ async function cleanupVersions(
 }
 
 console.info("Cleaning up old Lambda versions");
-cleanupVersions("us-east-1") // All Lambda@Edge is created in us-east-1 only
+cleanupVersions("us-east-1", true) // All Lambda@Edge is created in us-east-1 only
   .then((success) => {
     if (success) {
       console.info("Cleaning up old Lambda versions successful.");
