@@ -54,6 +54,8 @@ describe("Lambda@Edge", () => {
     ${true}
   `("Routing with trailingSlash = $trailingSlash", ({ trailingSlash }) => {
     let handler: any;
+    let mockTriggerStaticRegeneration: jest.Mock;
+    let mockS3StorePage: jest.Mock;
     let runRedirectTest: (
       path: string,
       expectedRedirect: string,
@@ -100,6 +102,18 @@ describe("Lambda@Edge", () => {
           }
         );
       }
+
+      mockTriggerStaticRegeneration = jest.fn();
+      jest.mock("../../src/lib/triggerStaticRegeneration", () => ({
+        __esModule: true,
+        triggerStaticRegeneration: mockTriggerStaticRegeneration
+      }));
+
+      mockS3StorePage = jest.fn();
+      jest.mock("../../src/s3/s3StorePage", () => ({
+        __esModule: true,
+        s3StorePage: mockS3StorePage
+      }));
 
       // Handler needs to be dynamically required to use above mocked manifests
       // eslint-disable-next-line @typescript-eslint/no-var-requires
@@ -496,6 +510,159 @@ describe("Lambda@Edge", () => {
           expect(request.uri).toEqual(path);
         }
       );
+
+      it("correctly removes the expires header if set in the response for an ssg page", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+
+        const event = createCloudFrontEvent({
+          uri: "/customers",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  value: new Date().toJSON(),
+                  key: "Expires"
+                }
+              ]
+            }
+          }
+        });
+
+        mockPageRequire("pages/customers/index.js");
+
+        const response = await handler(event);
+        expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
+
+        expect(response.headers).not.toHaveProperty("expires");
+        expect(response.headers).not.toHaveProperty("Expires");
+      });
+
+      it("returns a correct cache control header when an expiry header in the future is sent", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/customers",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  value: new Date(new Date().getTime() + 3000).toJSON(),
+                  key: "Expires"
+                }
+              ]
+            }
+          }
+        });
+
+        mockPageRequire("pages/customers/index.js");
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=3, must-revalidate"
+        );
+      });
+
+      it("returns a correct cache control header when an expiry header in the past is sent", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+        const event = createCloudFrontEvent({
+          uri: "/customers",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  value: new Date(new Date().getTime() - 3000).toJSON(),
+                  key: "Expires"
+                }
+              ]
+            }
+          }
+        });
+
+        mockPageRequire("pages/customers/index.js");
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=0, must-revalidate"
+        );
+      });
+
+      it("returns a correct cache control header when a last-modified header is sent", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+        const event = createCloudFrontEvent({
+          uri: "/preview",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              ["last-modified"]: [
+                {
+                  value: new Date(new Date().getTime() - 3000).toJSON(),
+                  key: "Last-Modified"
+                }
+              ]
+            }
+          }
+        });
+
+        mockPageRequire("pages/preview/index.js");
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=2, must-revalidate"
+        );
+      });
+
+      it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: true })
+        );
+        const event = createCloudFrontEvent({
+          uri: "/preview",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  key: "Expires",
+                  value: new Date().toJSON()
+                }
+              ]
+            }
+          }
+        });
+
+        mockPageRequire("pages/preview/index.js");
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=1, must-revalidate"
+        );
+      });
 
       it.each`
         path                                                       | expectedRedirect

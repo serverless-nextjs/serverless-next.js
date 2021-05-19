@@ -43,13 +43,10 @@ describe("Redirects Tests", () => {
         expectedStatus: 404
       }
     ].forEach(({ path, expectedPath, expectedStatus }) => {
-      it(`does not redirect page ${path}`, () => {
-        // These cases should not redirect ever due to security
-        cy.ensureRouteHasStatusCode(path, expectedStatus);
-
+      it(`does not redirect page ${path}`, { retries: 0 }, () => {
         cy.visit(path, { failOnStatusCode: false });
         cy.location("pathname").should("eq", expectedPath);
-        cy.contains("404");
+        cy.contains(`${expectedStatus}`);
       });
     });
   });

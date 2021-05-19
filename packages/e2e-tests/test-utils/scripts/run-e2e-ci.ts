@@ -23,6 +23,8 @@ const appName = process.env["APP_NAME"] || ""; // app name to store in deploymen
 
 const ssgPagePath = process.env["SSG_PAGE_PATH"];
 const ssrPagePath = process.env["SSR_PAGE_PATH"];
+const isrPagePath = process.env["ISR_PAGE_PATH"];
+const dynamicIsrPagePath = process.env["DYNAMIC_ISR_PAGE_PATH"];
 
 if (appName === "") {
   throw new Error("Please set the APP_NAME environment variable.");
@@ -51,9 +53,7 @@ async function checkWebAppBuildId(
   while (new Date().getTime() - startTime < waitDurationMillis) {
     // Guarantee that CloudFront cache is missed by appending uuid query parameter.
     const uuid: string = uuidv4().replace("-", "");
-    const suffixedUrl: string = `${url}${
-      url.endsWith("/") ? "" : "/"
-    }?uuid=${uuid}`;
+    const suffixedUrl = `${url}${url.endsWith("/") ? "" : "/"}?uuid=${uuid}`;
 
     try {
       const response = await fetch(suffixedUrl);
@@ -312,15 +312,43 @@ async function runEndToEndTest(): Promise<boolean> {
     console.info(
       "Checking if CloudFront invalidations, SSR and SSG pages are ready."
     );
-    const [cloudFrontReady, ssrReady, ssgReady] = await Promise.all([
+    const [
+      cloudFrontReady,
+      ssrReady,
+      ssgReady,
+      isrReady,
+      dynamicIsrReady
+    ] = await Promise.all([
       checkInvalidationsCompleted(distributionId, waitTimeout, 10),
       checkWebAppBuildId(cloudFrontUrl + ssrPagePath, buildId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + ssgPagePath, buildId, waitTimeout, 10)
+      checkWebAppBuildId(cloudFrontUrl + ssgPagePath, buildId, waitTimeout, 10),
+      isrPagePath
+        ? checkWebAppBuildId(
+            cloudFrontUrl + isrPagePath,
+            buildId,
+            waitTimeout,
+            10
+          )
+        : Promise.resolve(true),
+      dynamicIsrPagePath
+        ? checkWebAppBuildId(
+            cloudFrontUrl + dynamicIsrPagePath,
+            buildId,
+            waitTimeout,
+            10
+          )
+        : Promise.resolve(true)
       // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
       // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
     ]);
 
-    if (!cloudFrontReady || !ssrReady || !ssgReady) {
+    if (
+      !cloudFrontReady ||
+      !ssrReady ||
+      !ssgReady ||
+      !isrReady ||
+      !dynamicIsrReady
+    ) {
       throw new Error("Timed out waiting for app to be ready!");
     }
 

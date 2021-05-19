@@ -12,7 +12,7 @@ describe("CDK Construct", () => {
   it("passes correct lambda options to underlying lambdas when single value passed", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       runtime: Runtime.NODEJS_10_X,
       name: {
         defaultLambda: "NextDefaultLambda",
@@ -39,7 +39,7 @@ describe("CDK Construct", () => {
   it("passes correct lambda options to underlying lambdas when object passed", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       name: {
         defaultLambda: "NextDefaultLambda",
         apiLambda: "NextApiLambda",
@@ -70,7 +70,7 @@ describe("CDK Construct", () => {
   it("lambda cache policy passes correct cookies to origin when specified", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       whiteListedCookies: ["my-cookie"],
       cachePolicyName: {
         lambdaCache: "NextLambdaCache"
@@ -97,7 +97,7 @@ describe("CDK Construct", () => {
   it("lambda cache policy passes all cookies to origin when not specified", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       cachePolicyName: {
         lambdaCache: "NextLambdaCache"
       }
@@ -132,7 +132,7 @@ describe("CDK Construct", () => {
       zoneName: domainName
     });
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       domain: {
         certificate,
         domainNames: [domainName],
@@ -177,11 +177,31 @@ describe("CDK Construct", () => {
   it("does not create Route53 records when no domain specified", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate")
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app")
     });
 
     const synthesizedStack = SynthUtils.toCloudFormation(stack);
     expect(synthesizedStack).toCountResources("AWS::Route53::RecordSet", 0);
+  });
+
+  it("does not create an SQS queue if the app has no ISR pages", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app")
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toCountResources("AWS::SQS::Queue", 0);
+  });
+
+  it("does create an SQS queue if the app has ISR pages", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app-with-isr")
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toCountResources("AWS::SQS::Queue", 1);
   });
 
   it("configure distribution, but not Route53 records, with custom domain outside AWS", () => {
@@ -193,7 +213,7 @@ describe("CDK Construct", () => {
     );
     const domainName = "domain.com";
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       domain: {
         certificate,
         domainNames: [domainName]
@@ -232,7 +252,7 @@ describe("CDK Construct", () => {
     );
 
     new NextJSLambdaEdge(stack, "Stack", {
-      serverlessBuildOutDir: path.join(__dirname, "fixtures/next-boilerplate"),
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
       runtime: Runtime.NODEJS_10_X,
       defaultBehavior: {
         edgeLambdas: [

@@ -83,7 +83,7 @@
           "dataRoute": "/_next/data/build-id/tests/prerender-manifest/example-static-page.json"
         },
         "/preview": {
-          "initialRevalidateSeconds": false,
+          "initialRevalidateSeconds": 5,
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/preview.json"
         }

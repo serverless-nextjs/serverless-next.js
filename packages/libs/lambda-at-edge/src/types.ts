@@ -108,6 +108,13 @@ export type OriginResponseEvent = {
   ];
 };
 
+export interface RegenerationEvent {
+  basePath: string | undefined;
+  region: string;
+  bucketName: string;
+  cloudFrontEventRequest: AWSLambda.CloudFrontRequest;
+}
+
 export type PreRenderedManifest = {
   version: 2;
   routes: {

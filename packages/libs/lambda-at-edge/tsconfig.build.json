@@ -9,6 +9,7 @@
     "node_modules",
     "./src/api-handler.ts",
     "./src/default-handler.ts",
-    "./src/image-handler.ts"
+    "./src/image-handler.ts",
+    "./src/regeneration-handler.ts",
   ]
 }

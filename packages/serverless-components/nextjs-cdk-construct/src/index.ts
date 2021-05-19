@@ -6,11 +6,14 @@ import * as s3Deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as origins from "@aws-cdk/aws-cloudfront-origins";
 import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
+import * as sqs from "@aws-cdk/aws-sqs";
+import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
-  RoutesManifest
+  RoutesManifest,
+  PreRenderedManifest
 } from "@sls-next/lambda-at-edge";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -40,6 +43,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   private defaultManifest: OriginRequestDefaultHandlerManifest;
 
+  private prerenderManifest: PreRenderedManifest;
+
   public distribution: cloudfront.Distribution;
 
   public bucket: s3.Bucket;
@@ -60,12 +65,17 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public aRecord?: ARecord;
 
+  public regenerationQueue?: sqs.Queue;
+
+  public regenerationFunction?: lambda.Function;
+
   constructor(scope: cdk.Construct, id: string, private props: Props) {
     super(scope, id);
     this.apiBuildManifest = this.readApiBuildManifest();
     this.routesManifest = this.readRoutesManifest();
     this.imageManifest = this.readImageBuildManifest();
     this.defaultManifest = this.readDefaultManifest();
+    this.prerenderManifest = this.readPrerenderManifest();
     this.bucket = new s3.Bucket(this, "PublicAssets", {
       publicReadAccess: true,
 
@@ -77,6 +87,40 @@ export class NextJSLambdaEdge extends cdk.Construct {
       // Override props.
       ...(props.s3Props || {})
     });
+
+    const hasISRPages = Object.keys(this.prerenderManifest.routes).some(
+      (key) =>
+        typeof this.prerenderManifest.routes[key].initialRevalidateSeconds ===
+        "number"
+    );
+
+    if (hasISRPages) {
+      this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
+        // We call the queue the same name as the bucket so that we can easily
+        // reference it from within the lambda@edge, given we can't use env vars
+        // in a lambda@edge
+        queueName: `${this.bucket.bucketName}.fifo`,
+        fifo: true,
+        removalPolicy: cdk.RemovalPolicy.DESTROY
+      });
+
+      this.regenerationFunction = new lambda.Function(
+        this,
+        "RegenerationFunction",
+        {
+          handler: "index.handler",
+          runtime: lambda.Runtime.NODEJS_14_X,
+          timeout: Duration.seconds(30),
+          code: lambda.Code.fromAsset(
+            path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
+          )
+        }
+      );
+
+      this.regenerationFunction.addEventSource(
+        new lambdaEventSources.SqsEventSource(this.regenerationQueue)
+      );
+    }
 
     this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
@@ -111,7 +155,14 @@ export class NextJSLambdaEdge extends cdk.Construct {
       timeout: toLambdaOption("defaultLambda", props.timeout)
     });
 
+    this.bucket.grantReadWrite(this.defaultNextLambda);
     this.defaultNextLambda.currentVersion.addAlias("live");
+
+    if (hasISRPages && this.regenerationFunction) {
+      this.bucket.grantReadWrite(this.regenerationFunction);
+      this.regenerationQueue?.grantSendMessages(this.defaultNextLambda);
+      this.regenerationFunction?.grantInvoke(this.defaultNextLambda);
+    }
 
     const apis = this.apiBuildManifest?.apis;
     const hasAPIPages =
@@ -379,11 +430,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
       });
     });
 
-    if (props.domain?.hostedZone != null) {
+    if (props.domain?.hostedZone) {
+      const hostedZone = props.domain.hostedZone;
       props.domain.domainNames.forEach((domainName, index) => {
         this.aRecord = new ARecord(this, `AliasRecord_${index}`, {
           recordName: domainName,
-          zone: props.domain!.hostedZone!, // not sure why ! is needed here
+          zone: hostedZone,
           target: RecordTarget.fromAlias(
             new CloudFrontTarget(this.distribution)
           )
@@ -413,6 +465,15 @@ export class NextJSLambdaEdge extends cdk.Construct {
       path.join(
         this.props.serverlessBuildOutDir,
         "default-lambda/manifest.json"
+      )
+    );
+  }
+
+  private readPrerenderManifest(): PreRenderedManifest {
+    return fs.readJSONSync(
+      path.join(
+        this.props.serverlessBuildOutDir,
+        "default-lambda/prerender-manifest.json"
       )
     );
   }

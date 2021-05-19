@@ -12,7 +12,9 @@ import {
   RenderRoute,
   routeDefault,
   StaticRoute,
-  UnauthorizedRoute
+  UnauthorizedRoute,
+  getStaticRegenerationResponse,
+  getThrottledStaticRegenerationCachePolicy
 } from "@sls-next/core";
 
 import {
@@ -36,6 +38,10 @@ import { addHeadersToResponse } from "./headers/addHeaders";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import { getLocalePrefixFromUri } from "./routing/locale-utils";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
+import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
+import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
+import { s3StorePage } from "./s3/s3StorePage";
+import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -183,7 +189,6 @@ export const handler = async (
     response = await handleOriginResponse({
       event,
       manifest,
-      prerenderManifest,
       routesManifest
     });
   } else {
@@ -348,24 +353,67 @@ const handleOriginRequest = async ({
 const handleOriginResponse = async ({
   event,
   manifest,
-  prerenderManifest,
   routesManifest
 }: {
   event: OriginResponseEvent;
   manifest: OriginRequestDefaultHandlerManifest;
-  prerenderManifest: PrerenderManifestType;
   routesManifest: RoutesManifest;
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
   const { uri } = request;
   const { status } = response;
+  const bucketName = s3BucketNameFromEventRequest(request);
+
   if (status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
     if (uri.endsWith("/404.html")) {
       response.status = "404";
       response.statusDescription = "Not Found";
+      return response;
     }
+
+    const staticRegenerationResponse = getStaticRegenerationResponse({
+      requestedOriginUri: uri,
+      expiresHeader: response.headers?.expires?.[0]?.value || "",
+      lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
+      manifest
+    });
+
+    if (staticRegenerationResponse) {
+      response.headers["cache-control"] = [
+        {
+          key: "Cache-Control",
+          value: staticRegenerationResponse.cacheControl
+        }
+      ];
+
+      // We don't want the `expires` header to be sent to the client we manage
+      // the cache at the edge using the s-maxage directive in the cache-control
+      // header
+      delete response.headers.expires;
+
+      if (staticRegenerationResponse.secondsRemainingUntilRevalidation === 0) {
+        const { throttle } = await triggerStaticRegeneration({
+          basePath,
+          request,
+          response
+        });
+
+        // Occasionally we will get rate-limited by the Queue (in the event we
+        // send it too many messages) and so we we use the cache to reduce
+        // requests to the queue for a short period.
+        if (throttle) {
+          response.headers["cache-control"] = [
+            {
+              key: "Cache-Control",
+              value: getThrottledStaticRegenerationCachePolicy(1).cacheControl
+            }
+          ];
+        }
+      }
+    }
+
     return response;
   }
 
@@ -373,9 +421,6 @@ const handleOriginResponse = async ({
   if (request.method === "PUT" || request.method === "DELETE") {
     return response;
   }
-
-  const { domainName, region } = request.origin!.s3!;
-  const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
   // Lazily import only S3Client to reduce init times until actually needed
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
@@ -401,12 +446,7 @@ const handleOriginResponse = async ({
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
     // Reconstruct original uri for next/router
-    if (uri.endsWith(".html")) {
-      request.uri = uri.slice(0, uri.length - 5);
-      if (manifest.trailingSlash) {
-        request.uri += "/";
-      }
-    }
+    request.uri = cleanRequestUriForRouter(request.uri, manifest.trailingSlash);
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
       event.Records[0].cf,
       {
@@ -419,44 +459,38 @@ const handleOriginResponse = async ({
       res,
       "passthrough"
     );
+    let cacheControl = "public, max-age=0, s-maxage=2678400, must-revalidate";
     if (isSSG) {
-      const baseKey = uri
-        .replace(/^\//, "")
-        .replace(/\.(json|html)$/, "")
-        .replace(/^_next\/data\/[^\/]*\//, "");
-      const jsonKey = `_next/data/${manifest.buildId}/${baseKey}.json`;
-      const htmlKey = `static-pages/${manifest.buildId}/${baseKey}.html`;
-      const s3JsonParams = {
-        Bucket: bucketName,
-        Key: `${s3BasePath}${jsonKey}`,
-        Body: JSON.stringify(renderOpts.pageData),
-        ContentType: "application/json",
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-      const s3HtmlParams = {
-        Bucket: bucketName,
-        Key: `${s3BasePath}${htmlKey}`,
-        Body: html,
-        ContentType: "text/html",
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-      const { PutObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/PutObjectCommand"
-      );
-      await Promise.all([
-        s3.send(new PutObjectCommand(s3JsonParams)),
-        s3.send(new PutObjectCommand(s3HtmlParams))
-      ]);
+      const { expires } = await s3StorePage({
+        html,
+        uri,
+        basePath,
+        bucketName: bucketName || "",
+        buildId: manifest.buildId,
+        pageData: renderOpts.pageData,
+        region: request.origin?.s3?.region || "",
+        revalidate: renderOpts.revalidate
+      });
+
+      const isrResponse = expires
+        ? getStaticRegenerationResponse({
+            expiresHeader: expires.toJSON(),
+            manifest,
+            requestedOriginUri: uri,
+            lastModifiedHeader: undefined
+          })
+        : null;
+
+      cacheControl = (isrResponse && isrResponse.cacheControl) || cacheControl;
     }
     const outHeaders: OutgoingHttpHeaders = {};
     Object.entries(response.headers).map(([name, headers]) => {
       outHeaders[name] = headers.map(({ value }) => value);
     });
+
     res.writeHead(200, outHeaders);
-    res.setHeader(
-      "Cache-Control",
-      "public, max-age=0, s-maxage=2678400, must-revalidate"
-    );
+    res.setHeader("Cache-Control", cacheControl);
+
     if (isDataRequest(uri)) {
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));

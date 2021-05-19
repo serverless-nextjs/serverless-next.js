@@ -31,6 +31,7 @@ import { Job } from "@vercel/nft/out/node-file-trace";
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
+export const REGENERATION_LAMBDA_CODE_DIR = "regeneration-lambda";
 export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
@@ -230,7 +231,11 @@ class Builder {
    * @param shouldMinify
    */
   async processAndCopyHandler(
-    handlerType: "api-handler" | "default-handler" | "image-handler",
+    handlerType:
+      | "api-handler"
+      | "default-handler"
+      | "image-handler"
+      | "regeneration-handler",
     destination: string,
     shouldMinify: boolean
   ) {
@@ -245,9 +250,9 @@ class Builder {
     await fse.copy(source, destination);
   }
 
-  async buildDefaultLambda(
+  async copyTraces(
     buildManifest: OriginRequestDefaultHandlerManifest
-  ): Promise<void[]> {
+  ): Promise<void> {
     let copyTraces: Promise<void>[] = [];
 
     if (this.buildOptions.useServerlessTraceTarget) {
@@ -284,7 +289,13 @@ class Builder {
       );
     }
 
-    let prerenderManifest = require(join(
+    await Promise.all(copyTraces);
+  }
+
+  async buildDefaultLambda(
+    buildManifest: OriginRequestDefaultHandlerManifest
+  ): Promise<void[]> {
+    const prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
     ));
@@ -294,7 +305,7 @@ class Builder {
     );
 
     return Promise.all([
-      ...copyTraces,
+      this.copyTraces(buildManifest),
       this.processAndCopyHandler(
         "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
@@ -410,6 +421,40 @@ class Builder {
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
+      )
+    ]);
+  }
+
+  async buildRegenerationHandler(
+    buildManifest: OriginRequestDefaultHandlerManifest
+  ): Promise<void> {
+    await Promise.all([
+      this.copyTraces(buildManifest),
+      fse.writeJson(
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
+      this.processAndCopyHandler(
+        "regeneration-handler",
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
+        !!this.buildOptions.minifyHandlers
+      ),
+      fse.copy(
+        join(this.serverlessDir, "pages"),
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "pages"),
+        {
+          filter: (file: string) => {
+            const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
+            const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
+            const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
+
+            return (
+              isNotPrerenderedHTMLPage &&
+              isNotStaticPropsJSONFile &&
+              isNotApiPage
+            );
+          }
+        }
       )
     ]);
   }
@@ -943,9 +988,9 @@ class Builder {
       path.join(dotNextDirectory, "prerender-manifest.json")
     );
 
-    let prerenderManifestJSONPropFileAssets: Promise<void>[] = [];
-    let prerenderManifestHTMLPageAssets: Promise<void>[] = [];
-    let fallbackHTMLPageAssets: Promise<void>[] = [];
+    const prerenderManifestJSONPropFileAssets: Promise<void>[] = [];
+    const prerenderManifestHTMLPageAssets: Promise<void>[] = [];
+    const fallbackHTMLPageAssets: Promise<void>[] = [];
 
     // Copy locale-specific prerendered files if defined, otherwise use empty locale
     // which would copy to root only
@@ -1121,6 +1166,7 @@ class Builder {
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
 
     const { restoreUserConfig } = await createServerlessConfig(
@@ -1162,6 +1208,7 @@ class Builder {
     } = await this.prepareBuildManifests(routesManifest, prerenderManifest);
 
     await this.buildDefaultLambda(defaultBuildManifest);
+    await this.buildRegenerationHandler(defaultBuildManifest);
 
     const hasAPIPages =
       Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
