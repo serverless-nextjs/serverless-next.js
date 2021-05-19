@@ -256,6 +256,7 @@ function cleanup(): void {
     );
 
     // Optimistically clean up app's S3 bucket
+    console.info("Optimistically cleaning up app's S3 bucket");
     execSync(
       `aws s3 rm s3://${getAppBucketName(appName)} --recursive || true`,
       {

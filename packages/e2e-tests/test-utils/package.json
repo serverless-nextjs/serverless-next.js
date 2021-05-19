@@ -2,6 +2,9 @@
   "name": "e2e-test-utils",
   "version": "1.0.0",
   "description": "Test utils for running serverless-next.js end-to-end tests",
+  "scripts": {
+    "cleanup-lambda": "ts-node --project tsconfig.scripts.json scripts/cleanup-lambda.ts"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/serverless-next.js/serverless-next.js"
