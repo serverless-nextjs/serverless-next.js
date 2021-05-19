@@ -128,20 +128,20 @@
         }
       },
       "nonDynamic": {
-        "/": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id2/index.json"
-        },
         "/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/fallback/[slug]",
           "dataRoute": "/_next/data/build-id2/fallback/example-static-page.json"
         },
         "/preview": {
-          "initialRevalidateSeconds": false,
+          "initialRevalidateSeconds": 5,
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id2/preview.json"
+        },
+        "/": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id2/index.json"
         },
         "/no-fallback/example-static-page": {
           "initialRevalidateSeconds": false,

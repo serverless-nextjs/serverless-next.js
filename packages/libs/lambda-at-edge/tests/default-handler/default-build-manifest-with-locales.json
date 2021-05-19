@@ -440,25 +440,30 @@
     },
     "ssg": {
       "nonDynamic": {
-        "/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/preview.json"
-        },
-        "/nl/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/nl/preview.json"
-        },
-        "/fr/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/fr/preview.json"
-        },
         "/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/fallback/[slug]",
           "dataRoute": "/_next/data/build-id/fallback/example-static-page.json"
+        },
+        "/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
+        },
+        "/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/preview.json"
+        },
+        "/nl/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/preview.json"
+        },
+        "/fr/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/preview.json"
         },
         "/en": {
           "initialRevalidateSeconds": false,
@@ -475,30 +480,30 @@
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/index.json"
         },
-        "/no-fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/no-fallback/[slug]",
-          "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
-        },
-        "/en/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/en/preview.json"
-        },
-        "/en/nl/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/en/preview.json"
-        },
-        "/en/fr/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/en/preview.json"
-        },
         "/en/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/en/fallback/[slug]",
           "dataRoute": "/_next/data/build-id/en/fallback/example-static-page.json"
+        },
+        "/en/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/en/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/en/no-fallback/example-static-page.json"
+        },
+        "/en/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/preview.json"
+        },
+        "/en/nl/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/preview.json"
+        },
+        "/en/fr/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/en/preview.json"
         },
         "/en/en": {
           "initialRevalidateSeconds": false,
@@ -515,25 +520,25 @@
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/en/index.json"
         },
-        "/en/no-fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/en/no-fallback/[slug]",
-          "dataRoute": "/_next/data/build-id/en/no-fallback/example-static-page.json"
-        },
-        "/nl/nl/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/nl/preview.json"
-        },
-        "/nl/fr/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/nl/preview.json"
-        },
         "/nl/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/nl/fallback/[slug]",
           "dataRoute": "/_next/data/build-id/nl/fallback/example-static-page.json"
+        },
+        "/nl/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/nl/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/nl/no-fallback/example-static-page.json"
+        },
+        "/nl/nl/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/preview.json"
+        },
+        "/nl/fr/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/nl/preview.json"
         },
         "/nl/en": {
           "initialRevalidateSeconds": false,
@@ -550,25 +555,25 @@
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/nl/index.json"
         },
-        "/nl/no-fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/nl/no-fallback/[slug]",
-          "dataRoute": "/_next/data/build-id/nl/no-fallback/example-static-page.json"
-        },
-        "/fr/nl/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/fr/preview.json"
-        },
-        "/fr/fr/preview": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null,
-          "dataRoute": "/_next/data/build-id/fr/preview.json"
-        },
         "/fr/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/fr/fallback/[slug]",
           "dataRoute": "/_next/data/build-id/fr/fallback/example-static-page.json"
+        },
+        "/fr/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/fr/no-fallback/[slug]",
+          "dataRoute": "/_next/data/build-id/fr/no-fallback/example-static-page.json"
+        },
+        "/fr/nl/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/preview.json"
+        },
+        "/fr/fr/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null,
+          "dataRoute": "/_next/data/build-id/fr/preview.json"
         },
         "/fr/en": {
           "initialRevalidateSeconds": false,
@@ -584,11 +589,6 @@
           "initialRevalidateSeconds": false,
           "srcRoute": null,
           "dataRoute": "/_next/data/build-id/fr/index.json"
-        },
-        "/fr/no-fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/fr/no-fallback/[slug]",
-          "dataRoute": "/_next/data/build-id/fr/no-fallback/example-static-page.json"
         }
       },
       "dynamic": {

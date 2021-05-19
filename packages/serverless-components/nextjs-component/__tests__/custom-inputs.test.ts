@@ -6,6 +6,7 @@ import { mockUpload } from "aws-sdk";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import mockCreateInvalidation from "@sls-next/cloudfront";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockSQS } from "@sls-next/aws-sqs";
 
 import NextjsComponent, { DeploymentResult } from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
@@ -42,6 +43,10 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
 
   mockDomain.mockResolvedValueOnce({
     domains: [expectedDomain]
+  });
+
+  mockSQS.mockResolvedValue({
+    arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
   });
 };
 

@@ -1,5 +1,5 @@
-const promisify = (mockFunction) => {
-  const mockPromise = jest.fn(() => Promise.resolve());
+const promisify = (mockFunction, mockResolvedValue) => {
+  const mockPromise = jest.fn(() => Promise.resolve(mockResolvedValue));
   mockFunction.mockReturnValue({
     promise: mockPromise
   });
@@ -71,6 +71,23 @@ const {
 } = promisify(jest.fn());
 MockSTS.prototype.getCallerIdentity = mockGetCallerIdentity;
 
+const MockSQS = jest.fn();
+const {
+  mockFunction: mockGetQueueAttributes,
+  mockPromise: mockGetQueueAttributesPromise
+} = promisify(jest.fn());
+const {
+  mockFunction: mockCreateQueue,
+  mockPromise: mockCreateQueuePromise
+} = promisify(jest.fn());
+const {
+  mockFunction: mockDeleteQueue,
+  mockPromise: mockDeleteQueuePromise
+} = promisify(jest.fn());
+MockSQS.prototype.createQueue = mockCreateQueue;
+MockSQS.prototype.deleteQueue = mockDeleteQueue;
+MockSQS.prototype.getQueueAttributes = mockGetQueueAttributes;
+
 const MockAPIGateway = function () {};
 const {
   mockFunction: mockGetRestApis,
@@ -86,6 +103,9 @@ const mockMetadataRequest = jest
   .mockImplementation((path, cb) => cb(null, {}));
 MockMetadataService.prototype.request = mockMetadataRequest;
 
+const mockListEventSourceMappingsPromise = jest.fn();
+const mockCreateEventSourceMappingPromise = jest.fn();
+
 module.exports = {
   EnvironmentCredentials: MockEnvironmentCredentials,
   S3: jest.fn(() => {
@@ -97,10 +117,27 @@ module.exports = {
   CloudFormation: MockCloudFormation,
   CloudWatchLogs: MockCloudWatchLogs,
   STS: MockSTS,
+  SQS: MockSQS,
+  Lambda: jest.fn().mockImplementation(() => ({
+    listEventSourceMappings: jest.fn().mockReturnValue({
+      promise: mockListEventSourceMappingsPromise
+    }),
+    createEventSourceMapping: jest.fn().mockReturnValue({
+      promise: mockCreateEventSourceMappingPromise
+    })
+  })),
   APIGateway: MockAPIGateway,
   SharedIniFileCredentials: MockSharedIniFileCredentials,
   MetadataService: MockMetadataService,
 
+  mockDeleteQueue,
+  mockDeleteQueuePromise,
+  mockCreateQueue,
+  mockCreateQueuePromise,
+  mockGetQueueAttributes,
+  mockGetQueueAttributesPromise,
+  mockListEventSourceMappingsPromise,
+  mockCreateEventSourceMappingPromise,
   mockDescribeStacks,
   mockDescribeStacksPromise,
   mockCreateStack,

@@ -8,7 +8,7 @@
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "SSG_PAGE_PATH=/ssg-page SSR_PAGE_PATH=/ssr-page APP_NAME=next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
+    "e2e:ci": "ISR_PAGE_PATH=/revalidated-ssg-page DYNAMIC_ISR_PAGE_PATH=/revalidated-ssg-pages/101 SSG_PAGE_PATH=/ssg-page SSR_PAGE_PATH=/ssr-page APP_NAME=next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
   },
   "repository": {
     "type": "git",
@@ -36,7 +36,7 @@
     "aws-sdk": "2.758.0",
     "babel-plugin-istanbul": "6.0.0",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "cypress": "5.1.0",
+    "cypress": "7.2.0",
     "istanbul-lib-coverage": "3.0.0",
     "nyc": "15.1.0",
     "ts-node": "9.0.0",

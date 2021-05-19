@@ -51,7 +51,7 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add("ensureAllRoutesNotErrored", () => {
-  cy.route2("**", (req) => {
+  cy.intercept("**", (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -61,7 +61,7 @@ Cypress.Commands.add("ensureAllRoutesNotErrored", () => {
 });
 
 Cypress.Commands.add("ensureRouteNotCached", (path: string | RegExp) => {
-  cy.route2(path, (req) => {
+  cy.intercept(path, (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -75,7 +75,7 @@ Cypress.Commands.add("ensureRouteNotCached", (path: string | RegExp) => {
 });
 
 Cypress.Commands.add("ensureRouteCached", (path: string | RegExp) => {
-  cy.route2(path, (req) => {
+  cy.intercept(path, (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -89,7 +89,7 @@ Cypress.Commands.add("ensureRouteCached", (path: string | RegExp) => {
 });
 
 Cypress.Commands.add("ensureRouteNotErrored", (path: string | RegExp) => {
-  cy.route2(path, (req) => {
+  cy.intercept(path, (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -101,7 +101,7 @@ Cypress.Commands.add("ensureRouteNotErrored", (path: string | RegExp) => {
 Cypress.Commands.add(
   "ensureRouteHasStatusCode",
   (path: string | RegExp, status: number) => {
-    cy.route2(path, (req) => {
+    cy.intercept(path, (req) => {
       req.reply((res) => {
         if (res.statusCode !== status) {
           throw new Error(

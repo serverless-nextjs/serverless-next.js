@@ -5,20 +5,26 @@ import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import mockCreateInvalidation from "@sls-next/cloudfront";
 import NextjsComponent from "../src/component";
+import { mockSQS } from "@sls-next/aws-sqs";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
-  IMAGE_LAMBDA_CODE_DIR
+  IMAGE_LAMBDA_CODE_DIR,
+  REGENERATION_LAMBDA_CODE_DIR
 } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 import { mockUpload } from "aws-sdk";
 
-describe("deploy tests", () => {
+describe.each`
+  appPath                      | expectsQueueDeployment | name
+  ${"./fixtures/simple-app"}   | ${false}               | ${"without ISR"}
+  ${"./fixtures/app-with-isr"} | ${true}                | ${"with ISR"}
+`("deploy tests ($name)", ({ appPath, expectsQueueDeployment }) => {
   let tmpCwd;
   let componentOutputs;
   let consoleWarnSpy;
 
-  const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+  const fixturePath = path.join(__dirname, appPath);
 
   beforeEach(async () => {
     const realFseRemove = fse.remove.bind({});
@@ -36,6 +42,12 @@ describe("deploy tests", () => {
     mockS3.mockResolvedValue({
       name: "bucket-xyz"
     });
+    if (expectsQueueDeployment) {
+      mockLambda.mockResolvedValueOnce({
+        arn:
+          "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
+      });
+    }
     mockLambda.mockResolvedValueOnce({
       arn:
         "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
@@ -55,6 +67,12 @@ describe("deploy tests", () => {
       id: "cloudfrontdistrib",
       url: "https://cloudfrontdistrib.amazonaws.com"
     });
+
+    if (expectsQueueDeployment) {
+      mockSQS.mockResolvedValue({
+        arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
+      });
+    }
 
     const component = new NextjsComponent();
     component.context.credentials = {
@@ -88,103 +106,194 @@ describe("deploy tests", () => {
   });
 
   describe("cloudfront", () => {
+    if (expectsQueueDeployment) {
+      it("provisions regeneration lambda", () => {
+        expect(mockLambda).toHaveBeenNthCalledWith(1, {
+          description: expect.any(String),
+          handler: "index.handler",
+          code: path.join(fixturePath, REGENERATION_LAMBDA_CODE_DIR),
+          memory: 512,
+          timeout: 10,
+          runtime: "nodejs12.x",
+          name: "bucket-xyz",
+          region: "us-east-1",
+          role: {
+            service: ["lambda.amazonaws.com"],
+            policy: {
+              Version: "2012-10-17",
+              Statement: expect.arrayContaining([
+                {
+                  Effect: "Allow",
+                  Resource: "*",
+                  Action: [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: `arn:aws:s3:::bucket-xyz/*`,
+                  Action: ["s3:GetObject", "s3:PutObject"]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                  Action: ["sqs:SendMessage"]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                  Action: [
+                    "sqs:ReceiveMessage",
+                    "sqs:DeleteMessage",
+                    "sqs:GetQueueAttributes"
+                  ]
+                }
+              ])
+            }
+          }
+        });
+      });
+    }
+
     it("provisions default lambda", () => {
-      expect(mockLambda).toHaveBeenNthCalledWith(3, {
-        description: expect.any(String),
-        handler: "index.handler",
-        code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
-        memory: 512,
-        timeout: 10,
-        runtime: "nodejs12.x",
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            Version: "2012-10-17",
-            Statement: [
-              {
-                Effect: "Allow",
-                Resource: "*",
-                Action: [
-                  "logs:CreateLogGroup",
-                  "logs:CreateLogStream",
-                  "logs:PutLogEvents"
-                ]
-              },
-              {
-                Effect: "Allow",
-                Resource: `arn:aws:s3:::bucket-xyz/*`,
-                Action: ["s3:GetObject", "s3:PutObject"]
-              }
-            ]
+      expect(mockLambda).toHaveBeenNthCalledWith(
+        // The queue would be deployed first, if its not then the calls should be 1 step before.
+        3 + Number(expectsQueueDeployment),
+        {
+          description: expect.any(String),
+          handler: "index.handler",
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          memory: 512,
+          timeout: 10,
+          runtime: "nodejs12.x",
+          role: {
+            service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+            policy: {
+              Version: "2012-10-17",
+              Statement: [
+                {
+                  Effect: "Allow",
+                  Resource: "*",
+                  Action: [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: `arn:aws:s3:::bucket-xyz/*`,
+                  Action: ["s3:GetObject", "s3:PutObject"]
+                },
+                ...(expectsQueueDeployment
+                  ? [
+                      {
+                        Effect: "Allow",
+                        Resource:
+                          "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                        Action: ["sqs:SendMessage"]
+                      }
+                    ]
+                  : [])
+              ]
+            }
           }
         }
-      });
+      );
     });
 
     it("provisions api lambda", () => {
-      expect(mockLambda).toHaveBeenNthCalledWith(1, {
-        description: expect.any(String),
-        handler: "index.handler",
-        code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
-        memory: 512,
-        timeout: 10,
-        runtime: "nodejs12.x",
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            Version: "2012-10-17",
-            Statement: [
-              {
-                Effect: "Allow",
-                Resource: "*",
-                Action: [
-                  "logs:CreateLogGroup",
-                  "logs:CreateLogStream",
-                  "logs:PutLogEvents"
-                ]
-              },
-              {
-                Effect: "Allow",
-                Resource: `arn:aws:s3:::bucket-xyz/*`,
-                Action: ["s3:GetObject", "s3:PutObject"]
-              }
-            ]
+      expect(mockLambda).toHaveBeenNthCalledWith(
+        1 + Number(expectsQueueDeployment),
+        {
+          description: expect.any(String),
+          handler: "index.handler",
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          memory: 512,
+          timeout: 10,
+          runtime: "nodejs12.x",
+          role: {
+            service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+            policy: {
+              Version: "2012-10-17",
+              Statement: [
+                {
+                  Effect: "Allow",
+                  Resource: "*",
+                  Action: [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: `arn:aws:s3:::bucket-xyz/*`,
+                  Action: ["s3:GetObject", "s3:PutObject"]
+                },
+                ...(expectsQueueDeployment
+                  ? [
+                      {
+                        Effect: "Allow",
+                        Resource:
+                          "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                        Action: ["sqs:SendMessage"]
+                      }
+                    ]
+                  : [])
+              ]
+            }
           }
         }
-      });
+      );
     });
 
     it("provisions image lambda", () => {
-      expect(mockLambda).toHaveBeenNthCalledWith(2, {
-        description: expect.any(String),
-        handler: "index.handler",
-        code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
-        memory: 512,
-        timeout: 10,
-        runtime: "nodejs12.x",
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy: {
-            Version: "2012-10-17",
-            Statement: [
-              {
-                Effect: "Allow",
-                Resource: "*",
-                Action: [
-                  "logs:CreateLogGroup",
-                  "logs:CreateLogStream",
-                  "logs:PutLogEvents"
-                ]
-              },
-              {
-                Effect: "Allow",
-                Resource: `arn:aws:s3:::bucket-xyz/*`,
-                Action: ["s3:GetObject", "s3:PutObject"]
-              }
-            ]
+      expect(mockLambda).toHaveBeenNthCalledWith(
+        2 + Number(expectsQueueDeployment),
+        {
+          description: expect.any(String),
+          handler: "index.handler",
+          code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
+          memory: 512,
+          timeout: 10,
+          runtime: "nodejs12.x",
+          role: {
+            service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+            policy: {
+              Version: "2012-10-17",
+              Statement: [
+                {
+                  Effect: "Allow",
+                  Resource: "*",
+                  Action: [
+                    "logs:CreateLogGroup",
+                    "logs:CreateLogStream",
+                    "logs:PutLogEvents"
+                  ]
+                },
+                {
+                  Effect: "Allow",
+                  Resource: `arn:aws:s3:::bucket-xyz/*`,
+                  Action: ["s3:GetObject", "s3:PutObject"]
+                },
+                ...(expectsQueueDeployment
+                  ? [
+                      {
+                        Effect: "Allow",
+                        Resource:
+                          "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                        Action: ["sqs:SendMessage"]
+                      }
+                    ]
+                  : [])
+              ]
+            }
           }
         }
-      });
+      );
     });
 
     it("creates distribution", () => {

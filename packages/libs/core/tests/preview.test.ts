@@ -14,9 +14,9 @@ describe("isValidPreviewRequest", () => {
         }
       ];
 
-      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).resolves.toEqual(
-        false
-      );
+      expect(
+        isValidPreviewRequest(cookies, previewModeSigningKey)
+      ).resolves.toEqual(false);
     });
 
     it("is falsey for invalid preview cookies", () => {
@@ -28,9 +28,9 @@ describe("isValidPreviewRequest", () => {
         }
       ];
 
-      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).resolves.toEqual(
-        false
-      );
+      expect(
+        isValidPreviewRequest(cookies, previewModeSigningKey)
+      ).resolves.toEqual(false);
     });
   });
 
@@ -45,9 +45,9 @@ describe("isValidPreviewRequest", () => {
         }
       ];
 
-      expect(isValidPreviewRequest(cookies, previewModeSigningKey)).resolves.toEqual(
-        true
-      );
+      expect(
+        isValidPreviewRequest(cookies, previewModeSigningKey)
+      ).resolves.toEqual(true);
     });
   });
 });

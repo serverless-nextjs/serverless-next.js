@@ -25,6 +25,8 @@ import {
   UnauthorizedRoute
 } from "./types";
 
+export * from "./revalidate";
+
 export const handleAuth = (
   req: Request,
   manifest: Manifest

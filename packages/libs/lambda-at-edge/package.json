@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.8.1-alpha.7",
+  "version": "1.9.0-alpha.0",
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -13,6 +13,7 @@
   "scripts": {
     "prepare": "yarn build",
     "clean": "ts-node scripts/clean-dist.ts",
+    "build-test-manifests": "ts-node scripts/build-test-manifests.ts",
     "copy-sharp-modules": "ts-node scripts/copy-sharp-modules.ts",
     "build": "rollup --config && tsc -p tsconfig.build.json && yarn copy-sharp-modules"
   },
@@ -49,7 +50,7 @@
     "@types/node-fetch": "^2.5.7",
     "@types/path-to-regexp": "^1.7.0",
     "@types/send": "^0.14.5",
-    "@types/sharp": "^0.26.1",
+    "@types/sharp": "^0.28.1",
     "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.46.0",
     "rollup-plugin-delete": "^2.0.0",
@@ -59,10 +60,11 @@
     "sharp": "^0.26.3",
     "ts-loader": "^7.0.5",
     "ts-node": "^9.0.0",
-    "typescript": "^3.9.6"
+    "typescript": "^4.2.4"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "1.0.0-rc.3",
+    "@aws-sdk/client-s3": "3.14.0",
+    "@aws-sdk/client-sqs": "3.14.0",
     "@hapi/accept": "5.0.1",
     "@sls-next/core": "link:../core",
     "@vercel/nft": "^0.9.3",
