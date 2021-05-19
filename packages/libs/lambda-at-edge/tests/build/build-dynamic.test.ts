@@ -271,12 +271,12 @@ describe("Builder Tests (dynamic)", () => {
           "/en/fallback-blocking/a": {
             dataRoute: "/_next/data/test-build-id/en/fallback-blocking/a.json",
             initialRevalidateSeconds: false,
-            srcRoute: "/en/fallback-blocking/[slug]"
+            srcRoute: "/fallback-blocking/[slug]"
           },
           "/en/fallback/a": {
             dataRoute: "/_next/data/test-build-id/en/fallback/a.json",
             initialRevalidateSeconds: false,
-            srcRoute: "/en/fallback/[slug]"
+            srcRoute: "/fallback/[slug]"
           },
           "/en/nl": {
             dataRoute: "/_next/data/test-build-id/en/index.json",
@@ -291,22 +291,12 @@ describe("Builder Tests (dynamic)", () => {
           "/en/no-fallback/a": {
             dataRoute: "/_next/data/test-build-id/en/no-fallback/a.json",
             initialRevalidateSeconds: false,
-            srcRoute: "/en/no-fallback/[slug]"
+            srcRoute: "/no-fallback/[slug]"
           },
           "/en/ssg": {
             dataRoute: "/_next/data/test-build-id/en/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
-          },
-          "/fallback-blocking/a": {
-            dataRoute: "/_next/data/test-build-id/fallback-blocking/a.json",
-            initialRevalidateSeconds: false,
-            srcRoute: "/fallback-blocking/[slug]"
-          },
-          "/fallback/a": {
-            dataRoute: "/_next/data/test-build-id/fallback/a.json",
-            initialRevalidateSeconds: false,
-            srcRoute: "/fallback/[slug]"
           },
           "/nl": {
             dataRoute: "/_next/data/test-build-id/index.json",
@@ -318,16 +308,6 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: false,
             srcRoute: null
           },
-          "/nl/fallback-blocking/a": {
-            dataRoute: "/_next/data/test-build-id/nl/fallback-blocking/a.json",
-            initialRevalidateSeconds: false,
-            srcRoute: "/nl/fallback-blocking/[slug]"
-          },
-          "/nl/fallback/a": {
-            dataRoute: "/_next/data/test-build-id/nl/fallback/a.json",
-            initialRevalidateSeconds: false,
-            srcRoute: "/nl/fallback/[slug]"
-          },
           "/nl/nl": {
             dataRoute: "/_next/data/test-build-id/nl/index.json",
             initialRevalidateSeconds: false,
@@ -338,20 +318,10 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: false,
             srcRoute: null
           },
-          "/nl/no-fallback/a": {
-            dataRoute: "/_next/data/test-build-id/nl/no-fallback/a.json",
-            initialRevalidateSeconds: false,
-            srcRoute: "/nl/no-fallback/[slug]"
-          },
           "/nl/ssg": {
             dataRoute: "/_next/data/test-build-id/nl/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
-          },
-          "/no-fallback/a": {
-            dataRoute: "/_next/data/test-build-id/no-fallback/a.json",
-            initialRevalidateSeconds: false,
-            srcRoute: "/no-fallback/[slug]"
           },
           "/ssg": {
             dataRoute: "/_next/data/test-build-id/ssg.json",

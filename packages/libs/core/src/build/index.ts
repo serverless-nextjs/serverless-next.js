@@ -127,9 +127,11 @@ export const prepareBuildManifests = async (
 
   // Add non-dynamic SSG routes
   Object.entries(prerenderManifest.routes).forEach(([route, ssgRoute]) => {
-    // Somehow Next.js generates prerender manifest with default locale prefixed, normalize it
+    // Next.js generates prerender manifest with default locale prefixed, normalize it
+    // This is somewhat wrong, but used in build logic.
+    // Prerendered dynamic routes (with srcRoute) are left as they are
     const defaultLocale = routesManifest.i18n?.defaultLocale;
-    if (defaultLocale) {
+    if (defaultLocale && !ssgRoute.srcRoute) {
       const normalizedRoute = route.replace(`/${defaultLocale}/`, "/");
       ssgRoute.dataRoute = ssgRoute.dataRoute.replace(
         `/${defaultLocale}/`,
@@ -236,6 +238,10 @@ export const prepareBuildManifests = async (
       }
 
       for (const key in ssgPages.nonDynamic) {
+        if (ssgPages.nonDynamic[key].srcRoute) {
+          continue;
+        }
+
         const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
 
         // Initial default value
