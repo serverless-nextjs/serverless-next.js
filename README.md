@@ -15,7 +15,7 @@
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![Platforms](https://img.shields.io/badge/platforms-aws-blue)
 
-A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
+A zero configuration Next.js 9/10 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
 Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
 
