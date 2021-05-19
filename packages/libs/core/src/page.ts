@@ -1,6 +1,6 @@
 import { normalise } from "./basepath";
-import { addDefaultLocaleToPath } from "./locale";
-import { matchDynamic, matchDynamicRoute } from "./match";
+import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
+import { matchDynamicRoute } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import {
   ExternalRoute,
@@ -51,10 +51,14 @@ export const handlePageReq = (
     };
   }
   if (pages.ssg.nonDynamic[localeUri] && !isPreview) {
+    const ssg = pages.ssg.nonDynamic[localeUri];
+    const route = ssg.srcRoute ?? localeUri;
     return {
       isData: false,
       isStatic: true,
-      file: pageHtml(localeUri)
+      file: pageHtml(localeUri),
+      page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
+      revalidate: ssg.initialRevalidateSeconds
     };
   }
   if (pages.ssr.nonDynamic[localeUri]) {
@@ -95,7 +99,9 @@ export const handlePageReq = (
     return {
       isData: false,
       isStatic: true,
-      file: pageHtml(localeUri)
+      file: pageHtml(localeUri),
+      page: `pages${dropLocaleFromPath(dynamic as string, routesManifest)}.js`,
+      fallback: dynamicSSG.fallback
     };
   }
   const dynamicSSR = dynamic && pages.ssr.dynamic[dynamic];

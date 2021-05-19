@@ -178,6 +178,9 @@ export interface StaticRoute extends AnyRoute {
   isStatic: true;
   isData: boolean;
   file: string;
+  page?: string;
+  revalidate?: false | number;
+  fallback?: false | null | string;
 }
 
 export interface UnauthorizedRoute extends AnyRoute {

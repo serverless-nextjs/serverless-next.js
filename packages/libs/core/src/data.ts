@@ -1,5 +1,6 @@
+import { dropLocaleFromPath } from "./locale";
 import { matchDynamicRoute } from "./match";
-import { DataRoute, PageManifest, StaticRoute } from "./types";
+import { DataRoute, PageManifest, RoutesManifest, StaticRoute } from "./types";
 
 /*
  * Get page name from data route
@@ -47,15 +48,20 @@ const handle404 = (manifest: PageManifest): DataRoute | StaticRoute => {
 export const handleDataReq = (
   uri: string,
   manifest: PageManifest,
+  routesManifest: RoutesManifest,
   isPreview: boolean
 ): DataRoute | StaticRoute => {
   const { buildId, pages } = manifest;
   const normalisedUri = normaliseDataUri(uri, buildId);
   if (pages.ssg.nonDynamic[normalisedUri] && !isPreview) {
+    const ssg = pages.ssg.nonDynamic[normalisedUri];
+    const route = ssg.srcRoute ?? normalisedUri;
     return {
       isData: true,
       isStatic: true,
-      file: uri
+      file: uri,
+      page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
+      revalidate: ssg.initialRevalidateSeconds
     };
   }
   if (pages.ssr.nonDynamic[normalisedUri]) {
@@ -73,7 +79,9 @@ export const handleDataReq = (
     return {
       isData: true,
       isStatic: true,
-      file: fullDataUri(normalisedUri, buildId)
+      file: fullDataUri(normalisedUri, buildId),
+      page: `pages${dropLocaleFromPath(dynamic as string, routesManifest)}.js`,
+      fallback: dynamicSSG.fallback
     };
   }
   const dynamicSSR = dynamic && pages.ssr.dynamic[dynamic];
