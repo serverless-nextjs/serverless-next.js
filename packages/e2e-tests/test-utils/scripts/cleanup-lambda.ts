@@ -9,7 +9,7 @@ import {
 
 function listLambdaFunctions(
   lambda: AWS.Lambda,
-  nextMarker = null
+  nextMarker: string | undefined = undefined
 ): Promise<ListFunctionsResponse> {
   return new Promise((resolve, reject) => {
     const opts = {
@@ -32,7 +32,7 @@ function listLambdaFunctions(
 
 function listLambdaVersions(
   lambda: AWS.Lambda,
-  fnName
+  fnName: string
 ): Promise<ListVersionsByFunctionResponse> {
   return new Promise((resolve, reject) => {
     lambda.listVersionsByFunction(
@@ -51,7 +51,11 @@ function listLambdaVersions(
   });
 }
 
-function removeLambdaVersion(lambda: AWS.Lambda, fnName, version): {} {
+function removeLambdaVersion(
+  lambda: AWS.Lambda,
+  fnName: string,
+  version: string
+): Promise<{}> {
   return new Promise((resolve, reject) => {
     lambda.deleteFunction(
       { FunctionName: fnName, Qualifier: version },
@@ -66,29 +70,39 @@ function removeLambdaVersion(lambda: AWS.Lambda, fnName, version): {} {
   });
 }
 
-async function cleanupVersions(region, removeIt = false, nextMarker = null) {
+async function cleanupVersions(
+  region: string,
+  removeIt: boolean = false,
+  nextMarker: string | undefined = undefined
+) {
   const lambda: AWS.Lambda = new AWS.Lambda({ region });
   const lambdas = await listLambdaFunctions(lambda, nextMarker);
 
   let i = 0;
 
-  for (const fn of lambdas.Functions) {
-    const versions = await listLambdaVersions(lambda, fn.FunctionName);
+  for (const fn of lambdas.Functions ?? []) {
+    if (fn.FunctionName) {
+      const versions = await listLambdaVersions(lambda, fn.FunctionName);
 
-    for (const version of versions.Versions) {
-      if (version.Version !== fn.Version) {
-        if (removeIt) {
-          try {
-            await removeLambdaVersion(lambda, fn.FunctionName, version.Version);
+      for (const version of versions.Versions ?? []) {
+        if (version.Version && version.Version !== fn.Version) {
+          if (removeIt) {
+            try {
+              await removeLambdaVersion(
+                lambda,
+                fn.FunctionName,
+                version.Version
+              );
+              i++;
+            } catch (e) {
+              console.log(
+                `Remove failed (${fn.FunctionName} - ${version.Version}): ${e.message}`
+              );
+            }
+          } else {
+            console.log(`${fn.FunctionName} - ${version.Version}`);
             i++;
-          } catch (e) {
-            console.log(
-              `Remove failed (${fn.FunctionName} - ${version.Version}): ${e.message}`
-            );
           }
-        } else {
-          console.log(`${fn.FunctionName} - ${version.Version}`);
-          i++;
         }
       }
     }
