@@ -1,0 +1,118 @@
+#!/usr/bin/env node
+
+// Cleanup Lambda code adapted from https://github.com/davidmenger/cleanup-lambda-versions/blob/master/src/cleanupVersions.js
+import * as AWS from "aws-sdk";
+import {
+  ListFunctionsResponse,
+  ListVersionsByFunctionResponse
+} from "aws-sdk/clients/lambda";
+
+function listLambdaFunctions(
+  lambda: AWS.Lambda,
+  nextMarker = null
+): Promise<ListFunctionsResponse> {
+  return new Promise((resolve, reject) => {
+    const opts = {
+      MaxItems: 999
+    };
+
+    if (nextMarker) {
+      Object.assign(opts, { Marker: nextMarker });
+    }
+
+    lambda.listFunctions(opts, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res);
+      }
+    });
+  });
+}
+
+function listLambdaVersions(
+  lambda: AWS.Lambda,
+  fnName
+): Promise<ListVersionsByFunctionResponse> {
+  return new Promise((resolve, reject) => {
+    lambda.listVersionsByFunction(
+      {
+        FunctionName: fnName,
+        MaxItems: 50
+      },
+      (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      }
+    );
+  });
+}
+
+function removeLambdaVersion(lambda: AWS.Lambda, fnName, version): {} {
+  return new Promise((resolve, reject) => {
+    lambda.deleteFunction(
+      { FunctionName: fnName, Qualifier: version },
+      (err, res) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(res);
+        }
+      }
+    );
+  });
+}
+
+async function cleanupVersions(region, removeIt = false, nextMarker = null) {
+  const lambda: AWS.Lambda = new AWS.Lambda({ region });
+  const lambdas = await listLambdaFunctions(lambda, nextMarker);
+
+  let i = 0;
+
+  for (const fn of lambdas.Functions) {
+    const versions = await listLambdaVersions(lambda, fn.FunctionName);
+
+    for (const version of versions.Versions) {
+      if (version.Version !== fn.Version) {
+        if (removeIt) {
+          try {
+            await removeLambdaVersion(lambda, fn.FunctionName, version.Version);
+            i++;
+          } catch (e) {
+            console.log(
+              `Remove failed (${fn.FunctionName} - ${version.Version}): ${e.message}`
+            );
+          }
+        } else {
+          console.log(`${fn.FunctionName} - ${version.Version}`);
+          i++;
+        }
+      }
+    }
+  }
+
+  if (lambdas.NextMarker) {
+    i += await cleanupVersions(region, removeIt, lambdas.NextMarker);
+  }
+
+  return i;
+}
+
+console.info("Cleaning up old Lambda versions");
+cleanupVersions("us-east-1") // All Lambda@Edge is created in us-east-1 only
+  .then((success) => {
+    if (success) {
+      console.info("Cleaning up old Lambda versions successful.");
+      process.exit(0);
+    } else {
+      console.error("Cleaning up old Lambda versions failed.");
+      process.exit(1);
+    }
+  })
+  .catch((error) => {
+    console.error(`Unhandled error: ${error}`);
+    process.exit(1);
+  });
