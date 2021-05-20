@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.8...@sls-next/core@1.0.0-alpha.9) (2021-05-20)
+
+### Bug Fixes
+
+- **core:** add logging of path when pathToRegexStr fails ([#1082](https://github.com/serverless-nextjs/serverless-next.js/issues/1082)) ([31cc4b1](https://github.com/serverless-nextjs/serverless-next.js/commit/31cc4b15eace8797c2d4f8595122a03b077bd7d1))
+
 # [1.0.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.7...@sls-next/core@1.0.0-alpha.8) (2021-05-20)
 
 **Note:** Version bump only for package @sls-next/core
