@@ -61,9 +61,6 @@ jobs:
         with:
           node-version: "12.x"
 
-      - name: Set registry
-        run: yarn config set registry https://registry.npmjs.org
-
       - name: Build
         run: yarn --frozen-lockfile
 
