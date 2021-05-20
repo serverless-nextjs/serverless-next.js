@@ -29,16 +29,11 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
 
       let srcRoute = manifest.pages.ssg.nonDynamic[baseKey]?.srcRoute;
       if (!srcRoute) {
-        const matchedDynamicRoute = Object.entries(
-          manifest.pages.ssg.dynamic
-        ).find(([, dynamicSsgRoute]) => {
-          return new RegExp(dynamicSsgRoute.routeRegex).test(
-            regenerationEvent.cloudFrontEventRequest.uri
-          );
-        });
-
-        if (matchedDynamicRoute) {
-          [srcRoute] = matchedDynamicRoute;
+        const dynamic = manifest.pages.dynamic.find(({ regex }) =>
+          new RegExp(regex).test(regenerationEvent.cloudFrontEventRequest.uri)
+        );
+        if (dynamic && manifest.pages.ssg.dynamic[dynamic.route]) {
+          srcRoute = dynamic.route;
         }
       }
 

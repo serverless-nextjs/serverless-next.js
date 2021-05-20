@@ -89,7 +89,7 @@ export const handleDataReq = (
     return {
       isData: true,
       isRender: true,
-      page: dynamicSSR.file
+      page: dynamicSSR
     };
   }
 

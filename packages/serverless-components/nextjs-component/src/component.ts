@@ -104,16 +104,12 @@ class NextjsComponent extends Component {
     const manifestPaths = new Set();
 
     // extract paths to validate against from build manifest
-    const ssrDynamic = buildManifest.pages.ssr.dynamic || {};
+    const dynamic = buildManifest.pages.dynamic || [];
     const ssrNonDynamic = buildManifest.pages.ssr.nonDynamic || {};
-    const htmlDynamic = buildManifest.pages.html.dynamic || {};
     const htmlNonDynamic = buildManifest.pages.html.nonDynamic || {};
 
     // dynamic paths to check. We use their regex to match against our input yaml
-    Object.entries({
-      ...ssrDynamic,
-      ...htmlDynamic
-    }).map(([, { regex }]) => {
+    dynamic.map(({ regex }) => {
       manifestRegex.push(new RegExp(regex));
     });
 

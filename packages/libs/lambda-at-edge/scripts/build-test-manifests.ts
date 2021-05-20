@@ -306,6 +306,14 @@ module.exports = {
   {
     auth: true,
     api: "./tests/api-handler/api-build-manifest-with-basic-auth.json"
+  },
+  {
+    config: `
+module.exports = {
+  generateBuildId: async () => "build-id"
+}
+`,
+    default: "./tests/regeneration-handler/default-build-manifest.json"
   }
 ];
 
