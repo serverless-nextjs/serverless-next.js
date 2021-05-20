@@ -72,14 +72,6 @@ jobs:
       - name: "Compress build"
         run: tar -caf build.tar.gz ./packages ./node_modules
 
-      - name: Wait for existing workflow to complete before e2e tests
-        uses: softprops/turnstyle@v1
-        with:
-          poll-interval-seconds: 15
-          same-branch-only: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
       - name: "Upload build"
         uses: actions/upload-artifact@v2
         with:
@@ -140,6 +132,14 @@ jobs:
 
       - name: "Uncompress build"
         run: tar -xf build.tar.gz
+
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 15
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run e2e tests
         env:
