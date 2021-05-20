@@ -13,6 +13,7 @@
   "scripts": {
     "prepare": "yarn build",
     "clean": "ts-node scripts/clean-dist.ts",
+    "build-test-manifests": "ts-node scripts/build-test-manifests.ts",
     "copy-sharp-modules": "ts-node scripts/copy-sharp-modules.ts",
     "build": "rollup --config && tsc -p tsconfig.build.json && yarn copy-sharp-modules"
   },

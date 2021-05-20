@@ -181,10 +181,11 @@ export const routeDefault = async (
   );
 
   if (isDataReq) {
-    return handleDataReq(uri, manifest, isPreview);
+    return handleDataReq(uri, manifest, routesManifest, isPreview);
   } else {
     return handlePageReq(req.uri, manifest, routesManifest, isPreview);
   }
 };
 
+export * from "./build";
 export * from "./types";

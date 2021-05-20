@@ -145,15 +145,14 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                  | expectedPage
-        ${"/"}                                                | ${"/index.html"}
-        ${"/terms"}                                           | ${"/terms.html"}
-        ${"/users/batman"}                                    | ${"/users/[user].html"}
-        ${"/users/test/catch/all"}                            | ${"/users/[...user].html"}
-        ${"/john/123"}                                        | ${"/[username]/[id].html"}
-        ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
-        ${"/preview"}                                         | ${"/preview.html"}
+        path                               | expectedPage
+        ${"/"}                             | ${"/index.html"}
+        ${"/terms"}                        | ${"/terms.html"}
+        ${"/users/batman"}                 | ${"/users/[...user].html"}
+        ${"/users/test/catch/all"}         | ${"/users/[...user].html"}
+        ${"/fallback/example-static-page"} | ${"/fallback/example-static-page.html"}
+        ${"/fallback/not-yet-built"}       | ${"/fallback/not-yet-built.html"}
+        ${"/preview"}                      | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -193,8 +192,8 @@ describe("Lambda@Edge", () => {
         ${"/users/batman"}
         ${"/users/test/catch/all"}
         ${"/john/123"}
-        ${"/tests/prerender-manifest/example-static-page"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/fallback/example-static-page"}
+        ${"/fallback/not-yet-built"}
         ${"/preview"}
       `(
         `path $path redirects if it ${
@@ -361,7 +360,7 @@ describe("Lambda@Edge", () => {
         path                              | expectedPage
         ${"/abc"}                         | ${"pages/[root].js"}
         ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/customers"}                   | ${"pages/customers/index.js"}
+        ${"/customers"}                   | ${"pages/customers.js"}
         ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -451,7 +450,7 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                      | expectedPage
-        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
         ${"/_next/data/build-id/customers/test/catch/all.json"}   | ${"pages/customers/[...catchAll].js"}
@@ -480,10 +479,10 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                                           | expectedPage
-        ${"/_next/data/build-id"}                                                      | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                                           | ${"pages/js"}
-        ${"/_next/data/build-id/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
+        path                                                  | expectedPage
+        ${"/_next/data/build-id"}                             | ${"pages/index.js"}
+        ${"/_next/data/build-id/index.json"}                  | ${"pages/js"}
+        ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"pages/fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
         async ({ path, expectedPage }) => {
@@ -877,7 +876,7 @@ describe("Lambda@Edge", () => {
           ${"/terms-redirect-dest-query/"}     | ${"/terms/?foo=bar"}     | ${308}
           ${"/terms-redirect-dest-query/?a=b"} | ${"/terms/?a=b&foo=bar"} | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
             const [path, querystring] = uri.split("?");
 
@@ -899,7 +898,7 @@ describe("Lambda@Edge", () => {
           ${"/terms-redirect-dest-query"}     | ${"/terms?foo=bar"}      | ${308}
           ${"/terms-redirect-dest-query?a=b"} | ${"/terms?a=b&foo=bar"}  | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
             const [path, querystring] = uri.split("?");
 

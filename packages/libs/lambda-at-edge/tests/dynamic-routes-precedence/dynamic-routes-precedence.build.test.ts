@@ -47,13 +47,11 @@ describe("Dynamic Routes Precedence", () => {
     expect.assertions(1);
 
     const {
-      pages: {
-        ssr: { dynamic }
-      }
+      pages: { dynamic }
     } = defaultBuildManifest;
 
-    const routes = Object.keys(dynamic);
-    expect(routes).toEqual(["/customers/:customer", "/:blog/:id"]);
+    const routes = dynamic.map(({ route }) => route);
+    expect(routes).toEqual(["/customers/[customer]", "/[blog]/[id]"]);
   });
 
   it("adds dynamic api routes to the manifest in correct order of precedence", async () => {
@@ -63,7 +61,10 @@ describe("Dynamic Routes Precedence", () => {
       apis: { dynamic }
     } = apiBuildManifest;
 
-    const routes = Object.keys(dynamic);
-    expect(routes).toEqual(["/api/customers/:customer", "/api/:blog/:id"]);
+    const routes = dynamic.map(({ file }) => file);
+    expect(routes).toEqual([
+      "pages/api/customers/[customer].js",
+      "pages/api/[blog]/[id].js"
+    ]);
   });
 });

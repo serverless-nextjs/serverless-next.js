@@ -1,4 +1,4 @@
-import { RedirectData } from "../types";
+import { RedirectData } from "@sls-next/core";
 
 /**
  * Whether this is the default trailing slash redirect.

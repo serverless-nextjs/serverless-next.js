@@ -27,6 +27,11 @@ export type RewriteData = {
   regex: string;
 };
 
+export type DynamicRoute = {
+  route: string;
+  regex: string;
+};
+
 export type Dynamic = {
   file: string;
   regex: string;
@@ -55,9 +60,7 @@ export type Manifest = {
 
 export type ApiManifest = Manifest & {
   apis: {
-    dynamic: {
-      [key: string]: Dynamic;
-    };
+    dynamic: Dynamic[];
     nonDynamic: { [key: string]: string };
   };
 };
@@ -65,6 +68,7 @@ export type ApiManifest = Manifest & {
 export type PageManifest = Manifest & {
   buildId: string;
   pages: {
+    dynamic: DynamicRoute[];
     html: {
       dynamic: {
         [key: string]: Dynamic;
@@ -77,7 +81,7 @@ export type PageManifest = Manifest & {
       };
       nonDynamic: {
         [key: string]: {
-          initialRevalidateSeconds?: false | number;
+          initialRevalidateSeconds: false | number;
           srcRoute: string | null;
           dataRoute: string;
         };
@@ -93,6 +97,16 @@ export type PageManifest = Manifest & {
       nonDynamic: { [key: string]: string };
     };
   };
+  publicFiles: {
+    [key: string]: string;
+  };
+  trailingSlash: boolean;
+};
+
+export type HeaderData = {
+  source: string;
+  headers: Header[];
+  regex: string;
 };
 
 export type I18nData = {
@@ -104,6 +118,7 @@ export type RoutesManifest = {
   basePath: string;
   redirects: RedirectData[];
   rewrites: RewriteData[];
+  headers: HeaderData[];
   i18n?: I18nData;
 };
 
@@ -163,6 +178,9 @@ export interface StaticRoute extends AnyRoute {
   isStatic: true;
   isData: boolean;
   file: string;
+  page?: string;
+  revalidate?: false | number;
+  fallback?: false | null | string;
 }
 
 export interface UnauthorizedRoute extends AnyRoute {

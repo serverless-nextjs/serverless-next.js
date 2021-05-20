@@ -3,89 +3,21 @@ import type {
   CloudFrontEvent,
   CloudFrontResponse
 } from "aws-lambda";
-import { DynamicSsgRoute, SsgRoute } from "next/dist/build";
+import { ApiManifest, PageManifest } from "@sls-next/core";
+export { ImageConfig, ImagesManifest, RoutesManifest } from "@sls-next/core";
 
-export type DynamicPageKeyValue = {
-  [key: string]: {
-    file: string;
-    regex: string;
-  };
+export type OriginRequestApiHandlerManifest = ApiManifest & {
+  enableHTTPCompression?: boolean;
 };
 
-// Image optimization
-export type ImageConfig = {
-  deviceSizes: number[];
-  imageSizes: number[];
-  loader: "default" | "imgix" | "cloudinary" | "akamai";
-  path: string;
-  domains?: string[];
-};
-
-export type ImagesManifest = {
-  version: number;
-  images: ImageConfig;
-};
-
-export type OriginRequestApiHandlerManifest = {
-  apis: {
-    dynamic: DynamicPageKeyValue;
-    nonDynamic: {
-      [key: string]: string;
-    };
-  };
-  domainRedirects: {
-    [key: string]: string;
-  };
-  enableHTTPCompression: boolean;
-  authentication?: {
-    username: string;
-    password: string;
-  };
-};
-
-export type OriginRequestDefaultHandlerManifest = {
-  buildId: string;
-  logLambdaExecutionTimes: boolean;
-  pages: {
-    ssr: {
-      dynamic: DynamicPageKeyValue;
-      catchAll: DynamicPageKeyValue;
-      nonDynamic: {
-        [key: string]: string;
-      };
-    };
-    html: {
-      nonDynamic: {
-        [path: string]: string;
-      };
-      dynamic: DynamicPageKeyValue;
-    };
-    ssg: {
-      nonDynamic: {
-        [path: string]: SsgRoute;
-      };
-      dynamic: {
-        [path: string]: DynamicSsgRoute;
-      };
-    };
-  };
-  publicFiles: {
-    [key: string]: string;
-  };
-  trailingSlash: boolean;
-  enableHTTPCompression: boolean;
-  domainRedirects: {
-    [key: string]: string;
-  };
-  authentication?: {
-    username: string;
-    password: string;
-  };
+export type OriginRequestDefaultHandlerManifest = PageManifest & {
+  logLambdaExecutionTimes?: boolean;
+  enableHTTPCompression?: boolean;
 };
 
 export type OriginRequestImageHandlerManifest = {
-  enableHTTPCompression: boolean;
-  domainRedirects: {
+  enableHTTPCompression?: boolean;
+  domainRedirects?: {
     [key: string]: string;
   };
 };
@@ -137,44 +69,6 @@ export type PreRenderedManifest = {
     previewModeSigningKey: string;
     previewModeEncryptionKey: string;
   };
-};
-
-export type RedirectData = {
-  statusCode: number;
-  source: string;
-  destination: string;
-  regex: string;
-  internal?: boolean;
-};
-
-export type RewriteData = {
-  source: string;
-  destination: string;
-  regex: string;
-};
-
-export type Header = {
-  key: string;
-  value: string;
-};
-
-export type HeaderData = {
-  source: string;
-  headers: Header[];
-  regex: string;
-};
-
-export type I18nData = {
-  locales: string[];
-  defaultLocale: string;
-};
-
-export type RoutesManifest = {
-  basePath: string;
-  redirects: RedirectData[];
-  rewrites: RewriteData[];
-  headers: HeaderData[];
-  i18n?: I18nData;
 };
 
 export type PerfLogger = {

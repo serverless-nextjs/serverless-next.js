@@ -61,7 +61,7 @@ describe("Lambda@Edge origin response", () => {
   describe("Fallback pages", () => {
     it("serves fallback page from S3", async () => {
       const event = createCloudFrontEvent({
-        uri: "/tests/prerender-manifest-fallback/not-yet-built",
+        uri: "/fallback/not-yet-built.html",
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
@@ -75,8 +75,7 @@ describe("Lambda@Edge origin response", () => {
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
         Bucket: "my-bucket.s3.amazonaws.com",
-        Key:
-          "basepath/static-pages/build-id/tests/prerender-manifest-fallback/[fallback].html"
+        Key: "basepath/static-pages/build-id/fallback/[slug].html"
       });
 
       expect(response).toEqual({
@@ -102,7 +101,7 @@ describe("Lambda@Edge origin response", () => {
 
     it("serves 404 page from S3 for fallback: false", async () => {
       const event = createCloudFrontEvent({
-        uri: "/tests/prerender-manifest/[staticPageName]",
+        uri: "/no-fallback/not-found.html",
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {

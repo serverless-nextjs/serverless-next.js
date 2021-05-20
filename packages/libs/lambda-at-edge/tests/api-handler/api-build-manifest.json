@@ -1,11 +1,11 @@
 {
   "apis": {
-    "dynamic": {
-      "/api/users/:id": {
+    "dynamic": [
+      {
         "file": "pages/api/users/[id].js",
         "regex": "^\\/api\\/users(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       }
-    },
+    ],
     "nonDynamic": {
       "/api/getCustomers": "pages/api/getCustomers.js",
       "/api/getUser": "pages/api/getUser.js"

@@ -45,7 +45,7 @@ import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
 const basePath = RoutesManifestJson.basePath;
 
-const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
+const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
     return {
       now: () => performance.now(),
@@ -68,8 +68,6 @@ const addS3HostHeader = (
   req.headers["host"] = [{ key: "host", value: s3DomainName }];
 };
 
-const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
-
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   if (s3Origin.region === "us-east-1") {
     return s3Origin.domainName;
@@ -84,78 +82,6 @@ const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   }
 
   return s3Origin.domainName;
-};
-
-const normaliseDataRequestUri = (
-  uri: string,
-  manifest: OriginRequestDefaultHandlerManifest
-): string => {
-  let normalisedUri = uri
-    .replace(`/_next/data/${manifest.buildId}`, "")
-    .replace(".json", "");
-
-  // Normalise to "/" for index data request
-  normalisedUri = ["/index", ""].includes(normalisedUri) ? "/" : normalisedUri;
-
-  return normalisedUri;
-};
-
-const router = (
-  manifest: OriginRequestDefaultHandlerManifest,
-  routesManifest: RoutesManifestJson
-): ((uri: string) => string) => {
-  const {
-    pages: { ssr, html }
-  } = manifest;
-
-  const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
-
-  return (uri: string): string => {
-    let normalisedUri = uri;
-
-    if (isDataRequest(uri)) {
-      normalisedUri = normaliseDataRequestUri(normalisedUri, manifest);
-    }
-
-    if (ssr.nonDynamic[normalisedUri]) {
-      return ssr.nonDynamic[normalisedUri];
-    }
-
-    if (html.nonDynamic[normalisedUri]) {
-      return html.nonDynamic[normalisedUri];
-    }
-
-    // Dynamic routes are matched first
-    for (const route in allDynamicRoutes) {
-      const { file, regex } = allDynamicRoutes[route];
-
-      const re = new RegExp(regex, "i");
-      const pathMatchesRoute = re.test(normalisedUri);
-
-      if (pathMatchesRoute) {
-        return file;
-      }
-    }
-
-    // Then catch all routes are matched
-    for (const route in ssr.catchAll) {
-      const { file, regex } = ssr.catchAll[route];
-
-      const re = new RegExp(regex, "i");
-      const pathMatchesRoute = re.test(normalisedUri);
-
-      if (pathMatchesRoute) {
-        return file;
-      }
-    }
-
-    // Only use the 404 page if the project exports it
-    if (html.nonDynamic["/404"] !== undefined) {
-      return `pages${getLocalePrefixFromUri(uri, routesManifest)}/404.html`;
-    }
-
-    return "pages/_error.js";
-  };
 };
 
 /**
@@ -189,6 +115,7 @@ export const handler = async (
     response = await handleOriginResponse({
       event,
       manifest,
+      prerenderManifest,
       routesManifest
     });
   } else {
@@ -353,28 +280,29 @@ const handleOriginRequest = async ({
 const handleOriginResponse = async ({
   event,
   manifest,
+  prerenderManifest,
   routesManifest
 }: {
   event: OriginResponseEvent;
   manifest: OriginRequestDefaultHandlerManifest;
+  prerenderManifest: PrerenderManifestType;
   routesManifest: RoutesManifest;
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
-  const { uri } = request;
-  const { status } = response;
+
   const bucketName = s3BucketNameFromEventRequest(request);
 
-  if (status !== "403") {
+  if (response.status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (uri.endsWith("/404.html")) {
+    if (request.uri.endsWith("/404.html")) {
       response.status = "404";
       response.statusDescription = "Not Found";
       return response;
     }
 
     const staticRegenerationResponse = getStaticRegenerationResponse({
-      requestedOriginUri: uri,
+      requestedOriginUri: request.uri,
       expiresHeader: response.headers?.expires?.[0]?.value || "",
       lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
       manifest
@@ -431,17 +359,28 @@ const handleOriginResponse = async ({
     retryStrategy: await buildS3RetryStrategy()
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-  let pagePath;
-  const hasFallback = Object.values(manifest.pages.ssg.dynamic).find(
-    (routeConfig) => {
-      const re = new RegExp(routeConfig.routeRegex);
-      return re.test(uri);
-    }
+
+  // Reconstruct valid request uri for routing
+  const requestUri = `${basePath}${request.uri.replace(
+    /\.html$/,
+    manifest.trailingSlash ? "/" : ""
+  )}`;
+  const route = await routeDefault(
+    { ...request, uri: requestUri },
+    manifest,
+    prerenderManifest,
+    routesManifest
   );
-  const isFallbackBlocking = hasFallback?.fallback === null;
+  const renderRoute = route.isRender ? (route as RenderRoute) : undefined;
+  const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
+
+  const isFallbackBlocking = staticRoute?.fallback === null;
+  const isDataRequest = staticRoute?.isData ?? renderRoute?.isData;
+  const pagePath = staticRoute?.page ?? renderRoute?.page;
   if (
-    (isDataRequest(uri) || isFallbackBlocking) &&
-    !(pagePath = router(manifest, routesManifest)(uri)).endsWith(".html")
+    (isDataRequest || isFallbackBlocking) &&
+    pagePath &&
+    !pagePath.endsWith(".html")
   ) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
@@ -463,7 +402,7 @@ const handleOriginResponse = async ({
     if (isSSG) {
       const { expires } = await s3StorePage({
         html,
-        uri,
+        uri: request.uri,
         basePath,
         bucketName: bucketName || "",
         buildId: manifest.buildId,
@@ -476,7 +415,7 @@ const handleOriginResponse = async ({
         ? getStaticRegenerationResponse({
             expiresHeader: expires.toJSON(),
             manifest,
-            requestedOriginUri: uri,
+            requestedOriginUri: request.uri,
             lastModifiedHeader: undefined
           })
         : null;
@@ -491,7 +430,7 @@ const handleOriginResponse = async ({
     res.writeHead(200, outHeaders);
     res.setHeader("Cache-Control", cacheControl);
 
-    if (isDataRequest(uri)) {
+    if (isDataRequest) {
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
     } else {
@@ -500,20 +439,20 @@ const handleOriginResponse = async ({
     }
     return await responsePromise;
   } else {
-    if (!hasFallback) return response;
+    if (!staticRoute) return response;
 
     // Make sure we get locale-specific S3 page
-    const localePrefix = getLocalePrefixFromUri(uri, routesManifest);
+    const localePrefix = getLocalePrefixFromUri(request.uri, routesManifest);
 
     // If route has fallback, return that page from S3, otherwise return 404 page
     const s3Key = `${s3BasePath}static-pages/${manifest.buildId}${
-      hasFallback.fallback || `${localePrefix}/404.html`
+      staticRoute.fallback || `${localePrefix}/404.html`
     }`;
 
     // If 404 page does not exist based on manifest, then don't bother trying to retrieve from S3 as it will fail
     // Instead render 404 page via SSR
     if (
-      !hasFallback.fallback &&
+      !staticRoute.fallback &&
       !doesStaticPageExist(`${localePrefix}/404`, manifest)
     ) {
       const { req, res } = lambdaAtEdgeCompat(event.Records[0].cf, {
@@ -556,8 +495,8 @@ const handleOriginResponse = async ({
       const bodyString = await getStream.default(s3Response.Body as Readable);
 
       return {
-        status: hasFallback.fallback ? "200" : "404",
-        statusDescription: hasFallback.fallback ? "OK" : "Not Found",
+        status: staticRoute.fallback ? "200" : "404",
+        statusDescription: staticRoute.fallback ? "OK" : "Not Found",
         headers: {
           ...response.headers,
           "content-type": [
@@ -571,7 +510,7 @@ const handleOriginResponse = async ({
               key: "Cache-Control",
               value:
                 s3Response.CacheControl ??
-                (hasFallback.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+                (staticRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
                   ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
                   : "public, max-age=0, s-maxage=2678400, must-revalidate")
             }

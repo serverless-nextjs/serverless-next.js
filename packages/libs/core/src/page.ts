@@ -1,6 +1,6 @@
 import { normalise } from "./basepath";
-import { addDefaultLocaleToPath } from "./locale";
-import { matchDynamic, matchDynamicSSG } from "./match";
+import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
+import { matchDynamicRoute } from "./match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import {
   ExternalRoute,
@@ -8,6 +8,28 @@ import {
   PageRoute,
   RoutesManifest
 } from "./types";
+
+const pageHtml = (localeUri: string) => {
+  if (localeUri == "/") {
+    return "pages/index.html";
+  }
+  return `pages${localeUri}.html`;
+};
+
+const handle404 = (manifest: PageManifest): PageRoute => {
+  if (manifest.pages.html.nonDynamic["/404"]) {
+    return {
+      isData: false,
+      isStatic: true,
+      file: "pages/404.html"
+    };
+  }
+  return {
+    isData: false,
+    isRender: true,
+    page: "pages/_error.js"
+  };
+};
 
 export const handlePageReq = (
   uri: string,
@@ -29,10 +51,14 @@ export const handlePageReq = (
     };
   }
   if (pages.ssg.nonDynamic[localeUri] && !isPreview) {
+    const ssg = pages.ssg.nonDynamic[localeUri];
+    const route = ssg.srcRoute ?? localeUri;
     return {
       isData: false,
       isStatic: true,
-      file: `pages${localeUri}.html`
+      file: pageHtml(localeUri),
+      page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
+      revalidate: ssg.initialRevalidateSeconds
     };
   }
   if (pages.ssr.nonDynamic[localeUri]) {
@@ -66,52 +92,42 @@ export const handlePageReq = (
     };
   }
 
-  // TODO: this order reproduces default-handler logic
-  const dynamicSSG = matchDynamicSSG(localeUri, pages.ssg.dynamic, false);
+  const dynamic = matchDynamicRoute(localeUri, pages.dynamic);
+
+  const dynamicSSG = dynamic && pages.ssg.dynamic[dynamic];
   if (dynamicSSG) {
     return {
       isData: false,
       isStatic: true,
-      file: `pages${localeUri}.html`
+      file: pageHtml(localeUri),
+      page: `pages${dropLocaleFromPath(dynamic as string, routesManifest)}.js`,
+      fallback: dynamicSSG.fallback
     };
   }
-  const dynamicSSR = matchDynamic(localeUri, Object.values(pages.ssr.dynamic));
+  const dynamicSSR = dynamic && pages.ssr.dynamic[dynamic];
   if (dynamicSSR) {
     return {
       isData: false,
       isRender: true,
-      page: dynamicSSR
+      page: dynamicSSR.file
     };
   }
-  const dynamicHTML = matchDynamic(
-    localeUri,
-    Object.values(pages.html.dynamic)
-  );
+  const dynamicHTML = dynamic && pages.html.dynamic[dynamic];
   if (dynamicHTML) {
     return {
       isData: false,
       isStatic: true,
-      file: dynamicHTML
+      file: dynamicHTML.file
     };
   }
-  const catchAll = matchDynamic(localeUri, Object.values(pages.ssr.catchAll));
+  const catchAll = dynamic && pages.ssr.catchAll[dynamic];
   if (catchAll) {
     return {
       isData: false,
       isRender: true,
-      page: catchAll
+      page: catchAll.file
     };
   }
-  if (pages.html.nonDynamic["/404"]) {
-    return {
-      isData: false,
-      isStatic: true,
-      file: "pages/404.html"
-    };
-  }
-  return {
-    isData: false,
-    isRender: true,
-    page: "pages/_error.js"
-  };
+
+  return handle404(manifest);
 };

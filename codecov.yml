@@ -4,3 +4,4 @@ ignore:
   - "packages/serverless-components/serverless-cli"
   - "**/rollup.config.js"
   - "**/copy-sharp-modules.ts"
+  - "**/build-test-manifests.ts"

@@ -87,7 +87,7 @@ async function createExternalRewriteResponse(
 
 export const externalRewrite = async (
   event: OriginRequestEvent,
-  enableHTTPCompression: boolean,
+  enableHTTPCompression: boolean | undefined,
   rewrite: string
 ) => {
   const request = event.Records[0].cf.request;
