@@ -67,7 +67,7 @@ class NextjsComponent extends Component {
 
   pathPattern(pattern: string, routesManifest: RoutesManifest): string {
     const basePath = routesManifest.basePath;
-    if (basePath && basePath.length == 0 && pattern === "api/*") {
+    if (basePath.length === 0 && pattern === "api/*") {
       // for preview mode, if we do not set basePath, we need 'api/preview/*' instead of 'api/*'
       // Because we should always keep 'api/*' point to backend project
       return "api/preview/*";
