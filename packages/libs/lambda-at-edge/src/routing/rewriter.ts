@@ -1,6 +1,7 @@
 import { IncomingMessage, ServerResponse } from "http";
 import { OriginRequestEvent } from "../types";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import { CloudFrontResultResponse } from "aws-lambda";
 
 // Blacklisted or read-only headers in CloudFront
 const ignoredHeaders = [
@@ -85,7 +86,11 @@ async function createExternalRewriteResponse(
   res.end(await fetchResponse.buffer());
 }
 
-export const externalRewrite = async (
+export const externalRewrite: (
+  event: OriginRequestEvent,
+  enableHTTPCompression: boolean | undefined,
+  rewrite: string
+) => Promise<CloudFrontResultResponse> = async (
   event: OriginRequestEvent,
   enableHTTPCompression: boolean | undefined,
   rewrite: string
