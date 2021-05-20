@@ -72,7 +72,7 @@ describe("Regeneration Handler", () => {
   `(
     "should generate correct page when basePath = $basePath",
     async ({ basePath }) => {
-      mockPageRequire("pages/customers/index");
+      mockPageRequire("pages/customers/index.js");
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const regenerationHandler = require("../../src/regeneration-handler")
         .handler;
@@ -95,7 +95,8 @@ describe("Regeneration Handler", () => {
           basePath,
           bucketName: "my-bucket",
           cloudFrontEventRequest: event.Records[0].cf.request,
-          region: "us-east-1"
+          region: "us-east-1",
+          pagePath: "pages/customers/index.js"
         })
       );
 
@@ -111,7 +112,7 @@ describe("Regeneration Handler", () => {
   );
 
   it("should generate correct page when path exists in nonDynamic routes", async () => {
-    mockPageRequire("pages/preview");
+    mockPageRequire("pages/preview.js");
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const regenerationHandler = require("../../src/regeneration-handler")
       .handler;
@@ -134,7 +135,8 @@ describe("Regeneration Handler", () => {
         basePath: undefined,
         bucketName: "my-bucket",
         cloudFrontEventRequest: event.Records[0].cf.request,
-        region: "us-east-1"
+        region: "us-east-1",
+        pagePath: "pages/preview.js"
       })
     );
 

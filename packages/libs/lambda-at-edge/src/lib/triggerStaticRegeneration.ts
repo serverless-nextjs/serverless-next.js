@@ -6,6 +6,7 @@ interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
   response: AWSLambda.CloudFrontResponse;
   basePath: string | undefined;
+  pagePath: string;
 }
 
 export const triggerStaticRegeneration = async (
@@ -33,7 +34,8 @@ export const triggerStaticRegeneration = async (
     region,
     bucketName,
     cloudFrontEventRequest: options.request,
-    basePath: options.basePath
+    basePath: options.basePath,
+    pagePath: options.pagePath
   };
 
   try {

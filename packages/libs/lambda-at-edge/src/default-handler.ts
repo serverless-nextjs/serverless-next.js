@@ -293,6 +293,20 @@ const handleOriginResponse = async ({
 
   const bucketName = s3BucketNameFromEventRequest(request);
 
+  // Reconstruct valid request uri for routing
+  const requestUri = `${basePath}${request.uri.replace(
+    /(\.html)?$/,
+    manifest.trailingSlash ? "/" : ""
+  )}`;
+  const route = await routeDefault(
+    { ...request, uri: requestUri },
+    manifest,
+    prerenderManifest,
+    routesManifest
+  );
+  const renderRoute = route.isRender ? (route as RenderRoute) : undefined;
+  const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
+
   if (response.status !== "403") {
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
     if (request.uri.endsWith("/404.html")) {
@@ -302,10 +316,9 @@ const handleOriginResponse = async ({
     }
 
     const staticRegenerationResponse = getStaticRegenerationResponse({
-      requestedOriginUri: request.uri,
       expiresHeader: response.headers?.expires?.[0]?.value || "",
       lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
-      manifest
+      initialRevalidateSeconds: staticRoute?.revalidate
     });
 
     if (staticRegenerationResponse) {
@@ -321,11 +334,15 @@ const handleOriginResponse = async ({
       // header
       delete response.headers.expires;
 
-      if (staticRegenerationResponse.secondsRemainingUntilRevalidation === 0) {
+      if (
+        staticRoute?.page &&
+        staticRegenerationResponse.secondsRemainingUntilRevalidation === 0
+      ) {
         const { throttle } = await triggerStaticRegeneration({
           basePath,
           request,
-          response
+          response,
+          pagePath: staticRoute.page
         });
 
         // Occasionally we will get rate-limited by the Queue (in the event we
@@ -359,20 +376,6 @@ const handleOriginResponse = async ({
     retryStrategy: await buildS3RetryStrategy()
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-
-  // Reconstruct valid request uri for routing
-  const requestUri = `${basePath}${request.uri.replace(
-    /\.html$/,
-    manifest.trailingSlash ? "/" : ""
-  )}`;
-  const route = await routeDefault(
-    { ...request, uri: requestUri },
-    manifest,
-    prerenderManifest,
-    routesManifest
-  );
-  const renderRoute = route.isRender ? (route as RenderRoute) : undefined;
-  const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
 
   const isFallbackBlocking = staticRoute?.fallback === null;
   const isDataRequest = staticRoute?.isData ?? renderRoute?.isData;
@@ -414,9 +417,8 @@ const handleOriginResponse = async ({
       const isrResponse = expires
         ? getStaticRegenerationResponse({
             expiresHeader: expires.toJSON(),
-            manifest,
-            requestedOriginUri: request.uri,
-            lastModifiedHeader: undefined
+            lastModifiedHeader: undefined,
+            initialRevalidateSeconds: staticRoute?.revalidate
           })
         : null;
 

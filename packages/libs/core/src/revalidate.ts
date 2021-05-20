@@ -1,12 +1,8 @@
-import { PageManifest } from "./types";
-
 interface StaticRegenerationResponseOptions {
-  // URI of the origin object
-  requestedOriginUri: string;
   // Header as set on the origin object
   expiresHeader: string;
   lastModifiedHeader: string | undefined;
-  manifest: PageManifest;
+  initialRevalidateSeconds?: false | number;
 }
 
 interface StaticRegenerationResponseValue {
@@ -32,12 +28,7 @@ const firstRegenerateExpiryDate = (
 export const getStaticRegenerationResponse = (
   options: StaticRegenerationResponseOptions
 ): StaticRegenerationResponseValue | false => {
-  const normalisedUri = options.requestedOriginUri.endsWith(".html")
-    ? options.requestedOriginUri.slice(0, options.requestedOriginUri.length - 5)
-    : options.requestedOriginUri;
-  const initialRevalidateSeconds =
-    options.manifest.pages.ssg.nonDynamic?.[normalisedUri]
-      ?.initialRevalidateSeconds;
+  const { initialRevalidateSeconds } = options;
 
   // ISR pages that were either previously regenerated or generated
   // post-initial-build, will have an `Expires` header set. However ISR pages

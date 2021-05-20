@@ -516,7 +516,7 @@ describe("Lambda@Edge", () => {
         );
 
         const event = createCloudFrontEvent({
-          uri: "/customers",
+          uri: "/preview",
           host: "mydistribution.cloudfront.net",
           config: { eventType: "origin-response" } as any,
           response: {
@@ -532,8 +532,6 @@ describe("Lambda@Edge", () => {
             }
           }
         });
-
-        mockPageRequire("pages/customers/index.js");
 
         const response = await handler(event);
         expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
@@ -560,8 +558,6 @@ describe("Lambda@Edge", () => {
             }
           }
         });
-
-        mockPageRequire("pages/customers/index.js");
 
         const response = await handler(event);
         expect(response.headers).toHaveProperty("cache-control");
@@ -592,8 +588,6 @@ describe("Lambda@Edge", () => {
           }
         });
 
-        mockPageRequire("pages/customers/index.js");
-
         const response = await handler(event);
         expect(response.headers).toHaveProperty("cache-control");
         expect(response.headers["cache-control"][0].value).toBe(
@@ -623,8 +617,6 @@ describe("Lambda@Edge", () => {
           }
         });
 
-        mockPageRequire("pages/preview/index.js");
-
         const response = await handler(event);
         expect(response.headers).toHaveProperty("cache-control");
         expect(response.headers["cache-control"][0].value).toBe(
@@ -653,8 +645,6 @@ describe("Lambda@Edge", () => {
             }
           }
         });
-
-        mockPageRequire("pages/preview/index.js");
 
         const response = await handler(event);
         expect(response.headers).toHaveProperty("cache-control");
