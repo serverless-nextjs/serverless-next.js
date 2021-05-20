@@ -1,9 +1,16 @@
 import { BuildOptions, DynamicPageKeyValue, NextConfig } from "./types";
-import { ApiManifest, Manifest, PageManifest, RoutesManifest } from "../types";
+import {
+  ApiManifest,
+  DynamicSSG,
+  Manifest,
+  NonDynamicSSG,
+  PageManifest,
+  RoutesManifest
+} from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./isDynamicRoute";
 import { normaliseDomainRedirects } from "./normaliseDomainRedirects";
 import { pathToRegexStr } from "./pathToRegexStr";
-import { DynamicSsgRoute, PrerenderManifest, SsgRoute } from "next/dist/build";
+import { PrerenderManifest } from "next/dist/build";
 import { getSortedRoutes } from "./sortedRoutes";
 
 export const prepareBuildManifests = async (
@@ -31,7 +38,6 @@ export const prepareBuildManifests = async (
       dynamic: [],
       ssr: {
         dynamic: {},
-        catchAll: {},
         nonDynamic: {}
       },
       html: {
@@ -81,15 +87,9 @@ export const prepareBuildManifests = async (
 
     if (isHtmlPage(pageFile)) {
       if (isOtherDynamicRoute) {
-        htmlPages.dynamic[route] = {
-          file: pageFile,
-          regex: pathToRegexStr(route)
-        };
+        htmlPages.dynamic[route] = pageFile;
       } else if (isOptionalCatchAllDynamicRoute) {
-        htmlPages.dynamic[route] = {
-          file: pageFile,
-          regex: pathToRegexStr(route)
-        };
+        htmlPages.dynamic[route] = pageFile;
         htmlPages.nonDynamic[optionalBaseRoute] = pageFile;
       } else {
         htmlPages.nonDynamic[route] = pageFile;
@@ -110,15 +110,9 @@ export const prepareBuildManifests = async (
         apiPages.nonDynamic[route] = pageFile;
       }
     } else if (isOtherDynamicRoute) {
-      ssrPages.dynamic[route] = {
-        file: pageFile,
-        regex: pathToRegexStr(route)
-      };
+      ssrPages.dynamic[route] = pageFile;
     } else if (isOptionalCatchAllDynamicRoute) {
-      ssrPages.dynamic[route] = {
-        file: pageFile,
-        regex: pathToRegexStr(route)
-      };
+      ssrPages.dynamic[route] = pageFile;
       ssrPages.nonDynamic[optionalBaseRoute] = pageFile;
     } else {
       ssrPages.nonDynamic[route] = pageFile;
@@ -127,33 +121,41 @@ export const prepareBuildManifests = async (
 
   // Add non-dynamic SSG routes
   Object.entries(prerenderManifest.routes).forEach(([route, ssgRoute]) => {
+    const { initialRevalidateSeconds, srcRoute } = ssgRoute;
     // Next.js generates prerender manifest with default locale prefixed, normalize it
-    // This is somewhat wrong, but used in build logic.
+    // This is somewhat wrong, but used in other build logic.
     // Prerendered dynamic routes (with srcRoute) are left as they are
     const defaultLocale = routesManifest.i18n?.defaultLocale;
     if (defaultLocale && !ssgRoute.srcRoute) {
       const normalizedRoute = route.replace(`/${defaultLocale}/`, "/");
-      ssgRoute.dataRoute = ssgRoute.dataRoute.replace(
-        `/${defaultLocale}/`,
-        "/"
-      );
-      ssgPages.nonDynamic[normalizedRoute] = ssgRoute;
+      ssgPages.nonDynamic[normalizedRoute] = {
+        initialRevalidateSeconds,
+        srcRoute
+      };
     } else {
-      ssgPages.nonDynamic[route] = ssgRoute;
+      ssgPages.nonDynamic[route] = {
+        initialRevalidateSeconds,
+        srcRoute
+      };
     }
   });
 
   // Add dynamic SSG routes
   Object.entries(prerenderManifest.dynamicRoutes ?? {}).forEach(
     ([route, dynamicSsgRoute]) => {
-      ssgPages.dynamic[route] = dynamicSsgRoute;
+      const { fallback } = dynamicSsgRoute;
+      ssgPages.dynamic[route] = {
+        fallback
+      };
     }
   );
 
   // Duplicate routes for all specified locales. This is easy matching locale-prefixed routes in handler
   if (routesManifest.i18n) {
     const localeHtmlPages: {
-      dynamic: DynamicPageKeyValue;
+      dynamic: {
+        [key: string]: string;
+      };
       nonDynamic: {
         [key: string]: string;
       };
@@ -164,10 +166,10 @@ export const prepareBuildManifests = async (
 
     const localeSsgPages: {
       dynamic: {
-        [key: string]: DynamicSsgRoute;
+        [key: string]: DynamicSSG;
       };
       nonDynamic: {
-        [key: string]: SsgRoute;
+        [key: string]: NonDynamicSSG;
       };
     } = {
       dynamic: {},
@@ -175,13 +177,15 @@ export const prepareBuildManifests = async (
     };
 
     const localeSsrPages: {
+      dynamic: {
+        [key: string]: string;
+      };
       nonDynamic: {
         [key: string]: string;
       };
-      dynamic: DynamicPageKeyValue;
     } = {
-      nonDynamic: {},
-      dynamic: {}
+      dynamic: {},
+      nonDynamic: {}
     };
 
     for (const locale of routesManifest.i18n.locales) {
@@ -202,20 +206,10 @@ export const prepareBuildManifests = async (
 
       for (const key in htmlPages.dynamic) {
         const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-
-        // Initial default value
-        localeHtmlPages.dynamic[newKey] = { file: "", regex: "" };
-        const newDynamicHtml = Object.assign(
-          localeHtmlPages.dynamic[newKey],
-          htmlPages.dynamic[key]
-        );
-
-        // Need to update the file and regex
-        newDynamicHtml.file = newDynamicHtml.file.replace(
+        localeHtmlPages.dynamic[newKey] = htmlPages.dynamic[key].replace(
           "pages/",
           `pages/${locale}/`
         );
-        newDynamicHtml.regex = pathToRegexStr(newKey);
       }
 
       for (const key in ssrPages.nonDynamic) {
@@ -226,52 +220,20 @@ export const prepareBuildManifests = async (
       for (const key in ssrPages.dynamic) {
         const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
 
-        // Initial default value
-        localeSsrPages.dynamic[newKey] = { file: "", regex: "" };
-        const newDynamicSsr = Object.assign(
-          localeSsrPages.dynamic[newKey],
-          ssrPages.dynamic[key]
-        );
-
-        // Need to update the regex
-        newDynamicSsr.regex = pathToRegexStr(newKey);
+        // Page stays the same
+        localeSsrPages.dynamic[newKey] = ssrPages.dynamic[key];
       }
 
       for (const key in ssgPages.nonDynamic) {
         if (ssgPages.nonDynamic[key].srcRoute) {
+          // These are already correctly localized
           continue;
         }
 
         const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
 
         // Initial default value
-        localeSsgPages.nonDynamic[newKey] = {
-          initialRevalidateSeconds: false,
-          srcRoute: null,
-          dataRoute: ""
-        };
-
-        const newSsgRoute = Object.assign(
-          localeSsgPages.nonDynamic[newKey],
-          ssgPages.nonDynamic[key]
-        );
-
-        // Replace with localized value. For non-dynamic index page, this is in format "en.json"
-        if (key === "/") {
-          newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
-            `/_next/data/${buildId}/index.json`,
-            `/_next/data/${buildId}/${locale}.json`
-          );
-        } else {
-          newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
-            `/_next/data/${buildId}/`,
-            `/_next/data/${buildId}/${locale}/`
-          );
-        }
-
-        newSsgRoute.srcRoute = newSsgRoute.srcRoute
-          ? `/${locale}${newSsgRoute.srcRoute}`
-          : newSsgRoute.srcRoute;
+        localeSsgPages.nonDynamic[newKey] = { ...ssgPages.nonDynamic[key] };
       }
 
       for (const key in ssgPages.dynamic) {
@@ -281,32 +243,18 @@ export const prepareBuildManifests = async (
         const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
 
         // Replace with localized values
-        newDynamicSsgRoute.dataRoute = newDynamicSsgRoute.dataRoute.replace(
-          `/_next/data/${buildId}/`,
-          `/_next/data/${buildId}/${locale}/`
-        );
-        newDynamicSsgRoute.dataRouteRegex = newDynamicSsgRoute.dataRouteRegex.replace(
-          `/_next/data/${buildId}/`,
-          `/_next/data/${buildId}/${locale}/`
-        );
         newDynamicSsgRoute.fallback =
           typeof newDynamicSsgRoute.fallback === "string"
             ? newDynamicSsgRoute.fallback.replace("/", `/${locale}/`)
             : newDynamicSsgRoute.fallback;
-        newDynamicSsgRoute.routeRegex = localeSsgPages.dynamic[
-          newKey
-        ].routeRegex.replace("^/", `^/${locale}/`);
       }
     }
 
-    const allDynamicRoutes = {
-      ...ssrPages.dynamic,
-      ...localeSsrPages.dynamic
-    };
-
     pageManifest.pages.ssr = {
-      dynamic: allDynamicRoutes,
-      catchAll: {},
+      dynamic: {
+        ...ssrPages.dynamic,
+        ...localeSsrPages.dynamic
+      },
       nonDynamic: {
         ...ssrPages.nonDynamic,
         ...localeSsrPages.nonDynamic
@@ -336,30 +284,10 @@ export const prepareBuildManifests = async (
     };
   }
 
-  // Split dynamic routes to non-catch all and catch all dynamic routes for later use for route precedence
-  const nonCatchAllRoutes: DynamicPageKeyValue = {};
-  const catchAllRoutes: DynamicPageKeyValue = {};
-  const allDynamicRoutes: DynamicPageKeyValue = pageManifest.pages.ssr.dynamic;
-
-  for (const key in allDynamicRoutes) {
-    if (key.includes("[...")) {
-      catchAllRoutes[key] = allDynamicRoutes[key];
-    } else {
-      nonCatchAllRoutes[key] = allDynamicRoutes[key];
-    }
-  }
-
-  pageManifest.pages.ssr = {
-    ...pageManifest.pages.ssr,
-    dynamic: nonCatchAllRoutes,
-    catchAll: catchAllRoutes
-  };
-
   // Sort page routes
   const dynamicRoutes = Object.keys(pageManifest.pages.html.dynamic)
     .concat(Object.keys(pageManifest.pages.ssg.dynamic))
-    .concat(Object.keys(pageManifest.pages.ssr.dynamic))
-    .concat(Object.keys(pageManifest.pages.ssr.catchAll));
+    .concat(Object.keys(pageManifest.pages.ssr.dynamic));
   const sortedRoutes = getSortedRoutes(dynamicRoutes);
   pageManifest.pages.dynamic = sortedRoutes.map((route) => {
     return {

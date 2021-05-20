@@ -89,15 +89,7 @@ export const handleDataReq = (
     return {
       isData: true,
       isRender: true,
-      page: dynamicSSR.file
-    };
-  }
-  const catchAll = dynamic && pages.ssr.catchAll[dynamic];
-  if (catchAll) {
-    return {
-      isData: true,
-      isRender: true,
-      page: catchAll.file
+      page: dynamicSSR
     };
   }
 

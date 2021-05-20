@@ -23,31 +23,8 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         { enableHTTPCompression: manifest.enableHTTPCompression }
       );
 
-      const baseKey = regenerationEvent.cloudFrontEventRequest.uri
-        .replace(/\.(json|html)$/, "")
-        .replace(/^_next\/data\/[^\/]*\//, "");
-
-      let srcRoute = manifest.pages.ssg.nonDynamic[baseKey]?.srcRoute;
-      if (!srcRoute) {
-        const matchedDynamicRoute = Object.entries(
-          manifest.pages.ssg.dynamic
-        ).find(([, dynamicSsgRoute]) => {
-          return new RegExp(dynamicSsgRoute.routeRegex).test(
-            regenerationEvent.cloudFrontEventRequest.uri
-          );
-        });
-
-        if (matchedDynamicRoute) {
-          [srcRoute] = matchedDynamicRoute;
-        }
-      }
-
-      // We probably should not get to this point without `srcRoute` being
-      // defined
-      const srcPath = srcRoute || baseKey;
-
       // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const page = require(`./pages${srcPath}`);
+      const page = require(`./${regenerationEvent.pagePath}`);
 
       const { renderOpts, html } = await page.renderReqToHTML(
         req,
@@ -62,8 +39,7 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         bucketName: regenerationEvent.bucketName,
         buildId: manifest.buildId,
         pageData: renderOpts.pageData,
-        region:
-          regenerationEvent.cloudFrontEventRequest.origin?.s3?.region || "",
+        region: regenerationEvent.region,
         revalidate: renderOpts.revalidate
       });
     })

@@ -234,12 +234,7 @@ class Builder {
 
       const allSsrPages = [
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
-        ...Object.values(buildManifest.pages.ssr.dynamic).map(
-          (entry) => entry.file
-        ),
-        ...Object.values(buildManifest.pages.ssr.catchAll).map(
-          (entry) => entry.file
-        )
+        ...Object.values(buildManifest.pages.ssr.dynamic)
       ].filter(ignoreAppAndDocumentPages);
 
       const ssrPages = Object.values(allSsrPages).map((pageFile) =>

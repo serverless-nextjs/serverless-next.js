@@ -72,107 +72,120 @@ describe("Builder Tests (dynamic)", () => {
       const {
         buildId,
         publicFiles,
-        pages: {
-          ssr: { dynamic, catchAll, nonDynamic },
-          ssg,
-          html
-        },
+        pages: { dynamic, ssr, ssg, html },
         trailingSlash
       } = defaultBuildManifest;
 
       expect(removeNewLineChars(buildId)).toEqual("test-build-id");
 
-      // These could be removed from build?
-      expect(dynamic).toEqual({
-        "/en/fallback-blocking/[slug]": {
-          file: "pages/fallback-blocking/[slug].js",
-          regex: "^\\/en\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/en/fallback/[slug]": {
-          file: "pages/fallback/[slug].js",
-          regex: "^\\/en\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/en/no-fallback/[slug]": {
-          file: "pages/no-fallback/[slug].js",
-          regex: "^\\/en\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/fallback-blocking/[slug]": {
-          file: "pages/fallback-blocking/[slug].js",
-          regex: "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/fallback/[slug]": {
-          file: "pages/fallback/[slug].js",
-          regex: "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/nl/fallback-blocking/[slug]": {
-          file: "pages/fallback-blocking/[slug].js",
-          regex: "^\\/nl\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/nl/fallback/[slug]": {
-          file: "pages/fallback/[slug].js",
-          regex: "^\\/nl\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/nl/no-fallback/[slug]": {
-          file: "pages/no-fallback/[slug].js",
-          regex: "^\\/nl\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/no-fallback/[slug]": {
-          file: "pages/no-fallback/[slug].js",
-          regex: "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        }
-      });
-
-      // Should non-localized variants be removed?
-      expect(catchAll).toEqual({
-        "/catchall/[...slug]": {
-          file: "pages/catchall/[...slug].js",
+      expect(dynamic).toEqual([
+        {
+          route: "/catchall/[...slug]",
           regex:
             "^\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/en/catchall/[...slug]": {
-          file: "pages/catchall/[...slug].js",
+        {
+          route: "/en/catchall/[...slug]",
           regex:
             "^\\/en\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/en/optional-catchall/[[...slug]]": {
-          file: "pages/optional-catchall/[[...slug]].js",
+        {
+          route: "/en/fallback/[slug]",
+          regex: "^\\/en\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/en/fallback-blocking/[slug]",
+          regex: "^\\/en\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/en/no-fallback/[slug]",
+          regex: "^\\/en\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/en/optional-catchall/[[...slug]]",
           regex:
             "^\\/en\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/nl/catchall/[...slug]": {
-          file: "pages/catchall/[...slug].js",
+        {
+          route: "/fallback/[slug]",
+          regex: "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/fallback-blocking/[slug]",
+          regex: "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/nl/catchall/[...slug]",
           regex:
             "^\\/nl\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/nl/optional-catchall/[[...slug]]": {
-          file: "pages/optional-catchall/[[...slug]].js",
+        {
+          route: "/nl/fallback/[slug]",
+          regex: "^\\/nl\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/nl/fallback-blocking/[slug]",
+          regex: "^\\/nl\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/nl/no-fallback/[slug]",
+          regex: "^\\/nl\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/nl/optional-catchall/[[...slug]]",
           regex:
             "^\\/nl\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
-        "/optional-catchall/[[...slug]]": {
-          file: "pages/optional-catchall/[[...slug]].js",
+        {
+          route: "/no-fallback/[slug]",
+          regex: "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/optional-catchall/[[...slug]]",
           regex:
             "^\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         }
-      });
+      ]);
 
       // Should non-localized variants be removed?
-      expect(nonDynamic).toEqual({
-        "/": "pages/index.js",
-        "/_error": "pages/_error.js",
-        "/en": "pages/index.js",
-        "/en/_error": "pages/_error.js",
-        "/en/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-        "/en/ssg": "pages/ssg.js",
-        "/en/ssr": "pages/ssr.js",
-        "/nl": "pages/index.js",
-        "/nl/_error": "pages/_error.js",
-        "/nl/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-        "/nl/ssg": "pages/ssg.js",
-        "/nl/ssr": "pages/ssr.js",
-        "/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-        "/ssg": "pages/ssg.js",
-        "/ssr": "pages/ssr.js"
+      expect(ssr).toEqual({
+        dynamic: {
+          "/catchall/[...slug]": "pages/catchall/[...slug].js",
+          "/en/catchall/[...slug]": "pages/catchall/[...slug].js",
+          "/en/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
+          "/en/fallback/[slug]": "pages/fallback/[slug].js",
+          "/en/no-fallback/[slug]": "pages/no-fallback/[slug].js",
+          "/en/optional-catchall/[[...slug]]":
+            "pages/optional-catchall/[[...slug]].js",
+          "/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
+          "/fallback/[slug]": "pages/fallback/[slug].js",
+          "/nl/catchall/[...slug]": "pages/catchall/[...slug].js",
+          "/nl/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
+          "/nl/fallback/[slug]": "pages/fallback/[slug].js",
+          "/nl/no-fallback/[slug]": "pages/no-fallback/[slug].js",
+          "/nl/optional-catchall/[[...slug]]":
+            "pages/optional-catchall/[[...slug]].js",
+          "/no-fallback/[slug]": "pages/no-fallback/[slug].js",
+          "/optional-catchall/[[...slug]]":
+            "pages/optional-catchall/[[...slug]].js"
+        },
+        nonDynamic: {
+          "/": "pages/index.js",
+          "/_error": "pages/_error.js",
+          "/en": "pages/index.js",
+          "/en/_error": "pages/_error.js",
+          "/en/optional-catchall": "pages/optional-catchall/[[...slug]].js",
+          "/en/ssg": "pages/ssg.js",
+          "/en/ssr": "pages/ssr.js",
+          "/nl": "pages/index.js",
+          "/nl/_error": "pages/_error.js",
+          "/nl/optional-catchall": "pages/optional-catchall/[[...slug]].js",
+          "/nl/ssg": "pages/ssg.js",
+          "/nl/ssr": "pages/ssr.js",
+          "/optional-catchall": "pages/optional-catchall/[[...slug]].js",
+          "/ssg": "pages/ssg.js",
+          "/ssr": "pages/ssr.js"
+        }
       });
 
       expect(html).toEqual({
@@ -191,140 +204,87 @@ describe("Builder Tests (dynamic)", () => {
       expect(ssg).toEqual({
         dynamic: {
           "/en/fallback-blocking/[slug]": {
-            dataRoute:
-              "/_next/data/test-build-id/en/fallback-blocking/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/en/fallback\\-blocking/([^/]+?)\\.json$",
-            fallback: null,
-            routeRegex: "^/en/fallback\\-blocking/([^/]+?)(?:/)?$"
+            fallback: null
           },
           "/en/fallback/[slug]": {
-            dataRoute: "/_next/data/test-build-id/en/fallback/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/en/fallback/([^/]+?)\\.json$",
-            fallback: "/en/fallback/[slug].html",
-            routeRegex: "^/en/fallback/([^/]+?)(?:/)?$"
+            fallback: "/en/fallback/[slug].html"
           },
           "/en/no-fallback/[slug]": {
-            dataRoute: "/_next/data/test-build-id/en/no-fallback/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/en/no\\-fallback/([^/]+?)\\.json$",
-            fallback: false,
-            routeRegex: "^/en/no\\-fallback/([^/]+?)(?:/)?$"
+            fallback: false
           },
           "/fallback-blocking/[slug]": {
-            dataRoute:
-              "/_next/data/test-build-id/fallback-blocking/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/fallback\\-blocking/([^/]+?)\\.json$",
-            fallback: null,
-            routeRegex: "^/fallback\\-blocking/([^/]+?)(?:/)?$"
+            fallback: null
           },
           "/fallback/[slug]": {
-            dataRoute: "/_next/data/test-build-id/fallback/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/fallback/([^/]+?)\\.json$",
-            fallback: "/fallback/[slug].html",
-            routeRegex: "^/fallback/([^/]+?)(?:/)?$"
+            fallback: "/fallback/[slug].html"
           },
           "/nl/fallback-blocking/[slug]": {
-            dataRoute:
-              "/_next/data/test-build-id/nl/fallback-blocking/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/nl/fallback\\-blocking/([^/]+?)\\.json$",
-            fallback: null,
-            routeRegex: "^/nl/fallback\\-blocking/([^/]+?)(?:/)?$"
+            fallback: null
           },
           "/nl/fallback/[slug]": {
-            dataRoute: "/_next/data/test-build-id/nl/fallback/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/nl/fallback/([^/]+?)\\.json$",
-            fallback: "/nl/fallback/[slug].html",
-            routeRegex: "^/nl/fallback/([^/]+?)(?:/)?$"
+            fallback: "/nl/fallback/[slug].html"
           },
           "/nl/no-fallback/[slug]": {
-            dataRoute: "/_next/data/test-build-id/nl/no-fallback/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/nl/no\\-fallback/([^/]+?)\\.json$",
-            fallback: false,
-            routeRegex: "^/nl/no\\-fallback/([^/]+?)(?:/)?$"
+            fallback: false
           },
           "/no-fallback/[slug]": {
-            dataRoute: "/_next/data/test-build-id/no-fallback/[slug].json",
-            dataRouteRegex:
-              "^/_next/data/test-build-id/no\\-fallback/([^/]+?)\\.json$",
-            fallback: false,
-            routeRegex: "^/no\\-fallback/([^/]+?)(?:/)?$"
+            fallback: false
           }
         },
         nonDynamic: {
           "/en": {
-            dataRoute: "/_next/data/test-build-id/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/en/en": {
-            dataRoute: "/_next/data/test-build-id/en/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/en/fallback-blocking/a": {
-            dataRoute: "/_next/data/test-build-id/en/fallback-blocking/a.json",
             initialRevalidateSeconds: false,
             srcRoute: "/fallback-blocking/[slug]"
           },
           "/en/fallback/a": {
-            dataRoute: "/_next/data/test-build-id/en/fallback/a.json",
             initialRevalidateSeconds: false,
             srcRoute: "/fallback/[slug]"
           },
           "/en/nl": {
-            dataRoute: "/_next/data/test-build-id/en/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/en/nl/ssg": {
-            dataRoute: "/_next/data/test-build-id/en/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/en/no-fallback/a": {
-            dataRoute: "/_next/data/test-build-id/en/no-fallback/a.json",
             initialRevalidateSeconds: false,
             srcRoute: "/no-fallback/[slug]"
           },
           "/en/ssg": {
-            dataRoute: "/_next/data/test-build-id/en/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl": {
-            dataRoute: "/_next/data/test-build-id/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl/en": {
-            dataRoute: "/_next/data/test-build-id/nl/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl/nl": {
-            dataRoute: "/_next/data/test-build-id/nl/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl/nl/ssg": {
-            dataRoute: "/_next/data/test-build-id/nl/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl/ssg": {
-            dataRoute: "/_next/data/test-build-id/nl/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/ssg": {
-            dataRoute: "/_next/data/test-build-id/ssg.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           }

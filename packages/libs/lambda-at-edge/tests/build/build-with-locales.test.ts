@@ -68,95 +68,131 @@ describe("Builder Tests (with locales)", () => {
       const {
         buildId,
         publicFiles,
-        pages: {
-          ssr: { dynamic, catchAll, nonDynamic },
-          ssg,
-          html
-        },
+        pages: { dynamic, ssr, ssg, html },
         trailingSlash
       } = defaultBuildManifest;
 
       expect(removeNewLineChars(buildId)).toEqual("test-build-id");
-      expect(dynamic).toEqual({
-        "/[root]": {
-          file: "pages/[root].js",
-          regex: expect.any(String)
+
+      expect(dynamic).toEqual([
+        {
+          regex: "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/blog/[post]"
         },
-        "/customers/[customer]": {
-          file: "pages/customers/[customer].js",
-          regex: expect.any(String)
+        {
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/customers/[customer]"
         },
-        "/customers/[customer]/[post]": {
-          file: "pages/customers/[customer]/[post].js",
-          regex: expect.any(String)
+        {
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$",
+          route: "/customers/[customer]/profile"
         },
-        "/customers/[customer]/profile": {
-          file: "pages/customers/[customer]/profile.js",
-          regex: expect.any(String)
-        },
-        "/en/[root]": {
-          file: "pages/[root].js",
-          regex: "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/en/customers/[customer]": {
-          file: "pages/customers/[customer].js",
-          regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        "/en/customers/[customer]/[post]": {
-          file: "pages/customers/[customer]/[post].js",
+        {
           regex:
-            "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+            "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/customers/[customer]/[post]"
         },
-        "/en/customers/[customer]/profile": {
-          file: "pages/customers/[customer]/profile.js",
-          regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
+        {
+          regex:
+            "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
+          route: "/customers/[...catchAll]"
         },
-        "/nl/[root]": {
-          file: "pages/[root].js",
-          regex: expect.any(String)
+        {
+          regex: "^\\/en\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/en/blog/[post]"
         },
-        "/nl/customers/[customer]": {
-          file: "pages/customers/[customer].js",
-          regex: expect.any(String)
+        {
+          regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/en/customers/[customer]"
         },
-        "/nl/customers/[customer]/[post]": {
-          file: "pages/customers/[customer]/[post].js",
-          regex: expect.any(String)
+        {
+          regex: "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$",
+          route: "/en/customers/[customer]/profile"
         },
-        "/nl/customers/[customer]/profile": {
-          file: "pages/customers/[customer]/profile.js",
-          regex: expect.any(String)
+        {
+          regex:
+            "^\\/en\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/en/customers/[customer]/[post]"
+        },
+        {
+          regex:
+            "^\\/en\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
+          route: "/en/customers/[...catchAll]"
+        },
+        {
+          regex: "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/en/[root]"
+        },
+        {
+          regex: "^\\/nl\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/nl/blog/[post]"
+        },
+        {
+          regex: "^\\/nl\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/nl/customers/[customer]"
+        },
+        {
+          regex: "^\\/nl\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$",
+          route: "/nl/customers/[customer]/profile"
+        },
+        {
+          regex:
+            "^\\/nl\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/nl/customers/[customer]/[post]"
+        },
+        {
+          regex:
+            "^\\/nl\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
+          route: "/nl/customers/[...catchAll]"
+        },
+        {
+          regex: "^\\/nl(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/nl/[root]"
+        },
+        {
+          regex: "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/[root]"
         }
-      });
+      ]);
 
-      expect(catchAll).toEqual({
-        "/customers/[...catchAll]": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
+      expect(ssr).toEqual({
+        dynamic: {
+          "/[root]": "pages/[root].js",
+          "/customers/[...catchAll]": "pages/customers/[...catchAll].js",
+          "/customers/[customer]": "pages/customers/[customer].js",
+          "/customers/[customer]/[post]":
+            "pages/customers/[customer]/[post].js",
+          "/customers/[customer]/profile":
+            "pages/customers/[customer]/profile.js",
+          "/en/[root]": "pages/[root].js",
+          "/en/customers/[...catchAll]": "pages/customers/[...catchAll].js",
+          "/en/customers/[customer]": "pages/customers/[customer].js",
+          "/en/customers/[customer]/[post]":
+            "pages/customers/[customer]/[post].js",
+          "/en/customers/[customer]/profile":
+            "pages/customers/[customer]/profile.js",
+          "/nl/[root]": "pages/[root].js",
+          "/nl/customers/[...catchAll]": "pages/customers/[...catchAll].js",
+          "/nl/customers/[customer]": "pages/customers/[customer].js",
+          "/nl/customers/[customer]/[post]":
+            "pages/customers/[customer]/[post].js",
+          "/nl/customers/[customer]/profile":
+            "pages/customers/[customer]/profile.js"
         },
-        "/en/customers/[...catchAll]": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
-        },
-        "/nl/customers/[...catchAll]": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
+        nonDynamic: {
+          "/customers/new": "pages/customers/new.js",
+          "/": "pages/index.js",
+          "/_app": "pages/_app.js",
+          "/_document": "pages/_document.js",
+          "/en": "pages/index.js",
+          "/en/_app": "pages/_app.js",
+          "/en/_document": "pages/_document.js",
+          "/en/customers/new": "pages/customers/new.js",
+          "/nl": "pages/index.js",
+          "/nl/_app": "pages/_app.js",
+          "/nl/_document": "pages/_document.js",
+          "/nl/customers/new": "pages/customers/new.js"
         }
-      });
-
-      expect(nonDynamic).toEqual({
-        "/customers/new": "pages/customers/new.js",
-        "/": "pages/index.js",
-        "/_app": "pages/_app.js",
-        "/_document": "pages/_document.js",
-        "/en": "pages/index.js",
-        "/en/_app": "pages/_app.js",
-        "/en/_document": "pages/_document.js",
-        "/en/customers/new": "pages/customers/new.js",
-        "/nl": "pages/index.js",
-        "/nl/_app": "pages/_app.js",
-        "/nl/_document": "pages/_document.js",
-        "/nl/customers/new": "pages/customers/new.js"
       });
 
       expect(html).toEqual({
@@ -172,50 +208,35 @@ describe("Builder Tests (with locales)", () => {
           "/nl/about": "pages/nl/about.html"
         },
         dynamic: {
-          "/blog/[post]": {
-            file: "pages/blog/[post].html",
-            regex: expect.any(String)
-          },
-          "/en/blog/[post]": {
-            file: "pages/en/blog/[post].html",
-            regex: expect.any(String)
-          },
-          "/nl/blog/[post]": {
-            file: "pages/nl/blog/[post].html",
-            regex: expect.any(String)
-          }
+          "/blog/[post]": "pages/blog/[post].html",
+          "/en/blog/[post]": "pages/en/blog/[post].html",
+          "/nl/blog/[post]": "pages/nl/blog/[post].html"
         }
       });
 
       expect(ssg).toEqual({
         nonDynamic: {
           "/": {
-            dataRoute: "/_next/data/test-build-id/index.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/contact": {
-            dataRoute: "/_next/data/test-build-id/contact.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/en": {
-            dataRoute: "/_next/data/test-build-id/en.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/en/contact": {
-            dataRoute: "/_next/data/test-build-id/en/contact.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl": {
-            dataRoute: "/_next/data/test-build-id/nl.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           },
           "/nl/contact": {
-            dataRoute: "/_next/data/test-build-id/nl/contact.json",
             initialRevalidateSeconds: false,
             srcRoute: null
           }

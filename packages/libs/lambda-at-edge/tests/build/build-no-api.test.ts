@@ -72,45 +72,57 @@ describe("Builder Tests (no API routes)", () => {
       const {
         buildId,
         publicFiles,
-        pages: {
-          ssr: { dynamic, catchAll, nonDynamic },
-          html
-        },
+        pages: { dynamic, ssr, html },
         trailingSlash
       } = defaultBuildManifest;
 
       expect(removeNewLineChars(buildId)).toEqual("test-build-id");
-      expect(dynamic).toEqual({
-        "/[root]": {
-          file: "pages/[root].js",
-          regex: expect.any(String)
-        },
-        "/customers/[customer]": {
-          file: "pages/customers/[customer].js",
-          regex: expect.any(String)
-        },
-        "/customers/[customer]/[post]": {
-          file: "pages/customers/[customer]/[post].js",
-          regex: expect.any(String)
-        },
-        "/customers/[customer]/profile": {
-          file: "pages/customers/[customer]/profile.js",
-          regex: expect.any(String)
-        }
-      });
 
-      expect(catchAll).toEqual({
-        "/customers/[...catchAll]": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
+      expect(dynamic).toEqual([
+        {
+          route: "/blog/[post]",
+          regex: "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/customers/[customer]",
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/customers/[customer]/profile",
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
+        },
+        {
+          route: "/customers/[customer]/[post]",
+          regex:
+            "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/customers/[...catchAll]",
+          regex:
+            "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        {
+          route: "/[root]",
+          regex: "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         }
-      });
+      ]);
 
-      expect(nonDynamic).toEqual({
-        "/customers/new": "pages/customers/new.js",
-        "/": "pages/index.js",
-        "/_app": "pages/_app.js",
-        "/_document": "pages/_document.js"
+      expect(ssr).toEqual({
+        nonDynamic: {
+          "/customers/new": "pages/customers/new.js",
+          "/": "pages/index.js",
+          "/_app": "pages/_app.js",
+          "/_document": "pages/_document.js"
+        },
+        dynamic: {
+          "/[root]": "pages/[root].js",
+          "/customers/[customer]": "pages/customers/[customer].js",
+          "/customers/[customer]/[post]":
+            "pages/customers/[customer]/[post].js",
+          "/customers/[customer]/profile":
+            "pages/customers/[customer]/profile.js",
+          "/customers/[...catchAll]": "pages/customers/[...catchAll].js"
+        }
       });
 
       expect(html).toEqual({
@@ -120,10 +132,7 @@ describe("Builder Tests (no API routes)", () => {
           "/about": "pages/about.html"
         },
         dynamic: {
-          "/blog/[post]": {
-            file: "pages/blog/[post].html",
-            regex: expect.any(String)
-          }
+          "/blog/[post]": "pages/blog/[post].html"
         }
       });
 

@@ -66,12 +66,14 @@ describe("Regeneration Handler", () => {
   });
 
   it.each`
-    basePath
-    ${"/custom"}
-    ${undefined}
+    locale
+    ${""}
+    ${"/en"}
+    ${"/fr"}
+    ${"/nl"}
   `(
-    "should generate correct page when basePath = $basePath",
-    async ({ basePath }) => {
+    "should generate correct page when path is $locale/customers/index.html",
+    async ({ locale }) => {
       mockPageRequire("pages/customers/index.js");
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const regenerationHandler = require("../../src/regeneration-handler")
@@ -81,7 +83,7 @@ describe("Regeneration Handler", () => {
       const s3StorePage = require("../../src/s3/s3StorePage").s3StorePage;
 
       const event = createCloudFrontEvent({
-        uri: "/customers/index.html",
+        uri: `${locale}/customers/index.html`,
         host: "mydistribution.cloudfront.net",
         config: {
           eventType: "origin-request"
@@ -92,7 +94,7 @@ describe("Regeneration Handler", () => {
 
       await regenerationHandler(
         sqsHandlerEvent({
-          basePath,
+          basePath: undefined,
           bucketName: "my-bucket",
           cloudFrontEventRequest: event.Records[0].cf.request,
           region: "us-east-1",
@@ -103,8 +105,8 @@ describe("Regeneration Handler", () => {
       expect(s3StorePage).toBeCalledTimes(1);
       expect(s3StorePage).toBeCalledWith(
         expect.objectContaining({
-          basePath,
-          uri: "/customers/index",
+          basePath: undefined,
+          uri: `${locale}/customers/index`,
           pageData: { page: "pages/customers/index.js" }
         })
       );
@@ -121,7 +123,7 @@ describe("Regeneration Handler", () => {
     const s3StorePage = require("../../src/s3/s3StorePage").s3StorePage;
 
     const event = createCloudFrontEvent({
-      uri: "/preview.html",
+      uri: "/fr/preview.html",
       host: "mydistribution.cloudfront.net",
       config: {
         eventType: "origin-request"
@@ -144,7 +146,7 @@ describe("Regeneration Handler", () => {
     expect(s3StorePage).toBeCalledWith(
       expect.objectContaining({
         basePath: undefined,
-        uri: "/preview",
+        uri: "/fr/preview",
         pageData: { page: "pages/preview.js" }
       })
     );

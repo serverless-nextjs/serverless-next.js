@@ -38,10 +38,12 @@ export type Dynamic = {
 };
 
 export type DynamicSSG = {
-  dataRoute: string;
-  dataRouteRegex: string;
   fallback: false | null | string;
-  routeRegex: string;
+};
+
+export type NonDynamicSSG = {
+  initialRevalidateSeconds: false | number;
+  srcRoute: string | null;
 };
 
 export type Manifest = {
@@ -70,9 +72,7 @@ export type PageManifest = Manifest & {
   pages: {
     dynamic: DynamicRoute[];
     html: {
-      dynamic: {
-        [key: string]: Dynamic;
-      };
+      dynamic: { [key: string]: string };
       nonDynamic: { [key: string]: string };
     };
     ssg: {
@@ -80,20 +80,11 @@ export type PageManifest = Manifest & {
         [key: string]: DynamicSSG;
       };
       nonDynamic: {
-        [key: string]: {
-          initialRevalidateSeconds: false | number;
-          srcRoute: string | null;
-          dataRoute: string;
-        };
+        [key: string]: NonDynamicSSG;
       };
     };
     ssr: {
-      catchAll: {
-        [key: string]: Dynamic;
-      };
-      dynamic: {
-        [key: string]: Dynamic;
-      };
+      dynamic: { [key: string]: string };
       nonDynamic: { [key: string]: string };
     };
   };

@@ -41,6 +41,7 @@ export type OriginResponseEvent = {
 };
 
 export interface RegenerationEvent {
+  pagePath: string;
   basePath: string | undefined;
   region: string;
   bucketName: string;

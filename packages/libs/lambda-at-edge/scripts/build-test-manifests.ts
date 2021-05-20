@@ -306,6 +306,27 @@ module.exports = {
   {
     auth: true,
     api: "./tests/api-handler/api-build-manifest-with-basic-auth.json"
+  },
+  {
+    config: `
+module.exports = {
+  generateBuildId: async () => "build-id"
+}
+`,
+    default: "./tests/regeneration-handler/default-build-manifest.json"
+  },
+  {
+    config: `
+module.exports = {
+  generateBuildId: async () => "build-id",
+  i18n: {
+    defaultLocale: "en",
+    locales: ["en", "nl", "fr"]
+  }
+}
+`,
+    default:
+      "./tests/regeneration-handler/default-build-manifest-with-locales.json"
   }
 ];
 

@@ -109,7 +109,7 @@ export const handlePageReq = (
     return {
       isData: false,
       isRender: true,
-      page: dynamicSSR.file
+      page: dynamicSSR
     };
   }
   const dynamicHTML = dynamic && pages.html.dynamic[dynamic];
@@ -117,15 +117,7 @@ export const handlePageReq = (
     return {
       isData: false,
       isStatic: true,
-      file: dynamicHTML.file
-    };
-  }
-  const catchAll = dynamic && pages.ssr.catchAll[dynamic];
-  if (catchAll) {
-    return {
-      isData: false,
-      isRender: true,
-      page: catchAll.file
+      file: dynamicHTML
     };
   }
 
