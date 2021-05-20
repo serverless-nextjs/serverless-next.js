@@ -88,9 +88,6 @@ export type PageManifest = Manifest & {
       };
     };
     ssr: {
-      catchAll: {
-        [key: string]: Dynamic;
-      };
       dynamic: {
         [key: string]: Dynamic;
       };

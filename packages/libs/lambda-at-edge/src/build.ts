@@ -236,9 +236,6 @@ class Builder {
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
         ...Object.values(buildManifest.pages.ssr.dynamic).map(
           (entry) => entry.file
-        ),
-        ...Object.values(buildManifest.pages.ssr.catchAll).map(
-          (entry) => entry.file
         )
       ].filter(ignoreAppAndDocumentPages);
 

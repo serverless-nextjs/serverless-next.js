@@ -31,7 +31,6 @@ export const prepareBuildManifests = async (
       dynamic: [],
       ssr: {
         dynamic: {},
-        catchAll: {},
         nonDynamic: {}
       },
       html: {
@@ -299,14 +298,11 @@ export const prepareBuildManifests = async (
       }
     }
 
-    const allDynamicRoutes = {
-      ...ssrPages.dynamic,
-      ...localeSsrPages.dynamic
-    };
-
     pageManifest.pages.ssr = {
-      dynamic: allDynamicRoutes,
-      catchAll: {},
+      dynamic: {
+        ...ssrPages.dynamic,
+        ...localeSsrPages.dynamic
+      },
       nonDynamic: {
         ...ssrPages.nonDynamic,
         ...localeSsrPages.nonDynamic
@@ -336,30 +332,10 @@ export const prepareBuildManifests = async (
     };
   }
 
-  // Split dynamic routes to non-catch all and catch all dynamic routes for later use for route precedence
-  const nonCatchAllRoutes: DynamicPageKeyValue = {};
-  const catchAllRoutes: DynamicPageKeyValue = {};
-  const allDynamicRoutes: DynamicPageKeyValue = pageManifest.pages.ssr.dynamic;
-
-  for (const key in allDynamicRoutes) {
-    if (key.includes("[...")) {
-      catchAllRoutes[key] = allDynamicRoutes[key];
-    } else {
-      nonCatchAllRoutes[key] = allDynamicRoutes[key];
-    }
-  }
-
-  pageManifest.pages.ssr = {
-    ...pageManifest.pages.ssr,
-    dynamic: nonCatchAllRoutes,
-    catchAll: catchAllRoutes
-  };
-
   // Sort page routes
   const dynamicRoutes = Object.keys(pageManifest.pages.html.dynamic)
     .concat(Object.keys(pageManifest.pages.ssg.dynamic))
-    .concat(Object.keys(pageManifest.pages.ssr.dynamic))
-    .concat(Object.keys(pageManifest.pages.ssr.catchAll));
+    .concat(Object.keys(pageManifest.pages.ssr.dynamic));
   const sortedRoutes = getSortedRoutes(dynamicRoutes);
   pageManifest.pages.dynamic = sortedRoutes.map((route) => {
     return {

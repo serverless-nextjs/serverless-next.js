@@ -69,7 +69,7 @@ describe("Builder Tests (with locales)", () => {
         buildId,
         publicFiles,
         pages: {
-          ssr: { dynamic, catchAll, nonDynamic },
+          ssr: { dynamic, nonDynamic },
           ssg,
           html
         },
@@ -126,10 +126,7 @@ describe("Builder Tests (with locales)", () => {
         "/nl/customers/[customer]/profile": {
           file: "pages/customers/[customer]/profile.js",
           regex: expect.any(String)
-        }
-      });
-
-      expect(catchAll).toEqual({
+        },
         "/customers/[...catchAll]": {
           file: "pages/customers/[...catchAll].js",
           regex: expect.any(String)

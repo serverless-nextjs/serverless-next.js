@@ -53,6 +53,10 @@
           "file": "pages/blog/[id].js",
           "regex": "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
+        "/customers/[...catchAll]": {
+          "file": "pages/customers/[...catchAll].js",
+          "regex": "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
         "/customers/[customer]": {
           "file": "pages/customers/[customer].js",
           "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
@@ -76,12 +80,6 @@
         "/no-fallback/[slug]": {
           "file": "pages/no-fallback/[slug].js",
           "regex": "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        }
-      },
-      "catchAll": {
-        "/customers/[...catchAll]": {
-          "file": "pages/customers/[...catchAll].js",
-          "regex": "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         }
       },
       "nonDynamic": {

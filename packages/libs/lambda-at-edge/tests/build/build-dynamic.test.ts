@@ -73,7 +73,7 @@ describe("Builder Tests (dynamic)", () => {
         buildId,
         publicFiles,
         pages: {
-          ssr: { dynamic, catchAll, nonDynamic },
+          ssr: { dynamic, nonDynamic },
           ssg,
           html
         },
@@ -119,11 +119,7 @@ describe("Builder Tests (dynamic)", () => {
         "/no-fallback/[slug]": {
           file: "pages/no-fallback/[slug].js",
           regex: "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        }
-      });
-
-      // Should non-localized variants be removed?
-      expect(catchAll).toEqual({
+        },
         "/catchall/[...slug]": {
           file: "pages/catchall/[...slug].js",
           regex:
