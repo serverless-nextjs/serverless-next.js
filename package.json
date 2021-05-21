@@ -125,7 +125,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,md,yml}": ["eslint --fix","prettier --write"]
+    "*.{js,jsx,ts,tsx,md,yml}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx}": ["eslint --fix"]
   },
   "resolutions": {
     "which": "^2.0.1",
