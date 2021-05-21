@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.9...@sls-next/core@1.0.0-alpha.10) (2021-05-21)
+
+**Note:** Version bump only for package @sls-next/core
+
 # [1.0.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.8...@sls-next/core@1.0.0-alpha.9) (2021-05-20)
 
 ### Bug Fixes
