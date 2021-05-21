@@ -52,7 +52,7 @@ describe("API lambda handler", () => {
 
         mockPageRequire("pages/api/getCustomers.js");
 
-        let response = await handler(event);
+        const response = await handler(event);
 
         if (expectedAuthenticateSuccess) {
           const decodedBody = Buffer.from(

@@ -24,7 +24,7 @@ describe("With Trailing Slash Config Build", () => {
     ${"fixture-next-config-as-obj-no-trailing-slash"}          | ${false}              | ${""}            | ${'module.exports = { target: "serverless" };'}
     ${"fixture-next-config-as-func-no-trailing-slash"}         | ${false}              | ${""}            | ${'module.exports = () => ({ target: "serverless" });'}
     ${"fixture-no-next-config"}                                | ${false}              | ${""}            | ${undefined}
-    ${"fixture-next-config-as-obj-basepath"}                   | ${true}               | ${"/basepath"}   | ${'module.exports = { basePath: "/basepath", target: "serverless", trailingSlash: true };'}
+    ${"fixture-next-config-as-obj-basepath"}                   | ${true}               | ${"/basepath"}   | ${'module.exports = {  basePath: "/basepath",  target: "serverless",  trailingSlash: true};'}
     ${"fixture-next-config-as-obj-basepath-no-trailing-slash"} | ${false}              | ${"/basepath"}   | ${'module.exports = { basePath: "/basepath", target: "serverless" };'}
   `(
     "with fixture: $fixture",

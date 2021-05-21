@@ -185,7 +185,8 @@ const addCustomStackResources = async function () {
       path.join(__dirname, "../resources/assets-bucket.yml")
     );
 
-    assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName = bucketName;
+    assetsBucketResource.Resources.NextStaticAssetsS3Bucket.Properties.BucketName =
+      bucketName;
 
     merge(
       this.serverless.service.provider.coreCloudFormationTemplate,
@@ -204,9 +205,8 @@ const addCustomStackResources = async function () {
       merge(cloudFrontResource.Resources.NextjsCloudFront, cloudFront);
     }
 
-    const {
-      DistributionConfig
-    } = cloudFrontResource.Resources.NextjsCloudFront.Properties;
+    const { DistributionConfig } =
+      cloudFrontResource.Resources.NextjsCloudFront.Properties;
 
     const findOrigin = (originId) =>
       DistributionConfig.Origins.find((o) => o.Id === originId);

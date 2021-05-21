@@ -55,7 +55,8 @@ module.exports = {
     updateDistribution: mockUpdateDistribution,
     getDistributionConfig: mockGetDistributionConfig,
     deleteDistribution: mockDeleteDistribution,
-    createCloudFrontOriginAccessIdentity: mockCreateCloudFrontOriginAccessIdentity,
+    createCloudFrontOriginAccessIdentity:
+      mockCreateCloudFrontOriginAccessIdentity,
     getCloudFrontOriginAccessIdentity: mockGetCloudFrontOriginAccessIdentity
   })),
 

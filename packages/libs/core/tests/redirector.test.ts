@@ -59,7 +59,7 @@ describe("Redirector Tests", () => {
     `(
       "redirects path $path to $expectedRedirect",
       ({ path, expectedRedirect, expectedStatusCode }) => {
-        const request = ({ uri: path } as unknown) as Request;
+        const request = { uri: path } as unknown as Request;
         const redirect = getRedirectPath(request, routesManifest);
 
         if (expectedRedirect) {

@@ -39,7 +39,9 @@ jest.mock(
 
 describe("Image lambda handler", () => {
   if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {});
+    it("skipping tests for Node.js that is on v10", () => {
+      // do nothing
+    });
     return;
   }
 
@@ -101,8 +103,7 @@ describe("Image lambda handler", () => {
       });
 
       const event = createCloudFrontEvent({
-        uri:
-          "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
+        uri: "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
           accept: [
@@ -186,7 +187,7 @@ describe("Image lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,

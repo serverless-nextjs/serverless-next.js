@@ -49,7 +49,7 @@ async function createExternalRewriteResponse(
   const { default: fetch } = await import("node-fetch");
 
   // Set request headers
-  let reqHeaders: any = {};
+  const reqHeaders: any = {};
   Object.assign(reqHeaders, req.headers);
 
   // Delete host header otherwise request may fail due to host mismatch

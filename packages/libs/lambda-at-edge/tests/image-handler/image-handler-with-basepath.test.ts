@@ -37,7 +37,9 @@ jest.mock(
 
 describe("Image lambda handler", () => {
   if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {});
+    it("skipping tests for Node.js that is on v10", () => {
+      // do nothing
+    });
     return;
   }
 
@@ -122,7 +124,7 @@ describe("Image lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,
