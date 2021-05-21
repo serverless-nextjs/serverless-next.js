@@ -185,6 +185,7 @@ class Builder {
    * @param destination
    */
   async processAndCopyRoutesManifest(source: string, destination: string) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(source) as RoutesManifest;
 
     // Remove default trailing slash redirects as they are already handled without regex matching.
@@ -261,6 +262,7 @@ class Builder {
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
@@ -321,14 +323,7 @@ class Builder {
           }
         }
       ),
-      // copy chunks if present and not using serverless trace
-      !this.buildOptions.useServerlessTraceTarget &&
-      fse.existsSync(join(this.serverlessDir, "chunks"))
-        ? fse.copy(
-            join(this.serverlessDir, "chunks"),
-            join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "chunks")
-          )
-        : Promise.resolve(),
+      this.copyChunks(DEFAULT_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
@@ -388,14 +383,7 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
-      // copy chunks if present and not using serverless trace
-      !this.buildOptions.useServerlessTraceTarget &&
-      fse.existsSync(join(this.serverlessDir, "chunks"))
-        ? fse.copy(
-            join(this.serverlessDir, "chunks"),
-            join(this.outputDir, API_LAMBDA_CODE_DIR, "chunks")
-          )
-        : Promise.resolve(),
+      this.copyChunks(API_LAMBDA_CODE_DIR),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
@@ -421,6 +409,7 @@ class Builder {
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
+      this.copyChunks(REGENERATION_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.serverlessDir, "pages"),
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "pages"),
@@ -439,6 +428,19 @@ class Builder {
         }
       )
     ]);
+  }
+
+  /**
+   * copy chunks if present and not using serverless trace
+   */
+  async copyChunks(buildDir: string): Promise<void> {
+    return !this.buildOptions.useServerlessTraceTarget &&
+      fse.existsSync(join(this.serverlessDir, "chunks"))
+      ? fse.copy(
+          join(this.serverlessDir, "chunks"),
+          join(this.outputDir, buildDir, "chunks")
+        )
+      : Promise.resolve();
   }
 
   /**
@@ -793,11 +795,13 @@ class Builder {
       await restoreUserConfig();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(join(
       this.dotNextDir,
       "routes-manifest.json"
     ));
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
