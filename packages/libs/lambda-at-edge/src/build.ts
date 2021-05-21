@@ -321,6 +321,8 @@ class Builder {
           }
         }
       ),
+      // copy chunks if present and not using serverless trace
+      !this.buildOptions.useServerlessTraceTarget &&
       fse.existsSync(join(this.serverlessDir, "chunks"))
         ? fse.copy(
             join(this.serverlessDir, "chunks"),
@@ -386,6 +388,8 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
+      // copy chunks if present and not using serverless trace
+      !this.buildOptions.useServerlessTraceTarget &&
       fse.existsSync(join(this.serverlessDir, "chunks"))
         ? fse.copy(
             join(this.serverlessDir, "chunks"),
