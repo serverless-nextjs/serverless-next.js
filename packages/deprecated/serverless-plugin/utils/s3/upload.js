@@ -66,55 +66,54 @@ const cacheHeaderFactory = (buildId = "", rootPrefix) => {
   };
 };
 
-module.exports = (awsProvider, buildId) => (
-  dir,
-  { bucket, truncate = null, rootPrefix = null }
-) => {
-  const getCacheHeader = cacheHeaderFactory(buildId, rootPrefix);
-  const getObjectFromS3 = get(awsProvider);
-  const promises = [];
+module.exports =
+  (awsProvider, buildId) =>
+  (dir, { bucket, truncate = null, rootPrefix = null }) => {
+    const getCacheHeader = cacheHeaderFactory(buildId, rootPrefix);
+    const getObjectFromS3 = get(awsProvider);
+    const promises = [];
 
-  logger.log(`Uploading ${dir} to ${bucket} ...`);
+    logger.log(`Uploading ${dir} to ${bucket} ...`);
 
-  return new Promise((resolve, reject) => {
-    walkDir(dir)
-      .on("data", (item) => {
-        const p = fse.lstat(item.path).then(async (stats) => {
-          if (!stats.isDirectory()) {
-            const CacheControl = getCacheHeader(item);
-            const uploadParams = getUploadParameters(
-              bucket,
-              item.path,
-              truncate,
-              rootPrefix,
-              CacheControl
-            );
+    return new Promise((resolve, reject) => {
+      walkDir(dir)
+        .on("data", (item) => {
+          const p = fse.lstat(item.path).then(async (stats) => {
+            if (!stats.isDirectory()) {
+              const CacheControl = getCacheHeader(item);
+              const uploadParams = getUploadParameters(
+                bucket,
+                item.path,
+                truncate,
+                rootPrefix,
+                CacheControl
+              );
 
-            const s3Object = await getObjectFromS3(uploadParams.Key, bucket);
+              const s3Object = await getObjectFromS3(uploadParams.Key, bucket);
 
-            if (filesAreEqual(s3Object, stats)) {
-              debug(`no need to upload ${uploadParams.Key}`);
-              return Promise.resolve();
+              if (filesAreEqual(s3Object, stats)) {
+                debug(`no need to upload ${uploadParams.Key}`);
+                return Promise.resolve();
+              }
+
+              debug(
+                `uploading to s3 - ${uploadParams.Key} ${
+                  CacheControl ? " with cachecontrol " + CacheControl : ""
+                }`
+              );
+
+              return awsProvider("S3", "upload", uploadParams);
             }
+          });
 
-            debug(
-              `uploading to s3 - ${uploadParams.Key} ${
-                CacheControl ? " with cachecontrol " + CacheControl : ""
-              }`
-            );
-
-            return awsProvider("S3", "upload", uploadParams);
-          }
+          promises.push(p);
+        })
+        .on("end", () => {
+          Promise.all(promises)
+            .then(() => {
+              resolve({ count: promises.length });
+            })
+            .catch(reject);
         });
-
-        promises.push(p);
-      })
-      .on("end", () => {
-        Promise.all(promises)
-          .then(() => {
-            resolve({ count: promises.length });
-          })
-          .catch(reject);
-      });
-  });
-};
+    });
+  };

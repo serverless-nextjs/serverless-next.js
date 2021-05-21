@@ -44,21 +44,17 @@ describe.each`
     });
     if (expectsQueueDeployment) {
       mockLambda.mockResolvedValueOnce({
-        arn:
-          "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
+        arn: "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
       });
     }
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
     });
     mockLambdaPublish.mockResolvedValue({
       version: "v1"

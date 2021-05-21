@@ -75,9 +75,8 @@ describe("Regeneration Handler", () => {
     "should generate correct page when path is $locale/customers/index.html",
     async ({ locale }) => {
       mockPageRequire("pages/customers/index.js");
-      // eslint-disable-next-line @typescript-eslint/no-var-requires
-      const regenerationHandler = require("../../src/regeneration-handler")
-        .handler;
+      const regenerationHandler =
+        require("../../src/regeneration-handler").handler; // eslint-disable-line @typescript-eslint/no-var-requires
 
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const s3StorePage = require("../../src/s3/s3StorePage").s3StorePage;
@@ -115,9 +114,8 @@ describe("Regeneration Handler", () => {
 
   it("should generate correct page when path exists in nonDynamic routes", async () => {
     mockPageRequire("pages/preview.js");
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const regenerationHandler = require("../../src/regeneration-handler")
-      .handler;
+    const regenerationHandler =
+      require("../../src/regeneration-handler").handler; // eslint-disable-line @typescript-eslint/no-var-requires
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const s3StorePage = require("../../src/s3/s3StorePage").s3StorePage;

@@ -11,3 +11,4 @@ fixture
 integration/basic-app
 integration/basic-app-with-nested-next-config
 integration/app-with-serverless-offline
+packages/libs/lambda-at-edge/sharp_node_modules

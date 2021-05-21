@@ -19,6 +19,14 @@ module.exports = {
         "@typescript-eslint/ban-ts-ignore": "off",
         "@typescript-eslint/ban-ts-comment": "off"
       }
+    },
+    {
+      files: ["*.ts", "*.tsx"],
+      excludedFiles: ["**/cypress/integration/*.ts"],
+      plugins: ["promise"],
+      rules: {
+        "promise/catch-or-return": "error"
+      }
     }
   ]
 };

@@ -54,6 +54,7 @@
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "5.1.0",
     "fs-extra": "^9.0.1",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
@@ -124,7 +125,7 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,md,yml}": "prettier --write"
+    "*.{js,jsx,ts,tsx,md,yml}": ["eslint --fix","prettier --write"]
   },
   "resolutions": {
     "which": "^2.0.1",

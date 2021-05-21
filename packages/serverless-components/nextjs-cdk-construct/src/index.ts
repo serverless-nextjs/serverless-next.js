@@ -321,7 +321,8 @@ export class NextJSLambdaEdge extends cdk.Construct {
                     this,
                     "ImageOriginRequest",
                     {
-                      queryStringBehavior: OriginRequestQueryStringBehavior.all()
+                      queryStringBehavior:
+                        OriginRequestQueryStringBehavior.all()
                     }
                   ),
                   edgeLambdas: [

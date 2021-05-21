@@ -5,10 +5,12 @@ import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import { CloudFrontResultResponse } from "aws-lambda";
 import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
 jest.mock(
   "../../src/manifest.json",
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   () => require("./api-build-manifest.json"),
   {
     virtual: true
@@ -17,6 +19,7 @@ jest.mock(
 
 jest.mock(
   "../../src/routes-manifest.json",
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   () => require("./api-routes-manifest.json"),
   {
     virtual: true
@@ -26,6 +29,7 @@ jest.mock(
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../../src/${mockPagePath}`,
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     () => require(`../shared-fixtures/built-artifact/${mockPagePath}`),
     {
       virtual: true
@@ -96,7 +100,7 @@ describe("API lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,
@@ -200,6 +204,7 @@ describe("API lambda handler", () => {
       const response: CloudFrontResultResponse = await handler(event);
       expect(response.status).toEqual(200);
 
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
       const page = require(`../../src/pages/api/getUser.js`);
       const call = page.default.mock.calls[0];
       const req = call[0];
@@ -234,7 +239,7 @@ describe("API lambda handler", () => {
           status: 200
         });
 
-        let [path, querystring] = uri.split("?");
+        const [path, querystring] = uri.split("?");
 
         const event = createCloudFrontEvent({
           uri: path,

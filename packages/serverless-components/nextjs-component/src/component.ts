@@ -639,7 +639,8 @@ class NextjsComponent extends Component {
         imageEdgeLambdaInput
       );
 
-      const imageEdgeLambdaPublishOutputs = await imageEdgeLambda.publishVersion();
+      const imageEdgeLambdaPublishOutputs =
+        await imageEdgeLambda.publishVersion();
 
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
@@ -695,7 +696,8 @@ class NextjsComponent extends Component {
       defaultEdgeLambdaInput
     );
 
-    const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
+    const defaultEdgeLambdaPublishOutputs =
+      await defaultEdgeLambda.publishVersion();
 
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)

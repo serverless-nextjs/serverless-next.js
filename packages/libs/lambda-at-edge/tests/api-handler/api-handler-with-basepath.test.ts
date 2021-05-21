@@ -70,7 +70,7 @@ describe("API lambda handler with basePath configured", () => {
   });
 
   describe("Custom Redirects", () => {
-    let runRedirectTest = async (
+    const runRedirectTest = async (
       path: string,
       expectedRedirect: string,
       statusCode: number,

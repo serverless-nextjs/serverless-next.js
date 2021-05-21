@@ -55,7 +55,7 @@ function removeLambdaVersion(
   lambda: AWS.Lambda,
   fnName: string,
   version: string
-): Promise<{}> {
+): Promise<unknown> {
   return new Promise((resolve, reject) => {
     lambda.deleteFunction(
       { FunctionName: fnName, Qualifier: version },
@@ -72,7 +72,7 @@ function removeLambdaVersion(
 
 async function cleanupVersions(
   region: string,
-  removeIt: boolean = false,
+  removeIt = false,
   nextMarker: string | undefined = undefined
 ) {
   const lambda: AWS.Lambda = new AWS.Lambda({ region });

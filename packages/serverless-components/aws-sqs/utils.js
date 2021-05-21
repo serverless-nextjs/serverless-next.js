@@ -41,11 +41,13 @@ const createAttributeMap = (config) => {
   if (typeof config.maximumMessageSize !== "undefined")
     attributeMap.MaximumMessageSize = config.maximumMessageSize.toString();
   if (typeof config.messageRetentionPeriod !== "undefined")
-    attributeMap.MessageRetentionPeriod = config.messageRetentionPeriod.toString();
+    attributeMap.MessageRetentionPeriod =
+      config.messageRetentionPeriod.toString();
   if (typeof config.delaySeconds !== "undefined")
     attributeMap.DelaySeconds = config.delaySeconds.toString();
   if (typeof config.receiveMessageWaitTimeSeconds !== "undefined")
-    attributeMap.ReceiveMessageWaitTimeSeconds = config.receiveMessageWaitTimeSeconds.toString();
+    attributeMap.ReceiveMessageWaitTimeSeconds =
+      config.receiveMessageWaitTimeSeconds.toString();
   if (typeof config.redrivePolicy !== "undefined")
     attributeMap.RedrivePolicy = JSON.stringify(config.redrivePolicy) || "";
   if (typeof config.policy !== "undefined")

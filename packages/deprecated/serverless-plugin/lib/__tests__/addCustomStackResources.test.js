@@ -37,9 +37,8 @@ describe("addCustomStackResources", () => {
 
       const plugin = new ServerlessPluginBuilder().build();
 
-      plugin.serverless.service.provider.coreCloudFormationTemplate = clone(
-        coreCfTemplate
-      );
+      plugin.serverless.service.provider.coreCloudFormationTemplate =
+        clone(coreCfTemplate);
 
       return addCustomStackResources.call(plugin).then(() => {
         expect(logger.log).toBeCalledWith(
@@ -174,9 +173,8 @@ describe("addCustomStackResources", () => {
       plugin.provider.getRegion = getRegion;
 
       return addCustomStackResources.call(plugin).then(() => {
-        const {
-          RobotsProxyMethod
-        } = plugin.serverless.service.resources.Resources;
+        const { RobotsProxyMethod } =
+          plugin.serverless.service.resources.Resources;
 
         expect(getRegion).toBeCalled();
         expect(RobotsProxyMethod.Properties.Integration.Uri).toEqual(
@@ -289,15 +287,13 @@ describe("addCustomStackResources", () => {
           .mockResolvedValue(["robots.txt", "manifest.json"]);
 
         return addCustomStackResources.call(plugin).then(() => {
-          const {
-            NextjsCloudFront
-          } = plugin.serverless.service.resources.Resources;
+          const { NextjsCloudFront } =
+            plugin.serverless.service.resources.Resources;
 
           expect(NextjsCloudFront).toBeDefined();
 
-          const {
-            CacheBehaviors
-          } = NextjsCloudFront.Properties.DistributionConfig;
+          const { CacheBehaviors } =
+            NextjsCloudFront.Properties.DistributionConfig;
 
           expect(CacheBehaviors).toHaveLength(4); // behavior for static/*, _next/* origins and 2 other behaviours for robots and manifest
           expect(CacheBehaviors[2].PathPattern).toEqual("robots.txt");
@@ -323,9 +319,8 @@ describe("addCustomStackResources", () => {
           .build();
 
         return addCustomStackResources.call(plugin).then(() => {
-          const {
-            NextjsCloudFront
-          } = plugin.serverless.service.resources.Resources;
+          const { NextjsCloudFront } =
+            plugin.serverless.service.resources.Resources;
           expect(
             NextjsCloudFront.Properties.DistributionConfig.Aliases
           ).toEqual(["myalias.com"]);

@@ -143,9 +143,10 @@ function getAppBucketName(appName: string): string | null {
  * Get the CloudFront URL and distribution ID.
  * @param appName
  */
-function getCloudFrontDetails(
-  appName: string
-): { cloudFrontUrl: string | null; distributionId: string | null } {
+function getCloudFrontDetails(appName: string): {
+  cloudFrontUrl: string | null;
+  distributionId: string | null;
+} {
   let data;
   try {
     data = fs.readFileSync(`.serverless/Template.${appName}.CloudFront.json`);
@@ -312,35 +313,40 @@ async function runEndToEndTest(): Promise<boolean> {
     console.info(
       "Checking if CloudFront invalidations, SSR and SSG pages are ready."
     );
-    const [
-      cloudFrontReady,
-      ssrReady,
-      ssgReady,
-      isrReady,
-      dynamicIsrReady
-    ] = await Promise.all([
-      checkInvalidationsCompleted(distributionId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + ssrPagePath, buildId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + ssgPagePath, buildId, waitTimeout, 10),
-      isrPagePath
-        ? checkWebAppBuildId(
-            cloudFrontUrl + isrPagePath,
-            buildId,
-            waitTimeout,
-            10
-          )
-        : Promise.resolve(true),
-      dynamicIsrPagePath
-        ? checkWebAppBuildId(
-            cloudFrontUrl + dynamicIsrPagePath,
-            buildId,
-            waitTimeout,
-            10
-          )
-        : Promise.resolve(true)
-      // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
-      // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
-    ]);
+    const [cloudFrontReady, ssrReady, ssgReady, isrReady, dynamicIsrReady] =
+      await Promise.all([
+        checkInvalidationsCompleted(distributionId, waitTimeout, 10),
+        checkWebAppBuildId(
+          cloudFrontUrl + ssrPagePath,
+          buildId,
+          waitTimeout,
+          10
+        ),
+        checkWebAppBuildId(
+          cloudFrontUrl + ssgPagePath,
+          buildId,
+          waitTimeout,
+          10
+        ),
+        isrPagePath
+          ? checkWebAppBuildId(
+              cloudFrontUrl + isrPagePath,
+              buildId,
+              waitTimeout,
+              10
+            )
+          : Promise.resolve(true),
+        dynamicIsrPagePath
+          ? checkWebAppBuildId(
+              cloudFrontUrl + dynamicIsrPagePath,
+              buildId,
+              waitTimeout,
+              10
+            )
+          : Promise.resolve(true)
+        // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
+        // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
+      ]);
 
     if (
       !cloudFrontReady ||
