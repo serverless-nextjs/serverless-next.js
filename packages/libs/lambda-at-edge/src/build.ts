@@ -321,6 +321,12 @@ class Builder {
           }
         }
       ),
+      fse.existsSync(join(this.serverlessDir, "chunks"))
+        ? fse.copy(
+            join(this.serverlessDir, "chunks"),
+            join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "chunks")
+          )
+        : Promise.resolve(),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
@@ -380,6 +386,12 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
+      fse.existsSync(join(this.serverlessDir, "chunks"))
+        ? fse.copy(
+            join(this.serverlessDir, "chunks"),
+            join(this.outputDir, API_LAMBDA_CODE_DIR, "chunks")
+          )
+        : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
@@ -796,23 +808,18 @@ class Builder {
       domainRedirects: this.buildOptions.domainRedirects ?? {}
     };
 
-    const {
-      apiManifest,
-      imageManifest,
-      pageManifest
-    } = await prepareBuildManifests(
-      options,
-      await this.readNextConfig(),
-      routesManifest,
-      await this.readPagesManifest(),
-      prerenderManifest,
-      await this.readPublicFiles()
-    );
+    const { apiManifest, imageManifest, pageManifest } =
+      await prepareBuildManifests(
+        options,
+        await this.readNextConfig(),
+        routesManifest,
+        await this.readPagesManifest(),
+        prerenderManifest,
+        await this.readPublicFiles()
+      );
 
-    const {
-      enableHTTPCompression,
-      logLambdaExecutionTimes
-    } = this.buildOptions;
+    const { enableHTTPCompression, logLambdaExecutionTimes } =
+      this.buildOptions;
 
     const apiBuildManifest = {
       ...apiManifest,

@@ -506,6 +506,7 @@ describe("Builder Tests", () => {
         expect.arrayContaining([
           "index.js",
           "manifest.json",
+          "chunks",
           "pages",
           "prerender-manifest.json",
           "routes-manifest.json",
@@ -521,6 +522,7 @@ describe("Builder Tests", () => {
         expect.arrayContaining([
           "index.js",
           "manifest.json",
+          "chunks",
           "pages",
           "routes-manifest.json",
           "testFile.js"
