@@ -52,30 +52,28 @@ describe("triggerStaticRegeneration()", () => {
     mockSendMessageCommand.mockImplementationOnce(() => {
       throw new Error("Unknown error");
     });
-    expect(triggerStaticRegeneration(options)).rejects.toEqual({
-      error: "Unknown error"
-    });
+    await expect(triggerStaticRegeneration(options)).rejects.toEqual(
+      new Error("Unknown error")
+    );
   });
 
   it("should reject when corrupt s3 name is passed", async () => {
-    expect(
+    await expect(
       triggerStaticRegeneration({
         ...options,
         request: {
           ...options.request,
           origin: {
             ...options.request.origin,
-            s3: { domainName: "unknown", region: "us-east-1" }
+            s3: undefined
           }
         } as AWSLambda.CloudFrontRequest
       })
-    ).rejects.toEqual({
-      error: "Expected bucket name to be defined"
-    });
+    ).rejects.toEqual(new Error("Expected bucket name to be defined"));
   });
 
   it("should reject when no region is passed", async () => {
-    expect(
+    await expect(
       triggerStaticRegeneration({
         ...options,
         request: {
@@ -86,9 +84,7 @@ describe("triggerStaticRegeneration()", () => {
           }
         } as AWSLambda.CloudFrontRequest
       })
-    ).rejects.toEqual({
-      error: "Expected region to be defined"
-    });
+    ).rejects.toEqual(new Error("Expected region to be defined"));
   });
 
   it.each`
