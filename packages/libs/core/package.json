@@ -32,7 +32,9 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
     "@hapi/accept": "^5.0.1",
+    "cookie": "^0.4.1",
     "jsonwebtoken": "^8.5.1",
+    "path-to-regexp": "^6.1.0",
     "regex-parser": "^2.2.10"
   },
   "devDependencies": {
