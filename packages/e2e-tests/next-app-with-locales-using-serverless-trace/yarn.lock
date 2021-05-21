@@ -4231,7 +4231,7 @@ native-url@0.3.4:
   dependencies:
     querystring "^0.2.0"
 
-next@^10.2.0:
+next@10.2.2:
   version "10.2.2"
   resolved "https://registry.npmjs.org/next/-/next-10.2.2.tgz#aadcc526e420282b4a735b0595041195d748a91d"
   integrity sha512-HPGSLrflWPvf3zEZSIk/uj0CZ+YYrpZwZS0PFAgXbEwb894iRuAPzglagqlzcCh7lg12RBEaKNIxhrVa5xgjtQ==
