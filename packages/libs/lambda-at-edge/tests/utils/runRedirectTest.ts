@@ -2,6 +2,7 @@ import { createCloudFrontEvent } from "../test-utils";
 import { CloudFrontResultResponse } from "aws-lambda";
 
 export async function runRedirectTestWithHandler(
+  // eslint-disable-next-line @typescript-eslint/ban-types
   handler: Function,
   path: string,
   expectedRedirect: string,
@@ -40,5 +41,5 @@ export async function runRedirectTestWithHandler(
     ],
     refresh: refresh
   });
-  expect(response.status).toEqual(statusCode.toString());
+  expect(response.status.toString()).toEqual(statusCode.toString());
 }

@@ -96,7 +96,7 @@ describe("API lambda handler", () => {
 
       const response = (await handler(event)) as CloudFrontResponseResult;
 
-      expect(response.status).toEqual("404");
+      expect(response.status).toEqual(404);
     });
   });
 
@@ -223,7 +223,7 @@ describe("API lambda handler", () => {
       });
 
       const response: CloudFrontResultResponse = await handler(event);
-      expect(response.status).toEqual("404");
+      expect(response.status).toEqual(404);
     });
 
     it.each`

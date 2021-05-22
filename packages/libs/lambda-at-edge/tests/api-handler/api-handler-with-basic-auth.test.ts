@@ -63,9 +63,10 @@ describe("API lambda handler", () => {
           expect(response.status).toEqual(200);
         } else {
           expect(response).toEqual({
-            status: "401",
+            status: 401,
             statusDescription: "Unauthorized",
-            body: "Unauthorized",
+            body: Buffer.from("Unauthorized").toString("base64"),
+            bodyEncoding: "base64",
             headers: {
               "www-authenticate": [{ key: "WWW-Authenticate", value: "Basic" }]
             }

@@ -66,7 +66,7 @@ describe("API lambda handler with basePath configured", () => {
 
     const response = (await handler(event)) as CloudFrontResponseResult;
 
-    expect(response.status).toEqual("404");
+    expect(response.status).toEqual(404);
   });
 
   describe("Custom Redirects", () => {
@@ -137,7 +137,7 @@ describe("API lambda handler with basePath configured", () => {
       path                            | expectedHeaders                    | expectedJs
       ${"/basepath/api/getCustomers"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
     `(
-      "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
+      "has custom headers $expectedHeaders and expectedPage $expectedJs for path $path",
       async ({ path, expectedHeaders, expectedJs }) => {
         const event = createCloudFrontEvent({
           uri: path,
