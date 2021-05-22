@@ -72,9 +72,9 @@ describe("Regeneration Handler", () => {
     ${"/fr"}
     ${"/nl"}
   `(
-    "should generate correct page when path is $locale/customers/index.html",
+    "should generate correct page when path is $locale/preview",
     async ({ locale }) => {
-      mockPageRequire("pages/customers/index.js");
+      mockPageRequire("pages/preview.js");
       const regenerationHandler =
         require("../../src/regeneration-handler").handler; // eslint-disable-line @typescript-eslint/no-var-requires
 
@@ -82,7 +82,7 @@ describe("Regeneration Handler", () => {
       const s3StorePage = require("../../src/s3/s3StorePage").s3StorePage;
 
       const event = createCloudFrontEvent({
-        uri: `${locale}/customers/index.html`,
+        uri: `${locale}/preview`,
         host: "mydistribution.cloudfront.net",
         config: {
           eventType: "origin-request"
@@ -97,7 +97,7 @@ describe("Regeneration Handler", () => {
           bucketName: "my-bucket",
           cloudFrontEventRequest: event.Records[0].cf.request,
           region: "us-east-1",
-          pagePath: "pages/customers/index.js"
+          pagePath: "pages/preview.js"
         })
       );
 
@@ -105,48 +105,10 @@ describe("Regeneration Handler", () => {
       expect(s3StorePage).toBeCalledWith(
         expect.objectContaining({
           basePath: undefined,
-          uri: `${locale}/customers/index`,
-          pageData: { page: "pages/customers/index.js" }
+          uri: `${locale}/preview`,
+          pageData: { page: "pages/preview.js" }
         })
       );
     }
   );
-
-  it("should generate correct page when path exists in nonDynamic routes", async () => {
-    mockPageRequire("pages/preview.js");
-    const regenerationHandler =
-      require("../../src/regeneration-handler").handler; // eslint-disable-line @typescript-eslint/no-var-requires
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const s3StorePage = require("../../src/s3/s3StorePage").s3StorePage;
-
-    const event = createCloudFrontEvent({
-      uri: "/fr/preview.html",
-      host: "mydistribution.cloudfront.net",
-      config: {
-        eventType: "origin-request"
-      } as AWSLambda.CloudFrontEvent["config"],
-      querystring: undefined,
-      requestHeaders: {}
-    });
-
-    await regenerationHandler(
-      sqsHandlerEvent({
-        basePath: undefined,
-        bucketName: "my-bucket",
-        cloudFrontEventRequest: event.Records[0].cf.request,
-        region: "us-east-1",
-        pagePath: "pages/preview.js"
-      })
-    );
-
-    expect(s3StorePage).toBeCalledTimes(1);
-    expect(s3StorePage).toBeCalledWith(
-      expect.objectContaining({
-        basePath: undefined,
-        uri: "/fr/preview",
-        pageData: { page: "pages/preview.js" }
-      })
-    );
-  });
 });

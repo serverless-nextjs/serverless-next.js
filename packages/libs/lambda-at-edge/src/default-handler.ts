@@ -281,7 +281,7 @@ const handleOriginResponse = async ({
       ) {
         const { throttle } = await triggerStaticRegeneration({
           basePath,
-          request,
+          request: { ...request, uri: requestUri },
           response,
           pagePath: staticRoute.page
         });
