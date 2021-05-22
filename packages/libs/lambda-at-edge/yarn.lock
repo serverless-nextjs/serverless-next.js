@@ -1117,21 +1117,13 @@
     picomatch "^2.2.2"
 
 "@sls-next/core@link:../core":
-  version "1.0.0-alpha.8"
-  dependencies:
-    "@hapi/accept" "^5.0.1"
-    jsonwebtoken "^8.5.1"
-    regex-parser "^2.2.10"
+  version "0.0.0"
+  uid ""
 
 "@types/aws-lambda@^8.10.57":
   version "8.10.76"
   resolved "https://registry.npmjs.org/@types/aws-lambda/-/aws-lambda-8.10.76.tgz#a20191677f1f5e32fe1f26739b1d6fbbea9cf636"
   integrity sha512-lCTyeRm3NWqSwDnoji0z82Pl0tsOpr1p+33AiNeidgarloWXh3wdiVRUuxEa+sY9S5YLOYGz5X3N3Zvpibvm5w==
-
-"@types/cookie@^0.4.0":
-  version "0.4.0"
-  resolved "https://registry.npmjs.org/@types/cookie/-/cookie-0.4.0.tgz#14f854c0f93d326e39da6e3b6f34f7d37513d108"
-  integrity sha512-y7mImlc/rNkvCRmg8gC3/lj87S7pTUIJ6QGjwHR9WQJcFs+ZMTOaoPrkdFA/YdbuqVEmEbb5RdhVxMkAcgOnpg==
 
 "@types/estree@*":
   version "0.0.47"
