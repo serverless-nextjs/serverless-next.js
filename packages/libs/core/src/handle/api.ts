@@ -14,6 +14,14 @@ import {
 } from "../types";
 import { unauthorized } from "./unauthorized";
 
+/*
+ * Handles api routes.
+ *
+ * Returns ExternalRoute for handling in the caller.
+ *
+ * If return is void, the response has already been generated in
+ * event.res/event.responsePromise which the caller should wait on.
+ */
 export const handleApi = async (
   event: Event,
   manifest: ApiManifest,

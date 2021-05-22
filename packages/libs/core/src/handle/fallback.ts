@@ -1,4 +1,4 @@
-import { handleRender } from "./default";
+import { renderRoute } from "./default";
 import { setCustomHeaders } from "./headers";
 import {
   Event,
@@ -22,7 +22,7 @@ type Fallback = {
   renderOpts: any;
 };
 
-const handleFallbackRender = async (
+const renderFallback = async (
   event: Event,
   route: FallbackRoute,
   routesManifest: RoutesManifest,
@@ -50,6 +50,15 @@ const handleFallbackRender = async (
   }
 };
 
+/*
+ * Handles fallback routes
+ *
+ * If route is a blocking fallback, a Fallback object is returned.
+ * It contains the results of page rendering.
+ *
+ * Otherwise either a page is rendered (like handleDefault) or
+ * returnes as StaticRoute for the caller to handle.
+ */
 export const handleFallback = async (
   event: Event,
   route: Route,
@@ -59,7 +68,7 @@ export const handleFallback = async (
 ): Promise<StaticRoute | Fallback | void> => {
   // This should not be needed if all SSR routes are handled correctly
   if (route.isRender) {
-    return handleRender(event, route as RenderRoute, routesManifest, getPage);
+    return renderRoute(event, route as RenderRoute, routesManifest, getPage);
   }
 
   if (route.isStatic) {
@@ -69,7 +78,7 @@ export const handleFallback = async (
       staticRoute.fallback === null;
     if (shouldRender && staticRoute.page) {
       const fallback: FallbackRoute = staticRoute as FallbackRoute;
-      return handleFallbackRender(event, fallback, routesManifest, getPage);
+      return renderFallback(event, fallback, routesManifest, getPage);
     }
     if (staticRoute.fallback) {
       return { ...staticRoute, file: `pages${staticRoute.fallback}` };
@@ -85,5 +94,5 @@ export const handleFallback = async (
     return errorRoute as StaticRoute;
   }
 
-  return handleRender(event, errorRoute, routesManifest, getPage);
+  return renderRoute(event, errorRoute, routesManifest, getPage);
 };

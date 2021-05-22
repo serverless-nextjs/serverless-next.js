@@ -16,7 +16,7 @@ import {
 } from "../types";
 import { unauthorized } from "./unauthorized";
 
-export const handleRender = async (
+export const renderRoute = async (
   event: Event,
   route: RenderRoute,
   routesManifest: RoutesManifest,
@@ -54,6 +54,15 @@ export const handleRender = async (
   }
 };
 
+/*
+ * Handles page and data routes.
+ *
+ * Returns one of: ExternalRoute, PublicFileRoute, StaticRoute
+ * for handling in the caller.
+ *
+ * If return is void, the response has already been generated in
+ * event.res/event.responsePromise which the caller should wait on.
+ */
 export const handleDefault = async (
   event: Event,
   manifest: PageManifest,
@@ -77,12 +86,12 @@ export const handleDefault = async (
     return redirect(event, route as RedirectRoute);
   }
   if (route.isRender) {
-    return handleRender(event, route as RenderRoute, routesManifest, getPage);
+    return renderRoute(event, route as RenderRoute, routesManifest, getPage);
   }
   if (route.isUnauthorized) {
     return unauthorized(event, route as UnauthorizedRoute);
   }
 
-  // No if lets typescript check this is ExternalRoute
+  // Let typescript check this is correct type to be returned
   return route;
 };
