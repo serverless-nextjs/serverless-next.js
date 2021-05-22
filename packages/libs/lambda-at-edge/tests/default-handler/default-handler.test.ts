@@ -535,6 +535,15 @@ describe("Lambda@Edge", () => {
 
         const response = await handler(event);
         expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
+        expect(mockTriggerStaticRegeneration.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            basePath: "",
+            pagePath: "pages/preview.js",
+            request: expect.objectContaining({
+              uri: `/preview${trailingSlash ? "/" : ""}`
+            })
+          })
+        );
 
         expect(response.headers).not.toHaveProperty("expires");
         expect(response.headers).not.toHaveProperty("Expires");
