@@ -1,36 +1,18 @@
 import { setCustomHeaders } from "./headers";
 import { notFound } from "./notfound";
 import { redirect } from "./redirect";
+import { toRequest } from "./request";
 import { routeApi } from "../route";
 import {
   ApiManifest,
   ApiRoute,
   Event,
   ExternalRoute,
-  Headers,
   RedirectRoute,
   RoutesManifest,
-  Request,
   UnauthorizedRoute
 } from "../types";
 import { unauthorized } from "./unauthorized";
-
-const toRequest = (event: Event): Request => {
-  const [uri, querystring] = (event.req.url ?? "").split("?");
-  const headers: Headers = {};
-  for (const [key, value] of Object.entries(event.req.headers)) {
-    if (value && Array.isArray(value)) {
-      headers[key.toLowerCase()] = value.map((value) => ({ key, value }));
-    } else if (value) {
-      headers[key.toLowerCase()] = [{ key, value }];
-    }
-  }
-  return {
-    headers,
-    querystring,
-    uri
-  };
-};
 
 export const handleApi = async (
   event: Event,

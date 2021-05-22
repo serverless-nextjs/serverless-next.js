@@ -7,12 +7,11 @@ import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   ExternalRoute,
+  handleDefault,
   PublicFileRoute,
-  RedirectRoute,
   RenderRoute,
   routeDefault,
   StaticRoute,
-  UnauthorizedRoute,
   getStaticRegenerationResponse,
   getThrottledStaticRegenerationCachePolicy
 } from "@sls-next/core";
@@ -57,6 +56,7 @@ const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   }
   return {
     now: () => 0,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     log: () => {}
   };
 };
@@ -118,6 +118,16 @@ export const handler = async (
       prerenderManifest,
       routesManifest
     });
+    // Add custom headers to responses only.
+    // TODO: this will match on the rewritten URI, i.e it may be rewritten to S3 key.
+    if (response.hasOwnProperty("status")) {
+      const request = event.Records[0].cf.request;
+      addHeadersToResponse(
+        request.uri,
+        response as CloudFrontResultResponse,
+        routesManifest
+      );
+    }
   } else {
     response = await handleOriginRequest({
       event,
@@ -125,18 +135,6 @@ export const handler = async (
       prerenderManifest,
       routesManifest
     });
-  }
-
-  // Add custom headers to responses only.
-  // TODO: for paths that hit S3 origin, it will match on the rewritten URI, i.e it may be rewritten to S3 key.
-  if (response.hasOwnProperty("status")) {
-    const request = event.Records[0].cf.request;
-
-    addHeadersToResponse(
-      request.uri,
-      response as CloudFrontResultResponse,
-      routesManifest
-    );
   }
 
   // Remove blacklisted headers
@@ -165,64 +163,6 @@ const staticRequest = (
   return request;
 };
 
-const renderResponse = async (
-  event: OriginRequestEvent,
-  manifest: OriginRequestDefaultHandlerManifest,
-  pagePath: string,
-  isData: boolean
-) => {
-  const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const tBeforePageRequire = now();
-  const page = require(`./${pagePath}`); // eslint-disable-line
-  const tAfterPageRequire = now();
-
-  log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
-
-  const tBeforeSSR = now();
-
-  const { req, res, responsePromise } = lambdaAtEdgeCompat(
-    event.Records[0].cf,
-    {
-      enableHTTPCompression: manifest.enableHTTPCompression
-    }
-  );
-  try {
-    // If page is _error.js, set status to 404 so _error.js will render a 404 page
-    if (pagePath === "pages/_error.js") {
-      res.statusCode = 404;
-    }
-
-    // Render page
-    if (isData) {
-      const { renderOpts } = await page.renderReqToHTML(
-        req,
-        res,
-        "passthrough"
-      );
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify(renderOpts.pageData));
-    } else {
-      await Promise.race([page.render(req, res), responsePromise]);
-    }
-  } catch (error) {
-    // Set status to 500 so _error.js will render a 500 page
-    console.error(
-      `Error rendering page: ${pagePath}. Error:\n${error}\nRendering Next.js error page.`
-    );
-    res.statusCode = 500;
-    const errorPage = require("./pages/_error.js"); // eslint-disable-line
-    await errorPage.render(req, res);
-  }
-  const response = await responsePromise;
-  const tAfterSSR = now();
-
-  log("SSR execution time", tBeforeSSR, tAfterSSR);
-
-  setCloudFrontResponseStatus(response, res);
-
-  return response;
-};
-
 const handleOriginRequest = async ({
   event,
   manifest,
@@ -235,46 +175,61 @@ const handleOriginRequest = async ({
   routesManifest: RoutesManifest;
 }) => {
   const request = event.Records[0].cf.request;
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression: manifest.enableHTTPCompression
+    }
+  );
 
-  const route = await routeDefault(
-    request,
+  const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
+
+  let tBeforeSSR = null;
+  const getPage = (pagePath: string) => {
+    const tBeforePageRequire = now();
+    const page = require(`./${pagePath}`); // eslint-disable-line
+    const tAfterPageRequire = (tBeforeSSR = now());
+    log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
+    return page;
+  };
+
+  const route = await handleDefault(
+    { req, res, responsePromise },
     manifest,
     prerenderManifest,
-    routesManifest
+    routesManifest,
+    getPage
   );
+  if (tBeforeSSR) {
+    const tAfterSSR = now();
+    log("SSR execution time", tBeforeSSR, tAfterSSR);
+  }
+
+  if (!route) {
+    return await responsePromise;
+  }
+
   if (route.isPublicFile) {
     const { file } = route as PublicFileRoute;
     return staticRequest(request, file, `${routesManifest.basePath}/public`);
-  }
-  if (route.querystring) {
-    request.querystring = `${
-      request.querystring ? request.querystring + "&" : ""
-    }${route.querystring}`;
   }
   if (route.isStatic) {
     const { file, isData } = route as StaticRoute;
     const path = isData
       ? `${routesManifest.basePath}`
       : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
+
+    // This should not be necessary with static pages,
+    // but makes it easier to test rewrites
+    const [, querystring] = (req.url ?? "").split("?");
+    request.querystring = querystring || "";
+
     const relativeFile = isData ? file : file.slice("pages".length);
     return staticRequest(request, relativeFile, path);
   }
-  if (route.isRender) {
-    const { page, isData } = route as RenderRoute;
-    return renderResponse(event, manifest, page, isData);
-  }
-  if (route.isRedirect) {
-    const { isRedirect, status, ...response } = route as RedirectRoute;
-    return { ...response, status: status.toString() };
-  }
-  if (route.isExternal) {
-    const { path } = route as ExternalRoute;
-    return externalRewrite(event, manifest.enableHTTPCompression, path);
-  }
-  // No if lets typescript check this is the only option
-  const unauthorized: UnauthorizedRoute = route;
-  const { isUnauthorized, status, ...response } = unauthorized;
-  return { ...response, status: status.toString() };
+  const external: ExternalRoute = route;
+  const { path } = external;
+  return externalRewrite(event, manifest.enableHTTPCompression, path);
 };
 
 const handleOriginResponse = async ({

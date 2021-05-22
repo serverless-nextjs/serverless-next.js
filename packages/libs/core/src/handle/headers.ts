@@ -1,4 +1,5 @@
 import { matchPath } from "../match";
+import { addDefaultLocaleToPath } from "../route/locale";
 import { Event, Route, RoutesManifest } from "../types";
 
 export const setCustomHeaders = (
@@ -6,8 +7,9 @@ export const setCustomHeaders = (
   routesManifest: RoutesManifest
 ) => {
   const [uri] = (event.req.url ?? "").split("?");
+  const localized = addDefaultLocaleToPath(uri, routesManifest);
   for (const headerData of routesManifest.headers) {
-    if (!matchPath(uri, headerData.source)) {
+    if (!matchPath(localized, headerData.source)) {
       continue;
     }
     for (const { key, value } of headerData.headers) {
@@ -20,6 +22,8 @@ export const setHeadersFromRoute = (event: Event, route: Route) => {
   for (const [key, headers] of Object.entries(route.headers || [])) {
     const keys = headers.map(({ key }) => key);
     const values = headers.map(({ value }) => value).join(";");
-    event.res.setHeader(keys[0] ?? key, values);
+    if (values) {
+      event.res.setHeader(keys[0] ?? key, values);
+    }
   }
 };

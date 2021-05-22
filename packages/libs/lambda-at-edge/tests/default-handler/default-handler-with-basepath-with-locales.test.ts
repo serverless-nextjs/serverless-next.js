@@ -528,7 +528,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
+        expect(response.status).toEqual(404);
       });
 
       it("redirects unmatched request path", async () => {
@@ -607,7 +607,7 @@ describe("Lambda@Edge", () => {
               page: "pages/_error.js - 404"
             })
           );
-          expect(response.status).toEqual("404");
+          expect(response.status).toEqual(404);
         }
       );
 
@@ -644,7 +644,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual("500");
+        expect(response.status).toEqual(500);
       });
     });
 

@@ -21,6 +21,7 @@ export type Request = {
 export type Event = {
   req: IncomingMessage;
   res: ServerResponse;
+  responsePromise: Promise<any>;
 };
 
 // Manifests

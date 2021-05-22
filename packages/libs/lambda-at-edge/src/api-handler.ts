@@ -24,7 +24,7 @@ export const handler = async (
   });
 
   const external = await handleApi(
-    { req, res },
+    { req, res, responsePromise },
     buildManifest,
     routesManifest,
     (pagePath: string) => require(`./${pagePath}`)
