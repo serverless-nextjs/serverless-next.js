@@ -81,21 +81,6 @@ const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   return s3Origin.domainName;
 };
 
-/**
- * Checks whether static page exists (HTML/SSG) in the manifest.
- * @param route
- * @param manifest
- */
-const doesStaticPageExist = (
-  route: string,
-  manifest: OriginRequestDefaultHandlerManifest
-) => {
-  return (
-    manifest.pages.html.nonDynamic[route] ||
-    manifest.pages.ssg.nonDynamic[route]
-  );
-};
-
 export const handler = async (
   event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
@@ -433,18 +418,4 @@ const isOriginResponse = (
   event: OriginRequestEvent | OriginResponseEvent
 ): event is OriginResponseEvent => {
   return event.Records[0].cf.config.eventType === "origin-response";
-};
-
-// This sets CloudFront response for 404 or 500 statuses
-const setCloudFrontResponseStatus = (
-  response: CloudFrontResultResponse,
-  res: ServerResponse
-): void => {
-  if (res.statusCode == 404) {
-    response.status = "404";
-    response.statusDescription = "Not Found";
-  } else if (res.statusCode == 500) {
-    response.status = "500";
-    response.statusDescription = "Internal Server Error";
-  }
 };
