@@ -77,3 +77,23 @@ export const getAcceptLanguageLocale = async (
     }
   }
 };
+
+export function getLocalePrefixFromUri(
+  uri: string,
+  routesManifest: RoutesManifest
+) {
+  if (routesManifest.basePath && uri.startsWith(routesManifest.basePath)) {
+    uri = uri.slice(routesManifest.basePath.length);
+  }
+
+  if (routesManifest.i18n) {
+    for (const locale of routesManifest.i18n.locales) {
+      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
+        return `/${locale}`;
+      }
+    }
+    return `/${routesManifest.i18n.defaultLocale}`;
+  }
+
+  return "";
+}
