@@ -1,13 +1,13 @@
 import { normalise } from "./basepath";
 import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
-import { matchDynamicRoute } from "./match";
+import { matchDynamicRoute } from "../match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import {
   ExternalRoute,
   PageManifest,
   PageRoute,
   RoutesManifest
-} from "./types";
+} from "../types";
 
 const pageHtml = (localeUri: string) => {
   if (localeUri == "/") {

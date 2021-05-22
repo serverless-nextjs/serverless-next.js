@@ -1,6 +1,6 @@
-import { compileDestination, matchPath } from "./match";
-import { RewriteData, RoutesManifest } from "./types";
 import { addDefaultLocaleToPath } from "./locale";
+import { compileDestination, matchPath } from "../match";
+import { RewriteData, RoutesManifest } from "../types";
 
 /**
  * Get the rewrite of the given path, if it exists.

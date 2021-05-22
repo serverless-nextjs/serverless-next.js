@@ -1,4 +1,4 @@
-import { isValidPreviewRequest, Cookies } from "../src/preview";
+import { isValidPreviewRequest, Cookies } from "../../src/route/preview";
 
 import jsonwebtoken from "jsonwebtoken";
 

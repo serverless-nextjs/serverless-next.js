@@ -1,4 +1,4 @@
-import { Manifest, RoutesManifest } from "./types";
+import { Manifest, RoutesManifest } from "../types";
 
 export function addDefaultLocaleToPath(
   path: string,

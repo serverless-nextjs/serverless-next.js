@@ -1,9 +1,9 @@
-import { Manifest, RoutesManifest } from "../src/types";
+import { Manifest, RoutesManifest } from "../../src";
 import {
   addDefaultLocaleToPath,
   dropLocaleFromPath,
   getAcceptLanguageLocale
-} from "../src/locale";
+} from "../../src/route/locale";
 
 describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
@@ -12,6 +12,7 @@ describe("Locale Utils Tests", () => {
     beforeAll(() => {
       routesManifest = {
         basePath: "",
+        headers: [],
         redirects: [],
         rewrites: [],
         i18n: {
@@ -39,6 +40,7 @@ describe("Locale Utils Tests", () => {
     beforeAll(() => {
       routesManifest = {
         basePath: "/base",
+        headers: [],
         redirects: [],
         rewrites: [],
         i18n: {
@@ -82,6 +84,7 @@ describe("Locale Utils Tests", () => {
       };
       routesManifest = {
         basePath: "",
+        headers: [],
         redirects: [],
         rewrites: [],
         i18n: {

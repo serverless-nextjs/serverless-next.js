@@ -1,6 +1,6 @@
 import { dropLocaleFromPath } from "./locale";
-import { matchDynamicRoute } from "./match";
-import { DataRoute, PageManifest, RoutesManifest, StaticRoute } from "./types";
+import { matchDynamicRoute } from "../match";
+import { DataRoute, PageManifest, RoutesManifest, StaticRoute } from "../types";
 
 /*
  * Get page name from data route

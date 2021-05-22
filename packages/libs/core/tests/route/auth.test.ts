@@ -1,5 +1,5 @@
-import { getUnauthenticatedResponse } from "../src/auth";
-import { Header } from "../src";
+import { getUnauthenticatedResponse } from "../../src/route/auth";
+import { Header } from "../../src";
 
 describe("Basic Authenticator Tests", () => {
   let authentication: { username: string; password: string };
