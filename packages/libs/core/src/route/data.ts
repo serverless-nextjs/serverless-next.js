@@ -62,7 +62,7 @@ export const handleDataReq = (
     return {
       isData: true,
       isStatic: true,
-      file: uri,
+      file: fullDataUri(localeUri, buildId),
       page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
       revalidate: ssg.initialRevalidateSeconds
     };

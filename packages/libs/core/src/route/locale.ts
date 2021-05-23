@@ -7,7 +7,9 @@ export function addDefaultLocaleToPath(
   if (routesManifest.i18n) {
     const defaultLocale = routesManifest.i18n.defaultLocale;
     const locales = routesManifest.i18n.locales;
-    const basePath = routesManifest.basePath;
+    const basePath = path.startsWith(routesManifest.basePath)
+      ? routesManifest.basePath
+      : "";
 
     // If prefixed with a locale, return that path
     for (const locale of locales) {
