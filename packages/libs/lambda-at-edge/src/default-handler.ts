@@ -11,6 +11,7 @@ import {
   handleFallback,
   PublicFileRoute,
   routeDefault,
+  getCustomHeaders,
   StaticRoute,
   getStaticRegenerationResponse,
   getThrottledStaticRegenerationCachePolicy
@@ -234,6 +235,10 @@ const handleOriginResponse = async ({
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
 
   if (response.status !== "403") {
+    response.headers = {
+      ...response.headers,
+      ...getCustomHeaders(requestUri, routesManifest)
+    };
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
     if (request.uri.endsWith("/404.html")) {
       response.status = "404";
@@ -351,6 +356,7 @@ const handleOriginResponse = async ({
       statusDescription: is404 ? "Not Found" : "OK",
       headers: {
         ...response.headers,
+        ...getCustomHeaders(requestUri, routesManifest),
         "content-type": [
           {
             key: "Content-Type",
