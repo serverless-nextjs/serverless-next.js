@@ -288,10 +288,6 @@ describe("Pages Tests", () => {
 
     [{ path: "/optional-catch-all-ssg-no-fallback/not-found" }].forEach(
       ({ path }) => {
-        const param = path
-          .replace("/optional-catch-all-ssg-no-fallback", "")
-          .replace("/", "");
-
         ["HEAD", "GET"].forEach((method) => {
           it(`allows HTTP method for path ${path}: ${method} and returns 404 status`, () => {
             cy.request({
@@ -316,7 +312,7 @@ describe("Pages Tests", () => {
           });
         });
 
-        it(`serve data request for ${path}`, () => {
+        it(`returns 404 on data request for ${path}`, () => {
           const fullPath = `/_next/data/${buildId}${path.replace(
             /\/$/,
             "/index"
@@ -324,7 +320,8 @@ describe("Pages Tests", () => {
 
           cy.request({
             url: fullPath,
-            method: "GET"
+            method: "GET",
+            failOnStatusCode: false
           }).then((response) => {
             expect(response.status).to.equal(404);
           });
