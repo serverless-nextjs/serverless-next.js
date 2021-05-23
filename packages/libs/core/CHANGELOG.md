@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.10...@sls-next/core@1.0.0-alpha.11) (2021-05-23)
+
+### Bug Fixes
+
+- **core:** fix accept language redirect condition ([#1110](https://github.com/serverless-nextjs/serverless-next.js/issues/1110)) ([f05ccbc](https://github.com/serverless-nextjs/serverless-next.js/commit/f05ccbcbb8e57c6281d542fea20ff9b4b5d5efa7))
+
 # [1.0.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.9...@sls-next/core@1.0.0-alpha.10) (2021-05-21)
 
 **Note:** Version bump only for package @sls-next/core
