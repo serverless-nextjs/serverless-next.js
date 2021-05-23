@@ -350,7 +350,7 @@ const handleOriginResponse = async ({
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
     const bodyString = await getStream.default(s3Response.Body as Readable);
 
-    const is404 = file.endsWith("404.html");
+    const is404 = file.endsWith("/404.html");
     return {
       status: is404 ? "404" : "200",
       statusDescription: is404 ? "Not Found" : "OK",
