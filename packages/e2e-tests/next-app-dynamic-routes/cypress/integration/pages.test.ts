@@ -317,7 +317,6 @@ describe("Pages Tests", () => {
         });
 
         it(`serve data request for ${path}`, () => {
-          // TODO: page itself is 404 but data request can still be served if requested.
           const fullPath = `/_next/data/${buildId}${path.replace(
             /\/$/,
             "/index"
@@ -327,11 +326,7 @@ describe("Pages Tests", () => {
             url: fullPath,
             method: "GET"
           }).then((response) => {
-            expect(response.status).to.equal(200);
-            expect(response.body).to.deep.equal({
-              pageProps: { name: "serverless-next.js", catch: param },
-              __N_SSG: true
-            });
+            expect(response.status).to.equal(404);
           });
         });
       }
