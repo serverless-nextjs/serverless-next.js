@@ -51,10 +51,10 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      path                  | expectedPath
-      ${"/base/en"}         | ${"/base"}
-      ${"/base/en/test"}    | ${"/base/test"}
-      ${"/base/fr/api/foo"} | ${"/base/api/foo"}
+      path             | expectedPath
+      ${"/en"}         | ${"/"}
+      ${"/en/test"}    | ${"/test"}
+      ${"/fr/api/foo"} | ${"/api/foo"}
     `("changes path $path to $expectedPath", ({ path, expectedPath }) => {
       const newPath = dropLocaleFromPath(path, routesManifest);
 
@@ -63,10 +63,9 @@ describe("Locale Utils Tests", () => {
 
     it.each`
       path
-      ${"/none"}
-      ${"/base/nolocale"}
-      ${"/base/english"}
-      ${"/base/fra/test"}
+      ${"/base/en"}         | ${"/base"}
+      ${"/base/en/test"}    | ${"/base/test"}
+      ${"/base/fr/api/foo"} | ${"/base/api/foo"}
     `("keeps path $path unchanged", ({ path }) => {
       const newPath = dropLocaleFromPath(path, routesManifest);
 

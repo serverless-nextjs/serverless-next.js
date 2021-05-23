@@ -36,13 +36,15 @@ export function dropLocaleFromPath(
 ): string {
   if (routesManifest.i18n) {
     const locales = routesManifest.i18n.locales;
-    const basePath = routesManifest.basePath;
 
     // If prefixed with a locale, return path without
     for (const locale of locales) {
-      const prefix = `${basePath}/${locale}`;
-      if (path === prefix || path.startsWith(`${prefix}/`)) {
-        return `${basePath}${path.slice(prefix.length)}`;
+      const prefix = `/${locale}`;
+      if (path === prefix) {
+        return "/";
+      }
+      if (path.startsWith(`${prefix}/`)) {
+        return `${path.slice(prefix.length)}`;
       }
     }
   }
