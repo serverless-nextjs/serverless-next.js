@@ -40,7 +40,7 @@ const MODERN_TYPES = [/* AVIF, */ WEBP];
 const ANIMATABLE_TYPES = [WEBP, PNG, GIF];
 const VECTOR_TYPES = [SVG];
 
-const DEFAULT_CACHE_CONTROL = "public, max-age=60, s-maxage=2678400, immutable";
+const DEFAULT_CACHE_CONTROL = "public, immutable";
 
 export async function imageOptimizer(
   {
