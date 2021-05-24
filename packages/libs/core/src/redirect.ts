@@ -92,8 +92,8 @@ export async function getLanguageRedirectPath(
     ? req.headers.cookie[0]?.value
     : undefined;
   if (headerCookies) {
-    const cookies = parse(headerCookies.toLowerCase());
-    const nextLocale = cookies["next_locale"];
+    const cookies = parse(headerCookies);
+    const nextLocale = cookies["NEXT_LOCALE"];
     if (nextLocale) {
       return await getAcceptLanguageLocale(
         nextLocale,

@@ -8,7 +8,6 @@ next-app-with-locales-using-serverless-trace:
       defaults:
         forward:
           headers: [Authorization, Accept-Language]
-          cookies: [NEXT_LOCALE]
       api/*:
         forward:
           headers: [Authorization]
