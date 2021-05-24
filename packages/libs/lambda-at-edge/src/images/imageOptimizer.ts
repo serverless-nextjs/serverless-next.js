@@ -173,7 +173,7 @@ export async function imageOptimizer(
         //   res.setHeader("Cache-Control", "public, max-age=60");
         // }
         // Enforce default cache control
-        res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
+        // res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
         if (sendEtagResponse(req, res, etag)) {
           return { finished: true };
         }
@@ -254,7 +254,7 @@ export async function imageOptimizer(
       // if (CacheControl) {
       // }
       // Enforce default cache control
-      res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
+      // res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
     } catch (err) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
@@ -325,6 +325,7 @@ export async function imageOptimizer(
     const etag = getHash([optimizedBuffer]);
     const filename = join(hashDir, `${expireAt}.${etag}.${extension}`);
     await promises.writeFile(filename, optimizedBuffer);
+    // to S3
     sendResponse(req, res, contentType, optimizedBuffer);
   } catch (error) {
     console.error(
