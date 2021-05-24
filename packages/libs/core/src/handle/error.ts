@@ -1,8 +1,8 @@
 import { Event } from "../types";
 
 export const renderErrorPage = async (
-  event: Event,
   error: any,
+  event: Event,
   page: string,
   getPage: (page: string) => any
 ) => {
