@@ -22,7 +22,7 @@ const normaliseDataUri = (uri: string, buildId: string) => {
 const fullDataUri = (uri: string, buildId: string) => {
   const prefix = `/_next/data/${buildId}`;
   if (uri === "/") {
-    return `${prefix}/index.js`;
+    return `${prefix}/index.json`;
   }
   return `${prefix}${uri}.json`;
 };
