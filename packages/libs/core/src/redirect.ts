@@ -2,6 +2,7 @@ import { STATUS_CODES } from "http";
 import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "./locale";
 import { compileDestination, matchPath } from "./match";
 import { Manifest, Request, RedirectRoute, RoutesManifest } from "./types";
+import { parse } from "cookie";
 
 /**
  * Create a redirect response with the given status code
@@ -85,6 +86,23 @@ export async function getLanguageRedirectPath(
   manifest: Manifest,
   routesManifest: RoutesManifest
 ): Promise<string | undefined> {
+  // NEXT_LOCALE in cookie will override any accept-language header
+  // per: https://nextjs.org/docs/advanced-features/i18n-routing#leveraging-the-next_locale-cookie
+  const headerCookies = req.headers.cookie
+    ? req.headers.cookie[0]?.value
+    : undefined;
+  if (headerCookies) {
+    const cookies = parse(headerCookies);
+    const nextLocale = cookies["NEXT_LOCALE"];
+    if (nextLocale) {
+      return await getAcceptLanguageLocale(
+        nextLocale,
+        manifest,
+        routesManifest
+      );
+    }
+  }
+
   const languageHeader = req.headers["accept-language"];
   const acceptLanguage = languageHeader && languageHeader[0]?.value;
   const basePath = routesManifest.basePath;

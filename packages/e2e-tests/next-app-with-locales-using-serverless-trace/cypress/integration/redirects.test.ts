@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from "uuid";
+
 describe("Redirects Tests", () => {
   const buildId = Cypress.env("NEXT_BUILD_ID");
 
@@ -71,6 +73,24 @@ describe("Redirects Tests", () => {
         cy.request(fullPath).then((response) => {
           expect(response.status).to.equal(200);
         });
+      });
+    });
+  });
+
+  describe("Locale redirects", () => {
+    it(`redirects based on Accept-Language header`, () => {
+      // Use UUID to break the cache
+      const queryString = `?a=${uuidv4().replace(/-/g, "")}`;
+      cy.verifyRedirect(`/${queryString}`, `/fr${queryString}`, 307, {
+        "Accept-Language": "fr"
+      });
+    });
+
+    it(`redirects based on NEXT_LOCALE cookie`, () => {
+      // Use UUID to break the cache
+      const queryString = `?a=${uuidv4().replace(/-/g, "")}`;
+      cy.verifyRedirect(`/${queryString}`, `/fr${queryString}`, 307, {
+        cookie: "NEXT_LOCALE=fr"
       });
     });
   });
