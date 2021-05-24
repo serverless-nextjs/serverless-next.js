@@ -38,7 +38,8 @@ declare namespace Cypress {
     verifyRedirect: (
       path: string,
       redirectedPath: string,
-      redirectStatusCode: number
+      redirectStatusCode: number,
+      headers?: { [key: string]: string }
     ) => Cypress.Chainable<JQuery>;
     verifyResponseCacheStatus: (
       response: Cypress.Response,
@@ -115,18 +116,27 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   "verifyRedirect",
-  (path: string, redirectedPath: string, redirectStatusCode: number) => {
-    cy.request({ url: path, followRedirect: false }).then((response) => {
-      expect(response.status).to.equal(redirectStatusCode);
-      expect(response.headers["location"]).to.equal(redirectedPath);
+  (
+    path: string,
+    redirectedPath: string,
+    redirectStatusCode: number,
+    headers?: { [key: string]: string }
+  ) => {
+    cy.request({ url: path, followRedirect: false, headers: headers }).then(
+      (response) => {
+        expect(response.status).to.equal(redirectStatusCode);
+        expect(response.headers["location"]).to.equal(redirectedPath);
 
-      if (redirectStatusCode === 308) {
-        // IE11 compatibility
-        expect(response.headers["refresh"]).to.equal(`0;url=${redirectedPath}`);
-      } else {
-        expect(response.headers["refresh"]).to.be.undefined;
+        if (redirectStatusCode === 308) {
+          // IE11 compatibility
+          expect(response.headers["refresh"]).to.equal(
+            `0;url=${redirectedPath}`
+          );
+        } else {
+          expect(response.headers["refresh"]).to.be.undefined;
+        }
       }
-    });
+    );
   }
 );
 
