@@ -7,6 +7,7 @@ next-app-with-locales:
       defaults:
         forward:
           headers: [Authorization]
+          cookies: [NEXT_LOCALE]
       api/*:
         forward:
           headers: [Authorization]

@@ -22,10 +22,21 @@ module.exports = {
     },
     {
       files: ["*.ts", "*.tsx"],
-      excludedFiles: ["**/cypress/integration/*.ts"],
+      excludedFiles: [
+        "**/cypress/integration/*.ts",
+        "**/cypress/custom-commands.ts"
+      ],
       plugins: ["promise"],
       rules: {
         "promise/catch-or-return": "error"
+      }
+    },
+    {
+      parser: "@typescript-eslint/parser",
+      files: ["**/cypress/**/*.ts"],
+      plugins: ["@typescript-eslint"],
+      rules: {
+        "@typescript-eslint/no-namespace": "off"
       }
     }
   ]
