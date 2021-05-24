@@ -80,14 +80,16 @@ describe("Redirects Tests", () => {
   describe("Locale redirects", () => {
     it(`redirects based on Accept-Language header`, () => {
       // Use UUID to break the cache
-      cy.verifyRedirect(`/?a=${uuidv4().replace("-", "")}`, "/fr", 307, {
+      const queryString = `?a=${uuidv4().replace(/-/g, "")}`;
+      cy.verifyRedirect(`/${queryString}`, `/fr${queryString}`, 307, {
         "Accept-Language": "fr"
       });
     });
 
     it(`redirects based on NEXT_LOCALE cookie`, () => {
       // Use UUID to break the cache
-      cy.verifyRedirect(`/?a=${uuidv4().replace("-", "")}`, "/fr", 307, {
+      const queryString = `?a=${uuidv4().replace(/-/g, "")}`;
+      cy.verifyRedirect(`/${queryString}`, `/fr${queryString}`, 307, {
         cookie: "NEXT_LOCALE=fr"
       });
     });
