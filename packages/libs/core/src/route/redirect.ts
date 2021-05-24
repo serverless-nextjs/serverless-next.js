@@ -91,7 +91,7 @@ export async function getLanguageRedirectPath(
   const trailingSlash = manifest.trailingSlash;
   const rootUri = basePath ? `${basePath}${trailingSlash ? "/" : ""}` : "/";
 
-  if (req.uri === rootUri || acceptLanguage) {
+  if (req.uri === rootUri && acceptLanguage) {
     return await getAcceptLanguageLocale(
       acceptLanguage,
       manifest,
