@@ -1,3 +1,4 @@
+import { renderErrorPage } from "./error";
 import { renderRoute } from "./default";
 import { setCustomHeaders } from "./headers";
 import {
@@ -40,21 +41,15 @@ const renderFallback = async (
     );
     return { isStatic: false, route, html, renderOpts };
   } catch (error) {
-    // Set status to 500 so _error.js will render a 500 page
-    console.error(
-      `Error rendering page: ${route.page}. Error:\n${error}\nRendering Next.js error page.`
-    );
-    res.statusCode = 500;
-    const errorPage = getPage("./pages/_error.js");
-    await Promise.race([errorPage.render(req, res), event.responsePromise]);
+    renderErrorPage(error, event, route.page, getPage);
   }
 };
 
 /*
  * Handles fallback routes
  *
- * If route is a blocking fallback, a Fallback object is returned.
- * It contains the results of page rendering.
+ * If route is a blocking fallback or a fallback data route,
+ * a Fallback object is returned. It contains the rendered page.
  *
  * Otherwise either a page is rendered (like handleDefault) or
  * returnes as StaticRoute for the caller to handle.

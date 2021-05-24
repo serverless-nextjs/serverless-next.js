@@ -1,3 +1,4 @@
+import { renderErrorPage } from "./error";
 import { setCustomHeaders } from "./headers";
 import { redirect } from "./redirect";
 import { toRequest } from "./request";
@@ -44,13 +45,7 @@ export const renderRoute = async (
       await Promise.race([page.render(req, res), event.responsePromise]);
     }
   } catch (error) {
-    // Set status to 500 so _error.js will render a 500 page
-    console.error(
-      `Error rendering page: ${route.page}. Error:\n${error}\nRendering Next.js error page.`
-    );
-    res.statusCode = 500;
-    const errorPage = getPage("./pages/_error.js");
-    await Promise.race([errorPage.render(req, res), event.responsePromise]);
+    renderErrorPage(error, event, route.page, getPage);
   }
 };
 
