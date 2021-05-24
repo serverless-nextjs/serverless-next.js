@@ -222,12 +222,13 @@ const handleOriginResponse = async ({
   const bucketName = s3BucketNameFromEventRequest(request);
 
   // Reconstruct valid request uri for routing
-  const requestUri = `${basePath}${request.uri.replace(
+  const s3Uri = request.uri;
+  request.uri = `${basePath}${request.uri.replace(
     /(\.html)?$/,
     manifest.trailingSlash ? "/" : ""
   )}`;
   const route = await routeDefault(
-    { ...request, uri: requestUri },
+    request,
     manifest,
     prerenderManifest,
     routesManifest
@@ -237,10 +238,10 @@ const handleOriginResponse = async ({
   if (response.status !== "403") {
     response.headers = {
       ...response.headers,
-      ...getCustomHeaders(requestUri, routesManifest)
+      ...getCustomHeaders(request.uri, routesManifest)
     };
     // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (request.uri.endsWith("/404.html")) {
+    if (s3Uri.endsWith("/404.html")) {
       response.status = "404";
       response.statusDescription = "Not Found";
       return response;
@@ -271,7 +272,7 @@ const handleOriginResponse = async ({
       ) {
         const { throttle } = await triggerStaticRegeneration({
           basePath,
-          request: { ...request, uri: requestUri },
+          request,
           response,
           pagePath: staticRoute.page
         });
@@ -356,7 +357,7 @@ const handleOriginResponse = async ({
       statusDescription: is404 ? "Not Found" : "OK",
       headers: {
         ...response.headers,
-        ...getCustomHeaders(requestUri, routesManifest),
+        ...getCustomHeaders(request.uri, routesManifest),
         "content-type": [
           {
             key: "Content-Type",
@@ -382,7 +383,7 @@ const handleOriginResponse = async ({
   const { renderOpts, html } = fallbackRoute;
   const { expires } = await s3StorePage({
     html,
-    uri: request.uri,
+    uri: s3Uri,
     basePath,
     bucketName: bucketName || "",
     buildId: manifest.buildId,

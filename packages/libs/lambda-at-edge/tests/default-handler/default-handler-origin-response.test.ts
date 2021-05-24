@@ -151,6 +151,7 @@ describe("Lambda@Edge origin response", () => {
       });
 
       mockPageRequire("pages/fallback-blocking/[slug].js");
+      const page = require(`../../src/pages/fallback-blocking/[slug].js`);
 
       const response = await handler(event);
 
@@ -164,6 +165,10 @@ describe("Lambda@Edge origin response", () => {
       expect(headers["content-type"][0].value).toEqual("text/html");
       expect(decodedBody).toEqual("<div>Rendered Page</div>");
       expect(cfResponse.status).toEqual(200);
+
+      expect(page.renderReqToHTML.mock.calls[0][0]).toMatchObject({
+        url: "/fallback-blocking/not-yet-built"
+      });
 
       expect(s3Client.send).toHaveBeenNthCalledWith(1, {
         Command: "PutObjectCommand",
@@ -204,6 +209,7 @@ describe("Lambda@Edge origin response", () => {
       });
 
       mockPageRequire("pages/fallback/[slug].js");
+      const page = require(`../../src/pages/fallback/[slug].js`);
 
       const response = await handler(event);
 
@@ -223,6 +229,10 @@ describe("Lambda@Edge origin response", () => {
         page: "pages/fallback/[slug].js"
       });
       expect(cfResponse.status).toEqual(200);
+
+      expect(page.renderReqToHTML.mock.calls[0][0]).toMatchObject({
+        url: "/_next/data/build-id/fallback/not-yet-built.json"
+      });
 
       expect(s3Client.send).toHaveBeenNthCalledWith(1, {
         Command: "PutObjectCommand",
