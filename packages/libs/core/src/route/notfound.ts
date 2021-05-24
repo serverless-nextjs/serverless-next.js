@@ -29,6 +29,7 @@ export const notFoundPage = (
       file: `pages${notFoundUri}.html`
     };
   }
+  // Only possible in old versions of Next.js
   return {
     isData: false,
     isRender: true,

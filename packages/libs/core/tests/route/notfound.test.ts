@@ -1,7 +1,7 @@
 import { notFoundPage } from "../../src/route/notfound";
 import { PageManifest, RoutesManifest } from "../../src";
 
-describe("Default routing (non-dynamic)", () => {
+describe("notFoundPage()", () => {
   let htmlManifest: PageManifest;
   let ssgManifest: PageManifest;
   let routesManifest: RoutesManifest;
