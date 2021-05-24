@@ -26,7 +26,7 @@ export const notFoundPage = (
     return {
       isData: false,
       isStatic: true,
-      file: `${notFoundUri}.html`
+      file: `pages${notFoundUri}.html`
     };
   }
   return {
