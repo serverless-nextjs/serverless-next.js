@@ -12,6 +12,7 @@ import { normaliseDomainRedirects } from "./normaliseDomainRedirects";
 import { pathToRegexStr } from "./pathToRegexStr";
 import { PrerenderManifest } from "next/dist/build";
 import { getSortedRoutes } from "./sortedRoutes";
+import { addDefaultLocaleToPath } from "../route/locale";
 
 export const prepareBuildManifests = async (
   buildOptions: BuildOptions,
@@ -149,6 +150,29 @@ export const prepareBuildManifests = async (
       };
     }
   );
+
+  // Drop prerendered routes from SSR pages if no api (no preview mode)
+  if (!apiPages.dynamic.length && !Object.keys(apiPages.nonDynamic).length) {
+    const nonDynamic = ssrPages.nonDynamic;
+    ssrPages.nonDynamic = {};
+    for (const [key, value] of Object.entries(nonDynamic)) {
+      if (
+        !ssgPages.nonDynamic[key] &&
+        !ssgPages.nonDynamic[addDefaultLocaleToPath(key, routesManifest)]
+      ) {
+        ssrPages.nonDynamic[key] = value;
+      }
+    }
+
+    const dynamic = ssrPages.dynamic;
+    ssrPages.dynamic = {};
+    for (const [key, value] of Object.entries(dynamic)) {
+      const dynamicSSG = ssgPages.dynamic[key];
+      if (!dynamicSSG || dynamicSSG.fallback !== false) {
+        ssrPages.dynamic[key] = value;
+      }
+    }
+  }
 
   // Duplicate routes for all specified locales. This is easy matching locale-prefixed routes in handler
   if (routesManifest.i18n) {

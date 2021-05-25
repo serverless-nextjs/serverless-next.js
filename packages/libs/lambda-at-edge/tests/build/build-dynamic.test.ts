@@ -154,7 +154,6 @@ describe("Builder Tests (dynamic)", () => {
           "/en/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/en/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
           "/en/fallback/[slug]": "pages/fallback/[slug].js",
-          "/en/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/en/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js",
           "/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
@@ -162,28 +161,20 @@ describe("Builder Tests (dynamic)", () => {
           "/nl/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/nl/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
           "/nl/fallback/[slug]": "pages/fallback/[slug].js",
-          "/nl/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/nl/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js",
-          "/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js"
         },
         nonDynamic: {
-          "/": "pages/index.js",
           "/_error": "pages/_error.js",
-          "/en": "pages/index.js",
           "/en/_error": "pages/_error.js",
           "/en/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-          "/en/ssg": "pages/ssg.js",
           "/en/ssr": "pages/ssr.js",
-          "/nl": "pages/index.js",
           "/nl/_error": "pages/_error.js",
           "/nl/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-          "/nl/ssg": "pages/ssg.js",
           "/nl/ssr": "pages/ssr.js",
           "/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-          "/ssg": "pages/ssg.js",
           "/ssr": "pages/ssr.js"
         }
       });
@@ -382,11 +373,9 @@ describe("Builder Tests (dynamic)", () => {
         "en",
         "fallback",
         "fallback-blocking",
-        "index.js",
         "nl",
         "no-fallback",
         "optional-catchall",
-        "ssg.js",
         "ssr.js"
       ]);
 
@@ -401,7 +390,7 @@ describe("Builder Tests (dynamic)", () => {
 
       expect(fallbackPages).toEqual(["[slug].js"]);
       expect(fallbackBlockingPages).toEqual(["[slug].js"]);
-      expect(nofallbackPages).toEqual(["[slug].js"]);
+      expect(nofallbackPages).toEqual([]);
     });
   });
 
