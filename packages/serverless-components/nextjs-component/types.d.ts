@@ -41,10 +41,17 @@ export type ServerlessComponentInputs = {
         imageLambda?: string;
         regenerationLambda?: string;
       };
+  roleArn?:
+    | string
+    | {
+        defaultLambda?: string;
+        apiLambda?: string;
+        imageLambda?: string;
+        regenerationLambda?: string;
+      };
   handler?: string;
   description?: string;
   policy?: string;
-  roleArn?: string;
   domain?: string | string[];
   domainType?: "www" | "apex" | "both";
   domainRedirects?: { [key: string]: string };
