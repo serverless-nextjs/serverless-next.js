@@ -9,11 +9,11 @@ import {
   RoutesManifest
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
+import { setCustomHeaders } from "@sls-next/core";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import { handleAuth, handleDomainRedirects } from "@sls-next/core";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
-import { addHeadersToResponse } from "./headers/addHeaders";
 import { imageOptimizer } from "./images/imageOptimizer";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
@@ -86,6 +86,8 @@ export const handler = async (
     const { region } = request.origin!.s3!;
     const bucketName = s3BucketNameFromEventRequest(request);
 
+    setCustomHeaders({ res, req, responsePromise }, routesManifest);
+
     await imageOptimizer(
       { basePath: basePath, bucketName: bucketName || "", region: region },
       imagesManifest,
@@ -95,8 +97,6 @@ export const handler = async (
     );
 
     const response = await responsePromise;
-
-    addHeadersToResponse(request.uri, response, routesManifest);
 
     if (response.headers) {
       removeBlacklistedHeaders(response.headers);

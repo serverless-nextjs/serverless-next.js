@@ -1,5 +1,5 @@
-import { getRewritePath, isExternalRewrite } from "../src/rewrite";
-import { RoutesManifest } from "../src/types";
+import { getRewritePath, isExternalRewrite } from "../../src/route/rewrite";
+import { RoutesManifest } from "../../src/types";
 
 describe("Rewriter Tests", () => {
   describe("getRewritePath()", () => {
@@ -8,6 +8,7 @@ describe("Rewriter Tests", () => {
     beforeAll(() => {
       routesManifest = {
         basePath: "",
+        headers: [],
         rewrites: [
           {
             source: "/old-blog/:slug",

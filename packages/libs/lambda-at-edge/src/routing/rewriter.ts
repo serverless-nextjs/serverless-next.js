@@ -40,7 +40,7 @@ function isIgnoredHeader(name: string): boolean {
   return ignoredHeaders.includes(lowerCaseName);
 }
 
-async function createExternalRewriteResponse(
+export async function createExternalRewriteResponse(
   customRewrite: string,
   req: IncomingMessage,
   res: ServerResponse,

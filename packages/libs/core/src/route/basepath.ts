@@ -1,4 +1,4 @@
-import { RoutesManifest } from "./types";
+import { RoutesManifest } from "../types";
 
 export const normalise = (
   uri: string,

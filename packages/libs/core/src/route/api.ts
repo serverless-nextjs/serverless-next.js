@@ -1,8 +1,8 @@
 import { normalise } from "./basepath";
 import { dropLocaleFromPath } from "./locale";
-import { matchDynamic } from "./match";
+import { matchDynamic } from "../match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
-import { ApiManifest, ApiRoute, ExternalRoute, RoutesManifest } from "./types";
+import { ApiManifest, ApiRoute, ExternalRoute, RoutesManifest } from "../types";
 
 export const handleApiReq = (
   uri: string,

@@ -130,12 +130,7 @@ module.exports = {
         ]
       },
       {
-        /**
-         * TODO: we need to specify S3 key here for SSG page (ssg-page.html) because of how things currently work.
-         * Request URI is rewritten to the S3 key, so in origin response handler we have no easy way to determine the original page path.
-         * In the future, we may bypass S3 origin + remove origin response handler so origin request handler directly calls S3, making this easier.
-         */
-        source: "/ssg-page.html",
+        source: "/ssg-page",
         headers: [
           {
             key: "x-custom-header-ssg-page",

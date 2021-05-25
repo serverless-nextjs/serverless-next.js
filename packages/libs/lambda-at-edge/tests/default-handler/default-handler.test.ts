@@ -479,20 +479,18 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                  | expectedPage
-        ${"/_next/data/build-id"}                             | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                  | ${"pages/js"}
-        ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"pages/fallback/not-yet-built.json"}
+        path                                                  | expectedUri
+        ${"/_next/data/build-id"}                             | ${"/_next/data/build-id/index.json"}
+        ${"/_next/data/build-id/index.json"}                  | ${"/_next/data/build-id/index.json"}
+        ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"/_next/data/build-id/fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
-        async ({ path, expectedPage }) => {
+        async ({ path, expectedUri }) => {
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net",
             config: { eventType: "origin-request" } as any
           });
-
-          mockPageRequire(expectedPage);
 
           const result = await handler(event);
 
@@ -506,7 +504,7 @@ describe("Lambda@Edge", () => {
               region: "us-east-1"
             }
           });
-          expect(request.uri).toEqual(path);
+          expect(request.uri).toEqual(expectedUri);
         }
       );
 
@@ -535,6 +533,15 @@ describe("Lambda@Edge", () => {
 
         const response = await handler(event);
         expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
+        expect(mockTriggerStaticRegeneration.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            basePath: "",
+            pagePath: "pages/preview.js",
+            request: expect.objectContaining({
+              uri: `/preview${trailingSlash ? "/" : ""}`
+            })
+          })
+        );
 
         expect(response.headers).not.toHaveProperty("expires");
         expect(response.headers).not.toHaveProperty("Expires");
@@ -851,7 +858,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual("500");
+        expect(response.status).toEqual(500);
       });
     });
 

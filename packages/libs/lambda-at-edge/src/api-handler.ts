@@ -9,42 +9,9 @@ import {
   RoutesManifest
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
-import { externalRewrite } from "./routing/rewriter";
-import { addHeadersToResponse } from "./headers/addHeaders";
-import {
-  ApiRoute,
-  ExternalRoute,
-  RedirectRoute,
-  routeApi,
-  UnauthorizedRoute
-} from "@sls-next/core";
+import { createExternalRewriteResponse } from "./routing/rewriter";
+import { handleApi } from "@sls-next/core";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
-
-const renderApi = async (
-  event: OriginRequestEvent,
-  buildManifest: OriginRequestApiHandlerManifest,
-  routesManifest: RoutesManifest,
-  pagePath: string
-) => {
-  const request = event.Records[0].cf.request;
-  const page = require(`./${pagePath}`);
-  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
-    enableHTTPCompression: buildManifest.enableHTTPCompression
-  });
-
-  page.default(req, res);
-
-  const response = await responsePromise;
-
-  // Add custom headers before returning response
-  addHeadersToResponse(request.uri, response, routesManifest);
-
-  if (response.headers) {
-    removeBlacklistedHeaders(response.headers);
-  }
-
-  return response;
-};
 
 export const handler = async (
   event: OriginRequestEvent
@@ -52,32 +19,27 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
+  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
+    enableHTTPCompression: buildManifest.enableHTTPCompression
+  });
 
-  const route = routeApi(request, buildManifest, routesManifest);
-  if (!route) {
-    return {
-      status: "404"
-    };
+  const external = await handleApi(
+    { req, res, responsePromise },
+    buildManifest,
+    routesManifest,
+    (pagePath: string) => require(`./${pagePath}`)
+  );
+
+  if (external) {
+    const { path } = external;
+    createExternalRewriteResponse(path, req, res, request.body?.data);
   }
-  if (route.querystring) {
-    request.querystring = `${
-      request.querystring ? request.querystring + "&" : ""
-    }${route.querystring}`;
+
+  const response = await responsePromise;
+
+  if (response.headers) {
+    removeBlacklistedHeaders(response.headers);
   }
-  if (route.isApi) {
-    const { page } = route as ApiRoute;
-    return renderApi(event, manifest, routesManifest, page);
-  }
-  if (route.isExternal) {
-    const { path } = route as ExternalRoute;
-    return externalRewrite(event, manifest.enableHTTPCompression, path);
-  }
-  if (route.isRedirect) {
-    const { isRedirect, status, ...response } = route as RedirectRoute;
-    return { ...response, status: status.toString() };
-  }
-  // No if lets typescript check this is the only option
-  const unauthorized: UnauthorizedRoute = route;
-  const { isUnauthorized, status, ...response } = unauthorized;
-  return { ...response, status: status.toString() };
+
+  return response;
 };

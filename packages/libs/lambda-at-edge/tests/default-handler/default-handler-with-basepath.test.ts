@@ -365,19 +365,18 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                          | expectedPage
-        ${"/basepath/_next/data/build-id"}            | ${"pages/index.js"}
-        ${"/basepath/_next/data/build-id/index.json"} | ${"pages/index.js"}
+        path                                                           | expectedUri
+        ${"/basepath/_next/data/build-id"}                             | ${"/_next/data/build-id/index.json"}
+        ${"/basepath/_next/data/build-id/index.json"}                  | ${"/_next/data/build-id/index.json"}
+        ${"/basepath/_next/data/build-id/fallback/not-yet-built.json"} | ${"/_next/data/build-id/fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
-        async ({ path, expectedPage }) => {
+        async ({ path, expectedUri }) => {
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net",
             config: { eventType: "origin-request" } as any
           });
-
-          mockPageRequire(expectedPage);
 
           const result = await handler(event);
 
@@ -391,7 +390,7 @@ describe("Lambda@Edge", () => {
               region: "us-east-1"
             }
           });
-          expect(request.uri).toEqual(path.slice(9));
+          expect(request.uri).toEqual(expectedUri);
         }
       );
 
@@ -605,7 +604,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual("500");
+        expect(response.status).toEqual(500);
       });
     });
 

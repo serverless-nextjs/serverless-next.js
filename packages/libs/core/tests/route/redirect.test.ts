@@ -1,5 +1,8 @@
-import { createRedirectResponse, getRedirectPath } from "../src/redirect";
-import { Request, RoutesManifest } from "../src/types";
+import {
+  createRedirectResponse,
+  getRedirectPath
+} from "../../src/route/redirect";
+import { Request, RoutesManifest } from "../../src";
 
 describe("Redirector Tests", () => {
   describe("getRedirectPath()", () => {
@@ -8,6 +11,8 @@ describe("Redirector Tests", () => {
     beforeAll(() => {
       routesManifest = {
         basePath: "",
+        headers: [],
+        rewrites: [],
         redirects: [
           {
             source: "/old-blog/:slug",

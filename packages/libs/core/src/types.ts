@@ -1,14 +1,27 @@
 // Incoming data
+import { IncomingMessage, ServerResponse } from "http";
 
 export type Header = {
   key?: string;
   value: string;
 };
 
+export type Headers = {
+  [key: string]: Header[];
+};
+
 export type Request = {
-  headers: { [key: string]: Header[] };
+  headers: Headers;
   querystring?: string;
   uri: string;
+};
+
+// Handlers map an Event into a Result
+
+export type Event = {
+  req: IncomingMessage;
+  res: ServerResponse;
+  responsePromise: Promise<any>;
 };
 
 // Manifests
@@ -125,7 +138,7 @@ export type PrerenderManifest = {
 
 export interface AnyRoute {
   file?: string;
-  headers?: { [key: string]: Header[] };
+  headers?: Headers;
   querystring?: string;
   isApi?: boolean;
   isExternal?: boolean;

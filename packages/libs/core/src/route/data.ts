@@ -1,6 +1,6 @@
-import { dropLocaleFromPath } from "./locale";
-import { matchDynamicRoute } from "./match";
-import { DataRoute, PageManifest, RoutesManifest, StaticRoute } from "./types";
+import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
+import { matchDynamicRoute } from "../match";
+import { DataRoute, PageManifest, RoutesManifest, StaticRoute } from "../types";
 
 /*
  * Get page name from data route
@@ -22,7 +22,7 @@ const normaliseDataUri = (uri: string, buildId: string) => {
 const fullDataUri = (uri: string, buildId: string) => {
   const prefix = `/_next/data/${buildId}`;
   if (uri === "/") {
-    return `${prefix}/index.js`;
+    return `${prefix}/index.json`;
   }
   return `${prefix}${uri}.json`;
 };
@@ -52,34 +52,37 @@ export const handleDataReq = (
   isPreview: boolean
 ): DataRoute | StaticRoute => {
   const { buildId, pages } = manifest;
-  const normalisedUri = normaliseDataUri(uri, buildId);
-  if (pages.ssg.nonDynamic[normalisedUri] && !isPreview) {
-    const ssg = pages.ssg.nonDynamic[normalisedUri];
-    const route = ssg.srcRoute ?? normalisedUri;
+  const localeUri = addDefaultLocaleToPath(
+    normaliseDataUri(uri, buildId),
+    routesManifest
+  );
+  if (pages.ssg.nonDynamic[localeUri] && !isPreview) {
+    const ssg = pages.ssg.nonDynamic[localeUri];
+    const route = ssg.srcRoute ?? localeUri;
     return {
       isData: true,
       isStatic: true,
-      file: uri,
+      file: fullDataUri(localeUri, buildId),
       page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
       revalidate: ssg.initialRevalidateSeconds
     };
   }
-  if (pages.ssr.nonDynamic[normalisedUri]) {
+  if (pages.ssr.nonDynamic[localeUri]) {
     return {
       isData: true,
       isRender: true,
-      page: pages.ssr.nonDynamic[normalisedUri]
+      page: pages.ssr.nonDynamic[localeUri]
     };
   }
 
-  const dynamic = matchDynamicRoute(normalisedUri, pages.dynamic);
+  const dynamic = matchDynamicRoute(localeUri, pages.dynamic);
 
   const dynamicSSG = dynamic && pages.ssg.dynamic[dynamic];
   if (dynamicSSG) {
     return {
       isData: true,
       isStatic: true,
-      file: fullDataUri(normalisedUri, buildId),
+      file: fullDataUri(localeUri, buildId),
       page: `pages${dropLocaleFromPath(dynamic as string, routesManifest)}.js`,
       fallback: dynamicSSG.fallback
     };

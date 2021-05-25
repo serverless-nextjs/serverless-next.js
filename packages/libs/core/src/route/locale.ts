@@ -1,4 +1,4 @@
-import { Manifest, RoutesManifest } from "./types";
+import { Manifest, RoutesManifest } from "../types";
 
 export function addDefaultLocaleToPath(
   path: string,
@@ -7,7 +7,9 @@ export function addDefaultLocaleToPath(
   if (routesManifest.i18n) {
     const defaultLocale = routesManifest.i18n.defaultLocale;
     const locales = routesManifest.i18n.locales;
-    const basePath = routesManifest.basePath;
+    const basePath = path.startsWith(routesManifest.basePath)
+      ? routesManifest.basePath
+      : "";
 
     // If prefixed with a locale, return that path
     for (const locale of locales) {
@@ -36,13 +38,15 @@ export function dropLocaleFromPath(
 ): string {
   if (routesManifest.i18n) {
     const locales = routesManifest.i18n.locales;
-    const basePath = routesManifest.basePath;
 
     // If prefixed with a locale, return path without
     for (const locale of locales) {
-      const prefix = `${basePath}/${locale}`;
-      if (path === prefix || path.startsWith(`${prefix}/`)) {
-        return `${basePath}${path.slice(prefix.length)}`;
+      const prefix = `/${locale}`;
+      if (path === prefix) {
+        return "/";
+      }
+      if (path.startsWith(`${prefix}/`)) {
+        return `${path.slice(prefix.length)}`;
       }
     }
   }
@@ -77,3 +81,23 @@ export const getAcceptLanguageLocale = async (
     }
   }
 };
+
+export function getLocalePrefixFromUri(
+  uri: string,
+  routesManifest: RoutesManifest
+) {
+  if (routesManifest.basePath && uri.startsWith(routesManifest.basePath)) {
+    uri = uri.slice(routesManifest.basePath.length);
+  }
+
+  if (routesManifest.i18n) {
+    for (const locale of routesManifest.i18n.locales) {
+      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
+        return `/${locale}`;
+      }
+    }
+    return `/${routesManifest.i18n.defaultLocale}`;
+  }
+
+  return "";
+}

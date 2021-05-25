@@ -1,7 +1,7 @@
 import { STATUS_CODES } from "http";
 import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "./locale";
-import { compileDestination, matchPath } from "./match";
-import { Manifest, Request, RedirectRoute, RoutesManifest } from "./types";
+import { compileDestination, matchPath } from "../match";
+import { Manifest, Request, RedirectRoute, RoutesManifest } from "../types";
 import { parse } from "cookie";
 
 /**

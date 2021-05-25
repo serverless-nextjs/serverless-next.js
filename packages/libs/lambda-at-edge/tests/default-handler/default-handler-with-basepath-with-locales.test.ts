@@ -390,18 +390,21 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                       | expectedPage
-        ${"/basepath/_next/data/build-id/en.json"} | ${"pages/index.js"}
+        path                                                                    | expectedPath
+        ${"/basepath/_next/data/build-id/preview.json"}                         | ${"/_next/data/build-id/en/preview.json"}
+        ${"/basepath/_next/data/build-id/en/preview.json"}                      | ${"/_next/data/build-id/en/preview.json"}
+        ${"/basepath/_next/data/build-id/nl/preview.json"}                      | ${"/_next/data/build-id/nl/preview.json"}
+        ${"/basepath/_next/data/build-id/fallback/example-static-page.json"}    | ${"/_next/data/build-id/en/fallback/example-static-page.json"}
+        ${"/basepath/_next/data/build-id/en/fallback/example-static-page.json"} | ${"/_next/data/build-id/en/fallback/example-static-page.json"}
+        ${"/basepath/_next/data/build-id/nl/fallback/example-static-page.json"} | ${"/_next/data/build-id/nl/fallback/example-static-page.json"}
       `(
-        "serves json data via S3 for SSG path $path",
-        async ({ path, expectedPage }) => {
+        "serves json data via S3 for SSG path $path from $expectedPath",
+        async ({ path, expectedPath }) => {
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net",
             config: { eventType: "origin-request" } as any
           });
-
-          mockPageRequire(expectedPage);
 
           const result = await handler(event);
 
@@ -415,7 +418,7 @@ describe("Lambda@Edge", () => {
               region: "us-east-1"
             }
           });
-          expect(request.uri).toEqual(path.slice(9));
+          expect(request.uri).toEqual(expectedPath);
         }
       );
 
@@ -528,7 +531,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
+        expect(response.status).toEqual(404);
       });
 
       it("redirects unmatched request path", async () => {
@@ -607,7 +610,7 @@ describe("Lambda@Edge", () => {
               page: "pages/_error.js - 404"
             })
           );
-          expect(response.status).toEqual("404");
+          expect(response.status).toEqual(404);
         }
       );
 
@@ -644,7 +647,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual("500");
+        expect(response.status).toEqual(500);
       });
     });
 

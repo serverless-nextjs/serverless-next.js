@@ -6,7 +6,6 @@ import {
   RegenerationEvent
 } from "./types";
 import { s3StorePage } from "./s3/s3StorePage";
-import { cleanRequestUriForRouter } from "./lib/cleanRequestUriForRouter";
 
 export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
   await Promise.all(
@@ -14,10 +13,6 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
       const regenerationEvent: RegenerationEvent = JSON.parse(record.body);
 
       const manifest: OriginRequestDefaultHandlerManifest = Manifest;
-      regenerationEvent.cloudFrontEventRequest.uri = cleanRequestUriForRouter(
-        regenerationEvent.cloudFrontEventRequest.uri,
-        manifest.trailingSlash
-      );
       const { req, res } = lambdaAtEdgeCompat(
         { request: regenerationEvent.cloudFrontEventRequest },
         { enableHTTPCompression: manifest.enableHTTPCompression }

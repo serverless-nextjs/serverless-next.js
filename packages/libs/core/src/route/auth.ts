@@ -1,4 +1,4 @@
-import { Header, UnauthorizedRoute } from "./types";
+import { Header, UnauthorizedRoute } from "../types";
 
 export function getUnauthenticatedResponse(
   authorizationHeaders: Header[] | null,

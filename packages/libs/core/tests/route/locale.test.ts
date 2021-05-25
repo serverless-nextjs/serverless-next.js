@@ -1,9 +1,9 @@
-import { Manifest, RoutesManifest } from "../src/types";
+import { Manifest, RoutesManifest } from "../../src";
 import {
   addDefaultLocaleToPath,
   dropLocaleFromPath,
   getAcceptLanguageLocale
-} from "../src/locale";
+} from "../../src/route/locale";
 
 describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
@@ -12,6 +12,7 @@ describe("Locale Utils Tests", () => {
     beforeAll(() => {
       routesManifest = {
         basePath: "",
+        headers: [],
         redirects: [],
         rewrites: [],
         i18n: {
@@ -39,6 +40,7 @@ describe("Locale Utils Tests", () => {
     beforeAll(() => {
       routesManifest = {
         basePath: "/base",
+        headers: [],
         redirects: [],
         rewrites: [],
         i18n: {
@@ -49,10 +51,10 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      path                  | expectedPath
-      ${"/base/en"}         | ${"/base"}
-      ${"/base/en/test"}    | ${"/base/test"}
-      ${"/base/fr/api/foo"} | ${"/base/api/foo"}
+      path             | expectedPath
+      ${"/en"}         | ${"/"}
+      ${"/en/test"}    | ${"/test"}
+      ${"/fr/api/foo"} | ${"/api/foo"}
     `("changes path $path to $expectedPath", ({ path, expectedPath }) => {
       const newPath = dropLocaleFromPath(path, routesManifest);
 
@@ -61,10 +63,9 @@ describe("Locale Utils Tests", () => {
 
     it.each`
       path
-      ${"/none"}
-      ${"/base/nolocale"}
-      ${"/base/english"}
-      ${"/base/fra/test"}
+      ${"/base/en"}         | ${"/base"}
+      ${"/base/en/test"}    | ${"/base/test"}
+      ${"/base/fr/api/foo"} | ${"/base/api/foo"}
     `("keeps path $path unchanged", ({ path }) => {
       const newPath = dropLocaleFromPath(path, routesManifest);
 
@@ -82,6 +83,7 @@ describe("Locale Utils Tests", () => {
       };
       routesManifest = {
         basePath: "",
+        headers: [],
         redirects: [],
         rewrites: [],
         i18n: {
