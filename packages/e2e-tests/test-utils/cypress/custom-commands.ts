@@ -38,7 +38,8 @@ declare namespace Cypress {
     verifyRedirect: (
       path: string,
       redirectedPath: string,
-      redirectStatusCode: number
+      redirectStatusCode: number,
+      headers?: { [key: string]: string }
     ) => Cypress.Chainable<JQuery>;
     verifyResponseCacheStatus: (
       response: Cypress.Response,
@@ -51,7 +52,7 @@ declare namespace Cypress {
 }
 
 Cypress.Commands.add("ensureAllRoutesNotErrored", () => {
-  cy.route2("**", (req) => {
+  cy.intercept("**", (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -61,7 +62,7 @@ Cypress.Commands.add("ensureAllRoutesNotErrored", () => {
 });
 
 Cypress.Commands.add("ensureRouteNotCached", (path: string | RegExp) => {
-  cy.route2(path, (req) => {
+  cy.intercept(path, (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -75,7 +76,7 @@ Cypress.Commands.add("ensureRouteNotCached", (path: string | RegExp) => {
 });
 
 Cypress.Commands.add("ensureRouteCached", (path: string | RegExp) => {
-  cy.route2(path, (req) => {
+  cy.intercept(path, (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -89,7 +90,7 @@ Cypress.Commands.add("ensureRouteCached", (path: string | RegExp) => {
 });
 
 Cypress.Commands.add("ensureRouteNotErrored", (path: string | RegExp) => {
-  cy.route2(path, (req) => {
+  cy.intercept(path, (req) => {
     req.reply((res) => {
       if (res.statusCode >= 400) {
         throw new Error(`Response has errored with status ${res.statusCode}`);
@@ -101,7 +102,7 @@ Cypress.Commands.add("ensureRouteNotErrored", (path: string | RegExp) => {
 Cypress.Commands.add(
   "ensureRouteHasStatusCode",
   (path: string | RegExp, status: number) => {
-    cy.route2(path, (req) => {
+    cy.intercept(path, (req) => {
       req.reply((res) => {
         if (res.statusCode !== status) {
           throw new Error(
@@ -115,18 +116,27 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   "verifyRedirect",
-  (path: string, redirectedPath: string, redirectStatusCode: number) => {
-    cy.request({ url: path, followRedirect: false }).then((response) => {
-      expect(response.status).to.equal(redirectStatusCode);
-      expect(response.headers["location"]).to.equal(redirectedPath);
+  (
+    path: string,
+    redirectedPath: string,
+    redirectStatusCode: number,
+    headers?: { [key: string]: string }
+  ) => {
+    cy.request({ url: path, followRedirect: false, headers: headers }).then(
+      (response) => {
+        expect(response.status).to.equal(redirectStatusCode);
+        expect(response.headers["location"]).to.equal(redirectedPath);
 
-      if (redirectStatusCode === 308) {
-        // IE11 compatibility
-        expect(response.headers["refresh"]).to.equal(`0;url=${redirectedPath}`);
-      } else {
-        expect(response.headers["refresh"]).to.be.undefined;
+        if (redirectStatusCode === 308) {
+          // IE11 compatibility
+          expect(response.headers["refresh"]).to.equal(
+            `0;url=${redirectedPath}`
+          );
+        } else {
+          expect(response.headers["refresh"]).to.be.undefined;
+        }
       }
-    });
+    );
   }
 );
 

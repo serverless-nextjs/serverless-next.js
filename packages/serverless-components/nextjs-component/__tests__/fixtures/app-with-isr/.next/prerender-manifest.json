@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "routes": {
+    "/": {
+      "initialRevalidateSeconds": 10,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/zsWqBqLjpgRmswfQomanp/index.json"
+    }
+  },
+  "dynamicRoutes": {}
+}

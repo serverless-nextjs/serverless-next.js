@@ -19,13 +19,12 @@
     "packages-build": "lerna run build",
     "test:watch": "yarn test --watch --collect-coverage=false",
     "check-gh-token": ": \"${GH_TOKEN:?Please set GH_TOKEN to a GitHub personal token that can create releases.}\"",
-    "publish": "yarn check-gh-token && lerna publish --conventional-commits --exact --create-release github",
-    "prerelease": "yarn check-gh-token && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
-    "graduate": "yarn check-gh-token && lerna publish --conventional-commits --conventional-graduate --exact --create-release github",
+    "prerelease": "yarn check-gh-token && yarn install && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
+    "graduate": "yarn check-gh-token && yarn install && lerna publish --conventional-commits --conventional-graduate --exact --create-release github",
     "lint": "eslint .",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "postinstall": "yarn packages-install && opencollective-postinstall || true",
+    "postinstall": "yarn packages-install && opencollective-postinstall",
     "docs": "cd documentation && yarn && yarn build"
   },
   "repository": {
@@ -47,18 +46,19 @@
     "@types/react": "^16.9.41",
     "@types/react-dom": "^16.9.8",
     "@types/webpack": "^4.41.18",
-    "@typescript-eslint/eslint-plugin": "^3.5.0",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^3.5.0",
-    "adm-zip": "^0.4.16",
+    "adm-zip": "^0.5.5",
     "coveralls": "^3.1.0",
     "eslint": "^7.3.1",
-    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.1.4",
+    "eslint-plugin-promise": "5.1.0",
     "fs-extra": "^9.0.1",
     "husky": "^4.2.5",
     "jest": "^26.1.0",
     "jest-when": "^2.7.2",
-    "lerna": "^3.22.1",
+    "lerna": "^4.0.0",
     "lint-staged": "^10.2.11",
     "next": "^9.4.4",
     "prettier": "^2.0.5",
@@ -75,7 +75,8 @@
       "<rootDir>/packages/**/*.{js,ts}"
     ],
     "moduleNameMapper": {
-      "fs-extra": "<rootDir>/node_modules/fs-extra"
+      "fs-extra": "<rootDir>/node_modules/fs-extra",
+      "@sls-next/core": "<rootDir>/packages/libs/core/src/index.ts"
     },
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
@@ -123,7 +124,8 @@
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,md,yml}": "prettier --write"
+    "*.{js,jsx,ts,tsx,md,yml}": ["prettier --write"],
+    "*.{js,jsx,ts,tsx}": ["eslint --fix"]
   },
   "resolutions": {
     "which": "^2.0.1",

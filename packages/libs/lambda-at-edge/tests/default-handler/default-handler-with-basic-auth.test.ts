@@ -73,9 +73,8 @@ describe("Lambda@Edge", () => {
           });
         } else {
           expect(response).toEqual({
-            status: "401",
+            status: 401,
             statusDescription: "Unauthorized",
-            body: "Unauthorized",
             headers: {
               "www-authenticate": [{ key: "WWW-Authenticate", value: "Basic" }]
             }

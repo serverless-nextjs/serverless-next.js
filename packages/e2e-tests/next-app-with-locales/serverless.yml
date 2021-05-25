@@ -6,7 +6,7 @@ next-app-with-locales:
     cloudfront:
       defaults:
         forward:
-          headers: [Authorization]
+          headers: [Authorization, Accept-Language]
       api/*:
         forward:
           headers: [Authorization]

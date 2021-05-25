@@ -16,8 +16,38 @@ module.exports = {
         "plugin:prettier/recommended" // Enables eslint-plugin-prettier and eslint-config-prettier. This will display prettier errors as ESLint errors. Make sure this is always the last configuration in the extends array.
       ],
       rules: {
+        "prefer-const": "off", // Disabled in tests
+        "@typescript-eslint/no-explicit-any": "off", // Disabled in tests
+        "@typescript-eslint/no-var-requires": "off", // Used extensively for page requires
         "@typescript-eslint/ban-ts-ignore": "off",
         "@typescript-eslint/ban-ts-comment": "off"
+      }
+    },
+    {
+      files: ["*.ts", "*.tsx"],
+      excludedFiles: ["**/tests/**/*.ts"],
+      rules: {
+        "prefer-const": "error", // Disabled in tests
+        "@typescript-eslint/no-explicit-any": "warn" // Disabled in tests
+      }
+    },
+    {
+      files: ["*.ts", "*.tsx"],
+      excludedFiles: [
+        "**/cypress/integration/*.ts",
+        "**/cypress/custom-commands.ts"
+      ],
+      plugins: ["promise"],
+      rules: {
+        "promise/catch-or-return": "error"
+      }
+    },
+    {
+      parser: "@typescript-eslint/parser",
+      files: ["**/cypress/**/*.ts"],
+      plugins: ["@typescript-eslint"],
+      rules: {
+        "@typescript-eslint/no-namespace": "off"
       }
     }
   ]

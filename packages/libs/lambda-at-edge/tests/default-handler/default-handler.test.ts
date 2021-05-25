@@ -9,9 +9,8 @@ import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders"
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
-jest.mock("jsonwebtoken", () => ({
-  verify: jest.fn()
-}));
+const previewToken =
+  "eyJhbGciOiJIUzI1NiJ9.dGVzdA.bi6AtyJgYL7FimOTVSoV6Htx9XNLe2PINsOadEDYmwI";
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -55,6 +54,8 @@ describe("Lambda@Edge", () => {
     ${true}
   `("Routing with trailingSlash = $trailingSlash", ({ trailingSlash }) => {
     let handler: any;
+    let mockTriggerStaticRegeneration: jest.Mock;
+    let mockS3StorePage: jest.Mock;
     let runRedirectTest: (
       path: string,
       expectedRedirect: string,
@@ -102,6 +103,18 @@ describe("Lambda@Edge", () => {
         );
       }
 
+      mockTriggerStaticRegeneration = jest.fn();
+      jest.mock("../../src/lib/triggerStaticRegeneration", () => ({
+        __esModule: true,
+        triggerStaticRegeneration: mockTriggerStaticRegeneration
+      }));
+
+      mockS3StorePage = jest.fn();
+      jest.mock("../../src/s3/s3StorePage", () => ({
+        __esModule: true,
+        s3StorePage: mockS3StorePage
+      }));
+
       // Handler needs to be dynamically required to use above mocked manifests
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       handler = require("../../src/default-handler").handler;
@@ -132,15 +145,14 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                  | expectedPage
-        ${"/"}                                                | ${"/index.html"}
-        ${"/terms"}                                           | ${"/terms.html"}
-        ${"/users/batman"}                                    | ${"/users/[user].html"}
-        ${"/users/test/catch/all"}                            | ${"/users/[...user].html"}
-        ${"/john/123"}                                        | ${"/[username]/[id].html"}
-        ${"/tests/prerender-manifest/example-static-page"}    | ${"/tests/prerender-manifest/example-static-page.html"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"} | ${"/tests/prerender-manifest-fallback/not-yet-built.html"}
-        ${"/preview"}                                         | ${"/preview.html"}
+        path                               | expectedPage
+        ${"/"}                             | ${"/index.html"}
+        ${"/terms"}                        | ${"/terms.html"}
+        ${"/users/batman"}                 | ${"/users/[...user].html"}
+        ${"/users/test/catch/all"}         | ${"/users/[...user].html"}
+        ${"/fallback/example-static-page"} | ${"/fallback/example-static-page.html"}
+        ${"/fallback/not-yet-built"}       | ${"/fallback/not-yet-built.html"}
+        ${"/preview"}                      | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -180,8 +192,8 @@ describe("Lambda@Edge", () => {
         ${"/users/batman"}
         ${"/users/test/catch/all"}
         ${"/john/123"}
-        ${"/tests/prerender-manifest/example-static-page"}
-        ${"/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/fallback/example-static-page"}
+        ${"/fallback/not-yet-built"}
         ${"/preview"}
       `(
         `path $path redirects if it ${
@@ -198,6 +210,20 @@ describe("Lambda@Edge", () => {
           await runRedirectTest(path, expectedRedirect, 308);
         }
       );
+
+      it.each`
+        path
+        ${"//example.com"}
+        ${"//example.com/"}
+      `(`returns 404 without redirect for $path`, async ({ path }) => {
+        const event = createCloudFrontEvent({
+          uri: path,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
+      });
 
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
@@ -222,7 +248,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -247,7 +273,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -334,7 +360,7 @@ describe("Lambda@Edge", () => {
         path                              | expectedPage
         ${"/abc"}                         | ${"pages/[root].js"}
         ${"/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/customers"}                   | ${"pages/customers/index.js"}
+        ${"/customers"}                   | ${"pages/customers.js"}
         ${"/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -424,9 +450,10 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                      | expectedPage
-        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/_next/data/build-id/customers.json"}                  | ${"pages/customers.js"}
         ${"/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+        ${"/_next/data/build-id/customers/test/catch/all.json"}   | ${"pages/customers/[...catchAll].js"}
       `(
         "serves json data via SSR for SSR path $path",
         async ({ path, expectedPage }) => {
@@ -452,20 +479,18 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                                           | expectedPage
-        ${"/_next/data/build-id"}                                                      | ${"pages/index.js"}
-        ${"/_next/data/build-id/index.json"}                                           | ${"pages/js"}
-        ${"/_next/data/build-id/tests/prerender-manifest-fallback/not-yet-built.json"} | ${"pages/tests/prerender-manifest-fallback/not-yet-built.json"}
+        path                                                  | expectedUri
+        ${"/_next/data/build-id"}                             | ${"/_next/data/build-id/index.json"}
+        ${"/_next/data/build-id/index.json"}                  | ${"/_next/data/build-id/index.json"}
+        ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"/_next/data/build-id/fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
-        async ({ path, expectedPage }) => {
+        async ({ path, expectedUri }) => {
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net",
             config: { eventType: "origin-request" } as any
           });
-
-          mockPageRequire(expectedPage);
 
           const result = await handler(event);
 
@@ -479,9 +504,161 @@ describe("Lambda@Edge", () => {
               region: "us-east-1"
             }
           });
-          expect(request.uri).toEqual(path);
+          expect(request.uri).toEqual(expectedUri);
         }
       );
+
+      it("correctly removes the expires header if set in the response for an ssg page", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+
+        const event = createCloudFrontEvent({
+          uri: "/preview",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  value: new Date().toJSON(),
+                  key: "Expires"
+                }
+              ]
+            }
+          }
+        });
+
+        const response = await handler(event);
+        expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
+        expect(mockTriggerStaticRegeneration.mock.calls[0][0]).toEqual(
+          expect.objectContaining({
+            basePath: "",
+            pagePath: "pages/preview.js",
+            request: expect.objectContaining({
+              uri: `/preview${trailingSlash ? "/" : ""}`
+            })
+          })
+        );
+
+        expect(response.headers).not.toHaveProperty("expires");
+        expect(response.headers).not.toHaveProperty("Expires");
+      });
+
+      it("returns a correct cache control header when an expiry header in the future is sent", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/customers",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  value: new Date(new Date().getTime() + 3000).toJSON(),
+                  key: "Expires"
+                }
+              ]
+            }
+          }
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=3, must-revalidate"
+        );
+      });
+
+      it("returns a correct cache control header when an expiry header in the past is sent", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+        const event = createCloudFrontEvent({
+          uri: "/customers",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  value: new Date(new Date().getTime() - 3000).toJSON(),
+                  key: "Expires"
+                }
+              ]
+            }
+          }
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=0, must-revalidate"
+        );
+      });
+
+      it("returns a correct cache control header when a last-modified header is sent", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+        const event = createCloudFrontEvent({
+          uri: "/preview",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              ["last-modified"]: [
+                {
+                  value: new Date(new Date().getTime() - 3000).toJSON(),
+                  key: "Last-Modified"
+                }
+              ]
+            }
+          }
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=2, must-revalidate"
+        );
+      });
+
+      it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: true })
+        );
+        const event = createCloudFrontEvent({
+          uri: "/preview",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200",
+            statusDescription: "ok",
+            headers: {
+              expires: [
+                {
+                  key: "Expires",
+                  value: new Date().toJSON()
+                }
+              ]
+            }
+          }
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=1, must-revalidate"
+        );
+      });
 
       it.each`
         path                                                       | expectedRedirect
@@ -505,7 +682,7 @@ describe("Lambda@Edge", () => {
             cookie: [
               {
                 key: "Cookie",
-                value: "__next_preview_data=abc; __prerender_bypass=def"
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
               }
             ]
           }
@@ -607,20 +784,14 @@ describe("Lambda@Edge", () => {
     });
 
     describe("404 page", () => {
-      it("renders 404 page if request path can't be matched to any page / api routes", async () => {
+      it("returns 404 page if request path can't be matched to any page / api routes", async () => {
         const event = createCloudFrontEvent({
           uri: trailingSlash ? "/page/does/not/exist/" : "/page/does/not/exist",
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
       });
 
       it("redirects unmatched request path", async () => {
@@ -639,7 +810,7 @@ describe("Lambda@Edge", () => {
         path
         ${"/_next/data/unmatched"}
       `(
-        "renders 404 page if data request can't be matched for path: $path",
+        "returns 404 page if data request can't be matched for path: $path",
         async ({ path }) => {
           const event = createCloudFrontEvent({
             uri: path,
@@ -651,18 +822,8 @@ describe("Lambda@Edge", () => {
             config: { eventType: "origin-request" } as any
           });
 
-          mockPageRequire("./pages/_error.js");
-
-          const response = (await handler(event)) as CloudFrontResultResponse;
-          const body = response.body as string;
-          const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-          expect(decodedBody).toEqual(
-            JSON.stringify({
-              page: "pages/_error.js - 404"
-            })
-          );
-          expect(response.status).toEqual("404");
+          const request = (await handler(event)) as CloudFrontRequest;
+          expect(request.uri).toEqual("/404.html");
         }
       );
 
@@ -697,7 +858,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual("500");
+        expect(response.status).toEqual(500);
       });
     });
 
@@ -712,7 +873,7 @@ describe("Lambda@Edge", () => {
           ${"/terms-redirect-dest-query/"}     | ${"/terms/?foo=bar"}     | ${308}
           ${"/terms-redirect-dest-query/?a=b"} | ${"/terms/?a=b&foo=bar"} | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
             const [path, querystring] = uri.split("?");
 
@@ -734,7 +895,7 @@ describe("Lambda@Edge", () => {
           ${"/terms-redirect-dest-query"}     | ${"/terms?foo=bar"}      | ${308}
           ${"/terms-redirect-dest-query?a=b"} | ${"/terms?a=b&foo=bar"}  | ${308}
         `(
-          "redirects path uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
+          "redirects path $uri to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
           async ({ uri, expectedRedirect, expectedRedirectStatusCode }) => {
             const [path, querystring] = uri.split("?");
 
@@ -779,7 +940,7 @@ describe("Lambda@Edge", () => {
         uri                                | expectedPage     | expectedQuerystring
         ${"/index-rewrite"}                | ${"/index.html"} | ${""}
         ${"/terms-rewrite"}                | ${"/terms.html"} | ${""}
-        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${""}
+        ${"/path-rewrite/123"}             | ${"/terms.html"} | ${"slug=123"}
         ${"/terms"}                        | ${"/terms.html"} | ${""}
         ${"/terms-rewrite-dest-query"}     | ${"/terms.html"} | ${"foo=bar"}
         ${"/terms-rewrite-dest-query?a=b"} | ${"/terms.html"} | ${"a=b&foo=bar"}

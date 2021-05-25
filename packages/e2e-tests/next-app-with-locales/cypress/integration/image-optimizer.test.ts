@@ -64,8 +64,7 @@ describe("Image Optimizer Tests", () => {
 
     [
       {
-        path:
-          "/_next/image?url=https%3A%2F%2Fraw.githubusercontent.com%2Fserverless-nextjs%2Fserverless-next.js%2Fmaster%2Fpackages%2Fe2e-tests%2Fnext-app-with-locales%2Fpublic%2Fapp-store-badge.png&q=100&w=128"
+        path: "/_next/image?url=https%3A%2F%2Fraw.githubusercontent.com%2Fserverless-nextjs%2Fserverless-next.js%2Fmaster%2Fpackages%2Fe2e-tests%2Fnext-app-with-locales%2Fpublic%2Fapp-store-badge.png&q=100&w=128"
       }
     ].forEach(({ path }) => {
       it(`serves external image: ${path}`, () => {

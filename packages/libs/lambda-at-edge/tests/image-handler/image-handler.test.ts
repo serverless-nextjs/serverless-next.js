@@ -39,7 +39,9 @@ jest.mock(
 
 describe("Image lambda handler", () => {
   if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {});
+    it("skipping tests for Node.js that is on v10", () => {
+      // do nothing
+    });
     return;
   }
 
@@ -64,17 +66,17 @@ describe("Image lambda handler", () => {
         headers: {
           "cache-control": [
             {
-              key: "cache-control",
+              key: "Cache-Control",
               value: "public, max-age=60"
             }
           ],
           etag: [
             {
-              key: "etag",
+              key: "ETag",
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "content-type", value: "image/webp" }]
+          "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
         status: 200,
         statusDescription: "OK",
@@ -101,13 +103,12 @@ describe("Image lambda handler", () => {
       });
 
       const event = createCloudFrontEvent({
-        uri:
-          "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
+        uri: "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
           accept: [
             {
-              key: "accept",
+              key: "Accept",
               value: "image/webp"
             }
           ]
@@ -120,17 +121,17 @@ describe("Image lambda handler", () => {
         headers: {
           "cache-control": [
             {
-              key: "cache-control",
+              key: "Cache-Control",
               value: "public, max-age=60"
             }
           ],
           etag: [
             {
-              key: "etag",
+              key: "ETag",
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "content-type", value: "image/webp" }]
+          "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
         status: 200,
         statusDescription: "OK",
@@ -186,7 +187,7 @@ describe("Image lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,

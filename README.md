@@ -5,17 +5,17 @@
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
 [![GitHub contributors](https://img.shields.io/github/contributors/serverless-nextjs/serverless-next.js)](https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors)
 [![Financial Contributors on Open Collective](https://opencollective.com/serverless-nextjs-plugin/all/badge.svg?label=backers)](https://opencollective.com/serverless-nextjs-plugin)
-[![npm latest](https://badgen.net/npm/v/@sls-next/serverless-component/latest)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
-[![npm alpha](https://badgen.net/npm/v/@sls-next/serverless-component/alpha)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
+[![npm latest](https://img.shields.io/npm/v/@sls-next/serverless-component)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
+[![npm alpha](https://img.shields.io/npm/v/@sls-next/serverless-component/alpha)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
 ![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
-![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.x%20%7C%2010.0.x-blue)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-10.2.2-blue)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![Platforms](https://img.shields.io/badge/platforms-aws-blue)
 
-A zero configuration Next.js 9.0 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
+A zero configuration Next.js 9/10 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
 Please review [features](https://github.com/serverless-nextjs/serverless-next.js#features) for a list of currently supported features.
 
@@ -86,7 +86,8 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). Caveat: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them.
 - [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details).
 - [x] [Image Optimization](https://nextjs.org/docs/basic-features/image-optimization) Available in the latest 1.19 alpha version. Please try it out and let us know if there are any bugs.
-- [ ] [Next.js 10 Features](https://nextjs.org/blog/next-10). A few issues such as https://github.com/serverless-nextjs/serverless-next.js/issues/721 are in progress, aiming for 1.19 release.
+- [x] [Next.js 10 Localization](https://nextjs.org/blog/next-10). See: https://github.com/serverless-nextjs/serverless-next.js/issues/721 for more details and tips.
+- [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions (to be documented) on your deployment user. See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work. **Available in latest alpha version only. Please try out and help report any issues!**
 
 ### Getting started
 
@@ -381,11 +382,18 @@ The exhaustive list of AWS actions required for a deployment:
   "s3:CreateBucket",
   "s3:GetAccelerateConfiguration",
   "s3:GetObject",                     // only if persisting state to S3 for CI/CD
-  "s3:HeadBucket",
   "s3:ListBucket",
   "s3:PutAccelerateConfiguration",
   "s3:PutBucketPolicy",
   "s3:PutObject"
+  "lambda:ListEventSourceMappings",
+  "lambda:CreateEventSourceMapping",
+  "iam:UpdateAssumeRolePolicy",
+  "iam:DeleteRolePolicy",
+  "sqs:CreateQueue", // SQS permissions only needed if you use Incremental Static Regeneration. Corresponding SQS.SendMessage permission needed in the Lambda role
+  "sqs:DeleteQueue",
+  "sqs:GetQueueAttributes",
+  "sqs:SetQueueAttributes"
 ```
 
 ### Lambda At Edge Configuration
@@ -747,6 +755,24 @@ module.exports = {
 };
 ```
 
+### 502 Error when hitting CloudFront distribution
+
+You may see an error like below:
+
+```
+502 ERROR
+The request could not be satisfied.
+The Lambda function returned invalid JSON: The JSON output is not parsable. We can't connect to the server for this app or website at this time. There might be too much traffic or a configuration error. Try again later, or contact the app or website owner.
+If you provide content to customers through CloudFront, you can find steps to troubleshoot and help prevent this error by reviewing the CloudFront documentation.
+Generated by cloudfront (CloudFront)
+```
+
+It commonly occurs when the size of the response is too large. Lambda@Edge currently does have a limitation of 1 MB returned by the origin request handler. See: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-generating-http-responses-in-requests.html#lambda-generating-http-responses-errors. Unfortunately, there may not be a workaround other than trying to ensure your responses are smaller.
+
+### Automatic locale detection
+
+Ensure you forward `Accept-Language` header via CloudFront configuration, otherewise it is not able to determine which languages the user understands and/or prefers. By default it is forwarded but if you override with your own configuration, you should add it back.
+
 ## Contributing
 
 Please see the [contributing](./CONTRIBUTING.md) guide.
@@ -757,10 +783,10 @@ Please see the [contributing](./CONTRIBUTING.md) guide.
 
 This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
 <a href="https://github.com/serverless-nextjs/serverless-next.js/graphs/contributors">
-<img src="https://contributors-img.web.app/image?repo=serverless-nextjs/serverless-next.js" />
+<img src="https://contrib.rocks/image?repo=serverless-nextjs/serverless-next.js" />
 </a>
 
-Made with [contributors-img](https://contributors-img.web.app).
+Made with [contributors-img](https://contrib.rocks).
 
 ### Financial Contributors
 

@@ -6,6 +6,7 @@ import { mockUpload } from "aws-sdk";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import mockCreateInvalidation from "@sls-next/cloudfront";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockSQS } from "@sls-next/aws-sqs";
 
 import NextjsComponent, { DeploymentResult } from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
@@ -42,6 +43,10 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
 
   mockDomain.mockResolvedValueOnce({
     domains: [expectedDomain]
+  });
+
+  mockSQS.mockResolvedValue({
+    arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
   });
 };
 
@@ -1053,34 +1058,37 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe("Skip deployment after build", () => {
-    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
-    let tmpCwd: string;
+  describe.each([false, "false"])(
+    "Skip deployment after build",
+    (deployInput) => {
+      const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+      let tmpCwd: string;
 
-    beforeEach(async () => {
-      tmpCwd = process.cwd();
-      process.chdir(fixturePath);
+      beforeEach(async () => {
+        tmpCwd = process.cwd();
+        process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({ expectedDomain: undefined });
-    });
-
-    afterEach(() => {
-      process.chdir(tmpCwd);
-      return cleanupFixtureDirectory(fixturePath);
-    });
-
-    it("builds but skips deployment", async () => {
-      const result = await createNextComponent().default({
-        deploy: false
+        mockServerlessComponentDependencies({ expectedDomain: undefined });
       });
 
-      expect(result).toEqual({
-        appUrl: "SKIPPED_DEPLOY",
-        bucketName: "SKIPPED_DEPLOY",
-        distributionId: "SKIPPED_DEPLOY"
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
       });
-    });
-  });
+
+      it("builds but skips deployment", async () => {
+        const result = await createNextComponent().default({
+          deploy: deployInput
+        });
+
+        expect(result).toEqual({
+          appUrl: "SKIPPED_DEPLOY",
+          bucketName: "SKIPPED_DEPLOY",
+          distributionId: "SKIPPED_DEPLOY"
+        });
+      });
+    }
+  );
 
   describe.each([
     [undefined, "index.handler"],

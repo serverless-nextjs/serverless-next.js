@@ -41,7 +41,7 @@ describe("Serverless Trace With Dynamic Import - TypeScript", () => {
     const nodeModules = await readdir(
       path.join(outputDir, "api-lambda/node_modules")
     );
-    expect(nodeModules).toEqual(["next"]);
+    expect(nodeModules).toEqual(["@next", "next"]);
   });
 
   it("copies dynamic chunk to default lambda artefact", async () => {

@@ -1,12 +1,14 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
 
-let mockSend = jest.fn(() => {
-  return;
+const mockSend = jest.fn(() => {
+  // do nothing
 });
 
 const MockS3Client = jest.fn(() => ({
-  constructor: () => {},
+  constructor: () => {
+    // do nothing
+  },
   send: mockSend
 }));
 
@@ -46,7 +48,9 @@ jest.mock(
 
 describe("Image lambda handler", () => {
   if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {});
+    it("skipping tests for Node.js that is on v10", () => {
+      // do nothing
+    });
     return;
   }
 
@@ -72,7 +76,7 @@ describe("Image lambda handler", () => {
           }
         });
 
-        let response = await handler(event);
+        const response = await handler(event);
 
         if (expectedAuthenticateSuccess) {
           expect(response.status).not.toEqual("401"); // We are only testing whether unauthorized or not.

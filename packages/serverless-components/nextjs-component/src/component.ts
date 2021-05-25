@@ -19,7 +19,8 @@ import obtainDomains from "./lib/obtainDomains";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
-  IMAGE_LAMBDA_CODE_DIR
+  IMAGE_LAMBDA_CODE_DIR,
+  REGENERATION_LAMBDA_CODE_DIR
 } from "./constants";
 import type {
   BuildOptions,
@@ -85,6 +86,7 @@ class NextjsComponent extends Component {
     stillToMatch.delete(this.pathPattern("static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/data/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("_next/image*", routesManifest));
 
     // check for other api like paths
     for (const path of stillToMatch) {
@@ -102,16 +104,12 @@ class NextjsComponent extends Component {
     const manifestPaths = new Set();
 
     // extract paths to validate against from build manifest
-    const ssrDynamic = buildManifest.pages.ssr.dynamic || {};
+    const dynamic = buildManifest.pages.dynamic || [];
     const ssrNonDynamic = buildManifest.pages.ssr.nonDynamic || {};
-    const htmlDynamic = buildManifest.pages.html.dynamic || {};
     const htmlNonDynamic = buildManifest.pages.html.nonDynamic || {};
 
     // dynamic paths to check. We use their regex to match against our input yaml
-    Object.entries({
-      ...ssrDynamic,
-      ...htmlDynamic
-    }).map(([, { regex }]) => {
+    dynamic.map(({ regex }) => {
       manifestRegex.push(new RegExp(regex));
     });
 
@@ -195,15 +193,25 @@ class NextjsComponent extends Component {
         ? nextConfigPath
         : resolve(inputs.build.cwd);
 
+    const buildBaseDir =
+      typeof inputs.build === "boolean" ||
+      typeof inputs.build === "undefined" ||
+      !inputs.build.baseDir
+        ? nextConfigPath
+        : resolve(inputs.build.baseDir);
+
     const buildConfig: BuildOptions = {
       enabled: inputs.build
         ? // @ts-ignore
-          inputs.build !== false && inputs.build.enabled !== false
+          inputs.build !== false && // @ts-ignore
+          inputs.build.enabled !== false && // @ts-ignore
+          inputs.build.enabled !== "false"
         : true,
       cmd: "node_modules/.bin/next",
       args: ["build"],
       ...(typeof inputs.build === "object" ? inputs.build : {}),
-      cwd: buildCwd
+      cwd: buildCwd,
+      baseDir: buildBaseDir
     };
 
     if (buildConfig.enabled) {
@@ -223,7 +231,8 @@ class NextjsComponent extends Component {
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,
-          authentication: inputs.authentication ?? undefined
+          authentication: inputs.authentication ?? undefined,
+          baseDir: buildConfig.baseDir
         },
         nextStaticPath
       );
@@ -253,7 +262,7 @@ class NextjsComponent extends Component {
   ): Promise<DeploymentResult> {
     // Skip deployment if user explicitly set deploy input to false.
     // Useful when they just want the build outputs to deploy themselves.
-    if (inputs.deploy === false) {
+    if (inputs.deploy === "false" || inputs.deploy === false) {
       return {
         appUrl: SKIPPED_DEPLOY,
         bucketName: SKIPPED_DEPLOY,
@@ -302,15 +311,19 @@ class NextjsComponent extends Component {
     const [
       bucket,
       cloudFront,
+      sqs,
       defaultEdgeLambda,
       apiEdgeLambda,
-      imageEdgeLambda
+      imageEdgeLambda,
+      regenerationLambda
     ] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
+      this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
       this.load("@sls-next/aws-lambda", "apiEdgeLambda"),
-      this.load("@sls-next/aws-lambda", "imageEdgeLambda")
+      this.load("@sls-next/aws-lambda", "imageEdgeLambda"),
+      this.load("@sls-next/aws-lambda", "regenerationLambda")
     ]);
 
     const bucketOutputs = await bucket({
@@ -416,6 +429,14 @@ class NextjsComponent extends Component {
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
+    const hasISRPages = Object.keys(
+      defaultBuildManifest.pages.ssg.nonDynamic
+    ).some(
+      (key) =>
+        typeof defaultBuildManifest.pages.ssg.nonDynamic[key]
+          .initialRevalidateSeconds === "number"
+    );
+
     const readLambdaInputValue = (
       inputKey: "memory" | "timeout" | "name" | "runtime",
       lambdaType: LambdaType,
@@ -434,8 +455,17 @@ class NextjsComponent extends Component {
       return inputValue[lambdaType] || defaultValue;
     };
 
+    let queue;
+    if (hasISRPages) {
+      queue = await sqs({
+        name: `${bucketOutputs.name}.fifo`,
+        visibilityTimeout: "30",
+        fifoQueue: true
+      });
+    }
+
     // default policy
-    let policy: Record<string, unknown> = {
+    const defaultLambdaPolicy: Record<string, unknown> = {
       Version: "2012-10-17",
       Statement: [
         {
@@ -451,16 +481,78 @@ class NextjsComponent extends Component {
           Effect: "Allow",
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
           Action: ["s3:GetObject", "s3:PutObject"]
-        }
+        },
+        ...(queue
+          ? [
+              {
+                Effect: "Allow",
+                Resource: queue.arn,
+                Action: ["sqs:SendMessage"]
+              }
+            ]
+          : [])
       ]
     };
 
+    let policy = defaultLambdaPolicy;
     if (inputs.policy) {
       if (typeof inputs.policy === "string") {
         policy = { arn: inputs.policy };
       } else {
         policy = inputs.policy;
       }
+    }
+
+    if (hasISRPages) {
+      const regenerationLambdaInput: LambdaInput = {
+        region: bucketRegion,
+        description: inputs.description
+          ? `${inputs.description} (API)`
+          : "Next.js Regeneration Lambda",
+        handler: inputs.handler || "index.handler",
+        code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
+        role: {
+          service: ["lambda.amazonaws.com"],
+          policy: {
+            ...defaultLambdaPolicy,
+            Statement: [
+              ...(defaultLambdaPolicy.Statement as Record<string, unknown>[]),
+              {
+                Effect: "Allow",
+                Resource: queue.arn,
+                Action: [
+                  "sqs:ReceiveMessage",
+                  "sqs:DeleteMessage",
+                  "sqs:GetQueueAttributes"
+                ]
+              }
+            ]
+          }
+        },
+        memory: readLambdaInputValue(
+          "memory",
+          "regenerationLambda",
+          512
+        ) as number,
+        timeout: readLambdaInputValue(
+          "timeout",
+          "regenerationLambda",
+          10
+        ) as number,
+        runtime: readLambdaInputValue(
+          "runtime",
+          "regenerationLambda",
+          "nodejs12.x"
+        ) as string,
+        name: bucketOutputs.name
+      };
+
+      const regenerationLambdaResult = await regenerationLambda(
+        regenerationLambdaInput
+      );
+      await regenerationLambda.publishVersion();
+
+      await sqs.addEventSource(regenerationLambdaResult.name);
     }
 
     if (hasAPIPages) {
@@ -547,7 +639,8 @@ class NextjsComponent extends Component {
         imageEdgeLambdaInput
       );
 
-      const imageEdgeLambdaPublishOutputs = await imageEdgeLambda.publishVersion();
+      const imageEdgeLambdaPublishOutputs =
+        await imageEdgeLambda.publishVersion();
 
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
@@ -603,7 +696,8 @@ class NextjsComponent extends Component {
       defaultEdgeLambdaInput
     );
 
-    const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
+    const defaultEdgeLambdaPublishOutputs =
+      await defaultEdgeLambda.publishVersion();
 
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
@@ -753,15 +847,17 @@ class NextjsComponent extends Component {
   }
 
   async remove(): Promise<void> {
-    const [bucket, cloudfront, domain] = await Promise.all([
+    const [bucket, cloudfront, sqs, domain] = await Promise.all([
       this.load("@serverless/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
+      this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/domain")
     ]);
 
     await bucket.remove();
     await cloudfront.remove();
     await domain.remove();
+    await sqs.remove();
   }
 }
 

@@ -37,7 +37,9 @@ jest.mock(
 
 describe("Image lambda handler", () => {
   if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {});
+    it("skipping tests for Node.js that is on v10", () => {
+      // do nothing
+    });
     return;
   }
 
@@ -62,17 +64,17 @@ describe("Image lambda handler", () => {
         headers: {
           "cache-control": [
             {
-              key: "cache-control",
+              key: "Cache-Control",
               value: "public, max-age=60"
             }
           ],
           etag: [
             {
-              key: "etag",
+              key: "ETag",
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "content-type", value: "image/png" }]
+          "content-type": [{ key: "Content-Type", value: "image/png" }]
         },
         status: 200,
         statusDescription: "OK",
@@ -122,7 +124,7 @@ describe("Image lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,

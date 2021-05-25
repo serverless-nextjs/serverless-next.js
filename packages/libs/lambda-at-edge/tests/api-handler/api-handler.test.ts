@@ -5,10 +5,12 @@ import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import { CloudFrontResultResponse } from "aws-lambda";
 import { isBlacklistedHeader } from "../../src/headers/removeBlacklistedHeaders";
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
 jest.mock(
   "../../src/manifest.json",
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   () => require("./api-build-manifest.json"),
   {
     virtual: true
@@ -17,6 +19,7 @@ jest.mock(
 
 jest.mock(
   "../../src/routes-manifest.json",
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
   () => require("./api-routes-manifest.json"),
   {
     virtual: true
@@ -26,6 +29,7 @@ jest.mock(
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../../src/${mockPagePath}`,
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     () => require(`../shared-fixtures/built-artifact/${mockPagePath}`),
     {
       virtual: true
@@ -56,6 +60,27 @@ describe("API lambda handler", () => {
       expect(response.status).toEqual(200);
     });
 
+    it("serves dynamic api request", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/users/123",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
+        }
+      });
+
+      mockPageRequire("pages/api/users/[id].js");
+
+      const response = (await handler(event)) as CloudFrontResponseResult;
+
+      const decodedBody = Buffer.from(response.body, "base64").toString("utf8");
+
+      expect(decodedBody).toEqual("pages/api/[id]");
+      expect(response.status).toEqual(200);
+    });
+
     it("returns 404 for not-found api routes", async () => {
       const event = createCloudFrontEvent({
         uri: "/foo/bar",
@@ -71,11 +96,11 @@ describe("API lambda handler", () => {
 
       const response = (await handler(event)) as CloudFrontResponseResult;
 
-      expect(response.status).toEqual("404");
+      expect(response.status).toEqual(404);
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,
@@ -164,6 +189,43 @@ describe("API lambda handler", () => {
       }
     );
 
+    it("serves API with query param for rewritten path /api/customers/123", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/user/123",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
+        }
+      });
+
+      mockPageRequire("pages/api/getUser.js");
+      const response: CloudFrontResultResponse = await handler(event);
+      expect(response.status).toEqual(200);
+
+      // eslint-disable-next-line @typescript-eslint/no-var-requires
+      const page = require(`../../src/pages/api/getUser.js`);
+      const call = page.default.mock.calls[0];
+      const req = call[0];
+      expect(req.url).toEqual("/api/user/123?id=123");
+    });
+
+    it("serves API with 404 for rewritten path /api/notfound", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/api/notfound",
+        host: "mydistribution.cloudfront.net",
+        origin: {
+          s3: {
+            domainName: "my-bucket.s3.amazonaws.com"
+          }
+        }
+      });
+
+      const response: CloudFrontResultResponse = await handler(event);
+      expect(response.status).toEqual(404);
+    });
+
     it.each`
       uri                        | rewriteUri
       ${"/api/external-rewrite"} | ${"https://external.com"}
@@ -177,7 +239,7 @@ describe("API lambda handler", () => {
           status: 200
         });
 
-        let [path, querystring] = uri.split("?");
+        const [path, querystring] = uri.split("?");
 
         const event = createCloudFrontEvent({
           uri: path,

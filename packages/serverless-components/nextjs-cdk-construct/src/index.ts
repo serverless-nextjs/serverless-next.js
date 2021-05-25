@@ -6,11 +6,14 @@ import * as s3Deploy from "@aws-cdk/aws-s3-deployment";
 import * as cloudfront from "@aws-cdk/aws-cloudfront";
 import * as origins from "@aws-cdk/aws-cloudfront-origins";
 import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
+import * as sqs from "@aws-cdk/aws-sqs";
+import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
 import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
-  RoutesManifest
+  RoutesManifest,
+  PreRenderedManifest
 } from "@sls-next/lambda-at-edge";
 import * as fs from "fs-extra";
 import * as path from "path";
@@ -40,9 +43,31 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   private defaultManifest: OriginRequestDefaultHandlerManifest;
 
+  private prerenderManifest: PreRenderedManifest;
+
   public distribution: cloudfront.Distribution;
 
   public bucket: s3.Bucket;
+
+  public edgeLambdaRole: Role;
+
+  public defaultNextLambda: lambda.Function;
+
+  public nextApiLambda: lambda.Function | null;
+
+  public nextImageLambda: lambda.Function | null;
+
+  public nextStaticsCachePolicy: cloudfront.CachePolicy;
+
+  public nextImageCachePolicy: cloudfront.CachePolicy;
+
+  public nextLambdaCachePolicy: cloudfront.CachePolicy;
+
+  public aRecord?: ARecord;
+
+  public regenerationQueue?: sqs.Queue;
+
+  public regenerationFunction?: lambda.Function;
 
   constructor(scope: cdk.Construct, id: string, private props: Props) {
     super(scope, id);
@@ -50,6 +75,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     this.routesManifest = this.readRoutesManifest();
     this.imageManifest = this.readImageBuildManifest();
     this.defaultManifest = this.readDefaultManifest();
+    this.prerenderManifest = this.readPrerenderManifest();
     this.bucket = new s3.Bucket(this, "PublicAssets", {
       publicReadAccess: true,
 
@@ -57,10 +83,46 @@ export class NextJSLambdaEdge extends cdk.Construct {
       // assets uploaded by this library we should be able to safely delete all
       // contents along with the bucket its self upon stack deletion.
       autoDeleteObjects: true,
-      removalPolicy: cdk.RemovalPolicy.DESTROY
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+      // Override props.
+      ...(props.s3Props || {})
     });
 
-    const edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
+    const hasISRPages = Object.keys(this.prerenderManifest.routes).some(
+      (key) =>
+        typeof this.prerenderManifest.routes[key].initialRevalidateSeconds ===
+        "number"
+    );
+
+    if (hasISRPages) {
+      this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
+        // We call the queue the same name as the bucket so that we can easily
+        // reference it from within the lambda@edge, given we can't use env vars
+        // in a lambda@edge
+        queueName: `${this.bucket.bucketName}.fifo`,
+        fifo: true,
+        removalPolicy: cdk.RemovalPolicy.DESTROY
+      });
+
+      this.regenerationFunction = new lambda.Function(
+        this,
+        "RegenerationFunction",
+        {
+          handler: "index.handler",
+          runtime: lambda.Runtime.NODEJS_14_X,
+          timeout: Duration.seconds(30),
+          code: lambda.Code.fromAsset(
+            path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
+          )
+        }
+      );
+
+      this.regenerationFunction.addEventSource(
+        new lambdaEventSources.SqsEventSource(this.regenerationQueue)
+      );
+    }
+
+    this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
       assumedBy: new CompositePrincipal(
         new ServicePrincipal("lambda.amazonaws.com"),
         new ServicePrincipal("edgelambda.amazonaws.com")
@@ -74,7 +136,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       ]
     });
 
-    const defaultNextLambda = new lambda.Function(this, "NextLambda", {
+    this.defaultNextLambda = new lambda.Function(this, "NextLambda", {
       functionName: toLambdaOption("defaultLambda", props.name),
       description: `Default Lambda@Edge for Next CloudFront distribution`,
       handler: "index.handler",
@@ -85,7 +147,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       code: lambda.Code.fromAsset(
         path.join(this.props.serverlessBuildOutDir, "default-lambda")
       ),
-      role: edgeLambdaRole,
+      role: this.edgeLambdaRole,
       runtime:
         toLambdaOption("defaultLambda", props.runtime) ||
         lambda.Runtime.NODEJS_12_X,
@@ -93,7 +155,14 @@ export class NextJSLambdaEdge extends cdk.Construct {
       timeout: toLambdaOption("defaultLambda", props.timeout)
     });
 
-    defaultNextLambda.currentVersion.addAlias("live");
+    this.bucket.grantReadWrite(this.defaultNextLambda);
+    this.defaultNextLambda.currentVersion.addAlias("live");
+
+    if (hasISRPages && this.regenerationFunction) {
+      this.bucket.grantReadWrite(this.regenerationFunction);
+      this.regenerationQueue?.grantSendMessages(this.defaultNextLambda);
+      this.regenerationFunction?.grantInvoke(this.defaultNextLambda);
+    }
 
     const apis = this.apiBuildManifest?.apis;
     const hasAPIPages =
@@ -101,9 +170,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
       (Object.keys(apis.nonDynamic).length > 0 ||
         Object.keys(apis.dynamic).length > 0);
 
-    let nextApiLambda = null;
+    this.nextApiLambda = null;
     if (hasAPIPages) {
-      nextApiLambda = new lambda.Function(this, "NextApiLambda", {
+      this.nextApiLambda = new lambda.Function(this, "NextApiLambda", {
         functionName: toLambdaOption("apiLambda", props.name),
         description: `Default Lambda@Edge for Next API CloudFront distribution`,
         handler: "index.handler",
@@ -115,19 +184,19 @@ export class NextJSLambdaEdge extends cdk.Construct {
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "api-lambda")
         ),
-        role: edgeLambdaRole,
+        role: this.edgeLambdaRole,
         runtime:
           toLambdaOption("apiLambda", props.runtime) ||
           lambda.Runtime.NODEJS_12_X,
         memorySize: toLambdaOption("apiLambda", props.memory),
         timeout: toLambdaOption("apiLambda", props.timeout)
       });
-      nextApiLambda.currentVersion.addAlias("live");
+      this.nextApiLambda.currentVersion.addAlias("live");
     }
 
-    let nextImageLambda = null;
+    this.nextImageLambda = null;
     if (this.imageManifest) {
-      nextImageLambda = new lambda.Function(this, "NextImageLambda", {
+      this.nextImageLambda = new lambda.Function(this, "NextImageLambda", {
         functionName: toLambdaOption("imageLambda", props.name),
         description: `Default Lambda@Edge for Next Image CloudFront distribution`,
         handler: "index.handler",
@@ -139,17 +208,17 @@ export class NextJSLambdaEdge extends cdk.Construct {
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "image-lambda")
         ),
-        role: edgeLambdaRole,
+        role: this.edgeLambdaRole,
         runtime:
           toLambdaOption("imageLambda", props.runtime) ||
           lambda.Runtime.NODEJS_12_X,
         memorySize: toLambdaOption("imageLambda", props.memory),
         timeout: toLambdaOption("imageLambda", props.timeout)
       });
-      nextImageLambda.currentVersion.addAlias("live");
+      this.nextImageLambda.currentVersion.addAlias("live");
     }
 
-    const nextStaticsCachePolicy = new cloudfront.CachePolicy(
+    this.nextStaticsCachePolicy = new cloudfront.CachePolicy(
       this,
       "NextStaticsCache",
       {
@@ -165,7 +234,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const nextImageCachePolicy = new cloudfront.CachePolicy(
+    this.nextImageCachePolicy = new cloudfront.CachePolicy(
       this,
       "NextImageCache",
       {
@@ -181,7 +250,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const nextLambdaCachePolicy = new cloudfront.CachePolicy(
+    this.nextLambdaCachePolicy = new cloudfront.CachePolicy(
       this,
       "NextLambdaCache",
       {
@@ -200,17 +269,22 @@ export class NextJSLambdaEdge extends cdk.Construct {
       }
     );
 
-    const edgeLambdas = [
+    const edgeLambdas: cloudfront.EdgeLambda[] = [
       {
         includeBody: true,
         eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-        functionVersion: defaultNextLambda.currentVersion
+        functionVersion: this.defaultNextLambda.currentVersion
       },
       {
         eventType: cloudfront.LambdaEdgeEventType.ORIGIN_RESPONSE,
-        functionVersion: defaultNextLambda.currentVersion
+        functionVersion: this.defaultNextLambda.currentVersion
       }
     ];
+
+    const {
+      edgeLambdas: additionalDefaultEdgeLambdas = [],
+      ...defaultBehavior
+    } = props.defaultBehavior || {};
 
     this.distribution = new cloudfront.Distribution(
       this,
@@ -218,7 +292,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
       {
         enableLogging: props.withLogging ? true : undefined,
         certificate: props.domain?.certificate,
-        domainNames: props.domain ? [props.domain.domainName] : undefined,
+        domainNames: props.domain ? props.domain.domainNames : undefined,
         defaultRootObject: "",
         defaultBehavior: {
           viewerProtocolPolicy:
@@ -227,12 +301,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
           allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
           cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
           compress: true,
-          cachePolicy: nextLambdaCachePolicy,
-          edgeLambdas,
-          ...(props.defaultBehavior || {})
+          cachePolicy: this.nextLambdaCachePolicy,
+          edgeLambdas: [...edgeLambdas, ...additionalDefaultEdgeLambdas],
+          ...(defaultBehavior || {})
         },
         additionalBehaviors: {
-          ...(nextImageLambda
+          ...(this.nextImageLambda
             ? {
                 [this.pathPattern("_next/image*")]: {
                   viewerProtocolPolicy:
@@ -242,18 +316,19 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   cachedMethods:
                     cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
                   compress: true,
-                  cachePolicy: nextImageCachePolicy,
+                  cachePolicy: this.nextImageCachePolicy,
                   originRequestPolicy: new cloudfront.OriginRequestPolicy(
                     this,
                     "ImageOriginRequest",
                     {
-                      queryStringBehavior: OriginRequestQueryStringBehavior.all()
+                      queryStringBehavior:
+                        OriginRequestQueryStringBehavior.all()
                     }
                   ),
                   edgeLambdas: [
                     {
                       eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-                      functionVersion: nextImageLambda.currentVersion
+                      functionVersion: this.nextImageLambda.currentVersion
                     }
                   ]
                 }
@@ -266,7 +341,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
-            cachePolicy: nextLambdaCachePolicy,
+            cachePolicy: this.nextLambdaCachePolicy,
             edgeLambdas
           },
           [this.pathPattern("_next/*")]: {
@@ -276,7 +351,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
-            cachePolicy: nextStaticsCachePolicy
+            cachePolicy: this.nextStaticsCachePolicy
           },
           [this.pathPattern("static/*")]: {
             viewerProtocolPolicy:
@@ -285,9 +360,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
             allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
             cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
             compress: true,
-            cachePolicy: nextStaticsCachePolicy
+            cachePolicy: this.nextStaticsCachePolicy
           },
-          ...(nextApiLambda
+          ...(this.nextApiLambda
             ? {
                 [this.pathPattern("api/*")]: {
                   viewerProtocolPolicy:
@@ -297,12 +372,12 @@ export class NextJSLambdaEdge extends cdk.Construct {
                   cachedMethods:
                     cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
                   compress: true,
-                  cachePolicy: nextLambdaCachePolicy,
+                  cachePolicy: this.nextLambdaCachePolicy,
                   edgeLambdas: [
                     {
                       includeBody: true,
                       eventType: cloudfront.LambdaEdgeEventType.ORIGIN_REQUEST,
-                      functionVersion: nextApiLambda.currentVersion
+                      functionVersion: this.nextApiLambda.currentVersion
                     }
                   ]
                 }
@@ -347,7 +422,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
         // The source contents will be unzipped to and loaded into the S3 bucket
         // at the root '/', we don't want this, we want to maintain the same
         // path on S3 as their local path.
-        destinationKeyPrefix: path.relative(assetsDirectory, assetPath),
+        destinationKeyPrefix: path.posix.relative(assetsDirectory, assetPath),
 
         // Source directories are uploaded with `--sync` this means that any
         // files that don't exist in the source directory, but do in the S3
@@ -356,11 +431,16 @@ export class NextJSLambdaEdge extends cdk.Construct {
       });
     });
 
-    if (props.domain) {
-      new ARecord(this, "AliasRecord", {
-        recordName: props.domain.domainName,
-        zone: props.domain.hostedZone,
-        target: RecordTarget.fromAlias(new CloudFrontTarget(this.distribution))
+    if (props.domain?.hostedZone) {
+      const hostedZone = props.domain.hostedZone;
+      props.domain.domainNames.forEach((domainName, index) => {
+        this.aRecord = new ARecord(this, `AliasRecord_${index}`, {
+          recordName: domainName,
+          zone: hostedZone,
+          target: RecordTarget.fromAlias(
+            new CloudFrontTarget(this.distribution)
+          )
+        });
       });
     }
   }
@@ -386,6 +466,15 @@ export class NextJSLambdaEdge extends cdk.Construct {
       path.join(
         this.props.serverlessBuildOutDir,
         "default-lambda/manifest.json"
+      )
+    );
+  }
+
+  private readPrerenderManifest(): PreRenderedManifest {
+    return fs.readJSONSync(
+      path.join(
+        this.props.serverlessBuildOutDir,
+        "default-lambda/prerender-manifest.json"
       )
     );
   }

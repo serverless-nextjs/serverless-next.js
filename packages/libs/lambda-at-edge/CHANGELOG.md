@@ -3,6 +3,175 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.7...@sls-next/lambda-at-edge@1.9.0-alpha.8) (2021-05-25)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.6...@sls-next/lambda-at-edge@1.9.0-alpha.7) (2021-05-24)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.5...@sls-next/lambda-at-edge@1.9.0-alpha.6) (2021-05-23)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.4...@sls-next/lambda-at-edge@1.9.0-alpha.5) (2021-05-23)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.3...@sls-next/lambda-at-edge@1.9.0-alpha.4) (2021-05-21)
+
+### Bug Fixes
+
+- **lambda-at-edge:** also copy chunks for the revalidate lambda ([#1099](https://github.com/serverless-nextjs/serverless-next.js/issues/1099)) ([704b866](https://github.com/serverless-nextjs/serverless-next.js/commit/704b8662d4820c83c848a09c8000d176265bf5eb))
+
+# [1.9.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.2...@sls-next/lambda-at-edge@1.9.0-alpha.3) (2021-05-21)
+
+### Bug Fixes
+
+- **lambda-at-edge:** copy js chunks from .next/serverless/chunks to api/default lambdas if present ([#1095](https://github.com/serverless-nextjs/serverless-next.js/issues/1095)) ([f04fe34](https://github.com/serverless-nextjs/serverless-next.js/commit/f04fe3419915fddb2c1c898922ade859b42acbcb))
+
+# [1.9.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.1...@sls-next/lambda-at-edge@1.9.0-alpha.2) (2021-05-20)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.0...@sls-next/lambda-at-edge@1.9.0-alpha.1) (2021-05-20)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.7...@sls-next/lambda-at-edge@1.9.0-alpha.0) (2021-05-19)
+
+### Features
+
+- **lambda-at-edge:** incremental static regeneration ([#1028](https://github.com/serverless-nextjs/serverless-next.js/issues/1028)) ([d5bbdc6](https://github.com/serverless-nextjs/serverless-next.js/commit/d5bbdc6d395ae732ec0757744482bf8bc25e820f))
+
+## [1.8.1-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.6...@sls-next/lambda-at-edge@1.8.1-alpha.7) (2021-05-14)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+## [1.8.1-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.5...@sls-next/lambda-at-edge@1.8.1-alpha.6) (2021-05-14)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+## [1.8.1-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.4...@sls-next/lambda-at-edge@1.8.1-alpha.5) (2021-05-11)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+## [1.8.1-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.3...@sls-next/lambda-at-edge@1.8.1-alpha.4) (2021-05-09)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+## [1.8.1-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.2...@sls-next/lambda-at-edge@1.8.1-alpha.3) (2021-05-09)
+
+### Performance Improvements
+
+- **core, lambda-at-edge:** cold start improvements ([#1044](https://github.com/serverless-nextjs/serverless-next.js/issues/1044)) ([0ee1394](https://github.com/serverless-nextjs/serverless-next.js/commit/0ee1394d83141332d594010d6e2550daac30d245))
+
+## [1.8.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.1...@sls-next/lambda-at-edge@1.8.1-alpha.2) (2021-05-05)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+## [1.8.1-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.1-alpha.0...@sls-next/lambda-at-edge@1.8.1-alpha.1) (2021-05-05)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+## [1.8.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0...@sls-next/lambda-at-edge@1.8.1-alpha.0) (2021-05-05)
+
+### Bug Fixes
+
+- **core:** extend locale matching to secondary languages ([#1040](https://github.com/serverless-nextjs/serverless-next.js/issues/1040)) ([a2c476c](https://github.com/serverless-nextjs/serverless-next.js/commit/a2c476cb923b3a2a382541c7ff9327c0861bfd1c))
+
+# [1.8.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.43...@sls-next/lambda-at-edge@1.8.0) (2021-05-03)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.8.0-alpha.43](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.42...@sls-next/lambda-at-edge@1.8.0-alpha.43) (2021-05-03)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.8.0-alpha.42](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.41...@sls-next/lambda-at-edge@1.8.0-alpha.42) (2021-05-01)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.8.0-alpha.41](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.40...@sls-next/lambda-at-edge@1.8.0-alpha.41) (2021-05-01)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.8.0-alpha.40](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.39...@sls-next/lambda-at-edge@1.8.0-alpha.40) (2021-04-29)
+
+### Performance Improvements
+
+- **lambda-at-edge:** fix rollup bundling for dynamic imports perf ([#1029](https://github.com/serverless-nextjs/serverless-next.js/issues/1029)) ([f8f694c](https://github.com/serverless-nextjs/serverless-next.js/commit/f8f694c55458309eac3dda50d4002970a578074c))
+
+# [1.8.0-alpha.39](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.38...@sls-next/lambda-at-edge@1.8.0-alpha.39) (2021-04-28)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix router path in fallback SSG ([#1026](https://github.com/serverless-nextjs/serverless-next.js/issues/1026)) ([9772397](https://github.com/serverless-nextjs/serverless-next.js/commit/9772397fb15c2cf87ee45797aa52c92cd6b6c485))
+
+# [1.8.0-alpha.38](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.37...@sls-next/lambda-at-edge@1.8.0-alpha.38) (2021-04-26)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.8.0-alpha.37](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.36...@sls-next/lambda-at-edge@1.8.0-alpha.37) (2021-04-24)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix vulnerability in trailing slash redirect ([#1018](https://github.com/serverless-nextjs/serverless-next.js/issues/1018)) ([f31931c](https://github.com/serverless-nextjs/serverless-next.js/commit/f31931c4903a1ae87092745beb42047597b4dcad))
+
+# [1.8.0-alpha.36](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.35...@sls-next/lambda-at-edge@1.8.0-alpha.36) (2021-04-21)
+
+### Features
+
+- **lambda-at-edge:** fallback: "blocking" ([#1007](https://github.com/serverless-nextjs/serverless-next.js/issues/1007)) ([ef3c9ad](https://github.com/serverless-nextjs/serverless-next.js/commit/ef3c9adf4e991d23b6b13e550a757747790a55f2))
+
+# [1.8.0-alpha.35](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.34...@sls-next/lambda-at-edge@1.8.0-alpha.35) (2021-04-21)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.8.0-alpha.34](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.33...@sls-next/lambda-at-edge@1.8.0-alpha.34) (2021-04-21)
+
+### Bug Fixes
+
+- **lambda-at-edge:** render 404 SSR page when there is no static 404 page during fallback response ([9f430dc](https://github.com/serverless-nextjs/serverless-next.js/commit/9f430dca6e88c7c99d560fbb78704de8a97acd16))
+- **lambda-at-edge, e2e-test:** fixes for fallback and fallback e2e tests ([#997](https://github.com/serverless-nextjs/serverless-next.js/issues/997)) ([aad8536](https://github.com/serverless-nextjs/serverless-next.js/commit/aad8536f21cc45a9ddb33a48cb2750d6265a8de1))
+
+# [1.8.0-alpha.33](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.32...@sls-next/lambda-at-edge@1.8.0-alpha.33) (2021-04-16)
+
+### Bug Fixes
+
+- **lambda-at-edge:** various 404 page fixes: ([#1001](https://github.com/serverless-nextjs/serverless-next.js/issues/1001)) ([719f767](https://github.com/serverless-nextjs/serverless-next.js/commit/719f767f504e5ecfc1a4be7b74daa2205acef6a1))
+
+# [1.8.0-alpha.32](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.31...@sls-next/lambda-at-edge@1.8.0-alpha.32) (2021-04-15)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix SSG fallback with basepath ([#992](https://github.com/serverless-nextjs/serverless-next.js/issues/992)) ([dff598b](https://github.com/serverless-nextjs/serverless-next.js/commit/dff598bfc26e6c56e95d87a6dbb7e6bdd19f4227))
+
+# [1.8.0-alpha.31](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.30...@sls-next/lambda-at-edge@1.8.0-alpha.31) (2021-04-02)
+
+### Bug Fixes
+
+- **lambda-at-edge:** ensure dist/sharp_node_modules empty before copying ([#980](https://github.com/serverless-nextjs/serverless-next.js/issues/980)) ([c43b2f8](https://github.com/serverless-nextjs/serverless-next.js/commit/c43b2f86e0fb8923114bd71fb94545afd5861405))
+
+# [1.8.0-alpha.30](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.29...@sls-next/lambda-at-edge@1.8.0-alpha.30) (2021-03-30)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix dynamic vs. catch-all route precedence ([#974](https://github.com/serverless-nextjs/serverless-next.js/issues/974)) ([2a3140a](https://github.com/serverless-nextjs/serverless-next.js/commit/2a3140a7fc68d40840e65a1af85b79c8da9e3a31))
+
+# [1.8.0-alpha.29](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.28...@sls-next/lambda-at-edge@1.8.0-alpha.29) (2021-03-24)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix language detection ([#963](https://github.com/serverless-nextjs/serverless-next.js/issues/963)) ([72d14e8](https://github.com/serverless-nextjs/serverless-next.js/commit/72d14e82b9c1e210ae5a68d80ece6b1ae7228d1c))
+
+# [1.8.0-alpha.28](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.27...@sls-next/lambda-at-edge@1.8.0-alpha.28) (2021-03-22)
+
+### Bug Fixes
+
+- **lambda-at-edge:** do not follow redirect in fetch during rewrite ([#942](https://github.com/serverless-nextjs/serverless-next.js/issues/942)) ([0383cf2](https://github.com/serverless-nextjs/serverless-next.js/commit/0383cf20673cf354f24ce7d607a2d93193574e87))
+
 # [1.8.0-alpha.27](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.8.0-alpha.26...@sls-next/lambda-at-edge@1.8.0-alpha.27) (2021-03-04)
 
 ### Bug Fixes

@@ -118,13 +118,14 @@ describe("Lambda@Edge", () => {
 
     describe("HTML pages routing", () => {
       it.each`
-        path                                                        | expectedPage
-        ${"/basepath"}                                              | ${"/index.html"}
-        ${"/basepath/terms"}                                        | ${"/terms.html"}
-        ${"/basepath/users/batman"}                                 | ${"/users/[user].html"}
-        ${"/basepath/users/test/catch/all"}                         | ${"/users/[...user].html"}
-        ${"/basepath/john/123"}                                     | ${"/[username]/[id].html"}
-        ${"/basepath/tests/prerender-manifest/example-static-page"} | ${"/tests/prerender-manifest/example-static-page.html"}
+        path                                           | expectedPage
+        ${"/basepath"}                                 | ${"/index.html"}
+        ${"/basepath/terms"}                           | ${"/terms.html"}
+        ${"/basepath/users/batman"}                    | ${"/users/[...user].html"}
+        ${"/basepath/users/test/catch/all"}            | ${"/users/[...user].html"}
+        ${"/basepath/no-fallback/example-static-page"} | ${"/no-fallback/example-static-page.html"}
+        ${"/basepath/fallback/not-built"}              | ${"/fallback/not-built.html"}
+        ${"/basepath/preview"}                         | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -164,8 +165,8 @@ describe("Lambda@Edge", () => {
         ${"/basepath/users/batman"}
         ${"/basepath/users/test/catch/all"}
         ${"/basepath/john/123"}
-        ${"/basepath/tests/prerender-manifest/example-static-page"}
-        ${"/basepath/tests/prerender-manifest-fallback/not-yet-built"}
+        ${"/basepath/no-fallback/example-static-page"}
+        ${"/basepath/fallback/not-yet-built"}
       `(
         `path $path redirects if it ${
           trailingSlash ? "does not have" : "has"
@@ -252,7 +253,7 @@ describe("Lambda@Edge", () => {
         path                                       | expectedPage
         ${"/basepath/abc"}                         | ${"pages/[root].js"}
         ${"/basepath/blog/foo"}                    | ${"pages/blog/[id].js"}
-        ${"/basepath/customers"}                   | ${"pages/customers/index.js"}
+        ${"/basepath/customers"}                   | ${"pages/customers.js"}
         ${"/basepath/customers/superman"}          | ${"pages/customers/[customer].js"}
         ${"/basepath/customers/superman/howtofly"} | ${"pages/customers/[customer]/[post].js"}
         ${"/basepath/customers/superman/profile"}  | ${"pages/customers/[customer]/profile.js"}
@@ -336,7 +337,7 @@ describe("Lambda@Edge", () => {
     describe("Data Requests", () => {
       it.each`
         path                                                               | expectedPage
-        ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers/index.js"}
+        ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers.js"}
         ${"/basepath/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
         ${"/basepath/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
       `(
@@ -364,19 +365,18 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                          | expectedPage
-        ${"/basepath/_next/data/build-id"}            | ${"pages/index.js"}
-        ${"/basepath/_next/data/build-id/index.json"} | ${"pages/index.js"}
+        path                                                           | expectedUri
+        ${"/basepath/_next/data/build-id"}                             | ${"/_next/data/build-id/index.json"}
+        ${"/basepath/_next/data/build-id/index.json"}                  | ${"/_next/data/build-id/index.json"}
+        ${"/basepath/_next/data/build-id/fallback/not-yet-built.json"} | ${"/_next/data/build-id/fallback/not-yet-built.json"}
       `(
         "serves json data via S3 for SSG path $path",
-        async ({ path, expectedPage }) => {
+        async ({ path, expectedUri }) => {
           const event = createCloudFrontEvent({
             uri: path,
             host: "mydistribution.cloudfront.net",
             config: { eventType: "origin-request" } as any
           });
-
-          mockPageRequire(expectedPage);
 
           const result = await handler(event);
 
@@ -386,11 +386,11 @@ describe("Lambda@Edge", () => {
             s3: {
               authMethod: "origin-access-identity",
               domainName: "my-bucket.s3.amazonaws.com",
-              path: "",
+              path: "/basepath",
               region: "us-east-1"
             }
           });
-          expect(request.uri).toEqual(path);
+          expect(request.uri).toEqual(expectedUri);
         }
       );
 
@@ -497,14 +497,8 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual("404");
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.uri).toEqual("/404.html");
       });
 
       it("redirects unmatched request path", async () => {
@@ -560,7 +554,7 @@ describe("Lambda@Edge", () => {
         path
         ${"/basepath/_next/data/unmatched"}
       `(
-        "renders 404 page if data request can't be matched for path: $path",
+        "returns 404 page if data request can't be matched for path: $path",
         async ({ path }) => {
           const event = createCloudFrontEvent({
             uri: path,
@@ -572,18 +566,8 @@ describe("Lambda@Edge", () => {
             config: { eventType: "origin-request" } as any
           });
 
-          mockPageRequire("./pages/_error.js");
-
-          const response = (await handler(event)) as CloudFrontResultResponse;
-          const body = response.body as string;
-          const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-          expect(decodedBody).toEqual(
-            JSON.stringify({
-              page: "pages/_error.js - 404"
-            })
-          );
-          expect(response.status).toEqual("404");
+          const request = (await handler(event)) as CloudFrontRequest;
+          expect(request.uri).toEqual("/404.html");
         }
       );
 
@@ -620,7 +604,7 @@ describe("Lambda@Edge", () => {
         const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual("500");
+        expect(response.status).toEqual(500);
       });
     });
 

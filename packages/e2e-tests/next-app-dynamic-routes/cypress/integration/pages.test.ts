@@ -152,7 +152,10 @@ describe("Pages Tests", () => {
       );
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
         const dataRequestParam = path.replace("/", "");
 
         cy.request({ url: fullPath, method: "GET" }).then((response) => {
@@ -201,7 +204,10 @@ describe("Pages Tests", () => {
       );
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
 
         cy.request({ url: fullPath, method: "GET" }).then((response) => {
           expect(response.status).to.equal(200);
@@ -265,7 +271,10 @@ describe("Pages Tests", () => {
       });
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
 
         cy.request({ url: fullPath, method: "GET" }).then((response) => {
           expect(response.status).to.equal(200);
@@ -279,10 +288,6 @@ describe("Pages Tests", () => {
 
     [{ path: "/optional-catch-all-ssg-no-fallback/not-found" }].forEach(
       ({ path }) => {
-        const param = path
-          .replace("/optional-catch-all-ssg-no-fallback", "")
-          .replace("/", "");
-
         ["HEAD", "GET"].forEach((method) => {
           it(`allows HTTP method for path ${path}: ${method} and returns 404 status`, () => {
             cy.request({
@@ -307,19 +312,18 @@ describe("Pages Tests", () => {
           });
         });
 
-        it(`serve data request for ${path}`, () => {
-          // TODO: page itself is 404 but data request can still be served if requested.
-          const fullPath = `/_next/data/${buildId}${path}`;
+        it(`returns 404 on data request for ${path}`, () => {
+          const fullPath = `/_next/data/${buildId}${path.replace(
+            /\/$/,
+            "/index"
+          )}.json`;
 
           cy.request({
             url: fullPath,
-            method: "GET"
+            method: "GET",
+            failOnStatusCode: false
           }).then((response) => {
-            expect(response.status).to.equal(200);
-            expect(response.body).to.deep.equal({
-              pageProps: { name: "serverless-next.js", catch: param },
-              __N_SSG: true
-            });
+            expect(response.status).to.equal(404);
           });
         });
       }
@@ -389,7 +393,10 @@ describe("Pages Tests", () => {
       });
 
       it(`serves data request for ${path}`, () => {
-        const fullPath = `/_next/data/${buildId}${path}`;
+        const fullPath = `/_next/data/${buildId}${path.replace(
+          /\/$/,
+          "/index"
+        )}.json`;
         const dataRequestParam = path
           .replace("/optional-catch-all-ssg-with-fallback", "")
           .replace("/", "");

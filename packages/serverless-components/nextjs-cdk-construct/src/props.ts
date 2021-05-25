@@ -2,6 +2,7 @@ import { ICertificate } from "@aws-cdk/aws-certificatemanager";
 import { BehaviorOptions } from "@aws-cdk/aws-cloudfront";
 import { Runtime } from "@aws-cdk/aws-lambda";
 import { IHostedZone } from "@aws-cdk/aws-route53";
+import { BucketProps } from "@aws-cdk/aws-s3";
 import { Duration, StackProps } from "@aws-cdk/core";
 
 export type LambdaOption<T> =
@@ -16,14 +17,23 @@ export interface Props extends StackProps {
    */
   serverlessBuildOutDir: string;
   /**
-   * Is you'd like a custom domain for your site, you'll need to pass in a
-   * `hostedZone`, `certificate` and full `domainName`
+   * If you'd like a custom domain for your site, you'll need to pass in a list
+   * of full `domainNames` and a `certificate`.
+   *
+   * If your domain is hosted on Route53, you can pass a `hostedZone`, for
+   * which an A record will be automatically created. Otherwise, you can access
+   * the distribution information via the `distribution` property on the
+   * `NextJSLambdaEdge` construct instance, for external DNS configuration.
    */
   domain?: {
-    hostedZone: IHostedZone;
+    hostedZone?: IHostedZone;
     certificate: ICertificate;
-    domainName: string;
+    domainNames: string[];
   };
+  /**
+   * Override props passed to the underlying s3 bucket
+   */
+  s3Props?: Partial<BucketProps>;
   /**
    * Lambda memory limit(s)
    */

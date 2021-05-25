@@ -26,7 +26,50 @@ const mockUpdateFunctionConfigurationPromise = promisifyMock(
   mockUpdateFunctionConfiguration
 );
 
+const mockCreateQueue = jest.fn();
+const mockCreateQueuePromise = promisifyMock(mockCreateQueue);
+
+const mockGetQueueAttributes = jest.fn();
+const mockGetQueueAttributesPromise = promisifyMock(mockGetQueueAttributes);
+
+const mockDeleteQueue = jest.fn();
+const mockDeleteQueuePromise = promisifyMock(mockDeleteQueue);
+
+const mockListEventSourceMappings = jest.fn();
+const mockListEventSourceMappingsPromise = promisifyMock(
+  mockListEventSourceMappings
+);
+
+const mockCreateEventSourceMapping = jest.fn();
+const mockCreateEventSourceMappingPromise = promisifyMock(
+  mockCreateEventSourceMapping
+);
+
+const mockGetCallerIdentityMapping = jest.fn();
+const mockGetCallerIdentityMappingPromise = promisifyMock(
+  mockGetCallerIdentityMapping
+);
+
 module.exports = {
+  mockCreateQueuePromise,
+  mockGetQueueAttributesPromise,
+  mockDeleteQueuePromise,
+  mockListEventSourceMappingsPromise,
+  mockCreateEventSourceMappingPromise,
+  mockCreateQueue,
+  mockGetQueueAttributes,
+  mockDeleteQueue,
+  mockListEventSourceMappings,
+  mockCreateEventSourceMapping,
+  mockGetCallerIdentityMappingPromise,
+  mockGetCallerIdentityMapping,
+
+  SQS: jest.fn(() => ({
+    createQueue: mockCreateQueue,
+    getQueueAttributes: mockGetQueueAttributes,
+    deleteQueue: mockDeleteQueue
+  })),
+
   mockCreateFunction,
   mockCreateFunctionPromise,
   mockPublishVersion,
@@ -39,6 +82,8 @@ module.exports = {
   mockUpdateFunctionConfigurationPromise,
 
   Lambda: jest.fn(() => ({
+    listEventSourceMappings: mockListEventSourceMappings,
+    createEventSourceMapping: mockCreateEventSourceMapping,
     createFunction: mockCreateFunction,
     publishVersion: mockPublishVersion,
     getFunctionConfiguration: mockGetFunctionConfiguration,

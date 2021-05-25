@@ -35,6 +35,22 @@ describe("Redirects Tests", () => {
     });
   });
 
+  describe("Non-redirect cases", () => {
+    [
+      {
+        path: "//example.com",
+        expectedPath: "/example.com/",
+        expectedStatus: 404
+      }
+    ].forEach(({ path, expectedPath, expectedStatus }) => {
+      it(`does not redirect page ${path}`, { retries: 0 }, () => {
+        cy.visit(path, { failOnStatusCode: false });
+        cy.location("pathname").should("eq", expectedPath);
+        cy.contains(`${expectedStatus}`);
+      });
+    });
+  });
+
   describe("Public files always redirect to non-trailing slash path", () => {
     [{ path: "/app-store-badge.png/" }].forEach(({ path }) => {
       it(`redirects file ${path}`, () => {

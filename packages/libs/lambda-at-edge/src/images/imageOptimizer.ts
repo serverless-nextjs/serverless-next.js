@@ -161,7 +161,7 @@ export async function imageOptimizer(
 
   if (fs.existsSync(hashDir)) {
     const files = await promises.readdir(hashDir);
-    for (let file of files) {
+    for (const file of files) {
       const [prefix, etag, extension] = file.split(".");
       const expireAt = Number(prefix);
       const contentType = getContentType(extension);
@@ -236,7 +236,7 @@ export async function imageOptimizer(
         new GetObjectCommand(s3Params)
       );
       const s3chunks = [];
-      for await (let s3Chunk of Body as Stream.Readable) {
+      for await (const s3Chunk of Body as Stream.Readable) {
         s3chunks.push(s3Chunk);
       }
       res.statusCode = 200;
@@ -357,7 +357,7 @@ function getSupportedMimeType(options: string[], accept = ""): string {
 
 function getHash(items: (string | number | Buffer)[]) {
   const hash = createHash("sha256");
-  for (let item of items) {
+  for (const item of items) {
     if (typeof item === "number") hash.update(String(item));
     else {
       hash.update(item);
@@ -372,7 +372,7 @@ function parseCacheControl(str: string | null): Map<string, string> {
   if (!str) {
     return map;
   }
-  for (let directive of str.split(",")) {
+  for (const directive of str.split(",")) {
     let [key, value] = directive.trim().split("=");
     key = key.toLowerCase();
     if (value) {

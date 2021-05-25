@@ -4,33 +4,28 @@ import fse from "fs-extra";
 import { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
-import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   RoutesManifest,
-  OriginRequestImageHandlerManifest,
-  DynamicPageKeyValue
+  OriginRequestImageHandlerManifest
 } from "./types";
-import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
-import {
-  expressifyDynamicRoute,
-  expressifyOptionalCatchAllDynamicRoute
-} from "./lib/expressifyDynamicRoute";
-import pathToRegexStr from "./lib/pathToRegexStr";
 import normalizeNodeModules from "./lib/normalizeNodeModules";
 import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { DynamicSsgRoute, PrerenderManifest, SsgRoute } from "next/dist/build";
+import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
+import { prepareBuildManifests } from "@sls-next/core";
+import { NextConfig } from "@sls-next/core/dist/build";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
+export const REGENERATION_LAMBDA_CODE_DIR = "regeneration-lambda";
 export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
@@ -114,30 +109,7 @@ class Builder {
       );
     }
 
-    const pagesManifest = await fse.readJSON(path);
-    const pagesManifestWithoutDynamicRoutes = Object.keys(pagesManifest).reduce(
-      (acc: { [key: string]: string }, route: string) => {
-        if (isDynamicRoute(route)) {
-          return acc;
-        }
-
-        acc[route] = pagesManifest[route];
-        return acc;
-      },
-      {}
-    );
-
-    const dynamicRoutedPages = Object.keys(pagesManifest).filter(
-      isDynamicRoute
-    );
-    const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
-    const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
-
-    sortedDynamicRoutedPages.forEach((route) => {
-      sortedPagesManifest[route] = pagesManifest[route];
-    });
-
-    return sortedPagesManifest;
+    return await fse.readJSON(path);
   }
 
   copyLambdaHandlerDependencies(
@@ -213,6 +185,7 @@ class Builder {
    * @param destination
    */
   async processAndCopyRoutesManifest(source: string, destination: string) {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(source) as RoutesManifest;
 
     // Remove default trailing slash redirects as they are already handled without regex matching.
@@ -230,22 +203,28 @@ class Builder {
    * @param shouldMinify
    */
   async processAndCopyHandler(
-    handlerType: "api-handler" | "default-handler" | "image-handler",
+    handlerType:
+      | "api-handler"
+      | "default-handler"
+      | "image-handler"
+      | "regeneration-handler",
     destination: string,
     shouldMinify: boolean
   ) {
-    const source = require.resolve(
-      `@sls-next/lambda-at-edge/dist/${handlerType}${
-        shouldMinify ? ".min" : ""
-      }.js`
+    const source = path.dirname(
+      require.resolve(
+        `@sls-next/lambda-at-edge/dist/${handlerType}/${
+          shouldMinify ? "minified" : "standard"
+        }`
+      )
     );
 
     await fse.copy(source, destination);
   }
 
-  async buildDefaultLambda(
+  async copyTraces(
     buildManifest: OriginRequestDefaultHandlerManifest
-  ): Promise<void[]> {
+  ): Promise<void> {
     let copyTraces: Promise<void>[] = [];
 
     if (this.buildOptions.useServerlessTraceTarget) {
@@ -256,9 +235,7 @@ class Builder {
 
       const allSsrPages = [
         ...Object.values(buildManifest.pages.ssr.nonDynamic),
-        ...Object.values(buildManifest.pages.ssr.dynamic).map(
-          (entry) => entry.file
-        )
+        ...Object.values(buildManifest.pages.ssr.dynamic)
       ].filter(ignoreAppAndDocumentPages);
 
       const ssrPages = Object.values(allSsrPages).map((pageFile) =>
@@ -279,7 +256,14 @@ class Builder {
       );
     }
 
-    let prerenderManifest = require(join(
+    await Promise.all(copyTraces);
+  }
+
+  async buildDefaultLambda(
+    buildManifest: OriginRequestDefaultHandlerManifest
+  ): Promise<void[]> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
     ));
@@ -289,10 +273,10 @@ class Builder {
     );
 
     return Promise.all([
-      ...copyTraces,
+      this.copyTraces(buildManifest),
       this.processAndCopyHandler(
         "default-handler",
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
@@ -339,6 +323,7 @@ class Builder {
           }
         }
       ),
+      this.copyChunks(DEFAULT_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
@@ -385,7 +370,7 @@ class Builder {
       ...copyTraces,
       this.processAndCopyHandler(
         "api-handler",
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, API_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
@@ -398,6 +383,7 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
+      this.copyChunks(API_LAMBDA_CODE_DIR),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
@@ -407,6 +393,54 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
+  }
+
+  async buildRegenerationHandler(
+    buildManifest: OriginRequestDefaultHandlerManifest
+  ): Promise<void> {
+    await Promise.all([
+      this.copyTraces(buildManifest),
+      fse.writeJson(
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "manifest.json"),
+        buildManifest
+      ),
+      this.processAndCopyHandler(
+        "regeneration-handler",
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
+        !!this.buildOptions.minifyHandlers
+      ),
+      this.copyChunks(REGENERATION_LAMBDA_CODE_DIR),
+      fse.copy(
+        join(this.serverlessDir, "pages"),
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "pages"),
+        {
+          filter: (file: string) => {
+            const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
+            const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
+            const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
+
+            return (
+              isNotPrerenderedHTMLPage &&
+              isNotStaticPropsJSONFile &&
+              isNotApiPage
+            );
+          }
+        }
+      )
+    ]);
+  }
+
+  /**
+   * copy chunks if present and not using serverless trace
+   */
+  async copyChunks(buildDir: string): Promise<void> {
+    return !this.buildOptions.useServerlessTraceTarget &&
+      fse.existsSync(join(this.serverlessDir, "chunks"))
+      ? fse.copy(
+          join(this.serverlessDir, "chunks"),
+          join(this.outputDir, buildDir, "chunks")
+        )
+      : Promise.resolve();
   }
 
   /**
@@ -419,7 +453,7 @@ class Builder {
     return Promise.all([
       this.processAndCopyHandler(
         "image-handler",
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "index.js"),
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
@@ -457,348 +491,7 @@ class Builder {
     ]);
   }
 
-  async prepareBuildManifests(
-    routesManifest: RoutesManifest,
-    prerenderManifest: PrerenderManifest
-  ): Promise<{
-    defaultBuildManifest: OriginRequestDefaultHandlerManifest;
-    apiBuildManifest: OriginRequestApiHandlerManifest;
-    imageBuildManifest: OriginRequestImageHandlerManifest;
-  }> {
-    const pagesManifest = await this.readPagesManifest();
-
-    const buildId = await fse.readFile(
-      path.join(this.dotNextDir, "BUILD_ID"),
-      "utf-8"
-    );
-    const {
-      logLambdaExecutionTimes = false,
-      domainRedirects = {},
-      enableHTTPCompression = false,
-      authentication = undefined
-    } = this.buildOptions;
-
-    this.normalizeDomainRedirects(domainRedirects);
-
-    const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
-      buildId,
-      logLambdaExecutionTimes,
-      pages: {
-        ssr: {
-          dynamic: {},
-          nonDynamic: {}
-        },
-        html: {
-          dynamic: {},
-          nonDynamic: {}
-        },
-        ssg: {
-          dynamic: {},
-          nonDynamic: {}
-        }
-      },
-      publicFiles: {},
-      trailingSlash: false,
-      domainRedirects: domainRedirects,
-      authentication: authentication,
-      enableHTTPCompression
-    };
-
-    const apiBuildManifest: OriginRequestApiHandlerManifest = {
-      apis: {
-        dynamic: {},
-        nonDynamic: {}
-      },
-      domainRedirects: domainRedirects,
-      authentication: authentication,
-      enableHTTPCompression
-    };
-
-    const ssgPages = defaultBuildManifest.pages.ssg;
-    const ssrPages = defaultBuildManifest.pages.ssr;
-    const htmlPages = defaultBuildManifest.pages.html;
-    const apiPages = apiBuildManifest.apis;
-
-    const isHtmlPage = (path: string): boolean => path.endsWith(".html");
-    const isApiPage = (path: string): boolean => path.startsWith("pages/api");
-
-    Object.entries(pagesManifest).forEach(([route, pageFile]) => {
-      // Check for optional catch all dynamic routes vs. other types of dynamic routes
-      // We also add another route without dynamic parameter for optional catch all dynamic routes
-      const isOptionalCatchAllDynamicRoute = isOptionalCatchAllRoute(route);
-      const isOtherDynamicRoute =
-        !isOptionalCatchAllDynamicRoute && isDynamicRoute(route);
-
-      let expressRoute = "";
-      let optionalBaseRoute = "";
-      if (isOtherDynamicRoute) {
-        expressRoute = expressifyDynamicRoute(route);
-      } else if (isOptionalCatchAllDynamicRoute) {
-        expressRoute = expressifyOptionalCatchAllDynamicRoute(route);
-        optionalBaseRoute = route.split("/[[")[0]; // The base path of optional catch-all without parameter
-        optionalBaseRoute = optionalBaseRoute === "" ? "/" : optionalBaseRoute;
-      }
-
-      if (isHtmlPage(pageFile)) {
-        if (isOtherDynamicRoute) {
-          const route = expressRoute;
-          htmlPages.dynamic[route] = {
-            file: pageFile,
-            regex: pathToRegexStr(route)
-          };
-        } else if (isOptionalCatchAllDynamicRoute) {
-          const route = expressRoute;
-          htmlPages.dynamic[route] = {
-            file: pageFile,
-            regex: pathToRegexStr(route)
-          };
-          htmlPages.nonDynamic[optionalBaseRoute] = pageFile;
-        } else {
-          htmlPages.nonDynamic[route] = pageFile;
-        }
-      } else if (isApiPage(pageFile)) {
-        if (isOtherDynamicRoute) {
-          const route = expressRoute as string;
-          apiPages.dynamic[route] = {
-            file: pageFile,
-            regex: pathToRegexStr(route)
-          };
-        } else if (isOptionalCatchAllDynamicRoute) {
-          const route = expressRoute as string;
-          apiPages.dynamic[route] = {
-            file: pageFile,
-            regex: pathToRegexStr(route)
-          };
-          apiPages.nonDynamic[optionalBaseRoute] = pageFile;
-        } else {
-          apiPages.nonDynamic[route] = pageFile;
-        }
-      } else if (isOtherDynamicRoute) {
-        const route = expressRoute as string;
-        ssrPages.dynamic[route] = {
-          file: pageFile,
-          regex: pathToRegexStr(route)
-        };
-      } else if (isOptionalCatchAllDynamicRoute) {
-        const route = expressRoute as string;
-        ssrPages.dynamic[route] = {
-          file: pageFile,
-          regex: pathToRegexStr(route)
-        };
-        ssrPages.nonDynamic[optionalBaseRoute] = pageFile;
-      } else {
-        ssrPages.nonDynamic[route] = pageFile;
-      }
-    });
-
-    // Add non-dynamic SSG routes
-    Object.entries(prerenderManifest.routes).forEach(([route, ssgRoute]) => {
-      // Somehow Next.js generates prerender manifest with default locale prefixed, normalize it
-      const defaultLocale = routesManifest.i18n?.defaultLocale;
-      if (defaultLocale) {
-        const normalizedRoute = route.replace(`/${defaultLocale}/`, "/");
-        ssgRoute.dataRoute = ssgRoute.dataRoute.replace(
-          `/${defaultLocale}/`,
-          "/"
-        );
-        ssgPages.nonDynamic[normalizedRoute] = ssgRoute;
-      } else {
-        ssgPages.nonDynamic[route] = ssgRoute;
-      }
-    });
-
-    // Add dynamic SSG routes
-    Object.entries(prerenderManifest.dynamicRoutes ?? {}).forEach(
-      ([route, dynamicSsgRoute]) => {
-        ssgPages.dynamic[route] = dynamicSsgRoute;
-      }
-    );
-
-    // Duplicate routes for all specified locales. This is easy matching locale-prefixed routes in handler
-    if (routesManifest.i18n) {
-      const localeHtmlPages: {
-        dynamic: DynamicPageKeyValue;
-        nonDynamic: {
-          [key: string]: string;
-        };
-      } = {
-        dynamic: {},
-        nonDynamic: {}
-      };
-
-      const localeSsgPages: {
-        dynamic: {
-          [key: string]: DynamicSsgRoute;
-        };
-        nonDynamic: {
-          [key: string]: SsgRoute;
-        };
-      } = {
-        dynamic: {},
-        nonDynamic: {}
-      };
-
-      const localeSsrPages: {
-        nonDynamic: {
-          [key: string]: string;
-        };
-        dynamic: DynamicPageKeyValue;
-      } = {
-        nonDynamic: {},
-        dynamic: {}
-      };
-
-      for (const locale of routesManifest.i18n.locales) {
-        htmlPagesNonDynamicLoop: for (const key in htmlPages.nonDynamic) {
-          // Locale-prefixed pages don't need to be duplicated
-          for (const locale of routesManifest.i18n.locales) {
-            if (key.startsWith(`/${locale}/`) || key === `/${locale}`) {
-              break htmlPagesNonDynamicLoop;
-            }
-          }
-
-          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-          localeHtmlPages.nonDynamic[newKey] = htmlPages.nonDynamic[
-            key
-          ].replace("pages/", `pages/${locale}/`);
-        }
-
-        for (const key in htmlPages.dynamic) {
-          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-
-          // Initial default value
-          localeHtmlPages.dynamic[newKey] = { file: "", regex: "" };
-          const newDynamicHtml = Object.assign(
-            localeHtmlPages.dynamic[newKey],
-            htmlPages.dynamic[key]
-          );
-
-          // Need to update the file and regex
-          newDynamicHtml.file = newDynamicHtml.file.replace(
-            "pages/",
-            `pages/${locale}/`
-          );
-          newDynamicHtml.regex = pathToRegexStr(newKey);
-        }
-
-        for (const key in ssrPages.nonDynamic) {
-          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-          localeSsrPages.nonDynamic[newKey] = ssrPages.nonDynamic[key];
-        }
-
-        for (const key in ssrPages.dynamic) {
-          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-
-          // Initial default value
-          localeSsrPages.dynamic[newKey] = { file: "", regex: "" };
-          const newDynamicSsr = Object.assign(
-            localeSsrPages.dynamic[newKey],
-            ssrPages.dynamic[key]
-          );
-
-          // Need to update the regex
-          newDynamicSsr.regex = pathToRegexStr(newKey);
-        }
-
-        for (const key in ssgPages.nonDynamic) {
-          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-
-          // Initial default value
-          localeSsgPages.nonDynamic[newKey] = {
-            initialRevalidateSeconds: false,
-            srcRoute: null,
-            dataRoute: ""
-          };
-
-          const newSsgRoute = Object.assign(
-            localeSsgPages.nonDynamic[newKey],
-            ssgPages.nonDynamic[key]
-          );
-
-          // Replace with localized value. For non-dynamic index page, this is in format "en.json"
-          if (key === "/") {
-            newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
-              `/_next/data/${buildId}/index.json`,
-              `/_next/data/${buildId}/${locale}.json`
-            );
-          } else {
-            newSsgRoute.dataRoute = newSsgRoute.dataRoute.replace(
-              `/_next/data/${buildId}/`,
-              `/_next/data/${buildId}/${locale}/`
-            );
-          }
-
-          newSsgRoute.srcRoute = newSsgRoute.srcRoute
-            ? `/${locale}/${newSsgRoute.srcRoute}`
-            : newSsgRoute.srcRoute;
-        }
-
-        for (const key in ssgPages.dynamic) {
-          const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-          localeSsgPages.dynamic[newKey] = ssgPages.dynamic[key];
-
-          const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
-
-          // Replace with localized values
-          newDynamicSsgRoute.dataRoute = newDynamicSsgRoute.dataRoute.replace(
-            `/_next/data/${buildId}/`,
-            `/_next/data/${buildId}/${locale}/`
-          );
-          newDynamicSsgRoute.dataRouteRegex = newDynamicSsgRoute.dataRouteRegex.replace(
-            `/_next/data/${buildId}/`,
-            `/_next/data/${buildId}/${locale}/`
-          );
-          newDynamicSsgRoute.fallback =
-            typeof newDynamicSsgRoute.fallback === "string"
-              ? newDynamicSsgRoute.fallback.replace("/", `/${locale}/`)
-              : newDynamicSsgRoute.fallback;
-          newDynamicSsgRoute.routeRegex = localeSsgPages.dynamic[
-            newKey
-          ].routeRegex.replace("^/", `^/${locale}/`);
-        }
-      }
-
-      defaultBuildManifest.pages.ssr = {
-        dynamic: {
-          ...ssrPages.dynamic,
-          ...localeSsrPages.dynamic
-        },
-        nonDynamic: {
-          ...ssrPages.nonDynamic,
-          ...localeSsrPages.nonDynamic
-        }
-      };
-
-      defaultBuildManifest.pages.ssg = {
-        nonDynamic: {
-          ...ssgPages.nonDynamic,
-          ...localeSsgPages.nonDynamic
-        },
-        dynamic: {
-          ...ssgPages.dynamic,
-          ...localeSsgPages.dynamic
-        }
-      };
-
-      defaultBuildManifest.pages.html = {
-        nonDynamic: {
-          ...htmlPages.nonDynamic,
-          ...localeHtmlPages.nonDynamic
-        },
-        dynamic: {
-          ...htmlPages.dynamic,
-          ...localeHtmlPages.dynamic
-        }
-      };
-    }
-
-    const publicFiles = await this.readPublicFiles();
-
-    publicFiles.forEach((pf) => {
-      defaultBuildManifest.publicFiles["/" + pf] = pf;
-    });
-
-    // Read next.config.js
+  async readNextConfig(): Promise<NextConfig | undefined> {
     const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
 
     if (await fse.pathExists(nextConfigPath)) {
@@ -811,23 +504,8 @@ class Builder {
         // Execute using phase based on: https://github.com/vercel/next.js/blob/8a489e24bcb6141ad706e1527b77f3ff38940b6d/packages/next/next-server/lib/constants.ts#L1-L4
         normalisedNextConfig = nextConfig("phase-production-server", {});
       }
-
-      // Support trailing slash: https://nextjs.org/docs/api-reference/next.config.js/trailing-slash
-      defaultBuildManifest.trailingSlash =
-        normalisedNextConfig?.trailingSlash ?? false;
+      return normalisedNextConfig;
     }
-
-    // Image manifest
-    const imageBuildManifest: OriginRequestImageHandlerManifest = {
-      domainRedirects: domainRedirects,
-      enableHTTPCompression: enableHTTPCompression
-    };
-
-    return {
-      defaultBuildManifest,
-      apiBuildManifest,
-      imageBuildManifest
-    };
   }
 
   /**
@@ -914,9 +592,9 @@ class Builder {
       path.join(dotNextDirectory, "prerender-manifest.json")
     );
 
-    let prerenderManifestJSONPropFileAssets: Promise<void>[] = [];
-    let prerenderManifestHTMLPageAssets: Promise<void>[] = [];
-    let fallbackHTMLPageAssets: Promise<void>[] = [];
+    const prerenderManifestJSONPropFileAssets: Promise<void>[] = [];
+    const prerenderManifestHTMLPageAssets: Promise<void>[] = [];
+    const fallbackHTMLPageAssets: Promise<void>[] = [];
 
     // Copy locale-specific prerendered files if defined, otherwise use empty locale
     // which would copy to root only
@@ -990,7 +668,10 @@ class Builder {
           return copyIfExists(source, destination);
         })
       );
+    }
 
+    // Dynamic routes are unlocalized even in version 3
+    for (const locale of routesManifest.i18n?.locales ?? [""]) {
       fallbackHTMLPageAssets.concat(
         Object.values(prerenderManifest.dynamicRoutes ?? {})
           .filter(({ fallback }) => {
@@ -1089,6 +770,7 @@ class Builder {
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
+    await fse.emptyDir(join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
 
     const { restoreUserConfig } = await createServerlessConfig(
@@ -1113,23 +795,56 @@ class Builder {
       await restoreUserConfig();
     }
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(join(
       this.dotNextDir,
       "routes-manifest.json"
     ));
 
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
     const prerenderManifest = require(join(
       this.dotNextDir,
       "prerender-manifest.json"
     ));
 
-    const {
-      defaultBuildManifest,
-      apiBuildManifest,
-      imageBuildManifest
-    } = await this.prepareBuildManifests(routesManifest, prerenderManifest);
+    const options = {
+      buildId: await fse.readFile(
+        path.join(this.dotNextDir, "BUILD_ID"),
+        "utf-8"
+      ),
+      ...this.buildOptions,
+      domainRedirects: this.buildOptions.domainRedirects ?? {}
+    };
+
+    const { apiManifest, imageManifest, pageManifest } =
+      await prepareBuildManifests(
+        options,
+        await this.readNextConfig(),
+        routesManifest,
+        await this.readPagesManifest(),
+        prerenderManifest,
+        await this.readPublicFiles()
+      );
+
+    const { enableHTTPCompression, logLambdaExecutionTimes } =
+      this.buildOptions;
+
+    const apiBuildManifest = {
+      ...apiManifest,
+      enableHTTPCompression
+    };
+    const defaultBuildManifest = {
+      ...pageManifest,
+      enableHTTPCompression,
+      logLambdaExecutionTimes
+    };
+    const imageBuildManifest = {
+      ...imageManifest,
+      enableHTTPCompression
+    };
 
     await this.buildDefaultLambda(defaultBuildManifest);
+    await this.buildRegenerationHandler(defaultBuildManifest);
 
     const hasAPIPages =
       Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
@@ -1140,56 +855,32 @@ class Builder {
     }
 
     // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
-    const hasImageOptimizer = fse.existsSync(
+    const hasImagesManifest = fse.existsSync(
       join(this.dotNextDir, "images-manifest.json")
     );
 
-    if (hasImageOptimizer) {
+    // However if using a non-default loader, the lambda is not needed
+    const imagesManifest = hasImagesManifest
+      ? await fse.readJSON(join(this.dotNextDir, "images-manifest.json"))
+      : null;
+    const imageLoader = imagesManifest?.images?.loader;
+    const isDefaultLoader = !imageLoader || imageLoader === "default";
+    const hasImageOptimizer = hasImagesManifest && isDefaultLoader;
+
+    // ...nor if the image component is not used
+    const exportMarker = fse.existsSync(
+      join(this.dotNextDir, "export-marker.json")
+    )
+      ? await fse.readJSON(path.join(this.dotNextDir, "export-marker.json"))
+      : {};
+    const isNextImageImported = exportMarker.isNextImageImported !== false;
+
+    if (hasImageOptimizer && isNextImageImported) {
       await this.buildImageLambda(imageBuildManifest);
     }
 
     // Copy static assets to .serverless_nextjs directory
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
-  }
-
-  /**
-   * Normalize domain redirects by validating they are URLs and getting rid of trailing slash.
-   * @param domainRedirects
-   */
-  normalizeDomainRedirects(domainRedirects: { [key: string]: string }) {
-    for (const key in domainRedirects) {
-      const destination = domainRedirects[key];
-
-      let url;
-      try {
-        url = new URL(destination);
-      } catch (error) {
-        throw new Error(
-          `domainRedirects: ${destination} is invalid. The URL is not in a valid URL format.`
-        );
-      }
-
-      const { origin, pathname, searchParams } = url;
-
-      if (!origin.startsWith("https://") && !origin.startsWith("http://")) {
-        throw new Error(
-          `domainRedirects: ${destination} is invalid. The URL must start with http:// or https://.`
-        );
-      }
-
-      if (Array.from(searchParams).length > 0) {
-        throw new Error(
-          `domainRedirects: ${destination} is invalid. The URL must not contain query parameters.`
-        );
-      }
-
-      let normalizedDomain = `${origin}${pathname}`;
-      normalizedDomain = normalizedDomain.endsWith("/")
-        ? normalizedDomain.slice(0, -1)
-        : normalizedDomain;
-
-      domainRedirects[key] = normalizedDomain;
-    }
   }
 }
 
