@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.20.0-alpha.9...@sls-next/serverless-component@1.20.0-alpha.10) (2021-05-25)
+
+### Bug Fixes
+
+- **nextjs-component:** allow specifying role arn for all lambdas ([#1125](https://github.com/serverless-nextjs/serverless-next.js/issues/1125)) ([6496f26](https://github.com/serverless-nextjs/serverless-next.js/commit/6496f2653638d7bd83f90a00f8d046ab2b38dc7d))
+
 # [1.20.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.20.0-alpha.8...@sls-next/serverless-component@1.20.0-alpha.9) (2021-05-25)
 
 **Note:** Version bump only for package @sls-next/serverless-component
