@@ -48,13 +48,13 @@ describe("ISR Tests", () => {
                 // Make sure the next load is cached
                 cy.ensureRouteCached(path);
                 // Be sure that the regeneration has run and uploaded the file
-                cy.wait(2000);
+                cy.wait(4000);
                 cy.reload();
               });
           });
 
         // Wait for the cache to expire after the 10s
-        cy.wait(8000);
+        cy.wait(10000);
         cy.ensureRouteNotCached(path);
         cy.reload();
       });
