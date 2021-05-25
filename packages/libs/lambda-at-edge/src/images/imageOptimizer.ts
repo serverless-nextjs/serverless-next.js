@@ -40,7 +40,7 @@ const MODERN_TYPES = [/* AVIF, */ WEBP];
 const ANIMATABLE_TYPES = [WEBP, PNG, GIF];
 const VECTOR_TYPES = [SVG];
 
-const DEFAULT_CACHE_CONTROL = "public, immutable";
+const DEFAULT_CACHE_CONTROL = "public, max-age=31536000, immutable";
 
 export async function imageOptimizer(
   {
@@ -173,7 +173,7 @@ export async function imageOptimizer(
         //   res.setHeader("Cache-Control", "public, max-age=60");
         // }
         // Enforce default cache control
-        // res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
+        res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
         if (sendEtagResponse(req, res, etag)) {
           return { finished: true };
         }
@@ -254,7 +254,7 @@ export async function imageOptimizer(
       // if (CacheControl) {
       // }
       // Enforce default cache control
-      // res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
+      res.setHeader("Cache-Control", DEFAULT_CACHE_CONTROL);
     } catch (err) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
