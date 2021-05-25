@@ -86,12 +86,16 @@ export async function getLanguageRedirectPath(
   manifest: Manifest,
   routesManifest: RoutesManifest
 ): Promise<string | undefined> {
+  const basePath = routesManifest.basePath;
+  const trailingSlash = manifest.trailingSlash;
+  const rootUri = basePath ? `${basePath}${trailingSlash ? "/" : ""}` : "/";
+
   // NEXT_LOCALE in cookie will override any accept-language header
   // per: https://nextjs.org/docs/advanced-features/i18n-routing#leveraging-the-next_locale-cookie
   const headerCookies = req.headers.cookie
     ? req.headers.cookie[0]?.value
     : undefined;
-  if (headerCookies) {
+  if (req.uri === rootUri && headerCookies) {
     const cookies = parse(headerCookies);
     const nextLocale = cookies["NEXT_LOCALE"];
     if (nextLocale) {
@@ -105,9 +109,6 @@ export async function getLanguageRedirectPath(
 
   const languageHeader = req.headers["accept-language"];
   const acceptLanguage = languageHeader && languageHeader[0]?.value;
-  const basePath = routesManifest.basePath;
-  const trailingSlash = manifest.trailingSlash;
-  const rootUri = basePath ? `${basePath}${trailingSlash ? "/" : ""}` : "/";
 
   if (req.uri === rootUri && acceptLanguage) {
     return await getAcceptLanguageLocale(
