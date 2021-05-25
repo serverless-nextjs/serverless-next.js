@@ -2,7 +2,7 @@
     "version": 3,
     "routes": {
         "/en/no-fallback/a": {
-            "initialRevalidateSeconds": false,
+            "initialRevalidateSeconds": 60,
             "srcRoute": "/no-fallback/[slug]",
             "dataRoute": "/_next/data/test-build-id/en/no-fallback/a.json"
         },
@@ -12,12 +12,12 @@
             "dataRoute": "/_next/data/test-build-id/en/fallback/a.json"
         },
         "/en/ssg": {
-            "initialRevalidateSeconds": false,
+            "initialRevalidateSeconds": 60,
             "srcRoute": null,
             "dataRoute": "/_next/data/test-build-id/ssg.json"
         },
         "/nl/ssg": {
-            "initialRevalidateSeconds": false,
+            "initialRevalidateSeconds": 60,
             "srcRoute": null,
             "dataRoute": "/_next/data/test-build-id/ssg.json"
         },
