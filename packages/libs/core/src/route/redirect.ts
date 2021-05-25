@@ -86,6 +86,11 @@ export async function getLanguageRedirectPath(
   manifest: Manifest,
   routesManifest: RoutesManifest
 ): Promise<string | undefined> {
+  // Check for disabled locale detection: https://nextjs.org/docs/advanced-features/i18n-routing#disabling-automatic-locale-detection
+  if (routesManifest.i18n?.localeDetection === false) {
+    return;
+  }
+
   const basePath = routesManifest.basePath;
   const trailingSlash = manifest.trailingSlash;
   const rootUri = basePath ? `${basePath}${trailingSlash ? "/" : ""}` : "/";
