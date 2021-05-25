@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.15...@sls-next/core@1.0.0-alpha.16) (2021-05-25)
+
+### Bug Fixes
+
+- **core:** check for explicitly disabled locale detection ([#1129](https://github.com/serverless-nextjs/serverless-next.js/issues/1129)) ([0a39211](https://github.com/serverless-nextjs/serverless-next.js/commit/0a3921159513a927c5f8606e8550c12a5641396f))
+
 # [1.0.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.14...@sls-next/core@1.0.0-alpha.15) (2021-05-25)
 
 ### Bug Fixes
