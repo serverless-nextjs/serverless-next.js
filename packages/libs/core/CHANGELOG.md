@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.13...@sls-next/core@1.0.0-alpha.14) (2021-05-25)
+
+### Bug Fixes
+
+- **core, lambda-at-edge:** fix page inclusion logic in default-handler build ([#1126](https://github.com/serverless-nextjs/serverless-next.js/issues/1126)) ([5fdf3fe](https://github.com/serverless-nextjs/serverless-next.js/commit/5fdf3fe04146e60a01681b0bfe21c1147fea6fd4))
+
 # [1.0.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.12...@sls-next/core@1.0.0-alpha.13) (2021-05-25)
 
 **Note:** Version bump only for package @sls-next/core

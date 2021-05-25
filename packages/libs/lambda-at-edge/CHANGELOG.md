@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.9...@sls-next/lambda-at-edge@1.9.0-alpha.10) (2021-05-25)
+
+### Bug Fixes
+
+- **core, lambda-at-edge:** fix page inclusion logic in default-handler build ([#1126](https://github.com/serverless-nextjs/serverless-next.js/issues/1126)) ([5fdf3fe](https://github.com/serverless-nextjs/serverless-next.js/commit/5fdf3fe04146e60a01681b0bfe21c1147fea6fd4))
+
 # [1.9.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.8...@sls-next/lambda-at-edge@1.9.0-alpha.9) (2021-05-25)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
