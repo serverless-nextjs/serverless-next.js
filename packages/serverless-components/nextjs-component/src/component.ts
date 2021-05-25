@@ -11,8 +11,7 @@ import type {
 } from "@sls-next/lambda-at-edge";
 import {
   deleteOldStaticAssets,
-  uploadStaticAssetsFromBuild,
-  uploadStaticAssets
+  uploadStaticAssetsFromBuild
 } from "@sls-next/s3-static-assets";
 import createInvalidation from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
@@ -340,27 +339,14 @@ class NextjsComponent extends Component {
       credentials: this.context.credentials.aws
     });
 
-    // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
-    // TODO: remove once proven stable.
-    if (inputs.uploadStaticAssetsFromBuild ?? true) {
-      await uploadStaticAssetsFromBuild({
-        bucketName: bucketOutputs.name,
-        basePath: routesManifest.basePath,
-        nextConfigDir: nextConfigPath,
-        nextStaticDir: nextStaticPath,
-        credentials: this.context.credentials.aws,
-        publicDirectoryCache: inputs.publicDirectoryCache
-      });
-    } else {
-      await uploadStaticAssets({
-        bucketName: bucketOutputs.name,
-        basePath: routesManifest.basePath,
-        nextConfigDir: nextConfigPath,
-        nextStaticDir: nextStaticPath,
-        credentials: this.context.credentials.aws,
-        publicDirectoryCache: inputs.publicDirectoryCache
-      });
-    }
+    await uploadStaticAssetsFromBuild({
+      bucketName: bucketOutputs.name,
+      basePath: routesManifest.basePath,
+      nextConfigDir: nextConfigPath,
+      nextStaticDir: nextStaticPath,
+      credentials: this.context.credentials.aws,
+      publicDirectoryCache: inputs.publicDirectoryCache
+    });
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
