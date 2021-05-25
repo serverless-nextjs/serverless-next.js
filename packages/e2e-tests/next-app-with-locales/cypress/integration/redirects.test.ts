@@ -93,6 +93,30 @@ describe("Redirects Tests", () => {
         cookie: "NEXT_LOCALE=fr"
       });
     });
+
+    it(`no redirect with NEXT_LOCALE cookie on locale path`, () => {
+      // Use UUID to break the cache
+      const queryString = `?a=${uuidv4().replace(/-/g, "")}`;
+      cy.request({
+        url: `/fr${queryString}`,
+        method: "GET",
+        headers: { cookie: "NEXT_LOCALE=fr" }
+      }).then((response) => {
+        expect(response.status).to.equal(200);
+      });
+    });
+
+    it(`no redirect with Accept-Language header on locale path`, () => {
+      // Use UUID to break the cache
+      const queryString = `?a=${uuidv4().replace(/-/g, "")}`;
+      cy.request({
+        url: `/fr${queryString}`,
+        method: "GET",
+        headers: { "Accept-Language": "fr" }
+      }).then((response) => {
+        expect(response.status).to.equal(200);
+      });
+    });
   });
 
   describe("Custom redirects defined in next.config.js", () => {
