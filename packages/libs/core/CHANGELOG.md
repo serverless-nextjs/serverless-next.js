@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.14...@sls-next/core@1.0.0-alpha.15) (2021-05-25)
+
+### Bug Fixes
+
+- **core:** fix infinite redirects on NEXT_LOCALE cookie ([#1128](https://github.com/serverless-nextjs/serverless-next.js/issues/1128)) ([01d4d88](https://github.com/serverless-nextjs/serverless-next.js/commit/01d4d88afe2ca4e164ce12e5ac8ea2b75dbfe96c))
+
 # [1.0.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.13...@sls-next/core@1.0.0-alpha.14) (2021-05-25)
 
 ### Bug Fixes
