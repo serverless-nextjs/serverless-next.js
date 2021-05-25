@@ -116,6 +116,7 @@ export type HeaderData = {
 export type I18nData = {
   locales: string[];
   defaultLocale: string;
+  localeDetection: boolean;
 };
 
 export type RoutesManifest = {
