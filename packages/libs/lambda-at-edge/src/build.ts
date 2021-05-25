@@ -260,12 +260,6 @@ class Builder {
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const prerenderManifest = require(join(
-      this.dotNextDir,
-      "prerender-manifest.json"
-    ));
-
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
     );
