@@ -424,7 +424,7 @@ class NextjsComponent extends Component {
     );
 
     const readLambdaInputValue = (
-      inputKey: "memory" | "timeout" | "name" | "runtime",
+      inputKey: "memory" | "timeout" | "name" | "runtime" | "roleArn",
       lambdaType: LambdaType,
       defaultValue: string | number | undefined
     ): string | number | undefined => {
@@ -497,24 +497,35 @@ class NextjsComponent extends Component {
           : "Next.js Regeneration Lambda",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
-        role: {
-          service: ["lambda.amazonaws.com"],
-          policy: {
-            ...defaultLambdaPolicy,
-            Statement: [
-              ...(defaultLambdaPolicy.Statement as Record<string, unknown>[]),
-              {
-                Effect: "Allow",
-                Resource: queue.arn,
-                Action: [
-                  "sqs:ReceiveMessage",
-                  "sqs:DeleteMessage",
-                  "sqs:GetQueueAttributes"
+        role: readLambdaInputValue("roleArn", "regenerationLambda", undefined)
+          ? {
+              arn: readLambdaInputValue(
+                "roleArn",
+                "regenerationLambda",
+                undefined
+              ) as string
+            }
+          : {
+              service: ["lambda.amazonaws.com"],
+              policy: {
+                ...defaultLambdaPolicy,
+                Statement: [
+                  ...(defaultLambdaPolicy.Statement as Record<
+                    string,
+                    unknown
+                  >[]),
+                  {
+                    Effect: "Allow",
+                    Resource: queue.arn,
+                    Action: [
+                      "sqs:ReceiveMessage",
+                      "sqs:DeleteMessage",
+                      "sqs:GetQueueAttributes"
+                    ]
+                  }
                 ]
               }
-            ]
-          }
-        },
+            },
         memory: readLambdaInputValue(
           "memory",
           "regenerationLambda",
@@ -548,9 +559,13 @@ class NextjsComponent extends Component {
           : "API Lambda@Edge for Next CloudFront distribution",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
-        role: inputs.roleArn
+        role: readLambdaInputValue("roleArn", "apiLambda", undefined)
           ? {
-              arn: inputs.roleArn
+              arn: readLambdaInputValue(
+                "roleArn",
+                "apiLambda",
+                undefined
+              ) as string
             }
           : {
               service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -601,9 +616,13 @@ class NextjsComponent extends Component {
           : "Image Lambda@Edge for Next CloudFront distribution",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, IMAGE_LAMBDA_CODE_DIR),
-        role: inputs.roleArn
+        role: readLambdaInputValue("roleArn", "imageLambda", undefined)
           ? {
-              arn: inputs.roleArn
+              arn: readLambdaInputValue(
+                "roleArn",
+                "imageLambda",
+                undefined
+              ) as string
             }
           : {
               service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -658,9 +677,13 @@ class NextjsComponent extends Component {
         "Default Lambda@Edge for Next CloudFront distribution",
       handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
-      role: inputs.roleArn
+      role: readLambdaInputValue("roleArn", "defaultLambda", undefined)
         ? {
-            arn: inputs.roleArn
+            arn: readLambdaInputValue(
+              "roleArn",
+              "defaultLambda",
+              undefined
+            ) as string
           }
         : {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
