@@ -72,7 +72,7 @@ describe("Builder Tests (no API routes)", () => {
       const {
         buildId,
         publicFiles,
-        pages: { dynamic, ssr, html },
+        pages: { dynamic, ssg, ssr, html },
         trailingSlash
       } = defaultBuildManifest;
 
@@ -107,10 +107,23 @@ describe("Builder Tests (no API routes)", () => {
         }
       ]);
 
+      expect(ssg).toEqual({
+        nonDynamic: {
+          "/": {
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/contact": {
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          }
+        },
+        dynamic: {}
+      });
+
       expect(ssr).toEqual({
         nonDynamic: {
           "/customers/new": "pages/customers/new.js",
-          "/": "pages/index.js",
           "/_app": "pages/_app.js",
           "/_document": "pages/_document.js"
         },
@@ -213,8 +226,8 @@ describe("Builder Tests (no API routes)", () => {
       // JS files used only for prerendering at build time (contact.js, index.js) are not included since there are no API routes
       expect(pages).not.toContain(["contact.js", "index.js"]);
 
-      expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
-      expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
+      expect(pages).toEqual(["_error.js", "customers"]);
+      expect(customerPages).toEqual(["[...catchAll].js"]);
     });
   });
 });

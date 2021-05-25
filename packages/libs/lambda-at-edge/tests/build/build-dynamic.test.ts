@@ -170,14 +170,11 @@ describe("Builder Tests (dynamic)", () => {
             "pages/optional-catchall/[[...slug]].js"
         },
         nonDynamic: {
-          "/": "pages/index.js",
           "/_error": "pages/_error.js",
-          "/en": "pages/index.js",
           "/en/_error": "pages/_error.js",
           "/en/optional-catchall": "pages/optional-catchall/[[...slug]].js",
           "/en/ssg": "pages/ssg.js",
           "/en/ssr": "pages/ssr.js",
-          "/nl": "pages/index.js",
           "/nl/_error": "pages/_error.js",
           "/nl/optional-catchall": "pages/optional-catchall/[[...slug]].js",
           "/nl/ssg": "pages/ssg.js",
@@ -253,15 +250,15 @@ describe("Builder Tests (dynamic)", () => {
             srcRoute: null
           },
           "/en/nl/ssg": {
-            initialRevalidateSeconds: false,
+            initialRevalidateSeconds: 60,
             srcRoute: null
           },
           "/en/no-fallback/a": {
-            initialRevalidateSeconds: false,
+            initialRevalidateSeconds: 60,
             srcRoute: "/no-fallback/[slug]"
           },
           "/en/ssg": {
-            initialRevalidateSeconds: false,
+            initialRevalidateSeconds: 60,
             srcRoute: null
           },
           "/nl": {
@@ -277,15 +274,15 @@ describe("Builder Tests (dynamic)", () => {
             srcRoute: null
           },
           "/nl/nl/ssg": {
-            initialRevalidateSeconds: false,
+            initialRevalidateSeconds: 60,
             srcRoute: null
           },
           "/nl/ssg": {
-            initialRevalidateSeconds: false,
+            initialRevalidateSeconds: 60,
             srcRoute: null
           },
           "/ssg": {
-            initialRevalidateSeconds: false,
+            initialRevalidateSeconds: 60,
             srcRoute: null
           }
         }
@@ -382,7 +379,6 @@ describe("Builder Tests (dynamic)", () => {
         "en",
         "fallback",
         "fallback-blocking",
-        "index.js",
         "nl",
         "no-fallback",
         "optional-catchall",

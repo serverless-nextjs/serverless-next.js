@@ -181,14 +181,11 @@ describe("Builder Tests (with locales)", () => {
         },
         nonDynamic: {
           "/customers/new": "pages/customers/new.js",
-          "/": "pages/index.js",
           "/_app": "pages/_app.js",
           "/_document": "pages/_document.js",
-          "/en": "pages/index.js",
           "/en/_app": "pages/_app.js",
           "/en/_document": "pages/_document.js",
           "/en/customers/new": "pages/customers/new.js",
-          "/nl": "pages/index.js",
           "/nl/_app": "pages/_app.js",
           "/nl/_document": "pages/_document.js",
           "/nl/customers/new": "pages/customers/new.js"
@@ -316,8 +313,8 @@ describe("Builder Tests (with locales)", () => {
       expect(pages).not.toContain(["contact.js", "index.js"]);
 
       // Default lambda has locale directories "en", "nl" but they are empty for now
-      expect(pages).toEqual(["_error.js", "blog.js", "customers", "en", "nl"]);
-      expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
+      expect(pages).toEqual(["_error.js", "customers", "en", "nl"]);
+      expect(customerPages).toEqual(["[...catchAll].js"]);
     });
   });
 

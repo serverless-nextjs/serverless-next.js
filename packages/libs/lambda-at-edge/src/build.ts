@@ -153,27 +153,25 @@ class Builder {
   }
 
   /**
-   * Check whether this .next/serverless/pages file is a JS file used only for prerendering at build time.
-   * @param prerenderManifest
+   * Check whether this .next/serverless/pages file is a JS file used for runtime rendering.
+   * @param buildManifest
    * @param relativePageFile
    */
-  isPrerenderedJSFile(
-    prerenderManifest: any,
+  isSSRJSFile(
+    buildManifest: OriginRequestDefaultHandlerManifest,
     relativePageFile: string
   ): boolean {
     if (path.extname(relativePageFile) === ".js") {
-      // Page route is without .js extension
-      let pageRoute = relativePageFile.slice(0, -3);
-
-      // Prepend "/"
-      pageRoute = pageRoute.startsWith("/") ? pageRoute : `/${pageRoute}`;
-
-      // Normalise index route
-      pageRoute = pageRoute === "/index" ? "/" : pageRoute;
-
-      return (
-        !!prerenderManifest.routes && !!prerenderManifest.routes[pageRoute]
-      );
+      const page = relativePageFile.startsWith("/")
+        ? `pages${relativePageFile}`
+        : `pages/${relativePageFile}`;
+      if (
+        page === "pages/_error.js" ||
+        Object.values(buildManifest.pages.ssr.nonDynamic).includes(page) ||
+        Object.values(buildManifest.pages.ssr.dynamic).includes(page)
+      ) {
+        return true;
+      }
     }
 
     return false;
@@ -262,12 +260,6 @@ class Builder {
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void[]> {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const prerenderManifest = require(join(
-      this.dotNextDir,
-      "prerender-manifest.json"
-    ));
-
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
     );
@@ -303,14 +295,15 @@ class Builder {
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
 
             // If there are API routes, include all JS files.
-            // If there are no API routes, exclude all JS files that used only for prerendering at build time.
+            // If there are no API routes, include only JS files that used for SSR (including fallback).
             // We do this because if there are API routes, preview mode is possible which may use these JS files.
             // This is what Vercel does: https://github.com/vercel/next.js/discussions/15631#discussioncomment-44289
             // TODO: possibly optimize bundle further for those apps using API routes.
             const isNotExcludedJSFile =
               hasAPIRoutes ||
-              !this.isPrerenderedJSFile(
-                prerenderManifest,
+              path.extname(file) !== ".js" ||
+              this.isSSRJSFile(
+                buildManifest,
                 path.relative(join(this.serverlessDir, "pages"), file)
               );
 
