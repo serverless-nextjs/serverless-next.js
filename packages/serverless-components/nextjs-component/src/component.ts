@@ -767,6 +767,8 @@ class NextjsComponent extends Component {
 
     const pathsToInvalidate = routesManifest.basePath
       ? [`${routesManifest.basePath}*`]
+      : routesManifest.basePath === ""
+      ? ["/*"]
       : cloudFrontPaths;
 
     if (pathsToInvalidate && pathsToInvalidate.length) {
