@@ -40,6 +40,7 @@ export type DeploymentResult = {
   distributionId: string;
 };
 
+// get invalidate path from basePath
 function getPathsToInvalidate(basePath: string, cloudFrontPaths: any) {
   if (basePath === "") {
     return ["/*"];
