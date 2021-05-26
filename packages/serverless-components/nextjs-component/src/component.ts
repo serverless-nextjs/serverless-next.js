@@ -40,6 +40,14 @@ export type DeploymentResult = {
   distributionId: string;
 };
 
+// get invalidate path from basePath
+function getPathsToInvalidate(basePath: string, cloudFrontPaths: any) {
+  if (basePath === "") {
+    return ["/*"];
+  }
+  return basePath ? [`${basePath}*`] : cloudFrontPaths;
+}
+
 class NextjsComponent extends Component {
   async default(
     inputs: ServerlessComponentInputs = {}
@@ -765,9 +773,10 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
-    const pathsToInvalidate = routesManifest.basePath
-      ? [`${routesManifest.basePath}*`]
-      : cloudFrontPaths;
+    const pathsToInvalidate = getPathsToInvalidate(
+      routesManifest.basePath,
+      cloudFrontPaths
+    );
 
     if (pathsToInvalidate && pathsToInvalidate.length) {
       await createInvalidation({
