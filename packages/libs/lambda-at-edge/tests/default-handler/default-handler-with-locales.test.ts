@@ -901,14 +901,17 @@ describe("Lambda@Edge", () => {
 
     describe("Custom Rewrites pass correct Request URL to page render", () => {
       it.each`
-        path               | expectedPage
-        ${"/promise-page"} | ${"pages/async-page.js"}
+        path                  | expectedPage             | expectedUrl
+        ${"/promise-page"}    | ${"pages/async-page.js"} | ${"/en/promise-page"}
+        ${"/en/promise-page"} | ${"pages/async-page.js"} | ${"/en/promise-page"}
+        ${"/nl/promise-page"} | ${"pages/async-page.js"} | ${"/nl/promise-page"}
       `(
         "serves page $expectedPage for rewritten path $path with correct request url",
-        async ({ path, expectedPage }) => {
+        async ({ path, expectedPage, expectedUrl }) => {
           // If trailingSlash = true, append "/" to get the non-redirected path
           if (trailingSlash && !path.endsWith("/")) {
             path += "/";
+            expectedUrl += "/";
           }
 
           mockPageRequire(expectedPage);
@@ -922,7 +925,7 @@ describe("Lambda@Edge", () => {
           const result = await handler(event);
           const call = page.render.mock.calls[0];
           const firstArgument = call[0];
-          expect(firstArgument).toMatchObject({ url: path });
+          expect(firstArgument).toMatchObject({ url: expectedUrl });
           const decodedBody = Buffer.from(
             result.body as string,
             "base64"
