@@ -3,6 +3,7 @@ import { setCustomHeaders } from "./headers";
 import { redirect } from "./redirect";
 import { toRequest } from "./request";
 import { routeDefault } from "../route";
+import { addDefaultLocaleToPath } from "../route/locale";
 import {
   Event,
   ExternalRoute,
@@ -25,6 +26,11 @@ export const renderRoute = async (
 ) => {
   const { req, res } = event;
   setCustomHeaders(event, routesManifest);
+
+  // For SSR rewrites to work the page needs to be passed a localized url
+  if (req.url && routesManifest.i18n) {
+    req.url = addDefaultLocaleToPath(req.url, routesManifest);
+  }
 
   // If page is _error.js, set status to 404 so _error.js will render a 404 page
   if (route.page === "pages/_error.js") {

@@ -81,6 +81,10 @@ module.exports = {
         destination: "/ssr-page"
       },
       {
+        source: "/wildcard-rewrite-2/:slug",
+        destination: "/dynamic-ssr/:slug"
+      },
+      {
         source: "/regex-rewrite-1/:slug(\\d{1,})",
         destination: "/ssr-page"
       },
