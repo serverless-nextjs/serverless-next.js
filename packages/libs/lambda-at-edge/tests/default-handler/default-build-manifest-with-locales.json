@@ -3,26 +3,6 @@
   "pages": {
     "dynamic": [
       {
-        "route": "/blog/[id]",
-        "regex": "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/customers/[customer]",
-        "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/customers/[customer]/profile",
-        "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
-      },
-      {
-        "route": "/customers/[customer]/[post]",
-        "regex": "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/customers/[...catchAll]",
-        "regex": "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
         "route": "/en/blog/[id]",
         "regex": "^\\/en\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       },
@@ -43,24 +23,12 @@
         "regex": "^\\/en\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
       },
       {
-        "route": "/en/en/users/[...user]",
-        "regex": "^\\/en\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
         "route": "/en/fallback/[slug]",
         "regex": "^\\/en\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       },
       {
         "route": "/en/fallback-blocking/[slug]",
         "regex": "^\\/en\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/en/fr/users/[...user]",
-        "regex": "^\\/en\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
-        "route": "/en/nl/users/[...user]",
-        "regex": "^\\/en\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
       },
       {
         "route": "/en/no-fallback/[slug]",
@@ -73,14 +41,6 @@
       {
         "route": "/en/[root]",
         "regex": "^\\/en(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/fallback/[slug]",
-        "regex": "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/fallback-blocking/[slug]",
-        "regex": "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       },
       {
         "route": "/fr/blog/[id]",
@@ -103,24 +63,12 @@
         "regex": "^\\/fr\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
       },
       {
-        "route": "/fr/en/users/[...user]",
-        "regex": "^\\/fr\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
         "route": "/fr/fallback/[slug]",
         "regex": "^\\/fr\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       },
       {
         "route": "/fr/fallback-blocking/[slug]",
         "regex": "^\\/fr\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/fr/fr/users/[...user]",
-        "regex": "^\\/fr\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
-        "route": "/fr/nl/users/[...user]",
-        "regex": "^\\/fr\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
       },
       {
         "route": "/fr/no-fallback/[slug]",
@@ -155,24 +103,12 @@
         "regex": "^\\/nl\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
       },
       {
-        "route": "/nl/en/users/[...user]",
-        "regex": "^\\/nl\\/en\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
         "route": "/nl/fallback/[slug]",
         "regex": "^\\/nl\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       },
       {
         "route": "/nl/fallback-blocking/[slug]",
         "regex": "^\\/nl\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/nl/fr/users/[...user]",
-        "regex": "^\\/nl\\/fr\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-      },
-      {
-        "route": "/nl/nl/users/[...user]",
-        "regex": "^\\/nl\\/nl\\/users(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
       },
       {
         "route": "/nl/no-fallback/[slug]",
@@ -185,27 +121,10 @@
       {
         "route": "/nl/[root]",
         "regex": "^\\/nl(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/no-fallback/[slug]",
-        "regex": "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-      },
-      {
-        "route": "/[root]",
-        "regex": "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
       }
     ],
     "ssr": {
       "dynamic": {
-        "/[root]": "pages/[root].js",
-        "/blog/[id]": "pages/blog/[id].js",
-        "/customers/[...catchAll]": "pages/customers/[...catchAll].js",
-        "/customers/[customer]": "pages/customers/[customer].js",
-        "/customers/[customer]/[post]": "pages/customers/[customer]/[post].js",
-        "/customers/[customer]/profile": "pages/customers/[customer]/profile.js",
-        "/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
-        "/fallback/[slug]": "pages/fallback/[slug].js",
-        "/no-fallback/[slug]": "pages/no-fallback/[slug].js",
         "/en/[root]": "pages/[root].js",
         "/en/blog/[id]": "pages/blog/[id].js",
         "/en/customers/[...catchAll]": "pages/customers/[...catchAll].js",
@@ -235,13 +154,6 @@
         "/fr/no-fallback/[slug]": "pages/no-fallback/[slug].js"
       },
       "nonDynamic": {
-        "/async-page": "pages/async-page.js",
-        "/customers": "pages/customers.js",
-        "/customers/new": "pages/customers/new.js",
-        "/erroredPage": "pages/erroredPage.js",
-        "/": "pages/index.js",
-        "/preview": "pages/preview.js",
-        "/_error": "pages/_error.js",
         "/en/async-page": "pages/async-page.js",
         "/en/customers": "pages/customers.js",
         "/en/customers/new": "pages/customers/new.js",
@@ -266,6 +178,11 @@
       }
     },
     "html": {
+      "dynamic": {
+        "/en/users/[...user]": "pages/en/users/[...user].html",
+        "/nl/users/[...user]": "pages/nl/users/[...user].html",
+        "/fr/users/[...user]": "pages/fr/users/[...user].html"
+      },
       "nonDynamic": {
         "/en/404": "pages/en/404.html",
         "/nl/404": "pages/nl/404.html",
@@ -276,131 +193,10 @@
         "/en/terms": "pages/en/terms.html",
         "/nl/terms": "pages/nl/terms.html",
         "/fr/terms": "pages/fr/terms.html"
-      },
-      "dynamic": {
-        "/en/users/[...user]": "pages/en/users/[...user].html",
-        "/nl/users/[...user]": "pages/nl/users/[...user].html",
-        "/fr/users/[...user]": "pages/fr/users/[...user].html",
-        "/en/en/users/[...user]": "pages/en/en/users/[...user].html",
-        "/en/nl/users/[...user]": "pages/en/nl/users/[...user].html",
-        "/en/fr/users/[...user]": "pages/en/fr/users/[...user].html",
-        "/nl/en/users/[...user]": "pages/nl/en/users/[...user].html",
-        "/nl/nl/users/[...user]": "pages/nl/nl/users/[...user].html",
-        "/nl/fr/users/[...user]": "pages/nl/fr/users/[...user].html",
-        "/fr/en/users/[...user]": "pages/fr/en/users/[...user].html",
-        "/fr/nl/users/[...user]": "pages/fr/nl/users/[...user].html",
-        "/fr/fr/users/[...user]": "pages/fr/fr/users/[...user].html"
       }
     },
     "ssg": {
-      "nonDynamic": {
-        "/en/fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/fallback/[slug]"
-        },
-        "/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/nl/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/fr/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/en": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/nl": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/fr": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/en/no-fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/no-fallback/[slug]"
-        },
-        "/en/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/en/nl/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/en/fr/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/en/en": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/en/nl": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/en/fr": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/nl/nl/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/nl/fr/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/nl/en": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/nl/nl": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/nl/fr": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/fr/nl/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/fr/fr/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/fr/en": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/fr/nl": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/fr/fr": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        }
-      },
       "dynamic": {
-        "/fallback-blocking/[slug]": {
-          "fallback": null
-        },
-        "/fallback/[slug]": {
-          "fallback": "/fallback/[slug].html"
-        },
-        "/no-fallback/[slug]": {
-          "fallback": false
-        },
         "/en/fallback-blocking/[slug]": {
           "fallback": null
         },
@@ -427,6 +223,40 @@
         },
         "/fr/no-fallback/[slug]": {
           "fallback": false
+        }
+      },
+      "nonDynamic": {
+        "/en/fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/fallback/[slug]"
+        },
+        "/en/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/no-fallback/[slug]"
+        },
+        "/en": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null
+        },
+        "/nl": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null
+        },
+        "/fr": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null
+        },
+        "/en/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
+        },
+        "/nl/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
+        },
+        "/fr/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
         }
       }
     }

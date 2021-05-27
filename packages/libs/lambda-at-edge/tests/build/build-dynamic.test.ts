@@ -80,11 +80,6 @@ describe("Builder Tests (dynamic)", () => {
 
       expect(dynamic).toEqual([
         {
-          route: "/catchall/[...slug]",
-          regex:
-            "^\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-        },
-        {
           route: "/en/catchall/[...slug]",
           regex:
             "^\\/en\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
@@ -107,14 +102,6 @@ describe("Builder Tests (dynamic)", () => {
             "^\\/en\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
         {
-          route: "/fallback/[slug]",
-          regex: "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        {
-          route: "/fallback-blocking/[slug]",
-          regex: "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        {
           route: "/nl/catchall/[...slug]",
           regex:
             "^\\/nl\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
@@ -135,42 +122,25 @@ describe("Builder Tests (dynamic)", () => {
           route: "/nl/optional-catchall/[[...slug]]",
           regex:
             "^\\/nl\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
-        },
-        {
-          route: "/no-fallback/[slug]",
-          regex: "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
-        },
-        {
-          route: "/optional-catchall/[[...slug]]",
-          regex:
-            "^\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         }
       ]);
 
-      // Should non-localized variants be removed?
       expect(ssr).toEqual({
         dynamic: {
-          "/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/en/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/en/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
           "/en/fallback/[slug]": "pages/fallback/[slug].js",
           "/en/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/en/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js",
-          "/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
-          "/fallback/[slug]": "pages/fallback/[slug].js",
           "/nl/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/nl/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
           "/nl/fallback/[slug]": "pages/fallback/[slug].js",
           "/nl/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/nl/optional-catchall/[[...slug]]":
-            "pages/optional-catchall/[[...slug]].js",
-          "/no-fallback/[slug]": "pages/no-fallback/[slug].js",
-          "/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js"
         },
         nonDynamic: {
-          "/_error": "pages/_error.js",
           "/en/_error": "pages/_error.js",
           "/en/optional-catchall": "pages/optional-catchall/[[...slug]].js",
           "/en/ssg": "pages/ssg.js",
@@ -178,10 +148,7 @@ describe("Builder Tests (dynamic)", () => {
           "/nl/_error": "pages/_error.js",
           "/nl/optional-catchall": "pages/optional-catchall/[[...slug]].js",
           "/nl/ssg": "pages/ssg.js",
-          "/nl/ssr": "pages/ssr.js",
-          "/optional-catchall": "pages/optional-catchall/[[...slug]].js",
-          "/ssg": "pages/ssg.js",
-          "/ssr": "pages/ssr.js"
+          "/nl/ssr": "pages/ssr.js"
         }
       });
 
@@ -197,7 +164,6 @@ describe("Builder Tests (dynamic)", () => {
         }
       });
 
-      // Should non-localized variants be removed?
       expect(ssg).toEqual({
         dynamic: {
           "/en/fallback-blocking/[slug]": {
@@ -209,12 +175,6 @@ describe("Builder Tests (dynamic)", () => {
           "/en/no-fallback/[slug]": {
             fallback: false
           },
-          "/fallback-blocking/[slug]": {
-            fallback: null
-          },
-          "/fallback/[slug]": {
-            fallback: "/fallback/[slug].html"
-          },
           "/nl/fallback-blocking/[slug]": {
             fallback: null
           },
@@ -223,17 +183,10 @@ describe("Builder Tests (dynamic)", () => {
           },
           "/nl/no-fallback/[slug]": {
             fallback: false
-          },
-          "/no-fallback/[slug]": {
-            fallback: false
           }
         },
         nonDynamic: {
           "/en": {
-            initialRevalidateSeconds: false,
-            srcRoute: null
-          },
-          "/en/en": {
             initialRevalidateSeconds: false,
             srcRoute: null
           },
@@ -244,14 +197,6 @@ describe("Builder Tests (dynamic)", () => {
           "/en/fallback/a": {
             initialRevalidateSeconds: false,
             srcRoute: "/fallback/[slug]"
-          },
-          "/en/nl": {
-            initialRevalidateSeconds: false,
-            srcRoute: null
-          },
-          "/en/nl/ssg": {
-            initialRevalidateSeconds: 60,
-            srcRoute: null
           },
           "/en/no-fallback/a": {
             initialRevalidateSeconds: 60,
@@ -265,23 +210,7 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: false,
             srcRoute: null
           },
-          "/nl/en": {
-            initialRevalidateSeconds: false,
-            srcRoute: null
-          },
-          "/nl/nl": {
-            initialRevalidateSeconds: false,
-            srcRoute: null
-          },
-          "/nl/nl/ssg": {
-            initialRevalidateSeconds: 60,
-            srcRoute: null
-          },
           "/nl/ssg": {
-            initialRevalidateSeconds: 60,
-            srcRoute: null
-          },
-          "/ssg": {
             initialRevalidateSeconds: 60,
             srcRoute: null
           }

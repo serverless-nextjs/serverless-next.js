@@ -557,139 +557,44 @@ class Builder {
         return copyIfExists(source, destination);
       });
 
-    const pagesManifest = await fse.readJSON(
-      path.join(dotNextDirectory, "serverless/pages-manifest.json")
-    );
+    const htmlPaths = [
+      ...Object.keys(defaultBuildManifest.pages.html.dynamic),
+      ...Object.keys(defaultBuildManifest.pages.html.nonDynamic)
+    ];
 
-    const htmlPageAssets = Object.values(pagesManifest)
-      .filter((pageFile) => (pageFile as string).endsWith(".html"))
-      .map((relativePageFilePath) => {
-        const source = path.join(
-          dotNextDirectory,
-          `serverless/${relativePageFilePath}`
-        );
-        const destination = path.join(
-          assetOutputDirectory,
-          withBasePath(
-            `static-pages/${buildId}/${(relativePageFilePath as string).replace(
-              /^pages\//,
-              ""
-            )}`
-          )
-        );
+    const ssgPaths = Object.keys(defaultBuildManifest.pages.ssg.nonDynamic);
 
-        return copyIfExists(source, destination);
-      });
+    const fallbackFiles = Object.values(defaultBuildManifest.pages.ssg.dynamic)
+      .map(({ fallback }) => fallback)
+      .filter((fallback) => fallback);
 
-    const prerenderManifest: PrerenderManifest = await fse.readJSON(
-      path.join(dotNextDirectory, "prerender-manifest.json")
-    );
+    const htmlFiles = [...htmlPaths, ...ssgPaths].map((path) => {
+      return path.endsWith("/") ? `${path}index.html` : `${path}.html`;
+    });
 
-    const prerenderManifestJSONPropFileAssets: Promise<void>[] = [];
-    const prerenderManifestHTMLPageAssets: Promise<void>[] = [];
-    const fallbackHTMLPageAssets: Promise<void>[] = [];
+    const jsonFiles = ssgPaths.map((path) => {
+      return path.endsWith("/") ? `${path}index.json` : `${path}.json`;
+    });
 
-    // Copy locale-specific prerendered files if defined, otherwise use empty locale
-    // which would copy to root only
-    let locales;
-
-    // @ts-ignore
-    if (prerenderManifest.version > 2) {
-      // In newer Next.js 10 versions with prerender manifest version 3, it has one entry for each locale: https://github.com/vercel/next.js/pull/21404
-      // So we don't need to iterate through each locale and prefix manually
-      locales = [""];
-    } else {
-      locales = routesManifest.i18n?.locales ?? [""];
-    }
-
-    for (const locale of locales) {
-      prerenderManifestJSONPropFileAssets.concat(
-        Object.keys(prerenderManifest.routes).map((key) => {
-          const JSONFileName = key.endsWith("/")
-            ? key + "index.json"
-            : key + ".json";
-
-          let localePrefixedJSONFileName;
-
-          // If there are locales and index is SSG page
-          // Filename is <locale>.json e.g en.json, not index.json or en/index.json
-          if (locale && key === "/") {
-            localePrefixedJSONFileName = `${locale}.json`;
-          } else {
-            localePrefixedJSONFileName = locale + JSONFileName;
-          }
-
-          const source = path.join(
-            dotNextDirectory,
-            `serverless/pages/${localePrefixedJSONFileName}`
-          );
-          const destination = path.join(
-            assetOutputDirectory,
-            withBasePath(`_next/data/${buildId}/${localePrefixedJSONFileName}`)
-          );
-
-          return copyIfExists(source, destination);
-        })
+    const htmlAssets = [...htmlFiles, ...fallbackFiles].map((file) => {
+      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(`static-pages/${buildId}${file}`)
       );
 
-      prerenderManifestHTMLPageAssets.concat(
-        Object.keys(prerenderManifest.routes).map((key) => {
-          const pageFilePath = key.endsWith("/")
-            ? path.join(key, "index.html")
-            : key + ".html";
+      return copyIfExists(source, destination);
+    });
 
-          // If there are locales and index is SSG page,
-          // Filename is <locale>.html e.g en.html, not index.html or en/index.html
-          let localePrefixedPageFilePath;
-          if (locale && key === "/") {
-            localePrefixedPageFilePath = `${locale}.html`;
-          } else {
-            localePrefixedPageFilePath = locale + pageFilePath;
-          }
-
-          const source = path.join(
-            dotNextDirectory,
-            `serverless/pages/${localePrefixedPageFilePath}`
-          );
-          const destination = path.join(
-            assetOutputDirectory,
-            withBasePath(
-              path.join("static-pages", buildId, localePrefixedPageFilePath)
-            )
-          );
-
-          return copyIfExists(source, destination);
-        })
+    const jsonAssets = jsonFiles.map((file) => {
+      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const destination = path.join(
+        assetOutputDirectory,
+        withBasePath(`_next/data/${buildId}${file}`)
       );
-    }
 
-    // Dynamic routes are unlocalized even in version 3
-    for (const locale of routesManifest.i18n?.locales ?? [""]) {
-      fallbackHTMLPageAssets.concat(
-        Object.values(prerenderManifest.dynamicRoutes ?? {})
-          .filter(({ fallback }) => {
-            return !!fallback;
-          })
-          .map((routeConfig) => {
-            const fallback = routeConfig.fallback as string;
-            const localePrefixedFallback = locale + fallback;
-
-            const source = path.join(
-              dotNextDirectory,
-              `serverless/pages/${localePrefixedFallback}`
-            );
-
-            const destination = path.join(
-              assetOutputDirectory,
-              withBasePath(
-                path.join("static-pages", buildId, localePrefixedFallback)
-              )
-            );
-
-            return copyIfExists(source, destination);
-          })
-      );
-    }
+      return copyIfExists(source, destination);
+    });
 
     // Check if public/static exists and fail build since this conflicts with static/* behavior.
     if (await fse.pathExists(path.join(nextStaticDir, "public", "static"))) {
@@ -727,10 +632,8 @@ class Builder {
     return Promise.all([
       copyBuildId, // BUILD_ID
       ...staticFileAssets, // .next/static
-      ...htmlPageAssets, // prerendered html pages
-      ...prerenderManifestJSONPropFileAssets, // SSG json files
-      ...prerenderManifestHTMLPageAssets, // SSG html files
-      ...fallbackHTMLPageAssets, // fallback files
+      ...htmlAssets, // prerendered html pages
+      ...jsonAssets, // SSG json files
       ...publicDirAssets, // public dir
       ...staticDirAssets // static dir
     ]);
