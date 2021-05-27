@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.12...@sls-next/cdk-construct@1.20.0-alpha.13) (2021-05-27)
+
+**Note:** Version bump only for package @sls-next/cdk-construct
+
 # [1.20.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.11...@sls-next/cdk-construct@1.20.0-alpha.12) (2021-05-25)
 
 **Note:** Version bump only for package @sls-next/cdk-construct

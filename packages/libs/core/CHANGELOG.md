@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.16...@sls-next/core@1.0.0-alpha.17) (2021-05-27)
+
+### Bug Fixes
+
+- **core, lambda-at-edge, e2e-tests:** fix locale rewrites to dynamic ssr ([#1132](https://github.com/serverless-nextjs/serverless-next.js/issues/1132)) ([91c1ddf](https://github.com/serverless-nextjs/serverless-next.js/commit/91c1ddf91dd97abe70079b2dd2a3be4861b70208))
+
 # [1.0.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.15...@sls-next/core@1.0.0-alpha.16) (2021-05-25)
 
 ### Bug Fixes
