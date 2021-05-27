@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/core",
-  "version": "1.0.0-alpha.17",
+  "version": "1.0.0-alpha.18",
   "description": "Handles Next.js routing independent of provider",
   "publishConfig": {
     "access": "public"
