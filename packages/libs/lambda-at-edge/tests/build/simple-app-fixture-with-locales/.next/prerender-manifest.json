@@ -1,15 +1,25 @@
 {
-  "version": 2,
+  "version": 3,
   "routes": {
-    "/": {
+    "/en": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
-      "dataRoute": "/_next/data/test-build-id/index.json"
+      "dataRoute": "/_next/data/test-build-id/en.json"
     },
-    "/contact": {
+    "/nl": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
-      "dataRoute": "/_next/data/test-build-id/contact.json"
+      "dataRoute": "/_next/data/test-build-id/nl.json"
+    },
+    "/en/contact": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/test-build-id/en/contact.json"
+    },
+    "/nl/contact": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/test-build-id/nl/contact.json"
     }
   },
   "dynamicRoutes": {}

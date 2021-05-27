@@ -76,28 +76,6 @@ describe("Builder Tests (with locales)", () => {
 
       expect(dynamic).toEqual([
         {
-          regex: "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
-          route: "/blog/[post]"
-        },
-        {
-          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
-          route: "/customers/[customer]"
-        },
-        {
-          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$",
-          route: "/customers/[customer]/profile"
-        },
-        {
-          regex:
-            "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
-          route: "/customers/[customer]/[post]"
-        },
-        {
-          regex:
-            "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
-          route: "/customers/[...catchAll]"
-        },
-        {
           regex: "^\\/en\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
           route: "/en/blog/[post]"
         },
@@ -148,22 +126,11 @@ describe("Builder Tests (with locales)", () => {
         {
           regex: "^\\/nl(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
           route: "/nl/[root]"
-        },
-        {
-          regex: "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
-          route: "/[root]"
         }
       ]);
 
       expect(ssr).toEqual({
         dynamic: {
-          "/[root]": "pages/[root].js",
-          "/customers/[...catchAll]": "pages/customers/[...catchAll].js",
-          "/customers/[customer]": "pages/customers/[customer].js",
-          "/customers/[customer]/[post]":
-            "pages/customers/[customer]/[post].js",
-          "/customers/[customer]/profile":
-            "pages/customers/[customer]/profile.js",
           "/en/[root]": "pages/[root].js",
           "/en/customers/[...catchAll]": "pages/customers/[...catchAll].js",
           "/en/customers/[customer]": "pages/customers/[customer].js",
@@ -180,9 +147,6 @@ describe("Builder Tests (with locales)", () => {
             "pages/customers/[customer]/profile.js"
         },
         nonDynamic: {
-          "/customers/new": "pages/customers/new.js",
-          "/_app": "pages/_app.js",
-          "/_document": "pages/_document.js",
           "/en/_app": "pages/_app.js",
           "/en/_document": "pages/_document.js",
           "/en/customers/new": "pages/customers/new.js",
@@ -194,9 +158,6 @@ describe("Builder Tests (with locales)", () => {
 
       expect(html).toEqual({
         nonDynamic: {
-          "/404": "pages/404.html",
-          "/terms": "pages/terms.html",
-          "/about": "pages/about.html",
           "/en/404": "pages/en/404.html",
           "/en/terms": "pages/en/terms.html",
           "/en/about": "pages/en/about.html",
@@ -205,7 +166,6 @@ describe("Builder Tests (with locales)", () => {
           "/nl/about": "pages/nl/about.html"
         },
         dynamic: {
-          "/blog/[post]": "pages/blog/[post].html",
           "/en/blog/[post]": "pages/en/blog/[post].html",
           "/nl/blog/[post]": "pages/nl/blog/[post].html"
         }
@@ -213,14 +173,6 @@ describe("Builder Tests (with locales)", () => {
 
       expect(ssg).toEqual({
         nonDynamic: {
-          "/": {
-            initialRevalidateSeconds: false,
-            srcRoute: null
-          },
-          "/contact": {
-            initialRevalidateSeconds: false,
-            srcRoute: null
-          },
           "/en": {
             initialRevalidateSeconds: false,
             srcRoute: null
@@ -345,7 +297,7 @@ describe("Builder Tests (with locales)", () => {
       const enPageFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en`)
       );
-      expect(enPageFiles).toEqual(["contact.html"]);
+      expect(enPageFiles).toEqual(["about.html", "contact.html", "terms.html"]);
 
       const enIndexHtml = await fse.readFile(
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/en.html`),
@@ -371,7 +323,7 @@ describe("Builder Tests (with locales)", () => {
       const nlPageFiles = await fse.readdir(
         join(outputDir, `${ASSETS_DIR}/static-pages/test-build-id/nl`)
       );
-      expect(nlPageFiles).toEqual(["contact.html"]);
+      expect(nlPageFiles).toEqual(["about.html", "contact.html", "terms.html"]);
 
       const nlIndexHtml = await fse.readFile(
         join(

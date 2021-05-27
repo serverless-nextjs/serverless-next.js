@@ -124,22 +124,10 @@ export const prepareBuildManifests = async (
   // Add non-dynamic SSG routes
   Object.entries(prerenderManifest.routes).forEach(([route, ssgRoute]) => {
     const { initialRevalidateSeconds, srcRoute } = ssgRoute;
-    // Next.js generates prerender manifest with default locale prefixed, normalize it
-    // This is somewhat wrong, but used in other build logic.
-    // Prerendered dynamic routes (with srcRoute) are left as they are
-    const defaultLocale = routesManifest.i18n?.defaultLocale;
-    if (defaultLocale && !ssgRoute.srcRoute) {
-      const normalizedRoute = route.replace(`/${defaultLocale}/`, "/");
-      ssgPages.nonDynamic[normalizedRoute] = {
-        initialRevalidateSeconds,
-        srcRoute
-      };
-    } else {
-      ssgPages.nonDynamic[route] = {
-        initialRevalidateSeconds,
-        srcRoute
-      };
-    }
+    ssgPages.nonDynamic[route] = {
+      initialRevalidateSeconds,
+      srcRoute
+    };
   });
 
   // Add dynamic SSG routes
@@ -159,30 +147,15 @@ export const prepareBuildManifests = async (
     apiPages.dynamic.length > 0 || Object.keys(apiPages.nonDynamic).length > 0
   ));
 
-  // Duplicate routes for all specified locales. This is easy matching locale-prefixed routes in handler
+  // Duplicate unlocalized routes for all specified locales.
+  // This makes it easy to match locale-prefixed routes in handler
   if (routesManifest.i18n) {
-    const localeHtmlPages: {
-      dynamic: {
-        [key: string]: string;
-      };
-      nonDynamic: {
-        [key: string]: string;
-      };
-    } = {
-      dynamic: {},
-      nonDynamic: {}
-    };
-
     const localeSsgPages: {
       dynamic: {
         [key: string]: DynamicSSG;
       };
-      nonDynamic: {
-        [key: string]: NonDynamicSSG;
-      };
     } = {
-      dynamic: {},
-      nonDynamic: {}
+      dynamic: {}
     };
 
     const localeSsrPages: {
@@ -198,31 +171,10 @@ export const prepareBuildManifests = async (
     };
 
     for (const locale of routesManifest.i18n.locales) {
-      htmlPagesNonDynamicLoop: for (const key in htmlPages.nonDynamic) {
-        // Locale-prefixed pages don't need to be duplicated
-        for (const locale of routesManifest.i18n.locales) {
-          if (key.startsWith(`/${locale}/`) || key === `/${locale}`) {
-            break htmlPagesNonDynamicLoop;
-          }
-        }
-
-        const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-        localeHtmlPages.nonDynamic[newKey] = htmlPages.nonDynamic[key].replace(
-          "pages/",
-          `pages/${locale}/`
-        );
-      }
-
-      for (const key in htmlPages.dynamic) {
-        const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-        localeHtmlPages.dynamic[newKey] = htmlPages.dynamic[key].replace(
-          "pages/",
-          `pages/${locale}/`
-        );
-      }
-
       for (const key in ssrPages.nonDynamic) {
         const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
+
+        // Page stays the same, only route changes
         localeSsrPages.nonDynamic[newKey] = ssrPages.nonDynamic[key];
       }
 
@@ -233,64 +185,24 @@ export const prepareBuildManifests = async (
         localeSsrPages.dynamic[newKey] = ssrPages.dynamic[key];
       }
 
-      for (const key in ssgPages.nonDynamic) {
-        if (ssgPages.nonDynamic[key].srcRoute) {
-          // These are already correctly localized
-          continue;
-        }
-
-        const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-
-        // Initial default value
-        localeSsgPages.nonDynamic[newKey] = { ...ssgPages.nonDynamic[key] };
-      }
-
       for (const key in ssgPages.dynamic) {
         const newKey = key === "/" ? `/${locale}` : `/${locale}${key}`;
-        localeSsgPages.dynamic[newKey] = { ...ssgPages.dynamic[key] };
 
-        const newDynamicSsgRoute = localeSsgPages.dynamic[newKey];
-
-        // Replace with localized values
-        newDynamicSsgRoute.fallback =
-          typeof newDynamicSsgRoute.fallback === "string"
-            ? newDynamicSsgRoute.fallback.replace("/", `/${locale}/`)
-            : newDynamicSsgRoute.fallback;
+        // Only route and fallback need to be localized
+        const { fallback, ...rest } = ssgPages.dynamic[key];
+        localeSsgPages.dynamic[newKey] = {
+          fallback: fallback && fallback.replace("/", `/${locale}/`),
+          ...rest
+        };
       }
     }
 
     pageManifest.pages.ssr = {
-      dynamic: {
-        ...ssrPages.dynamic,
-        ...localeSsrPages.dynamic
-      },
-      nonDynamic: {
-        ...ssrPages.nonDynamic,
-        ...localeSsrPages.nonDynamic
-      }
+      dynamic: localeSsrPages.dynamic,
+      nonDynamic: localeSsrPages.nonDynamic
     };
 
-    pageManifest.pages.ssg = {
-      nonDynamic: {
-        ...ssgPages.nonDynamic,
-        ...localeSsgPages.nonDynamic
-      },
-      dynamic: {
-        ...ssgPages.dynamic,
-        ...localeSsgPages.dynamic
-      }
-    };
-
-    pageManifest.pages.html = {
-      nonDynamic: {
-        ...htmlPages.nonDynamic,
-        ...localeHtmlPages.nonDynamic
-      },
-      dynamic: {
-        ...htmlPages.dynamic,
-        ...localeHtmlPages.dynamic
-      }
-    };
+    pageManifest.pages.ssg.dynamic = localeSsgPages.dynamic;
   }
 
   // Sort page routes
