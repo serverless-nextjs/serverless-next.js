@@ -247,6 +247,13 @@ const handleOriginResponse = async ({
       return response;
     }
 
+    // Set 500 status code for 500.html page. We do not need normalised URI as it will always be "/404.html"
+    if (s3Uri.endsWith("/500.html")) {
+      response.status = "500";
+      response.statusDescription = "Internal Server Error";
+      return response;
+    }
+
     const staticRegenerationResponse = getStaticRegenerationResponse({
       expiresHeader: response.headers?.expires?.[0]?.value || "",
       lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
