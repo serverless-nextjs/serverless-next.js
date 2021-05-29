@@ -841,6 +841,21 @@ describe("Lambda@Edge", () => {
 
         expect(response.status).toEqual("404");
       });
+
+      it("500.html should return 500 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/500.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("500");
+      });
     });
 
     describe("500 page", () => {
