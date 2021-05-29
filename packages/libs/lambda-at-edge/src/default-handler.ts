@@ -247,6 +247,19 @@ const handleOriginResponse = async ({
       return response;
     }
 
+    // Set 500 status code for 500.html page. We do not need normalised URI as it will always be "/404.html"
+    if (s3Uri.endsWith("/500.html")) {
+      response.status = "500";
+      response.statusDescription = "Internal Server Error";
+      response.headers["cache-control"] = [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=0, s-maxage=0, must-revalidate" // server error page should not be cached
+        }
+      ];
+      return response;
+    }
+
     const staticRegenerationResponse = getStaticRegenerationResponse({
       expiresHeader: response.headers?.expires?.[0]?.value || "",
       lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
@@ -352,9 +365,14 @@ const handleOriginResponse = async ({
     const bodyString = await getStream.default(s3Response.Body as Readable);
 
     const is404 = file.endsWith("/404.html");
+    const is500 = file.endsWith("/500.html");
     return {
-      status: is404 ? "404" : "200",
-      statusDescription: is404 ? "Not Found" : "OK",
+      status: is500 ? "500" : is404 ? "404" : "200",
+      statusDescription: is500
+        ? "Internal Server Error"
+        : is404
+        ? "Not Found"
+        : "OK",
       headers: {
         ...response.headers,
         ...getCustomHeaders(request.uri, routesManifest),
@@ -367,11 +385,12 @@ const handleOriginResponse = async ({
         "cache-control": [
           {
             key: "Cache-Control",
-            value:
-              s3Response.CacheControl ??
-              (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
-                ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
-                : "public, max-age=0, s-maxage=2678400, must-revalidate")
+            value: is500
+              ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
+              : s3Response.CacheControl ??
+                (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+                  ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+                  : "public, max-age=0, s-maxage=2678400, must-revalidate")
           }
         ]
       },

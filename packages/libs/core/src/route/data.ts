@@ -1,4 +1,8 @@
-import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
+import {
+  addDefaultLocaleToPath,
+  dropLocaleFromPath,
+  getLocalePrefixFromUri
+} from "./locale";
 import { matchDynamicRoute } from "../match";
 import { DataRoute, PageManifest, RoutesManifest, StaticRoute } from "../types";
 
@@ -27,12 +31,19 @@ const fullDataUri = (uri: string, buildId: string) => {
   return `${prefix}${uri}.json`;
 };
 
-const handle404 = (manifest: PageManifest): DataRoute | StaticRoute => {
-  if (manifest.pages.html.nonDynamic["/404"]) {
+const handle404 = (
+  localePrefix: string,
+  manifest: PageManifest
+): DataRoute | StaticRoute => {
+  const notFoundRoute = `${localePrefix}/404`;
+  const staticNotFoundPage =
+    manifest.pages.html.nonDynamic[notFoundRoute] ||
+    manifest.pages.ssg.nonDynamic[notFoundRoute];
+  if (staticNotFoundPage) {
     return {
       isData: false,
       isStatic: true,
-      file: "pages/404.html"
+      file: `pages${localePrefix}/404.html`
     };
   }
   return {
@@ -96,5 +107,6 @@ export const handleDataReq = (
     };
   }
 
-  return handle404(manifest);
+  const localePrefix = getLocalePrefixFromUri(uri, routesManifest);
+  return handle404(localePrefix, manifest);
 };

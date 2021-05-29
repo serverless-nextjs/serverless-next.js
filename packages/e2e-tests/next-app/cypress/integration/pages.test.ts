@@ -126,12 +126,16 @@ describe("Pages Tests", () => {
   describe("Error pages", () => {
     [{ path: "/errored-page" }, { path: "/errored-page-new-ssr" }].forEach(
       ({ path }) => {
-        it(`serves 500 page ${path}`, () => {
+        it(`serves static 500 page ${path}`, () => {
           cy.ensureRouteHasStatusCode(path, 500);
           cy.visit(path, { failOnStatusCode: false });
 
-          // Default Next.js error page
-          cy.contains("500");
+          // Custom static error page
+          cy.contains("Custom 500");
+
+          // Check that it is not cached
+          cy.ensureRouteNotCached(path, false);
+          cy.visit(path, { failOnStatusCode: false });
         });
       }
     );

@@ -3,7 +3,10 @@ import { setCustomHeaders } from "./headers";
 import { redirect } from "./redirect";
 import { toRequest } from "./request";
 import { routeDefault } from "../route";
-import { addDefaultLocaleToPath } from "../route/locale";
+import {
+  addDefaultLocaleToPath,
+  getLocalePrefixFromUri
+} from "../route/locale";
 import {
   Event,
   ExternalRoute,
@@ -21,9 +24,10 @@ import { unauthorized } from "./unauthorized";
 export const renderRoute = async (
   event: Event,
   route: RenderRoute,
+  manifest: PageManifest,
   routesManifest: RoutesManifest,
   getPage: (page: string) => any
-) => {
+): Promise<void | StaticRoute> => {
   const { req, res } = event;
   setCustomHeaders(event, routesManifest);
 
@@ -51,7 +55,15 @@ export const renderRoute = async (
       await Promise.race([page.render(req, res), event.responsePromise]);
     }
   } catch (error) {
-    renderErrorPage(error, event, route.page, getPage);
+    const localePrefix = getLocalePrefixFromUri(req.url ?? "", routesManifest);
+    return renderErrorPage(
+      error,
+      event,
+      route,
+      localePrefix,
+      manifest,
+      getPage
+    );
   }
 };
 
@@ -87,7 +99,13 @@ export const handleDefault = async (
     return redirect(event, route as RedirectRoute);
   }
   if (route.isRender) {
-    return renderRoute(event, route as RenderRoute, routesManifest, getPage);
+    return renderRoute(
+      event,
+      route as RenderRoute,
+      manifest,
+      routesManifest,
+      getPage
+    );
   }
   if (route.isUnauthorized) {
     return unauthorized(event, route as UnauthorizedRoute);

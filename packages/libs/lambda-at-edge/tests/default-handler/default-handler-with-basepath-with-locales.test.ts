@@ -516,7 +516,7 @@ describe("Lambda@Edge", () => {
     });
 
     describe("404 page", () => {
-      it("renders 404 page if request path can't be matched to any page / api routes", async () => {
+      it("renders static 404 page if request path can't be matched to any page / api routes", async () => {
         const event = createCloudFrontEvent({
           uri: trailingSlash
             ? "/basepath/page/does/not/exist/"
@@ -524,14 +524,20 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 404");
-        expect(response.status).toEqual(404);
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "/basepath/static-pages/build-id",
+            region: "us-east-1"
+          }
+        });
+        expect(request.uri).toEqual("/en/404.html");
+        expect(request.headers.host[0].key).toEqual("host");
+        expect(request.headers.host[0].value).toEqual(
+          "my-bucket.s3.amazonaws.com"
+        );
       });
 
       it("redirects unmatched request path", async () => {
@@ -599,18 +605,20 @@ describe("Lambda@Edge", () => {
             config: { eventType: "origin-request" } as any
           });
 
-          mockPageRequire("./pages/_error.js");
-
-          const response = (await handler(event)) as CloudFrontResultResponse;
-          const body = response.body as string;
-          const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-          expect(decodedBody).toEqual(
-            JSON.stringify({
-              page: "pages/_error.js - 404"
-            })
+          const request = (await handler(event)) as CloudFrontRequest;
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/basepath/static-pages/build-id",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual("/en/404.html");
+          expect(request.headers.host[0].key).toEqual("host");
+          expect(request.headers.host[0].value).toEqual(
+            "my-bucket.s3.amazonaws.com"
           );
-          expect(response.status).toEqual(404);
         }
       );
 
@@ -631,7 +639,7 @@ describe("Lambda@Edge", () => {
     });
 
     describe("500 page", () => {
-      it("renders 500 page if page render has an error", async () => {
+      it("renders static 500 page if page render has an error", async () => {
         const event = createCloudFrontEvent({
           uri: trailingSlash
             ? "/basepath/erroredPage/"
@@ -639,15 +647,22 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        mockPageRequire("pages/_error.js");
         mockPageRequire("pages/erroredPage.js");
 
-        const response = (await handler(event)) as CloudFrontResultResponse;
-        const body = response.body as string;
-        const decodedBody = Buffer.from(body, "base64").toString("utf8");
-
-        expect(decodedBody).toEqual("pages/_error.js - 500");
-        expect(response.status).toEqual(500);
+        const request = (await handler(event)) as CloudFrontRequest;
+        expect(request.origin).toEqual({
+          s3: {
+            authMethod: "origin-access-identity",
+            domainName: "my-bucket.s3.amazonaws.com",
+            path: "/basepath/static-pages/build-id",
+            region: "us-east-1"
+          }
+        });
+        expect(request.uri).toEqual("/en/500.html");
+        expect(request.headers.host[0].key).toEqual("host");
+        expect(request.headers.host[0].value).toEqual(
+          "my-bucket.s3.amazonaws.com"
+        );
       });
     });
 

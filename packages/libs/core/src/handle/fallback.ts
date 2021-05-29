@@ -10,6 +10,7 @@ import {
   StaticRoute
 } from "../types";
 import { notFoundPage } from "../route/notfound";
+import { getLocalePrefixFromUri } from "../route/locale";
 
 type FallbackRoute = StaticRoute & {
   fallback: string | null;
@@ -26,9 +27,10 @@ type Fallback = {
 const renderFallback = async (
   event: Event,
   route: FallbackRoute,
+  manifest: PageManifest,
   routesManifest: RoutesManifest,
   getPage: (page: string) => any
-): Promise<Fallback | void> => {
+): Promise<Fallback | StaticRoute | void> => {
   const { req, res } = event;
   setCustomHeaders(event, routesManifest);
 
@@ -41,7 +43,15 @@ const renderFallback = async (
     );
     return { isStatic: false, route, html, renderOpts };
   } catch (error) {
-    renderErrorPage(error, event, route.page, getPage);
+    const localePrefix = getLocalePrefixFromUri(req.url ?? "", routesManifest);
+    return renderErrorPage(
+      error,
+      event,
+      route,
+      localePrefix,
+      manifest,
+      getPage
+    );
   }
 };
 
@@ -52,7 +62,7 @@ const renderFallback = async (
  * a Fallback object is returned. It contains the rendered page.
  *
  * Otherwise either a page is rendered (like handleDefault) or
- * returnes as StaticRoute for the caller to handle.
+ * returns as StaticRoute for the caller to handle.
  */
 export const handleFallback = async (
   event: Event,
@@ -63,7 +73,13 @@ export const handleFallback = async (
 ): Promise<StaticRoute | Fallback | void> => {
   // This should not be needed if all SSR routes are handled correctly
   if (route.isRender) {
-    return renderRoute(event, route as RenderRoute, routesManifest, getPage);
+    return renderRoute(
+      event,
+      route as RenderRoute,
+      manifest,
+      routesManifest,
+      getPage
+    );
   }
 
   if (route.isStatic) {
@@ -73,7 +89,7 @@ export const handleFallback = async (
       staticRoute.fallback === null;
     if (shouldRender && staticRoute.page) {
       const fallback: FallbackRoute = staticRoute as FallbackRoute;
-      return renderFallback(event, fallback, routesManifest, getPage);
+      return renderFallback(event, fallback, manifest, routesManifest, getPage);
     }
     if (staticRoute.fallback) {
       return { ...staticRoute, file: `pages${staticRoute.fallback}` };
@@ -89,5 +105,5 @@ export const handleFallback = async (
     return errorRoute as StaticRoute;
   }
 
-  return renderRoute(event, errorRoute, routesManifest, getPage);
+  return renderRoute(event, errorRoute, manifest, routesManifest, getPage);
 };
