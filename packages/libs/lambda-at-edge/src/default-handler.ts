@@ -251,6 +251,12 @@ const handleOriginResponse = async ({
     if (s3Uri.endsWith("/500.html")) {
       response.status = "500";
       response.statusDescription = "Internal Server Error";
+      response.headers["cache-control"] = [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=0, s-maxage=0, must-revalidate" // server error page should not be cached
+        }
+      ];
       return response;
     }
 

@@ -28,7 +28,10 @@
 declare namespace Cypress {
   interface Chainable {
     ensureRouteCached: (path: string | RegExp) => Cypress.Chainable<JQuery>;
-    ensureRouteNotCached: (path: string | RegExp) => Cypress.Chainable<JQuery>;
+    ensureRouteNotCached: (
+      path: string | RegExp,
+      failOnError: boolean = true
+    ) => Cypress.Chainable<JQuery>;
     ensureRouteNotErrored: (path: string | RegExp) => Cypress.Chainable<JQuery>;
     ensureAllRoutesNotErrored: () => Cypress.Chainable<JQuery>;
     ensureRouteHasStatusCode: (
@@ -61,33 +64,39 @@ Cypress.Commands.add("ensureAllRoutesNotErrored", () => {
   });
 });
 
-Cypress.Commands.add("ensureRouteNotCached", (path: string | RegExp) => {
-  cy.intercept(path, (req) => {
-    req.reply((res) => {
-      if (res.statusCode >= 400) {
-        throw new Error(`Response has errored with status ${res.statusCode}`);
-      }
+Cypress.Commands.add(
+  "ensureRouteNotCached",
+  (path: string | RegExp, failOnError = true) => {
+    cy.intercept(path, (req) => {
+      req.reply((res) => {
+        if (failOnError && res.statusCode >= 400) {
+          throw new Error(`Response has errored with status ${res.statusCode}`);
+        }
 
-      if (res.headers["x-cache"] === "Hit from cloudfront") {
-        throw new Error("Response was unexpectedly cached in CloudFront.");
-      }
+        if (res.headers["x-cache"] === "Hit from cloudfront") {
+          throw new Error("Response was unexpectedly cached in CloudFront.");
+        }
+      });
     });
-  });
-});
+  }
+);
 
-Cypress.Commands.add("ensureRouteCached", (path: string | RegExp) => {
-  cy.intercept(path, (req) => {
-    req.reply((res) => {
-      if (res.statusCode >= 400) {
-        throw new Error(`Response has errored with status ${res.statusCode}`);
-      }
+Cypress.Commands.add(
+  "ensureRouteCached",
+  (path: string | RegExp, failOnError = true) => {
+    cy.intercept(path, (req) => {
+      req.reply((res) => {
+        if (failOnError && res.statusCode >= 400) {
+          throw new Error(`Response has errored with status ${res.statusCode}`);
+        }
 
-      if (res.headers["x-cache"] !== "Hit from cloudfront") {
-        throw new Error("Response was unexpectedly uncached in CloudFront.");
-      }
+        if (res.headers["x-cache"] !== "Hit from cloudfront") {
+          throw new Error("Response was unexpectedly uncached in CloudFront.");
+        }
+      });
     });
-  });
-});
+  }
+);
 
 Cypress.Commands.add("ensureRouteNotErrored", (path: string | RegExp) => {
   cy.intercept(path, (req) => {

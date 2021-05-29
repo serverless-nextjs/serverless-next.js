@@ -128,6 +128,7 @@ describe("Pages Tests", () => {
       ({ path }) => {
         it(`serves static 500 page ${path}`, () => {
           cy.ensureRouteHasStatusCode(path, 500);
+          cy.ensureRouteNotCached(path, false);
           cy.visit(path, { failOnStatusCode: false });
 
           // Custom static error page
