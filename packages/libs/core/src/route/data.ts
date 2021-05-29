@@ -41,7 +41,7 @@ const handle404 = (
     manifest.pages.ssg.nonDynamic[notFoundRoute];
   if (staticNotFoundPage) {
     return {
-      isData: true,
+      isData: false,
       isStatic: true,
       file: `pages${localePrefix}/404.html`
     };
