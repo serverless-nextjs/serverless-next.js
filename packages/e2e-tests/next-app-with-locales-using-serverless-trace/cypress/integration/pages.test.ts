@@ -157,8 +157,8 @@ describe("Pages Tests", () => {
         cy.ensureRouteHasStatusCode(path, 404);
         cy.visit(path, { failOnStatusCode: false });
 
-        // Default Next.js 404 page
-        cy.contains("404");
+        // Custom static Next.js 404 page
+        cy.contains("Custom 404");
       });
     });
   });
@@ -176,8 +176,8 @@ describe("Pages Tests", () => {
         cy.ensureRouteHasStatusCode(path, 500);
         cy.visit(path, { failOnStatusCode: false });
 
-        // Default Next.js error page
-        cy.contains("500");
+        // Custom static Next.js error page
+        cy.contains("Custom 500");
       });
     });
   });
