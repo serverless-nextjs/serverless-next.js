@@ -1,5 +1,9 @@
 import { normalise } from "./basepath";
-import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
+import {
+  addDefaultLocaleToPath,
+  dropLocaleFromPath,
+  getLocalePrefixFromUri
+} from "./locale";
 import { matchDynamicRoute } from "../match";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import {
@@ -16,12 +20,16 @@ const pageHtml = (localeUri: string) => {
   return `pages${localeUri}.html`;
 };
 
-const handle404 = (manifest: PageManifest): PageRoute => {
-  if (manifest.pages.html.nonDynamic["/404"]) {
+const handle404 = (localePrefix: string, manifest: PageManifest): PageRoute => {
+  const notFoundRoute = `${localePrefix}/404`;
+  const staticNotFoundPage =
+    manifest.pages.html.nonDynamic[notFoundRoute] ||
+    manifest.pages.ssg.nonDynamic[notFoundRoute];
+  if (staticNotFoundPage) {
     return {
       isData: false,
       isStatic: true,
-      file: "pages/404.html"
+      file: `pages${localePrefix}/404.html`
     };
   }
   return {
@@ -121,5 +129,6 @@ export const handlePageReq = (
     };
   }
 
-  return handle404(manifest);
+  const localePrefix = getLocalePrefixFromUri(uri, routesManifest);
+  return handle404(localePrefix, manifest);
 };
