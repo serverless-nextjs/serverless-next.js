@@ -365,9 +365,14 @@ const handleOriginResponse = async ({
     const bodyString = await getStream.default(s3Response.Body as Readable);
 
     const is404 = file.endsWith("/404.html");
+    const is500 = file.endsWith("/500.html");
     return {
-      status: is404 ? "404" : "200",
-      statusDescription: is404 ? "Not Found" : "OK",
+      status: is500 ? "500" : is404 ? "404" : "200",
+      statusDescription: is500
+        ? "Internal Server Error"
+        : is404
+        ? "Not Found"
+        : "OK",
       headers: {
         ...response.headers,
         ...getCustomHeaders(request.uri, routesManifest),
@@ -380,11 +385,12 @@ const handleOriginResponse = async ({
         "cache-control": [
           {
             key: "Cache-Control",
-            value:
-              s3Response.CacheControl ??
-              (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
-                ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
-                : "public, max-age=0, s-maxage=2678400, must-revalidate")
+            value: is500
+              ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
+              : s3Response.CacheControl ??
+                (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+                  ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+                  : "public, max-age=0, s-maxage=2678400, must-revalidate")
           }
         ]
       },

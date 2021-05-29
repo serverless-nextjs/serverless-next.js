@@ -27,10 +27,13 @@
 // Declare command definitions here so that autocomplete works
 declare namespace Cypress {
   interface Chainable {
-    ensureRouteCached: (path: string | RegExp) => Cypress.Chainable<JQuery>;
+    ensureRouteCached: (
+      path: string | RegExp,
+      throwOnError?: boolean
+    ) => Cypress.Chainable<JQuery>;
     ensureRouteNotCached: (
       path: string | RegExp,
-      failOnError: boolean = true
+      throwOnError?: boolean
     ) => Cypress.Chainable<JQuery>;
     ensureRouteNotErrored: (path: string | RegExp) => Cypress.Chainable<JQuery>;
     ensureAllRoutesNotErrored: () => Cypress.Chainable<JQuery>;
@@ -66,10 +69,10 @@ Cypress.Commands.add("ensureAllRoutesNotErrored", () => {
 
 Cypress.Commands.add(
   "ensureRouteNotCached",
-  (path: string | RegExp, failOnError = true) => {
+  (path: string | RegExp, throwOnError?: boolean) => {
     cy.intercept(path, (req) => {
       req.reply((res) => {
-        if (failOnError && res.statusCode >= 400) {
+        if (throwOnError !== false && res.statusCode >= 400) {
           throw new Error(`Response has errored with status ${res.statusCode}`);
         }
 
@@ -83,10 +86,10 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   "ensureRouteCached",
-  (path: string | RegExp, failOnError = true) => {
+  (path: string | RegExp, throwOnError?: boolean) => {
     cy.intercept(path, (req) => {
       req.reply((res) => {
-        if (failOnError && res.statusCode >= 400) {
+        if (throwOnError !== false && res.statusCode >= 400) {
           throw new Error(`Response has errored with status ${res.statusCode}`);
         }
 

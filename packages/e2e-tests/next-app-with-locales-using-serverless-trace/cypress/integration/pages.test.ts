@@ -174,11 +174,14 @@ describe("Pages Tests", () => {
     ].forEach(({ path }) => {
       it(`serves 500 page ${path}`, () => {
         cy.ensureRouteHasStatusCode(path, 500);
-        cy.ensureRouteNotCached(path, false);
         cy.visit(path, { failOnStatusCode: false });
 
         // Custom static Next.js error page
         cy.contains("Custom 500");
+
+        // Check that it is not cached
+        cy.ensureRouteNotCached(path, false);
+        cy.visit(path, { failOnStatusCode: false });
       });
     });
   });
