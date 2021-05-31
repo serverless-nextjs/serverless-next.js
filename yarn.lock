@@ -3677,7 +3677,7 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "1.0.0-alpha.12"
+  version "1.0.0-alpha.19"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -3686,13 +3686,13 @@
     regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "1.9.0-alpha.7"
+  version "1.9.0-alpha.15"
   dependencies:
     "@aws-sdk/client-s3" "3.14.0"
     "@aws-sdk/client-sqs" "3.14.0"
     "@hapi/accept" "5.0.1"
     "@sls-next/core" "link:packages/libs/core"
-    "@vercel/nft" "^0.12.0"
+    "@vercel/nft" "^0.12.2"
     execa "^4.0.2"
     fresh "^0.5.2"
     fs-extra "^9.0.1"
@@ -3704,7 +3704,7 @@
     send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "1.6.2-alpha.0"
+  version "1.6.2-alpha.2"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -3908,10 +3908,19 @@
   dependencies:
     "@types/react" "^16"
 
-"@types/react@^16", "@types/react@^16.9.41":
+"@types/react@^16":
   version "16.14.6"
   resolved "https://registry.npmjs.org/@types/react/-/react-16.14.6.tgz#d933a2a6bc1bfe320a5eea480e8f45ba8126d6ee"
   integrity sha512-Ol/aFKune+P0FSFKIgf+XbhGzYGyz0p7g5befSt4rmbzfGLaZR0q7jPew9k7d3bvrcuaL8dPy9Oz3XGZmf9n+w==
+  dependencies:
+    "@types/prop-types" "*"
+    "@types/scheduler" "*"
+    csstype "^3.0.2"
+
+"@types/react@^17.0.8":
+  version "17.0.8"
+  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.8.tgz#fe76e3ba0fbb5602704110fd1e3035cf394778e3"
+  integrity sha512-3sx4c0PbXujrYAKwXxNONXUtRp9C+hE2di0IuxFyf5BELD+B+AXL8G7QrmSKhVwKZDbv0igiAjQAMhXj8Yg3aw==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -4124,10 +4133,10 @@
     "@typescript-eslint/types" "4.24.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vercel/nft@^0.12.0":
-  version "0.12.0"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.12.0.tgz#d88e6ab66848eb4d8862f70ccd148f29305fc4bd"
-  integrity sha512-4k87lSFscEOrILuiG5w1UUswDTLmn7snWGhBO1LUaZZShLeul/gMl4QzryIN7ljAExsYrkaaE07LPPf2bmMTvg==
+"@vercel/nft@^0.12.2":
+  version "0.12.2"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.12.2.tgz#67ea9f231d24639b3783e3e69bef173659972d3b"
+  integrity sha512-H8n44GboVnJaVVX4+WfuOTAaNLDnUIYH4KpMZcXll7KMNIcg0JTd0IFRsIBe/uvuXisqm6nEANp8Tr3/1dlRQw==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.1.0"
