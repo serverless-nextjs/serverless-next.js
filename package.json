@@ -87,6 +87,7 @@
       "/fixture/",
       "/examples/",
       "/dist/",
+      "/e2e-tests/",
       "/tests/"
     ],
     "watchPathIgnorePatterns": [
