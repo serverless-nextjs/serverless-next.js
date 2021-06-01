@@ -1245,9 +1245,9 @@
     "@types/node" "*"
 
 "@types/sharp@^0.28.1":
-  version "0.28.1"
-  resolved "https://registry.npmjs.org/@types/sharp/-/sharp-0.28.1.tgz#dbd702bd6a8d42576b8faffe1c2ec06fdffaaaff"
-  integrity sha512-Jn9NHCjT3KXjxTpbtaxBI4iL+st5o9pWhMGVpHF+Cs+t/31lohLNXSW9PT9RSl7Ct7yBT2XFu7R/xfo0Y8HH2Q==
+  version "0.28.2"
+  resolved "https://registry.npmjs.org/@types/sharp/-/sharp-0.28.2.tgz#75bb9f60714ed752dc88c477ef55310f17c2f08f"
+  integrity sha512-xXanJalZA3EVSZ49667lBctyao75JiH5tD5/hKYu9u5C3d9rxEqOHvMOtx/oenJUqKKgIwIZEsL0hjmKo2rjJg==
   dependencies:
     "@types/node" "*"
 
