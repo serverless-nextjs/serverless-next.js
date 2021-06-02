@@ -64,10 +64,11 @@ class AwsSqsQueue extends Component {
         this.context.status(`Updating`);
         await setAttributes(sqs, queueUrl, config);
       } else {
-        this.context.debug(`The QueueUrl has changed`);
-        this.context.debug(`Deleting previous queue`);
-
-        await deleteQueue({ sqs, queueUrl: this.state.url });
+        if (this.state.url) {
+          this.context.debug(`The QueueUrl has changed`);
+          this.context.debug(`Deleting previous queue`);
+          await deleteQueue({ sqs, queueUrl: this.state.url });
+        }
 
         this.context.debug(`Creating new queue`);
 

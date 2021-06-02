@@ -11,7 +11,13 @@ const {
 } = require("aws-sdk");
 
 describe("sqs component", () => {
-  const tmpStateFolder = () => fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
+  const tmpStateFolder = (initialState) => {
+    const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
+    if (initialState) {
+      fse.writeJSONSync(path.join(dir, "TestLambda.json"), initialState);
+    }
+    return dir;
+  };
   mockGetCallerIdentityPromise.mockResolvedValue({ Account: "123" });
   mockGetQueueAttributesPromise.mockResolvedValue({ Attributes: {} });
   mockCreateQueuePromise.mockResolvedValue({ QueueArn: "arn" });
@@ -23,8 +29,9 @@ describe("sqs component", () => {
   });
 
   it("creates a new queue", async () => {
+    const dir = tmpStateFolder();
     const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
+      stateRoot: dir
     });
     await component.init();
     await component.default();
@@ -37,12 +44,27 @@ describe("sqs component", () => {
       Attributes: { not: "empty" }
     });
     const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
+      stateRoot: tmpStateFolder({
+        url: "myQueueUrl"
+      })
     });
     await component.init();
     await component.default();
     expect(mockCreateQueuePromise).toBeCalledTimes(1);
     expect(mockDeleteQueuePromise).toBeCalledTimes(1);
+  });
+
+  it("creates a queue but does not try to delete an existing queue if none exist already", async () => {
+    mockGetQueueAttributesPromise.mockResolvedValueOnce({
+      Attributes: { not: "empty" }
+    });
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default();
+    expect(mockCreateQueuePromise).toBeCalledTimes(1);
+    expect(mockDeleteQueuePromise).toBeCalledTimes(0);
   });
 
   it("does not create a lambda mapping when a mapping is found", async () => {
