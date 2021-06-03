@@ -59,6 +59,12 @@ const createAttributeMap = (config) => {
       JSON.stringify(config.kmsDataKeyReusePeriodSeconds) || "300";
 
   if (config.fifoQueue) {
+    if (typeof config.deduplicationScope !== "undefined") {
+      attributeMap.DeduplicationScope = config.deduplicationScope.toString();
+    }
+    if (typeof config.fifoThroughputLimit !== "undefined") {
+      attributeMap.FifoThroughputLimit = config.fifoThroughputLimit.toString();
+    }
     if (typeof config.kmsDataKeyReusePeriodSeconds !== "undefined") {
       attributeMap.ContentBasedDeduplication =
         JSON.stringify(config.contentBasedDeduplication) || "false";
