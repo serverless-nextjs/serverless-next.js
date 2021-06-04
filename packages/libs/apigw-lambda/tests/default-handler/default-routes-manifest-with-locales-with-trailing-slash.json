@@ -62,6 +62,18 @@
       "destination": "https://example.com",
       "statusCode": 308,
       "regex": "^(?:/(en|nl|fr))/external/$"
+    },
+    {
+      "source": "/en/api/deprecated/getCustomers/",
+      "destination": "/api/getCustomers/",
+      "statusCode": 308,
+      "regex": "^/en/api/deprecated/getCustomers/$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/deprecated/getCustomers/",
+      "destination": "/:nextInternalLocale/api/getCustomers/",
+      "statusCode": 308,
+      "regex": "^(?:/(en|nl|fr))/api/deprecated/getCustomers/$"
     }
   ],
   "headers": [
@@ -74,6 +86,16 @@
         }
       ],
       "regex": "^(?:/(en|nl|fr))/customers/another$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/getCustomers",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^(?:/(en|nl|fr))/api/getCustomers$"
     }
   ],
   "dynamicRoutes": [
@@ -309,6 +331,31 @@
       "source": "/:nextInternalLocale(en|nl|fr)/external-rewrite/",
       "destination": "https://external.com",
       "regex": "^(?:/(en|nl|fr))/external-rewrite/$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/rewrite-getCustomers/",
+      "destination": "/:nextInternalLocale/api/getCustomers/",
+      "regex": "^(?:/(en|nl|fr))/api/rewrite-getCustomers/$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/getCustomers/",
+      "destination": "/:nextInternalLocale/api/another/",
+      "regex": "^(?:/(en|nl|fr))/api/getCustomers/$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/notfound/",
+      "destination": "/:nextInternalLocale/api/missing/",
+      "regex": "^(?:/(en|nl|fr))/api/notfound/$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/user/:id/",
+      "destination": "/:nextInternalLocale/api/getUser/",
+      "regex": "^(?:/(en|nl|fr))/api/user(?:/([^/]+?))/$"
+    },
+    {
+      "source": "/:nextInternalLocale(en|nl|fr)/api/external-rewrite/",
+      "destination": "https://external.com",
+      "regex": "^(?:/(en|nl|fr))/api/external-rewrite/$"
     }
   ]
 }

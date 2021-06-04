@@ -22,6 +22,10 @@ headers: async () => [
   {
     source: "/customers/another",
     headers: [{key: "x-custom-header", value: "custom"}]
+  },
+  {
+    source: "/api/getCustomers",
+    headers: [{key: "x-custom-header", value: "custom"}]
   }
 ]
 `;
@@ -51,6 +55,11 @@ redirects: async () => [
   {
     source: "/external%slash%",
     destination: "https://example.com",
+    permanent: true
+  },
+  {
+    source: "/api/deprecated/getCustomers%slash%",
+    destination: "/api/getCustomers%slash%",
     permanent: true
   }
 ]
@@ -86,48 +95,24 @@ rewrites: async () => [
     source: "/external-rewrite%slash%",
     destination: "https://external.com"
   },
-]
-`;
-
-const apiHeaders = `
-headers: async () => [
   {
-    source: "/api/getCustomers",
-    headers: [{key: "x-custom-header", value: "custom"}]
-  }
-]
-`;
-
-const apiRedirects = `
-redirects: async () => [
-  {
-    source: "/api/deprecated/getCustomers",
-    destination: "/api/getCustomers",
-    permanent: true
-  }
-]
-`;
-
-const apiRewrites = `
-rewrites: async () => [
-  {
-    source: "/api/rewrite-getCustomers",
-    destination: "/api/getCustomers"
+    source: "/api/rewrite-getCustomers%slash%",
+    destination: "/api/getCustomers%slash%"
   },
   {
-    source: "/api/getCustomers",
-    destination: "/api/another"
+    source: "/api/getCustomers%slash%",
+    destination: "/api/another%slash%"
   },
   {
-    source: "/api/notfound",
-    destination: "/api/missing"
+    source: "/api/notfound%slash%",
+    destination: "/api/missing%slash%"
   },
   {
-    source: "/api/user/:id",
-    destination: "/api/getUser"
+    source: "/api/user/:id%slash%",
+    destination: "/api/getUser%slash%"
   },
   {
-    source: "/api/external-rewrite",
+    source: "/api/external-rewrite%slash%",
     destination: "https://external.com"
   },
 ]
@@ -276,57 +261,6 @@ module.exports = {
     default:
       "./tests/default-handler/default-build-manifest-with-basic-auth.json",
     routes: null
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: false,
-  ${apiHeaders},
-  ${apiRedirects},
-  ${apiRewrites}
-}
-`,
-    api: "./tests/api-handler/api-build-manifest.json",
-    routes: "./tests/api-handler/api-routes-manifest.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: false,
-  basePath: "/basepath",
-  ${apiHeaders},
-  ${apiRedirects},
-  ${apiRewrites}
-}
-`,
-    routes: "./tests/api-handler/api-basepath-routes-manifest.json"
-  },
-  {
-    auth: true,
-    api: "./tests/api-handler/api-build-manifest-with-basic-auth.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id"
-}
-`,
-    default: "./tests/regeneration-handler/default-build-manifest.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  i18n: {
-    defaultLocale: "en",
-    locales: ["en", "nl", "fr"]
-  }
-}
-`,
-    default:
-      "./tests/regeneration-handler/default-build-manifest-with-locales.json"
   }
 ];
 
@@ -368,12 +302,6 @@ const cleanUp = () => {
     console.error(e);
   }
 
-  if (fixture.api) {
-    const apiManifest = fse.readJSONSync(
-      join(outDir, "api-lambda/manifest.json")
-    );
-    fse.writeJSON(fixture.api ?? "", apiManifest, { spaces: 2 });
-  }
   if (fixture.default) {
     const defaultManifest = fse.readJSONSync(
       join(outDir, "default-lambda/manifest.json")

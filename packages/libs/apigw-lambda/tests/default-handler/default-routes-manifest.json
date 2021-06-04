@@ -32,6 +32,12 @@
       "destination": "https://example.com",
       "statusCode": 308,
       "regex": "^/external$"
+    },
+    {
+      "source": "/api/deprecated/getCustomers",
+      "destination": "/api/getCustomers",
+      "statusCode": 308,
+      "regex": "^/api/deprecated/getCustomers$"
     }
   ],
   "headers": [
@@ -44,6 +50,16 @@
         }
       ],
       "regex": "^/customers/another$"
+    },
+    {
+      "source": "/api/getCustomers",
+      "headers": [
+        {
+          "key": "x-custom-header",
+          "value": "custom"
+        }
+      ],
+      "regex": "^/api/getCustomers$"
     }
   ],
   "dynamicRoutes": [
@@ -271,6 +287,31 @@
       "source": "/external-rewrite",
       "destination": "https://external.com",
       "regex": "^/external-rewrite$"
+    },
+    {
+      "source": "/api/rewrite-getCustomers",
+      "destination": "/api/getCustomers",
+      "regex": "^/api/rewrite-getCustomers$"
+    },
+    {
+      "source": "/api/getCustomers",
+      "destination": "/api/another",
+      "regex": "^/api/getCustomers$"
+    },
+    {
+      "source": "/api/notfound",
+      "destination": "/api/missing",
+      "regex": "^/api/notfound$"
+    },
+    {
+      "source": "/api/user/:id",
+      "destination": "/api/getUser",
+      "regex": "^/api/user(?:/([^/]+?))$"
+    },
+    {
+      "source": "/api/external-rewrite",
+      "destination": "https://external.com",
+      "regex": "^/api/external-rewrite$"
     }
   ]
 }

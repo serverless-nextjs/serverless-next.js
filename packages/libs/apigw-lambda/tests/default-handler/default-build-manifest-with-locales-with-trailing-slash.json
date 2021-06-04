@@ -212,13 +212,16 @@
     },
     "ssg": {
       "dynamic": {
+        "/en/no-fallback/[slug]": {
+          "fallback": false
+        },
         "/en/fallback/[slug]": {
           "fallback": "/en/fallback/[slug].html"
         },
         "/en/fallback-blocking/[slug]": {
           "fallback": null
         },
-        "/en/no-fallback/[slug]": {
+        "/nl/no-fallback/[slug]": {
           "fallback": false
         },
         "/nl/fallback/[slug]": {
@@ -227,7 +230,7 @@
         "/nl/fallback-blocking/[slug]": {
           "fallback": null
         },
-        "/nl/no-fallback/[slug]": {
+        "/fr/no-fallback/[slug]": {
           "fallback": false
         },
         "/fr/fallback/[slug]": {
@@ -235,27 +238,12 @@
         },
         "/fr/fallback-blocking/[slug]": {
           "fallback": null
-        },
-        "/fr/no-fallback/[slug]": {
-          "fallback": false
         }
       },
       "nonDynamic": {
-        "/en/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/nl/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/fr/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/en/fallback/example-static-page": {
+        "/en/no-fallback/example-static-page": {
           "initialRevalidateSeconds": false,
-          "srcRoute": "/fallback/[slug]"
+          "srcRoute": "/no-fallback/[slug]"
         },
         "/en": {
           "initialRevalidateSeconds": false,
@@ -269,9 +257,21 @@
           "initialRevalidateSeconds": false,
           "srcRoute": null
         },
-        "/en/no-fallback/example-static-page": {
+        "/en/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
-          "srcRoute": "/no-fallback/[slug]"
+          "srcRoute": "/fallback/[slug]"
+        },
+        "/en/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
+        },
+        "/nl/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
+        },
+        "/fr/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
         }
       }
     }

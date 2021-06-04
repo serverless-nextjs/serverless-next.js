@@ -13,9 +13,6 @@
     "resolveJsonModule": true
   },
   "include": [
-    "./src/default-handler.ts",
-    "./src/api-handler.ts",
-    "./src/image-handler.ts",
-    "./src/regeneration-handler.ts",
+    "./src/default-handler.ts"
   ]
 }

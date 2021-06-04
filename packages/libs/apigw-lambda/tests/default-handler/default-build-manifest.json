@@ -91,24 +91,24 @@
     },
     "ssg": {
       "dynamic": {
-        "/fallback-blocking/[slug]": {
-          "fallback": null
-        },
         "/fallback/[slug]": {
           "fallback": "/fallback/[slug].html"
         },
         "/no-fallback/[slug]": {
           "fallback": false
+        },
+        "/fallback-blocking/[slug]": {
+          "fallback": null
         }
       },
       "nonDynamic": {
-        "/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
         "/fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/fallback/[slug]"
+        },
+        "/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
         },
         "/no-fallback/example-static-page": {
           "initialRevalidateSeconds": false,

@@ -6,6 +6,7 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 import {
   ExternalRoute,
+  handleApi,
   handleDefault,
   handleFallback,
   PublicFileRoute,
@@ -137,13 +138,29 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
     return page;
   };
 
-  const route = await handleDefault(
-    { req, res, responsePromise },
-    manifest,
-    prerenderManifest,
-    routesManifest,
-    getPage
-  );
+  const apiRoute = event.rawPath.startsWith(`${routesManifest.basePath}/api/`)
+    ? await handleApi(
+        { req, res, responsePromise },
+        manifest,
+        routesManifest,
+        getPage
+      )
+    : undefined;
+
+  if (apiRoute === true) {
+    return await responsePromise;
+  }
+
+  const route =
+    apiRoute ||
+    (await handleDefault(
+      { req, res, responsePromise },
+      manifest,
+      prerenderManifest,
+      routesManifest,
+      getPage
+    ));
+
   if (tBeforeSSR) {
     const tAfterSSR = now();
     log("SSR execution time", tBeforeSSR, tAfterSSR);

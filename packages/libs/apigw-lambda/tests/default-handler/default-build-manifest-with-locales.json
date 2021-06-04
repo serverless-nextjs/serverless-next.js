@@ -241,6 +241,18 @@
         }
       },
       "nonDynamic": {
+        "/en": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null
+        },
+        "/nl": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null
+        },
+        "/fr": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": null
+        },
         "/en/no-fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/no-fallback/[slug]"
@@ -255,18 +267,6 @@
         },
         "/fr/preview": {
           "initialRevalidateSeconds": 5,
-          "srcRoute": null
-        },
-        "/en": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/nl": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": null
-        },
-        "/fr": {
-          "initialRevalidateSeconds": false,
           "srcRoute": null
         },
         "/en/fallback/example-static-page": {
