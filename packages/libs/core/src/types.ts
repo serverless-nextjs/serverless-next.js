@@ -141,6 +141,7 @@ export interface AnyRoute {
   file?: string;
   headers?: Headers;
   querystring?: string;
+  statusCode?: number;
   isApi?: boolean;
   isExternal?: boolean;
   isPublicFile?: boolean;

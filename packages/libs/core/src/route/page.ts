@@ -1,10 +1,7 @@
 import { normalise } from "./basepath";
-import {
-  addDefaultLocaleToPath,
-  dropLocaleFromPath,
-  getLocalePrefixFromUri
-} from "./locale";
+import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
 import { matchDynamicRoute } from "../match";
+import { notFoundPage } from "./notfound";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
 import {
   ExternalRoute,
@@ -20,25 +17,6 @@ const pageHtml = (localeUri: string) => {
   return `pages${localeUri}.html`;
 };
 
-const handle404 = (localePrefix: string, manifest: PageManifest): PageRoute => {
-  const notFoundRoute = `${localePrefix}/404`;
-  const staticNotFoundPage =
-    manifest.pages.html.nonDynamic[notFoundRoute] ||
-    manifest.pages.ssg.nonDynamic[notFoundRoute];
-  if (staticNotFoundPage) {
-    return {
-      isData: false,
-      isStatic: true,
-      file: `pages${localePrefix}/404.html`
-    };
-  }
-  return {
-    isData: false,
-    isRender: true,
-    page: "pages/_error.js"
-  };
-};
-
 export const handlePageReq = (
   uri: string,
   manifest: PageManifest,
@@ -52,21 +30,29 @@ export const handlePageReq = (
     routesManifest
   );
   if (pages.html.nonDynamic[localeUri]) {
+    const nonLocaleUri = dropLocaleFromPath(localeUri, routesManifest);
+    const statusCode =
+      nonLocaleUri === "/404" ? 404 : nonLocaleUri === "/500" ? 500 : undefined;
     return {
       isData: false,
       isStatic: true,
-      file: pages.html.nonDynamic[localeUri]
+      file: pages.html.nonDynamic[localeUri],
+      statusCode
     };
   }
   if (pages.ssg.nonDynamic[localeUri] && !isPreview) {
     const ssg = pages.ssg.nonDynamic[localeUri];
     const route = ssg.srcRoute ?? localeUri;
+    const nonLocaleUri = dropLocaleFromPath(localeUri, routesManifest);
+    const statusCode =
+      nonLocaleUri === "/404" ? 404 : nonLocaleUri === "/500" ? 500 : undefined;
     return {
       isData: false,
       isStatic: true,
       file: pageHtml(localeUri),
       page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
-      revalidate: ssg.initialRevalidateSeconds
+      revalidate: ssg.initialRevalidateSeconds,
+      statusCode
     };
   }
   if (pages.ssr.nonDynamic[localeUri]) {
@@ -129,6 +115,5 @@ export const handlePageReq = (
     };
   }
 
-  const localePrefix = getLocalePrefixFromUri(uri, routesManifest);
-  return handle404(localePrefix, manifest);
+  return notFoundPage(uri, manifest, routesManifest);
 };

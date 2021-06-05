@@ -3,10 +3,7 @@ import { setCustomHeaders } from "./headers";
 import { redirect } from "./redirect";
 import { toRequest } from "./request";
 import { routeDefault } from "../route";
-import {
-  addDefaultLocaleToPath,
-  getLocalePrefixFromUri
-} from "../route/locale";
+import { addDefaultLocaleToPath } from "../route/locale";
 import {
   Event,
   ExternalRoute,
@@ -36,9 +33,9 @@ export const renderRoute = async (
     req.url = addDefaultLocaleToPath(req.url, routesManifest);
   }
 
-  // If page is _error.js, set status to 404 so _error.js will render a 404 page
-  if (route.page === "pages/_error.js") {
-    res.statusCode = 404;
+  // Sets error page status code so _error renders the right page
+  if (route.statusCode) {
+    res.statusCode = route.statusCode;
   }
 
   const page = getPage(route.page);
@@ -55,13 +52,12 @@ export const renderRoute = async (
       await Promise.race([page.render(req, res), event.responsePromise]);
     }
   } catch (error) {
-    const localePrefix = getLocalePrefixFromUri(req.url ?? "", routesManifest);
     return renderErrorPage(
       error,
       event,
       route,
-      localePrefix,
       manifest,
+      routesManifest,
       getPage
     );
   }

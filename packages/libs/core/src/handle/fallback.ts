@@ -10,7 +10,6 @@ import {
   StaticRoute
 } from "../types";
 import { notFoundPage } from "../route/notfound";
-import { getLocalePrefixFromUri } from "../route/locale";
 
 type FallbackRoute = StaticRoute & {
   fallback: string | null;
@@ -43,13 +42,12 @@ const renderFallback = async (
     );
     return { isStatic: false, route, html, renderOpts };
   } catch (error) {
-    const localePrefix = getLocalePrefixFromUri(req.url ?? "", routesManifest);
     return renderErrorPage(
       error,
       event,
       route,
-      localePrefix,
       manifest,
+      routesManifest,
       getPage
     );
   }

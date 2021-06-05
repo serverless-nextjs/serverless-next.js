@@ -234,21 +234,22 @@ const handleOriginResponse = async ({
     routesManifest
   );
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
+  const statusCode = route?.statusCode;
 
   if (response.status !== "403") {
     response.headers = {
       ...response.headers,
       ...getCustomHeaders(request.uri, routesManifest)
     };
-    // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (s3Uri.endsWith("/404.html")) {
+    // Set 404 status code for static 400 page.
+    if (statusCode === 404) {
       response.status = "404";
       response.statusDescription = "Not Found";
       return response;
     }
 
-    // Set 500 status code for 500.html page. We do not need normalised URI as it will always be "/404.html"
-    if (s3Uri.endsWith("/500.html")) {
+    // Set 500 status code for static 500 page.
+    if (statusCode === 500) {
       response.status = "500";
       response.statusDescription = "Internal Server Error";
       response.headers["cache-control"] = [
@@ -364,10 +365,11 @@ const handleOriginResponse = async ({
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
     const bodyString = await getStream.default(s3Response.Body as Readable);
 
-    const is404 = file.endsWith("/404.html");
-    const is500 = file.endsWith("/500.html");
+    const statusCode = (fallbackRoute.statusCode || 200).toString();
+    const is404 = statusCode === "404";
+    const is500 = statusCode === "500";
     return {
-      status: is500 ? "500" : is404 ? "404" : "200",
+      status: statusCode,
       statusDescription: is500
         ? "Internal Server Error"
         : is404

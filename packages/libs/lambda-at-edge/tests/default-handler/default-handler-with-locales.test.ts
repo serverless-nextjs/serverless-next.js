@@ -685,7 +685,7 @@ describe("Lambda@Edge", () => {
 
       it("404.html should return 404 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
-          uri: "/404.html",
+          uri: "/en/404.html",
           host: "mydistribution.cloudfront.net",
           config: { eventType: "origin-response" } as any,
           response: {
@@ -722,6 +722,31 @@ describe("Lambda@Edge", () => {
         expect(request.headers.host[0].value).toEqual(
           "my-bucket.s3.amazonaws.com"
         );
+      });
+
+      it("500.html should return 500 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/en/500.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("500");
+
+        // 500 page should never be cached
+        expect(response.headers).toEqual({
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=0, s-maxage=0, must-revalidate"
+            }
+          ]
+        });
       });
     });
 
