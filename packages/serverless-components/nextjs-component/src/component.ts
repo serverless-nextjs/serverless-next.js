@@ -445,6 +445,8 @@ class NextjsComponent extends Component {
     if (hasISRPages) {
       queue = await sqs({
         name: `${bucketOutputs.name}.fifo`,
+        deduplicationScope: "messageGroup",
+        fifoThroughputLimit: "perMessageGroupId",
         visibilityTimeout: "30",
         fifoQueue: true
       });
