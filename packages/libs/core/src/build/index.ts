@@ -82,7 +82,7 @@ export const prepareBuildManifests = async (
     const isOtherDynamicRoute =
       !isOptionalCatchAllDynamicRoute && isDynamicRoute(route);
 
-    // The base path of optional catch-all without parameter
+    // the base path of optional catch-all without parameter
     const optionalBaseRoute = isOptionalCatchAllDynamicRoute
       ? route.split("/[[")[0] || "/"
       : "";
