@@ -21,7 +21,7 @@
     "@serverless/aws-iam-role": "^1.0.0",
     "@serverless/aws-lambda-layer": "^1.0.0",
     "@serverless/aws-s3": "^4.2.0",
-    "archiver": "^4.0.1",
+    "archiver": "^5.3.0",
     "fs-extra": "^9.0.1",
     "globby": "^11.0.1",
     "ramda": "^0.27.0"
