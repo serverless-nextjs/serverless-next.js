@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-sqs@1.2.0-alpha.1...@sls-next/aws-sqs@1.2.0-alpha.3) (2021-06-07)
+
+### Bug Fixes
+
+- only delete the sqs queue if it already exists in the state ([#1147](https://github.com/serverless-nextjs/serverless-next.js/issues/1147)) ([c072437](https://github.com/serverless-nextjs/serverless-next.js/commit/c072437f6620d7e1f323355ebd108201c64ffdd7))
+
+### Features
+
+- use high throughput mode for regeneration SQS ([#1148](https://github.com/serverless-nextjs/serverless-next.js/issues/1148)) ([f3d033c](https://github.com/serverless-nextjs/serverless-next.js/commit/f3d033c08164a7681572ad7fa1aedc78bbf23ed6))
+
 # [1.2.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-sqs@1.2.0-alpha.1...@sls-next/aws-sqs@1.2.0-alpha.2) (2021-06-07)
 
 ### Bug Fixes

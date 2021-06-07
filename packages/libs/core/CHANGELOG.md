@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.19...@sls-next/core@1.0.0-alpha.21) (2021-06-07)
+
+### Bug Fixes
+
+- **core, lambda-at-edge:** set error status codes in core, refactor error handling ([#1153](https://github.com/serverless-nextjs/serverless-next.js/issues/1153)) ([6d4ae93](https://github.com/serverless-nextjs/serverless-next.js/commit/6d4ae936d64d0dda1d4b077ddc402b6f1afae88b))
+
 # [1.0.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.19...@sls-next/core@1.0.0-alpha.20) (2021-06-07)
 
 ### Bug Fixes

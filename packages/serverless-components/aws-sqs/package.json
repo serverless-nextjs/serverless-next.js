@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-sqs",
-  "version": "1.2.0-alpha.2",
+  "version": "1.2.0-alpha.3",
   "main": "serverless.js",
   "publishConfig": {
     "access": "public"
