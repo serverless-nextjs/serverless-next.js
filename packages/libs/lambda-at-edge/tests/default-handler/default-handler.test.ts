@@ -842,9 +842,9 @@ describe("Lambda@Edge", () => {
         expect(response.status).toEqual("404");
       });
 
-      it("500.html should return 500 status after successful S3 Origin response", async () => {
+      it("path ending 404 should return 200 status after successful S3 Origin response", async () => {
         const event = createCloudFrontEvent({
-          uri: "/500.html",
+          uri: "/fallback/404.html",
           host: "mydistribution.cloudfront.net",
           config: { eventType: "origin-response" } as any,
           response: {
@@ -854,17 +854,7 @@ describe("Lambda@Edge", () => {
 
         const response = (await handler(event)) as CloudFrontResultResponse;
 
-        expect(response.status).toEqual("500");
-
-        // 500 page should never be cached
-        expect(response.headers).toEqual({
-          "cache-control": [
-            {
-              key: "Cache-Control",
-              value: "public, max-age=0, s-maxage=0, must-revalidate"
-            }
-          ]
-        });
+        expect(response.status).toEqual("200");
       });
     });
 
@@ -884,6 +874,21 @@ describe("Lambda@Edge", () => {
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
         expect(response.status).toEqual(500);
+      });
+
+      it("path ending 500 should return 200 status after successful S3 Origin response", async () => {
+        const event = createCloudFrontEvent({
+          uri: "/fallback/500.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            status: "200"
+          } as any
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+
+        expect(response.status).toEqual("200");
       });
     });
 

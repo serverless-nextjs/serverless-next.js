@@ -1,11 +1,12 @@
-import { Event, PageManifest, StaticRoute } from "../types";
+import { getLocalePrefixFromUri } from "../route/locale";
+import { Event, PageManifest, RoutesManifest, StaticRoute } from "../types";
 
 export const renderErrorPage = async (
   error: any,
   event: Event,
   route: { page: string; isData: boolean },
-  localePrefix: string,
   manifest: PageManifest,
+  routesManifest: RoutesManifest,
   getPage: (page: string) => any
 ): Promise<void | StaticRoute> => {
   console.error(
@@ -13,9 +14,7 @@ export const renderErrorPage = async (
   );
 
   const { req, res } = event;
-
-  // Set status to 500 so _error.js will render a 500 page
-  res.statusCode = 500;
+  const localePrefix = getLocalePrefixFromUri(req.url ?? "", routesManifest);
 
   // Render static error page if present by returning static route
   const errorRoute = `${localePrefix}/500`;
@@ -26,9 +25,12 @@ export const renderErrorPage = async (
     return {
       isData: route.isData,
       isStatic: true,
-      file: `pages${localePrefix}/500.html`
+      file: `pages${localePrefix}/500.html`,
+      statusCode: 500
     };
   } else {
+    // Set status to 500 so _error.js will render a 500 page
+    res.statusCode = 500;
     const errorPage = getPage("./pages/_error.js");
     await Promise.race([errorPage.render(req, res), event.responsePromise]);
   }
