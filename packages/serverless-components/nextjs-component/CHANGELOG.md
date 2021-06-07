@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.20.0-alpha.16...@sls-next/serverless-component@1.20.0-alpha.17) (2021-06-07)
+
+### Bug Fixes
+
+- **nextjs-component:** sqs region should be same as regeneration lambda region (using s3 bucket region) ([#1155](https://github.com/serverless-nextjs/serverless-next.js/issues/1155)) ([41b6be1](https://github.com/serverless-nextjs/serverless-next.js/commit/41b6be1943bca70a1e2e6f919b5ee6fecc56389f))
+
+### Features
+
+- use high throughput mode for regeneration SQS ([#1148](https://github.com/serverless-nextjs/serverless-next.js/issues/1148)) ([f3d033c](https://github.com/serverless-nextjs/serverless-next.js/commit/f3d033c08164a7681572ad7fa1aedc78bbf23ed6))
+
 # [1.20.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-component@1.20.0-alpha.15...@sls-next/serverless-component@1.20.0-alpha.16) (2021-05-29)
 
 **Note:** Version bump only for package @sls-next/serverless-component
