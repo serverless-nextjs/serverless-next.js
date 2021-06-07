@@ -40,20 +40,22 @@ describe("Serverless Trace With Dynamic Import", () => {
     const nodeModules = await readdir(
       path.join(outputDir, "api-lambda/node_modules")
     );
-    expect(nodeModules).toEqual(["@next", "next"]);
+    expect(nodeModules).toEqual(expect.arrayContaining(["@next", "next"]));
   });
 
   it("copies dynamic chunk to default lambda artefact", async () => {
+    // TODO: note that serverless-trace seems to be no-op due to new code splitting logic in Next 10.2.3
+    //  hence this test will just be testing that the chunks are copied as well
     const chunkFileName = (
-      await readdir(path.join(fixtureDir, ".next/serverless"))
+      await readdir(path.join(fixtureDir, ".next/serverless/chunks"))
     ).find((file) => {
-      return /^[\d]+\.+[\w,\s-]+\.(js)$/.test(file);
+      return /^[\d]+\.(js)$/.test(file);
     });
 
     expect(chunkFileName).toBeDefined();
 
     const chunkExistsInOutputBuild = await pathExists(
-      path.join(outputDir, "default-lambda", chunkFileName as string)
+      path.join(outputDir, "default-lambda", "chunks", chunkFileName as string)
     );
     expect(chunkExistsInOutputBuild).toBe(true);
   });
