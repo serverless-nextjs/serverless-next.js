@@ -26,6 +26,10 @@ import { ServerResponse } from "http";
 import { Readable } from "stream";
 import { httpCompat } from "./compat/apigw";
 import { createExternalRewriteResponse } from "./lib/createExternalRewriteResponse";
+import { s3StorePage } from "./lib/s3StorePage";
+
+const SERVER_NO_CACHE_CACHE_CONTROL_HEADER =
+  "public, max-age=0, s-maxage=0, must-revalidate";
 
 const manifest: BuildManifest = Manifest;
 const prerenderManifest: PrerenderManifestType = PrerenderManifest;
@@ -116,10 +120,8 @@ const handleStatic = (staticRoute: StaticRoute, res: ServerResponse) => {
     : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
 
   const relativeFile = isData ? file : file.slice("pages".length);
-  if (staticRoute.file.endsWith("/404.html")) {
-    res.statusCode = 404;
-  } else if (staticRoute.file.endsWith("/500.html")) {
-    res.statusCode = 500;
+  if (staticRoute.statusCode) {
+    res.statusCode = staticRoute.statusCode;
   }
   return getS3File(res, relativeFile, path);
 };
@@ -186,7 +188,9 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
   } else {
     const staticRoute: StaticRoute = route;
     if (await handleStatic(staticRoute, res)) {
-      // TODO: cache-control
+      if (staticRoute.statusCode == 500) {
+        res.setHeader("Cache-Control", SERVER_NO_CACHE_CACHE_CONTROL_HEADER);
+      }
       res.end();
       return responsePromise;
     }
@@ -206,12 +210,21 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
     return responsePromise;
   }
 
-  if (!fallbackRoute.isStatic && fallbackRoute) {
+  if (!fallbackRoute.isStatic) {
     const { renderOpts, html } = fallbackRoute;
-    // TODO store page, cache-control
+    const { pageData } = renderOpts;
+    s3StorePage({
+      basePath: routesManifest.basePath,
+      bucketName: manifest.bucketName,
+      buildId: manifest.buildId,
+      html,
+      pageData,
+      region: manifest.region,
+      uri: fallbackRoute.route.file
+    });
     if (fallbackRoute.route.isData) {
       res.setHeader("Content-Type", "application/json");
-      res.end(renderOpts.pageData);
+      res.end(pageData);
     } else {
       res.setHeader("Content-Type", "text/html");
       res.end(html);
@@ -223,7 +236,7 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
   if (!(await handleStatic(staticRoute, res))) {
     throw new Error("Failed to get error page!");
   }
-  // TODO: cache control
+  res.setHeader("Cache-Control", SERVER_NO_CACHE_CACHE_CONTROL_HEADER);
   res.end();
   return responsePromise;
 };

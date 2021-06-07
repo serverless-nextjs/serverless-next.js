@@ -215,32 +215,36 @@
         "/en/no-fallback/[slug]": {
           "fallback": false
         },
-        "/en/fallback/[slug]": {
-          "fallback": "/en/fallback/[slug].html"
-        },
         "/en/fallback-blocking/[slug]": {
           "fallback": null
+        },
+        "/en/fallback/[slug]": {
+          "fallback": "/en/fallback/[slug].html"
         },
         "/nl/no-fallback/[slug]": {
           "fallback": false
         },
-        "/nl/fallback/[slug]": {
-          "fallback": "/nl/fallback/[slug].html"
-        },
         "/nl/fallback-blocking/[slug]": {
           "fallback": null
+        },
+        "/nl/fallback/[slug]": {
+          "fallback": "/nl/fallback/[slug].html"
         },
         "/fr/no-fallback/[slug]": {
           "fallback": false
         },
-        "/fr/fallback/[slug]": {
-          "fallback": "/fr/fallback/[slug].html"
-        },
         "/fr/fallback-blocking/[slug]": {
           "fallback": null
+        },
+        "/fr/fallback/[slug]": {
+          "fallback": "/fr/fallback/[slug].html"
         }
       },
       "nonDynamic": {
+        "/en/no-fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/no-fallback/[slug]"
+        },
         "/en": {
           "initialRevalidateSeconds": false,
           "srcRoute": null
@@ -252,10 +256,6 @@
         "/fr": {
           "initialRevalidateSeconds": false,
           "srcRoute": null
-        },
-        "/en/no-fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/no-fallback/[slug]"
         },
         "/en/preview": {
           "initialRevalidateSeconds": 5,
@@ -281,5 +281,7 @@
     "/file with spaces.json": "file with spaces.json",
     "/manifest.json": "manifest.json"
   },
-  "trailingSlash": false
+  "trailingSlash": false,
+  "bucketName": "test-bucket",
+  "region": "us-east-1"
 }

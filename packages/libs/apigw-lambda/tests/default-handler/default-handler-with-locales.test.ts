@@ -768,6 +768,21 @@ describe("Lambda@Edge", () => {
           })
         );
       });
+
+      it("serves 500 with correct Cache-Control and Content-Type", async () => {
+        const event = createRequestEvent({
+          uri: trailingSlash ? "/erroredPage/" : "/erroredPage"
+        });
+
+        mockPageRequire("pages/erroredPage.js");
+
+        const response = await handler(event);
+
+        expect(response.headers).toEqual({
+          "Cache-Control": "public, max-age=0, s-maxage=0, must-revalidate",
+          "Content-Type": "text/html"
+        });
+      });
     });
 
     describe("Custom Redirects", () => {

@@ -200,6 +200,20 @@ describe("Lambda@Edge", () => {
           })
         );
       });
+
+      it("serves HTML page with Cache-Control and Content-Type from S3", async () => {
+        const event = createRequestEvent({
+          uri: "/"
+        });
+
+        const response = await handler(event);
+
+        expect(response.headers).toEqual({
+          "Cache-Control":
+            "public, max-age=0, s-maxage=2678400, must-revalidate",
+          "Content-Type": "text/html"
+        });
+      });
     });
 
     describe("Public files routing", () => {
@@ -494,32 +508,20 @@ describe("Lambda@Edge", () => {
         }
       );
 
-      /*
-      it("correctly removes the expires header if set in the response for an ssg page", async () => {
-        mockTriggerStaticRegeneration.mockReturnValueOnce(
-          Promise.resolve({ throttle: false })
-        );
-
+      it("serves JSON with Cache-Control and Content-Type from S3", async () => {
         const event = createRequestEvent({
-          uri: "/preview",
+          uri: "/_next/data/build-id/index.json"
         });
 
         const response = await handler(event);
-        expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
-        expect(mockTriggerStaticRegeneration.mock.calls[0][0]).toEqual(
-          expect.objectContaining({
-            basePath: "",
-            pagePath: "pages/preview.js",
-            request: expect.objectContaining({
-              uri: `/preview${trailingSlash ? "/" : ""}`
-            })
-          })
-        );
 
-        expect(response.headers).not.toHaveProperty("expires");
-        expect(response.headers).not.toHaveProperty("Expires");
+        expect(response.headers).toEqual({
+          "Cache-Control":
+            "public, max-age=0, s-maxage=2678400, must-revalidate",
+          "Content-Type": "application/json"
+        });
       });
-
+      /*
       it("returns a correct cache control header when an expiry header in the future is sent", async () => {
         const event = createRequestEvent({
           uri: "/customers",
@@ -636,6 +638,20 @@ describe("Lambda@Edge", () => {
             Key: "/static-pages/build-id/404.html"
           })
         );
+      });
+
+      it("serves 404 with correct Cache-Control and Content-Type", async () => {
+        const event = createRequestEvent({
+          uri: trailingSlash ? "/page/does/not/exist/" : "/page/does/not/exist"
+        });
+
+        const response = await handler(event);
+
+        expect(response.headers).toEqual({
+          "Cache-Control":
+            "public, max-age=0, s-maxage=2678400, must-revalidate",
+          "Content-Type": "text/html"
+        });
       });
 
       it("redirects unmatched request path", async () => {

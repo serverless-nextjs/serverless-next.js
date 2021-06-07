@@ -266,6 +266,8 @@ module.exports = {
 
 const build = async (auth: boolean) => {
   const builder = new Builder(fixtureDir, outDir, {
+    bucketName: "test-bucket",
+    region: "us-east-1",
     cwd: fixtureDir,
     cmd: nextBinary,
     args: ["build"],

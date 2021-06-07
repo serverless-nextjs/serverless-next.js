@@ -1,39 +1,39 @@
 {
   "version": 3,
   "routes": {
-    "/fallback/example-static-page": {
+    "/no-fallback/example-static-page": {
       "initialRevalidateSeconds": false,
-      "srcRoute": "/fallback/[slug]",
-      "dataRoute": "/_next/data/build-id/fallback/example-static-page.json"
+      "srcRoute": "/no-fallback/[slug]",
+      "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
     },
     "/preview": {
       "initialRevalidateSeconds": 5,
       "srcRoute": null,
       "dataRoute": "/_next/data/build-id/preview.json"
     },
-    "/no-fallback/example-static-page": {
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/no-fallback/[slug]",
-      "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
-    },
     "/": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
       "dataRoute": "/_next/data/build-id/index.json"
+    },
+    "/fallback/example-static-page": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/fallback/[slug]",
+      "dataRoute": "/_next/data/build-id/fallback/example-static-page.json"
     }
   },
   "dynamicRoutes": {
-    "/fallback/[slug]": {
-      "routeRegex": "^/fallback/([^/]+?)(?:/)?$",
-      "dataRoute": "/_next/data/build-id/fallback/[slug].json",
-      "fallback": "/fallback/[slug].html",
-      "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
-    },
     "/no-fallback/[slug]": {
       "routeRegex": "^/no\\-fallback/([^/]+?)(?:/)?$",
       "dataRoute": "/_next/data/build-id/no-fallback/[slug].json",
       "fallback": false,
       "dataRouteRegex": "^/_next/data/build\\-id/no\\-fallback/([^/]+?)\\.json$"
+    },
+    "/fallback/[slug]": {
+      "routeRegex": "^/fallback/([^/]+?)(?:/)?$",
+      "dataRoute": "/_next/data/build-id/fallback/[slug].json",
+      "fallback": "/fallback/[slug].html",
+      "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
     },
     "/fallback-blocking/[slug]": {
       "routeRegex": "^/fallback\\-blocking/([^/]+?)(?:/)?$",

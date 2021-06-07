@@ -9,15 +9,16 @@ export const mockSend = jest.fn(async (input) => {
   }
 
   if (input.Command === "GetObjectCommand") {
-    // Simulate fallback page cache control headers
-    const isFallback = /\[.*]/.test(input.Key as string);
-    const cacheControl = isFallback
-      ? "public, max-age=0, s-maxage=0, must-revalidate"
-      : "public, max-age=0, s-maxage=2678400, must-revalidate";
+    // Simulate headers
+    const contentType = input.Key.endsWith(".html")
+      ? "text/html"
+      : "application/json";
+    const cacheControl = "public, max-age=0, s-maxage=2678400, must-revalidate";
 
     return {
       Body: Readable.from(["S3Body"]),
-      CacheControl: cacheControl
+      CacheControl: cacheControl,
+      ContentType: contentType
     };
   } else {
     return {};

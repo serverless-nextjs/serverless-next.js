@@ -15,6 +15,8 @@ export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
+  bucketName: string;
+  region: string;
   args?: string[];
   cwd?: string;
   env?: NodeJS.ProcessEnv;
@@ -26,8 +28,6 @@ type BuildOptions = {
   handler?: string;
   authentication?: { username: string; password: string } | undefined;
   baseDir?: string;
-  bucketName?: string;
-  region?: string;
 };
 
 const defaultBuildOptions = {
@@ -49,12 +49,12 @@ class Builder {
   dotNextDir: string;
   serverlessDir: string;
   outputDir: string;
-  buildOptions: BuildOptions = defaultBuildOptions;
+  buildOptions: BuildOptions;
 
   constructor(
     nextConfigDir: string,
     outputDir: string,
-    buildOptions?: BuildOptions,
+    buildOptions: BuildOptions,
     nextStaticDir?: string
   ) {
     this.nextConfigDir = path.resolve(nextConfigDir);
@@ -62,9 +62,7 @@ class Builder {
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
     this.serverlessDir = path.join(this.dotNextDir, "serverless");
     this.outputDir = outputDir;
-    if (buildOptions) {
-      this.buildOptions = buildOptions;
-    }
+    this.buildOptions = buildOptions ?? defaultBuildOptions;
   }
 
   async readPublicFiles(): Promise<string[]> {

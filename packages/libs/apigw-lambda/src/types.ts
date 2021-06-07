@@ -7,11 +7,10 @@ export { ImageConfig, ImagesManifest, RoutesManifest } from "@sls-next/core";
 
 export type BuildManifest = ApiManifest &
   PageManifest & {
-    logLambdaExecutionTimes?: boolean;
+    bucketName: string;
     enableHTTPCompression?: boolean;
-    // TODO: make these mandatory
-    bucketName?: string;
-    region?: string;
+    logLambdaExecutionTimes?: boolean;
+    region: string;
   };
 
 export type RequestEvent = APIGatewayProxyEventV2;
