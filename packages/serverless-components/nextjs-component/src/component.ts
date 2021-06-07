@@ -448,7 +448,8 @@ class NextjsComponent extends Component {
         deduplicationScope: "messageGroup",
         fifoThroughputLimit: "perMessageGroupId",
         visibilityTimeout: "30",
-        fifoQueue: true
+        fifoQueue: true,
+        region: bucketRegion // make sure SQS region and regeneration lambda region are the same
       });
     }
 
@@ -493,9 +494,9 @@ class NextjsComponent extends Component {
 
     if (hasISRPages) {
       const regenerationLambdaInput: LambdaInput = {
-        region: bucketRegion,
+        region: bucketRegion, // make sure SQS region and regeneration lambda region are the same
         description: inputs.description
-          ? `${inputs.description} (API)`
+          ? `${inputs.description} (Regeneration)`
           : "Next.js Regeneration Lambda",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
