@@ -144,13 +144,13 @@
     traverse "^0.6.6"
 
 "@serverless/utils@^5.0.0":
-  version "5.1.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.1.0.tgz#d222223dd189208e39db745280077c29bad7a100"
-  integrity sha512-gROWcr+wZm72V0HhwChUSIUWUrRho4HrlTDxWO/vA8rLy7sUp0Q3EyO8RhqrFYNrHTMKcBUx0ccIpWCjPTb6mg==
+  version "5.2.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.2.0.tgz#3d635ff1aed7472547b2302ba67f7caf63fc2461"
+  integrity sha512-QXBZO0W2da0AtROpg8H1c4YWMSl56+nef0Kukd+40Q4jEaY3a0dtpVzvGps3aLFDXer3kWZ3LtlhS5HGXLficw==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.1"
-    ci-info "^3.1.1"
+    ci-info "^3.2.0"
     content-disposition "^0.5.3"
     decompress "^4.2.1"
     ext-name "^5.0.0"
@@ -542,10 +542,10 @@ chokidar@^3.4.1:
   optionalDependencies:
     fsevents "~2.3.1"
 
-ci-info@^3.1.1:
-  version "3.1.1"
-  resolved "https://registry.npmjs.org/ci-info/-/ci-info-3.1.1.tgz#9a32fcefdf7bcdb6f0a7e1c0f8098ec57897b80a"
-  integrity sha512-kdRWLBIJwdsYJWYJFtAFFYxybguqeF91qpZaggjG5Nf8QKdizFG2hjqvaTXbxFIcYbSaD74KpAXv6BSm17DHEQ==
+ci-info@^3.2.0:
+  version "3.2.0"
+  resolved "https://registry.npmjs.org/ci-info/-/ci-info-3.2.0.tgz#2876cb948a498797b5236f0095bc057d0dca38b6"
+  integrity sha512-dVqRX7fLUm8J6FgHJ418XuIgDLZDkYcDFTeL6TA2gt5WlIZUQrrH6EZrNClwT/H0FateUsZkGIOPRrLbP+PR9A==
 
 cli-cursor@^3.1.0:
   version "3.1.0"
