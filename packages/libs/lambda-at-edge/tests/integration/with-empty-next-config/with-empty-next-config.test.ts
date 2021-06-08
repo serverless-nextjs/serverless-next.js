@@ -3,6 +3,7 @@ import os from "os";
 import path from "path";
 import Builder from "../../../src/build";
 import { readFile, remove, pathExists } from "fs-extra";
+import { v4 as uuidv4 } from "uuid";
 
 jest.unmock("execa");
 
@@ -13,7 +14,7 @@ describe("With Empty Next Config Build", () => {
 
   beforeAll(async () => {
     mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
-    const builder = new Builder(fixtureDir, os.tmpdir(), {
+    const builder = new Builder(fixtureDir, path.join(os.tmpdir(), uuidv4()), {
       cwd: fixtureDir,
       cmd: nextBinary,
       args: ["build"]

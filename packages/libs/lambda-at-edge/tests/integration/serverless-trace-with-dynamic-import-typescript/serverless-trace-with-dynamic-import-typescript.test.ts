@@ -4,6 +4,7 @@ import os from "os";
 import Builder from "../../../src/build";
 import { getNextBinary } from "../../test-utils";
 import klaw from "klaw";
+import { v4 as uuidv4 } from "uuid";
 
 jest.unmock("execa");
 
@@ -62,7 +63,7 @@ describe("Serverless Trace With Dynamic Import - TypeScript", () => {
     expect(chunkExistsInOutputBuild).toBe(true);
   });
 
-  it("does not copy TypeScript sources", async () => {
+  it("does not copy TypeScript sources", () => {
     const defaultLambdaFiles: string[] = [];
     klaw(path.join(outputDir, "default-lambda")).on("data", (item) =>
       defaultLambdaFiles.push(item.path)
