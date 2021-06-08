@@ -42,7 +42,7 @@
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
     "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
     "aws-sdk": "^2.920.0",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^10.0.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
