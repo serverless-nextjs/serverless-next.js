@@ -15,6 +15,9 @@ updates:
       - dependency-name: "@sls-next/*"
         # FIXME: don't update plugin-node-resolve yet, versions >10 seems to be bundling browser version of uuid etc: https://github.com/rollup/plugins/blob/master/packages/node-resolve/CHANGELOG.md#v1100
       - dependency-name: "@rollup/plugin-node-resolve"
+        # FIXME: CDK dependencies must be updated together but Dependabot cannot group updates
+        # We'll manually update for now and/or use Renovate in the future
+      - dependency-name: "@aws-cdk/*"
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"
