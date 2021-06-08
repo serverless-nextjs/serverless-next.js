@@ -3420,10 +3420,10 @@
     ramda "^0.26.1"
     semver "^6.1.1"
 
-"@serverless/dashboard-plugin@^5.2.0":
-  version "5.2.0"
-  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.2.0.tgz#9d1385f01e1f7aea712abe45edc1dd3c1f7713c3"
-  integrity sha512-90LEgeWJioV1fb3Z7eDvPFeNFRiieszTXWjEbp1z1Afh8U1QyDSureTg/oHNiTkUlrtFYWRZ5ta4Duf7YFe7QA==
+"@serverless/dashboard-plugin@^5.3.0":
+  version "5.3.0"
+  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.3.0.tgz#2b789018b09a1a1f65a48f8bc739305ff3edf8da"
+  integrity sha512-JOtFIVLHyeTAtdoK2gFEAAMNsGemszQr6rwhTOg0bV6pgeLmfufL4nz9rAtSj5m2oZnVnH46+P1aVZlwUXNThQ==
   dependencies:
     "@serverless/event-mocks" "^1.1.1"
     "@serverless/platform-client" "^4.2.3"
@@ -3614,7 +3614,7 @@
     regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "1.9.0-alpha.19"
+  version "1.9.0-alpha.20"
   dependencies:
     "@aws-sdk/client-s3" "3.18.0"
     "@aws-sdk/client-sqs" "3.18.0"
@@ -4637,10 +4637,10 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.834.0, aws-sdk@^2.919.0:
-  version "2.923.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.923.0.tgz#97a95686e9dba10f628092bfd90f84397c8ad55f"
-  integrity sha512-93YK9Mx32qvH5eLrDRVkvwpEc7GJ6mces1qQugmNZCuQT68baILyDs0IMRtHS6NYxxiM6XNRFc7ubgMlnafYjg==
+aws-sdk@^2.834.0, aws-sdk@^2.923.0:
+  version "2.924.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.924.0.tgz#daefcd11729638d9c9279633a0cc5ba1c98fee64"
+  integrity sha512-EwJmZDNhEY1/hrihile8+EdrYrT5VKcLuL5F+OA9L+AYWxNou0i4fP36N5KFtMikkAGB31qhAuRDPcr132RnUw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -6392,15 +6392,15 @@ dot-qs@0.2.0:
   resolved "https://registry.npmjs.org/dot-qs/-/dot-qs-0.2.0.tgz#d36517fe24b7cda61fce7a5026a0024afaf5a439"
   integrity sha1-02UX/iS3zaYfznpQJqACSvr1pDk=
 
+dotenv@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.npmjs.org/dotenv/-/dotenv-10.0.0.tgz#3d4227b8fb95f81096cdd2b66653fb2c7085ba81"
+  integrity sha512-rlBi9d8jpv9Sf1klPjNfFAuWDjKLwTIJJ/VxtoTwIR6hnZxcEOQCZg2oIL3MWBYw5GpUDKOEnND7LXTbIpQ03Q==
+
 dotenv@^8.2.0:
   version "8.6.0"
   resolved "https://registry.npmjs.org/dotenv/-/dotenv-8.6.0.tgz#061af664d19f7f4d8fc6e4ff9b584ce237adcb8b"
   integrity sha512-IrPdXQsk2BbzvCBGBOTmmSH5SodmqZNt4ERAZDmW4CT+tL8VtvinqywuANaFu4bOMWki16nqf0e4oC0QIaDr/g==
-
-dotenv@^9.0.2:
-  version "9.0.2"
-  resolved "https://registry.npmjs.org/dotenv/-/dotenv-9.0.2.tgz#dacc20160935a37dea6364aa1bef819fb9b6ab05"
-  integrity sha512-I9OvvrHp4pIARv4+x9iuewrWycX6CcZtoAu1XrzPxc5UygMJXJZYmBsynku8IkrJwgypE5DGNjDPmPRhDCptUg==
 
 dtrace-provider@~0.8:
   version "0.8.8"
@@ -12480,18 +12480,18 @@ serverless-offline@^6.4.0:
     ws "^7.4.2"
 
 serverless@^2.44.0:
-  version "2.44.0"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.44.0.tgz#9481fd434531b55f563ee7815c2f6cde772cb67d"
-  integrity sha512-hNyjF1i41U0KouPG7JRWXw4oT2+ARjEBIOXPcmkoyg5yr2FEDce0gZGpD9BQqFHyihDZMGti/+KrZrWPiv27MQ==
+  version "2.45.1"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.45.1.tgz#a353848fc845737b52322ddb82c616780dc71372"
+  integrity sha512-OjKJ3r/DL0uXZfG+33uhSxiQgDvOH38k6eTGs6DISq2QIN03tV4C8BIhAc5ggmySSNySNo2vrH/5CoZbfCQbKg==
   dependencies:
     "@serverless/cli" "^1.5.2"
     "@serverless/components" "^3.11.0"
-    "@serverless/dashboard-plugin" "^5.2.0"
+    "@serverless/dashboard-plugin" "^5.3.0"
     "@serverless/utils" "^5.2.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.919.0"
+    aws-sdk "^2.923.0"
     bluebird "^3.7.2"
     boxen "^5.0.1"
     cachedir "^2.3.0"
@@ -12501,7 +12501,7 @@ serverless@^2.44.0:
     d "^1.0.1"
     dayjs "^1.10.5"
     decompress "^4.2.1"
-    dotenv "^9.0.2"
+    dotenv "^10.0.0"
     essentials "^1.1.1"
     fastest-levenshtein "^1.0.12"
     filesize "^6.3.0"
