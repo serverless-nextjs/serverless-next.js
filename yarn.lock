@@ -12444,10 +12444,10 @@ serialize-javascript@^5.0.1:
   dependencies:
     randombytes "^2.1.0"
 
-serverless-offline@^6.4.0:
-  version "6.9.0"
-  resolved "https://registry.npmjs.org/serverless-offline/-/serverless-offline-6.9.0.tgz#a87fee3561f34808be9ac8ab06db9278cea8fa5f"
-  integrity sha512-toKcyXUv0rFM7nGk/0QcCxP1Zlv/37IAf3vQiUlOh5XHPl6pFWfHUVF4HelMkosAeWJqJt1SngNmK38uiAsLtg==
+serverless-offline@^7.0.0:
+  version "7.0.0"
+  resolved "https://registry.npmjs.org/serverless-offline/-/serverless-offline-7.0.0.tgz#dc72a401d196bb7bded248338c19321adf985ad8"
+  integrity sha512-PrbRqS9796Bbb0A0JMHdBudL2+JsMJGHI8bwu3xtD4adAsYUCAONqTfNIBtbwk3KNuA1i/pdW9IIn63E0UNi0Q==
   dependencies:
     "@hapi/boom" "^7.4.11"
     "@hapi/h2o2" "^8.3.2"
@@ -14440,12 +14440,7 @@ write-pkg@^4.0.0:
     type-fest "^0.4.1"
     write-json-file "^3.2.0"
 
-ws@^7.3.1, ws@^7.4.2, ws@~7.4.2:
-  version "7.4.5"
-  resolved "https://registry.npmjs.org/ws/-/ws-7.4.5.tgz#a484dd851e9beb6fdb420027e3885e8ce48986c1"
-  integrity sha512-xzyu3hFvomRfXKH8vOFMU3OguG6oOvhXMo3xsGy3xWExqaM2dxBbVxuD99O7m3ZUFMvvscsZDqxfgMaRr/Nr1g==
-
-ws@^7.4.5, ws@^7.4.6:
+ws@^7.3.1, ws@^7.4.2, ws@^7.4.5, ws@^7.4.6, ws@~7.4.2:
   version "7.4.6"
   resolved "https://registry.npmjs.org/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
   integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
