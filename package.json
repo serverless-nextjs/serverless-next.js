@@ -62,7 +62,7 @@
     "jest": "^27.0.4",
     "jest-when": "^3.3.1",
     "lerna": "^4.0.0",
-    "lint-staged": "^10.2.11",
+    "lint-staged": "^11.0.0",
     "next": "^10.2.3",
     "prettier": "^2.0.5",
     "react": "^17.0.2",
