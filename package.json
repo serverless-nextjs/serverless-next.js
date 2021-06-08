@@ -58,7 +58,7 @@
     "eslint-plugin-prettier": "^3.1.4",
     "eslint-plugin-promise": "5.1.0",
     "fs-extra": "^10.0.0",
-    "husky": "^4.2.5",
+    "husky": "^6.0.0",
     "jest": "^27.0.4",
     "jest-when": "^3.3.1",
     "lerna": "^4.0.0",
