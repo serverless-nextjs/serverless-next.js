@@ -474,6 +474,43 @@ describe("Lambda@Edge", () => {
             expect(response.statusCode).toBe(200);
           }
         );
+
+        it.each`
+          path                                     | expectedPage
+          ${"/fallback-blocking/not-yet-built"}    | ${"pages/fallback-blocking/[slug].js"}
+          ${"/en/fallback-blocking/not-yet-built"} | ${"pages/fallback-blocking/[slug].js"}
+          ${"/nl/fallback-blocking/not-yet-built"} | ${"pages/fallback-blocking/[slug].js"}
+        `("Uploads page for $path", async ({ path, expectedPage }) => {
+          const withTrailingSlash = path + (trailingSlash ? "/" : "");
+
+          const event = createRequestEvent({
+            uri: withTrailingSlash
+          });
+
+          mockPageRequire(expectedPage);
+
+          const response = await handler(event);
+
+          expect(response.statusCode).toBe(200);
+
+          const page = path.replace(/^\/f/, "/en/f");
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `_next/data/build-id/pages${page}.json`,
+              ContentType: "application/json"
+            })
+          );
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            3,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `static-pages/build-id/pages${page}.html`,
+              ContentType: "text/html"
+            })
+          );
+        });
       });
     });
 
@@ -530,6 +567,53 @@ describe("Lambda@Edge", () => {
         }
       );
 
+      describe("dynamic fallback", () => {
+        beforeEach(() => {
+          (s3Client as any).fail(1);
+        });
+
+        afterAll(() => {
+          (s3Client as any).fail(0);
+        });
+
+        it.each`
+          path                                                     | expectedPage
+          ${"/_next/data/build-id/en/fallback/not-yet-built.json"} | ${"pages/fallback/[slug].js"}
+          ${"/_next/data/build-id/en/fallback-blocking/foo.json"}  | ${"pages/fallback-blocking/[slug].js"}
+          ${"/_next/data/build-id/nl/fallback/not-yet-built.json"} | ${"pages/fallback/[slug].js"}
+          ${"/_next/data/build-id/nl/fallback-blocking/foo.json"}  | ${"pages/fallback-blocking/[slug].js"}
+        `("Uploads page for $path", async ({ path, expectedPage }) => {
+          const event = createRequestEvent({
+            uri: path
+          });
+
+          mockPageRequire(expectedPage);
+
+          const response = await handler(event);
+
+          expect(response.statusCode).toBe(200);
+
+          const page = path
+            .replace("/_next/data/build-id", "")
+            .replace(".json", "");
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `_next/data/build-id${page}.json`,
+              ContentType: "application/json"
+            })
+          );
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            3,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `static-pages/build-id${page}.html`,
+              ContentType: "text/html"
+            })
+          );
+        });
+      });
       /*
       it("correctly removes the expires header if set in the response for an ssg page", async () => {
         mockTriggerStaticRegeneration.mockReturnValueOnce(

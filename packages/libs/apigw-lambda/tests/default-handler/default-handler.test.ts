@@ -452,6 +452,39 @@ describe("Lambda@Edge", () => {
             expect(response.statusCode).toBe(200);
           }
         );
+
+        it.each`
+          path                                  | expectedPage
+          ${"/fallback-blocking/not-yet-built"} | ${"pages/fallback-blocking/[slug].js"}
+        `("Uploads page for $path", async ({ path, expectedPage }) => {
+          const withTrailingSlash = path + (trailingSlash ? "/" : "");
+
+          const event = createRequestEvent({
+            uri: withTrailingSlash
+          });
+
+          mockPageRequire(expectedPage);
+
+          const response = await handler(event);
+
+          expect(response.statusCode).toBe(200);
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `_next/data/build-id/pages${path}.json`,
+              ContentType: "application/json"
+            })
+          );
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            3,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `static-pages/build-id/pages${path}.html`,
+              ContentType: "text/html"
+            })
+          );
+        });
       });
     });
 
@@ -521,6 +554,53 @@ describe("Lambda@Edge", () => {
           "Content-Type": "application/json"
         });
       });
+
+      describe("dynamic fallback", () => {
+        beforeEach(() => {
+          (s3Client as any).fail(1);
+        });
+
+        afterAll(() => {
+          (s3Client as any).fail(0);
+        });
+
+        it.each`
+          path                                                  | expectedPage
+          ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"pages/fallback/[slug].js"}
+          ${"/_next/data/build-id/fallback-blocking/foo.json"}  | ${"pages/fallback-blocking/[slug].js"}
+        `("Uploads page for $path", async ({ path, expectedPage }) => {
+          const event = createRequestEvent({
+            uri: path
+          });
+
+          mockPageRequire(expectedPage);
+
+          const response = await handler(event);
+
+          expect(response.statusCode).toBe(200);
+
+          const page = path
+            .replace("/_next/data/build-id", "")
+            .replace(".json", "");
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            2,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `_next/data/build-id${page}.json`,
+              ContentType: "application/json"
+            })
+          );
+          expect(s3Client.send).toHaveBeenNthCalledWith(
+            3,
+            expect.objectContaining({
+              Command: "PutObjectCommand",
+              Key: `static-pages/build-id${page}.html`,
+              ContentType: "text/html"
+            })
+          );
+        });
+      });
+
       /*
       it("returns a correct cache control header when an expiry header in the future is sent", async () => {
         const event = createRequestEvent({
