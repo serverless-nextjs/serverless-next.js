@@ -3,7 +3,6 @@ import os from "os";
 import path from "path";
 import Builder from "../../../src/build";
 import { readFile, remove, pathExists } from "fs-extra";
-import { v4 as uuidv4 } from "uuid";
 
 jest.unmock("execa");
 
@@ -14,11 +13,15 @@ describe("With Next Build Failure", () => {
 
   beforeAll(async () => {
     mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
-    const builder = new Builder(fixtureDir, path.join(os.tmpdir(), uuidv4()), {
-      cwd: fixtureDir,
-      cmd: nextBinary,
-      args: ["build"]
-    });
+    const builder = new Builder(
+      fixtureDir,
+      path.join(os.tmpdir(), new Date().getUTCMilliseconds().toString()),
+      {
+        cwd: fixtureDir,
+        cmd: nextBinary,
+        args: ["build"]
+      }
+    );
 
     try {
       await builder.build();

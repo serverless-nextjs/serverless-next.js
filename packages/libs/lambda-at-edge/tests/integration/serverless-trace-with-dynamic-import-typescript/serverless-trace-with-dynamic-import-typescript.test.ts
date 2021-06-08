@@ -4,7 +4,6 @@ import os from "os";
 import Builder from "../../../src/build";
 import { getNextBinary } from "../../test-utils";
 import klaw from "klaw";
-import { v4 as uuidv4 } from "uuid";
 
 jest.unmock("execa");
 

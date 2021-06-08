@@ -7,7 +7,6 @@ import {
   OriginRequestDefaultHandlerManifest,
   RoutesManifest
 } from "../../../src/types";
-import { v4 as uuidv4 } from "uuid";
 
 jest.unmock("execa");
 
@@ -39,7 +38,11 @@ describe("With Trailing Slash Config Build", () => {
 
       beforeAll(async () => {
         mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
-        outputDir = path.join(os.tmpdir(), uuidv4(), "slsnext-test-build");
+        outputDir = path.join(
+          os.tmpdir(),
+          new Date().getUTCMilliseconds().toString(),
+          "slsnext-test-build"
+        );
         const builder = new Builder(fixtureDir, outputDir, {
           cwd: fixtureDir,
           cmd: nextBinary,

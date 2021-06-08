@@ -3,7 +3,6 @@ import path from "path";
 import os from "os";
 import Builder from "../../../src/build";
 import { getNextBinary } from "../../test-utils";
-import { v4 as uuidv4 } from "uuid";
 
 jest.unmock("execa");
 
@@ -13,7 +12,11 @@ describe("Serverless Trace With Dynamic Import", () => {
   let outputDir: string;
 
   beforeAll(async () => {
-    outputDir = path.join(os.tmpdir(), uuidv4(), "slsnext-test-build");
+    outputDir = path.join(
+      os.tmpdir(),
+      new Date().getUTCMilliseconds().toString(),
+      "slsnext-test-build"
+    );
     const builder = new Builder(fixtureDir, outputDir, {
       cwd: fixtureDir,
       cmd: nextBinary,
