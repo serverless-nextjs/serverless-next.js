@@ -24,7 +24,7 @@
     "directory": "packages/serverless-plugin"
   },
   "dependencies": {
-    "@mapbox/s3urls": "^1.5.3",
+    "@mapbox/s3urls": "^2.0.0",
     "@sls-next/next-aws-lambda": "link:../../compat-layers/apigw-lambda-compat",
     "chalk": "^4.1.1",
     "debug": "^4.1.1",
