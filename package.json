@@ -38,6 +38,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
+    "@babel/core": "7.14.3",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/preset-env": "^7.14.4",
     "@babel/preset-typescript": "^7.10.4",
@@ -49,7 +50,7 @@
     "@types/react-dom": "^17.0.6",
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
-    "@typescript-eslint/parser": "^3.5.0",
+    "@typescript-eslint/parser": "^4.26.1",
     "adm-zip": "^0.5.5",
     "coveralls": "^3.1.0",
     "eslint": "^7.3.1",
