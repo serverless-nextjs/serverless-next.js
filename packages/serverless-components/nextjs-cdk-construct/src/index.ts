@@ -149,10 +149,11 @@ export class NextJSLambdaEdge extends cdk.Construct {
       ),
       role: this.edgeLambdaRole,
       runtime:
-        toLambdaOption("defaultLambda", props.runtime) ||
+        toLambdaOption("defaultLambda", props.runtime) ??
         lambda.Runtime.NODEJS_12_X,
-      memorySize: toLambdaOption("defaultLambda", props.memory),
-      timeout: toLambdaOption("defaultLambda", props.timeout)
+      memorySize: toLambdaOption("defaultLambda", props.memory) ?? 512,
+      timeout:
+        toLambdaOption("defaultLambda", props.timeout) ?? Duration.seconds(10)
     });
 
     this.bucket.grantReadWrite(this.defaultNextLambda);
@@ -186,10 +187,11 @@ export class NextJSLambdaEdge extends cdk.Construct {
         ),
         role: this.edgeLambdaRole,
         runtime:
-          toLambdaOption("apiLambda", props.runtime) ||
+          toLambdaOption("apiLambda", props.runtime) ??
           lambda.Runtime.NODEJS_12_X,
-        memorySize: toLambdaOption("apiLambda", props.memory),
-        timeout: toLambdaOption("apiLambda", props.timeout)
+        memorySize: toLambdaOption("apiLambda", props.memory) ?? 512,
+        timeout:
+          toLambdaOption("apiLambda", props.timeout) ?? Duration.seconds(10)
       });
       this.nextApiLambda.currentVersion.addAlias("live");
     }
@@ -210,10 +212,11 @@ export class NextJSLambdaEdge extends cdk.Construct {
         ),
         role: this.edgeLambdaRole,
         runtime:
-          toLambdaOption("imageLambda", props.runtime) ||
+          toLambdaOption("imageLambda", props.runtime) ??
           lambda.Runtime.NODEJS_12_X,
-        memorySize: toLambdaOption("imageLambda", props.memory),
-        timeout: toLambdaOption("imageLambda", props.timeout)
+        memorySize: toLambdaOption("imageLambda", props.memory) ?? 512,
+        timeout:
+          toLambdaOption("imageLambda", props.timeout) ?? Duration.seconds(10)
       });
       this.nextImageLambda.currentVersion.addAlias("live");
     }
