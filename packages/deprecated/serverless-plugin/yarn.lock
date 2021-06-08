@@ -7,14 +7,21 @@
   resolved "https://registry.npmjs.org/@mapbox/eslint-config-mapbox/-/eslint-config-mapbox-1.2.1.tgz#f0dc80d29a336a5477b146d9d32a75afc310a5e4"
   integrity sha512-hhE2sN7L/RO+MhdHIhmpL0KLhA/sWxV1WWH998fmGimI40XDbBgG1Z4d8nTlfuf9jaRDJ88/uklSBvFRhvMeDA==
 
-"@mapbox/s3urls@^1.5.3":
-  version "1.5.3"
-  resolved "https://registry.npmjs.org/@mapbox/s3urls/-/s3urls-1.5.3.tgz#8578f51941af2ba836623f4941a761515ce92ff1"
-  integrity sha1-hXj1GUGvK6g2Yj9JQadhUVzpL/E=
+"@mapbox/s3signed@^0.1.1":
+  version "0.1.1"
+  resolved "https://registry.npmjs.org/@mapbox/s3signed/-/s3signed-0.1.1.tgz#ebeb19dbd4b27f4ca2631cd9a6e682bb985354d3"
+  integrity sha512-6sbo59+Op1kVt/R3kzCTMrOxlvS0EgZJxyYEoQVtHU12QG0E3V7nyl8cSnc/FDB+aWJbQZshlGFFbad8BbnfyQ==
+  dependencies:
+    aws-sdk "^2.0.4"
+
+"@mapbox/s3urls@^2.0.0":
+  version "2.0.0"
+  resolved "https://registry.npmjs.org/@mapbox/s3urls/-/s3urls-2.0.0.tgz#3fb599d15688e6e0921ab4da77062e309ab5e5e1"
+  integrity sha512-02TiEiifX/mbz2w466xkHEOztzs4rv7yzrG0OZzR392cZOrHVy+QIeMQi/XIOBwSTffkiPvjssWtFUXXE5tUqA==
   dependencies:
     "@mapbox/eslint-config-mapbox" "^1.0.0"
+    "@mapbox/s3signed" "^0.1.1"
     minimist "^1.1.0"
-    s3signed "^0.1.0"
 
 "@sls-next/next-aws-lambda@link:../../compat-layers/apigw-lambda-compat":
   version "2.6.4-alpha.0"
@@ -183,13 +190,6 @@ querystring@0.2.0:
   version "0.2.0"
   resolved "https://registry.npmjs.org/querystring/-/querystring-0.2.0.tgz#b209849203bb25df820da756e747005878521620"
   integrity sha1-sgmEkgO7Jd+CDadW50cAWHhSFiA=
-
-s3signed@^0.1.0:
-  version "0.1.0"
-  resolved "https://registry.npmjs.org/s3signed/-/s3signed-0.1.0.tgz#ae03b86259413215ed43e99285c8c347579735fb"
-  integrity sha1-rgO4YllBMhXtQ+mShcjDR1eXNfs=
-  dependencies:
-    aws-sdk "^2.0.4"
 
 sax@1.2.1:
   version "1.2.1"
