@@ -61,7 +61,7 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.18.0",
-    "@aws-sdk/client-sqs": "3.14.0",
+    "@aws-sdk/client-sqs": "3.18.0",
     "@hapi/accept": "5.0.1",
     "@sls-next/core": "link:../core",
     "@vercel/nft": "^0.12.2",
