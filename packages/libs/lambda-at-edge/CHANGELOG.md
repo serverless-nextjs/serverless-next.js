@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.18...@sls-next/lambda-at-edge@1.9.0-alpha.19) (2021-06-08)
+
+### Bug Fixes
+
+- **lambda-at-edge:** move uuid to be a dependency of lambda-at-edge to fix bundling issues ([b9d1395](https://github.com/serverless-nextjs/serverless-next.js/commit/b9d13953b63bc67655890ffcf9f0ddcb8865508f))
+- **lambda-at-edge:** remove uuid and use datetime milliseconds to fix bundling issue ([8e003ae](https://github.com/serverless-nextjs/serverless-next.js/commit/8e003ae93e476ea95e05c13f340678348848af06))
+
 # [1.9.0-alpha.18](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.17...@sls-next/lambda-at-edge@1.9.0-alpha.18) (2021-06-07)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
