@@ -29,7 +29,7 @@
   "dependencies": {
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
     "fast-glob": "^3.2.5",
-    "fs-extra": "^9.0.1"
+    "fs-extra": "^10.0.0"
   },
   "peerDependencies": {
     "@aws-cdk/aws-certificatemanager": "^1.75.0",
