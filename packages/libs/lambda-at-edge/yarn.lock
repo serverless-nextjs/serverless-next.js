@@ -1594,13 +1594,8 @@
     picomatch "^2.2.2"
 
 "@sls-next/core@link:../core":
-  version "1.0.0-alpha.21"
-  dependencies:
-    "@hapi/accept" "^5.0.1"
-    cookie "^0.4.1"
-    jsonwebtoken "^8.5.1"
-    path-to-regexp "^6.1.0"
-    regex-parser "^2.2.10"
+  version "0.0.0"
+  uid ""
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.7"
@@ -1727,6 +1722,11 @@
   integrity sha512-xXanJalZA3EVSZ49667lBctyao75JiH5tD5/hKYu9u5C3d9rxEqOHvMOtx/oenJUqKKgIwIZEsL0hjmKo2rjJg==
   dependencies:
     "@types/node" "*"
+
+"@types/uuid@^8.3.0":
+  version "8.3.0"
+  resolved "https://registry.npmjs.org/@types/uuid/-/uuid-8.3.0.tgz#215c231dff736d5ba92410e6d602050cce7e273f"
+  integrity sha512-eQ9qFW/fhfGJF8WKHGEHZEyVWfZxrT+6CLIJGBcZPfxUh/+BnEj+UCGYMlr9qZuX/2AltsvwrGqp0LhEW8D0zQ==
 
 "@vercel/nft@^0.12.2":
   version "0.12.2"

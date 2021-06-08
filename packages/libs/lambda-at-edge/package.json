@@ -50,6 +50,7 @@
     "@types/path-to-regexp": "^1.7.0",
     "@types/send": "^0.14.5",
     "@types/sharp": "^0.28.1",
+    "@types/uuid": "^8.3.0",
     "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.46.0",
     "rollup-plugin-delete": "^2.0.0",
@@ -75,6 +76,7 @@
     "klaw": "^3.0.0",
     "node-fetch": "^2.6.1",
     "path-to-regexp": "^6.1.0",
-    "send": "^0.17.1"
+    "send": "^0.17.1",
+    "uuid": "^8.3.2"
   }
 }
