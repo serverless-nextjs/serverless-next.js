@@ -11,7 +11,7 @@
 ![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/c0d3aa2a86cb4ce98772a02015f46314)](https://www.codacy.com/manual/danielcondemarin/serverless-nextjs/dashboard?utm_source=github.com&utm_medium=referral&utm_content=serverless-nextjs/serverless-next.js&utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
-![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-10.2.2-blue)
+![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-9.5.5%20|%2010.2.2-blue)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![Platforms](https://img.shields.io/badge/platforms-aws-blue)
 
@@ -772,6 +772,12 @@ It commonly occurs when the size of the response is too large. Lambda@Edge curre
 ### Automatic locale detection
 
 Ensure you forward `Accept-Language` header via CloudFront configuration, otherewise it is not able to determine which languages the user understands and/or prefers. By default it is forwarded but if you override with your own configuration, you should add it back.
+
+## Reporting Issues
+
+You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If you are reporting a security vulnerability, please follow the [security policy](https://github.com/serverless-nextjs/serverless-next.js/security/policy) instead.
+
+Please note that there is only one active maintainer right now and a handful of community contributors, so we hope you understand if we do not respond in a timely manner. Hopefully with the project being open source, it is a bit easier to debug and resolve any issues.
 
 ## Contributing
 
