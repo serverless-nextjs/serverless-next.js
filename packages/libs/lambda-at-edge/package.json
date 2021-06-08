@@ -64,7 +64,7 @@
     "@aws-sdk/client-sqs": "3.18.0",
     "@hapi/accept": "5.0.1",
     "@sls-next/core": "link:../core",
-    "@vercel/nft": "^0.12.2",
+    "@vercel/nft": "^0.13.1",
     "execa": "^5.0.1",
     "fresh": "^0.5.2",
     "fs-extra": "^10.0.0",
