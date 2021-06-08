@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.19...@sls-next/cdk-construct@1.20.0-alpha.20) (2021-06-08)
+
+### Bug Fixes
+
+- **nextjs-cdk-construct:** update default memory and timeout to be mo… ([#1167](https://github.com/serverless-nextjs/serverless-next.js/issues/1167)) ([10a16b6](https://github.com/serverless-nextjs/serverless-next.js/commit/10a16b6e16bf235feabdac71721d8c5c5b18a20a))
+
 # [1.20.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.18...@sls-next/cdk-construct@1.20.0-alpha.19) (2021-06-08)
 
 **Note:** Version bump only for package @sls-next/cdk-construct

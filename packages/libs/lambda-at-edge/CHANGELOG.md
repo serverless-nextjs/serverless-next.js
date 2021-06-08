@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.19...@sls-next/lambda-at-edge@1.9.0-alpha.20) (2021-06-08)
+
+### Bug Fixes
+
+- **lambda-at-edge:** revert @rollup/plugin-node-resolve to v10 to fix bundling issue ([#1189](https://github.com/serverless-nextjs/serverless-next.js/issues/1189)) ([74f8aef](https://github.com/serverless-nextjs/serverless-next.js/commit/74f8aef06e45dbb70e02287e429e6e5dbbaa31bf))
+
 # [1.9.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.18...@sls-next/lambda-at-edge@1.9.0-alpha.19) (2021-06-08)
 
 ### Bug Fixes
