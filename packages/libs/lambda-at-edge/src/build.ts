@@ -304,7 +304,7 @@ class Builder {
               path.extname(file) !== ".js" ||
               this.isSSRJSFile(
                 buildManifest,
-                path.relative(join(this.serverlessDir, "pages"), file)
+                path.posix.relative(join(this.serverlessDir, "pages"), file) // important: make sure to use posix path to generate forward-slash path across both posix/windows
               );
 
             return (
