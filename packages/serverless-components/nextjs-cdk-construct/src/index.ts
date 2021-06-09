@@ -31,6 +31,7 @@ import { toLambdaOption } from "./utils/toLambdaOption";
 import { readAssetsDirectory } from "./utils/readAssetsDirectory";
 import { readInvalidationPathsFromManifest } from "./utils/readInvalidationPathsFromManifest";
 import { reduceInvalidationPaths } from "./utils/reduceInvalidationPaths";
+import pathToPosix from "./utils/pathToPosix";
 
 export * from "./props";
 
@@ -424,8 +425,10 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
         // The source contents will be unzipped to and loaded into the S3 bucket
         // at the root '/', we don't want this, we want to maintain the same
-        // path on S3 as their local path.
-        destinationKeyPrefix: path.posix.relative(assetsDirectory, assetPath),
+        // path on S3 as their local path. Note that this should be a posix path.
+        destinationKeyPrefix: pathToPosix(
+          path.relative(assetsDirectory, assetPath)
+        ),
 
         // Source directories are uploaded with `--sync` this means that any
         // files that don't exist in the source directory, but do in the S3
