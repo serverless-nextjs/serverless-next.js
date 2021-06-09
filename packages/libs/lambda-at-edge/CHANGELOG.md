@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.21...@sls-next/lambda-at-edge@1.9.0-alpha.22) (2021-06-09)
+
+
+### Bug Fixes
+
+* **lambda-at-edge, nextjs-cdk-construct:** fix several posix path normalizations ([313c600](https://github.com/serverless-nextjs/serverless-next.js/commit/313c6004d009df23b8356e03d19466d9ea393eac))
+
+
+
+
+
 # [1.9.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.20...@sls-next/lambda-at-edge@1.9.0-alpha.21) (2021-06-09)
 
 
