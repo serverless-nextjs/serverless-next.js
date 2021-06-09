@@ -124,12 +124,16 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged"
+      "pre-commit": "yarn lint-staged"
     }
   },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,md,yml}": ["prettier --write"],
-    "*.{js,jsx,ts,tsx}": ["eslint --fix"]
+    "*.{js,jsx,ts,tsx,md,yml}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "resolutions": {
     "which": "^2.0.1",
