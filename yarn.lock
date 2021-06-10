@@ -3282,16 +3282,34 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "0.0.0"
-  uid ""
+  version "1.0.0-alpha.22"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    jsonwebtoken "^8.5.1"
+    path-to-regexp "^6.1.0"
+    regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "0.0.0"
-  uid ""
+  version "1.9.0-alpha.22"
+  dependencies:
+    "@aws-sdk/client-s3" "3.18.0"
+    "@aws-sdk/client-sqs" "3.18.0"
+    "@hapi/accept" "5.0.1"
+    "@sls-next/core" "link:packages/libs/core"
+    "@vercel/nft" "^0.13.1"
+    execa "^5.0.1"
+    fresh "^0.5.2"
+    fs-extra "^10.0.0"
+    get-stream "^6.0.0"
+    is-animated "^2.0.1"
+    klaw "^3.0.0"
+    node-fetch "^2.6.1"
+    path-to-regexp "^6.1.0"
+    send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "0.0.0"
-  uid ""
+  version "1.6.2-alpha.3"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -3549,9 +3567,9 @@
     "@types/react" "*"
 
 "@types/react@*", "@types/react@^17.0.9":
-  version "17.0.10"
-  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.10.tgz#c8bb4e37cc642f7cc5532959cb5e2ead6c74dec9"
-  integrity sha512-+Tc5aGO49L/cjFBfpIPB398ztmAUChglc+a+EYlvphMOMvwUEzmLiyfmnEseGE7inMO6XiSffHmXVPC8GonksQ==
+  version "17.0.11"
+  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.11.tgz#67fcd0ddbf5a0b083a0f94e926c7d63f3b836451"
+  integrity sha512-yFRQbD+whVonItSk7ZzP/L+gPTJVBkL/7shLEF+i9GC/1cV3JmUxEQz6+9ylhUpWSDuqo1N9qEvqS6vTj4USUA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
