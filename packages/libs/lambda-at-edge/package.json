@@ -46,7 +46,7 @@
     "@types/klaw": "^3.0.1",
     "@types/node": "^15.12.2",
     "@types/node-fetch": "^2.5.7",
-    "@types/send": "^0.14.5",
+    "@types/send": "^0.17.0",
     "@types/sharp": "^0.28.1",
     "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.46.0",
