@@ -14,6 +14,7 @@
     "api gateway"
   ],
   "scripts": {
+    "prepare": "husky install",
     "test": "jest --runInBand --coverage",
     "packages-install": "lerna exec -- yarn install --frozen-lockfile",
     "packages-build": "lerna run build",
@@ -121,11 +122,6 @@
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/serverless-nextjs-plugin"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "yarn lint-staged"
-    }
   },
   "lint-staged": {
     "*.{js,jsx,ts,tsx,md,yml}": [
