@@ -22,7 +22,6 @@
     "prerelease": "yarn check-gh-token && yarn install && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
     "graduate": "yarn check-gh-token && yarn install && lerna publish --conventional-commits --conventional-graduate --exact --create-release github",
     "lint": "eslint .",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "postinstall": "yarn packages-install && opencollective-postinstall",
     "docs": "cd documentation && yarn && yarn build"
@@ -51,7 +50,6 @@
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.26.1",
-    "coveralls": "^3.1.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.1.4",
