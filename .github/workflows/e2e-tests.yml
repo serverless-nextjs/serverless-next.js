@@ -143,16 +143,43 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: "Download build"
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         uses: actions/download-artifact@v2
         with:
           name: build.tar.gz
 
-      - name: Make windows directory
-        if: ${{ matrix.os == 'windows-latest' }}
-        run: mkdir D:\a\serverless-next.js\serverless-next.js || cd .
-
       - name: "Uncompress build"
+        if: ${{ matrix.os == 'ubuntu-latest' }}
         run: tar -xf build.tar.gz
+
+      # Windows needs to do its own build. Currently only one workflow so not doing it separately
+      - name: Use Node.js ${{ matrix.node-version }}
+        if: ${{ matrix.os == 'windows-latest' }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: "12.x"
+
+      - name: Build
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: yarn --frozen-lockfile
+
+      - name: Mark end-to-end tests as failed
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ matrix.os == 'windows-latest' && failure() && github.event.inputs.pull_request_id == '' }}
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "End-to-end tests have failed"
+          state: "failure"
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Install test utils
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: |
+          cd packages/e2e-tests/test-utils
+          yarn --frozen-lockfile
 
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
