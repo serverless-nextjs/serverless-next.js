@@ -14,7 +14,12 @@ on:
 
 jobs:
   initialize:
-    runs-on: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest, windows-latest]
 
     outputs:
       pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
@@ -56,7 +61,7 @@ jobs:
           sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-      - name: Use Node.js ${{ matrix.node-version }}
+      - name: Use Node.js 12.x
         uses: actions/setup-node@v2
         with:
           node-version: "12.x"
@@ -77,28 +82,28 @@ jobs:
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
       - name: Install test utils
-        run: |
-          cd packages/e2e-tests/test-utils
-          yarn --frozen-lockfile
+        working-directory: packages/e2e-tests/test-utils
+        run: yarn --frozen-lockfile
 
       - name: "Compress build"
-        run: tar -caf build.tar.gz ./packages ./node_modules
+        run: tar -caf build-${{ matrix.os }}.tar.gz ./packages ./node_modules
 
       - name: "Upload build"
         uses: actions/upload-artifact@v2
         with:
-          name: build.tar.gz
-          path: build.tar.gz
+          name: build-${{ matrix.os }}.tar.gz
+          path: build-${{ matrix.os }}.tar.gz
           retention-days: 1
 
   run-e2e-tests:
     needs: [initialize]
-    runs-on: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         node-version: [12.x]
+        os: [ubuntu-latest]
         app:
           # Current minor version of Next.js
           - next-app
@@ -113,7 +118,11 @@ jobs:
           - prev-next-app-with-trailing-slash
           - prev-next-app-with-base-path
           - prev-next-app-dynamic-routes
-
+        # Add additional single app for windows e2e testing
+        include:
+          - node-version: 12.x
+            os: windows-latest
+            app: next-app-windows
     steps:
       # For non-fork PRs
       - uses: actions/checkout@v2
@@ -140,10 +149,10 @@ jobs:
       - name: "Download build"
         uses: actions/download-artifact@v2
         with:
-          name: build.tar.gz
+          name: build-${{ matrix.os }}.tar.gz
 
       - name: "Uncompress build"
-        run: tar -xf build.tar.gz
+        run: tar -xf build-${{ matrix.os }}.tar.gz
 
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
@@ -154,17 +163,16 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run e2e tests
+        if: ${{ matrix.os == 'windows-latest' }}
+        working-directory: packages/e2e-tests/${{ matrix.app }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
           AWS_DEFAULT_REGION: us-east-1
           WAIT_TIMEOUT: 600
-          APP_NAME: ${{ matrix.app }}
           CYPRESS_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for testing external rewrites to GitHub API without getting throttled
         run: |
-          cd packages/e2e-tests/$APP_NAME
           yarn --frozen-lockfile
-          sleep $[($RANDOM % 15) + 1]s # Sleep 1-15 seconds to try to avoid throttling
           yarn e2e:ci
         timeout-minutes: 30 # In case something goes wrong
 
