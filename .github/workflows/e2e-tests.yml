@@ -93,12 +93,13 @@ jobs:
 
   run-e2e-tests:
     needs: [initialize]
-    runs-on: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
 
     strategy:
       fail-fast: false
       matrix:
         node-version: [12.x]
+        os: [ubuntu-latest]
         app:
           # Current minor version of Next.js
           - next-app
@@ -113,7 +114,11 @@ jobs:
           - prev-next-app-with-trailing-slash
           - prev-next-app-with-base-path
           - prev-next-app-dynamic-routes
-
+        # Add additional single app for windows e2e testing
+        include:
+          - node-version: 12.x
+            os: windows-latest
+            app: next-app-windows
     steps:
       # For non-fork PRs
       - uses: actions/checkout@v2
@@ -164,7 +169,6 @@ jobs:
         run: |
           cd packages/e2e-tests/$APP_NAME
           yarn --frozen-lockfile
-          sleep $[($RANDOM % 15) + 1]s # Sleep 1-15 seconds to try to avoid throttling
           yarn e2e:ci
         timeout-minutes: 30 # In case something goes wrong
 

@@ -1,0 +1,12 @@
+next-app-windows:
+  component: "../../serverless-components/nextjs-component"
+  inputs:
+    build:
+      postBuildCommands: ["node scripts/post-build-test.js"]
+    cloudfront:
+      defaults:
+        forward:
+          headers: [Authorization]
+      api/*:
+        forward:
+          headers: [Authorization]
