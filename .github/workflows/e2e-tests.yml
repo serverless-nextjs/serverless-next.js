@@ -147,6 +147,10 @@ jobs:
         with:
           name: build.tar.gz
 
+      - name: Make windows directory
+        if: ${{ matrix.os == 'windows-latest' }}
+        run: mkdir D:\a\serverless-next.js\serverless-next.js
+
       - name: "Uncompress build"
         run: tar -xf build.tar.gz
 
