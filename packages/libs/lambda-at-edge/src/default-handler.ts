@@ -16,7 +16,8 @@ import {
   getCustomHeaders,
   StaticRoute,
   getStaticRegenerationResponse,
-  getThrottledStaticRegenerationCachePolicy
+  getThrottledStaticRegenerationCachePolicy,
+  setCustomHeaders
 } from "@sls-next/core";
 
 import {
@@ -175,6 +176,8 @@ const getS3File = (buildId: string, bucketName?: string, region?: string) => {
             "public, max-age=0, s-maxage=0, must-revalidate"
     );
 
+    setCustomHeaders(event, RoutesManifestJson);
+
     res.end(s3Page.bodyString);
     return true;
   };
@@ -284,33 +287,37 @@ const handleOriginRequest = async ({
     return staticRequest(request, file, `${routesManifest.basePath}/public`);
   }
 
-  if (route.isStatic && route.statusCode) {
-    // Error pages are requested through S3 client,
-    // so the correct status code gets set.
+  if (route.isExternal) {
+    const { path } = route as ExternalRoute;
+    return externalRewrite(event, manifest.enableHTTPCompression, path);
+  }
+
+  // Error pages are requested through S3 client,
+  // so the correct status code gets set.
+  const isErrorPage = !!route.statusCode;
+
+  // Pages with custom headers similarly to get those right.
+  const customHeaders = getCustomHeaders(request.uri, routesManifest);
+
+  if (isErrorPage || Object.keys(customHeaders).length) {
     if (!getFile({ req, res, responsePromise }, route as StaticRoute)) {
-      throw new Error("Static error page failed");
+      throw new Error("Static page request failed");
     }
     return await responsePromise;
   }
 
-  if (route.isStatic) {
-    const { file, isData } = route as StaticRoute;
-    const path = isData
-      ? `${routesManifest.basePath}`
-      : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
+  const { file, isData } = route as StaticRoute;
+  const path = isData
+    ? `${routesManifest.basePath}`
+    : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
 
-    // This should not be necessary with static pages,
-    // but makes it easier to test rewrites
-    const [, querystring] = (req.url ?? "").split("?");
-    request.querystring = querystring || "";
+  // This should not be necessary with static pages,
+  // but makes it easier to test rewrites
+  const [, querystring] = (req.url ?? "").split("?");
+  request.querystring = querystring || "";
 
-    const relativeFile = isData ? file : file.slice("pages".length);
-    return staticRequest(request, relativeFile, path);
-  }
-
-  const external: ExternalRoute = route;
-  const { path } = external;
-  return externalRewrite(event, manifest.enableHTTPCompression, path);
+  const relativeFile = isData ? file : file.slice("pages".length);
+  return staticRequest(request, relativeFile, path);
 };
 
 const handleOriginResponse = async ({
