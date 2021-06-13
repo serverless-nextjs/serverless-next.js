@@ -2,7 +2,7 @@ import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest
 import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
 import { RegenerationEvent } from "../types";
 
-interface TriggerStaticRegenerationOptions {
+export interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
   basePath: string | undefined;
   pagePath: string;
