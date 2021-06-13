@@ -8,6 +8,7 @@ import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   Event,
   ExternalRoute,
+  Fallback,
   handleDefault,
   handleFallback,
   PublicFileRoute,
@@ -138,9 +139,8 @@ const staticRequest = (
   return request;
 };
 
-const getS3File =
-  (buildId: string, bucketName?: string, region?: string) =>
-  async (event: Event, route: StaticRoute): Promise<boolean> => {
+const getS3File = (buildId: string, bucketName?: string, region?: string) => {
+  return async (event: Event, route: StaticRoute): Promise<boolean> => {
     const { isData, file, statusCode } = route;
     const s3Page = await s3GetPage({
       basePath,
@@ -178,6 +178,48 @@ const getS3File =
     res.end(s3Page.bodyString);
     return true;
   };
+};
+
+const putS3Files = (buildId: string, bucketName?: string, region?: string) => {
+  return async (event: Event, fallback: Fallback): Promise<void> => {
+    const { renderOpts, html } = fallback;
+    const { expires } = await s3StorePage({
+      html,
+      uri: fallback.route.file.slice("pages".length),
+      basePath,
+      bucketName: bucketName || "",
+      buildId: buildId,
+      pageData: renderOpts.pageData,
+      region: region || "",
+      revalidate: renderOpts.revalidate
+    });
+
+    const isrResponse = expires
+      ? getStaticRegenerationResponse({
+          expiresHeader: expires.toJSON(),
+          lastModifiedHeader: undefined,
+          initialRevalidateSeconds: fallback.route.revalidate
+        })
+      : null;
+
+    const cacheControl =
+      (isrResponse && isrResponse.cacheControl) ||
+      "public, max-age=0, s-maxage=2678400, must-revalidate";
+
+    const { res } = event;
+    res.statusCode = 200;
+    res.statusMessage = "OK";
+    res.setHeader("Cache-Control", cacheControl);
+
+    if (fallback.route.isData) {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(renderOpts.pageData));
+    } else {
+      res.setHeader("Content-Type", "text/html");
+      res.end(html);
+    }
+  };
+};
 
 const handleOriginRequest = async ({
   event,
@@ -214,12 +256,19 @@ const handleOriginRequest = async ({
     s3BucketNameFromEventRequest(request),
     request.origin?.s3?.region
   );
+
+  const putFiles = putS3Files(
+    manifest.buildId,
+    s3BucketNameFromEventRequest(request),
+    request.origin?.s3?.region
+  );
+
   const route = await handleDefault(
     { req, res, responsePromise },
     manifest,
     prerenderManifest,
     routesManifest,
-    { getFile, getPage }
+    { getFile, getPage, putFiles }
   );
   if (tBeforeSSR) {
     const tAfterSSR = now();

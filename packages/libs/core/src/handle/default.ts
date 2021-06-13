@@ -1,4 +1,5 @@
 import { renderErrorPage } from "./error";
+import { handleFallback } from "./fallback";
 import { setCustomHeaders } from "./headers";
 import { redirect } from "./redirect";
 import { toRequest } from "./request";
@@ -114,7 +115,17 @@ export const handleDefault = async (
       if (await handler.getFile(event, staticRoute)) {
         return;
       }
-      // TODO: handle fallback here?
+      const fallback = await handleFallback(
+        event,
+        route,
+        manifest,
+        routesManifest,
+        handler.getPage
+      );
+      if (fallback && !fallback.isStatic) {
+        return handler.putFiles(event, fallback);
+      }
+      return fallback;
     }
   }
 

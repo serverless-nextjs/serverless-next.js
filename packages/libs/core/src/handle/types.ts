@@ -22,4 +22,6 @@ export type Handler = {
    * On success, the results should be in event.res.
    */
   getFile: (event: Event, route: StaticRoute) => Promise<boolean>;
+  // Save a static page html+json and resolve as response.
+  putFiles: (event: Event, fallback: Fallback) => Promise<void>;
 };

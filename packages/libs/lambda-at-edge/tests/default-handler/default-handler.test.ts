@@ -282,10 +282,10 @@ describe("Lambda@Edge", () => {
     describe("SSG page routing", () => {
       it.each`
         path                         | expectedFile
-        ${"/fallback/not-yet-built"} | ${"pages/fallback/not-yet-built.html"}
+        ${"/fallback/already-built"} | ${"pages/fallback/already-built.html"}
         ${"/preview"}                | ${"pages/preview.html"}
       `(
-        "serves page $expectedPage with S3 client for path $path",
+        "serves page $expectedFile with S3 client for path $path",
         async ({ path, expectedFile }) => {
           // If trailingSlash = true, append "/" to get the non-redirected path
           if (trailingSlash && !path.endsWith("/")) {
@@ -319,7 +319,43 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
+        path                         | expectedFile
+        ${"/fallback/not-yet-built"} | ${"/fallback/[slug].html"}
+        ${"/no-fallback/not-built"}  | ${"/404.html"}
+      `(
+        "serves page $expectedFile via S3 origin for path $path",
+        async ({ path, expectedFile }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          mockS3GetPage.mockReturnValueOnce(undefined);
+
+          const result = await handler(event);
+
+          const request = result as CloudFrontRequest;
+
+          expect(request.origin).toEqual({
+            s3: {
+              authMethod: "origin-access-identity",
+              domainName: "my-bucket.s3.amazonaws.com",
+              path: "/static-pages/build-id",
+              region: "us-east-1"
+            }
+          });
+          expect(request.uri).toEqual(expectedFile);
+        }
+      );
+
+      it.each`
         path
+        ${"/fallback/already-built"}
         ${"/fallback/not-yet-built"}
         ${"/preview"}
       `(
