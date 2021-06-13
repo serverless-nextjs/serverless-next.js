@@ -283,6 +283,16 @@ const handleOriginRequest = async ({
     const { file } = route as PublicFileRoute;
     return staticRequest(request, file, `${routesManifest.basePath}/public`);
   }
+
+  if (route.isStatic && route.statusCode) {
+    // Error pages are requested through S3 client,
+    // so the correct status code gets set.
+    if (!getFile({ req, res, responsePromise }, route as StaticRoute)) {
+      throw new Error("Static error page failed");
+    }
+    return await responsePromise;
+  }
+
   if (route.isStatic) {
     const { file, isData } = route as StaticRoute;
     const path = isData
@@ -297,6 +307,7 @@ const handleOriginRequest = async ({
     const relativeFile = isData ? file : file.slice("pages".length);
     return staticRequest(request, relativeFile, path);
   }
+
   const external: ExternalRoute = route;
   const { path } = external;
   return externalRewrite(event, manifest.enableHTTPCompression, path);

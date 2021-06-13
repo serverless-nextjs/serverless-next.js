@@ -226,8 +226,12 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        const request = (await handler(event)) as CloudFrontRequest;
-        expect(request.uri).toEqual("/404.html");
+        mockS3GetPage.mockReturnValueOnce({
+          bodyString: "Not Found"
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+        expect(response.status).toEqual(404);
       });
 
       it("terms.html should return 200 status after successful S3 Origin response", async () => {
@@ -299,8 +303,7 @@ describe("Lambda@Edge", () => {
 
           mockS3GetPage.mockReturnValueOnce({
             bodyString: expectedFile,
-            contentType: "text/html",
-            cacheControl: "private"
+            contentType: "text/html"
           });
 
           const result = await handler(event);
@@ -321,7 +324,6 @@ describe("Lambda@Edge", () => {
       it.each`
         path                         | expectedFile
         ${"/fallback/not-yet-built"} | ${"/fallback/[slug].html"}
-        ${"/no-fallback/not-built"}  | ${"/404.html"}
       `(
         "serves page $expectedFile via S3 origin for path $path",
         async ({ path, expectedFile }) => {
@@ -350,6 +352,41 @@ describe("Lambda@Edge", () => {
             }
           });
           expect(request.uri).toEqual(expectedFile);
+        }
+      );
+
+      it.each`
+        path                        | expectedFile
+        ${"/no-fallback/not-built"} | ${"pages/404.html"}
+      `(
+        "serves page $expectedFile with S3 client for path $path",
+        async ({ path, expectedFile }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          mockS3GetPage
+            .mockReturnValueOnce(undefined)
+            .mockReturnValueOnce({ bodyString: "Not Found" });
+
+          const result = await handler(event);
+
+          const response = result as CloudFrontResultResponse;
+
+          expect(response.status).toEqual(404);
+          expect(mockS3GetPage).toHaveBeenNthCalledWith(2, {
+            basePath: "",
+            bucketName: "my-bucket.s3.amazonaws.com",
+            buildId: "build-id",
+            file: expectedFile,
+            region: "us-east-1"
+          });
         }
       );
 
@@ -923,8 +960,12 @@ describe("Lambda@Edge", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        const request = (await handler(event)) as CloudFrontRequest;
-        expect(request.uri).toEqual("/404.html");
+        mockS3GetPage.mockReturnValueOnce({
+          bodyString: "Not Found"
+        });
+
+        const response = (await handler(event)) as CloudFrontResultResponse;
+        expect(response.status).toEqual(404);
       });
 
       it("redirects unmatched request path", async () => {
@@ -955,8 +996,12 @@ describe("Lambda@Edge", () => {
             config: { eventType: "origin-request" } as any
           });
 
-          const request = (await handler(event)) as CloudFrontRequest;
-          expect(request.uri).toEqual("/404.html");
+          mockS3GetPage.mockReturnValueOnce({
+            bodyString: "Not Found"
+          });
+
+          const response = (await handler(event)) as CloudFrontResultResponse;
+          expect(response.status).toEqual(404);
         }
       );
 
