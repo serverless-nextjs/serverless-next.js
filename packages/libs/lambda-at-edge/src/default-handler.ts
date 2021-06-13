@@ -6,6 +6,7 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
+  Event,
   ExternalRoute,
   handleDefault,
   handleFallback,
@@ -38,6 +39,7 @@ import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
+import { s3GetPage } from "./s3/s3GetPage";
 import { s3StorePage } from "./s3/s3StorePage";
 
 const basePath = RoutesManifestJson.basePath;
@@ -136,6 +138,47 @@ const staticRequest = (
   return request;
 };
 
+const getS3File =
+  (buildId: string, bucketName?: string, region?: string) =>
+  async (event: Event, route: StaticRoute): Promise<boolean> => {
+    const { isData, file, statusCode } = route;
+    const s3Page = await s3GetPage({
+      basePath,
+      bucketName,
+      buildId,
+      file,
+      region
+    });
+
+    if (!s3Page) {
+      return false;
+    }
+
+    const { res } = event;
+    const is404 = statusCode === 404;
+    const is500 = statusCode === 500;
+    res.statusCode = statusCode || 200;
+    res.statusMessage = is500
+      ? "Internal Server Error"
+      : is404
+      ? "Not Found"
+      : "OK";
+
+    const contentTypeFallback = isData ? "application/json" : "text/html";
+    res.setHeader("Content-Type", s3Page.contentType || contentTypeFallback);
+    // TODO: set valid fallback for cache control?
+    res.setHeader(
+      "Cache-Control",
+      is500
+        ? "public, max-age=0, s-maxage=0, must-revalidate"
+        : s3Page.cacheControl ??
+            "public, max-age=0, s-maxage=0, must-revalidate"
+    );
+
+    res.end(s3Page.bodyString);
+    return true;
+  };
+
 const handleOriginRequest = async ({
   event,
   manifest,
@@ -166,12 +209,17 @@ const handleOriginRequest = async ({
     return page;
   };
 
+  const getFile = getS3File(
+    manifest.buildId,
+    s3BucketNameFromEventRequest(request),
+    request.origin?.s3?.region
+  );
   const route = await handleDefault(
     { req, res, responsePromise },
     manifest,
     prerenderManifest,
     routesManifest,
-    getPage
+    { getFile, getPage }
   );
   if (tBeforeSSR) {
     const tAfterSSR = now();

@@ -55,6 +55,7 @@ describe("Lambda@Edge", () => {
   `("Routing with trailingSlash = $trailingSlash", ({ trailingSlash }) => {
     let handler: any;
     let mockTriggerStaticRegeneration: jest.Mock;
+    let mockS3GetPage: jest.Mock;
     let mockS3StorePage: jest.Mock;
     let runRedirectTest: (
       path: string,
@@ -109,6 +110,12 @@ describe("Lambda@Edge", () => {
         triggerStaticRegeneration: mockTriggerStaticRegeneration
       }));
 
+      mockS3GetPage = jest.fn();
+      jest.mock("../../src/s3/s3GetPage", () => ({
+        __esModule: true,
+        s3GetPage: mockS3GetPage
+      }));
+
       mockS3StorePage = jest.fn();
       jest.mock("../../src/s3/s3StorePage", () => ({
         __esModule: true,
@@ -151,8 +158,6 @@ describe("Lambda@Edge", () => {
         ${"/users/batman"}                 | ${"/users/[...user].html"}
         ${"/users/test/catch/all"}         | ${"/users/[...user].html"}
         ${"/fallback/example-static-page"} | ${"/fallback/example-static-page.html"}
-        ${"/fallback/not-yet-built"}       | ${"/fallback/not-yet-built.html"}
-        ${"/preview"}                      | ${"/preview.html"}
       `(
         "serves page $expectedPage from S3 for path $path",
         async ({ path, expectedPage }) => {
@@ -240,31 +245,6 @@ describe("Lambda@Edge", () => {
         expect(response.status).toEqual("200");
       });
 
-      it("handles preview mode", async () => {
-        const event = createCloudFrontEvent({
-          uri: `/preview${trailingSlash ? "/" : ""}`,
-          host: "mydistribution.cloudfront.net",
-          requestHeaders: {
-            cookie: [
-              {
-                key: "Cookie",
-                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
-              }
-            ]
-          }
-        });
-
-        mockPageRequire("pages/preview.js");
-        const result = await handler(event);
-        const response = result as CloudFrontResultResponse;
-        const decodedBody = Buffer.from(
-          response.body as string,
-          "base64"
-        ).toString("utf8");
-        expect(decodedBody).toBe("pages/preview.js");
-        expect(response.status).toBe(200);
-      });
-
       it("HTML page without any props served from S3 on preview mode", async () => {
         const event = createCloudFrontEvent({
           uri: `/terms${trailingSlash ? "/" : ""}`,
@@ -296,6 +276,91 @@ describe("Lambda@Edge", () => {
         expect(request.headers.host[0].value).toEqual(
           "my-bucket.s3.amazonaws.com"
         );
+      });
+    });
+
+    describe("SSG page routing", () => {
+      it.each`
+        path                         | expectedFile
+        ${"/fallback/not-yet-built"} | ${"pages/fallback/not-yet-built.html"}
+        ${"/preview"}                | ${"pages/preview.html"}
+      `(
+        "serves page $expectedPage with S3 client for path $path",
+        async ({ path, expectedFile }) => {
+          // If trailingSlash = true, append "/" to get the non-redirected path
+          if (trailingSlash && !path.endsWith("/")) {
+            path += "/";
+          }
+
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+
+          mockS3GetPage.mockReturnValueOnce({
+            bodyString: expectedFile,
+            contentType: "text/html",
+            cacheControl: "private"
+          });
+
+          const result = await handler(event);
+
+          const response = result as CloudFrontResultResponse;
+
+          expect(response.status).toEqual(200);
+          expect(mockS3GetPage).toHaveBeenCalledWith({
+            basePath: "",
+            bucketName: "my-bucket.s3.amazonaws.com",
+            buildId: "build-id",
+            file: expectedFile,
+            region: "us-east-1"
+          });
+        }
+      );
+
+      it.each`
+        path
+        ${"/fallback/not-yet-built"}
+        ${"/preview"}
+      `(
+        `path $path redirects if it ${
+          trailingSlash ? "does not have" : "has"
+        } a trailing slash`,
+        async ({ path }) => {
+          let expectedRedirect;
+          if (trailingSlash) {
+            expectedRedirect = path + "/";
+          } else {
+            expectedRedirect = path;
+            path += "/";
+          }
+          await runRedirectTest(path, expectedRedirect, 308);
+        }
+      );
+
+      it("handles preview mode", async () => {
+        const event = createCloudFrontEvent({
+          uri: `/preview${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net",
+          requestHeaders: {
+            cookie: [
+              {
+                key: "Cookie",
+                value: `__next_preview_data=${previewToken}; __prerender_bypass=def`
+              }
+            ]
+          }
+        });
+
+        mockPageRequire("pages/preview.js");
+        const result = await handler(event);
+        const response = result as CloudFrontResultResponse;
+        const decodedBody = Buffer.from(
+          response.body as string,
+          "base64"
+        ).toString("utf8");
+        expect(decodedBody).toBe("pages/preview.js");
+        expect(response.status).toBe(200);
       });
     });
 
@@ -479,12 +544,11 @@ describe("Lambda@Edge", () => {
       );
 
       it.each`
-        path                                                  | expectedUri
-        ${"/_next/data/build-id"}                             | ${"/_next/data/build-id/index.json"}
-        ${"/_next/data/build-id/index.json"}                  | ${"/_next/data/build-id/index.json"}
-        ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"/_next/data/build-id/fallback/not-yet-built.json"}
+        path                                 | expectedUri
+        ${"/_next/data/build-id"}            | ${"/_next/data/build-id/index.json"}
+        ${"/_next/data/build-id/index.json"} | ${"/_next/data/build-id/index.json"}
       `(
-        "serves json data via S3 for SSG path $path",
+        "serves json data via S3 origin for SSG path $path",
         async ({ path, expectedUri }) => {
           const event = createCloudFrontEvent({
             uri: path,
@@ -505,6 +569,39 @@ describe("Lambda@Edge", () => {
             }
           });
           expect(request.uri).toEqual(expectedUri);
+        }
+      );
+
+      it.each`
+        path                                                  | expectedFile
+        ${"/_next/data/build-id/preview.json"}                | ${"/_next/data/build-id/preview.json"}
+        ${"/_next/data/build-id/fallback/not-yet-built.json"} | ${"/_next/data/build-id/fallback/not-yet-built.json"}
+      `(
+        "serves json data with S3 client for SSG path $path",
+        async ({ path, expectedFile }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net",
+            config: { eventType: "origin-request" } as any
+          });
+
+          mockS3GetPage.mockReturnValueOnce({
+            bodyString: expectedFile,
+            contentType: "application/json"
+          });
+
+          const result = await handler(event);
+
+          const response = result as CloudFrontResultResponse;
+
+          expect(response.status).toEqual(200);
+          expect(mockS3GetPage).toHaveBeenCalledWith({
+            basePath: "",
+            bucketName: "my-bucket.s3.amazonaws.com",
+            buildId: "build-id",
+            file: expectedFile,
+            region: "us-east-1"
+          });
         }
       );
 

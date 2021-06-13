@@ -4,6 +4,7 @@ import { redirect } from "./redirect";
 import { toRequest } from "./request";
 import { routeDefault } from "../route";
 import { addDefaultLocaleToPath } from "../route/locale";
+import { Handler } from "./types";
 import {
   Event,
   ExternalRoute,
@@ -77,7 +78,7 @@ export const handleDefault = async (
   manifest: PageManifest,
   prerenderManifest: PrerenderManifest,
   routesManifest: RoutesManifest,
-  getPage: (page: string) => any
+  handler: Handler
 ): Promise<ExternalRoute | PublicFileRoute | StaticRoute | void> => {
   const request = toRequest(event);
   const route = await routeDefault(
@@ -100,11 +101,21 @@ export const handleDefault = async (
       route as RenderRoute,
       manifest,
       routesManifest,
-      getPage
+      handler.getPage
     );
   }
   if (route.isUnauthorized) {
     return unauthorized(event, route as UnauthorizedRoute);
+  }
+
+  if (route.isStatic) {
+    const staticRoute = route as StaticRoute;
+    if (staticRoute.fallback !== undefined || staticRoute.revalidate) {
+      if (await handler.getFile(event, staticRoute)) {
+        return;
+      }
+      // TODO: handle fallback here?
+    }
   }
 
   // Let typescript check this is correct type to be returned
