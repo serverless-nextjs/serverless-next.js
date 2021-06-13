@@ -140,7 +140,12 @@ const staticRequest = (
   return request;
 };
 
-const getS3File = (buildId: string, bucketName?: string, region?: string) => {
+const getS3File = (
+  request: CloudFrontRequest,
+  buildId: string,
+  bucketName?: string,
+  region?: string
+) => {
   return async (event: Event, route: StaticRoute): Promise<boolean> => {
     const { isData, file, statusCode } = route;
     const s3Page = await s3GetPage({
@@ -155,7 +160,7 @@ const getS3File = (buildId: string, bucketName?: string, region?: string) => {
       return false;
     }
 
-    const { res } = event;
+    const { req, res } = event;
     const is404 = statusCode === 404;
     const is500 = statusCode === 500;
     res.statusCode = statusCode || 200;
@@ -167,16 +172,52 @@ const getS3File = (buildId: string, bucketName?: string, region?: string) => {
 
     const contentTypeFallback = isData ? "application/json" : "text/html";
     res.setHeader("Content-Type", s3Page.contentType || contentTypeFallback);
-    // TODO: set valid fallback for cache control?
-    res.setHeader(
-      "Cache-Control",
-      is500
-        ? "public, max-age=0, s-maxage=0, must-revalidate"
-        : s3Page.cacheControl ??
-            "public, max-age=0, s-maxage=0, must-revalidate"
-    );
 
     setCustomHeaders(event, RoutesManifestJson);
+
+    const isrResponse = getStaticRegenerationResponse({
+      expires: s3Page.expires,
+      lastModified: s3Page.lastModified,
+      initialRevalidateSeconds: route.revalidate
+    });
+
+    if (is500) {
+      res.setHeader(
+        "Cache-Control",
+        "public, max-age=0, s-maxage=0, must-revalidate"
+      );
+    } else if (isrResponse) {
+      res.setHeader("Cache-Control", isrResponse.cacheControl);
+
+      if (route.page && isrResponse.secondsRemainingUntilRevalidation <= 0) {
+        const { throttle } = await triggerStaticRegeneration({
+          basePath,
+          pagePath: route.page,
+          request,
+          etag: s3Page.etag,
+          lastModified: s3Page.lastModified
+        });
+
+        // Occasionally we will get rate-limited by the Queue (in the event we
+        // send it too many messages) and so we we use the cache to reduce
+        // requests to the queue for a short period.
+        if (throttle) {
+          res.setHeader(
+            "Cache-Control",
+            getThrottledStaticRegenerationCachePolicy(1).cacheControl
+          );
+        }
+      }
+    } else {
+      const isFallback = (req.url ?? "").includes("[");
+      res.setHeader(
+        "Cache-Control",
+        s3Page.cacheControl ??
+          (isFallback
+            ? "public, max-age=0, s-maxage=0, must-revalidate"
+            : "public, max-age=0, s-maxage=2678400, must-revalidate")
+      );
+    }
 
     res.end(s3Page.bodyString);
     return true;
@@ -198,11 +239,7 @@ const putS3Files = (buildId: string, bucketName?: string, region?: string) => {
     });
 
     const isrResponse = expires
-      ? getStaticRegenerationResponse({
-          expiresHeader: expires.toJSON(),
-          lastModifiedHeader: undefined,
-          initialRevalidateSeconds: fallback.route.revalidate
-        })
+      ? getStaticRegenerationResponse({ expires })
       : null;
 
     const cacheControl =
@@ -255,6 +292,7 @@ const handleOriginRequest = async ({
   };
 
   const getFile = getS3File(
+    request,
     manifest.buildId,
     s3BucketNameFromEventRequest(request),
     request.origin?.s3?.region
@@ -376,9 +414,14 @@ const handleOriginResponse = async ({
       return response;
     }
 
+    const expiresHeader = response.headers?.expires?.[0]?.value || "";
+    const lastModifiedHeader =
+      response.headers?.["last-modified"]?.[0]?.value || "";
     const staticRegenerationResponse = getStaticRegenerationResponse({
-      expiresHeader: response.headers?.expires?.[0]?.value || "",
-      lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
+      expires: expiresHeader ? new Date(expiresHeader) : undefined,
+      lastModified: lastModifiedHeader
+        ? new Date(lastModifiedHeader)
+        : undefined,
       initialRevalidateSeconds: staticRoute?.revalidate
     });
 
@@ -402,8 +445,9 @@ const handleOriginResponse = async ({
         const { throttle } = await triggerStaticRegeneration({
           basePath,
           request,
-          response,
-          pagePath: staticRoute.page
+          pagePath: staticRoute.page,
+          etag: response.headers.etag?.[0].value,
+          lastModified: new Date(response.headers["last-modified"]?.[0].value)
         });
 
         // Occasionally we will get rate-limited by the Queue (in the event we
@@ -529,11 +573,7 @@ const handleOriginResponse = async ({
   });
 
   const isrResponse = expires
-    ? getStaticRegenerationResponse({
-        expiresHeader: expires.toJSON(),
-        lastModifiedHeader: undefined,
-        initialRevalidateSeconds: staticRoute?.revalidate
-      })
+    ? getStaticRegenerationResponse({ expires })
     : null;
 
   const cacheControl =

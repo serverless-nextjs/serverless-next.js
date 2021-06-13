@@ -14,6 +14,9 @@ interface S3Page {
   bodyString: string;
   cacheControl?: string;
   contentType?: string;
+  etag?: string;
+  expires?: Date;
+  lastModified?: Date;
 }
 
 export const s3GetPage = async (
@@ -49,7 +52,10 @@ export const s3GetPage = async (
     return {
       bodyString,
       cacheControl: s3Response.CacheControl,
-      contentType: s3Response.ContentType
+      contentType: s3Response.ContentType,
+      etag: s3Response.ETag,
+      expires: s3Response.Expires,
+      lastModified: s3Response.LastModified
     };
   } catch (error) {
     return;
