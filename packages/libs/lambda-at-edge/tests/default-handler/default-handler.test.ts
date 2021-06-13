@@ -234,21 +234,6 @@ describe("Lambda@Edge", () => {
         expect(response.status).toEqual(404);
       });
 
-      it("terms.html should return 200 status after successful S3 Origin response", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/terms.html",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200"
-          } as any
-        });
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-
-        expect(response.status).toEqual("200");
-      });
-
       it("HTML page without any props served from S3 on preview mode", async () => {
         const event = createCloudFrontEvent({
           uri: `/terms${trailingSlash ? "/" : ""}`,
@@ -435,6 +420,91 @@ describe("Lambda@Edge", () => {
         expect(decodedBody).toBe("pages/preview.js");
         expect(response.status).toBe(200);
       });
+
+      it("returns a correct cache control header when expiry is in the future", async () => {
+        const event = createCloudFrontEvent({
+          uri: `/preview${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockS3GetPage.mockReturnValueOnce({
+          bodyString: "SSG",
+          contentType: "application/json",
+          expires: new Date(new Date().getTime() + 3000)
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=3, must-revalidate"
+        );
+      });
+
+      it("returns a correct cache control header when expiry is in the past", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+        const event = createCloudFrontEvent({
+          uri: `/preview${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockS3GetPage.mockReturnValueOnce({
+          bodyString: "SSG",
+          contentType: "application/json",
+          expires: new Date(new Date().getTime() - 3000)
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=0, must-revalidate"
+        );
+      });
+
+      it("returns a correct cache control header when a last-modified header is sent", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: false })
+        );
+        const event = createCloudFrontEvent({
+          uri: `/preview${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockS3GetPage.mockReturnValueOnce({
+          bodyString: "SSG",
+          contentType: "application/json",
+          lastModified: new Date(new Date().getTime() - 3000)
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=2, must-revalidate"
+        );
+      });
+
+      it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
+        mockTriggerStaticRegeneration.mockReturnValueOnce(
+          Promise.resolve({ throttle: true })
+        );
+        const event = createCloudFrontEvent({
+          uri: `/preview${trailingSlash ? "/" : ""}`,
+          host: "mydistribution.cloudfront.net"
+        });
+
+        mockS3GetPage.mockReturnValueOnce({
+          bodyString: "SSG",
+          contentType: "application/json",
+          expires: new Date(new Date().getTime() - 3000)
+        });
+
+        const response = await handler(event);
+        expect(response.headers).toHaveProperty("cache-control");
+        expect(response.headers["cache-control"][0].value).toBe(
+          "public, max-age=0, s-maxage=1, must-revalidate"
+        );
+      });
     });
 
     describe("Public files routing", () => {
@@ -465,21 +535,6 @@ describe("Lambda@Edge", () => {
           expect(request.uri).toEqual(path);
         }
       );
-
-      it("public file should return 200 status after successful S3 Origin response", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/manifest.json",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200"
-          } as any
-        });
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-
-        expect(response.status).toEqual("200");
-      });
 
       it.each`
         path                 | expectedRedirect
@@ -678,158 +733,6 @@ describe("Lambda@Edge", () => {
         }
       );
 
-      it("correctly removes the expires header if set in the response for an ssg page", async () => {
-        mockTriggerStaticRegeneration.mockReturnValueOnce(
-          Promise.resolve({ throttle: false })
-        );
-
-        const event = createCloudFrontEvent({
-          uri: "/preview",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200",
-            statusDescription: "ok",
-            headers: {
-              expires: [
-                {
-                  value: new Date().toJSON(),
-                  key: "Expires"
-                }
-              ]
-            }
-          }
-        });
-
-        const response = await handler(event);
-        expect(mockTriggerStaticRegeneration).toBeCalledTimes(1);
-        expect(mockTriggerStaticRegeneration.mock.calls[0][0]).toEqual(
-          expect.objectContaining({
-            basePath: "",
-            pagePath: "pages/preview.js",
-            request: expect.objectContaining({
-              uri: `/preview${trailingSlash ? "/" : ""}`
-            })
-          })
-        );
-
-        expect(response.headers).not.toHaveProperty("expires");
-        expect(response.headers).not.toHaveProperty("Expires");
-      });
-
-      it("returns a correct cache control header when an expiry header in the future is sent", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/customers",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200",
-            statusDescription: "ok",
-            headers: {
-              expires: [
-                {
-                  value: new Date(new Date().getTime() + 3000).toJSON(),
-                  key: "Expires"
-                }
-              ]
-            }
-          }
-        });
-
-        const response = await handler(event);
-        expect(response.headers).toHaveProperty("cache-control");
-        expect(response.headers["cache-control"][0].value).toBe(
-          "public, max-age=0, s-maxage=3, must-revalidate"
-        );
-      });
-
-      it("returns a correct cache control header when an expiry header in the past is sent", async () => {
-        mockTriggerStaticRegeneration.mockReturnValueOnce(
-          Promise.resolve({ throttle: false })
-        );
-        const event = createCloudFrontEvent({
-          uri: "/customers",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200",
-            statusDescription: "ok",
-            headers: {
-              expires: [
-                {
-                  value: new Date(new Date().getTime() - 3000).toJSON(),
-                  key: "Expires"
-                }
-              ]
-            }
-          }
-        });
-
-        const response = await handler(event);
-        expect(response.headers).toHaveProperty("cache-control");
-        expect(response.headers["cache-control"][0].value).toBe(
-          "public, max-age=0, s-maxage=0, must-revalidate"
-        );
-      });
-
-      it("returns a correct cache control header when a last-modified header is sent", async () => {
-        mockTriggerStaticRegeneration.mockReturnValueOnce(
-          Promise.resolve({ throttle: false })
-        );
-        const event = createCloudFrontEvent({
-          uri: "/preview",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200",
-            statusDescription: "ok",
-            headers: {
-              ["last-modified"]: [
-                {
-                  value: new Date(new Date().getTime() - 3000).toJSON(),
-                  key: "Last-Modified"
-                }
-              ]
-            }
-          }
-        });
-
-        const response = await handler(event);
-        expect(response.headers).toHaveProperty("cache-control");
-        expect(response.headers["cache-control"][0].value).toBe(
-          "public, max-age=0, s-maxage=2, must-revalidate"
-        );
-      });
-
-      it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
-        mockTriggerStaticRegeneration.mockReturnValueOnce(
-          Promise.resolve({ throttle: true })
-        );
-        const event = createCloudFrontEvent({
-          uri: "/preview",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200",
-            statusDescription: "ok",
-            headers: {
-              expires: [
-                {
-                  key: "Expires",
-                  value: new Date().toJSON()
-                }
-              ]
-            }
-          }
-        });
-
-        const response = await handler(event);
-        expect(response.headers).toHaveProperty("cache-control");
-        expect(response.headers["cache-control"][0].value).toBe(
-          "public, max-age=0, s-maxage=1, must-revalidate"
-        );
-      });
-
       it.each`
         path                                                       | expectedRedirect
         ${"/_next/data/build-id/"}                                 | ${"/_next/data/build-id"}
@@ -1004,36 +907,6 @@ describe("Lambda@Edge", () => {
           expect(response.status).toEqual(404);
         }
       );
-
-      it("404.html should return 404 status after successful S3 Origin response", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/404.html",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200"
-          } as any
-        });
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-
-        expect(response.status).toEqual("404");
-      });
-
-      it("path ending 404 should return 200 status after successful S3 Origin response", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/fallback/404.html",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200"
-          } as any
-        });
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-
-        expect(response.status).toEqual("200");
-      });
     });
 
     describe("500 page", () => {
@@ -1052,21 +925,6 @@ describe("Lambda@Edge", () => {
 
         expect(decodedBody).toEqual("pages/_error.js - 500");
         expect(response.status).toEqual(500);
-      });
-
-      it("path ending 500 should return 200 status after successful S3 Origin response", async () => {
-        const event = createCloudFrontEvent({
-          uri: "/fallback/500.html",
-          host: "mydistribution.cloudfront.net",
-          config: { eventType: "origin-response" } as any,
-          response: {
-            status: "200"
-          } as any
-        });
-
-        const response = (await handler(event)) as CloudFrontResultResponse;
-
-        expect(response.status).toEqual("200");
       });
     });
 
