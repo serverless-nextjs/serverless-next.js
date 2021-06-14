@@ -4242,10 +4242,10 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.924.0:
-  version "2.925.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.925.0.tgz#a352f3adc8274120fb31fa4fc04527d44b6107cf"
-  integrity sha512-dHXngzuSTZvIFWizWbU+ceZTAKmgodzEIi/AWbB+z0THKfxD3Iz/CJ7kZ7a9QyZv7X082L68vv3siMhXBMoTLA==
+aws-sdk@^2.926.0:
+  version "2.927.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.927.0.tgz#8545b30094eb52d16dc6b24b1c7f19bea565b261"
+  integrity sha512-S1dbpq26bQNYBQPHAsZBt0/L/e0FAWFdjjQoU3zdaVIXa08eA9d/oRI3kEs568ErJgBjwWU1CUUlr1byBxKjUQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -11275,9 +11275,9 @@ serialize-javascript@^5.0.1:
     randombytes "^2.1.0"
 
 serverless@^2.44.0:
-  version "2.45.2"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.45.2.tgz#364f2bb1e123937c1043cf3a409bda709f45ed19"
-  integrity sha512-DFGs4T1QW50fMNbw7LjIdsks4iAizsQQ6hd9H11ucTih+a5/HXzEMgVy6oHljdHGISwn2L2YfxdeAFg9WBjx3A==
+  version "2.46.0"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.46.0.tgz#d67c3b249e64f0c774ba79036db514c63315d97b"
+  integrity sha512-InHN7TTMezGrxejFKCtTKaUGbpbWoXVltLITgXoKdCkqUg66DkAwvf3kkTTy8/wKnTxYIdBbqNS5n1NHvzo4wg==
   dependencies:
     "@serverless/cli" "^1.5.2"
     "@serverless/components" "^3.12.0"
@@ -11286,7 +11286,7 @@ serverless@^2.44.0:
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.924.0"
+    aws-sdk "^2.926.0"
     bluebird "^3.7.2"
     boxen "^5.0.1"
     cachedir "^2.3.0"
