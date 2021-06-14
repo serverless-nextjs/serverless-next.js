@@ -3,24 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.20.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.21...@sls-next/cdk-construct@1.20.0-alpha.22) (2021-06-09)
+# [1.20.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.22...@sls-next/cdk-construct@1.20.0-alpha.23) (2021-06-14)
 
+**Note:** Version bump only for package @sls-next/cdk-construct
+
+# [1.20.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.21...@sls-next/cdk-construct@1.20.0-alpha.22) (2021-06-09)
 
 ### Bug Fixes
 
-* **lambda-at-edge, nextjs-cdk-construct:** fix several posix path normalizations ([313c600](https://github.com/serverless-nextjs/serverless-next.js/commit/313c6004d009df23b8356e03d19466d9ea393eac))
-
-
-
-
+- **lambda-at-edge, nextjs-cdk-construct:** fix several posix path normalizations ([313c600](https://github.com/serverless-nextjs/serverless-next.js/commit/313c6004d009df23b8356e03d19466d9ea393eac))
 
 # [1.20.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.20...@sls-next/cdk-construct@1.20.0-alpha.21) (2021-06-09)
 
 **Note:** Version bump only for package @sls-next/cdk-construct
-
-
-
-
 
 # [1.20.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.19...@sls-next/cdk-construct@1.20.0-alpha.20) (2021-06-08)
 
