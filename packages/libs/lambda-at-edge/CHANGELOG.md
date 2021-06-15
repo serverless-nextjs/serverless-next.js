@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.24...@sls-next/lambda-at-edge@1.9.0-alpha.25) (2021-06-15)
+
+### Bug Fixes
+
+- **lambda-at-edge:** await external API rewrite ([#1232](https://github.com/serverless-nextjs/serverless-next.js/issues/1232)) ([9f777d7](https://github.com/serverless-nextjs/serverless-next.js/commit/9f777d73eab583121d44a712c4ef18eecf784380))
+
 # [1.9.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.23...@sls-next/lambda-at-edge@1.9.0-alpha.24) (2021-06-15)
 
 ### Bug Fixes
