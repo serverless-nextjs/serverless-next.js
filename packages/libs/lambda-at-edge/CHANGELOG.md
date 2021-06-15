@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.9.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.23...@sls-next/lambda-at-edge@1.9.0-alpha.24) (2021-06-15)
+
+### Bug Fixes
+
+- **lambda-at-edge:** downgrade @rollup/plugin-commonjs to 18.1.0 to fix bundling issue of decodeHTML functions in SQS client ([#1227](https://github.com/serverless-nextjs/serverless-next.js/issues/1227)) ([5dc04e1](https://github.com/serverless-nextjs/serverless-next.js/commit/5dc04e149a3404be22fa14c481a1fe11f437bbcd))
+
 # [1.9.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.22...@sls-next/lambda-at-edge@1.9.0-alpha.23) (2021-06-14)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
