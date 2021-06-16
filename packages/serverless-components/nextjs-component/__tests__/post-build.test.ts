@@ -5,7 +5,7 @@ describe("Post-build tests", () => {
   let component: NextjsComponent;
   let buildOptions: BuildOptions;
 
-  beforeEach(async () => {
+  beforeEach(() => {
     component = new NextjsComponent();
     buildOptions = {
       cmd: "true",
@@ -13,17 +13,17 @@ describe("Post-build tests", () => {
     };
   });
 
-  it("executes post-build command successfully", async () => {
+  it("executes post-build command successfully", () => {
     buildOptions.postBuildCommands = ["true"];
 
-    await component.postBuild({ build: buildOptions });
+    component.postBuild({ build: buildOptions });
   });
 
-  it("fails to execute post-build command", async () => {
+  it("fails to execute post-build command", () => {
     buildOptions.postBuildCommands = ["false"];
 
-    await expect(
-      component.postBuild({ build: buildOptions })
-    ).rejects.toThrow();
+    expect(() => {
+      component.postBuild({ build: buildOptions });
+    }).toThrow();
   });
 });
