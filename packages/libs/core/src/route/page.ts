@@ -50,7 +50,7 @@ export const handlePageReq = (
       isData: false,
       isStatic: true,
       file: pageHtml(localeUri),
-      page: `pages${dropLocaleFromPath(route, routesManifest)}.js`,
+      page: pages.ssr.nonDynamic[route], // page JS path is from SSR entries in manifest
       revalidate: ssg.initialRevalidateSeconds,
       statusCode
     };
@@ -94,7 +94,7 @@ export const handlePageReq = (
       isData: false,
       isStatic: true,
       file: pageHtml(localeUri),
-      page: `pages${dropLocaleFromPath(dynamic as string, routesManifest)}.js`,
+      page: dynamic ? pages.ssr.dynamic[dynamic] : undefined, // page JS path is from SSR entries in manifest
       fallback: dynamicSSG.fallback
     };
   }
