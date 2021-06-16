@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.26](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.25...@sls-next/cdk-construct@1.20.0-alpha.26) (2021-06-16)
+
+### Bug Fixes
+
+- **nextjs-cdk-construct:** match dynamic route segments with square bracket ([#1235](https://github.com/serverless-nextjs/serverless-next.js/issues/1235)) ([979a633](https://github.com/serverless-nextjs/serverless-next.js/commit/979a633cf42e9896406216e351e209c88106b344))
+
+### Features
+
+- **nextjs-cdk-construct:** support override props for CloudFront distribution ([#1236](https://github.com/serverless-nextjs/serverless-next.js/issues/1236)) ([783b888](https://github.com/serverless-nextjs/serverless-next.js/commit/783b8889eef31796c0935e836962a7a329fd47fa))
+
 # [1.20.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/cdk-construct@1.20.0-alpha.24...@sls-next/cdk-construct@1.20.0-alpha.25) (2021-06-15)
 
 **Note:** Version bump only for package @sls-next/cdk-construct
