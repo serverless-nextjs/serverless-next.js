@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.0.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.23...@sls-next/core@1.0.0-alpha.24) (2021-06-16)
+
+### Bug Fixes
+
+- **core:** data request page JS path should use the one from the manifest ([#1241](https://github.com/serverless-nextjs/serverless-next.js/issues/1241)) ([f774a30](https://github.com/serverless-nextjs/serverless-next.js/commit/f774a30e1fa07d7f0d755106c68b50442d0c0d7f))
+
 # [1.0.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/core@1.0.0-alpha.22...@sls-next/core@1.0.0-alpha.23) (2021-06-16)
 
 ### Bug Fixes
