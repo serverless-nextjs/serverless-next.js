@@ -32,7 +32,7 @@ export const handler = async (
 
   if (external) {
     const { path } = external;
-    createExternalRewriteResponse(path, req, res, request.body?.data);
+    await createExternalRewriteResponse(path, req, res, request.body?.data);
   }
 
   const response = await responsePromise;

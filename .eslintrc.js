@@ -39,6 +39,7 @@ module.exports = {
       ],
       plugins: ["promise"],
       rules: {
+        "require-await": "error",
         "promise/catch-or-return": "error"
       }
     },

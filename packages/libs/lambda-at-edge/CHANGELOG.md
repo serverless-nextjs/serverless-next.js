@@ -3,27 +3,33 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.9.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.21...@sls-next/lambda-at-edge@1.9.0-alpha.22) (2021-06-09)
-
+# [1.9.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.24...@sls-next/lambda-at-edge@1.9.0-alpha.25) (2021-06-15)
 
 ### Bug Fixes
 
-* **lambda-at-edge, nextjs-cdk-construct:** fix several posix path normalizations ([313c600](https://github.com/serverless-nextjs/serverless-next.js/commit/313c6004d009df23b8356e03d19466d9ea393eac))
+- **lambda-at-edge:** await external API rewrite ([#1232](https://github.com/serverless-nextjs/serverless-next.js/issues/1232)) ([9f777d7](https://github.com/serverless-nextjs/serverless-next.js/commit/9f777d73eab583121d44a712c4ef18eecf784380))
 
+# [1.9.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.23...@sls-next/lambda-at-edge@1.9.0-alpha.24) (2021-06-15)
 
+### Bug Fixes
 
+- **lambda-at-edge:** downgrade @rollup/plugin-commonjs to 18.1.0 to fix bundling issue of decodeHTML functions in SQS client ([#1227](https://github.com/serverless-nextjs/serverless-next.js/issues/1227)) ([5dc04e1](https://github.com/serverless-nextjs/serverless-next.js/commit/5dc04e149a3404be22fa14c481a1fe11f437bbcd))
 
+# [1.9.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.22...@sls-next/lambda-at-edge@1.9.0-alpha.23) (2021-06-14)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
+# [1.9.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.21...@sls-next/lambda-at-edge@1.9.0-alpha.22) (2021-06-09)
+
+### Bug Fixes
+
+- **lambda-at-edge, nextjs-cdk-construct:** fix several posix path normalizations ([313c600](https://github.com/serverless-nextjs/serverless-next.js/commit/313c6004d009df23b8356e03d19466d9ea393eac))
 
 # [1.9.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.20...@sls-next/lambda-at-edge@1.9.0-alpha.21) (2021-06-09)
 
-
 ### Bug Fixes
 
-* **lambda-at-edge:** use posix relative path when determining JS files to exclude/include in default handler ([#1201](https://github.com/serverless-nextjs/serverless-next.js/issues/1201)) ([3e74ff0](https://github.com/serverless-nextjs/serverless-next.js/commit/3e74ff075ce71cf2f277aea7a482ecd496bd1a8c))
-
-
-
-
+- **lambda-at-edge:** use posix relative path when determining JS files to exclude/include in default handler ([#1201](https://github.com/serverless-nextjs/serverless-next.js/issues/1201)) ([3e74ff0](https://github.com/serverless-nextjs/serverless-next.js/commit/3e74ff075ce71cf2f277aea7a482ecd496bd1a8c))
 
 # [1.9.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.9.0-alpha.19...@sls-next/lambda-at-edge@1.9.0-alpha.20) (2021-06-08)
 
