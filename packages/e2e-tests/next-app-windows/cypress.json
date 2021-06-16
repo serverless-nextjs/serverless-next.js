@@ -4,5 +4,6 @@
   "responseTimeout": 15000,
   "requestTimeout": 15000,
   "experimentalFetchPolyfill": true,
-  "retries": 4
+  "retries": 4,
+  "video": false
 }
