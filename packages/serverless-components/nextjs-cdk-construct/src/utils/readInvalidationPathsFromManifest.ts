@@ -2,7 +2,19 @@ import * as path from "path";
 import { OriginRequestDefaultHandlerManifest } from "@sls-next/lambda-at-edge";
 
 const dynamicPathToInvalidationPath = (dynamicPath: string) => {
-  const [firstSegment] = dynamicPath.split("/:");
+  // Match "/:", "/[" or "/[[..."
+  // Only the last one indicates an optional catch-all group,
+  // where a route without both the the group and the slash matches.
+  // E.g. /pages/[[...slug]] matches on /pages and /pages/foo
+
+  const firstSplit = dynamicPath.match(/\/(:|\[(\[\.\.\.)?)/);
+  const [firstSegment] = dynamicPath.split(/\/[:[]/);
+
+  if (firstSplit && firstSplit[0] === "/[[...") {
+    // If the firstSplit is the optional catch-all,
+    // append the wildcard directly (without a slash)
+    return (firstSegment || "/") + "*";
+  }
   // Ensure this is posix path as CloudFront needs forward slash in invalidation
   return path.posix.join(firstSegment || "/", "*");
 };

@@ -35,16 +35,26 @@ describe("CDK Utils", () => {
             dynamic: {
               "/:id": file,
               "/:id/test": file,
-              "/test/:id/test": file
+              "/test/:id/test": file,
+              "/[id]": file,
+              "/[id]/test": file,
+              "/test/[id]/test": file,
+              "/test/[[...id]]": file
             },
             nonDynamic: { "/id": "" }
           },
           ssr: {
-            dynamic: { "/ssr/:id": file },
+            dynamic: {
+              "/ssr/:id": file,
+              "/ssr/[id]": file
+            },
             nonDynamic: { "/ssr-page": "" }
           },
           ssg: {
-            dynamic: { "/ssg/:id": ssgRoute },
+            dynamic: {
+              "/ssg/:id": ssgRoute,
+              "/ssg/[id]": ssgRoute
+            },
             nonDynamic: { "/ssg-page": nonDynamicSsgRoute }
           }
         } as OriginRequestDefaultHandlerManifest["pages"]
@@ -54,10 +64,16 @@ describe("CDK Utils", () => {
         "/*", // /:id
         "/*", // /:id/test
         "/test/*", // /test/:id/test
+        "/*", // /[id]
+        "/*", // /[id]/test
+        "/test/*", // /test/[id]/test
+        "/test*", // /test/[[...id]]
         "/id", // /id
         "/ssr/*", // /ssr/:id
+        "/ssr/*", // /ssr/[id]
         "/ssr-page", // /ssr-page
         "/ssg/*", // /ssg/:id
+        "/ssg/*", // /ssg/[id]
         "/ssg-page" // /ssg-page
       ].sort()
     );
