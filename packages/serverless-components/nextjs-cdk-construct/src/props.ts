@@ -1,5 +1,5 @@
 import { ICertificate } from "@aws-cdk/aws-certificatemanager";
-import { BehaviorOptions } from "@aws-cdk/aws-cloudfront";
+import { BehaviorOptions, DistributionProps } from "@aws-cdk/aws-cloudfront";
 import { Runtime } from "@aws-cdk/aws-lambda";
 import { IHostedZone } from "@aws-cdk/aws-route53";
 import { BucketProps } from "@aws-cdk/aws-s3";
@@ -92,4 +92,8 @@ export interface Props extends StackProps {
    * ```
    */
   invalidationPaths?: string[];
+  /**
+   * Override props passed to the underlying s3 bucket
+   */
+  cloudfrontProps?: Partial<DistributionProps>;
 }

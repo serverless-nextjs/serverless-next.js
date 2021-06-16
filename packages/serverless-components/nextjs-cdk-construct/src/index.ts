@@ -388,7 +388,9 @@ export class NextJSLambdaEdge extends cdk.Construct {
               }
             : {}),
           ...(props.behaviours || {})
-        }
+        },
+        // Override props.
+        ...(props.cloudfrontProps || {})
       }
     );
 
