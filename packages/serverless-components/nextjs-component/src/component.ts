@@ -42,12 +42,21 @@ class NextjsComponent extends Component {
   async default(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    this.initialize();
+
     if (inputs.build !== false) {
       await this.build(inputs);
-      await this.postBuild(inputs);
+      this.postBuild(inputs);
     }
 
     return this.deploy(inputs);
+  }
+
+  initialize(): void {
+    // Improve stack trace by increasing number of lines shown
+    if (this.context.instance.debugMode) {
+      Error.stackTraceLimit = 100;
+    }
   }
 
   readDefaultBuildManifest(
@@ -241,11 +250,11 @@ class NextjsComponent extends Component {
   }
 
   /**
-   * Run any post-build steps.
+   * Run any post-build steps synchronously.
    * Useful to run any custom commands before deploying.
    * @param inputs
    */
-  async postBuild(inputs: ServerlessComponentInputs): Promise<void> {
+  postBuild(inputs: ServerlessComponentInputs): void {
     const buildOptions = inputs.build;
 
     const postBuildCommands =
