@@ -13,15 +13,6 @@ import obtainDomains from "../src/lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
-jest.mock("aws-sdk", () => {
-  return {
-    ...jest.requireActual("aws-sdk"),
-    Config: jest.fn(() => {
-      // intentionally empty
-    })
-  };
-});
-
 const createNextComponent = () => {
   const component = new NextjsComponent();
   component.context.credentials = {
