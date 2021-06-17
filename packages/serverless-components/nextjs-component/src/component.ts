@@ -385,7 +385,8 @@ class NextjsComponent extends Component {
     };
 
     // parse origins from inputs d
-    let inputOrigins: (string | { [p: string]: unknown; url: string })[] = [];
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    let inputOrigins: any[] = [];
     if (cloudFrontOriginsInputs) {
       const origins = cloudFrontOriginsInputs as string[];
       inputOrigins = origins.map(expandRelativeUrls);
