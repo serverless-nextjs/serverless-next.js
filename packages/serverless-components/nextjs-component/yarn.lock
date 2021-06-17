@@ -979,12 +979,12 @@
   version "1.2.0-alpha.4"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "1.0.5-alpha.3"
+  version "1.0.5-alpha.5"
   dependencies:
     aws-sdk "2.929.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "1.0.0-alpha.22"
+  version "1.0.0-alpha.24"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -996,7 +996,7 @@
   version "1.1.2-alpha.1"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "1.9.0-alpha.23"
+  version "1.9.0-alpha.27"
   dependencies:
     "@aws-sdk/client-s3" "3.18.0"
     "@aws-sdk/client-sqs" "3.18.0"
@@ -1017,7 +1017,7 @@
   version "1.6.2-alpha.3"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "1.4.1-alpha.7"
+  version "1.4.1-alpha.9"
   dependencies:
     aws-sdk "2.929.0"
     fast-glob "^3.2.5"
@@ -3397,10 +3397,10 @@ tslib@^2.0.0:
   resolved "https://registry.npmjs.org/tslib/-/tslib-2.2.0.tgz#fb2c475977e35e241311ede2693cee1ec6698f5c"
   integrity sha512-gS9GVHRU+RGn5KQM2rllAlR3dU6m7AcpJKdtH8gFvQiC4Otgk98XnmMU+nZenHt/+VhnBPWwgrJsyrdcw6i23w==
 
-typescript@^3.9.6:
-  version "3.9.9"
-  resolved "https://registry.npmjs.org/typescript/-/typescript-3.9.9.tgz#e69905c54bc0681d0518bd4d587cc6f2d0b1a674"
-  integrity sha512-kdMjTiekY+z/ubJCATUPlRDl39vXYiMV9iyeMuEuXZh2we6zz80uovNN2WlAxmmdE/Z/YQe+EbOEXB5RHEED3w==
+typescript@^4.3.3:
+  version "4.3.3"
+  resolved "https://registry.npmjs.org/typescript/-/typescript-4.3.3.tgz#5401db69bd3203daf1851a1a74d199cb3112c11a"
+  integrity sha512-rUvLW0WtF7PF2b9yenwWUi9Da9euvDRhmH7BLyBG4DCFfOJ850LGNknmRpp8Z8kXNUPObdZQEfKOiHtXuQHHKA==
 
 union-value@^1.0.0:
   version "1.0.1"
