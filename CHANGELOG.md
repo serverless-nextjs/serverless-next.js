@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.0...v3.1.0-alpha.1) (2021-06-17)
+
+### Bug Fixes
+
+- tweak aws retry policy ([#1247](https://github.com/serverless-nextjs/serverless-next.js/issues/1247)) ([00e5730](https://github.com/serverless-nextjs/serverless-next.js/commit/00e57300b78e4b628d65f002dbf018760cf38763))
+
 # [3.1.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v2.3.4...v3.1.0-alpha.0) (2021-06-17)
 
 ### Bug Fixes
