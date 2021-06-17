@@ -28,6 +28,7 @@ import type {
   LambdaInput
 } from "../types";
 import { execSync } from "child_process";
+import AWS from "aws-sdk";
 
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -59,8 +60,7 @@ class NextjsComponent extends Component {
     }
 
     // Configure AWS retry policy
-    const AWS = require("aws-sdk");
-    AWS.Config.update({
+    new AWS.Config({
       maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
       retryDelayOptions: { base: 200 }
     });
@@ -384,8 +384,8 @@ class NextjsComponent extends Component {
       }
     };
 
-    // parse origins from inputs
-    let inputOrigins: any[] = [];
+    // parse origins from inputs d
+    let inputOrigins: (string | { [p: string]: unknown; url: string })[] = [];
     if (cloudFrontOriginsInputs) {
       const origins = cloudFrontOriginsInputs as string[];
       inputOrigins = origins.map(expandRelativeUrls);
