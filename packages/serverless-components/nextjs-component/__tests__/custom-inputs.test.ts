@@ -880,7 +880,7 @@ describe("Custom inputs", () => {
       const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
       let tmpCwd: string;
 
-      beforeEach(async () => {
+      beforeEach(() => {
         tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
@@ -935,7 +935,7 @@ describe("Custom inputs", () => {
 
     it(`allows setting custom cache behavior: ${JSON.stringify(
       cloudFrontInput
-    )}`, async () => {
+    )}`, () => {
       cloudFrontInput[pathName]["lambda@edge"] = {
         "origin-request":
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
@@ -1039,7 +1039,7 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
     let tmpCwd: string;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
@@ -1064,7 +1064,7 @@ describe("Custom inputs", () => {
       const fixturePath = path.join(__dirname, "./fixtures/simple-app");
       let tmpCwd: string;
 
-      beforeEach(async () => {
+      beforeEach(() => {
         tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
@@ -1134,7 +1134,7 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
     let tmpCwd: string;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 

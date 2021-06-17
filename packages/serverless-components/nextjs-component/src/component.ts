@@ -28,6 +28,7 @@ import type {
   LambdaInput
 } from "../types";
 import { execSync } from "child_process";
+import AWS from "aws-sdk";
 
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -56,6 +57,14 @@ class NextjsComponent extends Component {
     // Improve stack trace by increasing number of lines shown
     if (this.context.instance.debugMode) {
       Error.stackTraceLimit = 100;
+    }
+
+    // Configure AWS retry policy
+    if (AWS?.Config) {
+      new AWS.Config({
+        maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+        retryDelayOptions: { base: 200 }
+      });
     }
   }
 
@@ -378,6 +387,7 @@ class NextjsComponent extends Component {
     };
 
     // parse origins from inputs
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let inputOrigins: any[] = [];
     if (cloudFrontOriginsInputs) {
       const origins = cloudFrontOriginsInputs as string[];
