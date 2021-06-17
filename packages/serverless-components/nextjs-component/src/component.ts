@@ -62,7 +62,6 @@ class NextjsComponent extends Component {
     // Configure AWS retry policy
     if (AWS?.config) {
       AWS.config.update({
-        credentials: this.context.credentials.aws,
         maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
         retryDelayOptions: { base: 200 }
       });
