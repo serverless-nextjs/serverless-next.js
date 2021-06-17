@@ -57,6 +57,13 @@ class NextjsComponent extends Component {
     if (this.context.instance.debugMode) {
       Error.stackTraceLimit = 100;
     }
+
+    // Configure AWS retry policy
+    const AWS = require("aws-sdk");
+    AWS.Config.update({
+      maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+      retryDelayOptions: { base: 200 }
+    });
   }
 
   readDefaultBuildManifest(
