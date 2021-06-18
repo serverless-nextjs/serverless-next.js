@@ -53,7 +53,11 @@ export default async ({
   bucketRegion,
   credentials
 }: S3ClientFactoryOptions): Promise<S3Client> => {
-  let s3 = new AWS.S3({ ...credentials, region: bucketRegion });
+  let s3 = new AWS.S3({
+    ...credentials,
+    region: bucketRegion,
+    s3UsEast1RegionalEndpoint: "regional"
+  });
 
   try {
     const { Status } = await s3
@@ -66,6 +70,7 @@ export default async ({
       s3 = new AWS.S3({
         ...credentials,
         region: bucketRegion,
+        s3UsEast1RegionalEndpoint: "regional",
         useAccelerateEndpoint: true
       });
     }
