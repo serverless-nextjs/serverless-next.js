@@ -114,7 +114,7 @@ describe.each`
 
       expect(AWS.S3).toBeCalledWith({
         accessKeyId: "fake-access-key",
-        endpoint: "https://s3.us-east-1.amazonaws.com",
+        endpoint: "https://s3.us-east-1.amazonaws.com/test-bucket-name",
         s3BucketEndpoint: true,
         secretAccessKey: "fake-secret-key",
         sessionToken: "fake-session-token",

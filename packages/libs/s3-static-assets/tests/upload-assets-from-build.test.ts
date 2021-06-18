@@ -64,7 +64,7 @@ describe("Upload tests from build", () => {
 
     expect(AWS.S3).toBeCalledWith({
       region: "us-east-1",
-      endpoint: "https://s3.us-east-1.amazonaws.com",
+      endpoint: "https://s3.us-east-1.amazonaws.com/test-bucket-name",
       s3BucketEndpoint: true,
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
@@ -82,7 +82,7 @@ describe("Upload tests from build", () => {
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
       region: "us-east-1",
-      endpoint: "https://s3.us-east-1.amazonaws.com",
+      endpoint: "https://s3.us-east-1.amazonaws.com/test-bucket-name",
       s3BucketEndpoint: true,
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
