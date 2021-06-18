@@ -1,11 +1,13 @@
+import AWS from "aws-sdk";
 import NextjsComponent from "../src/component";
 
 jest.mock("aws-sdk", () => {
+  const mockConfig = {
+    update: jest.fn()
+  };
   return {
     ...jest.requireActual("aws-sdk"),
-    Config: jest.fn(() => {
-      // intentionally empty
-    })
+    config: mockConfig
   };
 });
 
@@ -29,7 +31,6 @@ describe("Initialize tests", () => {
   });
 
   it("sets AWS config correctly", () => {
-    const AWS = require("aws-sdk");
-    expect(AWS.Config).toBeCalled();
+    expect(AWS.config.update).toBeCalled();
   });
 });
