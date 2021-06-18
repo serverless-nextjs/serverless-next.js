@@ -353,12 +353,14 @@ class NextjsComponent extends Component {
     // After deployment, only the new and previous build ID's assets are present. We still need previous build assets as it takes time to propagate the Lambda.
     await deleteOldStaticAssets({
       bucketName: bucketOutputs.name,
+      bucketRegion: bucketRegion,
       basePath: routesManifest.basePath,
       credentials: this.context.credentials.aws
     });
 
     await uploadStaticAssetsFromBuild({
       bucketName: bucketOutputs.name,
+      bucketRegion: bucketRegion,
       basePath: routesManifest.basePath,
       nextConfigDir: nextConfigPath,
       nextStaticDir: nextStaticPath,

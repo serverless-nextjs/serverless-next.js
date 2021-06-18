@@ -14,6 +14,7 @@ import getPublicAssetCacheControl, {
 
 type UploadStaticAssetsOptions = {
   bucketName: string;
+  bucketRegion: string;
   basePath: string;
   nextConfigDir: string;
   nextStaticDir?: string;
@@ -151,6 +152,7 @@ const uploadStaticAssetsFromBuild = async (
 ): Promise<AWS.S3.ManagedUpload.SendData[]> => {
   const {
     bucketName,
+    bucketRegion,
     credentials,
     basePath,
     publicDirectoryCache,
@@ -163,6 +165,7 @@ const uploadStaticAssetsFromBuild = async (
   });
   const s3 = await S3ClientFactory({
     bucketName,
+    bucketRegion,
     credentials: credentials
   });
 
@@ -179,6 +182,7 @@ const uploadStaticAssetsFromBuild = async (
 
 type DeleteOldStaticAssetsOptions = {
   bucketName: string;
+  bucketRegion: string;
   basePath: string;
   credentials: Credentials;
 };
@@ -191,12 +195,13 @@ type DeleteOldStaticAssetsOptions = {
 const deleteOldStaticAssets = async (
   options: DeleteOldStaticAssetsOptions
 ): Promise<void> => {
-  const { bucketName, basePath } = options;
+  const { bucketName, bucketRegion, basePath } = options;
 
   const normalizedBasePathPrefix = basePath ? basePath.slice(1) + "/" : "";
 
   const s3 = await S3ClientFactory({
     bucketName,
+    bucketRegion,
     credentials: options.credentials
   });
 
