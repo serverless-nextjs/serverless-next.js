@@ -20,6 +20,8 @@ updates:
         # FIXME: CDK dependencies must be updated together but Dependabot cannot group updates
         # We'll manually update for now and/or use Renovate in the future
       - dependency-name: "@aws-cdk/*"
+        # FIXME: some issue with fs-extra for some users? https://github.com/serverless-nextjs/serverless-next.js/issues/1240
+      - dependency-name: "fs-extra"
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"

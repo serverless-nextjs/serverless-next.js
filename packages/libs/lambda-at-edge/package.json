@@ -67,7 +67,7 @@
     "@vercel/nft": "^0.13.1",
     "execa": "^5.0.1",
     "fresh": "^0.5.2",
-    "fs-extra": "^10.0.0",
+    "fs-extra": "^9.1.0",
     "get-stream": "^6.0.0",
     "is-animated": "^2.0.1",
     "klaw": "^3.0.0",

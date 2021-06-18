@@ -3260,34 +3260,16 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "1.0.0-alpha.22"
-  dependencies:
-    "@hapi/accept" "^5.0.1"
-    cookie "^0.4.1"
-    jsonwebtoken "^8.5.1"
-    path-to-regexp "^6.1.0"
-    regex-parser "^2.2.10"
+  version "0.0.0"
+  uid ""
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "1.9.0-alpha.23"
-  dependencies:
-    "@aws-sdk/client-s3" "3.18.0"
-    "@aws-sdk/client-sqs" "3.18.0"
-    "@hapi/accept" "5.0.1"
-    "@sls-next/core" "link:packages/libs/core"
-    "@vercel/nft" "^0.13.1"
-    execa "^5.0.1"
-    fresh "^0.5.2"
-    fs-extra "^10.0.0"
-    get-stream "^6.0.0"
-    is-animated "^2.0.1"
-    klaw "^3.0.0"
-    node-fetch "^2.6.1"
-    path-to-regexp "^6.1.0"
-    send "^0.17.1"
+  version "0.0.0"
+  uid ""
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "1.6.2-alpha.3"
+  version "0.0.0"
+  uid ""
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -6761,15 +6743,6 @@ fs-constants@^1.0.0:
   version "1.0.0"
   resolved "https://registry.npmjs.org/fs-constants/-/fs-constants-1.0.0.tgz#6be0de9be998ce16af8afc24497b9ee9b7ccd9ad"
   integrity sha512-y6OAwoSIf7FyjMIv94u+b5rdheZEjzR63GTyZJm5qh4Bi+2YgwLCcI/fPFZkL5PSixOt6ZNKm+w+Hfp/Bciwow==
-
-fs-extra@^10.0.0:
-  version "10.0.0"
-  resolved "https://registry.npmjs.org/fs-extra/-/fs-extra-10.0.0.tgz#9ff61b655dde53fb34a82df84bb214ce802e17c1"
-  integrity sha512-C5owb14u9eJwizKGdchcDUQeFtlSHHthBk8pbX9Vc1PFZrLombudjDnNns88aYslCyF6IY5SUw3Roz6xShcEIQ==
-  dependencies:
-    graceful-fs "^4.2.0"
-    jsonfile "^6.0.1"
-    universalify "^2.0.0"
 
 fs-extra@^7.0.1:
   version "7.0.1"
