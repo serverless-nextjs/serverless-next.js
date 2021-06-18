@@ -53,11 +53,11 @@ export default async ({
   bucketRegion,
   credentials
 }: S3ClientFactoryOptions): Promise<S3Client> => {
-  const endpoint = new AWS.Endpoint(`s3.${bucketRegion}.amazonaws.com`);
   let s3 = new AWS.S3({
     ...credentials,
     region: bucketRegion,
-    endpoint: endpoint
+    endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
+    s3BucketEndpoint: true
   });
 
   try {
@@ -71,7 +71,8 @@ export default async ({
       s3 = new AWS.S3({
         ...credentials,
         region: bucketRegion,
-        endpoint: endpoint,
+        endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
+        s3BucketEndpoint: true,
         useAccelerateEndpoint: true
       });
     }
