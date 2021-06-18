@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.3...v3.1.0-alpha.4) (2021-06-18)
+
+### Bug Fixes
+
+- **s3-static-assets:** when initializing s3 client, pass in bucket region to ensure correct s3 endpoints ([#1262](https://github.com/serverless-nextjs/serverless-next.js/issues/1262)) ([83805bb](https://github.com/serverless-nextjs/serverless-next.js/commit/83805bb56d824ff3777e3da6591078ffd7053f48))
+
 # [3.1.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.2...v3.1.0-alpha.3) (2021-06-18)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
