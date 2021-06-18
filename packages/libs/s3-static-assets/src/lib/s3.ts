@@ -56,7 +56,7 @@ export default async ({
   let s3 = new AWS.S3({
     ...credentials,
     region: bucketRegion,
-    endpoint: `https://s3.${bucketRegion}.amazonaws.com/${bucketName}`,
+    endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
     s3BucketEndpoint: true
   });
 
@@ -71,7 +71,7 @@ export default async ({
       s3 = new AWS.S3({
         ...credentials,
         region: bucketRegion,
-        endpoint: `https://s3.${bucketRegion}.amazonaws.com/${bucketName}`,
+        endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
         s3BucketEndpoint: true,
         useAccelerateEndpoint: true
       });
