@@ -5,6 +5,7 @@ import { redirect } from "./redirect";
 import { toRequest } from "./request";
 import { routeDefault } from "../route";
 import { addDefaultLocaleToPath } from "../route/locale";
+import { notFoundPage } from "../route/notfound";
 import { Handler } from "./types";
 import {
   Event,
@@ -107,6 +108,30 @@ export const handleDefault = async (
   }
   if (route.isUnauthorized) {
     return unauthorized(event, route as UnauthorizedRoute);
+  }
+
+  if (
+    route.isStatic &&
+    event.req.method !== "GET" &&
+    event.req.method !== "HEAD"
+  ) {
+    // Static pages only support GET/HEAD -> return 404 page
+    const errorRoute = notFoundPage(
+      event.req.url ?? "",
+      manifest,
+      routesManifest
+    );
+    if (errorRoute.isStatic) {
+      return errorRoute as StaticRoute;
+    }
+
+    return renderRoute(
+      event,
+      errorRoute,
+      manifest,
+      routesManifest,
+      handler.getPage
+    );
   }
 
   if (route.isStatic) {
