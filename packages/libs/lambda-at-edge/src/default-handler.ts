@@ -137,6 +137,7 @@ const getS3File = (
       bucketName,
       buildId,
       file,
+      isData,
       region
     });
 

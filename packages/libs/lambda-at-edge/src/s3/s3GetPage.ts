@@ -1,5 +1,4 @@
 import type { Readable } from "stream";
-import { Event, StaticRoute } from "@sls-next/core";
 import { buildS3RetryStrategy } from "./s3RetryStrategy";
 
 interface S3GetPageOptions {
@@ -7,6 +6,7 @@ interface S3GetPageOptions {
   bucketName?: string;
   buildId: string;
   file: string;
+  isData: boolean;
   region?: string;
 }
 
@@ -22,7 +22,7 @@ interface S3Page {
 export const s3GetPage = async (
   options: S3GetPageOptions
 ): Promise<S3Page | undefined> => {
-  const { basePath, bucketName, buildId, region } = options;
+  const { basePath, bucketName, buildId, isData, region } = options;
   // Lazily import only S3Client to reduce init times until actually needed
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
 
@@ -33,8 +33,11 @@ export const s3GetPage = async (
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
 
-  const file = options.file.slice("pages".length);
-  const s3Key = `${s3BasePath}static-pages/${buildId}${file}`;
+  const path = isData
+    ? `${s3BasePath}`
+    : `${s3BasePath}/static-pages/${buildId}`;
+  const file = isData ? options.file : options.file.slice("pages".length);
+  const s3Key = `${path}${file}`;
   const { GetObjectCommand } = await import(
     "@aws-sdk/client-s3/commands/GetObjectCommand"
   );

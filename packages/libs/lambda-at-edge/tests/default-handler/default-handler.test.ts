@@ -301,6 +301,7 @@ describe("Lambda@Edge", () => {
             bucketName: "my-bucket.s3.amazonaws.com",
             buildId: "build-id",
             file: expectedFile,
+            isData: false,
             region: "us-east-1"
           });
         }
@@ -370,6 +371,7 @@ describe("Lambda@Edge", () => {
             bucketName: "my-bucket.s3.amazonaws.com",
             buildId: "build-id",
             file: expectedFile,
+            isData: false,
             region: "us-east-1"
           });
         }
@@ -728,6 +730,7 @@ describe("Lambda@Edge", () => {
             bucketName: "my-bucket.s3.amazonaws.com",
             buildId: "build-id",
             file: expectedFile,
+            isData: true,
             region: "us-east-1"
           });
         }
