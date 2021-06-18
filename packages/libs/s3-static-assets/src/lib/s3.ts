@@ -57,7 +57,7 @@ export default async ({
     ...credentials,
     region: bucketRegion,
     endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
-    s3BucketEndpoint: true
+    s3BucketEndpoint: false
   });
 
   try {
@@ -72,7 +72,7 @@ export default async ({
         ...credentials,
         region: bucketRegion,
         endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
-        s3BucketEndpoint: true,
+        s3BucketEndpoint: false,
         useAccelerateEndpoint: true
       });
     }
