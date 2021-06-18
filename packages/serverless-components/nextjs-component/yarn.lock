@@ -965,7 +965,7 @@
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "1.2.0-alpha.4"
+  version "3.1.0-alpha.1"
   dependencies:
     "@serverless/aws-iam-role" "^1.0.0"
     "@serverless/aws-lambda-layer" "^1.0.0"
@@ -979,9 +979,9 @@
   version "1.2.0-alpha.4"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "1.0.5-alpha.5"
+  version "3.1.0-alpha.1"
   dependencies:
-    aws-sdk "2.930.0"
+    aws-sdk "2.931.0"
 
 "@sls-next/core@link:../../libs/core":
   version "1.0.0-alpha.24"
@@ -1017,9 +1017,9 @@
   version "1.6.2-alpha.3"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "1.4.1-alpha.9"
+  version "3.1.0-alpha.1"
   dependencies:
-    aws-sdk "2.930.0"
+    aws-sdk "2.931.0"
     fast-glob "^3.2.5"
     fs-extra "^10.0.0"
     mime-types "^2.1.27"
@@ -1244,10 +1244,10 @@ atob@^2.1.2:
   resolved "https://registry.npmjs.org/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-aws-sdk@2.930.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.920.0:
-  version "2.930.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.930.0.tgz#f98871a790ffdbfae5439e50db99f6d4635afe19"
-  integrity sha512-g8fPOy7Skh2Pqpz2SaDI+M9re2rjTWBQUirAMgtUD/6I/Lf6CR1Q0amsjtQU8WqRQH06kNGwuLtc8Tt6wAux3Q==
+aws-sdk@2.931.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.920.0:
+  version "2.931.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.931.0.tgz#7fdc886fa7697095203fe7de16bc948a8b1c8daa"
+  integrity sha512-Db97/aJq8zYl8mHzY6dNO6m9S89TqN4HEUUc2aCYQCTyMb/eNrjf+uZTnutnQbJkClqHzxFcWc3aqe5VlTac/A==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
