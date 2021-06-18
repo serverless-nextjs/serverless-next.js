@@ -102,7 +102,7 @@
       "/integration/",
       "/cypress/",
       "/sharp_node_modules/",
-      "<rootDir>/*/aws-sdk.mock.ts"
+      "*.mock.ts"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
