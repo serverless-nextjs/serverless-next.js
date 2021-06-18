@@ -114,11 +114,13 @@ describe.each`
 
       expect(AWS.S3).toBeCalledWith({
         accessKeyId: "fake-access-key",
+        endpoint: expect.any(Object),
         secretAccessKey: "fake-secret-key",
         sessionToken: "fake-session-token",
-        region: "us-east-1",
-        s3UsEast1RegionalEndpoint: "regional"
+        region: "us-east-1"
       });
+
+      expect(AWS.Endpoint).toBeCalledWith("s3.us-east-1.amazonaws.com");
 
       expect(mockDeleteObjects).toBeCalledTimes(2);
 

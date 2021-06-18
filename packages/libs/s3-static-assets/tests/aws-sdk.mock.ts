@@ -40,6 +40,11 @@ const MockS3 = jest.fn(() => ({
   deleteObjects: mockDeleteObjects
 }));
 
+const MockEndpoint = jest.fn(() => ({
+  // intentionally empty
+}));
+
 export default {
-  S3: MockS3
+  S3: MockS3,
+  Endpoint: MockEndpoint
 };

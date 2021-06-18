@@ -64,11 +64,13 @@ describe("Upload tests from build", () => {
 
     expect(AWS.S3).toBeCalledWith({
       region: "us-east-1",
-      s3UsEast1RegionalEndpoint: "regional",
+      endpoint: expect.any(Object),
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token"
     });
+
+    expect(AWS.Endpoint).toBeCalledWith("s3.us-east-1.amazonaws.com");
   });
 
   it("uses accelerated bucket option if available", async () => {
@@ -81,12 +83,13 @@ describe("Upload tests from build", () => {
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
       region: "us-east-1",
-      s3UsEast1RegionalEndpoint: "regional",
+      endpoint: expect.any(Object),
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token",
       useAccelerateEndpoint: true
     });
+    expect(AWS.Endpoint).toBeCalledWith("s3.us-east-1.amazonaws.com");
     expect(mockGetBucketAccelerateConfiguration).toBeCalledWith({
       Bucket: "test-bucket-name"
     });
