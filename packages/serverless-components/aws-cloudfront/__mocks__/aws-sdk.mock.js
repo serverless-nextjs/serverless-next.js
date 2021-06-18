@@ -62,5 +62,9 @@ module.exports = {
 
   S3: jest.fn(() => ({
     putBucketPolicy: mockPutBucketPolicy
+  })),
+
+  Endpoint: jest.fn(() => ({
+    // intentionally empty
   }))
 };
