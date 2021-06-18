@@ -13,6 +13,11 @@ import obtainDomains from "../src/lib/obtainDomains";
 import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
+// unfortunately can't use __mocks__ because aws-sdk is being mocked in other
+// packages in the monorepo
+// https://github.com/facebook/jest/issues/2070
+jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
+
 const createNextComponent = () => {
   const component = new NextjsComponent();
   component.context.credentials = {

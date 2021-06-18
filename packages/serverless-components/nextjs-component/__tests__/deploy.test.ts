@@ -15,6 +15,11 @@ import {
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 import { mockUpload } from "aws-sdk";
 
+// unfortunately can't use __mocks__ because aws-sdk is being mocked in other
+// packages in the monorepo
+// https://github.com/facebook/jest/issues/2070
+jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
+
 describe.each`
   appPath                      | expectsQueueDeployment | name
   ${"./fixtures/simple-app"}   | ${false}               | ${"without ISR"}
