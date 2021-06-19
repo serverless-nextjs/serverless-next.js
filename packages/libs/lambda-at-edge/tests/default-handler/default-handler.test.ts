@@ -481,7 +481,7 @@ describe("Lambda@Edge", () => {
     describe("Public files routing", () => {
       it.each`
         path
-        ${"/manifest.json"}
+        ${"/favicon.ico"}
         ${"/file%20with%20spaces.json"}
       `(
         "serves public file at path $path from S3 origin /public folder",
@@ -504,6 +504,35 @@ describe("Lambda@Edge", () => {
             }
           });
           expect(request.uri).toEqual(path);
+        }
+      );
+
+      it.each`
+        path                | expectedFile
+        ${"/manifest.json"} | ${"/manifest.json"}
+      `(
+        "serves public file at path $path with S3 client and header",
+        async ({ path, expectedFile }) => {
+          const event = createCloudFrontEvent({
+            uri: path,
+            host: "mydistribution.cloudfront.net"
+          });
+          mockS3GetPage.mockReturnValueOnce({ bodyString: "manifest.json" });
+
+          const result = await handler(event);
+
+          const response = result as CloudFrontResultResponse;
+
+          expect(response.status).toEqual(200);
+          expect(mockS3GetPage).toHaveBeenCalledWith({
+            basePath: "",
+            bucketName: "my-bucket.s3.amazonaws.com",
+            buildId: "build-id",
+            file: expectedFile,
+            isData: undefined,
+            isPublicFile: true,
+            region: "us-east-1"
+          });
         }
       );
 

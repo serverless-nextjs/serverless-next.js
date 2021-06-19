@@ -130,14 +130,26 @@ const getS3File = (
   bucketName?: string,
   region?: string
 ) => {
-  return async (event: Event, route: StaticRoute): Promise<boolean> => {
-    const { isData, file, statusCode } = route;
+  return async (
+    event: Event,
+    route: PublicFileRoute | StaticRoute
+  ): Promise<boolean> => {
+    const { isData, isPublicFile, file, page, revalidate, statusCode } =
+      route.isStatic
+        ? (route as StaticRoute)
+        : {
+            ...route,
+            isData: undefined,
+            revalidate: undefined,
+            page: undefined
+          };
     const s3Page = await s3GetPage({
       basePath,
       bucketName,
       buildId,
       file,
       isData,
+      isPublicFile,
       region
     });
 
@@ -163,7 +175,7 @@ const getS3File = (
     const isrResponse = getStaticRegenerationResponse({
       expires: s3Page.expires,
       lastModified: s3Page.lastModified,
-      initialRevalidateSeconds: route.revalidate
+      initialRevalidateSeconds: revalidate
     });
 
     if (is500) {
@@ -174,10 +186,10 @@ const getS3File = (
     } else if (isrResponse) {
       res.setHeader("Cache-Control", isrResponse.cacheControl);
 
-      if (route.page && isrResponse.secondsRemainingUntilRevalidation <= 0) {
+      if (page && isrResponse.secondsRemainingUntilRevalidation <= 0) {
         const { throttle } = await triggerStaticRegeneration({
           basePath,
-          pagePath: route.page,
+          pagePath: page,
           request,
           etag: s3Page.etag,
           lastModified: s3Page.lastModified
@@ -307,6 +319,13 @@ const handleOriginRequest = async ({
 
   if (route.isPublicFile) {
     const { file } = route as PublicFileRoute;
+    const customHeaders = getCustomHeaders(request.uri, routesManifest);
+    if (Object.keys(customHeaders).length) {
+      // Get using S3 client, to set custom headers
+      if (await getFile({ req, res, responsePromise }, route as StaticRoute)) {
+        return await responsePromise;
+      }
+    }
     return staticRequest(request, file, `${routesManifest.basePath}/public`);
   }
 
