@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.4...v3.1.0-alpha.5) (2021-06-19)
+
+### Bug Fixes
+
+- **s3-static-assets:** use regional endpoint for s3 buckets ([#1263](https://github.com/serverless-nextjs/serverless-next.js/issues/1263)) ([3a1d5d5](https://github.com/serverless-nextjs/serverless-next.js/commit/3a1d5d569f36759c1e709f31cbb98060abd1957a))
+
 # [3.1.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.3...v3.1.0-alpha.4) (2021-06-18)
 
 ### Bug Fixes
