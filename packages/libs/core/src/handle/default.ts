@@ -66,6 +66,27 @@ export const renderRoute = async (
   }
 };
 
+const handleRoute = async (
+  event: Event,
+  route: RenderRoute | StaticRoute,
+  manifest: PageManifest,
+  routesManifest: RoutesManifest,
+  handler: Handler
+): Promise<void> => {
+  const error = route.isStatic
+    ? (route as StaticRoute)
+    : await renderRoute(
+        event,
+        route,
+        manifest,
+        routesManifest,
+        handler.getPage
+      );
+  if (error) {
+    await handler.getFile(event, error);
+  }
+};
+
 /*
  * Handles page and data routes.
  *
@@ -81,7 +102,7 @@ export const handleDefault = async (
   prerenderManifest: PrerenderManifest,
   routesManifest: RoutesManifest,
   handler: Handler
-): Promise<ExternalRoute | PublicFileRoute | StaticRoute | void> => {
+): Promise<ExternalRoute | PublicFileRoute | void> => {
   const request = toRequest(event);
   const route = await routeDefault(
     request,
@@ -98,12 +119,12 @@ export const handleDefault = async (
     return redirect(event, route as RedirectRoute);
   }
   if (route.isRender) {
-    return renderRoute(
+    return handleRoute(
       event,
       route as RenderRoute,
       manifest,
       routesManifest,
-      handler.getPage
+      handler
     );
   }
   if (route.isUnauthorized) {
@@ -121,37 +142,27 @@ export const handleDefault = async (
       manifest,
       routesManifest
     );
-    if (errorRoute.isStatic) {
-      return errorRoute as StaticRoute;
-    }
-
-    return renderRoute(
-      event,
-      errorRoute,
-      manifest,
-      routesManifest,
-      handler.getPage
-    );
+    return handleRoute(event, errorRoute, manifest, routesManifest, handler);
   }
 
   if (route.isStatic) {
     const staticRoute = route as StaticRoute;
-    if (staticRoute.fallback !== undefined || staticRoute.revalidate) {
-      if (await handler.getFile(event, staticRoute)) {
-        return;
-      }
-      const fallback = await handleFallback(
-        event,
-        route,
-        manifest,
-        routesManifest,
-        handler.getPage
-      );
-      if (fallback && !fallback.isStatic) {
-        return handler.putFiles(event, fallback);
-      }
-      return fallback;
+    if (await handler.getFile(event, staticRoute)) {
+      return;
     }
+    const fallback = await handleFallback(
+      event,
+      route,
+      manifest,
+      routesManifest,
+      handler.getPage
+    );
+    if (fallback && !fallback.isStatic) {
+      return handler.putFiles(event, fallback);
+    } else if (fallback) {
+      await handler.getFile(event, fallback);
+    }
+    return;
   }
 
   // Let typescript check this is correct type to be returned
