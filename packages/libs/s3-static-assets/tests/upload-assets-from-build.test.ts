@@ -35,6 +35,7 @@ const upload = (
 
   return uploadStaticAssetsFromBuild({
     bucketName: "test-bucket-name",
+    bucketRegion: "us-east-1",
     basePath: basePath || "",
     nextConfigDir: path.join(__dirname, nextConfigDir),
     nextStaticDir: staticDir,
@@ -62,6 +63,9 @@ describe("Upload tests from build", () => {
     await upload("./fixtures/app-basic-upload-from-build");
 
     expect(AWS.S3).toBeCalledWith({
+      region: "us-east-1",
+      endpoint: "https://s3.us-east-1.amazonaws.com",
+      s3BucketEndpoint: false,
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token"
@@ -77,6 +81,9 @@ describe("Upload tests from build", () => {
 
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
+      region: "us-east-1",
+      endpoint: "https://s3.us-east-1.amazonaws.com",
+      s3BucketEndpoint: false,
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
       sessionToken: "fake-session-token",
@@ -111,7 +118,7 @@ describe.each`
       await upload(nextConfigDir, nextStaticDir);
     });
 
-    it("uploads static files in _next/static", async () => {
+    it("uploads static files in _next/static", () => {
       expect(mockUpload).toBeCalledWith({
         Bucket: "test-bucket-name",
         Key: "_next/static/a_test_build_id/two.js",
@@ -129,7 +136,7 @@ describe.each`
       });
     });
 
-    it("uploads HTML pages in static-pages", async () => {
+    it("uploads HTML pages in static-pages", () => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: "static-pages/zsWqBqLjpgRmswfQomanp/todos/terms.html",
@@ -163,7 +170,7 @@ describe.each`
       );
     });
 
-    it("uploads staticProps JSON files in _next/data", async () => {
+    it("uploads staticProps JSON files in _next/data", () => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: "_next/data/zsWqBqLjpgRmswfQomanp/index.json",
@@ -197,7 +204,7 @@ describe.each`
       );
     });
 
-    it("uploads files in the public folder", async () => {
+    it("uploads files in the public folder", () => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: "public/robots.txt",
@@ -215,7 +222,7 @@ describe.each`
       );
     });
 
-    it("uploads files in the static folder", async () => {
+    it("uploads files in the static folder", () => {
       expect(mockUpload).toBeCalledWith(
         expect.objectContaining({
           Key: "static/robots.txt",
