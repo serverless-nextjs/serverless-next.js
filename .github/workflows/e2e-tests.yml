@@ -157,9 +157,7 @@ jobs:
       - name: Choose latest next.js version
         if: ${{ !startsWith(matrix.app, 'prev') }}
         working-directory: packages/e2e-tests/${{ matrix.app }}
-        run: |
-          cd packages/e2e-tests/$APP_NAME
-          yarn add next@latest
+        run: yarn add next@latest
 
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
