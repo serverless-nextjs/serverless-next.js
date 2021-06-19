@@ -8,7 +8,7 @@
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "SSG_PAGE_PATH=/ssg-page SSR_PAGE_PATH=/ssr-page APP_NAME=prev-next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
+    "e2e:ci": "ISR_PAGE_PATH=/revalidated-ssg-page DYNAMIC_ISR_PAGE_PATH=/revalidated-ssg-pages/101 SSG_PAGE_PATH=/ssg-page SSR_PAGE_PATH=/ssr-page APP_NAME=prev-next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
   },
   "repository": {
     "type": "git",
@@ -20,9 +20,9 @@
   "homepage": "https://github.com/serverless-next.js/serverless-next.js",
   "dependencies": {
     "isomorphic-fetch": "2.2.1",
-    "next": "~9.5.5",
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "next": "10.2.3",
+    "react": "17.0.1",
+    "react-dom": "17.0.1"
   },
   "devDependencies": {
     "@bahmutov/print-env": "2.1.2",
