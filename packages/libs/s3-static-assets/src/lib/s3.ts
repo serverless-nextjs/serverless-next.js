@@ -6,6 +6,7 @@ import { ObjectList } from "aws-sdk/clients/s3";
 
 type S3ClientFactoryOptions = {
   bucketName: string;
+  bucketRegion: string;
   credentials: Credentials;
 };
 
@@ -49,9 +50,15 @@ export type Credentials = {
 
 export default async ({
   bucketName,
+  bucketRegion,
   credentials
 }: S3ClientFactoryOptions): Promise<S3Client> => {
-  let s3 = new AWS.S3({ ...credentials });
+  let s3 = new AWS.S3({
+    ...credentials,
+    region: bucketRegion,
+    endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
+    s3BucketEndpoint: false
+  });
 
   try {
     const { Status } = await s3
@@ -61,7 +68,13 @@ export default async ({
       .promise();
 
     if (Status === "Enabled") {
-      s3 = new AWS.S3({ ...credentials, useAccelerateEndpoint: true });
+      s3 = new AWS.S3({
+        ...credentials,
+        region: bucketRegion,
+        endpoint: `https://s3.${bucketRegion}.amazonaws.com`,
+        s3BucketEndpoint: false,
+        useAccelerateEndpoint: true
+      });
     }
   } catch (err) {
     console.warn(

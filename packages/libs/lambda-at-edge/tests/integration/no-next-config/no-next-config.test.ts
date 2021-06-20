@@ -6,8 +6,6 @@ import { remove, pathExists } from "fs-extra";
 
 jest.unmock("execa");
 
-jest.setTimeout(15000);
-
 describe("No Next Config Build Test", () => {
   const nextBinary = getNextBinary();
   const fixtureDir = path.join(__dirname, "./fixture");
