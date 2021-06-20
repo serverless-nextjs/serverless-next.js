@@ -78,7 +78,8 @@ describe("notFoundPage()", () => {
       rewrites: [],
       i18n: {
         defaultLocale: "en",
-        locales: ["en", "fr"]
+        locales: ["en", "fr"],
+        localeDetection: true
       }
     };
   });

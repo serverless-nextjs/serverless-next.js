@@ -19,7 +19,8 @@ describe("Locale Utils Tests", () => {
         rewrites: [],
         i18n: {
           locales: ["en", "fr", "nl"],
-          defaultLocale: "en"
+          defaultLocale: "en",
+          localeDetection: true
         }
       };
     });
@@ -98,7 +99,8 @@ describe("Locale Utils Tests", () => {
         rewrites: [],
         i18n: {
           locales: ["en", "fr"],
-          defaultLocale: "en"
+          defaultLocale: "en",
+          localeDetection: true
         }
       };
     });
@@ -141,7 +143,8 @@ describe("Locale Utils Tests", () => {
         rewrites: [],
         i18n: {
           locales: ["en", "fr", "nl"],
-          defaultLocale: "en"
+          defaultLocale: "en",
+          localeDetection: true
         }
       };
     });
