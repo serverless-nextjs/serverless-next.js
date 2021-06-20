@@ -1,24 +1,13 @@
 import { getStaticRegenerationResponse } from "../src/revalidate";
-import { PageManifest, RoutesManifest } from "../src/types";
-import initialRevalidateManifest from "./initial-revalidate-manifest.json";
-import noInitialRevalidateManifest from "./no-initial-revalidate-manifest.json";
 
 describe("revalidate", () => {
   describe("getStaticRegenerationResponse()", () => {
-    const routesManifest = {
-      basePath: "",
-      redirects: [],
-      rewrites: [],
-      routes: []
-    } as RoutesManifest;
-    it("should return a cache header at the amount defined as the initialRevalidateSeconds relative to the lastModifiedHeader when no Expires header is passed", async () => {
+    it("should return a cache header at the amount defined as the initialRevalidateSeconds relative to the lastModifiedHeader when no Expires header is passed", () => {
       const date = new Date().toJSON();
       const staticRegeneratedResponse = getStaticRegenerationResponse({
         expiresHeader: "",
         lastModifiedHeader: date,
-        manifest: initialRevalidateManifest as PageManifest,
-        routesManifest,
-        requestedOriginUri: "/preview.html"
+        initialRevalidateSeconds: 10
       });
 
       if (!staticRegeneratedResponse) {
@@ -30,14 +19,11 @@ describe("revalidate", () => {
       );
     });
 
-    it("should return a cache header at for the time relative to now and the expires header", async () => {
+    it("should return a cache header at for the time relative to now and the expires header", () => {
       const date = new Date(Date.now() + 5000).toJSON();
       const staticRegeneratedResponse = getStaticRegenerationResponse({
         expiresHeader: date,
-        lastModifiedHeader: "",
-        manifest: initialRevalidateManifest as PageManifest,
-        routesManifest,
-        requestedOriginUri: "/preview.html"
+        lastModifiedHeader: ""
       });
 
       if (!staticRegeneratedResponse) {
@@ -49,15 +35,12 @@ describe("revalidate", () => {
       );
     });
 
-    it("should prioritise using the Expires header if both Expires header and last modified are present", async () => {
+    it("should prioritise using the Expires header if both Expires header and last modified are present", () => {
       const lastModifiedHeader = new Date().toJSON();
       const expiresHeader = new Date(Date.now() + 2000).toJSON();
       const staticRegeneratedResponse = getStaticRegenerationResponse({
         expiresHeader: expiresHeader,
-        lastModifiedHeader: lastModifiedHeader,
-        manifest: initialRevalidateManifest as PageManifest,
-        routesManifest,
-        requestedOriginUri: "/preview.html"
+        lastModifiedHeader: lastModifiedHeader
       });
 
       if (!staticRegeneratedResponse) {
@@ -69,25 +52,19 @@ describe("revalidate", () => {
       );
     });
 
-    it("should return false when no headers are passed", async () => {
+    it("should return false when no headers are passed", () => {
       const staticRegeneratedResponse = getStaticRegenerationResponse({
         expiresHeader: "",
-        lastModifiedHeader: "",
-        manifest: initialRevalidateManifest as PageManifest,
-        routesManifest,
-        requestedOriginUri: "/preview.html"
+        lastModifiedHeader: ""
       });
 
       expect(staticRegeneratedResponse).toBe(false);
     });
 
-    it("should return false when no Expires header is passed, and there is no initial validation seconds in manifest", async () => {
+    it("should return false when no Expires header is passed, and there is no initial validation seconds in manifest", () => {
       const staticRegeneratedResponse = getStaticRegenerationResponse({
         expiresHeader: "",
-        lastModifiedHeader: new Date().toJSON(),
-        manifest: noInitialRevalidateManifest as PageManifest,
-        routesManifest,
-        requestedOriginUri: "/preview.html"
+        lastModifiedHeader: new Date().toJSON()
       });
 
       expect(staticRegeneratedResponse).toBe(false);
