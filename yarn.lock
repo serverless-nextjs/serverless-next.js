@@ -11322,9 +11322,9 @@ serialize-javascript@^5.0.1:
     randombytes "^2.1.0"
 
 serverless@^2.44.0:
-  version "2.47.0"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.47.0.tgz#d4bc71c6507922cac2d3da9e8008966f077baf79"
-  integrity sha512-IDU4LgIV43FCfNrPshMhZnrOd63TtghclXzdNISB8FVxfk8l3UDSdLTFopXo7+HiZms3E8NI6JSuVbfNXiRm2Q==
+  version "2.48.0"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.48.0.tgz#1f0f09da81f8a1f55b7bdcf90677b5f2064befbb"
+  integrity sha512-1CGCKr+7226psdyuGYFC54khCMUUBlLt2QPEAZtY00ZHMy8yOxvjMXAdfHAVnCdo+YH419MW3jFJhGuwVUsDyw==
   dependencies:
     "@serverless/cli" "^1.5.2"
     "@serverless/components" "^3.12.0"
