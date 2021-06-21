@@ -29,7 +29,7 @@ export const renderRoute = async (
   setCustomHeaders(event, routesManifest);
 
   // For SSR rewrites to work the page needs to be passed a localized url
-  if (req.url && routesManifest.i18n) {
+  if (req.url && routesManifest.i18n && !route.isData) {
     req.url = addDefaultLocaleToPath(req.url, routesManifest);
   }
 
