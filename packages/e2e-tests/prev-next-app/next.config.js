@@ -1,4 +1,7 @@
 module.exports = {
+  images: {
+    domains: ["raw.githubusercontent.com"]
+  },
   async redirects() {
     return [
       {
@@ -58,7 +61,7 @@ module.exports = {
       },
       {
         source: "/query-string-destination-redirect",
-        destination: "/ssg-page?a=1234&b=1?",
+        destination: "/ssg-page?a=1234&b=1",
         permanent: true
       }
     ];
@@ -108,6 +111,38 @@ module.exports = {
         // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
         source: "/api/basic-api",
         destination: "/"
+      },
+      {
+        source: "/rewrite-dest-with-query",
+        destination: "/ssr-page?foo=bar"
+      },
+      {
+        source: "/external-rewrite",
+        destination: "https://api.github.com"
+      },
+      {
+        source: "/external-rewrite-issues",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+      },
+      {
+        source: "/external-rewrite-issues-with-query",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+      },
+      {
+        source: "/api/external-rewrite",
+        destination: "https://api.github.com"
+      },
+      {
+        source: "/api/external-rewrite-issues",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+      },
+      {
+        source: "/api/external-rewrite-issues-with-query",
+        destination:
+          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
       }
     ];
   },

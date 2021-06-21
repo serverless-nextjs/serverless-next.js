@@ -1,4 +1,7 @@
 module.exports = {
+  eslint: {
+    ignoreDuringBuilds: true
+  },
   basePath: "/basepath",
   async redirects() {
     return [

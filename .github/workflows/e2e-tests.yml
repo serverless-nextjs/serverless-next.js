@@ -154,6 +154,11 @@ jobs:
       - name: "Uncompress build"
         run: tar -xf build-${{ matrix.os }}.tar.gz
 
+      - name: Choose latest next.js version
+        if: ${{ !startsWith(matrix.app, 'prev') }}
+        working-directory: packages/e2e-tests/${{ matrix.app }}
+        run: yarn add next@latest
+
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
         with:

@@ -1,4 +1,7 @@
 module.exports = {
+  eslint: {
+    ignoreDuringBuilds: true
+  },
   trailingSlash: true,
   async redirects() {
     return [
