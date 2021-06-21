@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-06-21)
+
+### Bug Fixes
+
+- **core:** fix data route locales ([#1268](https://github.com/serverless-nextjs/serverless-next.js/issues/1268)) ([e1c8cd8](https://github.com/serverless-nextjs/serverless-next.js/commit/e1c8cd8e5cc36a20ec4363911a501f232f51bd04))
+
 # [3.1.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.4...v3.1.0-alpha.5) (2021-06-19)
 
 **Note:** Version bump only for package @sls-next/core

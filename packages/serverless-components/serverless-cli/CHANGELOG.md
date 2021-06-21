@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-06-21)
+
+**Note:** Version bump only for package @sls-next/serverless-cli
+
 ## [1.5.4-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/serverless-cli@1.5.4-alpha.8...@sls-next/serverless-cli@1.5.4-alpha.9) (2021-06-15)
 
 **Note:** Version bump only for package @sls-next/serverless-cli
