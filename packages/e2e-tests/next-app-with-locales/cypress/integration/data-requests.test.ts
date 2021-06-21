@@ -55,10 +55,10 @@ describe("Data Requests", () => {
 
   describe("SSR data requests", () => {
     [
-      { path: "/ssr-page-2.json" },
-      { path: "/en/ssr-page-2.json" },
-      { path: "/fr/ssr-page-2.json" }
-    ].forEach(({ path }) => {
+      { path: "/ssr-page-2.json", locale: "en" },
+      { path: "/en/ssr-page-2.json", locale: "en" },
+      { path: "/fr/ssr-page-2.json", locale: "fr" }
+    ].forEach(({ locale, path }) => {
       const fullPath = `/_next/data/${buildId}${path}`;
 
       it(`serves the SSR data request for path ${fullPath}`, () => {
@@ -70,6 +70,12 @@ describe("Data Requests", () => {
             expect(response.headers["cache-control"]).to.be.undefined;
           });
         }
+      });
+
+      it(`serves the SSR data request for path ${fullPath} with locale ${locale}`, () => {
+        cy.request(fullPath).then((response) => {
+          expect(response.body.pageProps.locale).to.equal(locale);
+        });
       });
 
       ["HEAD", "GET"].forEach((method) => {

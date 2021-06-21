@@ -35,10 +35,10 @@ describe("Pages Tests", () => {
 
   describe("SSR pages (getServerSideProps)", () => {
     [
-      { path: "/ssr-page-2" },
-      { path: "/en/ssr-page-2" },
-      { path: "/fr/ssr-page-2" }
-    ].forEach(({ path }) => {
+      { path: "/ssr-page-2", locale: "en" },
+      { path: "/en/ssr-page-2", locale: "en" },
+      { path: "/fr/ssr-page-2", locale: "fr" }
+    ].forEach(({ locale, path }) => {
       it(`serves but does not cache page ${path}`, () => {
         if (path === "/") {
           // Somehow "/" is matching everything, need to exclude static files
@@ -51,6 +51,11 @@ describe("Pages Tests", () => {
         cy.location("pathname").should("eq", path);
 
         cy.visit(path);
+      });
+
+      it(`serves page ${path} with locale ${locale}`, () => {
+        cy.visit(path);
+        cy.get("[data-cy=locale]").contains(locale);
       });
 
       ["HEAD", "DELETE", "POST", "GET", "OPTIONS", "PUT", "PATCH"].forEach(
