@@ -16,7 +16,6 @@ import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
@@ -47,6 +46,7 @@ type BuildOptions = {
     cjsResolve: boolean
   ) => string | string[];
   baseDir?: string;
+  cleanupDotNext?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -61,7 +61,8 @@ const defaultBuildOptions = {
   enableHTTPCompression: true,
   authentication: undefined,
   resolve: undefined,
-  baseDir: process.cwd()
+  baseDir: process.cwd(),
+  cleanupDotNext: true
 };
 
 class Builder {
@@ -182,7 +183,10 @@ class Builder {
    * @param source
    * @param destination
    */
-  async processAndCopyRoutesManifest(source: string, destination: string) {
+  async processAndCopyRoutesManifest(
+    source: string,
+    destination: string
+  ): Promise<void> {
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(source) as RoutesManifest;
 
@@ -208,7 +212,7 @@ class Builder {
       | "regeneration-handler",
     destination: string,
     shouldMinify: boolean
-  ) {
+  ): Promise<void> {
     const source = path.dirname(
       require.resolve(
         `@sls-next/lambda-at-edge/dist/${handlerType}/${
@@ -428,7 +432,7 @@ class Builder {
   /**
    * copy chunks if present and not using serverless trace
    */
-  async copyChunks(buildDir: string): Promise<void> {
+  copyChunks(buildDir: string): Promise<void> {
     return !this.buildOptions.useServerlessTraceTarget &&
       fse.existsSync(join(this.serverlessDir, "chunks"))
       ? fse.copy(
@@ -444,8 +448,8 @@ class Builder {
    */
   async buildImageLambda(
     buildManifest: OriginRequestImageHandlerManifest
-  ): Promise<void[]> {
-    return Promise.all([
+  ): Promise<void> {
+    await Promise.all([
       this.processAndCopyHandler(
         "image-handler",
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR),
@@ -545,7 +549,7 @@ class Builder {
 
     const staticFileAssets = buildStaticFiles
       .filter(filterOutDirectories)
-      .map(async (fileItem: Item) => {
+      .map((fileItem: Item) => {
         const source = fileItem.path;
         const destination = path.join(
           assetOutputDirectory,
@@ -658,12 +662,12 @@ class Builder {
   }
 
   async build(debugMode?: boolean): Promise<void> {
-    const { cmd, args, cwd, env, useServerlessTraceTarget } = Object.assign(
-      defaultBuildOptions,
-      this.buildOptions
-    );
+    const { cmd, args, cwd, env, useServerlessTraceTarget, cleanupDotNext } =
+      Object.assign(defaultBuildOptions, this.buildOptions);
 
-    await this.cleanupDotNext();
+    if (cleanupDotNext) {
+      await this.cleanupDotNext();
+    }
 
     await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
     await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
