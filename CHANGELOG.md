@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.7...v3.1.0-alpha.8) (2021-06-22)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix reconstruction of uri for "index.html" -> "/" instead of "/index" in origin response handler ([#1278](https://github.com/serverless-nextjs/serverless-next.js/issues/1278)) ([48d6735](https://github.com/serverless-nextjs/serverless-next.js/commit/48d6735c5c298fa2575f34860072388c1cf16d89))
+
 # [3.1.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-06-22)
 
 ### Bug Fixes
