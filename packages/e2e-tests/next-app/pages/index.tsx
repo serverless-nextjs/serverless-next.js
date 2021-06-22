@@ -1,25 +1,29 @@
 import React from "react";
-import { NextPageContext } from "next";
+import { GetStaticPropsContext } from "next";
 
 type IndexPageProps = {
   name: string;
+  preview: boolean;
 };
 
 export default function IndexPage(props: IndexPageProps): JSX.Element {
   return (
     <React.Fragment>
+      {`Hello ${props.name}! This is an SSG Page using getStaticProps().`}
       <div>
-        {`Hello ${props.name}. This is an SSR page using getServerSideProps(). It also has an image.`}
+        <p data-cy="preview-mode">{String(props.preview)}</p>
       </div>
-      <img src={"/app-store-badge.png"} alt={"An image"} />
     </React.Fragment>
   );
 }
 
-export async function getServerSideProps(
-  ctx: NextPageContext
-): Promise<{ props: IndexPageProps }> {
+export function getStaticProps(ctx: GetStaticPropsContext): {
+  props: IndexPageProps;
+} {
   return {
-    props: { name: "serverless-next.js" }
+    props: {
+      name: "serverless-next.js",
+      preview: !!ctx.preview
+    }
   };
 }
