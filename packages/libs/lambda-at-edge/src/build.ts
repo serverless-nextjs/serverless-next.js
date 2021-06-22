@@ -446,10 +446,10 @@ class Builder {
    * Build image optimization lambda (supported by Next.js 10)
    * @param buildManifest
    */
-  buildImageLambda(
+  async buildImageLambda(
     buildManifest: OriginRequestImageHandlerManifest
-  ): Promise<void[]> {
-    return Promise.all([
+  ): Promise<void> {
+    await Promise.all([
       this.processAndCopyHandler(
         "image-handler",
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR),
