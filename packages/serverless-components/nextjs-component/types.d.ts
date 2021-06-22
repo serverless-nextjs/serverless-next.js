@@ -76,6 +76,7 @@ export type BuildOptions = {
   env?: Record<string, string>;
   postBuildCommands?: string[];
   baseDir?: string;
+  cleanupDotNext?: boolean;
 };
 
 export type LambdaType =

@@ -228,7 +228,8 @@ class NextjsComponent extends Component {
       args: ["build"],
       ...(typeof inputs.build === "object" ? inputs.build : {}),
       cwd: buildCwd,
-      baseDir: buildBaseDir
+      baseDir: buildBaseDir, // @ts-ignore
+      cleanupDotNext: inputs.build?.cleanupDotNext ?? true
     };
 
     if (buildConfig.enabled) {
@@ -249,7 +250,8 @@ class NextjsComponent extends Component {
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,
           authentication: inputs.authentication ?? undefined,
-          baseDir: buildConfig.baseDir
+          baseDir: buildConfig.baseDir,
+          cleanupDotNext: buildConfig.cleanupDotNext
         },
         nextStaticPath
       );
