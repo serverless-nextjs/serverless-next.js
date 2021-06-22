@@ -50,7 +50,7 @@ export type Credentials = {
 
 const getS3RegionalEndpoint = (bucketRegion: string): string => {
   // TODO: doesn't cover all endpoints but should be majority.
-  //  We should ugprade to AWS SDK JS v3 so we don't need to manually manage.
+  // We should ugprade to AWS SDK JS v3 so we don't need to manually manage.
   return (
     `https://s3.${bucketRegion}.amazonaws.com` +
     `${bucketRegion.startsWith("cn-") ? ".cn" : ""}`
