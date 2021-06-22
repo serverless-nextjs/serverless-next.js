@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-06-22)
+
+### Bug Fixes
+
+- **lambda-at-edge, nextjs-component:** add option to disable cleaning up .next directory before builds ([#1273](https://github.com/serverless-nextjs/serverless-next.js/issues/1273)) ([51bffdd](https://github.com/serverless-nextjs/serverless-next.js/commit/51bffdd1511d68377148534020d28513a3fda4cd))
+
 # [3.1.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.5...v3.1.0-alpha.6) (2021-06-21)
 
 ### Bug Fixes
