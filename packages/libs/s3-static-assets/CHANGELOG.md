@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.8...v3.1.0-alpha.9) (2021-06-22)
+
+### Bug Fixes
+
+- **s3-static-assets:** cover regional cn endpoints ([#1279](https://github.com/serverless-nextjs/serverless-next.js/issues/1279)) ([a47b761](https://github.com/serverless-nextjs/serverless-next.js/commit/a47b7613d9b084f6f1aaff266648f91a631abe04))
+
 # [3.1.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.6...v3.1.0-alpha.7) (2021-06-22)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
