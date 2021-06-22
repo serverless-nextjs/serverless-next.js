@@ -30,7 +30,7 @@ describe("Pages Tests", () => {
   });
 
   describe("SSR pages (getServerSideProps)", () => {
-    [{ path: "/" }].forEach(({ path }) => {
+    [{ path: "/ssr-page-2" }].forEach(({ path }) => {
       it(`serves but does not cache page ${path}`, () => {
         if (path === "/") {
           // Somehow "/" is matching everything, need to exclude static files
@@ -61,7 +61,7 @@ describe("Pages Tests", () => {
   });
 
   describe("SSG pages", () => {
-    [{ path: "/ssg-page" }].forEach(({ path }) => {
+    [{ path: "/ssg-page" }, { path: "/" }].forEach(({ path }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
         cy.location("pathname").should("eq", path);

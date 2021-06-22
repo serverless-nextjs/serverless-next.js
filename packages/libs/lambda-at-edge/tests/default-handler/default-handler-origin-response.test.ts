@@ -255,6 +255,24 @@ describe("Lambda@Edge origin response", () => {
     });
   });
 
+  describe("SSG page requests", () => {
+    it("index page is routed properly", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/index.html",
+        host: "mydistribution.cloudfront.net",
+        config: { eventType: "origin-response" } as any,
+        response: {
+          headers: {},
+          status: "200"
+        } as any
+      });
+
+      const response = await handler(event);
+      const cfResponse = response as CloudFrontResultResponse;
+      expect(cfResponse.status).toBe("200");
+    });
+  });
+
   describe("SSR data requests", () => {
     it("does not upload to S3", async () => {
       const event = createCloudFrontEvent({

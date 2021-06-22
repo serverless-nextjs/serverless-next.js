@@ -31,7 +31,7 @@ import {
   RoutesManifest
 } from "./types";
 import { performance } from "perf_hooks";
-import { OutgoingHttpHeaders, ServerResponse } from "http";
+import { OutgoingHttpHeaders } from "http";
 import type { Readable } from "stream";
 import { externalRewrite } from "./routing/rewriter";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
@@ -136,6 +136,21 @@ const staticRequest = (
   return request;
 };
 
+const reconstructOriginalRequestUri = (
+  s3Uri: string,
+  manifest: OriginRequestDefaultHandlerManifest
+) => {
+  let originalUri = `${basePath}${s3Uri.replace(
+    /(\.html)?$/,
+    manifest.trailingSlash ? "/" : ""
+  )}`;
+
+  // For index.html page, it will become "/index", which is not a route so normalize it to "/"
+  originalUri = originalUri.replace(/^(\/index)?$/, "/");
+
+  return originalUri;
+};
+
 const handleOriginRequest = async ({
   event,
   manifest,
@@ -223,10 +238,8 @@ const handleOriginResponse = async ({
 
   // Reconstruct valid request uri for routing
   const s3Uri = request.uri;
-  request.uri = `${basePath}${request.uri.replace(
-    /(\.html)?$/,
-    manifest.trailingSlash ? "/" : ""
-  )}`;
+  request.uri = reconstructOriginalRequestUri(s3Uri, manifest);
+
   const route = await routeDefault(
     request,
     manifest,
