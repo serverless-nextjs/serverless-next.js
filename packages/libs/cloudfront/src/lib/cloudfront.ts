@@ -15,6 +15,9 @@ export type CloudFrontClient = {
   createInvalidation: (
     options: CreateInvalidationOptions
   ) => Promise<AWS.CloudFront.CreateInvalidationResult>;
+  getDistribution: (
+    distributionId: string
+  ) => Promise<AWS.CloudFront.GetDistributionResult>;
 };
 
 export type Credentials = {
@@ -49,6 +52,15 @@ export default ({
               Items: paths
             }
           }
+        })
+        .promise();
+    },
+    getDistribution: async (
+      distributionId: string
+    ): Promise<AWS.CloudFront.GetDistributionResult> => {
+      return await cloudFront
+        .getDistribution({
+          Id: distributionId
         })
         .promise();
     }

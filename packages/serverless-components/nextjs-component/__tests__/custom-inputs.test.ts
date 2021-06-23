@@ -4,7 +4,7 @@ import { mockDomain } from "@sls-next/domain";
 import { mockS3 } from "@serverless/aws-s3";
 import { mockUpload } from "aws-sdk";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import mockCreateInvalidation from "@sls-next/cloudfront";
+import { mockCreateInvalidation } from "@sls-next/cloudfront";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockSQS } from "@sls-next/aws-sqs";
 
@@ -25,6 +25,9 @@ const createNextComponent = () => {
       accessKeyId: "123",
       secretAccessKey: "456"
     }
+  };
+  component.context.debug = () => {
+    // intentionally empty
   };
   return component;
 };

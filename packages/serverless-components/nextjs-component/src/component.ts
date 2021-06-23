@@ -13,7 +13,10 @@ import {
   deleteOldStaticAssets,
   uploadStaticAssetsFromBuild
 } from "@sls-next/s3-static-assets";
-import createInvalidation from "@sls-next/cloudfront";
+import {
+  createInvalidation,
+  checkCloudFrontDistributionReady
+} from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
@@ -310,6 +313,7 @@ class NextjsComponent extends Component {
       certificate: cloudFrontCertificate,
       originAccessIdentityId: cloudFrontOriginAccessIdentityId,
       paths: cloudFrontPaths,
+      waitBeforeInvalidate: cloudFrontWaitBeforeInvalidate = true,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -850,12 +854,36 @@ class NextjsComponent extends Component {
 
     let appUrl = cloudFrontOutputs.url;
 
+    const distributionId = cloudFrontOutputs.id;
     if (!cloudFrontPaths || cloudFrontPaths.length) {
+      // We need to wait for distribution to be fully propagated before trying to invalidate paths, otherwise we may cache old page
+      // This could add ~1-2 minute to deploy time but it is safer
+      const waitDuration = 600;
+      const pollInterval = 10;
+      if (cloudFrontWaitBeforeInvalidate) {
+        this.context.debug(
+          `Waiting for CloudFront distribution ${distributionId} to be ready before invalidations, for up to ${waitDuration} seconds, checking every ${pollInterval} seconds.`
+        );
+        await checkCloudFrontDistributionReady({
+          distributionId: distributionId,
+          credentials: this.context.credentials.aws,
+          waitDuration: waitDuration,
+          pollInterval: pollInterval
+        });
+      } else {
+        this.context.debug(
+          `Skipped waiting for CloudFront distribution ${distributionId} to be ready.`
+        );
+      }
+
+      this.context.debug(`Creating invalidations on ${distributionId}.`);
       await createInvalidation({
-        distributionId: cloudFrontOutputs.id,
+        distributionId: distributionId,
         credentials: this.context.credentials.aws,
         paths: cloudFrontPaths
       });
+    } else {
+      this.context.debug(`No invalidations needed for ${distributionId}.`);
     }
 
     const { domain, subdomain } = obtainDomains(inputs.domain);
