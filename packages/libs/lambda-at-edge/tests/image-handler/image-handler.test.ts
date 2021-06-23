@@ -4,16 +4,19 @@ import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@type
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import sharp from "sharp";
 import fetchMock from "fetch-mock";
-import { MockGetObjectCommand } from "../mocks/s3/aws-sdk-s3-client-get-object-command.mock";
 import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
+
+const MockGetObjectCommand = jest.fn();
 
 jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
-  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
-);
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
+  return {
+    GetObjectCommand: MockGetObjectCommand
+  };
+});
 
 jest.mock(
   "../../src/manifest.json",
