@@ -257,8 +257,8 @@ const runRevalidation = async (
     Qualifier: context.functionVersion
   };
   debug(`[revalidation] invoke: ${JSON.stringify(params)}`);
-  lambda.send(new InvokeCommand(params));
-  debug("[revalidation] invoked");
+  const response = await lambda.send(new InvokeCommand(params));
+  debug(`[revalidation] invoked, response:${JSON.stringify(response)}`);
   return;
 };
 
@@ -715,12 +715,16 @@ const handleOriginResponse = async ({
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
-  const { status } = response;
 
+  debug(`[origin-request]: ${JSON.stringify(request)}`);
+
+  const { status } = response;
   const uri = normaliseUri(request.uri);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const isHTMLPage = prerenderManifest.routes[decodeURI(uri)];
   const isPublicFile = manifest.publicFiles[decodeURI(uri)];
+  const isEnforceRevalidationRequest = request.querystring === "enforceISR";
+  // if isEnforceRevalidationRequest is true, revalidation will start anyway.
 
   // For PUT or DELETE just return the response as these should be unsupported S3 methods
   if (request.method === "PUT" || request.method === "DELETE") {
@@ -747,11 +751,12 @@ const handleOriginResponse = async ({
       debug(`[origin-response] isFallback: ${hasFallback}`);
 
       if (
+        isEnforceRevalidationRequest ||
         // if REVALIDATION_CONFIG is undefined revalidation is off
-        REVALIDATION_CONFIG &&
-        (isHTMLPage || hasFallback || isDataRequest(uri)) &&
-        !isPublicFile &&
-        isStale(revalidationKey)
+        (REVALIDATION_CONFIG &&
+          (isHTMLPage || hasFallback || isDataRequest(uri)) &&
+          !isPublicFile &&
+          isStale(revalidationKey))
       ) {
         await runRevalidation({ ...event, revalidate: true }, context);
         setStaleIn(revalidationKey, REVALIDATE_IN);
