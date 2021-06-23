@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.11...v3.1.0-alpha.12) (2021-06-23)
+
+### Bug Fixes
+
+- **lambda-at-edge:** handle /\_next/static image requests and minor improvements to image error logging ([#1288](https://github.com/serverless-nextjs/serverless-next.js/issues/1288)) ([b64effe](https://github.com/serverless-nextjs/serverless-next.js/commit/b64effedaecfbe789ad7134b4bcba0c57b17019b))
+- **lambda-at-edge:** improve error logging when s3 fails in image optimizer ([#1287](https://github.com/serverless-nextjs/serverless-next.js/issues/1287)) ([9af3a37](https://github.com/serverless-nextjs/serverless-next.js/commit/9af3a37352ee704424dd90691b3832e9cf8b721c))
+
 # [3.1.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.10...v3.1.0-alpha.11) (2021-06-23)
 
 ### Bug Fixes
