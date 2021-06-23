@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.10...v3.1.0-alpha.11) (2021-06-23)
+
+### Bug Fixes
+
+- **nextjs-component, cloudfront:** wait for distribution to be ready before creating invalidations ([#1281](https://github.com/serverless-nextjs/serverless-next.js/issues/1281)) ([3091c7c](https://github.com/serverless-nextjs/serverless-next.js/commit/3091c7c634986121c4943931c7ffd6303732c957))
+
 # [3.1.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.9...v3.1.0-alpha.10) (2021-06-22)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
