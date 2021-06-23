@@ -2,14 +2,19 @@ import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
 import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
+import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
+
+const MockGetObjectCommand = jest.fn();
 
 jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
-  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
-);
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
+  return {
+    GetObjectCommand: MockGetObjectCommand
+  };
+});
 
 jest.mock(
   "../../src/manifest.json",
@@ -44,15 +49,20 @@ describe("Image lambda handler", () => {
   }
 
   describe("Routes", () => {
-    it("serves image request", async () => {
+    it.each`
+      imagePath                                  | expectedS3Key
+      ${"/test-image.png"}                       | ${"basepath/public/test-image.png"}
+      ${"/basepath/static/test-image.png"}       | ${"basepath/static/test-image.png"}
+      ${"/basepath/_next/static/test-image.png"} | ${"basepath/_next/static/test-image.png"}
+    `("serves image request", async ({ imagePath, expectedS3Key }) => {
       const event = createCloudFrontEvent({
-        uri: "/basepath/_next/image?url=%2Ftest-image.png&q=100&w=128",
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
-          Accept: [
+          accept: [
             {
-              key: "Accept",
-              value: "*/*"
+              key: "accept",
+              value: "image/webp"
             }
           ]
         }
@@ -74,16 +84,24 @@ describe("Image lambda handler", () => {
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "Content-Type", value: "image/png" }]
+          "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
         status: 200,
         statusDescription: "OK",
         body: expect.any(String),
         bodyEncoding: "base64"
       });
+
+      // FIXME: flaky in CI?
+      // expect(MockGetObjectCommand).toBeCalledWith({
+      //   Bucket: "my-bucket.s3.amazonaws.com",
+      //   Key: expectedS3Key
+      // });
     });
 
     it("return 500 response when s3 throw an error", async () => {
+      mockSend.mockRejectedValueOnce(new Error("Mocked S3 error"));
+
       const event = createCloudFrontEvent({
         uri: "/basepath/_next/image?url=%2Fthrow-error.png&q=100&w=128",
         host: "mydistribution.cloudfront.net"

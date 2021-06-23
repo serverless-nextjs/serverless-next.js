@@ -4,14 +4,19 @@ import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@type
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import sharp from "sharp";
 import fetchMock from "fetch-mock";
+import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
+
+const MockGetObjectCommand = jest.fn();
 
 jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
-  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
-);
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
+  return {
+    GetObjectCommand: MockGetObjectCommand
+  };
+});
 
 jest.mock(
   "../../src/manifest.json",
@@ -46,9 +51,14 @@ describe("Image lambda handler", () => {
   }
 
   describe("Routes", () => {
-    it("serves image request", async () => {
+    it.each`
+      imagePath                         | expectedS3Key
+      ${"/test-image.png"}              | ${"public/test-image.png"}
+      ${"/static/test-image.png"}       | ${"static/test-image.png"}
+      ${"/_next/static/test-image.png"} | ${"_next/static/test-image.png"}
+    `("serves image request", async ({ imagePath, expectedS3Key }) => {
       const event = createCloudFrontEvent({
-        uri: "/_next/image?url=%2Ftest-image.png&q=100&w=128",
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
           accept: [
@@ -82,6 +92,11 @@ describe("Image lambda handler", () => {
         statusDescription: "OK",
         body: expect.any(String),
         bodyEncoding: "base64"
+      });
+
+      expect(MockGetObjectCommand).toBeCalledWith({
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: expectedS3Key
       });
     });
 
@@ -141,8 +156,10 @@ describe("Image lambda handler", () => {
     });
 
     it("return 500 response when s3 throws an error", async () => {
+      mockSend.mockRejectedValueOnce(new Error("Mocked S3 error"));
+
       const event = createCloudFrontEvent({
-        uri: "/_next/image?url=%2Fthrow-error.png&q=100&w=128",
+        uri: "/_next/image?url=%2Ftest-image.png&q=100&w=128",
         host: "mydistribution.cloudfront.net"
       });
 
