@@ -96,7 +96,7 @@ describe("Image lambda handler", () => {
     });
 
     it("return 500 response when s3 throw an error", async () => {
-      mockSend.mockRejectedValue(new Error("Mocked S3 error"));
+      mockSend.mockRejectedValueOnce(new Error("Mocked S3 error"));
 
       const event = createCloudFrontEvent({
         uri: "/basepath/_next/image?url=%2Fthrow-error.png&q=100&w=128",
