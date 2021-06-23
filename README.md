@@ -244,6 +244,7 @@ myNextApplication:
         minimumProtocolVersion: "TLSv1.2_2019" # can be omitted, defaults to "TLSv1.2_2019"
       originAccessIdentityId: XYZEXAMPLE #optional
       paths: ["/*"] # which paths should be invalidated on deploy, default matches everything, empty array skips invalidation completely
+      waitBeforeInvalidate: true # by default true, it waits for the CloudFront distribution to have completed before invalidating, to avoid possibly caching old page
 ```
 
 This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
@@ -526,8 +527,6 @@ The fourth cache behaviour handles next API requests `api/*`.
 | authentication.username  | `string`          | `undefined`                                                        | Username for basic authentication.                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
 | authentication.password  | `string`          | `undefined`                                                        | Password for basic authentication. **Note: it is highly recommended not to reuse a password here as it gets inlined in plaintext in the Lambda handler.**                                                                                                                                                                                                                                                                                                                             |
 | enableS3Acceleration     | `boolean`         | `true`                                                             | Whether to enable S3 transfer acceleration. This may be useful to disable as some AWS regions do not support it. See [reference](https://docs.amazonaws.cn/en_us/aws/latest/userguide/s3.html).                                                                                                                                                                                                                                                                                       |
-
-|
 
 Custom inputs can be configured like this:
 

@@ -60,6 +60,9 @@ describe("basepath tests", () => {
         secretAccessKey: "456"
       }
     };
+    component.context.debug = () => {
+      // intentionally empty
+    };
 
     await component.build();
 

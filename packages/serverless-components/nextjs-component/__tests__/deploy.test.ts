@@ -3,7 +3,10 @@ import fse from "fs-extra";
 import { mockS3 } from "@serverless/aws-s3";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import mockCreateInvalidation from "@sls-next/cloudfront";
+import {
+  mockCreateInvalidation,
+  mockCheckCloudFrontDistributionReady
+} from "@sls-next/cloudfront";
 import NextjsComponent from "../src/component";
 import { mockSQS } from "@sls-next/aws-sqs";
 import {
@@ -81,6 +84,9 @@ describe.each`
         accessKeyId: "123",
         secretAccessKey: "456"
       }
+    };
+    component.context.debug = () => {
+      // intentionally empty
     };
 
     await component.build();
@@ -384,6 +390,16 @@ describe.each`
     });
 
     it("invalidates distribution cache", () => {
+      expect(mockCheckCloudFrontDistributionReady).toBeCalledWith({
+        credentials: {
+          accessKeyId: "123",
+          secretAccessKey: "456"
+        },
+        distributionId: "cloudfrontdistrib",
+        pollInterval: 10,
+        waitDuration: 600
+      });
+
       expect(mockCreateInvalidation).toBeCalledWith({
         credentials: {
           accessKeyId: "123",
