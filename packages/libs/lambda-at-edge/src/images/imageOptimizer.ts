@@ -202,9 +202,8 @@ export async function imageOptimizer(
     upstreamType = upstreamRes.headers.get("Content-Type");
     maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control"));
   } else {
+    let s3Key;
     try {
-      let s3Key;
-
       if (href.startsWith(`${basePath}/static`)) {
         s3Key = href; // static files' URL map to the S3 key directly e.g /static/ -> static
       } else {
@@ -252,7 +251,11 @@ export async function imageOptimizer(
     } catch (err) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
-      console.error("Error processing upstream response (S3): " + err);
+      console.error(
+        `Error processing upstream response due to S3 error for s3Key: ${s3Key}, bucket: ${bucketName} and region: ${region}. Error: ` +
+          err
+      );
+      console.error("Stack trace: " + err.stack);
       return { finished: true };
     }
   }
