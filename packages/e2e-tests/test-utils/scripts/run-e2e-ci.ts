@@ -290,8 +290,9 @@ async function runEndToEndTest(): Promise<boolean> {
       { stdio: "inherit" }
     );
 
-    // Sleep a few seconds to prevent exhausting API limits. TODO: smarter throttling.
-    await new Promise((resolve) => setTimeout(resolve, Math.random() * 15000));
+    // Sleep a few seconds to prevent exhausting API limits.
+    // (likely not needed anymore due to changing retry policy)
+    // await new Promise((resolve) => setTimeout(resolve, Math.random() * 15000));
 
     // Deploy
     console.info("Deploying serverless-next.js app.");
