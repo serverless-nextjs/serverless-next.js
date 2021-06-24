@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.13...v3.1.0-alpha.14) (2021-06-24)
+
+**Note:** Version bump only for package @sls-next/lambda-at-edge
+
 # [3.1.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.11...v3.1.0-alpha.12) (2021-06-23)
 
 ### Bug Fixes

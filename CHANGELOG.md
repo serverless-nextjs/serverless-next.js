@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.13...v3.1.0-alpha.14) (2021-06-24)
+
+### Bug Fixes
+
+- **core, e2e-tests:** fix ISR, make e2e tests retryable ([#1290](https://github.com/serverless-nextjs/serverless-next.js/issues/1290)) ([83d19f0](https://github.com/serverless-nextjs/serverless-next.js/commit/83d19f0b607441a76746fa8cf4dacddd52d8b20a))
+
 # [3.1.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.12...v3.1.0-alpha.13) (2021-06-24)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
