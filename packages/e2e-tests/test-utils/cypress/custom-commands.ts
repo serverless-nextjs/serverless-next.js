@@ -147,6 +147,8 @@ Cypress.Commands.add(
         } else {
           expect(response.headers["refresh"]).to.be.undefined;
         }
+
+        expect(response.headers["cache-control"]).to.equal("s-maxage=0");
       }
     );
   }

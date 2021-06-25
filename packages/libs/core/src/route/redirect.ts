@@ -39,6 +39,13 @@ export function createRedirectResponse(
         ]
       : [];
 
+  const cacheControl = [
+    {
+      key: "Cache-Control",
+      value: "s-maxage=0"
+    }
+  ];
+
   return {
     isRedirect: true,
     status: status,
@@ -50,7 +57,8 @@ export function createRedirectResponse(
           value: location
         }
       ],
-      refresh: refresh
+      refresh: refresh,
+      "cache-control": cacheControl
     }
   };
 }
