@@ -3,13 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.2.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-sqs@1.2.0-alpha.3...@sls-next/aws-sqs@1.2.0-alpha.4) (2021-06-09)
+# [3.1.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.16...v3.1.0) (2021-06-25)
 
 **Note:** Version bump only for package @sls-next/aws-sqs
 
+# [1.2.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-sqs@1.2.0-alpha.3...@sls-next/aws-sqs@1.2.0-alpha.4) (2021-06-09)
 
-
-
+**Note:** Version bump only for package @sls-next/aws-sqs
 
 # [1.2.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-sqs@1.2.0-alpha.1...@sls-next/aws-sqs@1.2.0-alpha.3) (2021-06-07)
 
