@@ -1,11 +1,37 @@
-import { Manifest, RoutesManifest } from "../types";
+import { DomainData, Manifest, RoutesManifest } from "../types";
+import { IncomingMessage } from "http";
+
+export const findDomainLocale = (
+  req: IncomingMessage,
+  manifest: RoutesManifest
+): string | boolean => {
+  const domains =
+    manifest.i18n && manifest.i18n.domains ? manifest.i18n.domains : null;
+  if (domains) {
+    const hostHeaders = req.headers.host?.split(",");
+    if (hostHeaders && hostHeaders.length > 0) {
+      const host = hostHeaders[0];
+      const matchedDomain = domains.find(
+        (d): DomainData | boolean => d.domain === host
+      );
+
+      if (matchedDomain) {
+        return matchedDomain.defaultLocale;
+      }
+    }
+  }
+  return false;
+};
 
 export function addDefaultLocaleToPath(
   path: string,
-  routesManifest: RoutesManifest
+  routesManifest: RoutesManifest,
+  forceLocale: string | boolean = false
 ): string {
   if (routesManifest.i18n) {
-    const defaultLocale = routesManifest.i18n.defaultLocale;
+    const defaultLocale = forceLocale
+      ? forceLocale
+      : routesManifest.i18n.defaultLocale;
     const locales = routesManifest.i18n.locales;
     const basePath = path.startsWith(routesManifest.basePath)
       ? routesManifest.basePath

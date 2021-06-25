@@ -3,7 +3,7 @@ import { setCustomHeaders } from "./headers";
 import { redirect } from "./redirect";
 import { toRequest } from "./request";
 import { routeDefault } from "../route";
-import { addDefaultLocaleToPath } from "../route/locale";
+import { addDefaultLocaleToPath, findDomainLocale } from "../route/locale";
 import {
   Event,
   ExternalRoute,
@@ -30,7 +30,11 @@ export const renderRoute = async (
 
   // For SSR rewrites to work the page needs to be passed a localized url
   if (req.url && routesManifest.i18n && !route.isData) {
-    req.url = addDefaultLocaleToPath(req.url, routesManifest);
+    req.url = addDefaultLocaleToPath(
+      req.url,
+      routesManifest,
+      findDomainLocale(req, routesManifest)
+    );
   }
 
   // Sets error page status code so _error renders the right page
