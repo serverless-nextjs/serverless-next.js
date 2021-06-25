@@ -2,8 +2,10 @@ import { Manifest, RoutesManifest } from "../../src";
 import {
   addDefaultLocaleToPath,
   dropLocaleFromPath,
-  getAcceptLanguageLocale
+  getAcceptLanguageLocale,
+  findDomainLocale
 } from "../../src/route/locale";
+import { IncomingMessage } from "http";
 
 describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
@@ -23,14 +25,65 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      path       | expectedPath
-      ${"/a"}    | ${"/en/a"}
-      ${"/en/a"} | ${"/en/a"}
-      ${"/fr/a"} | ${"/fr/a"}
-    `("changes path $path to $expectedPath", ({ path, expectedPath }) => {
-      const newPath = addDefaultLocaleToPath(path, routesManifest);
+      path       | forceLocale | expectedPath
+      ${"/a"}    | ${null}     | ${"/en/a"}
+      ${"/en/a"} | ${null}     | ${"/en/a"}
+      ${"/fr/a"} | ${null}     | ${"/fr/a"}
+      ${"/nl/a"} | ${"en"}     | ${"/en/a"}
+    `(
+      "changes path $path to $expectedPath",
+      ({ path, forceLocale, expectedPath }) => {
+        const newPath = addDefaultLocaleToPath(
+          path,
+          routesManifest,
+          forceLocale
+        );
 
-      expect(newPath).toBe(expectedPath);
+        expect(newPath).toBe(expectedPath);
+      }
+    );
+  });
+
+  describe("findDomainLocale()", () => {
+    let routesManifest: RoutesManifest;
+
+    beforeAll(() => {
+      routesManifest = {
+        basePath: "",
+        headers: [],
+        redirects: [],
+        rewrites: [],
+        i18n: {
+          locales: ["en", "fr", "nl"],
+          defaultLocale: "en",
+          domains: [
+            {
+              domain: "next-serverless.fr",
+              defaultLocale: "fr"
+            },
+            {
+              domain: "next-serverless.com",
+              defaultLocale: "en"
+            }
+          ]
+        }
+      };
+    });
+
+    it.each`
+      host                     | expectedResult
+      ${"google.com"}          | ${null}
+      ${"next-serverless.fr"}  | ${"fr"}
+      ${"next-serverless.com"} | ${"en"}
+    `("$host is resolved to $expectedResult", ({ host, expectedResult }) => {
+      const req = {
+        headers: {
+          host
+        }
+      } as unknown as IncomingMessage;
+      const newPath = findDomainLocale(req, routesManifest);
+
+      expect(newPath).toBe(expectedResult);
     });
   });
 

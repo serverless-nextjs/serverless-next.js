@@ -3,7 +3,6 @@ import {
   ApiManifest,
   DynamicSSG,
   Manifest,
-  NonDynamicSSG,
   PageManifest,
   RoutesManifest
 } from "../types";
@@ -12,7 +11,6 @@ import { normaliseDomainRedirects } from "./normaliseDomainRedirects";
 import { pathToRegexStr } from "./pathToRegexStr";
 import { PrerenderManifest } from "next/dist/build";
 import { getSortedRoutes } from "./sortedRoutes";
-import { addDefaultLocaleToPath } from "../route/locale";
 import { usedSSR } from "./ssr";
 
 export const prepareBuildManifests = async (

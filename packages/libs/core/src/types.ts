@@ -113,10 +113,17 @@ export type HeaderData = {
   regex: string;
 };
 
+export type DomainData = {
+  domain: string;
+  defaultLocale: string;
+  locales?: string[];
+};
+
 export type I18nData = {
   locales: string[];
   defaultLocale: string;
-  localeDetection: boolean;
+  localeDetection?: boolean;
+  domains?: DomainData[];
 };
 
 export type RoutesManifest = {
