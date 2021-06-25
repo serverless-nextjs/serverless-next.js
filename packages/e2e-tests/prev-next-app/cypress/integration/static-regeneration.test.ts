@@ -3,9 +3,7 @@ describe("ISR Tests", () => {
     cy.ensureAllRoutesNotErrored();
   });
 
-  // We don't want this test to retry as the cache will not be expired between
-  // runs
-  describe("SSG page", { retries: 0 }, () => {
+  describe("SSG page", () => {
     [
       { path: "/revalidated-ssg-page", initialWaitSeconds: 0 },
       // Pre-rendered ISR page
@@ -16,7 +14,18 @@ describe("ISR Tests", () => {
       { path: "/revalidated-ssg-pages/105", initialWaitSeconds: 11 }
     ].forEach(({ path, initialWaitSeconds }) => {
       it(`serves the cached re-rendered page "${path}" after 2 reloads`, () => {
-        if (initialWaitSeconds) {
+        // https://docs.cypress.io/guides/guides/test-retries#Can-I-access-the-current-attempt-counter-from-the-test
+        const attempt = Cypress._.get(
+          (cy as any).state("runnable"),
+          "_currentRetry",
+          0
+        );
+
+        if (attempt) {
+          // In retries we wait to ensure consistent, expired state
+          cy.wait(11000);
+        } else if (initialWaitSeconds) {
+          // Here the page has never been generated
           cy.ensureRouteNotCached(path);
           cy.visit(path);
           cy.wait(initialWaitSeconds * 1000);
@@ -30,10 +39,11 @@ describe("ISR Tests", () => {
         cy.get("[data-cy=date-text]")
           .invoke("text")
           .then((text1) => {
+            // Be sure that the regeneration has run and uploaded the file
+            cy.wait(4000);
             // When we reload again the page still should not be cached as this
             // should be the first time its being served from the origin
             cy.ensureRouteNotCached(path);
-            cy.wait(1000);
             cy.reload();
             cy.get("[data-cy=date-text]")
               .invoke("text")
@@ -47,8 +57,6 @@ describe("ISR Tests", () => {
                 );
                 // Make sure the next load is cached
                 cy.ensureRouteCached(path);
-                // Be sure that the regeneration has run and uploaded the file
-                cy.wait(4000);
                 cy.reload();
               });
           });

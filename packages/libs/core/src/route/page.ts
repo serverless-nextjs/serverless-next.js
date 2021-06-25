@@ -50,7 +50,8 @@ export const handlePageReq = (
       isData: false,
       isStatic: true,
       file: pageHtml(localeUri),
-      page: pages.ssr.nonDynamic[route], // page JS path is from SSR entries in manifest
+      // page JS path is from SSR entries in manifest
+      page: pages.ssr.nonDynamic[route] || pages.ssr.dynamic[route],
       revalidate: ssg.initialRevalidateSeconds,
       statusCode
     };
