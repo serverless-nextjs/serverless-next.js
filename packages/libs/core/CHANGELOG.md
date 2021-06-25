@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.1.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.15...v3.1.0-alpha.16) (2021-06-25)
+
+### Features
+
+- **core:** add domain locale detection ([#1283](https://github.com/serverless-nextjs/serverless-next.js/issues/1283)) ([#1296](https://github.com/serverless-nextjs/serverless-next.js/issues/1296)) ([b331695](https://github.com/serverless-nextjs/serverless-next.js/commit/b33169526eb30aeffd5f1b95a781709019f00248))
+
 # [3.1.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.13...v3.1.0-alpha.14) (2021-06-24)
 
 ### Bug Fixes
