@@ -4,7 +4,7 @@ import { IncomingMessage } from "http";
 export const findDomainLocale = (
   req: IncomingMessage,
   manifest: RoutesManifest
-): string | boolean => {
+): string | null => {
   const domains =
     manifest.i18n && manifest.i18n.domains ? manifest.i18n.domains : null;
   if (domains) {
@@ -20,18 +20,17 @@ export const findDomainLocale = (
       }
     }
   }
-  return false;
+  return null;
 };
 
 export function addDefaultLocaleToPath(
   path: string,
   routesManifest: RoutesManifest,
-  forceLocale: string | boolean = false
+  forceLocale: string | null = null
 ): string {
   if (routesManifest.i18n) {
-    const defaultLocale = forceLocale
-      ? forceLocale
-      : routesManifest.i18n.defaultLocale;
+    const defaultLocale = forceLocale ?? routesManifest.i18n.defaultLocale;
+
     const locales = routesManifest.i18n.locales;
     const basePath = path.startsWith(routesManifest.basePath)
       ? routesManifest.basePath
@@ -43,7 +42,9 @@ export function addDefaultLocaleToPath(
         path === `${basePath}/${locale}` ||
         path.startsWith(`${basePath}/${locale}/`)
       ) {
-        return path;
+        return typeof forceLocale === "string"
+          ? path.replace(`${locale}/`, `${forceLocale}/`)
+          : path;
       }
     }
 

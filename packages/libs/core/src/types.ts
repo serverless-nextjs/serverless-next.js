@@ -122,7 +122,7 @@ export type DomainData = {
 export type I18nData = {
   locales: string[];
   defaultLocale: string;
-  localeDetection: boolean;
+  localeDetection?: boolean;
   domains?: DomainData[];
 };
 
