@@ -119,7 +119,12 @@ describe("Redirector Tests", () => {
             }
           ],
           refresh: [],
-          "cache-control": "s-maxage=0"
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "s-maxage=0"
+            }
+          ]
         }
       });
     });
