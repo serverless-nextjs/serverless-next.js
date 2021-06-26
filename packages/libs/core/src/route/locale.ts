@@ -149,12 +149,14 @@ export async function getLocaleDomainRedirect(
       : undefined;
     // Use cookies first, otherwise use the accept-language header
     let acceptLanguages: string[] = [];
+    let nextLocale;
     if (headerCookies) {
       const cookies = parse(headerCookies);
-      const nextLocale = cookies["NEXT_LOCALE"];
-      if (nextLocale) {
-        acceptLanguages = [nextLocale.toLowerCase()];
-      }
+      nextLocale = cookies["NEXT_LOCALE"];
+    }
+
+    if (nextLocale) {
+      acceptLanguages = [nextLocale.toLowerCase()];
     } else {
       const Accept = await import("@hapi/accept");
       acceptLanguages = Accept.languages(acceptLanguage).map((lang) =>
