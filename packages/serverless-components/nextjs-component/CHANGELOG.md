@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.1-alpha.0...v3.2.0-alpha.0) (2021-06-26)
+
+### Features
+
+- **nextjs-component, aws-lambda:** support adding tags to lambdas ([#1300](https://github.com/serverless-nextjs/serverless-next.js/issues/1300)) ([74721c2](https://github.com/serverless-nextjs/serverless-next.js/commit/74721c28097ec3bb4227ad50e9d9c3db48848fb8))
+
 ## [3.1.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0...v3.1.1-alpha.0) (2021-06-26)
 
 **Note:** Version bump only for package @sls-next/serverless-component
