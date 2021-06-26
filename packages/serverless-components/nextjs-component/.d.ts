@@ -3,6 +3,7 @@ declare module "@serverless/core" {
 
   export class Component {
     load(modulePath: string, moduleName?: string): any;
+    state: any;
     context: {
       credentials: {
         aws: Credentials;
@@ -13,5 +14,6 @@ declare module "@serverless/core" {
       status(status: string): void;
       debug(message: string): void;
     };
+    save(): void;
   }
 }

@@ -24,7 +24,7 @@ const errorResponse = (errorPage) => {
   };
 };
 
-module.exports = (errorPages = []) => {
+export default (errorPages = []) => {
   return {
     Quantity: errorPages.length,
     Items: errorPages.map(errorResponse)

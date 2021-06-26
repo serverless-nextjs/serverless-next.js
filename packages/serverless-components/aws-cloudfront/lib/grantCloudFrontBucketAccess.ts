@@ -1,4 +1,4 @@
-module.exports = (s3, bucketName, s3CanonicalUserId) => {
+export default (s3, bucketName, s3CanonicalUserId) => {
   const policy = `
 	{
 		"Version":"2012-10-17",

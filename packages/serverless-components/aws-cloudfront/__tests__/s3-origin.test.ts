@@ -1,4 +1,4 @@
-const {
+import {
   mockCreateDistribution,
   mockUpdateDistribution,
   mockCreateDistributionPromise,
@@ -7,7 +7,7 @@ const {
   mockCreateCloudFrontOriginAccessIdentityPromise,
   mockGetCloudFrontOriginAccessIdentityPromise,
   mockPutBucketPolicy
-} = require("aws-sdk");
+} from "../__mocks__/aws-sdk.mock";
 
 const { createComponent, assertHasOrigin } = require("../test-utils");
 

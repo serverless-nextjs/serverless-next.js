@@ -1,11 +1,11 @@
-const aws = require("aws-sdk");
-const { equals } = require("ramda");
+import AWS from "aws-sdk";
+import { equals } from "ramda";
 const { Component } = require("@serverless/core");
-const {
+import {
   createCloudFrontDistribution,
   updateCloudFrontDistribution,
   deleteCloudFrontDistribution
-} = require("./lib");
+} from "./lib";
 
 /*
  * Website
@@ -16,7 +16,7 @@ class CloudFront extends Component {
    * Default
    */
 
-  async default(inputs = {}) {
+  async default(inputs: any = {}) {
     this.context.status("Deploying");
 
     inputs.region = inputs.region || "us-east-1";
@@ -39,12 +39,12 @@ class CloudFront extends Component {
       `Starting deployment of CloudFront distribution to the ${inputs.region} region.`
     );
 
-    const cf = new aws.CloudFront({
+    const cf = new AWS.CloudFront({
       credentials: this.context.credentials.aws,
       region: inputs.region
     });
 
-    const s3 = new aws.S3({
+    const s3 = new AWS.S3({
       credentials: this.context.credentials.aws,
       region: inputs.region
     });
@@ -113,7 +113,7 @@ class CloudFront extends Component {
       return;
     }
 
-    const cf = new aws.CloudFront({
+    const cf = new AWS.CloudFront({
       credentials: this.context.credentials.aws,
       region: this.state.region
     });
@@ -128,4 +128,4 @@ class CloudFront extends Component {
   }
 }
 
-module.exports = CloudFront;
+export default CloudFront;

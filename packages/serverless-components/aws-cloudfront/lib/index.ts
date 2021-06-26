@@ -1,8 +1,8 @@
-const parseInputOrigins = require("./parseInputOrigins");
-const getDefaultCacheBehavior = require("./getDefaultCacheBehavior");
-const createOriginAccessIdentity = require("./createOriginAccessIdentity");
-const grantCloudFrontBucketAccess = require("./grantCloudFrontBucketAccess");
-const getCustomErrorResponses = require("./getCustomErrorResponses");
+import parseInputOrigins from "./parseInputOrigins";
+import getDefaultCacheBehavior from "./getDefaultCacheBehavior";
+import createOriginAccessIdentity from "./createOriginAccessIdentity";
+import grantCloudFrontBucketAccess from "./grantCloudFrontBucketAccess";
+import getCustomErrorResponses from "./getCustomErrorResponses";
 
 const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2019";
 const DEFAULT_SSL_SUPPORT_METHOD = "sni-only";
@@ -18,7 +18,7 @@ const updateBucketsPolicies = async (s3, origins, s3CanonicalUserId) => {
     (origin) => origin.S3OriginConfig
   ).map((origin) => origin.Id);
 
-  return Promise.all(
+  await Promise.all(
     bucketNames.map((bucketName) =>
       grantCloudFrontBucketAccess(s3, bucketName, s3CanonicalUserId)
     )
@@ -59,7 +59,7 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     }
   };
 
-  const distributionConfig = params.DistributionConfig;
+  const distributionConfig: any = params.DistributionConfig;
 
   let originAccessIdentityId;
   let s3CanonicalUserId;
@@ -89,8 +89,9 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     distributionConfig.CacheBehaviors = CacheBehaviors;
   }
 
-  const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
-  distributionConfig.CustomErrorResponses = CustomErrorResponses;
+  distributionConfig.CustomErrorResponses = getCustomErrorResponses(
+    inputs.errorPages
+  );
 
   // Set WAF web ACL id if defined
   if (inputs.webACLId !== undefined && inputs.webACLId !== null) {
@@ -288,8 +289,9 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     behaviors.Quantity = behaviors.Items.length;
   }
 
-  const CustomErrorResponses = getCustomErrorResponses(inputs.errorPages);
-  params.DistributionConfig.CustomErrorResponses = CustomErrorResponses;
+  params.DistributionConfig.CustomErrorResponses = getCustomErrorResponses(
+    inputs.errorPages
+  );
 
   // 6. then finally update!
   const res = await cf.updateDistribution(params).promise();
@@ -340,7 +342,7 @@ const deleteCloudFrontDistribution = async (cf, distributionId) => {
   }
 };
 
-module.exports = {
+export {
   createCloudFrontDistribution,
   updateCloudFrontDistribution,
   deleteCloudFrontDistribution

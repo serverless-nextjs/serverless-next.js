@@ -1,4 +1,4 @@
-const { createComponent } = require("../test-utils");
+import { createComponent } from "../test-utils";
 
 const {
   mockCreateDistribution,

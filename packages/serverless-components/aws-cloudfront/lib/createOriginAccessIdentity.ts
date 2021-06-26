@@ -1,4 +1,6 @@
-module.exports = async (cf) => {
+export default async (
+  cf
+): Promise<{ originAccessIdentityId: string; s3CanonicalUserId: string }> => {
   const {
     CloudFrontOriginAccessIdentity: { Id, S3CanonicalUserId }
   } = await cf

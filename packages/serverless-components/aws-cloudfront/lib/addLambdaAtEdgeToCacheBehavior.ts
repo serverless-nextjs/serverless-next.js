@@ -6,7 +6,19 @@ const validLambdaTriggers = [
 ];
 
 // adds lambda@edge to cache behavior passed
-module.exports = (cacheBehavior, lambdaAtEdgeConfig = {}) => {
+export default (
+  cacheBehavior: {
+    LambdaFunctionAssociations: {
+      Quantity: number;
+      Items: {
+        EventType: string;
+        LambdaFunctionARN: string;
+        IncludeBody: boolean | undefined;
+      }[];
+    };
+  },
+  lambdaAtEdgeConfig = {}
+): void => {
   Object.keys(lambdaAtEdgeConfig).forEach((eventType) => {
     if (!validLambdaTriggers.includes(eventType)) {
       throw new Error(
