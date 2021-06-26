@@ -121,7 +121,7 @@ describe.each`
           code: path.join(fixturePath, REGENERATION_LAMBDA_CODE_DIR),
           memory: 512,
           timeout: 10,
-          runtime: "nodejs12.x",
+          runtime: "nodejs14.x",
           name: "bucket-xyz",
           region: "us-east-1",
           tags: undefined,
@@ -175,7 +175,7 @@ describe.each`
           code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
           memory: 512,
           timeout: 10,
-          runtime: "nodejs12.x",
+          runtime: "nodejs14.x",
           tags: undefined,
           role: {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -222,7 +222,7 @@ describe.each`
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
           memory: 512,
           timeout: 10,
-          runtime: "nodejs12.x",
+          runtime: "nodejs14.x",
           tags: undefined,
           role: {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -269,7 +269,7 @@ describe.each`
           code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
           memory: 512,
           timeout: 10,
-          runtime: "nodejs12.x",
+          runtime: "nodejs14.x",
           tags: undefined,
           role: {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],

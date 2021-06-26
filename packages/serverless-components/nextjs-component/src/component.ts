@@ -569,7 +569,7 @@ class NextjsComponent extends Component {
         runtime: readLambdaInputValue(
           "runtime",
           "regenerationLambda",
-          "nodejs12.x"
+          "nodejs14.x"
         ) as string,
         name: bucketOutputs.name,
         tags: readLambdaInputValue(
@@ -611,7 +611,7 @@ class NextjsComponent extends Component {
         runtime: readLambdaInputValue(
           "runtime",
           "apiLambda",
-          "nodejs12.x"
+          "nodejs14.x"
         ) as string,
         name: readLambdaInputValue("name", "apiLambda", undefined) as
           | string
@@ -672,7 +672,7 @@ class NextjsComponent extends Component {
         runtime: readLambdaInputValue(
           "runtime",
           "imageLambda",
-          "nodejs12.x"
+          "nodejs14.x"
         ) as string,
         name: readLambdaInputValue("name", "imageLambda", undefined) as
           | string
@@ -737,7 +737,7 @@ class NextjsComponent extends Component {
       runtime: readLambdaInputValue(
         "runtime",
         "defaultLambda",
-        "nodejs12.x"
+        "nodejs14.x"
       ) as string,
       name: readLambdaInputValue("name", "defaultLambda", undefined) as
         | string
