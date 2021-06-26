@@ -16,8 +16,9 @@
     "directory": "packages/libs/cloudfront"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist"
   },
   "keywords": [
     "AWS",
@@ -36,6 +37,7 @@
   },
   "devDependencies": {
     "@types/node": "^15.12.2",
+    "rimraf": "^3.0.2",
     "typescript": "^4.3.4"
   }
 }

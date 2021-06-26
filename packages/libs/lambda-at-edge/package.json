@@ -11,8 +11,8 @@
     "build-lambda-at-edge": "dist/command.js"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "clean": "ts-node scripts/clean-dist.ts",
+    "prepare": "yarn clean && yarn build",
+    "clean": "yarn rimraf dist",
     "build-test-manifests": "ts-node scripts/build-test-manifests.ts",
     "copy-sharp-modules": "ts-node scripts/copy-sharp-modules.ts",
     "build": "rollup --config && tsc -p tsconfig.build.json && yarn copy-sharp-modules"
@@ -49,6 +49,7 @@
     "@types/send": "^0.17.0",
     "@types/sharp": "^0.28.1",
     "fetch-mock-jest": "^1.5.1",
+    "rimraf": "^3.0.2",
     "rollup": "^2.46.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-node-externals": "^2.2.0",

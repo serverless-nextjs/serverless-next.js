@@ -13,8 +13,9 @@
     "directory": "packages/serverless-components/nextjs-component"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist"
   },
   "keywords": [
     "serverless",

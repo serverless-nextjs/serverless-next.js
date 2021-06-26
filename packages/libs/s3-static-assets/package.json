@@ -16,8 +16,9 @@
     "directory": "packages/libs/s3-static-assets"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist"
   },
   "keywords": [
     "AWS",
@@ -40,6 +41,7 @@
   },
   "devDependencies": {
     "@types/mime-types": "^2.1.0",
+    "rimraf": "^3.0.2",
     "typescript": "^4.3.4"
   }
 }

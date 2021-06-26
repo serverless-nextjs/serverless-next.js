@@ -14,8 +14,9 @@
     "nextjs"
   ],
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.json"
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.json",
+    "clean": "yarn rimraf dist"
   },
   "bugs": {
     "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
@@ -62,6 +63,7 @@
     "@aws-cdk/aws-sqs": "^1.75.0",
     "@aws-cdk/core": "^1.75.0",
     "@types/fs-extra": "^9.0.1",
+    "rimraf": "^3.0.2",
     "typescript": "^4.3.4"
   }
 }
