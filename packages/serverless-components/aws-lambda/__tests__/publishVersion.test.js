@@ -122,7 +122,7 @@ describe("publishVersion", () => {
 
     expect(mockUntagResource).toBeCalledWith({
       Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
-      Tags: ["foo"]
+      TagKeys: ["foo"]
     });
 
     expect(mockTagResource).toBeCalledWith({

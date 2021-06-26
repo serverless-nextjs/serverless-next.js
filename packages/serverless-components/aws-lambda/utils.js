@@ -170,7 +170,7 @@ const updateLambdaConfig = async ({
       await lambda
         .untagResource({
           Resource: res.FunctionArn,
-          Tags: Object.keys(currentTags)
+          TagKeys: Object.keys(currentTags)
         })
         .promise();
 
