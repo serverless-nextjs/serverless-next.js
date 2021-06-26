@@ -99,6 +99,12 @@ describe("Redirector Tests", () => {
               key: "Refresh",
               value: `0;url=/terms`
             }
+          ],
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "s-maxage=0"
+            }
           ]
         }
       });
@@ -117,7 +123,13 @@ describe("Redirector Tests", () => {
               value: "/terms?a=123"
             }
           ],
-          refresh: []
+          refresh: [],
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "s-maxage=0"
+            }
+          ]
         }
       });
     });

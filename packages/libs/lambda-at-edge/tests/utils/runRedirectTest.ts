@@ -39,7 +39,13 @@ export async function runRedirectTestWithHandler(
         value: expectedRedirect
       }
     ],
-    refresh: refresh
+    refresh: refresh,
+    "cache-control": [
+      {
+        key: "Cache-Control",
+        value: "s-maxage=0"
+      }
+    ]
   });
   expect(response.status.toString()).toEqual(statusCode.toString());
 }
