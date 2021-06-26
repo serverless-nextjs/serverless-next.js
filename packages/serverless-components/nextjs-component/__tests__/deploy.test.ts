@@ -124,6 +124,7 @@ describe.each`
           runtime: "nodejs12.x",
           name: "bucket-xyz",
           region: "us-east-1",
+          tags: undefined,
           role: {
             service: ["lambda.amazonaws.com"],
             policy: {
@@ -175,6 +176,7 @@ describe.each`
           memory: 512,
           timeout: 10,
           runtime: "nodejs12.x",
+          tags: undefined,
           role: {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
             policy: {
@@ -221,6 +223,7 @@ describe.each`
           memory: 512,
           timeout: 10,
           runtime: "nodejs12.x",
+          tags: undefined,
           role: {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
             policy: {
@@ -267,6 +270,7 @@ describe.each`
           memory: 512,
           timeout: 10,
           runtime: "nodejs12.x",
+          tags: undefined,
           role: {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
             policy: {

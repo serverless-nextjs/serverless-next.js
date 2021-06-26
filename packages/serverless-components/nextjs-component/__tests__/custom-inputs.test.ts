@@ -10,7 +10,12 @@ import { mockSQS } from "@sls-next/aws-sqs";
 
 import NextjsComponent, { DeploymentResult } from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR,
+  REGENERATION_LAMBDA_CODE_DIR
+} from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
 // unfortunately can't use __mocks__ because aws-sdk is being mocked in other
@@ -409,6 +414,61 @@ describe("Custom inputs", () => {
         expect.objectContaining({
           code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
           memory: apiMemory
+        })
+      );
+    });
+  });
+
+  describe.each([
+    {
+      defaultLambda: { tag1: "val1" },
+      apiLambda: { tag2: "val2" },
+      imageLambda: { tag3: "val3" }
+    }
+  ])("Lambda tags input", (tags) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        tags: tags
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`sets lambda tags to ${JSON.stringify(tags)}`, () => {
+      // default Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          tags: tags.defaultLambda
+        })
+      );
+
+      // api Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          tags: tags.apiLambda
+        })
+      );
+
+      // image lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
+          tags: tags.imageLambda
         })
       );
     });

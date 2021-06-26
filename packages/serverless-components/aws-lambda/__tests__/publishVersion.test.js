@@ -1,12 +1,17 @@
 const { createComponent, createTmpDir } = require("../test-utils");
 
 const {
+  mockCreateFunction,
   mockCreateFunctionPromise,
   mockPublishVersion,
   mockPublishVersionPromise,
   mockGetFunctionConfigurationPromise,
   mockUpdateFunctionCodePromise,
-  mockUpdateFunctionConfigurationPromise
+  mockUpdateFunctionConfigurationPromise,
+  mockListTags,
+  mockListTagsPromise,
+  mockTagResource,
+  mockUntagResource
 } = require("aws-sdk");
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
@@ -47,7 +52,8 @@ describe("publishVersion", () => {
     const tmpFolder = await createTmpDir();
 
     await component.default({
-      code: tmpFolder
+      code: tmpFolder,
+      tags: { new: "tag" }
     });
 
     const versionResult = await component.publishVersion();
@@ -60,6 +66,12 @@ describe("publishVersion", () => {
     expect(versionResult).toEqual({
       version: "v2"
     });
+
+    expect(mockCreateFunction).toBeCalledWith(
+      expect.objectContaining({
+        Tags: { new: "tag" }
+      })
+    );
   });
 
   it("publishes new version of lambda that was updated", async () => {
@@ -79,7 +91,11 @@ describe("publishVersion", () => {
       CodeSha256: "LQT0VA="
     });
     mockUpdateFunctionConfigurationPromise.mockResolvedValueOnce({
-      CodeSha256: "XYZ0VA="
+      CodeSha256: "XYZ0VA=",
+      FunctionArn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+    });
+    mockListTagsPromise.mockResolvedValueOnce({
+      Tags: { foo: "bar" }
     });
 
     const tmpFolder = await createTmpDir();
@@ -89,7 +105,8 @@ describe("publishVersion", () => {
     });
 
     await component.default({
-      code: tmpFolder
+      code: tmpFolder,
+      tags: { new: "tag" }
     });
 
     const versionResult = await component.publishVersion();
@@ -97,6 +114,20 @@ describe("publishVersion", () => {
     expect(mockPublishVersion).toBeCalledWith({
       FunctionName: expect.any(String),
       CodeSha256: "XYZ0VA=" // compare against the hash received from the function update, *not* create
+    });
+
+    expect(mockListTags).toBeCalledWith({
+      Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+    });
+
+    expect(mockUntagResource).toBeCalledWith({
+      Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
+      TagKeys: ["foo"]
+    });
+
+    expect(mockTagResource).toBeCalledWith({
+      Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
+      Tags: { new: "tag" }
     });
 
     expect(versionResult).toEqual({

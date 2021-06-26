@@ -451,10 +451,10 @@ class NextjsComponent extends Component {
     );
 
     const readLambdaInputValue = (
-      inputKey: "memory" | "timeout" | "name" | "runtime" | "roleArn",
+      inputKey: "memory" | "timeout" | "name" | "runtime" | "roleArn" | "tags",
       lambdaType: LambdaType,
-      defaultValue: string | number | undefined
-    ): string | number | undefined => {
+      defaultValue: string | number | Record<string, string> | undefined
+    ): string | number | Record<string, string> | undefined => {
       const inputValue = inputs[inputKey];
 
       if (typeof inputValue === "string" || typeof inputValue === "number") {
@@ -571,7 +571,12 @@ class NextjsComponent extends Component {
           "regenerationLambda",
           "nodejs12.x"
         ) as string,
-        name: bucketOutputs.name
+        name: bucketOutputs.name,
+        tags: readLambdaInputValue(
+          "tags",
+          "regenerationLambda",
+          undefined
+        ) as Record<string, string>
       };
 
       const regenerationLambdaResult = await regenerationLambda(
@@ -610,7 +615,11 @@ class NextjsComponent extends Component {
         ) as string,
         name: readLambdaInputValue("name", "apiLambda", undefined) as
           | string
-          | undefined
+          | undefined,
+        tags: readLambdaInputValue("tags", "apiLambda", undefined) as Record<
+          string,
+          string
+        >
       };
 
       const apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
@@ -667,7 +676,11 @@ class NextjsComponent extends Component {
         ) as string,
         name: readLambdaInputValue("name", "imageLambda", undefined) as
           | string
-          | undefined
+          | undefined,
+        tags: readLambdaInputValue("tags", "imageLambda", undefined) as Record<
+          string,
+          string
+        >
       };
 
       const imageEdgeLambdaOutputs = await imageEdgeLambda(
@@ -728,7 +741,11 @@ class NextjsComponent extends Component {
       ) as string,
       name: readLambdaInputValue("name", "defaultLambda", undefined) as
         | string
-        | undefined
+        | undefined,
+      tags: readLambdaInputValue("tags", "defaultLambda", undefined) as Record<
+        string,
+        string
+      >
     };
 
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda(

@@ -26,7 +26,8 @@ const outputsList = [
   "env",
   "role",
   "arn",
-  "region"
+  "region",
+  "tags"
 ];
 
 const defaults = {
@@ -39,7 +40,8 @@ const defaults = {
   handler: "handler.hello",
   runtime: "nodejs10.x",
   env: {},
-  region: "us-east-1"
+  region: "us-east-1",
+  tags: undefined
 };
 
 class AwsLambda extends Component {
@@ -49,6 +51,7 @@ class AwsLambda extends Component {
     const config = mergeDeepRight(defaults, inputs);
 
     config.name = inputs.name || this.state.name || this.context.resourceId();
+    config.tags = inputs.tags || this.state.tags;
 
     this.context.debug(
       `Starting deployment of lambda ${config.name} to the ${config.region} region.`

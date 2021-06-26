@@ -50,6 +50,13 @@ const mockGetCallerIdentityMappingPromise = promisifyMock(
   mockGetCallerIdentityMapping
 );
 
+const mockListTags = jest.fn();
+const mockListTagsPromise = promisifyMock(mockListTags);
+const mockTagResource = jest.fn();
+const mockTagResourcePromise = promisifyMock(mockTagResource);
+const mockUntagResource = jest.fn();
+const mockUntagResourcePromise = promisifyMock(mockUntagResource);
+
 module.exports = {
   mockCreateQueuePromise,
   mockGetQueueAttributesPromise,
@@ -80,6 +87,12 @@ module.exports = {
   mockUpdateFunctionCodePromise,
   mockUpdateFunctionConfiguration,
   mockUpdateFunctionConfigurationPromise,
+  mockListTags,
+  mockListTagsPromise,
+  mockTagResource,
+  mockTagResourcePromise,
+  mockUntagResource,
+  mockUntagResourcePromise,
 
   Lambda: jest.fn(() => ({
     listEventSourceMappings: mockListEventSourceMappings,
@@ -88,6 +101,9 @@ module.exports = {
     publishVersion: mockPublishVersion,
     getFunctionConfiguration: mockGetFunctionConfiguration,
     updateFunctionCode: mockUpdateFunctionCode,
-    updateFunctionConfiguration: mockUpdateFunctionConfiguration
+    updateFunctionConfiguration: mockUpdateFunctionConfiguration,
+    listTags: mockListTags,
+    tagResource: mockTagResource,
+    untagResource: mockUntagResource
   }))
 };

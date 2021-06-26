@@ -5,6 +5,7 @@ const globby = require("globby");
 const { contains, isNil, last, split, equals, not, pick } = require("ramda");
 const { readFile, createReadStream, createWriteStream } = require("fs-extra");
 const { utils } = require("@serverless/core");
+const _ = require("lodash");
 
 const VALID_FORMATS = ["zip", "tar"];
 const isValidFormat = (format) => contains(format, VALID_FORMATS);
@@ -88,7 +89,8 @@ const createLambda = async ({
   zipPath,
   bucket,
   role,
-  layer
+  layer,
+  tags
 }) => {
   const params = {
     FunctionName: name,
@@ -102,7 +104,8 @@ const createLambda = async ({
     Timeout: timeout,
     Environment: {
       Variables: env
-    }
+    },
+    Tags: tags
   };
 
   if (layer && layer.arn) {
@@ -131,7 +134,8 @@ const updateLambdaConfig = async ({
   env,
   description,
   role,
-  layer
+  layer,
+  tags
 }) => {
   const functionConfigParams = {
     FunctionName: name,
@@ -153,6 +157,33 @@ const updateLambdaConfig = async ({
   const res = await lambda
     .updateFunctionConfiguration(functionConfigParams)
     .promise();
+
+  // Get and update Lambda tags only if tags are specified (for backwards compatibility and avoiding unneeded updates)
+  if (tags) {
+    const listTagsResponse = await lambda
+      .listTags({ Resource: res.FunctionArn })
+      .promise();
+    const currentTags = listTagsResponse.Tags;
+
+    // If tags are not the same then update them
+    if (!_.isEqual(currentTags, tags)) {
+      if (currentTags && Object.keys(currentTags).length > 0)
+        await lambda
+          .untagResource({
+            Resource: res.FunctionArn,
+            TagKeys: Object.keys(currentTags)
+          })
+          .promise();
+
+      if (Object.keys(tags).length > 0)
+        await lambda
+          .tagResource({
+            Resource: res.FunctionArn,
+            Tags: tags
+          })
+          .promise();
+    }
+  }
 
   return { arn: res.FunctionArn, hash: res.CodeSha256 };
 };
