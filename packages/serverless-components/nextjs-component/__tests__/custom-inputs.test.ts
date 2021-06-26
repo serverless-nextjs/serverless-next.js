@@ -525,12 +525,12 @@ describe("Custom inputs", () => {
 
   describe.each`
     inputRuntime                                                | expectedRuntime
-    ${undefined}                                                | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
-    ${{}}                                                       | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
-    ${"nodejs10.x"}                                             | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
-    ${{ defaultLambda: "nodejs10.x" }}                          | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs12.x" }}
-    ${{ apiLambda: "nodejs10.x" }}                              | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs10.x" }}
-    ${{ defaultLambda: "nodejs10.x", apiLambda: "nodejs10.x" }} | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
+    ${undefined}                                                | ${{ defaultRuntime: "nodejs14.x", apiRuntime: "nodejs14.x" }}
+    ${{}}                                                       | ${{ defaultRuntime: "nodejs14.x", apiRuntime: "nodejs14.x" }}
+    ${"nodejs12.x"}                                             | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
+    ${{ defaultLambda: "nodejs12.x" }}                          | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs14.x" }}
+    ${{ apiLambda: "nodejs12.x" }}                              | ${{ defaultRuntime: "nodejs14.x", apiRuntime: "nodejs12.x" }}
+    ${{ defaultLambda: "nodejs12.x", apiLambda: "nodejs12.x" }} | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
   `("Input runtime options", ({ inputRuntime, expectedRuntime }) => {
     let tmpCwd: string;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
