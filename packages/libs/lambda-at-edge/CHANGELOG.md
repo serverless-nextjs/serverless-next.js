@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.1.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0...v3.1.1-alpha.0) (2021-06-26)
+
+### Bug Fixes
+
+- **core:** add s-maxage=0 cache-control headers to redirect responses ([#1298](https://github.com/serverless-nextjs/serverless-next.js/issues/1298)) ([6220078](https://github.com/serverless-nextjs/serverless-next.js/commit/6220078cedac2c56ed0c314e0416890fab4aa891))
+
 # [3.1.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.16...v3.1.0) (2021-06-25)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
