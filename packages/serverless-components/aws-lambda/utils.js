@@ -167,12 +167,13 @@ const updateLambdaConfig = async ({
 
     // If tags are not the same then update them
     if (!_.isEqual(currentTags, tags)) {
-      await lambda
-        .untagResource({
-          Resource: res.FunctionArn,
-          TagKeys: Object.keys(currentTags)
-        })
-        .promise();
+      if (currentTags && Object.keys(currentTags).length > 0)
+        await lambda
+          .untagResource({
+            Resource: res.FunctionArn,
+            TagKeys: Object.keys(currentTags)
+          })
+          .promise();
 
       if (Object.keys(tags).length > 0)
         await lambda
