@@ -120,19 +120,21 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      host                     | acceptLang              | expectedRedirect
-      ${"next-serverless.com"} | ${"en"}                 | ${undefined}
-      ${"next-serverless.com"} | ${"fr"}                 | ${"next-serverless.fr/test"}
-      ${"next-serverless.com"} | ${"fr;q=0.7, nl;q=0.9"} | ${"next-serverless.nl/test"}
-      ${"next-serverless.fr"}  | ${"es"}                 | ${"next-serverless.com/test"}
-      ${"next-serverless.fr"}  | ${"en-GB"}              | ${"next-serverless.com/test"}
+      host                     | acceptLang              | cookie              | expectedRedirect
+      ${"next-serverless.com"} | ${"en"}                 | ${undefined}        | ${undefined}
+      ${"next-serverless.com"} | ${"fr"}                 | ${undefined}        | ${"next-serverless.fr/test"}
+      ${"next-serverless.com"} | ${"fr;q=0.7, nl;q=0.9"} | ${undefined}        | ${"next-serverless.nl/test"}
+      ${"next-serverless.fr"}  | ${"es"}                 | ${undefined}        | ${"next-serverless.com/test"}
+      ${"next-serverless.fr"}  | ${"en-GB"}              | ${undefined}        | ${"next-serverless.com/test"}
+      ${"next-serverless.com"} | ${"en"}                 | ${"NEXT_LOCALE=fr"} | ${"next-serverless.fr/test"}
     `(
-      "host: $host with accept-language: $acceptLang redirects to $expectedRedirect",
-      async ({ host, acceptLang, expectedRedirect }) => {
+      "host: $host with accept-language: $acceptLang and cookie: $cookie redirects to $expectedRedirect",
+      async ({ host, acceptLang, cookie, expectedRedirect }) => {
         const req = {
           headers: {
             host: [{ key: "Host", value: host }],
-            "accept-language": [{ key: "Accept-Language", value: acceptLang }]
+            "accept-language": [{ key: "Accept-Language", value: acceptLang }],
+            cookie: [{ key: "Cookie", value: cookie }]
           },
           uri: "/test"
         };

@@ -1,5 +1,6 @@
 import { Manifest, Request, RoutesManifest } from "../types";
 import { IncomingMessage } from "http";
+import { parse } from "cookie";
 
 export const findDomainLocale = (
   req: IncomingMessage,
@@ -143,12 +144,25 @@ export async function getLocaleDomainRedirect(
     const languageHeader = req.headers["accept-language"];
     const acceptLanguage = languageHeader && languageHeader[0]?.value;
 
-    // Try to find the right domain to redirect to if needed
-    const Accept = await import("@hapi/accept");
-    const acceptLanguages = Accept.languages(acceptLanguage).map((lang) =>
-      lang.toLowerCase()
-    );
+    const headerCookies = req.headers.cookie
+      ? req.headers.cookie[0]?.value
+      : undefined;
+    // Use cookies first, otherwise use the accept-language header
+    let acceptLanguages: string[] = [];
+    if (headerCookies) {
+      const cookies = parse(headerCookies);
+      const nextLocale = cookies["NEXT_LOCALE"];
+      if (nextLocale) {
+        acceptLanguages = [nextLocale.toLowerCase()];
+      }
+    } else {
+      const Accept = await import("@hapi/accept");
+      acceptLanguages = Accept.languages(acceptLanguage).map((lang) =>
+        lang.toLowerCase()
+      );
+    }
 
+    // Try to find the right domain to redirect to if needed
     // First check current domain can support any preferred language, if so do not redirect
     const currentDomainData = domains.find(
       (domainData) => domainData.domain === host
