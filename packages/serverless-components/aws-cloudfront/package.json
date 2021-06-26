@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-cloudfront",
-  "version": "3.1.0",
+  "version": "3.2.0-alpha.2",
   "main": "./serverless.js",
   "types": "dist/component.d.ts",
   "publishConfig": {
@@ -16,9 +16,9 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "ramda": "^0.27.1",
+    "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.935.0",
-    "@serverless/core": "^1.1.2"
+    "ramda": "^0.27.1"
   },
   "peerDependencies": {
     "@serverless/core": "^1.1.2",
