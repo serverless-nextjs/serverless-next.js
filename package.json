@@ -86,7 +86,9 @@
       "/examples/",
       "/dist/",
       "/e2e-tests/",
-      "/tests/"
+      "/tests/",
+      "babel.config.js",
+      "jest.config.js"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",
