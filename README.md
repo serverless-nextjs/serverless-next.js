@@ -377,6 +377,9 @@ The exhaustive list of AWS actions required for a deployment:
   "lambda:PublishVersion",
   "lambda:UpdateFunctionCode",
   "lambda:UpdateFunctionConfiguration",
+  "lambda:ListTags",                  // for tagging lambdas
+  "lambda:TagResource",               // for tagging lambdas
+  "lambda:UntagResource",             // for tagging lambdas
   "route53:ChangeResourceRecordSets", // only for custom domains
   "route53:ListHostedZonesByName",
   "route53:ListResourceRecordSets",   // only for custom domains
