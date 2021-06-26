@@ -1,14 +1,27 @@
-const getOriginConfig = require("./getOriginConfig");
-const getCacheBehavior = require("./getCacheBehavior");
-const addLambdaAtEdgeToCacheBehavior = require("./addLambdaAtEdgeToCacheBehavior");
+import {
+  getOriginConfig,
+  OriginConfig,
+  Origin,
+  Options
+} from "./getOriginConfig";
+import getCacheBehavior from "./getCacheBehavior";
+import addLambdaAtEdgeToCacheBehavior, {
+  CacheBehavior
+} from "./addLambdaAtEdgeToCacheBehavior";
 
-module.exports = (origins, options) => {
-  const distributionOrigins = {
+export default (origins: Origin[], options: Options) => {
+  const distributionOrigins: {
+    Quantity: number;
+    Items: OriginConfig[];
+  } = {
     Quantity: 0,
     Items: []
   };
 
-  const distributionCacheBehaviors = {
+  const distributionCacheBehaviors: {
+    Quantity: number;
+    Items: any;
+  } = {
     Quantity: 0,
     Items: []
   };
@@ -30,7 +43,7 @@ module.exports = (origins, options) => {
         );
 
         addLambdaAtEdgeToCacheBehavior(
-          cacheBehavior,
+          cacheBehavior as CacheBehavior,
           pathPatternConfig["lambda@edge"]
         );
 

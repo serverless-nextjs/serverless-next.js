@@ -3,12 +3,23 @@ const forwardDefaults = {
   queryString: false
 };
 
+type ForwardedValues = {
+  cookies?: string | string[];
+  queryString?: string;
+  headers?: string | string[];
+  queryStringCacheKeys?: string[];
+};
+
 /**
  * @param config User-defined config
  * @param defaults Default framework values (default cache behavior and custom cache behavior have different default values)
  * @returns Object
  */
-function getForwardedValues(config = {}, defaults = {}) {
+
+function getForwardedValues(
+  config: ForwardedValues = {},
+  defaults = {}
+): Record<string, unknown> {
   const defaultValues = { ...forwardDefaults, ...defaults };
   const {
     cookies,
@@ -18,7 +29,10 @@ function getForwardedValues(config = {}, defaults = {}) {
   } = config;
 
   // Cookies
-  const forwardCookies = {
+  const forwardCookies: {
+    Forward: string;
+    WhitelistedNames?: Record<string, unknown>;
+  } = {
     Forward: defaultValues.cookies
   };
 
@@ -65,4 +79,4 @@ function getForwardedValues(config = {}, defaults = {}) {
   };
 }
 
-module.exports = { getForwardedValues };
+export { getForwardedValues };

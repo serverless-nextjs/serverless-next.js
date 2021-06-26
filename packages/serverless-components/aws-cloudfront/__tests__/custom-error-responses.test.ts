@@ -1,9 +1,9 @@
-const { createComponent } = require("../test-utils");
+import { createComponent } from "../test-utils";
 
-const {
+import {
   mockCreateDistribution,
   mockCreateDistributionPromise
-} = require("aws-sdk");
+} from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
@@ -83,7 +83,7 @@ describe("Configures custom error responses", () => {
         ]
       });
     };
-    await expect(failing(401)).rejects.toThrow(
+    await expect(failing(401, undefined)).rejects.toThrow(
       'CloudFront error code "401" is not supported'
     );
     await expect(failing(400, 401)).rejects.toThrow(

@@ -1,15 +1,12 @@
-const {
-  createComponent,
-  assertHasCustomOriginConfig
-} = require("../test-utils");
+import { createComponent, assertHasCustomOriginConfig } from "../test-utils";
 
-const {
+import {
   mockCreateDistribution,
   mockUpdateDistribution,
   mockCreateDistributionPromise,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise
-} = require("aws-sdk");
+} from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 

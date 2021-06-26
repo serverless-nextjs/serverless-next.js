@@ -1,6 +1,10 @@
-const { getForwardedValues } = require("./cacheBahaviorUtils");
+import { getForwardedValues } from "./cacheBehaviorUtils";
 
-module.exports = (pathPattern, pathPatternConfig, originId) => {
+export default (
+  pathPattern,
+  pathPatternConfig,
+  originId
+): Record<string, unknown> => {
   const {
     allowedHttpMethods = ["GET", "HEAD"],
     minTTL,

@@ -1,9 +1,9 @@
-const { createComponent, assertHasCacheBehavior } = require("../test-utils");
+import { createComponent, assertHasCacheBehavior } from "../test-utils";
 
-const {
+import {
   mockCreateDistribution,
   mockCreateDistributionPromise
-} = require("aws-sdk");
+} from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 

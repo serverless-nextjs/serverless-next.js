@@ -1,7 +1,19 @@
-const addLambdaAtEdgeToCacheBehavior = require("./addLambdaAtEdgeToCacheBehavior");
-const { getForwardedValues } = require("./cacheBahaviorUtils");
+import addLambdaAtEdgeToCacheBehavior from "./addLambdaAtEdgeToCacheBehavior";
+import { getForwardedValues } from "./cacheBehaviorUtils";
 
-module.exports = (originId, defaults = {}) => {
+type DefaultCacheBehavior = {
+  allowedHttpMethods?: string[];
+  forward?: Record<string, string>;
+  minTTL?: number;
+  defaultTTL?: number;
+  maxTTL?: number;
+  compress?: boolean;
+  smoothStreaming?: boolean;
+  viewerProtocolPolicy?: string;
+  fieldLevelEncryptionId?: string;
+};
+
+export default (originId, defaults: DefaultCacheBehavior = {}) => {
   const {
     allowedHttpMethods = ["HEAD", "GET"],
     forward = {},

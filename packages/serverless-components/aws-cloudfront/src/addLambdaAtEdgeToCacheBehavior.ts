@@ -5,8 +5,22 @@ const validLambdaTriggers = [
   "viewer-response"
 ];
 
+export type CacheBehavior = {
+  LambdaFunctionAssociations: {
+    Quantity: number;
+    Items: {
+      EventType: string;
+      LambdaFunctionARN: string;
+      IncludeBody: boolean | undefined;
+    }[];
+  };
+};
+
 // adds lambda@edge to cache behavior passed
-module.exports = (cacheBehavior, lambdaAtEdgeConfig = {}) => {
+export default (
+  cacheBehavior: CacheBehavior,
+  lambdaAtEdgeConfig = {}
+): void => {
   Object.keys(lambdaAtEdgeConfig).forEach((eventType) => {
     if (!validLambdaTriggers.includes(eventType)) {
       throw new Error(
