@@ -49,6 +49,14 @@ export type ServerlessComponentInputs = {
         imageLambda?: string;
         regenerationLambda?: string;
       };
+  tags?:
+    | string
+    | {
+        defaultLambda?: Record<string, string>;
+        apiLambda?: Record<string, string>;
+        imageLambda?: Record<string, string>;
+        regenerationLambda?: Record<string, string>;
+      };
   handler?: string;
   description?: string;
   policy?: string;
@@ -95,4 +103,5 @@ export type LambdaInput = {
   timeout: number;
   runtime: string;
   name?: string;
+  tags: Record<string, string>;
 };

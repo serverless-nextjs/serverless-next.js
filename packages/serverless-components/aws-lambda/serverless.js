@@ -39,7 +39,8 @@ const defaults = {
   handler: "handler.hello",
   runtime: "nodejs10.x",
   env: {},
-  region: "us-east-1"
+  region: "us-east-1",
+  tags: {}
 };
 
 class AwsLambda extends Component {
