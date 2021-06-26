@@ -1,17 +1,20 @@
 import AWS from "aws-sdk";
 import { equals } from "ramda";
-const { Component } = require("@serverless/core");
+import { Component } from "@serverless/core";
 import {
   createCloudFrontDistribution,
   updateCloudFrontDistribution,
   deleteCloudFrontDistribution
-} from "./lib";
+} from "./";
 
 /*
  * Website
  */
 
 class CloudFront extends Component {
+  context: any;
+  state: any;
+  save: () => void;
   /*
    * Default
    */

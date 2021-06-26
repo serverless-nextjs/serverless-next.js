@@ -5,7 +5,9 @@ import {
   Options
 } from "./getOriginConfig";
 import getCacheBehavior from "./getCacheBehavior";
-import addLambdaAtEdgeToCacheBehavior from "./addLambdaAtEdgeToCacheBehavior";
+import addLambdaAtEdgeToCacheBehavior, {
+  CacheBehavior
+} from "./addLambdaAtEdgeToCacheBehavior";
 
 export default (origins: Origin[], options: Options) => {
   const distributionOrigins: {
@@ -41,7 +43,7 @@ export default (origins: Origin[], options: Options) => {
         );
 
         addLambdaAtEdgeToCacheBehavior(
-          cacheBehavior,
+          cacheBehavior as CacheBehavior,
           pathPatternConfig["lambda@edge"]
         );
 
