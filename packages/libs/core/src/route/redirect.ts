@@ -1,5 +1,9 @@
 import { STATUS_CODES } from "http";
-import { addDefaultLocaleToPath, getAcceptLanguageLocale } from "./locale";
+import {
+  addDefaultLocaleToPath,
+  getAcceptLanguageLocale,
+  getLocaleDomainRedirect
+} from "./locale";
 import { compileDestination, matchPath } from "../match";
 import { Manifest, Request, RedirectRoute, RoutesManifest } from "../types";
 import { parse } from "cookie";
@@ -85,7 +89,7 @@ export function getDomainRedirectPath(
 
 /**
  * Redirect from root to locale.
- * @param request
+ * @param req
  * @param routesManifest
  * @param manifest
  */
@@ -96,7 +100,16 @@ export async function getLanguageRedirectPath(
 ): Promise<string | undefined> {
   // Check for disabled locale detection: https://nextjs.org/docs/advanced-features/i18n-routing#disabling-automatic-locale-detection
   if (routesManifest.i18n?.localeDetection === false) {
-    return;
+    return undefined;
+  }
+
+  // Try to get locale domain redirect
+  const localeDomainRedirect = await getLocaleDomainRedirect(
+    req,
+    routesManifest
+  );
+  if (localeDomainRedirect) {
+    return localeDomainRedirect;
   }
 
   const basePath = routesManifest.basePath;
