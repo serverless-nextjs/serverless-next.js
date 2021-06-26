@@ -158,28 +158,30 @@ const updateLambdaConfig = async ({
     .updateFunctionConfiguration(functionConfigParams)
     .promise();
 
-  // Get and update Lambda tags
-  const listTagsResponse = await lambda
-    .listTags({ Resource: res.FunctionArn })
-    .promise();
-  const currentTags = listTagsResponse.Tags;
-
-  // If tags are not the same then update them
-  if (!_.isEqual(currentTags, tags)) {
-    await lambda
-      .untagResource({
-        Resource: res.FunctionArn,
-        Tags: Object.keys(currentTags)
-      })
+  // Get and update Lambda tags only if tags are specified (for backwards compatibility and avoiding unneeded updates)
+  if (tags) {
+    const listTagsResponse = await lambda
+      .listTags({ Resource: res.FunctionArn })
       .promise();
+    const currentTags = listTagsResponse.Tags;
 
-    if (tags && Object.keys(tags).length > 0)
+    // If tags are not the same then update them
+    if (!_.isEqual(currentTags, tags)) {
       await lambda
-        .tagResource({
+        .untagResource({
           Resource: res.FunctionArn,
-          Tags: tags
+          Tags: Object.keys(currentTags)
         })
         .promise();
+
+      if (Object.keys(tags).length > 0)
+        await lambda
+          .tagResource({
+            Resource: res.FunctionArn,
+            Tags: tags
+          })
+          .promise();
+    }
   }
 
   return { arn: res.FunctionArn, hash: res.CodeSha256 };

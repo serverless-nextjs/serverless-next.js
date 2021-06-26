@@ -572,10 +572,11 @@ class NextjsComponent extends Component {
           "nodejs12.x"
         ) as string,
         name: bucketOutputs.name,
-        tags: readLambdaInputValue("tags", "regenerationLambda", {}) as Record<
-          string,
-          string
-        >
+        tags: readLambdaInputValue(
+          "tags",
+          "regenerationLambda",
+          undefined
+        ) as Record<string, string>
       };
 
       const regenerationLambdaResult = await regenerationLambda(
@@ -615,7 +616,7 @@ class NextjsComponent extends Component {
         name: readLambdaInputValue("name", "apiLambda", undefined) as
           | string
           | undefined,
-        tags: readLambdaInputValue("tags", "apiLambda", {}) as Record<
+        tags: readLambdaInputValue("tags", "apiLambda", undefined) as Record<
           string,
           string
         >
@@ -676,7 +677,7 @@ class NextjsComponent extends Component {
         name: readLambdaInputValue("name", "imageLambda", undefined) as
           | string
           | undefined,
-        tags: readLambdaInputValue("tags", "imageLambda", {}) as Record<
+        tags: readLambdaInputValue("tags", "imageLambda", undefined) as Record<
           string,
           string
         >
@@ -741,7 +742,7 @@ class NextjsComponent extends Component {
       name: readLambdaInputValue("name", "defaultLambda", undefined) as
         | string
         | undefined,
-      tags: readLambdaInputValue("tags", "defaultLambda", {}) as Record<
+      tags: readLambdaInputValue("tags", "defaultLambda", undefined) as Record<
         string,
         string
       >

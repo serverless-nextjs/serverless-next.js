@@ -41,7 +41,7 @@ const defaults = {
   runtime: "nodejs10.x",
   env: {},
   region: "us-east-1",
-  tags: {}
+  tags: undefined
 };
 
 class AwsLambda extends Component {
