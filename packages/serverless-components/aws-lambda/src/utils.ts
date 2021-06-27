@@ -306,7 +306,7 @@ const pack = (code, shims = [], packDeps = true) => {
   return packDir(code, outputFilePath, shims, exclude);
 };
 
-module.exports = {
+export {
   createLambda,
   updateLambdaCode,
   updateLambdaConfig,

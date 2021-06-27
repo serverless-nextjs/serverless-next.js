@@ -2,7 +2,7 @@ import AWS from "aws-sdk";
 const AwsSdkLambda = AWS.Lambda;
 import { mergeDeepRight, pick } from "ramda";
 import { Component, utils } from "@serverless/core";
-const {
+import {
   createLambda,
   updateLambdaCode,
   updateLambdaConfig,
@@ -10,7 +10,7 @@ const {
   deleteLambda,
   configChanged,
   pack
-} = require("./utils");
+} from "./utils";
 
 const outputsList = [
   "name",
@@ -49,7 +49,6 @@ class AwsLambda extends Component {
   state: any;
   save: () => void;
   load: (name: string) => any;
-  init: () => void;
 
   async default(inputs: Record<string, unknown> = {}) {
     this.context.status(`Deploying`);

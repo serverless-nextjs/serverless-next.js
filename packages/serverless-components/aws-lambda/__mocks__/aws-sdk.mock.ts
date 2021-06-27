@@ -7,93 +7,66 @@ const promisifyMock = (mockFn) => {
   return promise;
 };
 
-const mockCreateFunction = jest.fn();
-const mockCreateFunctionPromise = promisifyMock(mockCreateFunction);
+export const mockCreateFunction = jest.fn();
+export const mockCreateFunctionPromise = promisifyMock(mockCreateFunction);
 
-const mockPublishVersion = jest.fn();
-const mockPublishVersionPromise = promisifyMock(mockPublishVersion);
+export const mockPublishVersion = jest.fn();
+export const mockPublishVersionPromise = promisifyMock(mockPublishVersion);
 
-const mockGetFunctionConfiguration = jest.fn();
-const mockGetFunctionConfigurationPromise = promisifyMock(
+export const mockGetFunctionConfiguration = jest.fn();
+export const mockGetFunctionConfigurationPromise = promisifyMock(
   mockGetFunctionConfiguration
 );
 
-const mockUpdateFunctionCode = jest.fn();
-const mockUpdateFunctionCodePromise = promisifyMock(mockUpdateFunctionCode);
+export const mockUpdateFunctionCode = jest.fn();
+export const mockUpdateFunctionCodePromise = promisifyMock(
+  mockUpdateFunctionCode
+);
 
-const mockUpdateFunctionConfiguration = jest.fn();
-const mockUpdateFunctionConfigurationPromise = promisifyMock(
+export const mockUpdateFunctionConfiguration = jest.fn();
+export const mockUpdateFunctionConfigurationPromise = promisifyMock(
   mockUpdateFunctionConfiguration
 );
 
-const mockCreateQueue = jest.fn();
-const mockCreateQueuePromise = promisifyMock(mockCreateQueue);
+export const mockCreateQueue = jest.fn();
+export const mockCreateQueuePromise = promisifyMock(mockCreateQueue);
 
-const mockGetQueueAttributes = jest.fn();
-const mockGetQueueAttributesPromise = promisifyMock(mockGetQueueAttributes);
+export const mockGetQueueAttributes = jest.fn();
+export const mockGetQueueAttributesPromise = promisifyMock(
+  mockGetQueueAttributes
+);
 
-const mockDeleteQueue = jest.fn();
-const mockDeleteQueuePromise = promisifyMock(mockDeleteQueue);
+export const mockDeleteQueue = jest.fn();
+export const mockDeleteQueuePromise = promisifyMock(mockDeleteQueue);
 
-const mockListEventSourceMappings = jest.fn();
-const mockListEventSourceMappingsPromise = promisifyMock(
+export const mockListEventSourceMappings = jest.fn();
+export const mockListEventSourceMappingsPromise = promisifyMock(
   mockListEventSourceMappings
 );
 
-const mockCreateEventSourceMapping = jest.fn();
-const mockCreateEventSourceMappingPromise = promisifyMock(
+export const mockCreateEventSourceMapping = jest.fn();
+export const mockCreateEventSourceMappingPromise = promisifyMock(
   mockCreateEventSourceMapping
 );
 
-const mockGetCallerIdentityMapping = jest.fn();
-const mockGetCallerIdentityMappingPromise = promisifyMock(
+export const mockGetCallerIdentityMapping = jest.fn();
+export const mockGetCallerIdentityMappingPromise = promisifyMock(
   mockGetCallerIdentityMapping
 );
 
-const mockListTags = jest.fn();
-const mockListTagsPromise = promisifyMock(mockListTags);
-const mockTagResource = jest.fn();
-const mockTagResourcePromise = promisifyMock(mockTagResource);
-const mockUntagResource = jest.fn();
-const mockUntagResourcePromise = promisifyMock(mockUntagResource);
+export const mockListTags = jest.fn();
+export const mockListTagsPromise = promisifyMock(mockListTags);
+export const mockTagResource = jest.fn();
+export const mockTagResourcePromise = promisifyMock(mockTagResource);
+export const mockUntagResource = jest.fn();
+export const mockUntagResourcePromise = promisifyMock(mockUntagResource);
 
-module.exports = {
-  mockCreateQueuePromise,
-  mockGetQueueAttributesPromise,
-  mockDeleteQueuePromise,
-  mockListEventSourceMappingsPromise,
-  mockCreateEventSourceMappingPromise,
-  mockCreateQueue,
-  mockGetQueueAttributes,
-  mockDeleteQueue,
-  mockListEventSourceMappings,
-  mockCreateEventSourceMapping,
-  mockGetCallerIdentityMappingPromise,
-  mockGetCallerIdentityMapping,
-
+export default {
   SQS: jest.fn(() => ({
     createQueue: mockCreateQueue,
     getQueueAttributes: mockGetQueueAttributes,
     deleteQueue: mockDeleteQueue
   })),
-
-  mockCreateFunction,
-  mockCreateFunctionPromise,
-  mockPublishVersion,
-  mockPublishVersionPromise,
-  mockGetFunctionConfiguration,
-  mockGetFunctionConfigurationPromise,
-  mockUpdateFunctionCode,
-  mockUpdateFunctionCodePromise,
-  mockUpdateFunctionConfiguration,
-  mockUpdateFunctionConfigurationPromise,
-  mockListTags,
-  mockListTagsPromise,
-  mockTagResource,
-  mockTagResourcePromise,
-  mockUntagResource,
-  mockUntagResourcePromise,
-
   Lambda: jest.fn(() => ({
     listEventSourceMappings: mockListEventSourceMappings,
     createEventSourceMapping: mockCreateEventSourceMapping,

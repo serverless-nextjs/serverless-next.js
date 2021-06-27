@@ -1,6 +1,6 @@
 import { createComponent, createTmpDir } from "../test-utils";
 
-const {
+import {
   mockCreateFunction,
   mockCreateFunctionPromise,
   mockPublishVersion,
@@ -12,7 +12,7 @@ const {
   mockListTagsPromise,
   mockTagResource,
   mockUntagResource
-} = require("aws-sdk");
+} from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
