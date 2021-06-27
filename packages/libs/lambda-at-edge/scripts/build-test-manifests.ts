@@ -187,19 +187,6 @@ module.exports = {
     routes: "./tests/api-handler/api-routes-manifest.json"
   },
   {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: false,
-  basePath: "/basepath",
-  ${apiHeaders},
-  ${apiRedirects},
-  ${apiRewrites}
-}
-`,
-    routes: "./tests/api-handler/api-basepath-routes-manifest.json"
-  },
-  {
     auth: true,
     api: "./tests/api-handler/api-build-manifest-with-basic-auth.json"
   },
