@@ -11,7 +11,7 @@ PropertyDescriptor::Accessor(const char* utf8name,
                              Getter getter,
                              napi_property_attributes attributes,
                              void* /*data*/) {
-  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  using CbData = details::CallbackData<Getter, Napi::Value>;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, nullptr });
 
@@ -40,7 +40,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
                                                        Getter getter,
                                                        napi_property_attributes attributes,
                                                        void* /*data*/) {
-  typedef details::CallbackData<Getter, Napi::Value> CbData;
+  using CbData = details::CallbackData<Getter, Napi::Value>;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, nullptr });
 
@@ -71,7 +71,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(const char* utf8name,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
                                                        void* /*data*/) {
-  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  using CbData = details::AccessorCallbackData<Getter, Setter>;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, setter, nullptr });
 
@@ -102,7 +102,7 @@ inline PropertyDescriptor PropertyDescriptor::Accessor(napi_value name,
                                                        Setter setter,
                                                        napi_property_attributes attributes,
                                                        void* /*data*/) {
-  typedef details::AccessorCallbackData<Getter, Setter> CbData;
+  using CbData = details::AccessorCallbackData<Getter, Setter>;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ getter, setter, nullptr });
 
@@ -133,8 +133,8 @@ inline PropertyDescriptor PropertyDescriptor::Function(const char* utf8name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,
                                                        void* /*data*/) {
-  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
-  typedef details::CallbackData<Callable, ReturnType> CbData;
+  using ReturnType = decltype(cb(CallbackInfo(nullptr, nullptr)));
+  using CbData = details::CallbackData<Callable, ReturnType>;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ cb, nullptr });
 
@@ -163,8 +163,8 @@ inline PropertyDescriptor PropertyDescriptor::Function(napi_value name,
                                                        Callable cb,
                                                        napi_property_attributes attributes,
                                                        void* /*data*/) {
-  typedef decltype(cb(CallbackInfo(nullptr, nullptr))) ReturnType;
-  typedef details::CallbackData<Callable, ReturnType> CbData;
+  using ReturnType = decltype(cb(CallbackInfo(nullptr, nullptr)));
+  using CbData = details::CallbackData<Callable, ReturnType>;
   // TODO: Delete when the function is destroyed
   auto callbackData = new CbData({ cb, nullptr });
 
