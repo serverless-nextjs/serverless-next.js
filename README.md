@@ -438,7 +438,7 @@ myNextApplication:
     runtime:
       defaultLambda: "nodejs14.x"
       apiLambda: "nodejs14.x"
-      imageLambda: "nodejs12.x" # Note that the sharp image library is built for NodeJS 12.x
+      imageLambda: "nodejs14.x" # Note that the sharp image library is built for Lambda Node.js 14.x, although it will likely work fine on other runtimes
 ```
 
 Similarly, the timeout by default is 10 seconds. To customise you can:
