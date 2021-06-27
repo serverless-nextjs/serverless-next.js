@@ -1,4 +1,4 @@
-const { createComponent, createTmpDir } = require("../test-utils");
+import { createComponent, createTmpDir } from "../test-utils";
 
 const {
   mockCreateFunction,
@@ -19,9 +19,13 @@ jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 const mockIamRole = jest.fn();
 jest.mock("@serverless/aws-iam-role", () =>
   jest.fn(() => {
-    const iamRole = mockIamRole;
-    iamRole.init = () => {};
-    iamRole.default = () => {};
+    const iamRole: any = mockIamRole;
+    iamRole.init = () => {
+      // intentional
+    };
+    iamRole.default = () => {
+      // intentional
+    };
     iamRole.context = {};
     return iamRole;
   })
