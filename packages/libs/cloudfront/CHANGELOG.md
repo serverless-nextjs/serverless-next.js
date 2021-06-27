@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.3...v3.2.0-alpha.4) (2021-06-27)
+
+### Bug Fixes
+
+- update aws retry logic and fix dependencies ([#1306](https://github.com/serverless-nextjs/serverless-next.js/issues/1306)) ([e0cee9c](https://github.com/serverless-nextjs/serverless-next.js/commit/e0cee9c0d5d79314a7239c37e55438b5200d8bb2))
+
 # [3.2.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.1...v3.2.0-alpha.2) (2021-06-26)
 
 **Note:** Version bump only for package @sls-next/cloudfront
