@@ -42,6 +42,13 @@ class CloudFront extends Component {
       `Starting deployment of CloudFront distribution to the ${inputs.region} region.`
     );
 
+    if (AWS?.config) {
+      AWS.config.update({
+        maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+        retryDelayOptions: { base: 200 }
+      });
+    }
+
     const cf = new AWS.CloudFront({
       credentials: this.context.credentials.aws,
       region: inputs.region

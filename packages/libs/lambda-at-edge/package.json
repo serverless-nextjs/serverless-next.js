@@ -75,5 +75,8 @@
     "node-fetch": "^2.6.1",
     "path-to-regexp": "^6.1.0",
     "send": "^0.17.1"
+  },
+  "peerDependencies": {
+    "builtin-modules": "^3.2.0"
   }
 }

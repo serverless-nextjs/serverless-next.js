@@ -9,6 +9,13 @@ const HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"; // this is a constant that you can get 
  * - Gets AWS SDK clients to use within this Component
  */
 const getClients = (credentials, region = "us-east-1") => {
+  if (aws && aws.config) {
+    aws.config.update({
+      maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES || "10"),
+      retryDelayOptions: { base: 200 }
+    });
+  }
+
   const route53 = new aws.Route53({
     credentials,
     region
