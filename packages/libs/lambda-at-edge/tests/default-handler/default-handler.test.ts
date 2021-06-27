@@ -1,3 +1,4 @@
+import { handler } from "../../src/default-handler";
 import { createCloudFrontEvent } from "../test-utils";
 import {
   CloudFrontRequest,
@@ -11,6 +12,22 @@ jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
 const previewToken =
   "eyJhbGciOiJIUzI1NiJ9.dGVzdA.bi6AtyJgYL7FimOTVSoV6Htx9XNLe2PINsOadEDYmwI";
+
+jest.mock(
+  "../../src/manifest.json",
+  () => require("./default-build-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
+jest.mock(
+  "../../src/routes-manifest.json",
+  () => require("./default-routes-manifest.json"),
+  {
+    virtual: true
+  }
+);
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -28,6 +45,18 @@ jest.mock(
   }
 );
 
+jest.mock("../../src/lib/triggerStaticRegeneration", () => ({
+  __esModule: true,
+  triggerStaticRegeneration: jest.fn()
+}));
+const mockTriggerStaticRegeneration =
+  require("../../src/lib/triggerStaticRegeneration").triggerStaticRegeneration;
+
+jest.mock("../../src/s3/s3StorePage", () => ({
+  __esModule: true,
+  s3StorePage: jest.fn()
+}));
+
 const mockPageRequire = (mockPagePath: string): void => {
   jest.mock(
     `../../src/${mockPagePath}`,
@@ -38,77 +67,34 @@ const mockPageRequire = (mockPagePath: string): void => {
   );
 };
 
+const runRedirectTest = async (
+  path: string,
+  expectedRedirect: string,
+  statusCode: number,
+  querystring?: string,
+  host?: string,
+  requestHeaders?: { [p: string]: { key: string; value: string }[] }
+): Promise<void> => {
+  await runRedirectTestWithHandler(
+    handler,
+    path,
+    expectedRedirect,
+    statusCode,
+    querystring,
+    host,
+    requestHeaders
+  );
+};
+
 describe("Lambda@Edge", () => {
   let consoleWarnSpy: jest.SpyInstance;
-  let handler: any;
-  let mockTriggerStaticRegeneration: jest.Mock;
-  let mockS3StorePage: jest.Mock;
-  let runRedirectTest: (
-    path: string,
-    expectedRedirect: string,
-    statusCode: number,
-    querystring?: string,
-    host?: string,
-    requestHeaders?: { [p: string]: { key: string; value: string }[] }
-  ) => Promise<void>;
 
   beforeEach(() => {
-    jest.resetModules();
     consoleWarnSpy = jest.spyOn(console, "error").mockReturnValue();
-    jest.mock(
-      "../../src/manifest.json",
-      () => require("./default-build-manifest.json"),
-      {
-        virtual: true
-      }
-    );
-
-    jest.mock(
-      "../../src/routes-manifest.json",
-      () => require("./default-routes-manifest.json"),
-      {
-        virtual: true
-      }
-    );
-    mockTriggerStaticRegeneration = jest.fn();
-    jest.mock("../../src/lib/triggerStaticRegeneration", () => ({
-      __esModule: true,
-      triggerStaticRegeneration: mockTriggerStaticRegeneration
-    }));
-
-    mockS3StorePage = jest.fn();
-    jest.mock("../../src/s3/s3StorePage", () => ({
-      __esModule: true,
-      s3StorePage: mockS3StorePage
-    }));
-
-    // Handler needs to be dynamically required to use above mocked manifests
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    handler = require("../../src/default-handler").handler;
-
-    runRedirectTest = async (
-      path: string,
-      expectedRedirect: string,
-      statusCode: number,
-      querystring?: string,
-      host?: string,
-      requestHeaders?: { [p: string]: { key: string; value: string }[] }
-    ): Promise<void> => {
-      await runRedirectTestWithHandler(
-        handler,
-        path,
-        expectedRedirect,
-        statusCode,
-        querystring,
-        host,
-        requestHeaders
-      );
-    };
   });
 
   afterEach(() => {
     consoleWarnSpy.mockRestore();
-    jest.unmock("../../src/manifest.json");
   });
 
   describe("HTML pages routing", () => {
@@ -503,9 +489,6 @@ describe("Lambda@Edge", () => {
     });
 
     it("returns a correct cache control header when an expiry header in the past is sent", async () => {
-      mockTriggerStaticRegeneration.mockReturnValueOnce(
-        Promise.resolve({ throttle: false })
-      );
       const event = createCloudFrontEvent({
         uri: "/customers",
         host: "mydistribution.cloudfront.net",
@@ -532,9 +515,6 @@ describe("Lambda@Edge", () => {
     });
 
     it("returns a correct cache control header when a last-modified header is sent", async () => {
-      mockTriggerStaticRegeneration.mockReturnValueOnce(
-        Promise.resolve({ throttle: false })
-      );
       const event = createCloudFrontEvent({
         uri: "/preview",
         host: "mydistribution.cloudfront.net",
@@ -587,6 +567,7 @@ describe("Lambda@Edge", () => {
       expect(response.headers["cache-control"][0].value).toBe(
         "public, max-age=0, s-maxage=1, must-revalidate"
       );
+      expect(mockTriggerStaticRegeneration).toHaveBeenCalled();
     });
 
     it.each`

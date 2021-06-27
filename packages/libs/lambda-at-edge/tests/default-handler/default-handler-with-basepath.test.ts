@@ -1,3 +1,4 @@
+import { handler } from "../../src/default-handler";
 import { createCloudFrontEvent } from "../test-utils";
 import {
   CloudFrontRequest,
@@ -5,6 +6,22 @@ import {
   CloudFrontOrigin
 } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
+
+jest.mock(
+  "../../src/manifest.json",
+  () => require("./default-build-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
+jest.mock(
+  "../../src/routes-manifest.json",
+  () => require("./default-basepath-routes-manifest.json"),
+  {
+    virtual: true
+  }
+);
 
 jest.mock(
   "../../src/prerender-manifest.json",
@@ -24,64 +41,34 @@ const mockPageRequire = (mockPagePath: string): void => {
   );
 };
 
+const runRedirectTest = async (
+  path: string,
+  expectedRedirect: string,
+  statusCode: number,
+  querystring?: string,
+  host?: string,
+  requestHeaders?: { [p: string]: { key: string; value: string }[] }
+): Promise<void> => {
+  await runRedirectTestWithHandler(
+    handler,
+    path,
+    expectedRedirect,
+    statusCode,
+    querystring,
+    host,
+    requestHeaders
+  );
+};
+
 describe("Lambda@Edge", () => {
   let consoleWarnSpy: jest.SpyInstance;
-  let handler: any;
-  let runRedirectTest: (
-    path: string,
-    expectedRedirect: string,
-    statusCode: number,
-    querystring?: string,
-    host?: string,
-    requestHeaders?: { [p: string]: { key: string; value: string }[] }
-  ) => Promise<void>;
 
   beforeEach(() => {
     consoleWarnSpy = jest.spyOn(console, "error").mockReturnValue();
-    jest.mock(
-      "../../src/manifest.json",
-      () => require("./default-build-manifest.json"),
-      {
-        virtual: true
-      }
-    );
-
-    // Note that default trailing slash redirects have already been removed from routes-manifest.json (done in deploy step in real app)
-    jest.mock(
-      "../../src/routes-manifest.json",
-      () => require("./default-basepath-routes-manifest.json"),
-      {
-        virtual: true
-      }
-    );
-
-    // Handler needs to be dynamically required to use above mocked manifests
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    handler = require("../../src/default-handler").handler;
-
-    runRedirectTest = async (
-      path: string,
-      expectedRedirect: string,
-      statusCode: number,
-      querystring?: string,
-      host?: string,
-      requestHeaders?: { [p: string]: { key: string; value: string }[] }
-    ): Promise<void> => {
-      await runRedirectTestWithHandler(
-        handler,
-        path,
-        expectedRedirect,
-        statusCode,
-        querystring,
-        host,
-        requestHeaders
-      );
-    };
   });
 
   afterEach(() => {
     consoleWarnSpy.mockRestore();
-    jest.unmock("../../src/manifest.json");
   });
 
   describe("HTML pages routing", () => {
