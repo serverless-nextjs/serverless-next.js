@@ -1,21 +1,21 @@
-const { tmpdir } = require("os");
-const path = require("path");
-const archiver = require("archiver");
-const globby = require("globby");
-const { contains, isNil, last, split, equals, not, pick } = require("ramda");
-const { readFile, createReadStream, createWriteStream } = require("fs-extra");
-const { utils } = require("@serverless/core");
-const _ = require("lodash");
+import { tmpdir } from "os";
+import * as path from "path";
+import * as archiver from "archiver";
+import * as globby from "globby";
+import { contains, isNil, last, split, equals, not, pick } from "ramda";
+import { readFile, createReadStream, createWriteStream } from "fs-extra";
+import { utils } from "@serverless/core";
+import * as _ from "lodash";
 
 const VALID_FORMATS = ["zip", "tar"];
 const isValidFormat = (format) => contains(format, VALID_FORMATS);
 
 const packDir = async (
-  inputDirPath,
-  outputFilePath,
-  include = [],
-  exclude = [],
-  prefix
+  inputDirPath: string,
+  outputFilePath: string,
+  include: string[] = [],
+  exclude: string[] = [],
+  prefix?: string
 ) => {
   const format = last(split(".", outputFilePath));
 
@@ -29,7 +29,9 @@ const packDir = async (
     exclude.forEach((excludedItem) => patterns.push(`!${excludedItem}`));
   }
 
-  const files = (await globby(patterns, { cwd: inputDirPath, dot: true }))
+  const files = (
+    await globby.default(patterns, { cwd: inputDirPath, dot: true })
+  )
     .sort() // we must sort to ensure correct hash
     .map((file) => ({
       input: path.join(inputDirPath, file),
@@ -38,7 +40,7 @@ const packDir = async (
 
   return new Promise((resolve, reject) => {
     const output = createWriteStream(outputFilePath);
-    const archive = archiver(format, {
+    const archive = archiver.create(format, {
       zlib: { level: 9 }
     });
 
@@ -92,7 +94,7 @@ const createLambda = async ({
   layer,
   tags
 }) => {
-  const params = {
+  const params: any = {
     FunctionName: name,
     Code: {},
     Description: description,
@@ -137,7 +139,7 @@ const updateLambdaConfig = async ({
   layer,
   tags
 }) => {
-  const functionConfigParams = {
+  const functionConfigParams: any = {
     FunctionName: name,
     Description: description,
     Handler: handler,
@@ -189,7 +191,7 @@ const updateLambdaConfig = async ({
 };
 
 const updateLambdaCode = async ({ lambda, name, zipPath, bucket }) => {
-  const functionCodeParams = {
+  const functionCodeParams: any = {
     FunctionName: name,
     Publish: true
   };
@@ -246,7 +248,7 @@ const deleteLambda = async ({ lambda, name }) => {
   }
 };
 
-const getPolicy = async ({ name, region, accountId }) => {
+const getPolicy = ({ name, region, accountId }) => {
   return {
     Version: "2012-10-17",
     Statement: [
@@ -285,7 +287,7 @@ const configChanged = (prevLambda, lambda) => {
   return not(equals(inputs, prevInputs));
 };
 
-const pack = async (code, shims = [], packDeps = true) => {
+const pack = (code, shims = [], packDeps = true) => {
   if (utils.isArchivePath(code)) {
     return path.resolve(code);
   }
@@ -304,7 +306,7 @@ const pack = async (code, shims = [], packDeps = true) => {
   return packDir(code, outputFilePath, shims, exclude);
 };
 
-module.exports = {
+export {
   createLambda,
   updateLambdaCode,
   updateLambdaConfig,
