@@ -12,50 +12,41 @@ describe("Rewriter Tests", () => {
         rewrites: [
           {
             source: "/old-blog/:slug",
-            destination: "/news/:slug",
-            regex: "^/old-blog(?:/([^/]+?))$"
+            destination: "/news/:slug"
           },
-          { source: "/a", destination: "/b", regex: "^/a$" },
+          { source: "/a", destination: "/b" },
           {
             source: "/:nextInternalLocale(en|nl|fr)/a",
-            destination: "/:nextInternalLocale/b",
-            regex: "^(?:/(en|nl|fr))/a$"
+            destination: "/:nextInternalLocale/b"
           },
-          { source: "/c", destination: "/d", regex: "^/c$" },
+          { source: "/c", destination: "/d" },
           {
             source: "/old-users/:id(\\d{1,})",
-            destination: "/users/:id",
-            regex: "^/old-users(?:/(\\d{1,}))$"
+            destination: "/users/:id"
           },
           {
             source: "/external",
-            destination: "https://example.com",
-            regex: "^/external$"
+            destination: "https://example.com"
           },
           {
             source: "/external-http",
-            destination: "http://example.com",
-            regex: "^/external$"
+            destination: "http://example.com"
           },
           {
             source: "/invalid-destination",
-            destination: "ftp://example.com",
-            regex: "^/invalid-destination$"
+            destination: "ftp://example.com"
           },
           {
             source: "/query/:path",
-            destination: "/target?a=b",
-            regex: "^/query(?:/([^/]+?))$"
+            destination: "/target?a=b"
           },
           {
             source: "/manual-query/:path",
-            destination: "/target?key=:path",
-            regex: "^/manual-query(?:/([^/]+?))$"
+            destination: "/target?key=:path"
           },
           {
             source: "/multi-query/:path*",
-            destination: "/target",
-            regex: "^/multi-query(?:/([^/]+?))$"
+            destination: "/target"
           }
         ],
         redirects: []
