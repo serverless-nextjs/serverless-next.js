@@ -76,17 +76,25 @@
     },
     "ssg": {
       "dynamic": {
+        "/fallback/[slug]": {
+          "fallback": "/fallback/[slug].html"
+        },
         "/fallback-blocking/[slug]": {
           "fallback": null
         },
         "/no-fallback/[slug]": {
           "fallback": false
-        },
-        "/fallback/[slug]": {
-          "fallback": "/fallback/[slug].html"
         }
       },
       "nonDynamic": {
+        "/preview": {
+          "initialRevalidateSeconds": 5,
+          "srcRoute": null
+        },
+        "/fallback/example-static-page": {
+          "initialRevalidateSeconds": false,
+          "srcRoute": "/fallback/[slug]"
+        },
         "/": {
           "initialRevalidateSeconds": false,
           "srcRoute": null
@@ -94,14 +102,6 @@
         "/no-fallback/example-static-page": {
           "initialRevalidateSeconds": false,
           "srcRoute": "/no-fallback/[slug]"
-        },
-        "/fallback/example-static-page": {
-          "initialRevalidateSeconds": false,
-          "srcRoute": "/fallback/[slug]"
-        },
-        "/preview": {
-          "initialRevalidateSeconds": 5,
-          "srcRoute": null
         }
       }
     }

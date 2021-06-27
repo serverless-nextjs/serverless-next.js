@@ -165,17 +165,6 @@ module.exports = {
   {
     config: `
 module.exports = {
-  generateBuildId: async () => "build-id2"
-}
-`,
-    auth: true,
-    default:
-      "./tests/default-handler/default-build-manifest-with-basic-auth.json",
-    routes: null
-  },
-  {
-    config: `
-module.exports = {
   generateBuildId: async () => "build-id",
   trailingSlash: false,
   ${apiHeaders},
@@ -185,10 +174,6 @@ module.exports = {
 `,
     api: "./tests/api-handler/api-build-manifest.json",
     routes: "./tests/api-handler/api-routes-manifest.json"
-  },
-  {
-    auth: true,
-    api: "./tests/api-handler/api-build-manifest-with-basic-auth.json"
   },
   {
     config: `
@@ -213,20 +198,14 @@ module.exports = {
   }
 ];
 
-const build = async (auth: boolean) => {
+const build = async () => {
   const builder = new Builder(fixtureDir, outDir, {
     cwd: fixtureDir,
     cmd: nextBinary,
     args: ["build"],
     domainRedirects: {
       "example.com": "https://www.example.com"
-    },
-    authentication: auth
-      ? {
-          username: "test",
-          password: "123"
-        }
-      : undefined
+    }
   });
   await builder.build();
 };
@@ -246,7 +225,7 @@ const cleanUp = () => {
   }
 
   try {
-    await build(!!(fixture as any).auth);
+    await build();
   } catch (e) {
     console.error(e);
   }
