@@ -87,7 +87,7 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. You also need to specify the S3 key as the source when redirecting any path mapped to an S3 file (see [PR](https://github.com/serverless-nextjs/serverless-next.js/pull/662) for more details).
 - [x] [Image Optimization](https://nextjs.org/docs/basic-features/image-optimization) Available in the latest 1.19 alpha version. Please try it out and let us know if there are any bugs.
 - [x] [Next.js 10 Localization](https://nextjs.org/blog/next-10). See: https://github.com/serverless-nextjs/serverless-next.js/issues/721 for more details and tips.
-- [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions (to be documented) on your deployment user. See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work. **Available in latest alpha version only. Please try out and help report any issues!**
+- [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions (to be documented) on your deployment user. See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work.
 
 ### Getting started
 
@@ -427,7 +427,7 @@ myNextApplication:
       imageLambda: 2048
 ```
 
-The same pattern can be followed for specifying the Node.js runtime (nodejs12.x by default):
+The same pattern can be followed for specifying the Node.js runtime (nodejs14.x by default):
 
 ```yml
 # serverless.yml
@@ -436,8 +436,8 @@ myNextApplication:
   component: "@sls-next/serverless-component@{version_here}"
   inputs:
     runtime:
-      defaultLambda: "nodejs10.x"
-      apiLambda: "nodejs10.x"
+      defaultLambda: "nodejs14.x"
+      apiLambda: "nodejs14.x"
       imageLambda: "nodejs12.x" # Note that the sharp image library is built for NodeJS 12.x
 ```
 
@@ -470,6 +470,8 @@ myNextApplication:
       apiLambda: fooApiLambda
       imageLambda: fooImageLambda
 ```
+
+There is a fourth **regeneration** lambda, which can be configured similarly and is used for Incremental Static Regeneration. However, it does not use Lamda@Edge and can, for example, have a longer timeout setting.
 
 ### Architecture
 
@@ -504,7 +506,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | description              | `string`          | `*lambda-type*@Edge for Next CloudFront distribution`              | The description that will be used for both lambdas. Note that "(API)" will be appended to the API lambda description.                                                                                                                                                                                                                                                                                                                                                                 |
 | policy                   | `string\|object`  | `arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole` | The arn or inline policy that will be assigned to both lambdas.                                                                                                                                                                                                                                                                                                                                                                                                                       |
 | roleArn                  | `string\|object`  | null                                                               | The arn of role that will be assigned to both lambdas.                                                                                                                                                                                                                                                                                                                                                                                                                                |
-| runtime                  | `string\|object`  | `nodejs12.x`                                                       | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                                               |
+| runtime                  | `string\|object`  | `nodejs14.x`                                                       | When assigned a value, both the default and api lambdas will be assigned the runtime defined in the value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                                               |
 | memory                   | `number\|object`  | `512`                                                              | When assigned a number, both the default and api lambdas will be assigned memory of that value. When assigned to an object, values for the default and api lambdas can be separately defined                                                                                                                                                                                                                                                                                          |
 | tags                     | `object`          | `undefined`                                                        | Tags to assign to a Lambda. If undefined, the component will not update any tags. If set to an empty object, it will remove all tags.                                                                                                                                                                                                                                                                                                                                                 |
 | timeout                  | `number\|object`  | `10`                                                               | Same as above                                                                                                                                                                                                                                                                                                                                                                                                                                                                         |
