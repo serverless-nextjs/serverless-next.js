@@ -2,7 +2,6 @@
 
 var path = require('path')
 var fs = require('fs')
-var whichPmRuns = require('which-pm-runs')
 var napi = require('napi-build-utils')
 
 var pkg = require(path.resolve('package.json'))
@@ -42,13 +41,9 @@ var opts = Object.assign({}, rc, { pkg: pkg, log: log })
 
 if (napi.isNapiRuntime(rc.runtime)) napi.logUnsupportedVersion(rc.target, log)
 
-var pm = whichPmRuns()
-var isNpm = !pm || pm.name === 'npm'
 var origin = util.packageOrigin(process.env, pkg)
 
-if (!isNpm && /node_modules/.test(process.cwd())) {
-  // From yarn repository
-} else if (opts.force) {
+if (opts.force) {
   log.warn('install', 'prebuilt binaries enforced with --force!')
   log.warn('install', 'prebuilt binaries may be out of date!')
 } else if (origin && origin.length > 4 && origin.substr(0, 4) === 'git+') {
