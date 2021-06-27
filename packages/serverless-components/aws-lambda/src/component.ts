@@ -62,6 +62,13 @@ class AwsLambda extends Component {
       `Starting deployment of lambda ${config.name} to the ${config.region} region.`
     );
 
+    if (AWS?.config) {
+      AWS.config.update({
+        maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+        retryDelayOptions: { base: 200 }
+      });
+    }
+
     const lambda = new AwsSdkLambda({
       region: config.region,
       credentials: this.context.credentials.aws
