@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-lambda",
-  "version": "3.2.0-alpha.0",
+  "version": "3.2.0-alpha.3",
   "main": "serverless.js",
   "publishConfig": {
     "access": "public"
@@ -38,8 +38,8 @@
     "@serverless/aws-lambda-layer": "^1.0.0",
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.935.0",
     "archiver": "^5.3.0",
+    "aws-sdk": "^2.935.0",
     "fs-extra": "^9.1.0",
     "globby": "^11.0.1",
     "lodash": "^4.17.21",
