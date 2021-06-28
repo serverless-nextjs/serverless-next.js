@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.6...v3.2.0-alpha.7) (2021-06-28)
+
+### Features
+
+- **core:** support locale-based domain redirects [wip] ([#1299](https://github.com/serverless-nextjs/serverless-next.js/issues/1299)) ([5836142](https://github.com/serverless-nextjs/serverless-next.js/commit/58361424be8e6f4fcfa69f6b5956d3cf1b55cd97))
+
 # [3.2.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.5...v3.2.0-alpha.6) (2021-06-27)
 
 **Note:** Version bump only for package @sls-next/core
