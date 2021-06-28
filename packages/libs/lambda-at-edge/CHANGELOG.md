@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.7...v3.2.0-alpha.8) (2021-06-28)
+
+### Bug Fixes
+
+- **lambda-at-edge:** properly copy node_modules in serverless-trace mode for regeneration lambda ([#1319](https://github.com/serverless-nextjs/serverless-next.js/issues/1319)) ([0eee571](https://github.com/serverless-nextjs/serverless-next.js/commit/0eee571549e85f66bdc3bed0c907c36d03332fa3))
+
 # [3.2.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.6...v3.2.0-alpha.7) (2021-06-28)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
