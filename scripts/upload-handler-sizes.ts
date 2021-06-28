@@ -57,7 +57,8 @@ const uploadHandlerSizesToS3 = async (
       Bucket: "serverless-nextjs-handler-sizes",
       Key: `sizes-github-sha-${process.env.GITHUB_SHA}.json`,
       Body: JSON.stringify(sizes, null, 2),
-      ContentType: "application/json"
+      ContentType: "application/json",
+      CacheControl: "public, max-age=2592000, immutable"
     })
     .promise();
 };
