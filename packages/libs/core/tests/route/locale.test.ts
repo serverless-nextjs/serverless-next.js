@@ -1,9 +1,10 @@
-import { Manifest, RoutesManifest } from "../../src";
+import { Headers, Manifest, RoutesManifest } from "../../src";
 import {
   addDefaultLocaleToPath,
   dropLocaleFromPath,
   getAcceptLanguageLocale,
-  findDomainLocale
+  findDomainLocale,
+  getLocaleDomainRedirect
 } from "../../src/route/locale";
 import { IncomingMessage } from "http";
 
@@ -86,6 +87,64 @@ describe("Locale Utils Tests", () => {
 
       expect(newPath).toBe(expectedResult);
     });
+  });
+
+  describe("getLocaleDomainRedirect()", () => {
+    let routesManifest: RoutesManifest;
+
+    beforeAll(() => {
+      routesManifest = {
+        basePath: "",
+        headers: [],
+        redirects: [],
+        rewrites: [],
+        i18n: {
+          locales: ["en", "fr", "nl"],
+          defaultLocale: "en",
+          domains: [
+            {
+              domain: "next-serverless.fr",
+              defaultLocale: "fr"
+            },
+            {
+              domain: "next-serverless.com",
+              defaultLocale: "en",
+              locales: ["es", "en-GB"]
+            },
+            {
+              domain: "next-serverless.nl",
+              defaultLocale: "nl"
+            }
+          ]
+        }
+      };
+    });
+
+    it.each`
+      host                     | acceptLang              | cookie              | expectedRedirect
+      ${"next-serverless.com"} | ${"en"}                 | ${undefined}        | ${undefined}
+      ${"next-serverless.com"} | ${"fr"}                 | ${undefined}        | ${"next-serverless.fr/test"}
+      ${"next-serverless.com"} | ${"fr;q=0.7, nl;q=0.9"} | ${undefined}        | ${"next-serverless.nl/test"}
+      ${"next-serverless.fr"}  | ${"es"}                 | ${undefined}        | ${"next-serverless.com/test"}
+      ${"next-serverless.fr"}  | ${"en-GB"}              | ${undefined}        | ${"next-serverless.com/test"}
+      ${"next-serverless.com"} | ${"en"}                 | ${"NEXT_LOCALE=fr"} | ${"next-serverless.fr/test"}
+    `(
+      "host: $host with accept-language: $acceptLang and cookie: $cookie redirects to $expectedRedirect",
+      async ({ host, acceptLang, cookie, expectedRedirect }) => {
+        const req = {
+          headers: {
+            host: [{ key: "Host", value: host }],
+            "accept-language": [{ key: "Accept-Language", value: acceptLang }],
+            cookie: [{ key: "Cookie", value: cookie }]
+          },
+          uri: "/test"
+        };
+
+        expect(await getLocaleDomainRedirect(req, routesManifest)).toBe(
+          expectedRedirect
+        );
+      }
+    );
   });
 
   describe("dropLocaleFromPath()", () => {

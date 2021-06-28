@@ -1,19 +1,17 @@
-import { DomainData, Manifest, RoutesManifest } from "../types";
+import { Manifest, Request, RoutesManifest } from "../types";
 import { IncomingMessage } from "http";
+import { parse } from "cookie";
 
 export const findDomainLocale = (
   req: IncomingMessage,
   manifest: RoutesManifest
 ): string | null => {
-  const domains =
-    manifest.i18n && manifest.i18n.domains ? manifest.i18n.domains : null;
+  const domains = manifest.i18n?.domains;
   if (domains) {
     const hostHeaders = req.headers.host?.split(",");
     if (hostHeaders && hostHeaders.length > 0) {
       const host = hostHeaders[0];
-      const matchedDomain = domains.find(
-        (d): DomainData | boolean => d.domain === host
-      );
+      const matchedDomain = domains.find((d) => d.domain === host);
 
       if (matchedDomain) {
         return matchedDomain.defaultLocale;
@@ -87,7 +85,7 @@ export const getAcceptLanguageLocale = async (
   routesManifest: RoutesManifest
 ) => {
   if (routesManifest.i18n) {
-    const defaultLocale = routesManifest.i18n.defaultLocale;
+    const defaultLocale = routesManifest.i18n.defaultLocale?.toLowerCase();
     const locales = new Set(
       routesManifest.i18n.locales.map((locale) => locale.toLowerCase())
     );
@@ -127,4 +125,86 @@ export function getLocalePrefixFromUri(
   }
 
   return "";
+}
+
+/**
+ * Get a redirect to the locale-specific domain. Returns undefined if no redirect found.
+ * @param req
+ * @param routesManifest
+ */
+export async function getLocaleDomainRedirect(
+  req: Request,
+  routesManifest: RoutesManifest
+): Promise<string | undefined> {
+  // Redirect to correct domain based on user's language
+  const domains = routesManifest.i18n?.domains;
+  const hostHeaders = req.headers.host;
+  if (domains && hostHeaders && hostHeaders.length > 0) {
+    const host = hostHeaders[0].value.split(":")[0];
+    const languageHeader = req.headers["accept-language"];
+    const acceptLanguage = languageHeader && languageHeader[0]?.value;
+
+    const headerCookies = req.headers.cookie
+      ? req.headers.cookie[0]?.value
+      : undefined;
+    // Use cookies first, otherwise use the accept-language header
+    let acceptLanguages: string[] = [];
+    let nextLocale;
+    if (headerCookies) {
+      const cookies = parse(headerCookies);
+      nextLocale = cookies["NEXT_LOCALE"];
+    }
+
+    if (nextLocale) {
+      acceptLanguages = [nextLocale.toLowerCase()];
+    } else {
+      const Accept = await import("@hapi/accept");
+      acceptLanguages = Accept.languages(acceptLanguage).map((lang) =>
+        lang.toLowerCase()
+      );
+    }
+
+    // Try to find the right domain to redirect to if needed
+    // First check current domain can support any preferred language, if so do not redirect
+    const currentDomainData = domains.find(
+      (domainData) => domainData.domain === host
+    );
+
+    if (currentDomainData) {
+      for (const language of acceptLanguages) {
+        if (
+          currentDomainData.defaultLocale?.toLowerCase() === language ||
+          currentDomainData.locales
+            ?.map((locale) => locale.toLowerCase())
+            .includes(language)
+        ) {
+          return undefined;
+        }
+      }
+    }
+
+    // Try to find domain whose default locale matched preferred language in order
+    for (const language of acceptLanguages) {
+      for (const domainData of domains) {
+        if (domainData.defaultLocale.toLowerCase() === language) {
+          return `${domainData.domain}${req.uri}`;
+        }
+      }
+    }
+
+    // Try to find domain whose supported locales matches preferred language in order
+    for (const language of acceptLanguages) {
+      for (const domainData of domains) {
+        if (
+          domainData.locales
+            ?.map((locale) => locale.toLowerCase())
+            .includes(language)
+        ) {
+          return `${domainData.domain}${req.uri}`;
+        }
+      }
+    }
+  }
+
+  return undefined;
 }
