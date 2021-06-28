@@ -33,13 +33,13 @@ jobs:
       - run: yarn integration
 
       - name: Upload code coverage
-        if: ${{ matrix.node-version == '12.x' }}
+        if: ${{ matrix.node-version == '14.x' }}
         env:
           CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
         run: npx codecov
 
       - name: Upload handler sizes to S3
-        if: ${{ github.ref == 'refs/heads/master' }}
+        if: ${{ github.ref == 'refs/heads/master' && matrix.node-version == '14.x' }}
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
