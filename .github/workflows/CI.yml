@@ -39,8 +39,7 @@ jobs:
         run: npx codecov
 
       - name: Upload handler sizes to S3
-        #commenting out first to test
-        #if: ${{ github.ref == 'refs/heads/master' }}
+        if: ${{ github.ref == 'refs/heads/master' }}
         env:
           GITHUB_SHA: ${{ github.sha }}
         run: yarn upload-handler-sizes
