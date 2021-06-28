@@ -30,14 +30,12 @@ export type RedirectData = {
   statusCode: number;
   source: string;
   destination: string;
-  regex: string;
   internal?: boolean;
 };
 
 export type RewriteData = {
   source: string;
   destination: string;
-  regex: string;
 };
 
 export type DynamicRoute = {
@@ -110,7 +108,6 @@ export type PageManifest = Manifest & {
 export type HeaderData = {
   source: string;
   headers: Header[];
-  regex: string;
 };
 
 export type DomainData = {

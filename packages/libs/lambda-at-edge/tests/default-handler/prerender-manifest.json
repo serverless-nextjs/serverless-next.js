@@ -1,6 +1,16 @@
 {
   "version": 3,
   "routes": {
+    "/preview": {
+      "initialRevalidateSeconds": 5,
+      "srcRoute": null,
+      "dataRoute": "/_next/data/build-id/preview.json"
+    },
+    "/fallback/example-static-page": {
+      "initialRevalidateSeconds": false,
+      "srcRoute": "/fallback/[slug]",
+      "dataRoute": "/_next/data/build-id/fallback/example-static-page.json"
+    },
     "/": {
       "initialRevalidateSeconds": false,
       "srcRoute": null,
@@ -10,19 +20,15 @@
       "initialRevalidateSeconds": false,
       "srcRoute": "/no-fallback/[slug]",
       "dataRoute": "/_next/data/build-id/no-fallback/example-static-page.json"
-    },
-    "/fallback/example-static-page": {
-      "initialRevalidateSeconds": false,
-      "srcRoute": "/fallback/[slug]",
-      "dataRoute": "/_next/data/build-id/fallback/example-static-page.json"
-    },
-    "/preview": {
-      "initialRevalidateSeconds": 5,
-      "srcRoute": null,
-      "dataRoute": "/_next/data/build-id/preview.json"
     }
   },
   "dynamicRoutes": {
+    "/fallback/[slug]": {
+      "routeRegex": "^/fallback/([^/]+?)(?:/)?$",
+      "dataRoute": "/_next/data/build-id/fallback/[slug].json",
+      "fallback": "/fallback/[slug].html",
+      "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
+    },
     "/fallback-blocking/[slug]": {
       "routeRegex": "^/fallback\\-blocking/([^/]+?)(?:/)?$",
       "dataRoute": "/_next/data/build-id/fallback-blocking/[slug].json",
@@ -34,12 +40,6 @@
       "dataRoute": "/_next/data/build-id/no-fallback/[slug].json",
       "fallback": false,
       "dataRouteRegex": "^/_next/data/build\\-id/no\\-fallback/([^/]+?)\\.json$"
-    },
-    "/fallback/[slug]": {
-      "routeRegex": "^/fallback/([^/]+?)(?:/)?$",
-      "dataRoute": "/_next/data/build-id/fallback/[slug].json",
-      "fallback": "/fallback/[slug].html",
-      "dataRouteRegex": "^/_next/data/build\\-id/fallback/([^/]+?)\\.json$"
     }
   },
   "notFoundRoutes": [],

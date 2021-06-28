@@ -24,6 +24,13 @@ class AwsSqsQueue extends Component {
     const config = mergeDeepRight(getDefaults({ defaults }), inputs);
     const accountId = await getAccountId(aws);
 
+    if (aws && aws.config) {
+      aws.config.update({
+        maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES || "10"),
+        retryDelayOptions: { base: 200 }
+      });
+    }
+
     const arn = getArn({
       aws,
       accountId,

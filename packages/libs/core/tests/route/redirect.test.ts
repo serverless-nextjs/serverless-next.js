@@ -17,34 +17,29 @@ describe("Redirector Tests", () => {
           {
             source: "/old-blog/:slug",
             destination: "/news/:slug",
-            statusCode: 308,
-            regex: "^/old-blog(?:/([^/]+?))$"
+            statusCode: 308
           },
-          { source: "/a", destination: "/b", statusCode: 308, regex: "^/a$" },
+          { source: "/a", destination: "/b", statusCode: 308 },
           {
             source: "/:nextInternalLocale(en|nl|fr)/a",
             destination: "/:nextInternalLocale/b",
-            statusCode: 308,
-            regex: "^(?:/(en|nl|fr))/a$"
+            statusCode: 308
           },
-          { source: "/c", destination: "/d", statusCode: 302, regex: "^/c$" },
+          { source: "/c", destination: "/d", statusCode: 302 },
           {
             source: "/old-users/:id(\\d{1,})",
             destination: "/users/:id",
-            statusCode: 307,
-            regex: "^/old-users(?:/(\\d{1,}))$"
+            statusCode: 307
           },
           {
             source: "/external",
             destination: "https://example.com",
-            statusCode: 308,
-            regex: "^/external$"
+            statusCode: 308
           },
           {
             source: "/invalid-destination",
             destination: "ftp://example.com",
-            statusCode: 308,
-            regex: "^/invalid-destination$"
+            statusCode: 308
           }
         ]
       };

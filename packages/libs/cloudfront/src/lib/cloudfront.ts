@@ -29,6 +29,13 @@ export type Credentials = {
 export default ({
   credentials
 }: CloudFrontClientFactoryOptions): CloudFrontClient => {
+  if (AWS?.config) {
+    AWS.config.update({
+      maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+      retryDelayOptions: { base: 200 }
+    });
+  }
+
   const cloudFront = new AWS.CloudFront({ credentials });
 
   return {
