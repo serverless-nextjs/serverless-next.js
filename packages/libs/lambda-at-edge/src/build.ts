@@ -225,7 +225,8 @@ class Builder {
   }
 
   async copyTraces(
-    buildManifest: OriginRequestDefaultHandlerManifest
+    buildManifest: OriginRequestDefaultHandlerManifest,
+    destination: string
   ): Promise<void> {
     let copyTraces: Promise<void>[] = [];
 
@@ -253,7 +254,7 @@ class Builder {
       copyTraces = this.copyLambdaHandlerDependencies(
         fileList,
         reasons,
-        DEFAULT_LAMBDA_CODE_DIR,
+        destination,
         base
       );
     }
@@ -269,7 +270,7 @@ class Builder {
     );
 
     return Promise.all([
-      this.copyTraces(buildManifest),
+      this.copyTraces(buildManifest, DEFAULT_LAMBDA_CODE_DIR),
       this.processAndCopyHandler(
         "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
@@ -398,7 +399,7 @@ class Builder {
     buildManifest: OriginRequestDefaultHandlerManifest
   ): Promise<void> {
     await Promise.all([
-      this.copyTraces(buildManifest),
+      this.copyTraces(buildManifest, REGENERATION_LAMBDA_CODE_DIR),
       fse.writeJson(
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
