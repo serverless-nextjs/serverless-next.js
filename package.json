@@ -25,7 +25,8 @@
     "lint": "eslint .",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "postinstall": "yarn packages-install && opencollective-postinstall",
-    "docs": "cd documentation && yarn && yarn build"
+    "docs": "cd documentation && yarn && yarn build",
+    "upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts"
   },
   "repository": {
     "type": "git",
@@ -51,6 +52,7 @@
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.26.1",
+    "aws-sdk": "^2.935.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.1.4",
@@ -64,6 +66,7 @@
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "serverless": "^2.44.0",
+    "ts-node": "^10.0.0",
     "typescript": "^4.3.2"
   },
   "jest": {
