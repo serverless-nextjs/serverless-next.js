@@ -52,9 +52,13 @@ const main = async (): Promise<void> => {
   const newSizes: Record<string, any> = handlerSizeUtils();
 
   let output = `Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA}\n`;
+  output += "```json";
   output += JSON.stringify(baseSizes + "\n", null, 4);
+  output += "```";
   output += `New Handler Sizes (kB) (commit ${GITHUB_NEW_SHA})\n`;
+  output += "```json";
   output += JSON.stringify(newSizes + "\n", null, 4);
+  output += "```";
 
   // Post comment to pull request
   await postCommentToPullRequest(PULL_REQUEST_ID, output);
