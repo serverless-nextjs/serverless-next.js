@@ -28,6 +28,16 @@ jobs:
 
       - run: yarn --frozen-lockfile
 
+      - name: Calculate and post handler sizes
+        # TODO: handle commenting for fork/dependabot PRs somehow, either through a locked-down web API, periodic workflow, or pull_request_target event.
+        if: (matrix.node-version == '14.x' && startsWith(github.head_ref, 'dependabot/') == false && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        env:
+          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
+          GITHUB_NEW_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PULL_REQUEST_ID: ${{ github.event.number }}
+        run: yarn handlers:comment-handler-sizes
+
       - run: yarn test
 
       - run: yarn integration
@@ -45,11 +55,11 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
           AWS_DEFAULT_REGION: us-east-1
           GITHUB_SHA: ${{ github.sha }}
-        run: yarn upload-handler-sizes
+        run: yarn handlers:upload-handler-sizes
 
   start-e2e-tests:
-    # Note: we only run e2e tests automatically if this PR is not from a fork, as forks won't have access to secrets
-    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
+    # Note: we only run e2e tests automatically if this PR is not from a fork or dependabot, as forks won't have access to secrets
+    if: ${{ startsWith(github.head_ref, 'dependabot/') == false && github.event_name == 'push' || (github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: ubuntu-latest
 
     steps:

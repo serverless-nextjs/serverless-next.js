@@ -26,7 +26,8 @@
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "postinstall": "yarn packages-install && opencollective-postinstall",
     "docs": "cd documentation && yarn && yarn build",
-    "upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts"
+    "handlers:upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts",
+    "handlers:comment-handler-sizes": "ts-node scripts/comment-handler-sizes.ts"
   },
   "repository": {
     "type": "git",
@@ -47,6 +48,9 @@
     "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.170",
+    "@types/node": "^15.12.5",
+    "@types/node-fetch": "^2.5.10",
     "@types/react": "^17.0.9",
     "@types/react-dom": "^17.0.6",
     "@types/webpack": "^5.28.0",
@@ -117,7 +121,9 @@
     ]
   },
   "dependencies": {
-    "opencollective-postinstall": "^2.0.3"
+    "opencollective-postinstall": "^2.0.3",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1"
   },
   "collective": {
     "type": "opencollective",
@@ -133,6 +139,6 @@
   },
   "resolutions": {
     "which": "^2.0.1",
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.21"
   }
 }
