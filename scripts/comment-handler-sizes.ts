@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import fetch from "node-fetch";
-import { handlerSizeUtils } from "./handler-size-utils";
+import { calculateHandlerSizes } from "./handler-size-utils";
 import { Octokit } from "@octokit/rest";
 
 /**
@@ -58,16 +58,17 @@ const main = async (): Promise<void> => {
   console.info("Calculate all uncompressed handler sizes");
 
   // Get sizes from PR branch latest commit
-  const newSizes: Record<string, any> = handlerSizeUtils();
+  const newSizes: Record<string, any> = calculateHandlerSizes();
 
-  let output = `Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA}\n`;
-  output += "```json";
-  output += JSON.stringify(baseSizes + "\n", null, 4);
-  output += "```";
-  output += `New Handler Sizes (kB) (commit ${GITHUB_NEW_SHA})\n`;
-  output += "```json";
-  output += JSON.stringify(newSizes + "\n", null, 4);
-  output += "```";
+  let output = "## Handler Size Analysis\n";
+  output += `### Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA}\n`;
+  output += "```ts\n";
+  output += JSON.stringify(baseSizes, null, 4) + "\n";
+  output += "```\n";
+  output += `### New Handler Sizes (kB) (commit ${GITHUB_NEW_SHA})\n`;
+  output += "```ts\n";
+  output += JSON.stringify(newSizes, null, 4) + "\n";
+  output += "```\n";
 
   // Post comment to pull request
   await postCommentToPullRequest(PULL_REQUEST_ID, output);

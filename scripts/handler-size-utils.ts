@@ -45,7 +45,7 @@ export const getDirectorySizeInKilobytes = (
   }
 };
 
-export const handlerSizeUtils = (): Record<string, any> => {
+export const calculateHandlerSizes = (): Record<string, any> => {
   const sizes: Record<string, any> = {};
 
   for (const [platform, platformConfig] of Object.entries(PLATFORM_CONFIGS)) {
