@@ -249,25 +249,38 @@ const configureCors = async (s3, bucketName, config) => {
   }
 };
 
-const configureBucketTags = async (s3, bucketName, config) => {
-  if (config.tags) {
-    const data = await s3.getBucketTagging({ Bucket: bucketName }).promise();
+const configureBucketTags = async (s3, bucketName, configTags) => {
+  const currentTags = {};
 
-    const currentTags = {};
+  try {
+    const data = await s3.getBucketTagging({ Bucket: bucketName }).promise();
     data.TagSet.forEach((x) => {
       currentTags[x.Key] = x.Value;
     });
-
-    if (!_.isEqual(config.tags, currentTags)) {
-      await s3.deleteBucketTagging({ Bucket: bucketName }).promise();
-
-      const newTagSet = [];
-      for (const [key, value] of Object.entries(config.tags)) {
-        newTagSet.push({ Key: key, Value: value });
-      }
-
-      await s3.putBucketTagging({ Bucket: bucketName, Tagging: newTagSet });
+  } catch (error) {
+    if (error.code === "NoSuchTagSet") {
+      // Don't throw when there are no tags yet
+    } else {
+      throw error;
     }
+  }
+
+  if (!_.isEqual(configTags, currentTags)) {
+    await s3.deleteBucketTagging({ Bucket: bucketName }).promise();
+
+    const newTagSet = [];
+    for (const [key, value] of Object.entries(configTags)) {
+      newTagSet.push({ Key: key, Value: value });
+    }
+
+    await s3
+      .putBucketTagging({
+        Bucket: bucketName,
+        Tagging: {
+          TagSet: newTagSet
+        }
+      })
+      .promise();
   }
 };
 
