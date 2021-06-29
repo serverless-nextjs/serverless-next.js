@@ -948,40 +948,75 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.5"
+  dependencies:
+    "@serverless/core" "^1.1.2"
+    aws-sdk "^2.935.0"
+    ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.5"
+  dependencies:
+    "@serverless/aws-iam-role" "^1.0.0"
+    "@serverless/aws-lambda-layer" "^1.0.0"
+    "@serverless/aws-s3" "^4.2.0"
+    "@serverless/core" "^1.1.2"
+    archiver "^5.3.0"
+    aws-sdk "^2.935.0"
+    fs-extra "^9.1.0"
+    globby "^11.0.1"
+    lodash "^4.17.21"
+    ramda "^0.27.0"
 
 "@sls-next/aws-sqs@link:../aws-sqs":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.4"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.5"
+  dependencies:
+    aws-sdk "2.936.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.7"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    jsonwebtoken "^8.5.1"
+    path-to-regexp "^6.1.0"
+    regex-parser "^2.2.10"
 
 "@sls-next/domain@link:../domain":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.4"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.8"
+  dependencies:
+    "@aws-sdk/client-s3" "3.19.0"
+    "@aws-sdk/client-sqs" "3.19.0"
+    "@hapi/accept" "5.0.1"
+    "@sls-next/core" "link:../../libs/core"
+    "@vercel/nft" "^0.13.1"
+    execa "^5.0.1"
+    fresh "^0.5.2"
+    fs-extra "^9.1.0"
+    get-stream "^6.0.0"
+    is-animated "^2.0.1"
+    klaw "^3.0.0"
+    node-fetch "^2.6.1"
+    path-to-regexp "^6.1.0"
+    send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:../../compat-layers/lambda-at-edge-compat":
-  version "0.0.0"
-  uid ""
+  version "3.1.0"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.6"
+  dependencies:
+    aws-sdk "2.936.0"
+    fast-glob "^3.2.5"
+    fs-extra "^9.1.0"
+    mime-types "^2.1.27"
+    regex-parser "^2.2.10"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -1207,10 +1242,10 @@ atob@^2.1.2:
   resolved "https://registry.npmjs.org/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-aws-sdk@2.934.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.920.0:
-  version "2.934.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.934.0.tgz#1c26bd8ded15d2f6b2aa3301d35fc5daf1a61d68"
-  integrity sha512-k7p08ewrKcbs0ikCLFi9OI98Iv9dMND5244xPxUIjK5BLtuT/9Gr6eSCHfN70eCQyM5Y2xG1VJP6zhpkihu9Ew==
+aws-sdk@2.936.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.920.0, aws-sdk@^2.935.0:
+  version "2.936.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.936.0.tgz#b69f5db7c0c745f260b014415a8fbfb38c5e615d"
+  integrity sha512-X0kuyycck0fEPN5V0Vw1PmPIQ4BO0qupsL1El5jnXzXxNkf1cOmn5PMSxPXPsdcqua4w4h3sf143/yME0V9w8g==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
