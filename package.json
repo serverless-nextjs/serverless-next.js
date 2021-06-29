@@ -95,7 +95,8 @@
       "/e2e-tests/",
       "/tests/",
       "babel.config.js",
-      "jest.config.js"
+      "jest.config.js",
+      "<rootDir>/packages/serverless-components/aws-s3"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",

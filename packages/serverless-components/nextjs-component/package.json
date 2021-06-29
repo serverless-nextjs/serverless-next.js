@@ -32,7 +32,7 @@
     "node": ">=10.11.0"
   },
   "dependencies": {
-    "@serverless/aws-s3": "^4.2.0",
+    "@sls-next/aws-s3": "link:../aws-s3",
     "@serverless/core": "^1.1.2",
     "@sls-next/aws-cloudfront": "link:../aws-cloudfront",
     "@sls-next/aws-lambda": "link:../aws-lambda",

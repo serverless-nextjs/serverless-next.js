@@ -1,7 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import { mockDomain } from "@sls-next/domain";
-import { mockS3 } from "@serverless/aws-s3";
+import { mockS3 } from "@sls-next/aws-s3";
 import { mockUpload } from "aws-sdk";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
 import { mockCreateInvalidation } from "@sls-next/cloudfront";

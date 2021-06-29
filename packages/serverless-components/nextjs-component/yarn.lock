@@ -955,6 +955,10 @@
   version "0.0.0"
   uid ""
 
+"@sls-next/aws-s3@link:../aws-s3":
+  version "0.0.0"
+  uid ""
+
 "@sls-next/aws-sqs@link:../aws-sqs":
   version "0.0.0"
   uid ""
@@ -1211,6 +1215,21 @@ aws-sdk@2.934.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.920.0:
   version "2.934.0"
   resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.934.0.tgz#1c26bd8ded15d2f6b2aa3301d35fc5daf1a61d68"
   integrity sha512-k7p08ewrKcbs0ikCLFi9OI98Iv9dMND5244xPxUIjK5BLtuT/9Gr6eSCHfN70eCQyM5Y2xG1VJP6zhpkihu9Ew==
+  dependencies:
+    buffer "4.9.2"
+    events "1.1.1"
+    ieee754 "1.1.13"
+    jmespath "0.15.0"
+    querystring "0.2.0"
+    sax "1.2.1"
+    url "0.10.3"
+    uuid "3.3.2"
+    xml2js "0.4.19"
+
+aws-sdk@^2.935.0:
+  version "2.936.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.936.0.tgz#b69f5db7c0c745f260b014415a8fbfb38c5e615d"
+  integrity sha512-X0kuyycck0fEPN5V0Vw1PmPIQ4BO0qupsL1El5jnXzXxNkf1cOmn5PMSxPXPsdcqua4w4h3sf143/yME0V9w8g==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
