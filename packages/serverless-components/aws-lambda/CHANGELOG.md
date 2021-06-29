@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.8...v3.2.0-alpha.9) (2021-06-29)
+
+**Note:** Version bump only for package @sls-next/aws-lambda
+
 # [3.2.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.4...v3.2.0-alpha.5) (2021-06-27)
 
 **Note:** Version bump only for package @sls-next/aws-lambda
