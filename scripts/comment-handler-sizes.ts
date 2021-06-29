@@ -49,8 +49,8 @@ const postCommentToPullRequest = async (
 
   for (const comment of comments.data) {
     if (
-      comment.body.includes("# Handler Size Report") &&
-      comment.user.login === "slsnextbot"
+      comment.body?.includes("# Handler Size Report") &&
+      comment.user?.login === "slsnextbot"
     ) {
       existingCommentId = comment.id;
     }
