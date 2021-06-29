@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import * as AWS from "aws-sdk";
-import { handlerSizeUtils } from "./handler-size-utils";
+import { calculateHandlerSizes } from "./handler-size-utils";
 
 const uploadHandlerSizesToS3 = async (
   sizes: Record<string, any>
@@ -20,7 +20,7 @@ const uploadHandlerSizesToS3 = async (
 
 console.info("Calculate all uncompressed handler sizes");
 
-const sizes: Record<string, any> = handlerSizeUtils();
+const sizes: Record<string, any> = calculateHandlerSizes();
 
 console.log("Calculated sizes: " + JSON.stringify(sizes, null, 2));
 
