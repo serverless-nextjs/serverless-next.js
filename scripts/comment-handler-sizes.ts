@@ -53,6 +53,7 @@ const postCommentToPullRequest = async (
       comment.user?.login === "slsnextbot"
     ) {
       existingCommentId = comment.id;
+      break;
     }
   }
 
