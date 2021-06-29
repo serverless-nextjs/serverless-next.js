@@ -60,7 +60,7 @@ const main = async (): Promise<void> => {
   // Get sizes from PR branch latest commit
   const newSizes: Record<string, any> = calculateHandlerSizes();
 
-  let output = "## Handler Size Analysis\n";
+  let output = "# Handler Size Analysis\n";
   output += `### Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA})\n`;
   output += "```ts\n";
   output += JSON.stringify(baseSizes, null, 4) + "\n";
