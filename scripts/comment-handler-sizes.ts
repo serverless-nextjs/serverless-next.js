@@ -94,7 +94,9 @@ const main = async (): Promise<void> => {
   let output = "# Handler Size Report\n";
 
   if (_.isEqual(baseSizes, newSizes)) {
-    output += "No changes to handler sizes.\n";
+    output += "> No changes to handler sizes.\n";
+  } else {
+    output += "> There were changes to handler sizes. Please review.";
   }
 
   output += `### Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA})\n`;
