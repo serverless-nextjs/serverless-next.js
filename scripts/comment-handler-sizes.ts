@@ -18,7 +18,7 @@ const getCommitSizes = async (
     `${SIZES_URL}/sizes-github-sha-${commitSha}.json`
   );
 
-  return JSON.parse(response);
+  return JSON.parse(await response.text());
 };
 
 const postCommentToPullRequest = async (
@@ -37,9 +37,9 @@ const postCommentToPullRequest = async (
 };
 
 const main = async (): Promise<void> => {
-  const PULL_REQUEST_ID = parseInt(process.env.PULL_REQUEST_ID);
-  const GITHUB_BASE_SHA = process.env.GITHUB_BASE_SHA;
-  const GITHUB_NEW_SHA = process.env.GITHUB_NEW_SHA;
+  const PULL_REQUEST_ID = parseInt(process.env.PULL_REQUEST_ID ?? "0");
+  const GITHUB_BASE_SHA = process.env.GITHUB_BASE_SHA ?? "";
+  const GITHUB_NEW_SHA = process.env.GITHUB_NEW_SHA ?? "";
 
   console.info("Get base commit's sizes");
 
