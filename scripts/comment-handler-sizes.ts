@@ -3,6 +3,7 @@
 import fetch from "node-fetch";
 import { calculateHandlerSizes } from "./handler-size-utils";
 import { Octokit } from "@octokit/rest";
+import * as _ from "lodash";
 
 /**
  * Get sizes that were calculated from existing commit SHA
@@ -91,6 +92,11 @@ const main = async (): Promise<void> => {
   const newSizes: Record<string, any> = calculateHandlerSizes();
 
   let output = "# Handler Size Report\n";
+
+  if (_.isEqual(baseSizes, newSizes)) {
+    output += "No changes to handler sizes.\n";
+  }
+
   output += `### Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA})\n`;
   output += "```ts\n";
   output += JSON.stringify(baseSizes, null, 4) + "\n";
