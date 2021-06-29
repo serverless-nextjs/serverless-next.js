@@ -37,12 +37,41 @@ const postCommentToPullRequest = async (
   const octokit = new Octokit({
     auth: `token ${process.env.GITHUB_TOKEN}`
   });
-  await octokit.issues.createComment({
+
+  // Try to find existing report comment
+  const comments = await octokit.issues.listComments({
     owner: "serverless-nextjs",
     repo: "serverless-next.js",
-    issue_number: prNumber,
-    body: comment
+    issue_number: prNumber
   });
+
+  let existingCommentId;
+
+  for (const comment of comments.data) {
+    if (
+      comment.body.includes("# Handler Size Report") &&
+      comment.user.login === "slsnextbot"
+    ) {
+      existingCommentId = comment.id;
+    }
+  }
+
+  if (existingCommentId) {
+    await octokit.issues.updateComment({
+      comment_id: existingCommentId,
+      owner: "serverless-nextjs",
+      repo: "serverless-next.js",
+      issue_number: prNumber,
+      body: comment
+    });
+  } else {
+    await octokit.issues.createComment({
+      owner: "serverless-nextjs",
+      repo: "serverless-next.js",
+      issue_number: prNumber,
+      body: comment
+    });
+  }
 };
 
 const main = async (): Promise<void> => {
@@ -60,7 +89,7 @@ const main = async (): Promise<void> => {
   // Get sizes from PR branch latest commit
   const newSizes: Record<string, any> = calculateHandlerSizes();
 
-  let output = "# Handler Size Analysis\n";
+  let output = "# Handler Size Report\n";
   output += `### Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA})\n`;
   output += "```ts\n";
   output += JSON.stringify(baseSizes, null, 4) + "\n";
