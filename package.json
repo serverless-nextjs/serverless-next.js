@@ -65,7 +65,6 @@
     "lerna": "^4.0.0",
     "lint-staged": "^11.0.0",
     "next": "^10.2.3",
-    "node-fetch": "^2.6.1",
     "prettier": "^2.0.5",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -121,7 +120,8 @@
     ]
   },
   "dependencies": {
-    "opencollective-postinstall": "^2.0.3"
+    "opencollective-postinstall": "^2.0.3",
+    "node-fetch": "^2.6.1"
   },
   "collective": {
     "type": "opencollective",
