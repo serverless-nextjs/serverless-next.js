@@ -14,11 +14,20 @@ const getCommitSizes = async (
   const SIZES_URL =
     process.env.SIZES_URL ?? "https://d3m7nebxuhlnm8.cloudfront.net";
 
-  const response = await fetch(
-    `${SIZES_URL}/sizes-github-sha-${commitSha}.json`
-  );
+  const url = `${SIZES_URL}/sizes-github-sha-${commitSha}.json`;
 
-  return JSON.parse(await response.text());
+  console.info("Retrieving url at: " + url);
+
+  const response = await fetch(url);
+
+  if (response.ok) {
+    return JSON.parse(await response.text());
+  } else {
+    console.warn(
+      "Unable to get commit sizes due to response status: " + response.status
+    );
+    return {};
+  }
 };
 
 const postCommentToPullRequest = async (
@@ -43,12 +52,12 @@ const main = async (): Promise<void> => {
 
   console.info("Get base commit's sizes");
 
-  // Get sizes from base commit
+  // Get sizes from base branch commit
   const baseSizes = await getCommitSizes(GITHUB_BASE_SHA);
 
   console.info("Calculate all uncompressed handler sizes");
 
-  // Get sizes from current commit
+  // Get sizes from PR branch latest commit
   const newSizes: Record<string, any> = handlerSizeUtils();
 
   let output = `Base Handler Sizes (kB) (commit ${GITHUB_BASE_SHA}\n`;
