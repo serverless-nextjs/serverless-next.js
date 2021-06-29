@@ -19,3 +19,6 @@ next-app:
         tag3: val3
       regenerationLambda:
         tag4: val4
+    bucketTags:
+      tag1: val1
+      tag2: val2

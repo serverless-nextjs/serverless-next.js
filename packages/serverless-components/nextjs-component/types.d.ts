@@ -8,6 +8,7 @@ export type ServerlessComponentInputs = {
   nextStaticDir?: string;
   bucketName?: string;
   bucketRegion?: string;
+  bucketTags?: Record<string, string>;
   publicDirectoryCache?: PublicDirectoryCache;
   memory?:
     | number

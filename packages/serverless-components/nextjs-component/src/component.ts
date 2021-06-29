@@ -340,7 +340,7 @@ class NextjsComponent extends Component {
       imageEdgeLambda,
       regenerationLambda
     ] = await Promise.all([
-      this.load("@serverless/aws-s3"),
+      this.load("@sls-next/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
       this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
@@ -352,7 +352,8 @@ class NextjsComponent extends Component {
     const bucketOutputs = await bucket({
       accelerated: inputs.enableS3Acceleration ?? true,
       name: inputs.bucketName,
-      region: bucketRegion
+      region: bucketRegion,
+      tags: inputs.bucketTags
     });
 
     // If new BUILD_ID file is present, remove all versioned assets but the existing build ID's assets, to save S3 storage costs.
@@ -928,7 +929,7 @@ class NextjsComponent extends Component {
 
   async remove(): Promise<void> {
     const [bucket, cloudfront, sqs, domain] = await Promise.all([
-      this.load("@serverless/aws-s3"),
+      this.load("@sls-next/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
       this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/domain")
