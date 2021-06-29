@@ -1,9 +1,10 @@
 import { getRewritePath, isExternalRewrite } from "../../src/route/rewrite";
-import { RoutesManifest } from "../../src/types";
+import { PageManifest, RoutesManifest } from "../../src/types";
 
 describe("Rewriter Tests", () => {
   describe("getRewritePath()", () => {
     let routesManifest: RoutesManifest;
+    let pageManifest: PageManifest;
 
     beforeAll(() => {
       routesManifest = {
@@ -47,9 +48,38 @@ describe("Rewriter Tests", () => {
           {
             source: "/multi-query/:path*",
             destination: "/target"
+          },
+          {
+            source: "/no-op-rewrite",
+            destination: "/no-op-rewrite"
+          },
+          {
+            source: "/no-op-rewrite",
+            destination: "/actual-no-op-rewrite-destination"
           }
         ],
         redirects: []
+      };
+
+      pageManifest = {
+        publicFiles: {},
+        trailingSlash: false,
+        buildId: "test-build-id",
+        pages: {
+          dynamic: [],
+          html: {
+            dynamic: {},
+            nonDynamic: {}
+          },
+          ssg: {
+            dynamic: {},
+            nonDynamic: {}
+          },
+          ssr: {
+            dynamic: {},
+            nonDynamic: {}
+          }
+        }
       };
     });
 
@@ -68,10 +98,11 @@ describe("Rewriter Tests", () => {
       ${"/query/foo"}           | ${"/target?a=b&path=foo"}
       ${"/manual-query/foo"}    | ${"/target?key=foo"}
       ${"/multi-query/foo/bar"} | ${"/target?path=foo&path=bar"}
+      ${"/no-op-rewrite"}       | ${"/actual-no-op-rewrite-destination"}
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {
-        const rewrite = getRewritePath(path, routesManifest);
+        const rewrite = getRewritePath(path, routesManifest, pageManifest);
 
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);
