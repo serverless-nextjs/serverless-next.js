@@ -1,0 +1,25 @@
+service: serverless-nextjs-ci-api
+
+provider:
+  name: aws
+  runtime: nodejs14.x
+  stage: prod
+  region: us-east-1
+
+package:
+  individually: true
+  exclude:
+    - "**"
+  include:
+    - "dist/api/post-comment.js"
+
+functions:
+  post-comment:
+    handler: dist/api/post-comment.handler
+    memorySize: 128
+    description: "Locked down API used by CI to post comments"
+    timeout: 30
+    events:
+      - http:
+          path: post-comment
+          method: post
