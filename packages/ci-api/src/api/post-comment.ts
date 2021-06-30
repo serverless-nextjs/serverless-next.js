@@ -3,7 +3,6 @@ import { postCommentToPullRequest } from "../comment";
 export const handler = async (
   event: any = {}
 ): Promise<{ statusCode: number; body?: string }> => {
-  console.log("Got event body: " + event.body);
   const requestBody = JSON.parse(event.body);
   const prNumber = parseInt(requestBody.prNumber);
   const comment = requestBody.comment;
@@ -11,10 +10,16 @@ export const handler = async (
   const auth = requestBody.auth;
 
   // Just a simple check that auth token is passed in
-  console.log(auth, process.env.AUTH);
   if (auth !== process.env.AUTH) {
     return {
       statusCode: 401
+    };
+  }
+
+  // Only allow one type of comment for now
+  if (existingSearchString !== "# Handler Size Report") {
+    return {
+      statusCode: 400
     };
   }
 
