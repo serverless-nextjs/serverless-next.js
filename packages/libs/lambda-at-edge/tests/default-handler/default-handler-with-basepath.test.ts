@@ -5,7 +5,6 @@ import {
   CloudFrontResultResponse,
   CloudFrontOrigin
 } from "aws-lambda";
-import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 
 jest.mock(
   "../../src/manifest.json",
@@ -41,25 +40,6 @@ const mockPageRequire = (mockPagePath: string): void => {
   );
 };
 
-const runRedirectTest = async (
-  path: string,
-  expectedRedirect: string,
-  statusCode: number,
-  querystring?: string,
-  host?: string,
-  requestHeaders?: { [p: string]: { key: string; value: string }[] }
-): Promise<void> => {
-  await runRedirectTestWithHandler(
-    handler,
-    path,
-    expectedRedirect,
-    statusCode,
-    querystring,
-    host,
-    requestHeaders
-  );
-};
-
 describe("Lambda@Edge", () => {
   let consoleWarnSpy: jest.SpyInstance;
 
@@ -73,14 +53,10 @@ describe("Lambda@Edge", () => {
 
   describe("HTML pages routing", () => {
     it.each`
-      path                                           | expectedPage
-      ${"/basepath"}                                 | ${"/index.html"}
-      ${"/basepath/terms"}                           | ${"/terms.html"}
-      ${"/basepath/users/batman"}                    | ${"/users/[...user].html"}
-      ${"/basepath/users/test/catch/all"}            | ${"/users/[...user].html"}
-      ${"/basepath/no-fallback/example-static-page"} | ${"/no-fallback/example-static-page.html"}
-      ${"/basepath/fallback/not-built"}              | ${"/fallback/not-built.html"}
-      ${"/basepath/preview"}                         | ${"/preview.html"}
+      path                        | expectedPage
+      ${"/basepath"}              | ${"/index.html"}
+      ${"/basepath/terms"}        | ${"/terms.html"}
+      ${"/basepath/users/batman"} | ${"/users/[...user].html"}
     `(
       "serves page $expectedPage from S3 for path $path",
       async ({ path, expectedPage }) => {
@@ -108,19 +84,6 @@ describe("Lambda@Edge", () => {
         );
       }
     );
-
-    it.each`
-      path
-      ${"/basepath"}
-      ${"/basepath/terms"}
-      ${"/basepath/users/batman"}
-      ${"/basepath/users/test/catch/all"}
-      ${"/basepath/john/123"}
-      ${"/basepath/no-fallback/example-static-page"}
-      ${"/basepath/fallback/not-yet-built"}
-    `(`path $path redirects if it has a trailing slash`, async ({ path }) => {
-      await runRedirectTest(`${path}/`, path, 308);
-    });
 
     it("terms.html should return 200 status after successful S3 Origin response", async () => {
       const event = createCloudFrontEvent({
@@ -174,17 +137,6 @@ describe("Lambda@Edge", () => {
 
       expect(response.status).toEqual("200");
     });
-
-    it.each`
-      path                          | expectedRedirect
-      ${"/basepath/favicon.ico/"}   | ${"/basepath/favicon.ico"}
-      ${"/basepath/manifest.json/"} | ${"/basepath/manifest.json"}
-    `(
-      "public files always redirect to path without trailing slash: $path -> $expectedRedirect",
-      async ({ path, expectedRedirect }) => {
-        await runRedirectTest(path, expectedRedirect, 308);
-      }
-    );
   });
 
   describe("SSR pages routing", () => {
@@ -219,44 +171,13 @@ describe("Lambda@Edge", () => {
         expect(cfResponse.status).toEqual(200);
       }
     );
-
-    it.each`
-      path
-      ${"/basepath/abc"}
-      ${"/basepath/blog/foo"}
-      ${"/basepath/customers"}
-      ${"/basepath/customers/superman"}
-      ${"/basepath/customers/superman/howtofly"}
-      ${"/basepath/customers/superman/profile"}
-      ${"/basepath/customers/test/catch/all"}
-    `(`path $path redirects if it has trailing slash`, async ({ path }) => {
-      await runRedirectTest(`${path}/`, path, 308);
-    });
-
-    it.each`
-      path
-      ${"/basepath/abc"}
-      ${"/basepath/blog/foo"}
-      ${"/basepath/customers"}
-      ${"/basepath/customers/superman"}
-      ${"/basepath/customers/superman/howtofly"}
-      ${"/basepath/customers/superman/profile"}
-      ${"/basepath/customers/test/catch/all"}
-    `("path $path passes querystring to redirected URL", async ({ path }) => {
-      const querystring = "a=1&b=2";
-
-      const expectedRedirect = `${path}?${querystring}`;
-
-      await runRedirectTest(`${path}/`, expectedRedirect, 308, querystring);
-    });
   });
 
   describe("Data Requests", () => {
     it.each`
-      path                                                               | expectedPage
-      ${"/basepath/_next/data/build-id/customers.json"}                  | ${"pages/customers.js"}
-      ${"/basepath/_next/data/build-id/customers/superman.json"}         | ${"pages/customers/[customer].js"}
-      ${"/basepath/_next/data/build-id/customers/superman/profile.json"} | ${"pages/customers/[customer]/profile.js"}
+      path                                                       | expectedPage
+      ${"/basepath/_next/data/build-id/customers.json"}          | ${"pages/customers.js"}
+      ${"/basepath/_next/data/build-id/customers/superman.json"} | ${"pages/customers/[customer].js"}
     `(
       "serves json data via SSR for SSR path $path",
       async ({ path, expectedPage }) => {
@@ -308,20 +229,6 @@ describe("Lambda@Edge", () => {
           }
         });
         expect(request.uri).toEqual(expectedUri);
-      }
-    );
-
-    it.each`
-      path                                                                | expectedRedirect
-      ${"/basepath/_next/data/build-id/"}                                 | ${"/basepath/_next/data/build-id"}
-      ${"/basepath/_next/data/build-id/index.json/"}                      | ${"/basepath/_next/data/build-id/index.json"}
-      ${"/basepath/_next/data/build-id/customers.json/"}                  | ${"/basepath/_next/data/build-id/customers.json"}
-      ${"/basepath/_next/data/build-id/customers/superman.json/"}         | ${"/basepath/_next/data/build-id/customers/superman.json"}
-      ${"/basepath/_next/data/build-id/customers/superman/profile.json/"} | ${"/basepath/_next/data/build-id/customers/superman/profile.json"}
-    `(
-      "data requests always redirect to path without trailing slash: $path -> $expectedRedirect",
-      async ({ path, expectedRedirect }) => {
-        await runRedirectTest(path, expectedRedirect, 308);
       }
     );
   });
@@ -412,11 +319,6 @@ describe("Lambda@Edge", () => {
 
       const request = (await handler(event)) as CloudFrontRequest;
       expect(request.uri).toEqual("/404.html");
-    });
-
-    it("redirects unmatched request path", async () => {
-      const path = "/basepath/page/does/not/exist";
-      await runRedirectTest(`${path}/`, path, 308);
     });
 
     // Next.js serves 404 on pages that do not have basepath prefix. It doesn't redirect whether there is trailing slash or not.
@@ -510,112 +412,5 @@ describe("Lambda@Edge", () => {
       expect(decodedBody).toEqual("pages/_error.js - 500");
       expect(response.status).toEqual(500);
     });
-  });
-
-  describe("Custom Redirects", () => {
-    it.each`
-      path                          | expectedRedirect          | expectedRedirectStatusCode
-      ${"/basepath/terms-new"}      | ${"/basepath/terms"}      | ${308}
-      ${"/basepath/old-blog/abc"}   | ${"/basepath/news/abc"}   | ${308}
-      ${"/basepath/old-users/1234"} | ${"/basepath/users/1234"} | ${307}
-      ${"/basepath/external"}       | ${"https://example.com"}  | ${308}
-    `(
-      "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
-      async ({ path, expectedRedirect, expectedRedirectStatusCode }) => {
-        await runRedirectTest(
-          path,
-          expectedRedirect,
-          expectedRedirectStatusCode
-        );
-      }
-    );
-  });
-
-  describe("Domain Redirects", () => {
-    it.each`
-      path                 | querystring | expectedRedirect                              | expectedRedirectStatusCode
-      ${"/basepath/"}      | ${""}       | ${"https://www.example.com/basepath/"}        | ${308}
-      ${"/basepath/"}      | ${"a=1234"} | ${"https://www.example.com/basepath/?a=1234"} | ${308}
-      ${"/basepath/terms"} | ${""}       | ${"https://www.example.com/basepath/terms"}   | ${308}
-    `(
-      "redirects path $path to $expectedRedirect, expectedRedirectStatusCode: $expectedRedirectStatusCode",
-      async ({
-        path,
-        querystring,
-        expectedRedirect,
-        expectedRedirectStatusCode
-      }) => {
-        await runRedirectTest(
-          path,
-          expectedRedirect,
-          expectedRedirectStatusCode,
-          querystring,
-          "example.com" // Override host to test a domain redirect from host example.com -> https://www.example.com
-        );
-      }
-    );
-  });
-
-  describe("Custom Rewrites", () => {
-    it.each`
-      path                            | expectedPage
-      ${"/basepath/index-rewrite"}    | ${"/index.html"}
-      ${"/basepath/terms-rewrite"}    | ${"/terms.html"}
-      ${"/basepath/path-rewrite/123"} | ${"/terms.html"}
-      ${"/basepath/terms"}            | ${"/terms.html"}
-    `(
-      "serves page $expectedPage from S3 for rewritten path $path",
-      async ({ path, expectedPage }) => {
-        const event = createCloudFrontEvent({
-          uri: path,
-          host: "mydistribution.cloudfront.net"
-        });
-
-        const result = await handler(event);
-
-        const request = result as CloudFrontRequest;
-
-        expect(request.origin).toEqual({
-          s3: {
-            authMethod: "origin-access-identity",
-            domainName: "my-bucket.s3.amazonaws.com",
-            path: "/basepath/static-pages/build-id",
-            region: "us-east-1"
-          }
-        });
-        expect(request.uri).toEqual(expectedPage);
-        expect(request.headers.host[0].key).toEqual("host");
-        expect(request.headers.host[0].value).toEqual(
-          "my-bucket.s3.amazonaws.com"
-        );
-      }
-    );
-  });
-
-  describe("Custom Headers", () => {
-    it.each`
-      path                             | expectedHeaders                    | expectedPage
-      ${"/basepath/customers/another"} | ${{ "x-custom-header": "custom" }} | ${"pages/customers/[customer].js"}
-    `(
-      "has custom headers $expectedHeaders and expectedPage $expectedPage for path $path",
-      async ({ path, expectedHeaders, expectedPage }) => {
-        const event = createCloudFrontEvent({
-          uri: path,
-          host: "mydistribution.cloudfront.net"
-        });
-
-        mockPageRequire(expectedPage);
-
-        const response = await handler(event);
-
-        for (const header in expectedHeaders) {
-          const headerEntry = response.headers[header][0];
-          expect(headerEntry).toEqual({
-            key: header,
-            value: expectedHeaders[header]
-          });
-        }
-      }
-    );
   });
 });

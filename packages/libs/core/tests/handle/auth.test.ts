@@ -1,27 +1,13 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
   ApiManifest,
-  Event,
   handleApi,
   handleDefault,
   PageManifest,
   prepareBuildManifests,
   RoutesManifest
 } from "../../src";
-
-const event = (url: string, headers?: { [key: string]: string }): Event => {
-  return {
-    req: {
-      headers: headers ?? {},
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 const authHeaders = {
   Authorization: "Basic dGVzdC11c2VyOnRlc3QtcGFzcw=="
@@ -93,7 +79,7 @@ describe("Basic authentication", () => {
   describe("Api handler", () => {
     it("Handles api request /api when authorized", async () => {
       const route = await handleApi(
-        event("/api", authHeaders),
+        mockEvent("/api", authHeaders),
         apiManifest,
         routesManifest,
         getPage
@@ -104,26 +90,36 @@ describe("Basic authentication", () => {
     });
 
     it("Returns 401 when not authorized", async () => {
-      const e = event("/api");
-      const route = await handleApi(e, apiManifest, routesManifest, getPage);
+      const event = mockEvent("/api");
+      const route = await handleApi(
+        event,
+        apiManifest,
+        routesManifest,
+        getPage
+      );
 
       expect(route).toBeFalsy();
-      expect(e.res.statusCode).toEqual(401);
+      expect(event.res.statusCode).toEqual(401);
     });
 
     it("Returns 401 when password is wrong", async () => {
-      const e = event("/api", wrongAuthHeaders);
-      const route = await handleApi(e, apiManifest, routesManifest, getPage);
+      const event = mockEvent("/api", wrongAuthHeaders);
+      const route = await handleApi(
+        event,
+        apiManifest,
+        routesManifest,
+        getPage
+      );
 
       expect(route).toBeFalsy();
-      expect(e.res.statusCode).toEqual(401);
+      expect(event.res.statusCode).toEqual(401);
     });
   });
 
   describe("Default handler", () => {
     it("Handles page request / when authorized", async () => {
       const route = await handleDefault(
-        event("/", authHeaders),
+        mockEvent("/", authHeaders),
         pageManifest,
         prerenderManifest,
         routesManifest,
@@ -135,9 +131,9 @@ describe("Basic authentication", () => {
     });
 
     it("Returns 401 when not authorized", async () => {
-      const e = event("/");
+      const event = mockEvent("/");
       const route = await handleDefault(
-        e,
+        event,
         pageManifest,
         prerenderManifest,
         routesManifest,
@@ -145,13 +141,13 @@ describe("Basic authentication", () => {
       );
 
       expect(route).toBeFalsy();
-      expect(e.res.statusCode).toEqual(401);
+      expect(event.res.statusCode).toEqual(401);
     });
 
     it("Returns 401 when password is wrong", async () => {
-      const e = event("/", wrongAuthHeaders);
+      const event = mockEvent("/", wrongAuthHeaders);
       const route = await handleDefault(
-        e,
+        event,
         pageManifest,
         prerenderManifest,
         routesManifest,
@@ -159,7 +155,7 @@ describe("Basic authentication", () => {
       );
 
       expect(route).toBeFalsy();
-      expect(e.res.statusCode).toEqual(401);
+      expect(event.res.statusCode).toEqual(401);
     });
   });
 });

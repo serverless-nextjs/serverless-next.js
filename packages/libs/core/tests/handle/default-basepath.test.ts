@@ -1,25 +1,11 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
-  Event,
   handleDefault,
   PageManifest,
   prepareBuildManifests,
   RoutesManifest
 } from "../../src";
-
-const event = (url: string): Event => {
-  return {
-    req: {
-      headers: [],
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 describe("Default handler (basepath)", () => {
   let pagesManifest: { [key: string]: string };
@@ -111,7 +97,7 @@ describe("Default handler (basepath)", () => {
       ${"/base/name%20with%20spaces.txt"} | ${"/name%20with%20spaces.txt"}
     `("Routes $uri to public file", async ({ file, uri }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -135,7 +121,7 @@ describe("Default handler (basepath)", () => {
       ${"/html"}           | ${"pages/404.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -155,7 +141,7 @@ describe("Default handler (basepath)", () => {
       ${"/base/_next/data/test-build-id/index.json"} | ${"/_next/data/test-build-id/index.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -175,7 +161,7 @@ describe("Default handler (basepath)", () => {
       ${"/base/_next/data/test-build-id/ssr.json"} | ${"pages/ssr.js"}
     `("Routes SSR request $uri to page $page", async ({ uri, page }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -201,7 +187,7 @@ describe("Default handler (basepath)", () => {
       ${"/base/fallback/new"} | ${"pages/fallback/new.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -220,7 +206,7 @@ describe("Default handler (basepath)", () => {
       ${"/base/_next/data/test-build-id/fallback/new.json"} | ${"/_next/data/test-build-id/fallback/new.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -240,7 +226,7 @@ describe("Default handler (basepath)", () => {
       ${"/base/_next/data/test-build-id/ssr/1.json"} | ${"pages/ssr/[id].js"}
     `("Routes SSR request $uri to page $page", async ({ uri, page }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -268,9 +254,9 @@ describe("Default handler (basepath)", () => {
     `(
       "Redirects $uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri);
+        const event = mockEvent(uri);
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -278,9 +264,12 @@ describe("Default handler (basepath)", () => {
         );
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
   });
