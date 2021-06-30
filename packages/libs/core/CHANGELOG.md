@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.10...v3.2.0-alpha.11) (2021-06-30)
+
+### Bug Fixes
+
+- **core:** support no-op rewrites ([#1329](https://github.com/serverless-nextjs/serverless-next.js/issues/1329)) ([27d1943](https://github.com/serverless-nextjs/serverless-next.js/commit/27d1943f2d193eecba7c8cb99d33ffcccb463e41))
+
 # [3.2.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.6...v3.2.0-alpha.7) (2021-06-28)
 
 ### Features
