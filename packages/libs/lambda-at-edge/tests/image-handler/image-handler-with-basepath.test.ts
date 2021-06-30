@@ -50,10 +50,10 @@ describe("Image lambda handler", () => {
 
   describe("Routes", () => {
     it.each`
-      imagePath                                  | expectedS3Key
-      ${"/test-image.png"}                       | ${"basepath/public/test-image.png"}
-      ${"/basepath/static/test-image.png"}       | ${"basepath/static/test-image.png"}
-      ${"/basepath/_next/static/test-image.png"} | ${"basepath/_next/static/test-image.png"}
+      imagePath                                     | expectedS3Key
+      ${"/test-image-bp.png"}                       | ${"basepath/public/test-image-bp.png"}
+      ${"/basepath/static/test-image-bp.png"}       | ${"basepath/static/test-image-bp.png"}
+      ${"/basepath/_next/static/test-image-bp.png"} | ${"basepath/_next/static/test-image-bp.png"}
     `("serves image request", async ({ imagePath, expectedS3Key }) => {
       const event = createCloudFrontEvent({
         uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
@@ -92,11 +92,10 @@ describe("Image lambda handler", () => {
         bodyEncoding: "base64"
       });
 
-      // FIXME: flaky in CI?
-      // expect(MockGetObjectCommand).toBeCalledWith({
-      //   Bucket: "my-bucket.s3.amazonaws.com",
-      //   Key: expectedS3Key
-      // });
+      expect(MockGetObjectCommand).toBeCalledWith({
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: expectedS3Key
+      });
     });
 
     it("return 500 response when s3 throw an error", async () => {
