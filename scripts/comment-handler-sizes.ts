@@ -2,8 +2,8 @@
 
 import fetch from "node-fetch";
 import { calculateHandlerSizes } from "./handler-size-utils";
-import { Octokit } from "@octokit/rest";
 import * as _ from "lodash";
+import { getAuth } from "./get-auth";
 
 /**
  * Get sizes that were calculated from existing commit SHA
@@ -35,45 +35,21 @@ const postCommentToPullRequest = async (
   prNumber: number,
   comment: string
 ): Promise<void> => {
-  const octokit = new Octokit({
-    auth: `token ${process.env.GITHUB_TOKEN}`
-  });
+  const existingSearchString = "# Handler Size Report";
 
-  // Try to find existing report comment
-  const comments = await octokit.issues.listComments({
-    owner: "serverless-nextjs",
-    repo: "serverless-next.js",
-    issue_number: prNumber
-  });
-
-  let existingCommentId;
-
-  for (const comment of comments.data) {
-    if (
-      comment.body?.includes("# Handler Size Report") &&
-      comment.user?.login === "slsnextbot"
-    ) {
-      existingCommentId = comment.id;
-      break;
+  // Using locked down API proxy to post comment for both fork and non-fork PRs
+  await fetch(
+    "https://l7ycsrlajd.execute-api.us-east-1.amazonaws.com/prod/post-comment",
+    {
+      method: "POST",
+      body: JSON.stringify({
+        auth: getAuth(),
+        comment: comment,
+        prNumber: prNumber,
+        existingSearchString: existingSearchString
+      })
     }
-  }
-
-  if (existingCommentId) {
-    await octokit.issues.updateComment({
-      comment_id: existingCommentId,
-      owner: "serverless-nextjs",
-      repo: "serverless-next.js",
-      issue_number: prNumber,
-      body: comment
-    });
-  } else {
-    await octokit.issues.createComment({
-      owner: "serverless-nextjs",
-      repo: "serverless-next.js",
-      issue_number: prNumber,
-      body: comment
-    });
-  }
+  );
 };
 
 const main = async (): Promise<void> => {
