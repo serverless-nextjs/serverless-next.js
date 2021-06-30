@@ -1,25 +1,11 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
-  Event,
   handleDefault,
   PageManifest,
   prepareBuildManifests,
   RoutesManifest
 } from "../../src";
-
-const event = (url: string, headers?: { [key: string]: string }): Event => {
-  return {
-    req: {
-      headers: headers ?? {},
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 describe("Default handler (i18n)", () => {
   let pagesManifest: { [key: string]: string };
@@ -154,7 +140,7 @@ describe("Default handler (i18n)", () => {
       ${"/fr/not/found"} | ${"pages/fr/404.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -175,7 +161,7 @@ describe("Default handler (i18n)", () => {
       ${"/_next/data/test-build-id/fr/ssg.json"} | ${"/_next/data/test-build-id/fr/ssg.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -197,7 +183,7 @@ describe("Default handler (i18n)", () => {
       ${"/_next/data/test-build-id/ssr.json"} | ${"pages/en/500.html"}
     `("Routes SSR request $uri to pages/ssr.js", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -229,7 +215,7 @@ describe("Default handler (i18n)", () => {
       ${"/fr/fallback/new"} | ${"pages/fr/fallback/new.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -250,7 +236,7 @@ describe("Default handler (i18n)", () => {
       ${"/_next/data/test-build-id/fr/fallback/new.json"} | ${"/_next/data/test-build-id/fr/fallback/new.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -272,7 +258,7 @@ describe("Default handler (i18n)", () => {
       ${"/_next/data/test-build-id/ssr/1.json"} | ${"pages/en/500.html"}
     `("Routes SSR request $uri to pages/ssr/[id].js", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -304,9 +290,9 @@ describe("Default handler (i18n)", () => {
     `(
       "Redirects $uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri);
+        const event = mockEvent(uri);
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -314,9 +300,12 @@ describe("Default handler (i18n)", () => {
         );
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
 
@@ -333,11 +322,11 @@ describe("Default handler (i18n)", () => {
     `(
       "Redirects accept-lang $lang from $uri to $destination",
       async ({ lang, destination, uri }) => {
-        const e = event(uri, {
+        const event = mockEvent(uri, {
           "Accept-Language": lang
         });
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -346,9 +335,12 @@ describe("Default handler (i18n)", () => {
 
         if (destination) {
           expect(route).toBeFalsy();
-          expect(e.res.statusCode).toEqual(307);
-          expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-          expect(e.res.end).toHaveBeenCalled();
+          expect(event.res.statusCode).toEqual(307);
+          expect(event.res.setHeader).toHaveBeenCalledWith(
+            "Location",
+            destination
+          );
+          expect(event.res.end).toHaveBeenCalled();
         } else {
           expect(route).toBeTruthy();
         }
@@ -368,11 +360,11 @@ describe("Default handler (i18n)", () => {
     `(
       "Redirects NEXT_LOCALE $lang from $uri to $destination",
       async ({ lang, destination, uri }) => {
-        const e = event(uri, {
+        const event = mockEvent(uri, {
           Cookie: `NEXT_LOCALE=${lang}`
         });
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -381,9 +373,12 @@ describe("Default handler (i18n)", () => {
 
         if (destination) {
           expect(route).toBeFalsy();
-          expect(e.res.statusCode).toEqual(307);
-          expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-          expect(e.res.end).toHaveBeenCalled();
+          expect(event.res.statusCode).toEqual(307);
+          expect(event.res.setHeader).toHaveBeenCalledWith(
+            "Location",
+            destination
+          );
+          expect(event.res.end).toHaveBeenCalled();
         } else {
           expect(route).toBeTruthy();
         }

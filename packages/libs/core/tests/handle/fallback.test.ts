@@ -1,6 +1,5 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
-  Event,
   handleFallback,
   PageManifest,
   prepareBuildManifests,
@@ -8,20 +7,7 @@ import {
   RoutesManifest
 } from "../../src";
 import { toRequest } from "../../src/handle/request";
-
-const event = (url: string, headers?: { [key: string]: string }): Event => {
-  return {
-    req: {
-      headers: headers ?? {},
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 describe("Fallback handler", () => {
   let pagesManifest: { [key: string]: string };
@@ -163,10 +149,10 @@ describe("Fallback handler", () => {
       ${"/rewrite-ssg"}     | ${"pages/404.html"}
       ${"/redirect-simple"} | ${"pages/404.html"}
     `("Routes static route $uri to file $file", async ({ uri, file }) => {
-      const e = event(uri);
-      const request = toRequest(e);
+      const event = mockEvent(uri);
+      const request = toRequest(event);
       const route = await handleFallback(
-        e,
+        event,
         await routeDefault(
           request,
           manifest,
@@ -189,10 +175,10 @@ describe("Fallback handler", () => {
       uri                                     | file
       ${"/_next/data/test-build-id/ssg.json"} | ${"pages/404.html"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
-      const e = event(uri);
-      const request = toRequest(e);
+      const event = mockEvent(uri);
+      const request = toRequest(event);
       const route = await handleFallback(
-        e,
+        event,
         await routeDefault(
           request,
           manifest,
@@ -215,10 +201,10 @@ describe("Fallback handler", () => {
       uri       | page
       ${"/ssr"} | ${"pages/ssr.js"}
     `("Routes SSR route $uri to page $page", async ({ uri, page }) => {
-      const e = event(uri);
-      const request = toRequest(e);
+      const event = mockEvent(uri);
+      const request = toRequest(event);
       const route = await handleFallback(
-        e,
+        event,
         await routeDefault(
           request,
           manifest,
@@ -248,10 +234,10 @@ describe("Fallback handler", () => {
       ${"/fallback/new"}     | ${"pages/fallback/[slug].html"}
       ${"/rewrite-path/new"} | ${"pages/fallback/[slug].html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
-      const e = event(uri);
-      const request = toRequest(e);
+      const event = mockEvent(uri);
+      const request = toRequest(event);
       const route = await handleFallback(
-        e,
+        event,
         await routeDefault(
           request,
           manifest,
@@ -276,10 +262,10 @@ describe("Fallback handler", () => {
       ${"/_next/data/test-build-id/no-fallback/new.json"} | ${"pages/404.html"}
       ${"/_next/data/not-build-id/fallback/new.json"}     | ${"pages/404.html"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
-      const e = event(uri);
-      const request = toRequest(e);
+      const event = mockEvent(uri);
+      const request = toRequest(event);
       const route = await handleFallback(
-        e,
+        event,
         await routeDefault(
           request,
           manifest,
@@ -304,10 +290,10 @@ describe("Fallback handler", () => {
     `(
       "Routes fallback blocking route $uri to page $page",
       async ({ uri, page }) => {
-        const e = event(uri);
-        const request = toRequest(e);
+        const event = mockEvent(uri);
+        const request = toRequest(event);
         const route = await handleFallback(
-          e,
+          event,
           await routeDefault(
             request,
             manifest,
@@ -335,10 +321,10 @@ describe("Fallback handler", () => {
     `(
       "Routes fallback data route $uri to page $page",
       async ({ uri, page }) => {
-        const e = event(uri);
-        const request = toRequest(e);
+        const event = mockEvent(uri);
+        const request = toRequest(event);
         const route = await handleFallback(
-          e,
+          event,
           await routeDefault(
             request,
             manifest,

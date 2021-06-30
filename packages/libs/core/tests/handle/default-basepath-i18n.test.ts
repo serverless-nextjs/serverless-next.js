@@ -1,25 +1,11 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
-  Event,
   handleDefault,
   PageManifest,
   prepareBuildManifests,
   RoutesManifest
 } from "../../src";
-
-const event = (url: string): Event => {
-  return {
-    req: {
-      headers: [],
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 describe("Default handler (basepath + i18n)", () => {
   let pagesManifest: { [key: string]: string };
@@ -145,7 +131,7 @@ describe("Default handler (basepath + i18n)", () => {
       ${"/base/fr/not/found"} | ${"pages/fr/404.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -166,7 +152,7 @@ describe("Default handler (basepath + i18n)", () => {
       ${"/base/_next/data/test-build-id/fr/ssg.json"} | ${"/_next/data/test-build-id/fr/ssg.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -189,7 +175,7 @@ describe("Default handler (basepath + i18n)", () => {
     `("Routes SSR request $uri to pages/ssr.js", async ({ uri }) => {
       await expect(
         handleDefault(
-          event(uri),
+          mockEvent(uri),
           manifest,
           prerenderManifest,
           routesManifest,
@@ -215,7 +201,7 @@ describe("Default handler (basepath + i18n)", () => {
       ${"/base/fr/fallback/new"} | ${"pages/fr/fallback/new.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -236,7 +222,7 @@ describe("Default handler (basepath + i18n)", () => {
       ${"/base/_next/data/test-build-id/fr/fallback/new.json"} | ${"/_next/data/test-build-id/fr/fallback/new.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -259,7 +245,7 @@ describe("Default handler (basepath + i18n)", () => {
     `("Routes SSR request $uri to pages/ssr/[id].js", async ({ uri }) => {
       await expect(
         handleDefault(
-          event(uri),
+          mockEvent(uri),
           manifest,
           prerenderManifest,
           routesManifest,
@@ -285,9 +271,9 @@ describe("Default handler (basepath + i18n)", () => {
     `(
       "Redirects $uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri);
+        const event = mockEvent(uri);
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -295,9 +281,12 @@ describe("Default handler (basepath + i18n)", () => {
         );
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
   });

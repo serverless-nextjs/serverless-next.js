@@ -1,25 +1,11 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
   ApiManifest,
-  Event,
   handleApi,
   prepareBuildManifests,
   RoutesManifest
 } from "../../src";
-
-const event = (url: string, headers?: { [key: string]: string }): Event => {
-  return {
-    req: {
-      headers: headers ?? {},
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 describe("Api handler", () => {
   let pagesManifest: { [key: string]: string };
@@ -133,7 +119,7 @@ describe("Api handler", () => {
       ${"/rewrite-query/3"} | ${"pages/api/static.js"}
     `("Routes api request $uri to page $page", async ({ uri, page }) => {
       const route = await handleApi(
-        event(uri),
+        mockEvent(uri),
         manifest,
         routesManifest,
         getPage
@@ -149,11 +135,11 @@ describe("Api handler", () => {
       ${"/api/dynamic/not/found"}
       ${"/rewrite-not-found"}
     `("Returns 404 for $uri", async ({ uri }) => {
-      const e = event(uri);
-      const route = await handleApi(e, manifest, routesManifest, getPage);
+      const event = mockEvent(uri);
+      const route = await handleApi(event, manifest, routesManifest, getPage);
 
       expect(route).toBeFalsy();
-      expect(e.res.statusCode).toEqual(404);
+      expect(event.res.statusCode).toEqual(404);
     });
   });
 
@@ -162,11 +148,14 @@ describe("Api handler", () => {
       uri
       ${"/api/static"}
     `("Sets headers for $uri", async ({ uri }) => {
-      const e = event(uri);
+      const event = mockEvent(uri);
 
-      await handleApi(e, manifest, routesManifest, getPage);
+      await handleApi(event, manifest, routesManifest, getPage);
 
-      expect(e.res.setHeader).toHaveBeenCalledWith("X-Test-Header", "value");
+      expect(event.res.setHeader).toHaveBeenCalledWith(
+        "X-Test-Header",
+        "value"
+      );
     });
   });
 
@@ -179,13 +168,16 @@ describe("Api handler", () => {
     `(
       "Redirects $uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri);
-        const route = await handleApi(e, manifest, routesManifest, getPage);
+        const event = mockEvent(uri);
+        const route = await handleApi(event, manifest, routesManifest, getPage);
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
 
@@ -197,13 +189,16 @@ describe("Api handler", () => {
     `(
       "Redirects www.example.com$uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri, { Host: "www.example.com" });
-        const route = await handleApi(e, manifest, routesManifest, getPage);
+        const event = mockEvent(uri, { Host: "www.example.com" });
+        const route = await handleApi(event, manifest, routesManifest, getPage);
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
   });
@@ -213,8 +208,8 @@ describe("Api handler", () => {
       uri                    | path
       ${"/rewrite-external"} | ${"https://ext.example.com"}
     `("Returns external rewrite from $uri to $path", async ({ path, uri }) => {
-      const e = event(uri);
-      const route = await handleApi(e, manifest, routesManifest, getPage);
+      const event = mockEvent(uri);
+      const route = await handleApi(event, manifest, routesManifest, getPage);
 
       expect(route).toBeTruthy();
       if (route) {

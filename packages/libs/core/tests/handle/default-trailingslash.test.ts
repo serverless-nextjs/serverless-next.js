@@ -1,25 +1,11 @@
 import { PrerenderManifest } from "next/dist/build";
 import {
-  Event,
   handleDefault,
   PageManifest,
   prepareBuildManifests,
   RoutesManifest
 } from "../../src";
-
-const event = (url: string, headers?: { [key: string]: string }): Event => {
-  return {
-    req: {
-      headers: headers ?? {},
-      url
-    } as any,
-    res: {
-      end: jest.fn(),
-      setHeader: jest.fn()
-    } as any,
-    responsePromise: new Promise(() => ({}))
-  };
-};
+import { mockEvent } from "./utils";
 
 describe("Default handler (trailing slash)", () => {
   let pagesManifest: { [key: string]: string };
@@ -136,7 +122,7 @@ describe("Default handler (trailing slash)", () => {
       ${"/favicon.ico"}
     `("Routes $uri to public file", async ({ uri }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -160,7 +146,7 @@ describe("Default handler (trailing slash)", () => {
       ${"/rewrite-ssg/"} | ${"pages/ssg.html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -179,7 +165,7 @@ describe("Default handler (trailing slash)", () => {
       ${"/_next/data/test-build-id/ssg.json"} | ${"/_next/data/test-build-id/ssg.json"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -201,7 +187,7 @@ describe("Default handler (trailing slash)", () => {
       ${"/rewrite-query/test/"}               | ${"pages/ssr.js"}
     `("Routes SSR request $uri to page $page", async ({ uri, page }) => {
       const route = await handleDefault(
-        event(uri),
+        mockEvent(uri),
         manifest,
         prerenderManifest,
         routesManifest,
@@ -231,9 +217,9 @@ describe("Default handler (trailing slash)", () => {
     `(
       "Redirects $uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri);
+        const event = mockEvent(uri);
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -241,9 +227,12 @@ describe("Default handler (trailing slash)", () => {
         );
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
 
@@ -255,9 +244,9 @@ describe("Default handler (trailing slash)", () => {
     `(
       "Redirects www.example.com$uri to $destination with code $code",
       async ({ code, destination, uri }) => {
-        const e = event(uri, { Host: "www.example.com" });
+        const event = mockEvent(uri, { Host: "www.example.com" });
         const route = await handleDefault(
-          e,
+          event,
           manifest,
           prerenderManifest,
           routesManifest,
@@ -265,9 +254,12 @@ describe("Default handler (trailing slash)", () => {
         );
 
         expect(route).toBeFalsy();
-        expect(e.res.statusCode).toEqual(code);
-        expect(e.res.setHeader).toHaveBeenCalledWith("Location", destination);
-        expect(e.res.end).toHaveBeenCalled();
+        expect(event.res.statusCode).toEqual(code);
+        expect(event.res.setHeader).toHaveBeenCalledWith(
+          "Location",
+          destination
+        );
+        expect(event.res.end).toHaveBeenCalled();
       }
     );
   });
@@ -277,9 +269,9 @@ describe("Default handler (trailing slash)", () => {
       uri                     | path
       ${"/rewrite-external/"} | ${"https://ext.example.com"}
     `("Returns external rewrite from $uri to $path", async ({ path, uri }) => {
-      const e = event(uri);
+      const event = mockEvent(uri);
       const route = await handleDefault(
-        e,
+        event,
         manifest,
         prerenderManifest,
         routesManifest,
