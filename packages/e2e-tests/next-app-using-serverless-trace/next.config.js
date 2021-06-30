@@ -46,17 +46,17 @@ module.exports = {
       },
       {
         source: "/external-redirect-1",
-        destination: "https://api.github.com",
+        destination: "https://jsonplaceholder.typicode.com",
         permanent: true
       },
       {
         source: "/external-redirect-2/:id",
-        destination: "https://api.github.com/:id",
+        destination: "https://jsonplaceholder.typicode.com/:id",
         permanent: true
       },
       {
         source: "/external-redirect-3/:id",
-        destination: "https://api.github.com/:id/",
+        destination: "https://jsonplaceholder.typicode.com/:id/",
         permanent: true
       },
       {
