@@ -29,10 +29,8 @@ jobs:
       - run: yarn --frozen-lockfile
 
       - name: Calculate and post handler sizes
-        # TODO: handle commenting for fork/dependabot PRs somehow, either through a locked-down web API, periodic workflow, or pull_request_target event.
-        if: (matrix.node-version == '14.x' && startsWith(github.head_ref, 'dependabot/') == false && github.event_name == 'pull_request' && github.event.pull_request.head.repo.full_name == github.repository)
+        if: (matrix.node-version == '14.x' && startsWith(github.head_ref, 'dependabot/') == false && github.event_name == 'pull_request')
         env:
-          GITHUB_TOKEN: ${{ secrets.BOT_GITHUB_TOKEN }}
           GITHUB_NEW_SHA: ${{ github.event.pull_request.head.sha }}
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PULL_REQUEST_ID: ${{ github.event.number }}
