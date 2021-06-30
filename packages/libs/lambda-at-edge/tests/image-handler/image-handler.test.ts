@@ -100,6 +100,91 @@ describe("Image lambda handler", () => {
       });
     });
 
+    it.each`
+      imagePath
+      ${"/test-image-cached.png"}
+    `("serves cached image on second request", async ({ imagePath }) => {
+      const event = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ]
+        }
+      });
+
+      const response1 = (await handler(event)) as CloudFrontResponseResult;
+      const response2 = (await handler(event)) as CloudFrontResponseResult;
+
+      expect(response1).toEqual(response2);
+
+      expect(MockGetObjectCommand).toBeCalledTimes(1);
+    });
+
+    it.each`
+      imagePath
+      ${"/test-image-etag.png"}
+    `("serves 304 when etag matches", async ({ imagePath }) => {
+      const event1 = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ]
+        }
+      });
+
+      const response1 = (await handler(event1)) as CloudFrontResponseResult;
+
+      const event2 = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ],
+          "if-none-match": [
+            {
+              key: "if-none-match",
+              value: response1.headers.etag[0].value
+            }
+          ]
+        }
+      });
+
+      const response2 = (await handler(event2)) as CloudFrontResponseResult;
+
+      expect(response2).toEqual({
+        headers: {
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=60"
+            }
+          ],
+          etag: [
+            {
+              key: "ETag",
+              value: response1.headers.etag[0].value
+            }
+          ]
+        },
+        status: 304,
+        statusDescription: "Not Modified"
+      });
+    });
+
     it("serves external image request", async () => {
       const imageBuffer: Buffer = await sharp({
         create: {

@@ -8,5 +8,5 @@ export default {
     file: "./dist/api/post-comment.js",
     format: "cjs"
   },
-  plugins: [commonjs(), nodeResolve(), typescript()]
+  plugins: [commonjs(), nodeResolve({ preferBuiltins: true }), typescript()]
 };
