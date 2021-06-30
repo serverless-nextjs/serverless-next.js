@@ -100,6 +100,31 @@ describe("Image lambda handler", () => {
       });
     });
 
+    it.each`
+      imagePath
+      ${"/test-image-cached.png"}
+    `("serves cached image on second request", async ({ imagePath }) => {
+      const event = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ]
+        }
+      });
+
+      const response1 = (await handler(event)) as CloudFrontResponseResult;
+      const response2 = (await handler(event)) as CloudFrontResponseResult;
+
+      expect(response1).toEqual(response2);
+
+      expect(MockGetObjectCommand).toBeCalledTimes(1);
+    });
+
     it("serves external image request", async () => {
       const imageBuffer: Buffer = await sharp({
         create: {
