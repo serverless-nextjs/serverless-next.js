@@ -100,51 +100,47 @@ describe("Rewrites Tests", () => {
     [
       {
         path: "/external-rewrite",
-        expectedRewrite: "https://api.github.com",
+        expectedRewrite: "https://jsonplaceholder.typicode.com",
         method: "GET",
         expectedStatus: 200
       },
       {
         path: "/api/external-rewrite",
-        expectedRewrite: "https://api.github.com",
+        expectedRewrite: "https://jsonplaceholder.typicode.com",
         method: "GET",
         expectedStatus: 200
       },
       {
         path: "/api/external-rewrite",
-        expectedRewrite: "https://api.github.com",
+        expectedRewrite: "https://jsonplaceholder.typicode.com",
         method: "POST",
         body: '{ "hello": "world" }', // Check that body can passed to external rewrite
         expectedStatus: 404
       },
       {
         path: "/external-rewrite-issues?page=1",
-        expectedRewrite:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/todos?page=1",
         method: "GET",
         body: undefined,
         expectedStatus: 200
       },
       {
         path: "/external-rewrite-issues-with-query?page=1",
-        expectedRewrite:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/todos?page=1",
         method: "GET",
         body: undefined,
         expectedStatus: 200
       },
       {
         path: "/api/external-rewrite-issues?page=1",
-        expectedRewrite:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/todos?page=1",
         method: "GET",
         body: undefined,
         expectedStatus: 200
       },
       {
         path: "/api/external-rewrite-issues-with-query?page=1",
-        expectedRewrite:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?page=1",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/todos?page=1",
         method: "GET",
         body: undefined,
         expectedStatus: 200

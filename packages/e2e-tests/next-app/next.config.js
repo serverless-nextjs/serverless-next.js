@@ -49,17 +49,17 @@ module.exports = {
       },
       {
         source: "/external-redirect-1",
-        destination: "https://api.github.com",
+        destination: "https://jsonplaceholder.typicode.com",
         permanent: true
       },
       {
         source: "/external-redirect-2/:id",
-        destination: "https://api.github.com/:id",
+        destination: "https://jsonplaceholder.typicode.com/:id",
         permanent: true
       },
       {
         source: "/external-redirect-3/:id",
-        destination: "https://api.github.com/:id/",
+        destination: "https://jsonplaceholder.typicode.com/:id/",
         permanent: true
       },
       {
@@ -121,31 +121,27 @@ module.exports = {
       },
       {
         source: "/external-rewrite",
-        destination: "https://api.github.com"
+        destination: "https://jsonplaceholder.typicode.com"
       },
       {
         source: "/external-rewrite-issues",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+        destination: "https://jsonplaceholder.typicode.com/todos"
       },
       {
         source: "/external-rewrite-issues-with-query",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+        destination: "https://jsonplaceholder.typicode.com/todos?a=b"
       },
       {
         source: "/api/external-rewrite",
-        destination: "https://api.github.com"
+        destination: "https://jsonplaceholder.typicode.com"
       },
       {
         source: "/api/external-rewrite-issues",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+        destination: "https://jsonplaceholder.typicode.com/todos"
       },
       {
         source: "/api/external-rewrite-issues-with-query",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+        destination: "https://jsonplaceholder.typicode.com/todos?a=b"
       },
       {
         source: "/no-op-rewrite",
