@@ -146,6 +146,14 @@ module.exports = {
         source: "/api/external-rewrite-issues-with-query",
         destination:
           "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+      },
+      {
+        source: "/no-op-rewrite",
+        destination: "/no-op-rewrite"
+      },
+      {
+        source: "/no-op-rewrite",
+        destination: "/ssr-page"
       }
     ];
   },

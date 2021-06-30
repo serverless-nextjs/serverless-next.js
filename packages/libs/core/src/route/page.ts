@@ -64,7 +64,7 @@ export const handlePageReq = (
     };
   }
 
-  const rewrite = !isRewrite && getRewritePath(uri, routesManifest);
+  const rewrite = !isRewrite && getRewritePath(uri, routesManifest, manifest);
   if (rewrite) {
     const [path, querystring] = rewrite.split("?");
     if (isExternalRewrite(path)) {

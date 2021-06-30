@@ -1,15 +1,18 @@
 import { addDefaultLocaleToPath } from "./locale";
 import { compileDestination, matchPath } from "../match";
-import { RewriteData, RoutesManifest } from "../types";
+import { PageManifest, RewriteData, RoutesManifest } from "../types";
+import { handlePageReq } from "../route/page";
 
 /**
  * Get the rewrite of the given path, if it exists.
- * @param path
+ * @param uri
+ * @param pageManifest
  * @param routesManifest
  */
 export function getRewritePath(
   uri: string,
-  routesManifest: RoutesManifest
+  routesManifest: RoutesManifest,
+  pageManifest?: PageManifest
 ): string | undefined {
   const path = addDefaultLocaleToPath(uri, routesManifest);
 
@@ -25,6 +28,21 @@ export function getRewritePath(
     const destination = compileDestination(rewrite.destination, params);
     if (!destination) {
       return;
+    }
+
+    // No-op rewrite support for pages: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
+    if (pageManifest && path === destination) {
+      const url = handlePageReq(
+        destination,
+        pageManifest,
+        routesManifest,
+        false,
+        true
+      );
+
+      if (url.statusCode === 404) {
+        continue;
+      }
     }
 
     // Pass unused params to destination
