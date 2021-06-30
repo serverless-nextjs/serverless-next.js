@@ -234,7 +234,7 @@ describe("Default handler", () => {
       ${"/ssr"}                               | ${"pages/ssr.js"}
       ${"/_next/data/test-build-id/ssr.json"} | ${"pages/ssr.js"}
       ${"/rewrite-ssr"}                       | ${"pages/ssr.js"}
-      ${"/rewrite-query/test"}                | ${"pages/ssr.js"}
+      ${"/rewrite-query/test?key=value"}      | ${"pages/ssr.js"}
     `("Routes SSR request $uri to page $page", async ({ uri, page }) => {
       const route = await handleDefault(
         mockEvent(uri),
