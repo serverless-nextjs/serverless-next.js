@@ -1,5 +1,6 @@
 # Serverless Next.js Component
 
+
 ![logo](./img/logo.gif)
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
