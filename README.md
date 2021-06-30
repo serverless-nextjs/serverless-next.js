@@ -773,9 +773,11 @@ Ensure you forward `Accept-Language` header via CloudFront configuration, othere
 
 ## Reporting Issues
 
-You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If you are reporting a security vulnerability, please follow the [security policy](https://github.com/serverless-nextjs/serverless-next.js/security/policy) instead.
+You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If posting a problem, please follow the [debugging wiki](https://github.com/serverless-nextjs/serverless-next.js/wiki/Debugging-Issues) first for some useful tips.
 
-Please note that there is only one active maintainer right now and a handful of community contributors, so we hope you understand if we do not respond in a timely manner. Hopefully with the project being open source, it is a bit easier to debug and resolve any issues.
+If you are reporting a security vulnerability, please follow the [security policy](https://github.com/serverless-nextjs/serverless-next.js/security/policy) instead.
+
+Please note that there is only one active maintainer right now and a handful of community contributors, so we hope you understand if we do not respond in a timely manner - we shall rely on the community to hopefully help each other.
 
 ## Contributing
 
