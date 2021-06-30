@@ -3075,10 +3075,10 @@
     ramda "^0.26.1"
     semver "^6.1.1"
 
-"@serverless/dashboard-plugin@^5.4.2":
-  version "5.4.2"
-  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.4.2.tgz#afad1ce3a38d6563cb3d57d8122f9a9906178ebf"
-  integrity sha512-yFugs3TBPjZh6Gt/8lPca8H7n2/ICin17r/zmhiOhIscYMgIJT1EOY9EyCFWIQi9AMAmZD0a3ZR8U8gSYYTT9A==
+"@serverless/dashboard-plugin@^5.4.3":
+  version "5.4.3"
+  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.4.3.tgz#83a166ee1591da665f7ff67a7aa0bbb2d9be6858"
+  integrity sha512-lgQh7NG5B0T+jr5/CWLZUvW2EqQ5Phzf+XTybM/I+Obwc5jxtpOmPgItDs52kBgyNLDJAqzUN+YRpfE/HBGsoQ==
   dependencies:
     "@serverless/event-mocks" "^1.1.1"
     "@serverless/platform-client" "^4.2.3"
@@ -3260,16 +3260,34 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.7"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    jsonwebtoken "^8.5.1"
+    path-to-regexp "^6.1.0"
+    regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.8"
+  dependencies:
+    "@aws-sdk/client-s3" "3.19.0"
+    "@aws-sdk/client-sqs" "3.19.0"
+    "@hapi/accept" "5.0.1"
+    "@sls-next/core" "link:packages/libs/core"
+    "@vercel/nft" "^0.13.1"
+    execa "^5.0.1"
+    fresh "^0.5.2"
+    fs-extra "^9.1.0"
+    get-stream "^6.0.0"
+    is-animated "^2.0.1"
+    klaw "^3.0.0"
+    node-fetch "^2.6.1"
+    path-to-regexp "^6.1.0"
+    send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "0.0.0"
-  uid ""
+  version "3.1.0"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -4261,7 +4279,7 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.934.0, aws-sdk@^2.935.0:
+aws-sdk@^2.935.0, aws-sdk@^2.936.0:
   version "2.936.0"
   resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.936.0.tgz#b69f5db7c0c745f260b014415a8fbfb38c5e615d"
   integrity sha512-X0kuyycck0fEPN5V0Vw1PmPIQ4BO0qupsL1El5jnXzXxNkf1cOmn5PMSxPXPsdcqua4w4h3sf143/yME0V9w8g==
@@ -4975,6 +4993,18 @@ cli-boxes@^2.2.1:
   resolved "https://registry.npmjs.org/cli-boxes/-/cli-boxes-2.2.1.tgz#ddd5035d25094fce220e9cab40a45840a440318f"
   integrity sha512-y4coMcylgSCdVinjiDBuR8PCC2bLjyGTwEmPb9NHR/QaNU6EUOXcTY/s6VjGMD6ENSEaeQYHCY0GNGS5jfMwPw==
 
+cli-color@^1.4:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/cli-color/-/cli-color-1.4.0.tgz#7d10738f48526824f8fe7da51857cb0f572fe01f"
+  integrity sha512-xu6RvQqqrWEo6MPR1eixqGPywhYBHRs653F9jfXB2Hx4jdM/3WxiNE1vppRmxtMIfl16SFYTpYlrnqH/HsK/2w==
+  dependencies:
+    ansi-regex "^2.1.1"
+    d "1"
+    es5-ext "^0.10.46"
+    es6-iterator "^2.0.3"
+    memoizee "^0.4.14"
+    timers-ext "^0.1.5"
+
 cli-color@^2.0.0:
   version "2.0.0"
   resolved "https://registry.npmjs.org/cli-color/-/cli-color-2.0.0.tgz#11ecfb58a79278cf6035a60c54e338f9d837897c"
@@ -5000,6 +5030,17 @@ cli-cursor@^3.1.0:
   integrity sha512-I/zHAwsKf9FqGoXM4WWRACob9+SNukZTd94DWF57E4toouRulbCxcUh6RKUEOQlYTHJnzkPMySvPNaaSLNfLZw==
   dependencies:
     restore-cursor "^3.1.0"
+
+cli-progress-footer@^1.1.1:
+  version "1.1.1"
+  resolved "https://registry.npmjs.org/cli-progress-footer/-/cli-progress-footer-1.1.1.tgz#8aa2292f5cca4f6639e3e0107ef04d897d620563"
+  integrity sha512-J0uW2u06pWI0tMKCbcCiMOZd8TbWj4EpuYgPo4Jiwih/FfGbd4dbLcJieO0Ior1pY1HBrnmCuHFk6GB9azE4pg==
+  dependencies:
+    cli-color "^1.4"
+    d "1"
+    es5-ext "^0.10.47"
+    process-utils "^2.0.1"
+    timers-ext "^0.1.7"
 
 cli-truncate@^2.1.0:
   version "2.1.0"
@@ -6501,7 +6542,7 @@ ext-name@^5.0.0:
     ext-list "^2.0.0"
     sort-keys-length "^1.0.0"
 
-ext@^1.1.2:
+ext@^1.1.0, ext@^1.1.2, ext@^1.4.0:
   version "1.4.0"
   resolved "https://registry.npmjs.org/ext/-/ext-1.4.0.tgz#89ae7a07158f79d35517882904324077e4379244"
   integrity sha512-Key5NIsUxdqKg3vIsdw9dSuXpPCQ297y6wBjL30edxwPgt2E44WcWBZey/ZvUc6sERLTxKdyCu4gZFmUbk1Q7A==
@@ -10488,6 +10529,24 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.npmjs.org/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
+process-utils@^2.0.1:
+  version "2.6.0"
+  resolved "https://registry.npmjs.org/process-utils/-/process-utils-2.6.0.tgz#0f0d3b2633ec1f4656def20d36425f92ec60cf23"
+  integrity sha512-2zKFADQDvHiUDyJQTsBTdu1+Q2D/WtReBotZwXmD9oUueb0kNv4rXulK/78hMM+nclBNFZ/ZlHOJtobt8oHpqQ==
+  dependencies:
+    ext "^1.1.0"
+    type "^2.0.0"
+
+process-utils@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.npmjs.org/process-utils/-/process-utils-4.0.0.tgz#3e5b204e1d38e62fe39ef3144664a1fe94097b9e"
+  integrity sha512-fMyMQbKCxX51YxR7YGCzPjLsU3yDzXFkP4oi1/Mt5Ixnk7GO/7uUTj8mrCHUwuvozWzI+V7QSJR9cZYnwNOZPg==
+  dependencies:
+    ext "^1.4.0"
+    fs2 "^0.3.9"
+    memoizee "^0.4.14"
+    type "^2.1.0"
+
 process@0.11.10, process@^0.11.10:
   version "0.11.10"
   resolved "https://registry.npmjs.org/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
@@ -11331,24 +11390,25 @@ serialize-javascript@^5.0.1:
     randombytes "^2.1.0"
 
 serverless@^2.44.0:
-  version "2.48.1"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.48.1.tgz#c7f6e8358103b1cd2a7bf6c1f12b544fb500d2e5"
-  integrity sha512-G61WEeJwDWsmsXW3jBzYnnNOJzw3ysqL5/3b0UHy1Zi8RhpkzzI9J7poteJHVmDchw9Ru5tczIKYq2dCfufxsA==
+  version "2.49.0"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.49.0.tgz#97723559e888223e254d573c8d48923c00e8b8a8"
+  integrity sha512-nJ9YZ23YcYqrqCni5UuqZWhERB0Qo7tXASAGXrk3B55UHU75b3wz1QQzKd0sgIqbcfwsUsEuNt3+AJlfCzdTpA==
   dependencies:
     "@serverless/cli" "^1.5.2"
     "@serverless/components" "^3.12.0"
-    "@serverless/dashboard-plugin" "^5.4.2"
+    "@serverless/dashboard-plugin" "^5.4.3"
     "@serverless/utils" "^5.3.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.934.0"
+    aws-sdk "^2.936.0"
     bluebird "^3.7.2"
     boxen "^5.0.1"
     cachedir "^2.3.0"
     chalk "^4.1.1"
     child-process-ext "^2.1.1"
     ci-info "^3.2.0"
+    cli-progress-footer "^1.1.1"
     d "^1.0.1"
     dayjs "^1.10.5"
     decompress "^4.2.1"
@@ -11374,6 +11434,7 @@ serverless@^2.44.0:
     node-fetch "^2.6.1"
     object-hash "^2.2.0"
     path2 "^0.1.0"
+    process-utils "^4.0.0"
     promise-queue "^2.2.5"
     replaceall "^0.1.6"
     semver "^7.3.5"
@@ -12306,7 +12367,7 @@ timers-browserify@2.0.12, timers-browserify@^2.0.4:
   dependencies:
     setimmediate "^1.0.4"
 
-timers-ext@^0.1.7:
+timers-ext@^0.1.5, timers-ext@^0.1.7:
   version "0.1.7"
   resolved "https://registry.npmjs.org/timers-ext/-/timers-ext-0.1.7.tgz#6f57ad8578e07a3fb9f91d9387d65647555e25c6"
   integrity sha512-b85NUNzTSdodShTIbky6ZF02e8STtVVfD+fu4aXXShEELpozH+bCpJLYMPZbsABN2wDH7fJpqIoXxJpzbf0NqQ==
