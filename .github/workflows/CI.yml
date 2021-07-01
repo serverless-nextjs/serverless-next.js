@@ -28,13 +28,14 @@ jobs:
 
       - run: yarn --frozen-lockfile
 
-      - name: Calculate and post handler sizes
-        if: (matrix.node-version == '14.x' && startsWith(github.head_ref, 'dependabot/') == false && github.event_name == 'pull_request')
+      - name: Upload handler sizes to S3
+        if: ${{ github.ref == 'refs/heads/master' && matrix.node-version == '14.x' }}
         env:
-          GITHUB_NEW_SHA: ${{ github.event.pull_request.head.sha }}
-          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
-          PULL_REQUEST_ID: ${{ github.event.number }}
-        run: yarn handlers:comment-handler-sizes
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
+          AWS_DEFAULT_REGION: us-east-1
+          GITHUB_SHA: ${{ github.sha }}
+        run: yarn handlers:upload-handler-sizes
 
       - run: yarn test
 
@@ -54,6 +55,14 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
           GITHUB_SHA: ${{ github.sha }}
         run: yarn handlers:upload-handler-sizes
+
+      - name: Calculate and post handler sizes
+        if: (matrix.node-version == '14.x' && github.event_name == 'pull_request')
+        env:
+          GITHUB_NEW_SHA: ${{ github.event.pull_request.head.sha }}
+          GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          PULL_REQUEST_ID: ${{ github.event.number }}
+        run: yarn handlers:comment-handler-sizes
 
   start-e2e-tests:
     # Note: we only run e2e tests automatically if this PR is not from a fork or dependabot, as forks won't have access to secrets
