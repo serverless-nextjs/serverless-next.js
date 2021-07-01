@@ -33,33 +33,33 @@ headers: async () => [
 const redirects = `
 redirects: async () => [
   {
-    source: "/old-blog/:slug%slash%",
-    destination: "/news/:slug%slash%",
+    source: "/old-blog/:slug",
+    destination: "/news/:slug",
     permanent: true
   },
   {
-    source: "/terms-new%slash%",
-    destination: "/terms%slash%",
+    source: "/terms-new",
+    destination: "/terms",
     permanent: true
   },
   {
-    source: "/old-users/:id(\\\\d{1,})%slash%",
-    destination: "/users/:id%slash%",
+    source: "/old-users/:id(\\\\d{1,})",
+    destination: "/users/:id",
     permanent: false
   },
   {
-    source: "/terms-redirect-dest-query%slash%",
-    destination: "/terms%slash%?foo=bar",
+    source: "/terms-redirect-dest-query",
+    destination: "/terms?foo=bar",
     permanent: true,
   },
   {
-    source: "/external%slash%",
+    source: "/external",
     destination: "https://example.com",
     permanent: true
   },
   {
-    source: "/api/deprecated/getCustomers%slash%",
-    destination: "/api/getCustomers%slash%",
+    source: "/api/deprecated/getCustomers",
+    destination: "/api/getCustomers",
     permanent: true
   }
 ]
@@ -68,51 +68,51 @@ redirects: async () => [
 const rewrites = `
 rewrites: async () => [
   {
-    source: "/terms-rewrite%slash%",
-    destination: "/terms%slash%"
+    source: "/terms-rewrite",
+    destination: "/terms"
   },
   {
-    source: "/index-rewrite%slash%",
+    source: "/index-rewrite",
     destination: "/"
   },
   {
-    source: "/path-rewrite/:slug%slash%",
-    destination: "/terms%slash%"
+    source: "/path-rewrite/:slug",
+    destination: "/terms"
   },
   {
-    source: "/terms%slash%",
+    source: "/terms",
     destination: "/"
   },
   {
-    source: "/promise-page%slash%",
-    destination: "/async-page%slash%"
+    source: "/promise-page",
+    destination: "/async-page"
   },
   {
-    source: "/terms-rewrite-dest-query%slash%",
-    destination: "/terms%slash%?foo=bar"
+    source: "/terms-rewrite-dest-query",
+    destination: "/terms?foo=bar"
   },
   {
-    source: "/external-rewrite%slash%",
+    source: "/external-rewrite",
     destination: "https://external.com"
   },
   {
-    source: "/api/rewrite-getCustomers%slash%",
-    destination: "/api/getCustomers%slash%"
+    source: "/api/rewrite-getCustomers",
+    destination: "/api/getCustomers"
   },
   {
-    source: "/api/getCustomers%slash%",
-    destination: "/api/another%slash%"
+    source: "/api/getCustomers",
+    destination: "/api/another"
   },
   {
-    source: "/api/notfound%slash%",
-    destination: "/api/missing%slash%"
+    source: "/api/notfound",
+    destination: "/api/missing"
   },
   {
-    source: "/api/user/:id%slash%",
-    destination: "/api/getUser%slash%"
+    source: "/api/user/:id",
+    destination: "/api/getUser"
   },
   {
-    source: "/api/external-rewrite%slash%",
+    source: "/api/external-rewrite",
     destination: "https://external.com"
   },
 ]
@@ -125,8 +125,8 @@ module.exports = {
   generateBuildId: async () => "build-id",
   trailingSlash: false,
   ${headers},
-  ${redirects.replace(/%slash%/g, "")},
-  ${rewrites.replace(/%slash%/g, "")}
+  ${redirects},
+  ${rewrites}
 }
 `,
     default: "./tests/default-handler/default-build-manifest.json",
@@ -137,130 +137,15 @@ module.exports = {
     config: `
 module.exports = {
   generateBuildId: async () => "build-id",
-  trailingSlash: true,
-  ${headers},
-  ${redirects.replace(/%slash%/g, "/")},
-  ${rewrites.replace(/%slash%/g, "/")}
-}
-`,
-    default:
-      "./tests/default-handler/default-build-manifest-with-trailing-slash.json",
-    routes:
-      "./tests/default-handler/default-routes-manifest-with-trailing-slash.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: false,
-  i18n: {
-    defaultLocale: "en",
-    locales: ["en", "nl", "fr"]
-  },
-  ${headers},
-  ${redirects.replace(/%slash%/g, "")},
-  ${rewrites.replace(/%slash%/g, "")}
-}
-`,
-    default: "./tests/default-handler/default-build-manifest-with-locales.json",
-    routes: "./tests/default-handler/default-routes-manifest-with-locales.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: true,
-  i18n: {
-    defaultLocale: "en",
-    locales: ["en", "nl", "fr"]
-  },
-  ${headers},
-  ${redirects.replace(/%slash%/g, "/")},
-  ${rewrites.replace(/%slash%/g, "/")}
-}
-`,
-    default:
-      "./tests/default-handler/default-build-manifest-with-locales-with-trailing-slash.json",
-    routes:
-      "./tests/default-handler/default-routes-manifest-with-locales-with-trailing-slash.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
   trailingSlash: false,
   basePath: "/basepath",
   ${headers},
-  ${redirects.replace(/%slash%/g, "")},
-  ${rewrites.replace(/%slash%/g, "")}
+  ${redirects},
+  ${rewrites}
 }
 `,
     default: null,
     routes: "./tests/default-handler/default-basepath-routes-manifest.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: true,
-  basePath: "/basepath",
-  ${headers},
-  ${redirects.replace(/%slash%/g, "/")},
-  ${rewrites.replace(/%slash%/g, "/")}
-}
-`,
-    default: null,
-    routes:
-      "./tests/default-handler/default-basepath-routes-manifest-with-trailing-slash.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: false,
-  basePath: "/basepath",
-  i18n: {
-    defaultLocale: "en",
-    locales: ["en", "nl", "fr"]
-  },
-  ${headers},
-  ${redirects.replace(/%slash%/g, "")},
-  ${rewrites.replace(/%slash%/g, "")}
-}
-`,
-    default: null,
-    routes:
-      "./tests/default-handler/default-basepath-routes-manifest-with-locales.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id",
-  trailingSlash: true,
-  basePath: "/basepath",
-  i18n: {
-    defaultLocale: "en",
-    locales: ["en", "nl", "fr"]
-  },
-  ${headers},
-  ${redirects.replace(/%slash%/g, "/")},
-  ${rewrites.replace(/%slash%/g, "/")}
-}
-`,
-    default: null,
-    routes:
-      "./tests/default-handler/default-basepath-routes-manifest-with-locales-with-trailing-slash.json"
-  },
-  {
-    config: `
-module.exports = {
-  generateBuildId: async () => "build-id2"
-}
-`,
-    auth: true,
-    default:
-      "./tests/default-handler/default-build-manifest-with-basic-auth.json",
-    routes: null
   }
 ];
 
