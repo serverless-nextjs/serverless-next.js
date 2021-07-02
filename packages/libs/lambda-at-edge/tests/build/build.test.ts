@@ -101,48 +101,66 @@ describe("Builder Tests", () => {
         const {
           buildId,
           publicFiles,
-          pages: {
-            ssr: { dynamic, nonDynamic },
-            html
-          },
+          pages: { dynamic, ssr, html },
           trailingSlash,
           domainRedirects
         } = defaultBuildManifest;
 
         expect(removeNewLineChars(buildId)).toEqual("test-build-id");
-        expect(dynamic).toEqual({
-          "/:root": {
-            file: "pages/[root].js",
-            regex: expect.any(String)
-          },
-          "/customers/:customer": {
-            file: "pages/customers/[customer].js",
-            regex: expect.any(String)
-          },
-          "/customers/:customer/:post": {
-            file: "pages/customers/[customer]/[post].js",
-            regex: expect.any(String)
-          },
-          "/customers/:customer/profile": {
-            file: "pages/customers/[customer]/profile.js",
-            regex: expect.any(String)
-          },
-          "/customers/:catchAll*": {
-            file: "pages/customers/[...catchAll].js",
-            regex: expect.any(String)
-          },
-          "/products/:optionalCatchAll*": {
-            file: "pages/products/[[...optionalCatchAll]].js",
-            regex: expect.any(String)
-          }
-        });
 
-        expect(nonDynamic).toEqual({
-          "/customers/new": "pages/customers/new.js",
-          "/": "pages/index.js",
-          "/_app": "pages/_app.js",
-          "/_document": "pages/_document.js",
-          "/products": "pages/products/[[...optionalCatchAll]].js"
+        expect(dynamic).toEqual([
+          {
+            regex: "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+            route: "/blog/[post]"
+          },
+          {
+            regex: "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+            route: "/customers/[customer]"
+          },
+          {
+            regex: "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$",
+            route: "/customers/[customer]/profile"
+          },
+          {
+            regex:
+              "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+            route: "/customers/[customer]/[post]"
+          },
+          {
+            regex:
+              "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
+            route: "/customers/[...catchAll]"
+          },
+          {
+            regex:
+              "^\\/products(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
+            route: "/products/[[...optionalCatchAll]]"
+          },
+          {
+            regex: "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+            route: "/[root]"
+          }
+        ]);
+
+        expect(ssr).toEqual({
+          dynamic: {
+            "/[root]": "pages/[root].js",
+            "/customers/[customer]": "pages/customers/[customer].js",
+            "/customers/[customer]/[post]":
+              "pages/customers/[customer]/[post].js",
+            "/customers/[customer]/profile":
+              "pages/customers/[customer]/profile.js",
+            "/customers/[...catchAll]": "pages/customers/[...catchAll].js",
+            "/products/[[...optionalCatchAll]]":
+              "pages/products/[[...optionalCatchAll]].js"
+          },
+          nonDynamic: {
+            "/customers/new": "pages/customers/new.js",
+            "/": "pages/index.js",
+            "/_app": "pages/_app.js",
+            "/_document": "pages/_document.js",
+            "/products": "pages/products/[[...optionalCatchAll]].js"
+          }
         });
 
         expect(html).toEqual({
@@ -152,10 +170,7 @@ describe("Builder Tests", () => {
             "/about": "pages/about.html"
           },
           dynamic: {
-            "/blog/:post": {
-              file: "pages/blog/[post].html",
-              regex: expect.any(String)
-            }
+            "/blog/[post]": "pages/blog/[post].html"
           }
         });
 
@@ -185,12 +200,12 @@ describe("Builder Tests", () => {
           "/api/customers": "pages/api/customers.js",
           "/api/customers/new": "pages/api/customers/new.js"
         });
-        expect(dynamic).toEqual({
-          "/api/customers/:id": {
+        expect(dynamic).toEqual([
+          {
             file: "pages/api/customers/[id].js",
             regex: expect.any(String)
           }
-        });
+        ]);
       });
     });
 
@@ -214,13 +229,15 @@ describe("Builder Tests", () => {
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
         );
 
-        expect(files).toEqual([
-          "index.js",
-          "manifest.json",
-          "pages",
-          "prerender-manifest.json",
-          "routes-manifest.json"
-        ]);
+        expect(files).toEqual(
+          expect.arrayContaining([
+            "index.js", // there are more chunks but it should at least contain the entry point
+            "manifest.json",
+            "pages",
+            "prerender-manifest.json",
+            "routes-manifest.json"
+          ])
+        );
 
         // api pages should not be included in the default lambda
         expect(apiDirExists).toEqual(false);
@@ -257,7 +274,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(defaultHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+        expect(countLines(defaultHandler.toString())).toBeGreaterThan(10); // Arbitrary choice
       });
     });
 
@@ -272,12 +289,14 @@ describe("Builder Tests", () => {
           join(outputDir, `${API_LAMBDA_CODE_DIR}/pages`)
         );
 
-        expect(files).toEqual([
-          "index.js",
-          "manifest.json",
-          "pages",
-          "routes-manifest.json"
-        ]);
+        expect(files).toEqual(
+          expect.arrayContaining([
+            "index.js",
+            "manifest.json",
+            "pages",
+            "routes-manifest.json"
+          ])
+        );
         expect(pages).toEqual(["api"]);
       });
 
@@ -286,7 +305,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${API_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(apiHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+        expect(countLines(apiHandler.toString())).toBeGreaterThan(10); // Arbitrary choice
       });
     });
 
@@ -311,13 +330,15 @@ describe("Builder Tests", () => {
           join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}`)
         );
 
-        expect(files).toEqual([
-          "images-manifest.json", // Next.js default images manifest
-          "index.js",
-          "manifest.json",
-          "node_modules", // Contains sharp node modules built for Lambda Node.js 12.x
-          "routes-manifest.json"
-        ]);
+        expect(files).toEqual(
+          expect.arrayContaining([
+            "images-manifest.json", // Next.js default images manifest
+            "index.js",
+            "manifest.json",
+            "node_modules", // Contains sharp node modules built for Lambda Node.js 12.x
+            "routes-manifest.json"
+          ])
+        );
       });
 
       it("image handler is not minified", async () => {
@@ -325,7 +346,7 @@ describe("Builder Tests", () => {
           join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}/index.js`)
         );
 
-        expect(countLines(imageHandler.toString())).toBeGreaterThan(100); // Arbitrary choice
+        expect(countLines(imageHandler.toString())).toBeGreaterThan(10); // Arbitrary choice
       });
     });
 
@@ -342,7 +363,7 @@ describe("Builder Tests", () => {
         expect(staticFiles).toEqual(["donotdelete.txt"]);
 
         const nextDataFiles = await fse.readdir(
-          join(outputDir, `${ASSETS_DIR}/_next/data/zsWqBqLjpgRmswfQomanp`)
+          join(outputDir, `${ASSETS_DIR}/_next/data/test-build-id`)
         );
         expect(nextDataFiles).toEqual(["contact.json", "index.json"]);
 
@@ -481,26 +502,32 @@ describe("Builder Tests", () => {
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}`)
       );
 
-      expect(defaultFiles).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "prerender-manifest.json",
-        "routes-manifest.json",
-        "testFile.js"
-      ]);
+      expect(defaultFiles).toEqual(
+        expect.arrayContaining([
+          "index.js",
+          "manifest.json",
+          "chunks",
+          "pages",
+          "prerender-manifest.json",
+          "routes-manifest.json",
+          "testFile.js"
+        ])
+      );
 
       const apiFiles = await fse.readdir(
         join(outputDir, `${API_LAMBDA_CODE_DIR}`)
       );
 
-      expect(apiFiles).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "routes-manifest.json",
-        "testFile.js"
-      ]);
+      expect(apiFiles).toEqual(
+        expect.arrayContaining([
+          "index.js",
+          "manifest.json",
+          "chunks",
+          "pages",
+          "routes-manifest.json",
+          "testFile.js"
+        ])
+      );
     });
   });
 });

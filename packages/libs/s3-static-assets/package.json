@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/s3-static-assets",
-  "version": "1.4.0-alpha.0",
+  "version": "3.2.0-alpha.14",
   "description": "Handles upload to S3 of next.js static assets",
   "publishConfig": {
     "access": "public"
@@ -16,8 +16,9 @@
     "directory": "packages/libs/s3-static-assets"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist"
   },
   "keywords": [
     "AWS",
@@ -32,15 +33,15 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "2.728.0",
-    "fs-extra": "^9.0.1",
-    "klaw": "^3.0.0",
+    "aws-sdk": "^2.938.0",
+    "fast-glob": "^3.2.5",
+    "fs-extra": "^9.1.0",
     "mime-types": "^2.1.27",
     "regex-parser": "^2.2.10"
   },
   "devDependencies": {
-    "@types/klaw": "^3.0.1",
     "@types/mime-types": "^2.1.0",
-    "typescript": "^3.9.6"
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.4"
   }
 }

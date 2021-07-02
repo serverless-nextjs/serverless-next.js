@@ -14,19 +14,20 @@
     "api gateway"
   ],
   "scripts": {
+    "prepare": "husky install",
     "test": "jest --runInBand --coverage",
     "packages-install": "lerna exec -- yarn install --frozen-lockfile",
     "packages-build": "lerna run build",
     "test:watch": "yarn test --watch --collect-coverage=false",
     "check-gh-token": ": \"${GH_TOKEN:?Please set GH_TOKEN to a GitHub personal token that can create releases.}\"",
-    "publish": "yarn check-gh-token && lerna publish --conventional-commits --exact --create-release github",
     "prerelease": "yarn check-gh-token && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
-    "graduate": "yarn check-gh-token && lerna publish --conventional-commits --conventional-graduate --exact --create-release github",
+    "graduate": "yarn check-gh-token && lerna version --conventional-commits --conventional-graduate --exact --create-release github && lerna publish from-git",
     "lint": "eslint .",
-    "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "postinstall": "yarn packages-install && opencollective-postinstall || true",
-    "docs": "cd documentation && yarn && yarn build"
+    "postinstall": "yarn packages-install && opencollective-postinstall",
+    "docs": "cd documentation && yarn && yarn build",
+    "handlers:upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts",
+    "handlers:comment-handler-sizes": "ts-node scripts/comment-handler-sizes.ts"
   },
   "repository": {
     "type": "git",
@@ -39,34 +40,38 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
+    "@babel/core": "7.14.6",
+    "@babel/plugin-proposal-class-properties": "^7.13.0",
+    "@babel/preset-env": "^7.14.4",
     "@babel/preset-typescript": "^7.10.4",
     "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.1",
-    "@types/jest": "^26.0.3",
-    "@types/react": "^16.9.41",
-    "@types/react-dom": "^16.9.8",
-    "@types/webpack": "^4.41.18",
-    "@typescript-eslint/eslint-plugin": "^3.5.0",
-    "@typescript-eslint/parser": "^3.5.0",
-    "adm-zip": "^0.4.16",
-    "coveralls": "^3.1.0",
+    "@types/jest": "^26.0.23",
+    "@types/lodash": "^4.14.170",
+    "@types/node": "^15.12.5",
+    "@types/node-fetch": "^2.5.10",
+    "@types/react": "^17.0.9",
+    "@types/react-dom": "^17.0.6",
+    "@types/webpack": "^5.28.0",
+    "@typescript-eslint/eslint-plugin": "^4.0.0",
+    "@typescript-eslint/parser": "^4.26.1",
+    "aws-sdk": "^2.935.0",
     "eslint": "^7.3.1",
-    "eslint-config-prettier": "^6.11.0",
+    "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.1.4",
-    "fs-extra": "^9.0.1",
-    "husky": "^4.2.5",
-    "jest": "^26.1.0",
-    "jest-when": "^2.7.2",
-    "lerna": "^3.22.1",
-    "lint-staged": "^10.2.11",
-    "next": "^9.4.4",
+    "eslint-plugin-promise": "5.1.0",
+    "husky": "^7.0.0",
+    "jest": "^27.0.4",
+    "lerna": "^4.0.0",
+    "lint-staged": "^11.0.0",
+    "next": "^10.2.3",
     "prettier": "^2.0.5",
-    "react": "^16.13.1",
-    "react-dom": "^16.13.1",
-    "serverless": "^1.74.1",
-    "serverless-offline": "^6.4.0",
-    "typescript": "^3.9.6"
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "serverless": "^2.44.0",
+    "ts-node": "^10.0.0",
+    "typescript": "^4.3.2"
   },
   "jest": {
     "clearMocks": true,
@@ -75,7 +80,8 @@
       "<rootDir>/packages/**/*.{js,ts}"
     ],
     "moduleNameMapper": {
-      "fs-extra": "<rootDir>/node_modules/fs-extra"
+      "fs-extra": "<rootDir>/node_modules/fs-extra",
+      "@sls-next/core": "<rootDir>/packages/libs/core/src/index.ts"
     },
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
@@ -86,7 +92,12 @@
       "/fixture/",
       "/examples/",
       "/dist/",
-      "/tests/"
+      "/e2e-tests/",
+      "/tests/",
+      "/scripts/",
+      "babel.config.js",
+      "jest.config.js",
+      "<rootDir>/packages/serverless-components/aws-s3"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",
@@ -101,7 +112,8 @@
       "/examples/",
       "/integration/",
       "/cypress/",
-      "/sharp_node_modules/"
+      "/sharp_node_modules/",
+      "aws-sdk.mock.ts"
     ],
     "setupFiles": [
       "<rootDir>/jest.setup.js"
@@ -111,22 +123,24 @@
     ]
   },
   "dependencies": {
-    "opencollective-postinstall": "^2.0.3"
+    "opencollective-postinstall": "^2.0.3",
+    "lodash": "^4.17.21",
+    "node-fetch": "^2.6.1"
   },
   "collective": {
     "type": "opencollective",
     "url": "https://opencollective.com/serverless-nextjs-plugin"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
   "lint-staged": {
-    "*.{js,jsx,ts,tsx,md,yml}": "prettier --write"
+    "*.{js,jsx,ts,tsx,md,yml}": [
+      "prettier --write"
+    ],
+    "*.{js,jsx,ts,tsx}": [
+      "eslint --fix"
+    ]
   },
   "resolutions": {
     "which": "^2.0.1",
-    "lodash": "^4.17.19"
+    "lodash": "^4.17.21"
   }
 }

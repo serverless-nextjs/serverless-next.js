@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.19.0-alpha.27",
+  "version": "3.2.0-alpha.15",
   "description": "Serverless Next.js powered by Serverless Components",
   "main": "./serverless.js",
   "types": "dist/component.d.ts",
@@ -13,8 +13,9 @@
     "directory": "packages/serverless-components/nextjs-component"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist"
   },
   "keywords": [
     "serverless",
@@ -31,20 +32,22 @@
     "node": ">=10.11.0"
   },
   "dependencies": {
-    "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
     "@sls-next/aws-cloudfront": "link:../aws-cloudfront",
     "@sls-next/aws-lambda": "link:../aws-lambda",
+    "@sls-next/aws-s3": "link:../aws-s3",
+    "@sls-next/aws-sqs": "link:../aws-sqs",
     "@sls-next/cloudfront": "link:../../libs/cloudfront",
     "@sls-next/domain": "link:../domain",
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
     "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
-    "aws-sdk": "^2.702.0",
-    "fs-extra": "^9.0.1"
+    "aws-sdk": "^2.920.0",
+    "fs-extra": "^9.1.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
-    "typescript": "^3.9.6"
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.4"
   }
 }

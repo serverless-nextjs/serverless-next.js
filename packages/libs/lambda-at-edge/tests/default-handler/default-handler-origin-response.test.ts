@@ -61,7 +61,7 @@ describe("Lambda@Edge origin response", () => {
   describe("Fallback pages", () => {
     it("serves fallback page from S3", async () => {
       const event = createCloudFrontEvent({
-        uri: "/tests/prerender-manifest-fallback/not-yet-built",
+        uri: "/fallback/not-yet-built.html",
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
@@ -75,8 +75,7 @@ describe("Lambda@Edge origin response", () => {
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
         Bucket: "my-bucket.s3.amazonaws.com",
-        Key:
-          "static-pages/build-id/tests/prerender-manifest-fallback/[fallback].html"
+        Key: "static-pages/build-id/fallback/[slug].html"
       });
 
       expect(response).toEqual({
@@ -102,7 +101,7 @@ describe("Lambda@Edge origin response", () => {
 
     it("serves 404 page from S3 for fallback: false", async () => {
       const event = createCloudFrontEvent({
-        uri: "/tests/prerender-manifest/[staticPageName]",
+        uri: "/no-fallback/not-found.html",
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
@@ -140,9 +139,9 @@ describe("Lambda@Edge origin response", () => {
       });
     });
 
-    it("renders and uploads HTML and JSON for fallback SSG data requests", async () => {
+    it("renders and uploads HTML and JSON for fallback: blocking", async () => {
       const event = createCloudFrontEvent({
-        uri: "/_next/data/build-id/fallback/not-yet-built.json",
+        uri: "/fallback-blocking/not-yet-built.html",
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
@@ -151,7 +150,8 @@ describe("Lambda@Edge origin response", () => {
         } as any
       });
 
-      mockPageRequire("pages/fallback/[slug].js");
+      mockPageRequire("pages/fallback-blocking/[slug].js");
+      const page = require(`../../src/pages/fallback-blocking/[slug].js`);
 
       const response = await handler(event);
 
@@ -162,11 +162,77 @@ describe("Lambda@Edge origin response", () => {
       ).toString("utf8");
 
       const headers = response.headers as CloudFrontHeaders;
+      expect(headers["content-type"][0].value).toEqual("text/html");
+      expect(decodedBody).toEqual("<div>Rendered Page</div>");
+      expect(cfResponse.status).toEqual(200);
+
+      expect(page.renderReqToHTML.mock.calls[0][0]).toMatchObject({
+        url: "/fallback-blocking/not-yet-built"
+      });
+
+      expect(s3Client.send).toHaveBeenNthCalledWith(1, {
+        Command: "PutObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "_next/data/build-id/fallback-blocking/not-yet-built.json",
+        Body: JSON.stringify({
+          page: "pages/fallback-blocking/[slug].js"
+        }),
+        ContentType: "application/json",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      });
+      expect(s3Client.send).toHaveBeenNthCalledWith(2, {
+        Command: "PutObjectCommand",
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: "static-pages/build-id/fallback-blocking/not-yet-built.html",
+        Body: "<div>Rendered Page</div>",
+        ContentType: "text/html",
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+      });
+    });
+
+    it("renders and uploads HTML and JSON for fallback SSG data requests", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/_next/data/build-id/fallback/not-yet-built.json",
+        host: "mydistribution.cloudfront.net",
+        config: { eventType: "origin-response" } as any,
+        response: {
+          headers: {
+            date: [
+              {
+                name: "date",
+                value: "Wed, 21 Apr 2021 03:47:27 GMT"
+              }
+            ]
+          },
+          status: "403"
+        } as any
+      });
+
+      mockPageRequire("pages/fallback/[slug].js");
+      const page = require(`../../src/pages/fallback/[slug].js`);
+
+      const response = await handler(event);
+
+      const cfResponse = response as CloudFrontResultResponse;
+      const decodedBody = Buffer.from(
+        cfResponse.body as string,
+        "base64"
+      ).toString("utf8");
+
+      const headers = response.headers as CloudFrontHeaders;
+      expect(headers["date"][0].value).toEqual("Wed, 21 Apr 2021 03:47:27 GMT");
+      expect(headers["cache-control"][0].value).toEqual(
+        "public, max-age=0, s-maxage=2678400, must-revalidate"
+      );
       expect(headers["content-type"][0].value).toEqual("application/json");
       expect(JSON.parse(decodedBody)).toEqual({
         page: "pages/fallback/[slug].js"
       });
       expect(cfResponse.status).toEqual(200);
+
+      expect(page.renderReqToHTML.mock.calls[0][0]).toMatchObject({
+        url: "/_next/data/build-id/fallback/not-yet-built.json"
+      });
 
       expect(s3Client.send).toHaveBeenNthCalledWith(1, {
         Command: "PutObjectCommand",
@@ -186,6 +252,24 @@ describe("Lambda@Edge origin response", () => {
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       });
+    });
+  });
+
+  describe("SSG page requests", () => {
+    it("index page is routed properly", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/index.html",
+        host: "mydistribution.cloudfront.net",
+        config: { eventType: "origin-response" } as any,
+        response: {
+          headers: {},
+          status: "200"
+        } as any
+      });
+
+      const response = await handler(event);
+      const cfResponse = response as CloudFrontResultResponse;
+      expect(cfResponse.status).toBe("200");
     });
   });
 

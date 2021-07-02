@@ -1,5 +1,5 @@
 // This mock makes it easier to unit test by returning params with the command name
-const MockGetObjectCommand = jest.fn((params: object) => {
+const MockGetObjectCommand = jest.fn((params: Record<string, string>) => {
   return {
     ...{
       Command: "GetObjectCommand"
@@ -8,4 +8,4 @@ const MockGetObjectCommand = jest.fn((params: object) => {
   };
 });
 
-export { MockGetObjectCommand as GetObjectCommand };
+export { MockGetObjectCommand as GetObjectCommand, MockGetObjectCommand };

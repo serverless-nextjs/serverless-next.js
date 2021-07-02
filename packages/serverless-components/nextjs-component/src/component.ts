@@ -11,15 +11,18 @@ import type {
 } from "@sls-next/lambda-at-edge";
 import {
   deleteOldStaticAssets,
-  uploadStaticAssetsFromBuild,
-  uploadStaticAssets
+  uploadStaticAssetsFromBuild
 } from "@sls-next/s3-static-assets";
-import createInvalidation from "@sls-next/cloudfront";
+import {
+  createInvalidation,
+  checkCloudFrontDistributionReady
+} from "@sls-next/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
-  IMAGE_LAMBDA_CODE_DIR
+  IMAGE_LAMBDA_CODE_DIR,
+  REGENERATION_LAMBDA_CODE_DIR
 } from "./constants";
 import type {
   BuildOptions,
@@ -28,6 +31,7 @@ import type {
   LambdaInput
 } from "../types";
 import { execSync } from "child_process";
+import AWS from "aws-sdk";
 
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -42,12 +46,29 @@ class NextjsComponent extends Component {
   async default(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    this.initialize();
+
     if (inputs.build !== false) {
       await this.build(inputs);
-      await this.postBuild(inputs);
+      this.postBuild(inputs);
     }
 
     return this.deploy(inputs);
+  }
+
+  initialize(): void {
+    // Improve stack trace by increasing number of lines shown
+    if (this.context.instance.debugMode) {
+      Error.stackTraceLimit = 100;
+    }
+
+    // Configure AWS retry policy
+    if (AWS?.config) {
+      AWS.config.update({
+        maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+        retryDelayOptions: { base: 200 }
+      });
+    }
   }
 
   readDefaultBuildManifest(
@@ -85,6 +106,7 @@ class NextjsComponent extends Component {
     stillToMatch.delete(this.pathPattern("static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/static/*", routesManifest));
     stillToMatch.delete(this.pathPattern("_next/data/*", routesManifest));
+    stillToMatch.delete(this.pathPattern("_next/image*", routesManifest));
 
     // check for other api like paths
     for (const path of stillToMatch) {
@@ -102,16 +124,12 @@ class NextjsComponent extends Component {
     const manifestPaths = new Set();
 
     // extract paths to validate against from build manifest
-    const ssrDynamic = buildManifest.pages.ssr.dynamic || {};
+    const dynamic = buildManifest.pages.dynamic || [];
     const ssrNonDynamic = buildManifest.pages.ssr.nonDynamic || {};
-    const htmlDynamic = buildManifest.pages.html.dynamic || {};
     const htmlNonDynamic = buildManifest.pages.html.nonDynamic || {};
 
     // dynamic paths to check. We use their regex to match against our input yaml
-    Object.entries({
-      ...ssrDynamic,
-      ...htmlDynamic
-    }).map(([, { regex }]) => {
+    dynamic.map(({ regex }) => {
       manifestRegex.push(new RegExp(regex));
     });
 
@@ -195,15 +213,26 @@ class NextjsComponent extends Component {
         ? nextConfigPath
         : resolve(inputs.build.cwd);
 
+    const buildBaseDir =
+      typeof inputs.build === "boolean" ||
+      typeof inputs.build === "undefined" ||
+      !inputs.build.baseDir
+        ? nextConfigPath
+        : resolve(inputs.build.baseDir);
+
     const buildConfig: BuildOptions = {
       enabled: inputs.build
         ? // @ts-ignore
-          inputs.build !== false && inputs.build.enabled !== false
+          inputs.build !== false && // @ts-ignore
+          inputs.build.enabled !== false && // @ts-ignore
+          inputs.build.enabled !== "false"
         : true,
       cmd: "node_modules/.bin/next",
       args: ["build"],
       ...(typeof inputs.build === "object" ? inputs.build : {}),
-      cwd: buildCwd
+      cwd: buildCwd,
+      baseDir: buildBaseDir, // @ts-ignore
+      cleanupDotNext: inputs.build?.cleanupDotNext ?? true
     };
 
     if (buildConfig.enabled) {
@@ -223,7 +252,9 @@ class NextjsComponent extends Component {
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,
-          authentication: inputs.authentication ?? undefined
+          authentication: inputs.authentication ?? undefined,
+          baseDir: buildConfig.baseDir,
+          cleanupDotNext: buildConfig.cleanupDotNext
         },
         nextStaticPath
       );
@@ -233,11 +264,11 @@ class NextjsComponent extends Component {
   }
 
   /**
-   * Run any post-build steps.
+   * Run any post-build steps synchronously.
    * Useful to run any custom commands before deploying.
    * @param inputs
    */
-  async postBuild(inputs: ServerlessComponentInputs): Promise<void> {
+  postBuild(inputs: ServerlessComponentInputs): void {
     const buildOptions = inputs.build;
 
     const postBuildCommands =
@@ -253,7 +284,7 @@ class NextjsComponent extends Component {
   ): Promise<DeploymentResult> {
     // Skip deployment if user explicitly set deploy input to false.
     // Useful when they just want the build outputs to deploy themselves.
-    if (inputs.deploy === false) {
+    if (inputs.deploy === "false" || inputs.deploy === false) {
       return {
         appUrl: SKIPPED_DEPLOY,
         bucketName: SKIPPED_DEPLOY,
@@ -282,6 +313,8 @@ class NextjsComponent extends Component {
       certificate: cloudFrontCertificate,
       originAccessIdentityId: cloudFrontOriginAccessIdentityId,
       paths: cloudFrontPaths,
+      waitBeforeInvalidate: cloudFrontWaitBeforeInvalidate = true,
+      tags: cloudFrontTags,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -302,52 +335,46 @@ class NextjsComponent extends Component {
     const [
       bucket,
       cloudFront,
+      sqs,
       defaultEdgeLambda,
       apiEdgeLambda,
-      imageEdgeLambda
+      imageEdgeLambda,
+      regenerationLambda
     ] = await Promise.all([
-      this.load("@serverless/aws-s3"),
+      this.load("@sls-next/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
+      this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/aws-lambda", "defaultEdgeLambda"),
       this.load("@sls-next/aws-lambda", "apiEdgeLambda"),
-      this.load("@sls-next/aws-lambda", "imageEdgeLambda")
+      this.load("@sls-next/aws-lambda", "imageEdgeLambda"),
+      this.load("@sls-next/aws-lambda", "regenerationLambda")
     ]);
 
     const bucketOutputs = await bucket({
-      accelerated: true,
+      accelerated: inputs.enableS3Acceleration ?? true,
       name: inputs.bucketName,
-      region: bucketRegion
+      region: bucketRegion,
+      tags: inputs.bucketTags
     });
 
     // If new BUILD_ID file is present, remove all versioned assets but the existing build ID's assets, to save S3 storage costs.
     // After deployment, only the new and previous build ID's assets are present. We still need previous build assets as it takes time to propagate the Lambda.
     await deleteOldStaticAssets({
       bucketName: bucketOutputs.name,
+      bucketRegion: bucketRegion,
       basePath: routesManifest.basePath,
       credentials: this.context.credentials.aws
     });
 
-    // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
-    // TODO: remove once proven stable.
-    if (inputs.uploadStaticAssetsFromBuild ?? true) {
-      await uploadStaticAssetsFromBuild({
-        bucketName: bucketOutputs.name,
-        basePath: routesManifest.basePath,
-        nextConfigDir: nextConfigPath,
-        nextStaticDir: nextStaticPath,
-        credentials: this.context.credentials.aws,
-        publicDirectoryCache: inputs.publicDirectoryCache
-      });
-    } else {
-      await uploadStaticAssets({
-        bucketName: bucketOutputs.name,
-        basePath: routesManifest.basePath,
-        nextConfigDir: nextConfigPath,
-        nextStaticDir: nextStaticPath,
-        credentials: this.context.credentials.aws,
-        publicDirectoryCache: inputs.publicDirectoryCache
-      });
-    }
+    await uploadStaticAssetsFromBuild({
+      bucketName: bucketOutputs.name,
+      bucketRegion: bucketRegion,
+      basePath: routesManifest.basePath,
+      nextConfigDir: nextConfigPath,
+      nextStaticDir: nextStaticPath,
+      credentials: this.context.credentials.aws,
+      publicDirectoryCache: inputs.publicDirectoryCache
+    });
 
     const bucketUrl = `http://${bucketOutputs.name}.s3.${bucketRegion}.amazonaws.com`;
 
@@ -370,6 +397,7 @@ class NextjsComponent extends Component {
     };
 
     // parse origins from inputs
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let inputOrigins: any[] = [];
     if (cloudFrontOriginsInputs) {
       const origins = cloudFrontOriginsInputs as string[];
@@ -416,11 +444,19 @@ class NextjsComponent extends Component {
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
+    const hasISRPages = Object.keys(
+      defaultBuildManifest.pages.ssg.nonDynamic
+    ).some(
+      (key) =>
+        typeof defaultBuildManifest.pages.ssg.nonDynamic[key]
+          .initialRevalidateSeconds === "number"
+    );
+
     const readLambdaInputValue = (
-      inputKey: "memory" | "timeout" | "name" | "runtime",
+      inputKey: "memory" | "timeout" | "name" | "runtime" | "roleArn" | "tags",
       lambdaType: LambdaType,
-      defaultValue: string | number | undefined
-    ): string | number | undefined => {
+      defaultValue: string | number | Record<string, string> | undefined
+    ): string | number | Record<string, string> | undefined => {
       const inputValue = inputs[inputKey];
 
       if (typeof inputValue === "string" || typeof inputValue === "number") {
@@ -434,8 +470,20 @@ class NextjsComponent extends Component {
       return inputValue[lambdaType] || defaultValue;
     };
 
+    let queue;
+    if (hasISRPages) {
+      queue = await sqs({
+        name: `${bucketOutputs.name}.fifo`,
+        deduplicationScope: "messageGroup",
+        fifoThroughputLimit: "perMessageGroupId",
+        visibilityTimeout: "30",
+        fifoQueue: true,
+        region: bucketRegion // make sure SQS region and regeneration lambda region are the same
+      });
+    }
+
     // default policy
-    let policy: Record<string, unknown> = {
+    const defaultLambdaPolicy: Record<string, unknown> = {
       Version: "2012-10-17",
       Statement: [
         {
@@ -451,16 +499,94 @@ class NextjsComponent extends Component {
           Effect: "Allow",
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
           Action: ["s3:GetObject", "s3:PutObject"]
-        }
+        },
+        ...(queue
+          ? [
+              {
+                Effect: "Allow",
+                Resource: queue.arn,
+                Action: ["sqs:SendMessage"]
+              }
+            ]
+          : [])
       ]
     };
 
+    let policy = defaultLambdaPolicy;
     if (inputs.policy) {
       if (typeof inputs.policy === "string") {
         policy = { arn: inputs.policy };
       } else {
         policy = inputs.policy;
       }
+    }
+
+    if (hasISRPages) {
+      const regenerationLambdaInput: LambdaInput = {
+        region: bucketRegion, // make sure SQS region and regeneration lambda region are the same
+        description: inputs.description
+          ? `${inputs.description} (Regeneration)`
+          : "Next.js Regeneration Lambda",
+        handler: inputs.handler || "index.handler",
+        code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
+        role: readLambdaInputValue("roleArn", "regenerationLambda", undefined)
+          ? {
+              arn: readLambdaInputValue(
+                "roleArn",
+                "regenerationLambda",
+                undefined
+              ) as string
+            }
+          : {
+              service: ["lambda.amazonaws.com"],
+              policy: {
+                ...defaultLambdaPolicy,
+                Statement: [
+                  ...(defaultLambdaPolicy.Statement as Record<
+                    string,
+                    unknown
+                  >[]),
+                  {
+                    Effect: "Allow",
+                    Resource: queue.arn,
+                    Action: [
+                      "sqs:ReceiveMessage",
+                      "sqs:DeleteMessage",
+                      "sqs:GetQueueAttributes"
+                    ]
+                  }
+                ]
+              }
+            },
+        memory: readLambdaInputValue(
+          "memory",
+          "regenerationLambda",
+          512
+        ) as number,
+        timeout: readLambdaInputValue(
+          "timeout",
+          "regenerationLambda",
+          10
+        ) as number,
+        runtime: readLambdaInputValue(
+          "runtime",
+          "regenerationLambda",
+          "nodejs14.x"
+        ) as string,
+        name: bucketOutputs.name,
+        tags: readLambdaInputValue(
+          "tags",
+          "regenerationLambda",
+          undefined
+        ) as Record<string, string>
+      };
+
+      const regenerationLambdaResult = await regenerationLambda(
+        regenerationLambdaInput
+      );
+      await regenerationLambda.publishVersion();
+
+      await sqs.addEventSource(regenerationLambdaResult.name);
     }
 
     if (hasAPIPages) {
@@ -470,9 +596,13 @@ class NextjsComponent extends Component {
           : "API Lambda@Edge for Next CloudFront distribution",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, API_LAMBDA_CODE_DIR),
-        role: inputs.roleArn
+        role: readLambdaInputValue("roleArn", "apiLambda", undefined)
           ? {
-              arn: inputs.roleArn
+              arn: readLambdaInputValue(
+                "roleArn",
+                "apiLambda",
+                undefined
+              ) as string
             }
           : {
               service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -483,11 +613,15 @@ class NextjsComponent extends Component {
         runtime: readLambdaInputValue(
           "runtime",
           "apiLambda",
-          "nodejs12.x"
+          "nodejs14.x"
         ) as string,
         name: readLambdaInputValue("name", "apiLambda", undefined) as
           | string
-          | undefined
+          | undefined,
+        tags: readLambdaInputValue("tags", "apiLambda", undefined) as Record<
+          string,
+          string
+        >
       };
 
       const apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
@@ -523,27 +657,40 @@ class NextjsComponent extends Component {
           : "Image Lambda@Edge for Next CloudFront distribution",
         handler: inputs.handler || "index.handler",
         code: join(nextConfigPath, IMAGE_LAMBDA_CODE_DIR),
-        role: {
-          service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
-          policy
-        },
+        role: readLambdaInputValue("roleArn", "imageLambda", undefined)
+          ? {
+              arn: readLambdaInputValue(
+                "roleArn",
+                "imageLambda",
+                undefined
+              ) as string
+            }
+          : {
+              service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
+              policy
+            },
         memory: readLambdaInputValue("memory", "imageLambda", 512) as number,
         timeout: readLambdaInputValue("timeout", "imageLambda", 10) as number,
         runtime: readLambdaInputValue(
           "runtime",
           "imageLambda",
-          "nodejs12.x"
+          "nodejs14.x"
         ) as string,
         name: readLambdaInputValue("name", "imageLambda", undefined) as
           | string
-          | undefined
+          | undefined,
+        tags: readLambdaInputValue("tags", "imageLambda", undefined) as Record<
+          string,
+          string
+        >
       };
 
       const imageEdgeLambdaOutputs = await imageEdgeLambda(
         imageEdgeLambdaInput
       );
 
-      const imageEdgeLambdaPublishOutputs = await imageEdgeLambda.publishVersion();
+      const imageEdgeLambdaPublishOutputs =
+        await imageEdgeLambda.publishVersion();
 
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
@@ -575,9 +722,13 @@ class NextjsComponent extends Component {
         "Default Lambda@Edge for Next CloudFront distribution",
       handler: inputs.handler || "index.handler",
       code: join(nextConfigPath, DEFAULT_LAMBDA_CODE_DIR),
-      role: inputs.roleArn
+      role: readLambdaInputValue("roleArn", "defaultLambda", undefined)
         ? {
-            arn: inputs.roleArn
+            arn: readLambdaInputValue(
+              "roleArn",
+              "defaultLambda",
+              undefined
+            ) as string
           }
         : {
             service: ["lambda.amazonaws.com", "edgelambda.amazonaws.com"],
@@ -588,18 +739,23 @@ class NextjsComponent extends Component {
       runtime: readLambdaInputValue(
         "runtime",
         "defaultLambda",
-        "nodejs12.x"
+        "nodejs14.x"
       ) as string,
       name: readLambdaInputValue("name", "defaultLambda", undefined) as
         | string
-        | undefined
+        | undefined,
+      tags: readLambdaInputValue("tags", "defaultLambda", undefined) as Record<
+        string,
+        string
+      >
     };
 
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda(
       defaultEdgeLambdaInput
     );
 
-    const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
+    const defaultEdgeLambdaPublishOutputs =
+      await defaultEdgeLambda.publishVersion();
 
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
@@ -676,6 +832,7 @@ class NextjsComponent extends Component {
         maxTTL: 31536000,
         ...cloudFrontDefaults,
         forward: {
+          headers: routesManifest.i18n ? ["Accept-Language"] : undefined,
           cookies: "all",
           queryString: true,
           ...cloudFrontDefaults.forward
@@ -711,17 +868,42 @@ class NextjsComponent extends Component {
       webACLId: cloudFrontWebACLId,
       restrictions: cloudFrontRestrictions,
       certificate: cloudFrontCertificate,
-      originAccessIdentityId: cloudFrontOriginAccessIdentityId
+      originAccessIdentityId: cloudFrontOriginAccessIdentityId,
+      tags: cloudFrontTags
     });
 
     let appUrl = cloudFrontOutputs.url;
 
+    const distributionId = cloudFrontOutputs.id;
     if (!cloudFrontPaths || cloudFrontPaths.length) {
+      // We need to wait for distribution to be fully propagated before trying to invalidate paths, otherwise we may cache old page
+      // This could add ~1-2 minute to deploy time but it is safer
+      const waitDuration = 600;
+      const pollInterval = 10;
+      if (cloudFrontWaitBeforeInvalidate) {
+        this.context.debug(
+          `Waiting for CloudFront distribution ${distributionId} to be ready before invalidations, for up to ${waitDuration} seconds, checking every ${pollInterval} seconds.`
+        );
+        await checkCloudFrontDistributionReady({
+          distributionId: distributionId,
+          credentials: this.context.credentials.aws,
+          waitDuration: waitDuration,
+          pollInterval: pollInterval
+        });
+      } else {
+        this.context.debug(
+          `Skipped waiting for CloudFront distribution ${distributionId} to be ready.`
+        );
+      }
+
+      this.context.debug(`Creating invalidations on ${distributionId}.`);
       await createInvalidation({
-        distributionId: cloudFrontOutputs.id,
+        distributionId: distributionId,
         credentials: this.context.credentials.aws,
         paths: cloudFrontPaths
       });
+    } else {
+      this.context.debug(`No invalidations needed for ${distributionId}.`);
     }
 
     const { domain, subdomain } = obtainDomains(inputs.domain);
@@ -748,15 +930,17 @@ class NextjsComponent extends Component {
   }
 
   async remove(): Promise<void> {
-    const [bucket, cloudfront, domain] = await Promise.all([
-      this.load("@serverless/aws-s3"),
+    const [bucket, cloudfront, sqs, domain] = await Promise.all([
+      this.load("@sls-next/aws-s3"),
       this.load("@sls-next/aws-cloudfront"),
+      this.load("@sls-next/aws-sqs"),
       this.load("@sls-next/domain")
     ]);
 
     await bucket.remove();
     await cloudfront.remove();
     await domain.remove();
+    await sqs.remove();
   }
 }
 

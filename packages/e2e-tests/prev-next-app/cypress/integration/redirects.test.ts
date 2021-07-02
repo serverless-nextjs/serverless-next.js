@@ -37,6 +37,25 @@ describe("Redirects Tests", () => {
     });
   });
 
+  describe("Non-redirect cases", () => {
+    [
+      {
+        path: "//example.com/",
+        expectedPath: "/example.com",
+        expectedStatus: 308
+      }
+    ].forEach(({ path, expectedPath, expectedStatus }) => {
+      it(`does not redirect page ${path}`, () => {
+        // These cases should not redirect ever due to security
+        cy.ensureRouteHasStatusCode(path, expectedStatus);
+
+        cy.visit(path, { failOnStatusCode: false });
+        cy.location("pathname").should("eq", expectedPath);
+        cy.contains("404");
+      });
+    });
+  });
+
   describe("Public files always redirect to non-trailing slash path", () => {
     [{ path: "/app-store-badge.png/" }].forEach(({ path }) => {
       it(`redirects file ${path}`, () => {
@@ -145,25 +164,31 @@ describe("Redirects Tests", () => {
       },
       {
         path: "/external-redirect-1",
-        expectedRedirect: "https://api.github.com",
+        expectedRedirect: "https://jsonplaceholder.typicode.com",
         expectedStatus: 200,
         expectedRedirectStatus: 308
       },
       {
         path: "/external-redirect-2/abcd",
-        expectedRedirect: "https://api.github.com/abcd",
+        expectedRedirect: "https://jsonplaceholder.typicode.com/abcd",
         expectedStatus: 404,
         expectedRedirectStatus: 308
       },
       {
         path: "/external-redirect-3/abcd",
-        expectedRedirect: "https://api.github.com/abcd/",
+        expectedRedirect: "https://jsonplaceholder.typicode.com/abcd/",
         expectedStatus: 404,
         expectedRedirectStatus: 308
       },
       {
         path: "/query-string-destination-redirect",
-        expectedRedirect: "/ssg-page?a=1234&b=1?",
+        expectedRedirect: "/ssg-page?a=1234&b=1",
+        expectedStatus: 200,
+        expectedRedirectStatus: 308
+      },
+      {
+        path: "/query-string-destination-redirect?foo=bar",
+        expectedRedirect: "/ssg-page?foo=bar&a=1234&b=1",
         expectedStatus: 200,
         expectedRedirectStatus: 308
       }

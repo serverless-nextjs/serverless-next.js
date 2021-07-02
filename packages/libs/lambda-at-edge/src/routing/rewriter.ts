@@ -1,49 +1,7 @@
-import { compileDestination, matchPath } from "./matcher";
-import { RewriteData, RoutesManifest } from "../types";
 import { IncomingMessage, ServerResponse } from "http";
-
-/**
- * Get the rewrite of the given path, if it exists. Otherwise return null.
- * @param path
- * @param routesManifest
- * @param router
- * @param normalisedPath
- */
-export function getRewritePath(
-  path: string,
-  routesManifest: RoutesManifest,
-  router: (uri: string) => string | null,
-  normalisedPath: string
-): string | null {
-  const rewrites: RewriteData[] = routesManifest.rewrites;
-
-  for (const rewrite of rewrites) {
-    const match = matchPath(path, rewrite.source);
-
-    if (match) {
-      const destination = compileDestination(rewrite.destination, match.params);
-
-      // No-op rewrite support: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
-      if (path === destination) {
-        const url = router(normalisedPath);
-
-        if (url === "pages/404.html" || url === "pages/_error.js") {
-          continue;
-        }
-      }
-
-      return destination;
-    }
-  }
-
-  return null;
-}
-
-export function isExternalRewrite(customRewrite: string): boolean {
-  return (
-    customRewrite.startsWith("http://") || customRewrite.startsWith("https://")
-  );
-}
+import { OriginRequestEvent } from "../types";
+import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import { CloudFrontResultResponse } from "aws-lambda";
 
 // Blacklisted or read-only headers in CloudFront
 const ignoredHeaders = [
@@ -91,7 +49,7 @@ export async function createExternalRewriteResponse(
   const { default: fetch } = await import("node-fetch");
 
   // Set request headers
-  let reqHeaders: any = {};
+  const reqHeaders: any = {};
   Object.assign(reqHeaders, req.headers);
 
   // Delete host header otherwise request may fail due to host mismatch
@@ -107,13 +65,15 @@ export async function createExternalRewriteResponse(
       headers: reqHeaders,
       method: req.method,
       body: decodedBody, // Must pass body as a string,
-      compress: false
+      compress: false,
+      redirect: "manual"
     });
   } else {
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
       method: req.method,
-      compress: false
+      compress: false,
+      redirect: "manual"
     });
   }
 
@@ -125,3 +85,28 @@ export async function createExternalRewriteResponse(
   res.statusCode = fetchResponse.status;
   res.end(await fetchResponse.buffer());
 }
+
+export const externalRewrite: (
+  event: OriginRequestEvent,
+  enableHTTPCompression: boolean | undefined,
+  rewrite: string
+) => Promise<CloudFrontResultResponse> = async (
+  event: OriginRequestEvent,
+  enableHTTPCompression: boolean | undefined,
+  rewrite: string
+) => {
+  const request = event.Records[0].cf.request;
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression
+    }
+  );
+  await createExternalRewriteResponse(
+    rewrite + (request.querystring ? "?" : "") + request.querystring,
+    req,
+    res,
+    request.body?.data
+  );
+  return await responsePromise;
+};

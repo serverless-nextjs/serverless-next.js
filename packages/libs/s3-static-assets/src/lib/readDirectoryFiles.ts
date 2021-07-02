@@ -1,21 +1,26 @@
-import klaw, { Item } from "klaw";
-
 import fse from "fs-extra";
+import path from "path";
+import glob, { Entry } from "fast-glob";
 
-const readDirectoryFiles = async (directory: string): Promise<Array<Item>> => {
-  const directoryExists = await fse.pathExists(directory);
+const readDirectoryFiles = (directory: string): Array<Entry> => {
+  const directoryExists = fse.pathExistsSync(directory);
   if (!directoryExists) {
-    return Promise.resolve([]);
+    return [];
   }
 
-  const items: Item[] = [];
-  return new Promise((resolve, reject) => {
-    klaw(directory.trim())
-      .on("data", (item) => items.push(item))
-      .on("end", () => {
-        resolve(items);
-      })
-      .on("error", reject);
+  // fast-glob only accepts posix paths
+  // we need to split directory by separator and use path.posix.join specifically to rejoin it
+  // this should enable it to work on windows
+  const directorySplit = directory.split(path.sep);
+
+  // Ensure absolute path is preserved
+  if (directorySplit.length > 0 && directorySplit[0] === "") {
+    directorySplit[0] = "/";
+  }
+
+  return glob.sync(path.posix.join(...directorySplit, "**", "*"), {
+    onlyFiles: true,
+    stats: true
   });
 };
 

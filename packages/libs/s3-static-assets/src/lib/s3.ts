@@ -6,6 +6,7 @@ import { ObjectList } from "aws-sdk/clients/s3";
 
 type S3ClientFactoryOptions = {
   bucketName: string;
+  bucketRegion: string;
   credentials: Credentials;
 };
 
@@ -47,11 +48,26 @@ export type Credentials = {
   sessionToken?: string;
 };
 
+const getS3RegionalEndpoint = (bucketRegion: string): string => {
+  // TODO: doesn't cover all endpoints but should be majority.
+  // We should ugprade to AWS SDK JS v3 so we don't need to manually manage.
+  return (
+    `https://s3.${bucketRegion}.amazonaws.com` +
+    `${bucketRegion.startsWith("cn-") ? ".cn" : ""}`
+  );
+};
+
 export default async ({
   bucketName,
+  bucketRegion,
   credentials
 }: S3ClientFactoryOptions): Promise<S3Client> => {
-  let s3 = new AWS.S3({ ...credentials });
+  let s3 = new AWS.S3({
+    ...credentials,
+    region: bucketRegion,
+    endpoint: getS3RegionalEndpoint(bucketRegion),
+    s3BucketEndpoint: false
+  });
 
   try {
     const { Status } = await s3
@@ -61,7 +77,13 @@ export default async ({
       .promise();
 
     if (Status === "Enabled") {
-      s3 = new AWS.S3({ ...credentials, useAccelerateEndpoint: true });
+      s3 = new AWS.S3({
+        ...credentials,
+        region: bucketRegion,
+        endpoint: getS3RegionalEndpoint(bucketRegion),
+        s3BucketEndpoint: false,
+        useAccelerateEndpoint: true
+      });
     }
   } catch (err) {
     console.warn(

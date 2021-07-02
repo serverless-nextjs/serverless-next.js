@@ -1,16 +1,27 @@
 import fse from "fs-extra";
 import path from "path";
 import { mockDomain } from "@sls-next/domain";
-import { mockS3 } from "@serverless/aws-s3";
+import { mockS3 } from "@sls-next/aws-s3";
 import { mockUpload } from "aws-sdk";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
-import mockCreateInvalidation from "@sls-next/cloudfront";
+import { mockCreateInvalidation } from "@sls-next/cloudfront";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
+import { mockSQS } from "@sls-next/aws-sqs";
 
 import NextjsComponent, { DeploymentResult } from "../src/component";
 import obtainDomains from "../src/lib/obtainDomains";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../src/constants";
+import {
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR,
+  REGENERATION_LAMBDA_CODE_DIR
+} from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
+
+// unfortunately can't use __mocks__ because aws-sdk is being mocked in other
+// packages in the monorepo
+// https://github.com/facebook/jest/issues/2070
+jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 
 const createNextComponent = () => {
   const component = new NextjsComponent();
@@ -19,6 +30,9 @@ const createNextComponent = () => {
       accessKeyId: "123",
       secretAccessKey: "456"
     }
+  };
+  component.context.debug = () => {
+    // intentionally empty
   };
   return component;
 };
@@ -42,6 +56,10 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
 
   mockDomain.mockResolvedValueOnce({
     domains: [expectedDomain]
+  });
+
+  mockSQS.mockResolvedValue({
+    arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
   });
 };
 
@@ -276,7 +294,7 @@ describe("Custom inputs", () => {
           );
         });
 
-        ["_next/data/zsWqBqLjpgRmswfQomanp/index.json"].forEach((file) => {
+        ["_next/data/test-build-id/index.json"].forEach((file) => {
           expect(mockUpload).toBeCalledWith(
             expect.objectContaining({
               Key: file,
@@ -401,6 +419,61 @@ describe("Custom inputs", () => {
     });
   });
 
+  describe.each([
+    {
+      defaultLambda: { tag1: "val1" },
+      apiLambda: { tag2: "val2" },
+      imageLambda: { tag3: "val3" }
+    }
+  ])("Lambda tags input", (tags) => {
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+    let tmpCwd: string;
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        tags: tags
+      });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it(`sets lambda tags to ${JSON.stringify(tags)}`, () => {
+      // default Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+          tags: tags.defaultLambda
+        })
+      );
+
+      // api Lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+          tags: tags.apiLambda
+        })
+      );
+
+      // image lambda
+      expect(mockLambda).toBeCalledWith(
+        expect.objectContaining({
+          code: path.join(fixturePath, IMAGE_LAMBDA_CODE_DIR),
+          tags: tags.imageLambda
+        })
+      );
+    });
+  });
+
   describe.each`
     inputTimeout                            | expectedTimeout
     ${undefined}                            | ${{ defaultTimeout: 10, apiTimeout: 10 }}
@@ -452,12 +525,12 @@ describe("Custom inputs", () => {
 
   describe.each`
     inputRuntime                                                | expectedRuntime
-    ${undefined}                                                | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
-    ${{}}                                                       | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
-    ${"nodejs10.x"}                                             | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
-    ${{ defaultLambda: "nodejs10.x" }}                          | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs12.x" }}
-    ${{ apiLambda: "nodejs10.x" }}                              | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs10.x" }}
-    ${{ defaultLambda: "nodejs10.x", apiLambda: "nodejs10.x" }} | ${{ defaultRuntime: "nodejs10.x", apiRuntime: "nodejs10.x" }}
+    ${undefined}                                                | ${{ defaultRuntime: "nodejs14.x", apiRuntime: "nodejs14.x" }}
+    ${{}}                                                       | ${{ defaultRuntime: "nodejs14.x", apiRuntime: "nodejs14.x" }}
+    ${"nodejs12.x"}                                             | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
+    ${{ defaultLambda: "nodejs12.x" }}                          | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs14.x" }}
+    ${{ apiLambda: "nodejs12.x" }}                              | ${{ defaultRuntime: "nodejs14.x", apiRuntime: "nodejs12.x" }}
+    ${{ defaultLambda: "nodejs12.x", apiLambda: "nodejs12.x" }} | ${{ defaultRuntime: "nodejs12.x", apiRuntime: "nodejs12.x" }}
   `("Input runtime options", ({ inputRuntime, expectedRuntime }) => {
     let tmpCwd: string;
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
@@ -875,7 +948,7 @@ describe("Custom inputs", () => {
       const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
       let tmpCwd: string;
 
-      beforeEach(async () => {
+      beforeEach(() => {
         tmpCwd = process.cwd();
         process.chdir(fixturePath);
 
@@ -930,7 +1003,7 @@ describe("Custom inputs", () => {
 
     it(`allows setting custom cache behavior: ${JSON.stringify(
       cloudFrontInput
-    )}`, async () => {
+    )}`, () => {
       cloudFrontInput[pathName]["lambda@edge"] = {
         "origin-request":
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
@@ -1034,7 +1107,7 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
     let tmpCwd: string;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 
@@ -1053,34 +1126,37 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe("Skip deployment after build", () => {
-    const fixturePath = path.join(__dirname, "./fixtures/simple-app");
-    let tmpCwd: string;
+  describe.each([false, "false"])(
+    "Skip deployment after build",
+    (deployInput) => {
+      const fixturePath = path.join(__dirname, "./fixtures/simple-app");
+      let tmpCwd: string;
 
-    beforeEach(async () => {
-      tmpCwd = process.cwd();
-      process.chdir(fixturePath);
+      beforeEach(() => {
+        tmpCwd = process.cwd();
+        process.chdir(fixturePath);
 
-      mockServerlessComponentDependencies({ expectedDomain: undefined });
-    });
-
-    afterEach(() => {
-      process.chdir(tmpCwd);
-      return cleanupFixtureDirectory(fixturePath);
-    });
-
-    it("builds but skips deployment", async () => {
-      const result = await createNextComponent().default({
-        deploy: false
+        mockServerlessComponentDependencies({ expectedDomain: undefined });
       });
 
-      expect(result).toEqual({
-        appUrl: "SKIPPED_DEPLOY",
-        bucketName: "SKIPPED_DEPLOY",
-        distributionId: "SKIPPED_DEPLOY"
+      afterEach(() => {
+        process.chdir(tmpCwd);
+        return cleanupFixtureDirectory(fixturePath);
       });
-    });
-  });
+
+      it("builds but skips deployment", async () => {
+        const result = await createNextComponent().default({
+          deploy: deployInput
+        });
+
+        expect(result).toEqual({
+          appUrl: "SKIPPED_DEPLOY",
+          bucketName: "SKIPPED_DEPLOY",
+          distributionId: "SKIPPED_DEPLOY"
+        });
+      });
+    }
+  );
 
   describe.each([
     [undefined, "index.handler"],
@@ -1126,7 +1202,7 @@ describe("Custom inputs", () => {
     const fixturePath = path.join(__dirname, "./fixtures/simple-app");
     let tmpCwd: string;
 
-    beforeEach(async () => {
+    beforeEach(() => {
       tmpCwd = process.cwd();
       process.chdir(fixturePath);
 

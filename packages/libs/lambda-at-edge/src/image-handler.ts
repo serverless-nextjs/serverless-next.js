@@ -9,16 +9,14 @@ import {
   RoutesManifest
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
+import { setCustomHeaders } from "@sls-next/core";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import { handleAuth, handleDomainRedirects } from "@sls-next/core";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
-import { addHeadersToResponse } from "./headers/addHeaders";
 import { imageOptimizer } from "./images/imageOptimizer";
-import {
-  createRedirectResponse,
-  getDomainRedirectPath
-} from "./routing/redirector";
-import { getUnauthenticatedResponse } from "./auth/authenticator";
+import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
+import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -41,19 +39,17 @@ export const handler = async (
   const buildManifest: OriginRequestImageHandlerManifest = manifest;
 
   // Handle basic auth
-  const authorization = request.headers.authorization;
-  const unauthResponse = getUnauthenticatedResponse(
-    authorization ? authorization[0].value : null,
-    manifest.authentication
-  );
-  if (unauthResponse) {
-    return unauthResponse;
+  const authRoute = handleAuth(request, buildManifest);
+  if (authRoute) {
+    const { isUnauthorized, status, ...response } = authRoute;
+    return { ...response, status: status.toString() };
   }
 
   // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, buildManifest);
-  if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  const redirectRoute = handleDomainRedirects(request, manifest);
+  if (redirectRoute) {
+    const { isRedirect, status, ...response } = redirectRoute;
+    return { ...response, status: status.toString() };
   }
 
   // No other redirects or rewrites supported for now as it's assumed one is accessing this directly.
@@ -87,11 +83,13 @@ export const handler = async (
       true
     );
 
-    const { domainName, region } = request.origin!.s3!;
-    const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+    const { region } = request.origin!.s3!;
+    const bucketName = s3BucketNameFromEventRequest(request);
+
+    setCustomHeaders({ res, req, responsePromise }, routesManifest);
 
     await imageOptimizer(
-      { basePath: basePath, bucketName: bucketName, region: region },
+      { basePath: basePath, bucketName: bucketName || "", region: region },
       imagesManifest,
       req,
       res,
@@ -100,7 +98,9 @@ export const handler = async (
 
     const response = await responsePromise;
 
-    addHeadersToResponse(request.uri, response, routesManifest);
+    if (response.headers) {
+      removeBlacklistedHeaders(response.headers);
+    }
 
     return response;
   } else {

@@ -101,8 +101,7 @@ describe("compatLayer.request", () => {
         path: "/"
       },
       multiValueQueryStringParameters: {
-        url:
-          "https://example.com/t/t?a=8&as=1&t=2&tk=1&url=https://example.com/õ",
+        url: "https://example.com/t/t?a=8&as=1&t=2&tk=1&url=https://example.com/õ",
         clickSource: "yes",
         category: "cat"
       }

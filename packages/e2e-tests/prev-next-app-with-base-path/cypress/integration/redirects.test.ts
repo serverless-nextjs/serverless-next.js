@@ -145,19 +145,19 @@ describe("Redirects Tests", () => {
       },
       {
         path: "/basepath/external-redirect-1",
-        expectedRedirect: "https://api.github.com",
+        expectedRedirect: "https://jsonplaceholder.typicode.com",
         expectedStatus: 200,
         expectedRedirectStatus: 308
       },
       {
         path: "/basepath/external-redirect-2/abcd",
-        expectedRedirect: "https://api.github.com/abcd",
+        expectedRedirect: "https://jsonplaceholder.typicode.com/abcd",
         expectedStatus: 404,
         expectedRedirectStatus: 308
       },
       {
         path: "/basepath/external-redirect-3/abcd",
-        expectedRedirect: "https://api.github.com/abcd/",
+        expectedRedirect: "https://jsonplaceholder.typicode.com/abcd/",
         expectedStatus: 404,
         expectedRedirectStatus: 308
       },

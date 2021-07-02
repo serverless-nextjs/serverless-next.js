@@ -3,7 +3,7 @@
   "supportFile": "cypress/support/index.ts",
   "responseTimeout": 15000,
   "requestTimeout": 15000,
-  "experimentalNetworkStubbing": true,
   "experimentalFetchPolyfill": true,
-  "retries": 4
+  "retries": 4,
+  "video": false
 }

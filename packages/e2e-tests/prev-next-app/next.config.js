@@ -1,4 +1,7 @@
 module.exports = {
+  images: {
+    domains: ["raw.githubusercontent.com"]
+  },
   async redirects() {
     return [
       {
@@ -43,22 +46,22 @@ module.exports = {
       },
       {
         source: "/external-redirect-1",
-        destination: "https://api.github.com",
+        destination: "https://jsonplaceholder.typicode.com",
         permanent: true
       },
       {
         source: "/external-redirect-2/:id",
-        destination: "https://api.github.com/:id",
+        destination: "https://jsonplaceholder.typicode.com/:id",
         permanent: true
       },
       {
         source: "/external-redirect-3/:id",
-        destination: "https://api.github.com/:id/",
+        destination: "https://jsonplaceholder.typicode.com/:id/",
         permanent: true
       },
       {
         source: "/query-string-destination-redirect",
-        destination: "/ssg-page?a=1234&b=1?",
+        destination: "/ssg-page?a=1234&b=1",
         permanent: true
       }
     ];
@@ -108,6 +111,34 @@ module.exports = {
         // Per https://nextjs.org/docs/api-reference/next.config.js/rewrites, this has no effect as non-dynamic routes cannot be rewritten
         source: "/api/basic-api",
         destination: "/"
+      },
+      {
+        source: "/rewrite-dest-with-query",
+        destination: "/ssr-page?foo=bar"
+      },
+      {
+        source: "/external-rewrite",
+        destination: "https://jsonplaceholder.typicode.com"
+      },
+      {
+        source: "/external-rewrite-issues",
+        destination: "https://jsonplaceholder.typicode.com/todos"
+      },
+      {
+        source: "/external-rewrite-issues-with-query",
+        destination: "https://jsonplaceholder.typicode.com/todos?a=b"
+      },
+      {
+        source: "/api/external-rewrite",
+        destination: "https://jsonplaceholder.typicode.com"
+      },
+      {
+        source: "/api/external-rewrite-issues",
+        destination: "https://jsonplaceholder.typicode.com/todos"
+      },
+      {
+        source: "/api/external-rewrite-issues-with-query",
+        destination: "https://jsonplaceholder.typicode.com/todos?a=b"
       }
     ];
   },
@@ -132,12 +163,7 @@ module.exports = {
         ]
       },
       {
-        /**
-         * TODO: we need to specify S3 key here for SSG page (ssg-page.html) because of how things currently work.
-         * Request URI is rewritten to the S3 key, so in origin response handler we have no easy way to determine the original page path.
-         * In the future, we may bypass S3 origin + remove origin response handler so origin request handler directly calls S3, making this easier.
-         */
-        source: "/ssg-page.html",
+        source: "/ssg-page",
         headers: [
           {
             key: "x-custom-header-ssg-page",

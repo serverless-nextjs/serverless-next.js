@@ -4,14 +4,19 @@ import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@type
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import sharp from "sharp";
 import fetchMock from "fetch-mock";
+import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
+
+const MockGetObjectCommand = jest.fn();
 
 jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
-  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
-);
+jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
+  return {
+    GetObjectCommand: MockGetObjectCommand
+  };
+});
 
 jest.mock(
   "../../src/manifest.json",
@@ -39,14 +44,21 @@ jest.mock(
 
 describe("Image lambda handler", () => {
   if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {});
+    it("skipping tests for Node.js that is on v10", () => {
+      // do nothing
+    });
     return;
   }
 
   describe("Routes", () => {
-    it("serves image request", async () => {
+    it.each`
+      imagePath                         | expectedS3Key
+      ${"/test-image.png"}              | ${"public/test-image.png"}
+      ${"/static/test-image.png"}       | ${"static/test-image.png"}
+      ${"/_next/static/test-image.png"} | ${"_next/static/test-image.png"}
+    `("serves image request", async ({ imagePath, expectedS3Key }) => {
       const event = createCloudFrontEvent({
-        uri: "/_next/image?url=%2Ftest-image.png&q=100&w=128",
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
           accept: [
@@ -64,22 +76,112 @@ describe("Image lambda handler", () => {
         headers: {
           "cache-control": [
             {
-              key: "cache-control",
+              key: "Cache-Control",
               value: "public, max-age=60"
             }
           ],
           etag: [
             {
-              key: "etag",
+              key: "ETag",
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "content-type", value: "image/webp" }]
+          "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
         status: 200,
         statusDescription: "OK",
         body: expect.any(String),
         bodyEncoding: "base64"
+      });
+
+      expect(MockGetObjectCommand).toBeCalledWith({
+        Bucket: "my-bucket.s3.amazonaws.com",
+        Key: expectedS3Key
+      });
+    });
+
+    it.each`
+      imagePath
+      ${"/test-image-cached.png"}
+    `("serves cached image on second request", async ({ imagePath }) => {
+      const event = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ]
+        }
+      });
+
+      const response1 = (await handler(event)) as CloudFrontResponseResult;
+      const response2 = (await handler(event)) as CloudFrontResponseResult;
+
+      expect(response1).toEqual(response2);
+
+      expect(MockGetObjectCommand).toBeCalledTimes(1);
+    });
+
+    it.each`
+      imagePath
+      ${"/test-image-etag.png"}
+    `("serves 304 when etag matches", async ({ imagePath }) => {
+      const event1 = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ]
+        }
+      });
+
+      const response1 = (await handler(event1)) as CloudFrontResponseResult;
+
+      const event2 = createCloudFrontEvent({
+        uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          accept: [
+            {
+              key: "accept",
+              value: "image/webp"
+            }
+          ],
+          "if-none-match": [
+            {
+              key: "if-none-match",
+              value: response1.headers.etag[0].value
+            }
+          ]
+        }
+      });
+
+      const response2 = (await handler(event2)) as CloudFrontResponseResult;
+
+      expect(response2).toEqual({
+        headers: {
+          "cache-control": [
+            {
+              key: "Cache-Control",
+              value: "public, max-age=60"
+            }
+          ],
+          etag: [
+            {
+              key: "ETag",
+              value: response1.headers.etag[0].value
+            }
+          ]
+        },
+        status: 304,
+        statusDescription: "Not Modified"
       });
     });
 
@@ -101,13 +203,12 @@ describe("Image lambda handler", () => {
       });
 
       const event = createCloudFrontEvent({
-        uri:
-          "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
+        uri: "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
         host: "mydistribution.cloudfront.net",
         requestHeaders: {
           accept: [
             {
-              key: "accept",
+              key: "Accept",
               value: "image/webp"
             }
           ]
@@ -120,17 +221,17 @@ describe("Image lambda handler", () => {
         headers: {
           "cache-control": [
             {
-              key: "cache-control",
+              key: "Cache-Control",
               value: "public, max-age=60"
             }
           ],
           etag: [
             {
-              key: "etag",
+              key: "ETag",
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "content-type", value: "image/webp" }]
+          "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
         status: 200,
         statusDescription: "OK",
@@ -140,8 +241,10 @@ describe("Image lambda handler", () => {
     });
 
     it("return 500 response when s3 throws an error", async () => {
+      mockSend.mockRejectedValueOnce(new Error("Mocked S3 error"));
+
       const event = createCloudFrontEvent({
-        uri: "/_next/image?url=%2Fthrow-error.png&q=100&w=128",
+        uri: "/_next/image?url=%2Ftest-image.png&q=100&w=128",
         host: "mydistribution.cloudfront.net"
       });
 
@@ -186,7 +289,7 @@ describe("Image lambda handler", () => {
     });
   });
 
-  let runRedirectTest = async (
+  const runRedirectTest = async (
     path: string,
     expectedRedirect: string,
     statusCode: number,

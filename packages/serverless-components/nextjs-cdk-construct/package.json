@@ -1,0 +1,69 @@
+{
+  "name": "@sls-next/cdk-construct",
+  "publishConfig": {
+    "access": "public"
+  },
+  "description": "Serverless Next.js powered by AWS CDK",
+  "version": "3.2.0-alpha.14",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "author": "Henry Kirkness <henry@planes.studio>",
+  "keywords": [
+    "serverless",
+    "cdk",
+    "nextjs"
+  ],
+  "scripts": {
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.json",
+    "clean": "yarn rimraf dist"
+  },
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
+    "directory": "packages/serverless-components/nextjs-cdk-construct"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
+    "fast-glob": "^3.2.5",
+    "fs-extra": "^9.1.0"
+  },
+  "peerDependencies": {
+    "@aws-cdk/aws-certificatemanager": "^1.75.0",
+    "@aws-cdk/aws-cloudfront": "^1.75.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.75.0",
+    "@aws-cdk/aws-iam": "^1.75.0",
+    "@aws-cdk/aws-lambda": "^1.75.0",
+    "@aws-cdk/aws-lambda-event-sources": "^1.75.0",
+    "@aws-cdk/aws-logs": "^1.75.0",
+    "@aws-cdk/aws-route53": "^1.75.0",
+    "@aws-cdk/aws-route53-targets": "^1.75.0",
+    "@aws-cdk/aws-s3": "^1.75.0",
+    "@aws-cdk/aws-s3-deployment": "^1.75.0",
+    "@aws-cdk/aws-sqs": "^1.75.0",
+    "@aws-cdk/core": "^1.75.0"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "^1.75.0",
+    "@aws-cdk/aws-certificatemanager": "^1.75.0",
+    "@aws-cdk/aws-cloudfront": "^1.75.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.75.0",
+    "@aws-cdk/aws-iam": "^1.75.0",
+    "@aws-cdk/aws-lambda": "^1.75.0",
+    "@aws-cdk/aws-lambda-event-sources": "^1.75.0",
+    "@aws-cdk/aws-logs": "^1.75.0",
+    "@aws-cdk/aws-route53": "^1.75.0",
+    "@aws-cdk/aws-route53-targets": "^1.75.0",
+    "@aws-cdk/aws-s3": "^1.75.0",
+    "@aws-cdk/aws-s3-deployment": "^1.75.0",
+    "@aws-cdk/aws-sqs": "^1.75.0",
+    "@aws-cdk/core": "^1.75.0",
+    "@types/fs-extra": "^9.0.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.3.4"
+  }
+}

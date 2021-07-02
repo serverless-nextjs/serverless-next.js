@@ -40,6 +40,10 @@ const MODERN_TYPES = [/* AVIF, */ WEBP];
 const ANIMATABLE_TYPES = [WEBP, PNG, GIF];
 const VECTOR_TYPES = [SVG];
 
+type ImageOptimizerResponse = {
+  finished: boolean;
+};
+
 export async function imageOptimizer(
   {
     basePath,
@@ -50,7 +54,7 @@ export async function imageOptimizer(
   req: IncomingMessage,
   res: ServerResponse,
   parsedUrl: UrlWithParsedQuery
-) {
+): Promise<ImageOptimizerResponse> {
   const imageConfig: ImageConfig = imagesManifest?.images ?? imageConfigDefault;
   const {
     deviceSizes = [],
@@ -161,7 +165,7 @@ export async function imageOptimizer(
 
   if (fs.existsSync(hashDir)) {
     const files = await promises.readdir(hashDir);
-    for (let file of files) {
+    for (const file of files) {
       const [prefix, etag, extension] = file.split(".");
       const expireAt = Number(prefix);
       const contentType = getContentType(extension);
@@ -202,10 +206,12 @@ export async function imageOptimizer(
     upstreamType = upstreamRes.headers.get("Content-Type");
     maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control"));
   } else {
+    let s3Key;
     try {
-      let s3Key;
-
-      if (href.startsWith(`${basePath}/static`)) {
+      if (
+        href.startsWith(`${basePath}/static`) ||
+        href.startsWith(`${basePath}/_next/static`)
+      ) {
         s3Key = href; // static files' URL map to the S3 key directly e.g /static/ -> static
       } else {
         s3Key = `${basePath}/public` + href; // public file URLs map from /public.png -> public/public.png
@@ -236,7 +242,7 @@ export async function imageOptimizer(
         new GetObjectCommand(s3Params)
       );
       const s3chunks = [];
-      for await (let s3Chunk of Body as Stream.Readable) {
+      for await (const s3Chunk of Body as Stream.Readable) {
         s3chunks.push(s3Chunk);
       }
       res.statusCode = 200;
@@ -252,7 +258,10 @@ export async function imageOptimizer(
     } catch (err) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
-      console.error("Error processing upstream response (S3): " + err);
+      console.error(
+        `Error processing upstream response due to S3 error for s3Key: ${s3Key}, bucket: ${bucketName} and region: ${region}. Stack trace: ` +
+          err.stack
+      );
       return { finished: true };
     }
   }
@@ -284,7 +293,7 @@ export async function imageOptimizer(
     } catch (error) {
       if (error.code === "MODULE_NOT_FOUND") {
         error.message += "\n\nLearn more: https://err.sh/next.js/install-sharp";
-        console.error(error);
+        console.error(error.stack);
         sendResponse(req, res, upstreamType, upstreamBuffer);
         return { finished: true };
       }
@@ -357,7 +366,7 @@ function getSupportedMimeType(options: string[], accept = ""): string {
 
 function getHash(items: (string | number | Buffer)[]) {
   const hash = createHash("sha256");
-  for (let item of items) {
+  for (const item of items) {
     if (typeof item === "number") hash.update(String(item));
     else {
       hash.update(item);
@@ -372,7 +381,7 @@ function parseCacheControl(str: string | null): Map<string, string> {
   if (!str) {
     return map;
   }
-  for (let directive of str.split(",")) {
+  for (const directive of str.split(",")) {
     let [key, value] = directive.trim().split("=");
     key = key.toLowerCase();
     if (value) {

@@ -90,36 +90,35 @@ const HttpStatusCodes = {
   305: "Use Proxy"
 };
 
-const toCloudFrontHeaders = (headers, originalHeaders) => {
+const toCloudFrontHeaders = (headers, headerNames, originalHeaders) => {
   const result = {};
   const lowerCaseOriginalHeaders = {};
   Object.entries(originalHeaders).forEach(([header, value]) => {
     lowerCaseOriginalHeaders[header.toLowerCase()] = value;
   });
 
-  Object.keys(headers).forEach((headerName) => {
-    const lowerCaseHeaderName = headerName.toLowerCase();
-    const headerValue = headers[headerName];
+  Object.entries(headers).forEach(([headerName, headerValue]) => {
+    const headerKey = headerName.toLowerCase();
+    headerName = headerNames[headerKey] || headerName;
 
-    if (readOnlyCloudFrontHeaders[lowerCaseHeaderName]) {
-      if (lowerCaseOriginalHeaders[lowerCaseHeaderName]) {
-        result[lowerCaseHeaderName] =
-          lowerCaseOriginalHeaders[lowerCaseHeaderName];
+    if (readOnlyCloudFrontHeaders[headerKey]) {
+      if (lowerCaseOriginalHeaders[headerKey]) {
+        result[headerKey] = lowerCaseOriginalHeaders[headerKey];
       }
       return;
     }
 
-    result[lowerCaseHeaderName] = [];
+    result[headerKey] = [];
 
     if (headerValue instanceof Array) {
       headerValue.forEach((val) => {
-        result[lowerCaseHeaderName].push({
+        result[headerKey].push({
           key: headerName,
           value: val.toString()
         });
       });
     } else {
-      result[lowerCaseHeaderName].push({
+      result[headerKey].push({
         key: headerName,
         value: headerValue.toString()
       });
@@ -215,6 +214,7 @@ const handler = (
   });
 
   res.headers = {};
+  const headerNames = {};
   res.writeHead = (status, headers) => {
     response.status = status;
 
@@ -257,7 +257,11 @@ const handler = (
           : Buffer.from(response.body).toString("base64");
       }
 
-      response.headers = toCloudFrontHeaders(res.headers, cfResponse.headers);
+      response.headers = toCloudFrontHeaders(
+        res.headers,
+        headerNames,
+        cfResponse.headers
+      );
 
       if (shouldGzip) {
         response.headers["content-encoding"] = [
@@ -270,6 +274,7 @@ const handler = (
 
   res.setHeader = (name, value) => {
     res.headers[name.toLowerCase()] = value;
+    headerNames[name.toLowerCase()] = name;
   };
   res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()];

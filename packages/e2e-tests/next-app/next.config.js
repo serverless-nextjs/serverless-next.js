@@ -1,4 +1,7 @@
 module.exports = {
+  eslint: {
+    ignoreDuringBuilds: true
+  },
   images: {
     domains: ["raw.githubusercontent.com"]
   },
@@ -46,17 +49,17 @@ module.exports = {
       },
       {
         source: "/external-redirect-1",
-        destination: "https://api.github.com",
+        destination: "https://jsonplaceholder.typicode.com",
         permanent: true
       },
       {
         source: "/external-redirect-2/:id",
-        destination: "https://api.github.com/:id",
+        destination: "https://jsonplaceholder.typicode.com/:id",
         permanent: true
       },
       {
         source: "/external-redirect-3/:id",
-        destination: "https://api.github.com/:id/",
+        destination: "https://jsonplaceholder.typicode.com/:id/",
         permanent: true
       },
       {
@@ -118,31 +121,35 @@ module.exports = {
       },
       {
         source: "/external-rewrite",
-        destination: "https://api.github.com"
+        destination: "https://jsonplaceholder.typicode.com"
       },
       {
         source: "/external-rewrite-issues",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+        destination: "https://jsonplaceholder.typicode.com/todos"
       },
       {
         source: "/external-rewrite-issues-with-query",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+        destination: "https://jsonplaceholder.typicode.com/todos?a=b"
       },
       {
         source: "/api/external-rewrite",
-        destination: "https://api.github.com"
+        destination: "https://jsonplaceholder.typicode.com"
       },
       {
         source: "/api/external-rewrite-issues",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues"
+        destination: "https://jsonplaceholder.typicode.com/todos"
       },
       {
         source: "/api/external-rewrite-issues-with-query",
-        destination:
-          "https://api.github.com/repos/serverless-nextjs/serverless-next.js/issues?a=b"
+        destination: "https://jsonplaceholder.typicode.com/todos?a=b"
+      },
+      {
+        source: "/no-op-rewrite",
+        destination: "/no-op-rewrite"
+      },
+      {
+        source: "/no-op-rewrite",
+        destination: "/ssr-page"
       }
     ];
   },
@@ -167,12 +174,7 @@ module.exports = {
         ]
       },
       {
-        /**
-         * TODO: we need to specify S3 key here for SSG page (ssg-page.html) because of how things currently work.
-         * Request URI is rewritten to the S3 key, so in origin response handler we have no easy way to determine the original page path.
-         * In the future, we may bypass S3 origin + remove origin response handler so origin request handler directly calls S3, making this easier.
-         */
-        source: "/ssg-page.html",
+        source: "/ssg-page",
         headers: [
           {
             key: "x-custom-header-ssg-page",
