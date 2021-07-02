@@ -353,39 +353,38 @@ const setCloudFrontDistributionTags = async (
     })
     .promise();
 
+  const existingTags = {};
   if (listTagsResponse.Tags && listTagsResponse.Tags.Items) {
-    const existingTags = {};
-
     for (const tag of listTagsResponse.Tags.Items) {
       existingTags[tag.Key] = tag.Value;
     }
+  }
 
-    // Remove tags if there are any
-    if (Object.keys(existingTags).length > 0) {
-      await cf
-        .untagResource({
-          Resource: distributionArn,
-          TagKeys: {
-            Items: Object.keys(existingTags)
-          }
-        })
-        .promise();
-    }
-
-    // Add new tags
-    const newTags = [];
-    for (const [key, value] of Object.entries(tags)) {
-      newTags.push({ Key: key, Value: value });
-    }
-
-    if (newTags.length > 0) {
-      await cf.tagResource({
+  // Remove tags if there are any
+  if (Object.keys(existingTags).length > 0) {
+    await cf
+      .untagResource({
         Resource: distributionArn,
-        Tags: {
-          Items: newTags
+        TagKeys: {
+          Items: Object.keys(existingTags)
         }
-      });
-    }
+      })
+      .promise();
+  }
+
+  // Add new tags if there are any
+  const newTags = [];
+  for (const [key, value] of Object.entries(tags)) {
+    newTags.push({ Key: key, Value: value });
+  }
+
+  if (newTags.length > 0) {
+    await cf.tagResource({
+      Resource: distributionArn,
+      Tags: {
+        Items: newTags
+      }
+    });
   }
 };
 

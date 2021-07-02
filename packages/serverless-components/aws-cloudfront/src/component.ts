@@ -99,7 +99,7 @@ class CloudFront extends Component {
     // Set distribution tags if present
     if (inputs.tags && !equals(this.state.tags, inputs.tags)) {
       this.context.debug(
-        `Updating tags for CloudFront distribution ${this.state.id}`
+        `Updating tags for CloudFront distribution of ID ${this.state.id}.`
       );
       await setCloudFrontDistributionTags(cf, this.state.arn, inputs.tags);
     }
