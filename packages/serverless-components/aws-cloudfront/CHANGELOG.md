@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.14...v3.2.0-alpha.15) (2021-07-02)
+
+### Features
+
+- **aws-cloudfront:** allow configurable trustedSigners ([#1351](https://github.com/serverless-nextjs/serverless-next.js/issues/1351)) ([5ee78a6](https://github.com/serverless-nextjs/serverless-next.js/commit/5ee78a682497ee21fcd65057661f938e9de813f1))
+
 # [3.2.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.13...v3.2.0-alpha.14) (2021-07-02)
 
 ### Features
