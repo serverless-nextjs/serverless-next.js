@@ -366,6 +366,9 @@ The exhaustive list of AWS actions required for a deployment:
   "cloudfront:ListPublicKeys",
   "cloudfront:ListStreamingDistributions",
   "cloudfront:UpdateDistribution",
+  "cloudfront:TagResource",         // for adding tags
+  "cloudfront:UntagResource",       // for adding tags
+  "cloudfront:ListTagsForResource", // for adding tags
   "iam:AttachRolePolicy",
   "iam:CreateRole",
   "iam:CreateServiceLinkedRole",
