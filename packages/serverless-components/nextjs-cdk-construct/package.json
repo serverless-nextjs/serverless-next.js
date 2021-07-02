@@ -4,7 +4,7 @@
     "access": "public"
   },
   "description": "Serverless Next.js powered by AWS CDK",
-  "version": "3.2.0-alpha.12",
+  "version": "3.2.0-alpha.13",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "author": "Henry Kirkness <henry@planes.studio>",
