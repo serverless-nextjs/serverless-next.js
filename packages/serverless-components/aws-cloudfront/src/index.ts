@@ -344,8 +344,8 @@ const deleteCloudFrontDistribution = async (cf, distributionId) => {
 
 const setCloudFrontDistributionTags = async (
   cf: AWS.CloudFront,
-  distributionArn,
-  tags
+  distributionArn: string,
+  tags: Record<string, string>
 ) => {
   const listTagsResponse = await cf
     .listTagsForResource({
@@ -379,12 +379,14 @@ const setCloudFrontDistributionTags = async (
   }
 
   if (newTags.length > 0) {
-    await cf.tagResource({
-      Resource: distributionArn,
-      Tags: {
-        Items: newTags
-      }
-    });
+    await cf
+      .tagResource({
+        Resource: distributionArn,
+        Tags: {
+          Items: newTags
+        }
+      })
+      .promise();
   }
 };
 
