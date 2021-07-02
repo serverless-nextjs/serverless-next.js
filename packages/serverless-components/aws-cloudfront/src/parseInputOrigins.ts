@@ -27,10 +27,15 @@ export default (origins: Origin[], options: Options) => {
   };
 
   for (const origin of origins) {
-    const originConfig = getOriginConfig(origin, options);
+    const newOriginConfig = getOriginConfig(origin, options);
+    const originConfig =
+      distributionOrigins.Items.find(({ Id }) => Id === newOriginConfig.Id) ||
+      newOriginConfig;
 
-    distributionOrigins.Quantity = distributionOrigins.Quantity + 1;
-    distributionOrigins.Items.push(originConfig);
+    if (originConfig === newOriginConfig) {
+      distributionOrigins.Quantity = distributionOrigins.Quantity + 1;
+      distributionOrigins.Items.push(originConfig);
+    }
 
     if (typeof origin === "object") {
       // add any cache behaviors
