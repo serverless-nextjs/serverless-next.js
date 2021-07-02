@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.13...v3.2.0-alpha.14) (2021-07-02)
+
+### Features
+
+- **aws-cloudfront, nextjs-component:** support cloudfront tags ([#1350](https://github.com/serverless-nextjs/serverless-next.js/issues/1350)) ([b5d03b1](https://github.com/serverless-nextjs/serverless-next.js/commit/b5d03b1dce9851c31d3dca144c66ae32f83060c0))
+
 # [3.2.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.12...v3.2.0-alpha.13) (2021-07-02)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
