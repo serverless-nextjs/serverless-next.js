@@ -2,6 +2,7 @@ ignore:
   - "packages/e2e-tests"
   - "packages/deprecated"
   - "packages/serverless-components/serverless-cli"
+  - "packages/ci-api"
   - "**/rollup.config.js"
   - "**/copy-sharp-modules.ts"
   - "**/build-test-manifests.ts"
