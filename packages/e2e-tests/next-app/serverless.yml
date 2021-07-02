@@ -10,6 +10,8 @@ next-app:
       api/*:
         forward:
           headers: [Authorization]
+      tags:
+        tag1: val1
     tags:
       defaultLambda:
         tag1: val1

@@ -146,7 +146,7 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
 };
 
 const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
-  // Update logic is a bit weird...
+  // Update logic is a bit weird...s3
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
 
   // 1. we gotta get the config first...
@@ -342,8 +342,56 @@ const deleteCloudFrontDistribution = async (cf, distributionId) => {
   }
 };
 
+const setCloudFrontDistributionTags = async (
+  cf: AWS.CloudFront,
+  distributionArn,
+  tags
+) => {
+  const listTagsResponse = await cf
+    .listTagsForResource({
+      Resource: distributionArn
+    })
+    .promise();
+
+  if (listTagsResponse.Tags && listTagsResponse.Tags.Items) {
+    const existingTags = {};
+
+    for (const tag of listTagsResponse.Tags.Items) {
+      existingTags[tag.Key] = tag.Value;
+    }
+
+    // Remove tags if there are any
+    if (Object.keys(existingTags).length > 0) {
+      await cf
+        .untagResource({
+          Resource: distributionArn,
+          TagKeys: {
+            Items: Object.keys(existingTags)
+          }
+        })
+        .promise();
+    }
+
+    // Add new tags
+    const newTags = [];
+    for (const [key, value] of Object.entries(tags)) {
+      newTags.push({ Key: key, Value: value });
+    }
+
+    if (newTags.length > 0) {
+      await cf.tagResource({
+        Resource: distributionArn,
+        Tags: {
+          Items: newTags
+        }
+      });
+    }
+  }
+};
+
 export {
   createCloudFrontDistribution,
   updateCloudFrontDistribution,
-  deleteCloudFrontDistribution
+  deleteCloudFrontDistribution,
+  setCloudFrontDistributionTags
 };
