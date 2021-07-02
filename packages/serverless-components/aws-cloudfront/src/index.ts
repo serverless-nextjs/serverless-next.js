@@ -146,7 +146,7 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
 };
 
 const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
-  // Update logic is a bit weird...s3
+  // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
 
   // 1. we gotta get the config first...
