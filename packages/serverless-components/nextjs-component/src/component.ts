@@ -314,6 +314,7 @@ class NextjsComponent extends Component {
       originAccessIdentityId: cloudFrontOriginAccessIdentityId,
       paths: cloudFrontPaths,
       waitBeforeInvalidate: cloudFrontWaitBeforeInvalidate = true,
+      tags: cloudFrontTags,
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
@@ -867,7 +868,8 @@ class NextjsComponent extends Component {
       webACLId: cloudFrontWebACLId,
       restrictions: cloudFrontRestrictions,
       certificate: cloudFrontCertificate,
-      originAccessIdentityId: cloudFrontOriginAccessIdentityId
+      originAccessIdentityId: cloudFrontOriginAccessIdentityId,
+      tags: cloudFrontTags
     });
 
     let appUrl = cloudFrontOutputs.url;

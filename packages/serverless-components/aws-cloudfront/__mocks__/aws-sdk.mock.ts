@@ -40,6 +40,17 @@ export const mockGetCloudFrontOriginAccessIdentityPromise = promisifyMock(
 export const mockPutBucketPolicy = jest.fn();
 export const mockPutBucketPolicyPromise = promisifyMock(mockPutBucketPolicy);
 
+export const mockUntagResource = jest.fn();
+export const mockUntagResourcePromise = promisifyMock(mockUntagResource);
+
+export const mockTagResource = jest.fn();
+export const mockTagResourcePromise = promisifyMock(mockTagResource);
+
+export const mockListTagsForResource = jest.fn();
+export const mockListTagsForResourcePromise = promisifyMock(
+  mockListTagsForResource
+);
+
 export default {
   CloudFront: jest.fn(() => ({
     createDistribution: mockCreateDistribution,
@@ -48,7 +59,10 @@ export default {
     deleteDistribution: mockDeleteDistribution,
     createCloudFrontOriginAccessIdentity:
       mockCreateCloudFrontOriginAccessIdentity,
-    getCloudFrontOriginAccessIdentity: mockGetCloudFrontOriginAccessIdentity
+    getCloudFrontOriginAccessIdentity: mockGetCloudFrontOriginAccessIdentity,
+    listTagsForResource: mockListTagsForResource,
+    untagResource: mockUntagResource,
+    tagResource: mockTagResource
   })),
 
   S3: jest.fn(() => ({

@@ -245,6 +245,9 @@ myNextApplication:
       originAccessIdentityId: XYZEXAMPLE #optional
       paths: ["/*"] # which paths should be invalidated on deploy, default matches everything, empty array skips invalidation completely
       waitBeforeInvalidate: true # by default true, it waits for the CloudFront distribution to have completed before invalidating, to avoid possibly caching old page
+      tags: # Add any tags you want
+        tag1: val1
+        tag2: val2
 ```
 
 This is particularly useful for caching any of your Next.js pages at CloudFront's edge locations. See [this](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/serverless-components/nextjs-component/examples/app-with-custom-caching-config) for an example application with custom cache configuration.
@@ -363,6 +366,9 @@ The exhaustive list of AWS actions required for a deployment:
   "cloudfront:ListPublicKeys",
   "cloudfront:ListStreamingDistributions",
   "cloudfront:UpdateDistribution",
+  "cloudfront:TagResource",         // for adding tags
+  "cloudfront:UntagResource",       // for adding tags
+  "cloudfront:ListTagsForResource", // for adding tags
   "iam:AttachRolePolicy",
   "iam:CreateRole",
   "iam:CreateServiceLinkedRole",

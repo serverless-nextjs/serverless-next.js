@@ -4,7 +4,8 @@ import { Component } from "@serverless/core";
 import {
   createCloudFrontDistribution,
   updateCloudFrontDistribution,
-  deleteCloudFrontDistribution
+  deleteCloudFrontDistribution,
+  setCloudFrontDistributionTags
 } from "./";
 
 /*
@@ -23,7 +24,7 @@ class CloudFront extends Component {
     this.context.status("Deploying");
 
     inputs.region = inputs.region || "us-east-1";
-    inputs.enabled = inputs.enabled === false ? false : true;
+    inputs.enabled = inputs.enabled !== false;
     inputs.comment =
       inputs.comment === null || inputs.comment === undefined
         ? ""
@@ -95,6 +96,14 @@ class CloudFront extends Component {
       this.state = await createCloudFrontDistribution(cf, s3, inputs);
     }
 
+    // Set distribution tags if present
+    if (inputs.tags && !equals(this.state.tags, inputs.tags)) {
+      this.context.debug(
+        `Updating tags for CloudFront distribution of ID ${this.state.id}.`
+      );
+      await setCloudFrontDistributionTags(cf, this.state.arn, inputs.tags);
+    }
+
     this.state.region = inputs.region;
     this.state.enabled = inputs.enabled;
     this.state.comment = inputs.comment;
@@ -103,6 +112,7 @@ class CloudFront extends Component {
     this.state.origins = inputs.origins;
     this.state.errorPages = inputs.errorPages;
     this.state.defaults = inputs.defaults;
+    this.state.tags = inputs.tags;
     await this.save();
 
     this.context.debug(

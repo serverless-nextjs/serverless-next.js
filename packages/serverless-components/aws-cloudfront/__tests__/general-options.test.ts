@@ -5,7 +5,11 @@ import {
   mockUpdateDistribution,
   mockCreateDistributionPromise,
   mockGetDistributionConfigPromise,
-  mockUpdateDistributionPromise
+  mockUpdateDistributionPromise,
+  mockListTagsForResource,
+  mockListTagsForResourcePromise,
+  mockUntagResource,
+  mockTagResource
 } from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
@@ -19,7 +23,8 @@ describe("General options propagation", () => {
   beforeEach(async () => {
     mockCreateDistributionPromise.mockResolvedValueOnce({
       Distribution: {
-        Id: "distribution123"
+        Id: "distribution123",
+        ARN: "distributionArn"
       }
     });
 
@@ -451,5 +456,50 @@ describe("General options propagation", () => {
         })
       })
     );
+  });
+
+  it("create distribution with tags", async () => {
+    mockListTagsForResourcePromise.mockResolvedValueOnce({
+      Tags: {
+        Items: [{ Key: "existingTag", Tag: "existingValue" }]
+      }
+    });
+
+    await component.default({
+      tags: {
+        tag1: "val1",
+        tag2: "val2"
+      },
+      origins
+    });
+
+    expect(mockCreateDistribution).toBeCalled();
+
+    expect(mockListTagsForResource).toBeCalledWith({
+      Resource: "distributionArn"
+    });
+
+    expect(mockUntagResource).toBeCalledWith({
+      Resource: "distributionArn",
+      TagKeys: {
+        Items: ["existingTag"]
+      }
+    });
+
+    expect(mockTagResource).toBeCalledWith({
+      Resource: "distributionArn",
+      Tags: {
+        Items: [
+          {
+            Key: "tag1",
+            Value: "val1"
+          },
+          {
+            Key: "tag2",
+            Value: "val2"
+          }
+        ]
+      }
+    });
   });
 });

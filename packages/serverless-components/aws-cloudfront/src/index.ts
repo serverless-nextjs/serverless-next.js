@@ -342,8 +342,57 @@ const deleteCloudFrontDistribution = async (cf, distributionId) => {
   }
 };
 
+const setCloudFrontDistributionTags = async (
+  cf: AWS.CloudFront,
+  distributionArn: string,
+  tags: Record<string, string>
+) => {
+  const listTagsResponse = await cf
+    .listTagsForResource({
+      Resource: distributionArn
+    })
+    .promise();
+
+  const existingTags = {};
+  if (listTagsResponse.Tags && listTagsResponse.Tags.Items) {
+    for (const tag of listTagsResponse.Tags.Items) {
+      existingTags[tag.Key] = tag.Value;
+    }
+  }
+
+  // Remove tags if there are any
+  if (Object.keys(existingTags).length > 0) {
+    await cf
+      .untagResource({
+        Resource: distributionArn,
+        TagKeys: {
+          Items: Object.keys(existingTags)
+        }
+      })
+      .promise();
+  }
+
+  // Add new tags if there are any
+  const newTags = [];
+  for (const [key, value] of Object.entries(tags)) {
+    newTags.push({ Key: key, Value: value });
+  }
+
+  if (newTags.length > 0) {
+    await cf
+      .tagResource({
+        Resource: distributionArn,
+        Tags: {
+          Items: newTags
+        }
+      })
+      .promise();
+  }
+};
+
 export {
   createCloudFrontDistribution,
   updateCloudFrontDistribution,
-  deleteCloudFrontDistribution
+  deleteCloudFrontDistribution,
+  setCloudFrontDistributionTags
 };
