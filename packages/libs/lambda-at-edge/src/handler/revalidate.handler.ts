@@ -7,6 +7,9 @@ import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
 import { debug } from "../lib/console";
 
+// ISR needs to maintain a time gap of at least tens of seconds.
+const REVALIDATE_TRIGGER_GAP_SECONDS = 60;
+
 export class RevalidateHandler {
   constructor(
     private resourceService: ResourceService,
@@ -26,6 +29,13 @@ export class RevalidateHandler {
       this.s3Service.getHeader(resource.getJsonKey()),
       this.renderService.getPage(resource.getPagePath(), resource.getJsonUri())
     ]);
+
+    if (this.shouldSkipRevalidate(htmlHeader.header.LastModified)) {
+      debug(
+        `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
+      );
+      return;
+    }
 
     debug(`[handler] Revalidate resource: ${JSON.stringify(resource)}`);
 
@@ -63,5 +73,18 @@ export class RevalidateHandler {
     }
 
     return;
+  }
+
+  //check lastModified to control revalidate
+  private shouldSkipRevalidate(lastModified: Date | undefined) {
+    if (lastModified === undefined) return false;
+    debug(
+      `[checkRevalidateTimeGap] lastModified at ${lastModified}, current: ${new Date()}, time gap: ${REVALIDATE_TRIGGER_GAP_SECONDS}`
+    );
+
+    return (
+      new Date() <
+      new Date(lastModified!.getTime() + REVALIDATE_TRIGGER_GAP_SECONDS * 1000)
+    );
   }
 }
