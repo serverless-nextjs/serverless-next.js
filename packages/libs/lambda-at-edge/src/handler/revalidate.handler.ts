@@ -8,7 +8,7 @@ import { S3Service } from "../services/s3.service";
 import { debug } from "../lib/console";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
-const REVALIDATE_TRIGGER_GAP_SECONDS = 60;
+const REVALIDATE_TRIGGER_GAP_SECONDS = 300;
 
 export class RevalidateHandler {
   constructor(
@@ -79,7 +79,7 @@ export class RevalidateHandler {
   private shouldSkipRevalidate(lastModified: Date | undefined) {
     if (lastModified === undefined) return false;
     debug(
-      `[checkRevalidateTimeGap] lastModified at ${lastModified}, current: ${new Date()}, time gap: ${REVALIDATE_TRIGGER_GAP_SECONDS}`
+      `[checkRevalidateTimeGap] lastModified at ${lastModified}, current: ${new Date()}`
     );
 
     return (
