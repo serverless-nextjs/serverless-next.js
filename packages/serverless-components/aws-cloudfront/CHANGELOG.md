@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.16](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.15...v3.2.0-alpha.16) (2021-07-03)
+
+### Bug Fixes
+
+- **aws-cloudfront:** fix cloudfront origin merging ([623c168](https://github.com/serverless-nextjs/serverless-next.js/commit/623c1684c41995341a5543de9f0e802bbd864b0e))
+
 # [3.2.0-alpha.15](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.14...v3.2.0-alpha.15) (2021-07-02)
 
 ### Features
