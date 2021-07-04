@@ -3,7 +3,10 @@
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
     "module": "ESNext",
-    "lib": ["DOM", "ES2020"],
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
     "target": "ES2019",
     "moduleResolution": "node",
     "noImplicitAny": true,
@@ -16,6 +19,6 @@
     "./src/default-handler.ts",
     "./src/api-handler.ts",
     "./src/image-handler.ts",
-    "./src/regeneration-handler.ts",
+    "./src/regeneration-handler.ts"
   ]
 }
