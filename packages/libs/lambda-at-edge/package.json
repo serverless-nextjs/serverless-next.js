@@ -44,7 +44,7 @@
     "@types/fresh": "^0.5.0",
     "@types/fs-extra": "^9.0.1",
     "@types/klaw": "^3.0.1",
-    "@types/node": "^15.12.2",
+    "@types/node": "^16.0.0",
     "@types/node-fetch": "^2.5.7",
     "@types/send": "^0.17.0",
     "@types/sharp": "^0.28.1",
