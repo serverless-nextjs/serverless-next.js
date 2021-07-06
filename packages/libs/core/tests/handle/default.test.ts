@@ -25,7 +25,7 @@ describe("Default handler", () => {
   beforeAll(async () => {
     prerenderManifest = {
       version: 3,
-      notFoundRoutes: [],
+      notFoundRoutes: ["/fallback/404"],
       routes: {
         "/ssg": {
           initialRevalidateSeconds: false,
@@ -262,6 +262,7 @@ describe("Default handler", () => {
       ${"/foo"}          | ${"pages/[root].html"}
       ${"/html/bar"}     | ${"pages/html/[page].html"}
       ${"/fallback/new"} | ${"pages/fallback/new.html"}
+      ${"/fallback/404"} | ${"pages/404.html"}
       ${"/rewrite-path"} | ${"pages/[root].html"}
     `("Routes static page $uri to file $file", async ({ uri, file }) => {
       const route = await handleDefault(
@@ -282,6 +283,7 @@ describe("Default handler", () => {
     it.each`
       uri                                              | file
       ${"/_next/data/test-build-id/fallback/new.json"} | ${"/_next/data/test-build-id/fallback/new.json"}
+      ${"/_next/data/test-build-id/fallback/404.json"} | ${"pages/404.html"}
       ${"/_next/data/test-build-id/not-found.json"}    | ${"pages/404.html"}
       ${"/_next/data/not-build-id/fallback/new.json"}  | ${"pages/404.html"}
     `("Routes static data route $uri to file $file", async ({ uri, file }) => {

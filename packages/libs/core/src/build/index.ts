@@ -46,7 +46,8 @@ export const prepareBuildManifests = async (
       },
       ssg: {
         dynamic: {},
-        nonDynamic: {}
+        nonDynamic: {},
+        notFound: {}
       }
     },
     publicFiles: {},
@@ -137,6 +138,11 @@ export const prepareBuildManifests = async (
       };
     }
   );
+
+  // Add not found SSG routes
+  prerenderManifest.notFoundRoutes.forEach((route) => {
+    ssgPages.notFound[route] = true;
+  });
 
   // Include only SSR routes that are in runtime use
   const ssrPages = (pageManifest.pages.ssr = usedSSR(
