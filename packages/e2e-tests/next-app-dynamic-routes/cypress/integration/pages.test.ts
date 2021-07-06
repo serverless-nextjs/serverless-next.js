@@ -451,7 +451,7 @@ describe("Pages Tests", () => {
       });
     });
 
-    [{ path: "/optional-catch-all-ssg-fallback/not-found" }].forEach(
+    [{ path: "/optional-catch-all-ssg-with-fallback/not-found" }].forEach(
       ({ path }) => {
         ["HEAD", "GET"].forEach((method) => {
           it(`allows HTTP method for path ${path}: ${method} and returns 404 status`, () => {
