@@ -214,6 +214,9 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: 60,
             srcRoute: null
           }
+        },
+        notFound: {
+          "/fallback/not-found": true
         }
       });
 

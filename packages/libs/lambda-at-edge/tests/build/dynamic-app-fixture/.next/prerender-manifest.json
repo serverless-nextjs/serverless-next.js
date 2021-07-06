@@ -57,7 +57,9 @@
             "dataRouteRegex": "^/_next/data/test-build-id/fallback\\-blocking/([^/]+?)\\.json$"
         }
     },
-    "notFoundRoutes": [],
+    "notFoundRoutes": [
+        "/fallback/not-found"
+    ],
     "preview": {
         "previewModeId": "815c0e1086134f5f9a666832bd0b2a95",
         "previewModeSigningKey": "0aa4fa146a001d1053ec5056e1afbc933e390de4410a68782ccada0ec1066ac9",
