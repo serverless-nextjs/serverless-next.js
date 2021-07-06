@@ -56,7 +56,7 @@ export const handlePageReq = (
       statusCode
     };
   }
-  if (pages.ssg.notFound[localeUri] && !isPreview) {
+  if ((pages.ssg.notFound ?? {})[localeUri] && !isPreview) {
     return notFoundPage(uri, manifest, routesManifest);
   }
   if (pages.ssr.nonDynamic[localeUri]) {

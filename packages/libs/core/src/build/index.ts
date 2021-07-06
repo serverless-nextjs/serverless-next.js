@@ -140,7 +140,7 @@ export const prepareBuildManifests = async (
   );
 
   // Add not found SSG routes
-  prerenderManifest.notFoundRoutes.forEach((route) => {
+  (prerenderManifest.notFoundRoutes ?? []).forEach((route) => {
     ssgPages.notFound[route] = true;
   });
 

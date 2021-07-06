@@ -53,7 +53,7 @@ export const handleDataReq = (
       revalidate: ssg.initialRevalidateSeconds
     };
   }
-  if (pages.ssg.notFound[localeUri] && !isPreview) {
+  if ((pages.ssg.notFound ?? {})[localeUri] && !isPreview) {
     return notFoundData(uri, manifest, routesManifest);
   }
   if (pages.ssr.nonDynamic[localeUri]) {
