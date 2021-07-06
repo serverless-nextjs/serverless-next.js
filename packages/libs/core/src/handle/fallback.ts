@@ -23,6 +23,20 @@ type Fallback = {
   renderOpts: any;
 };
 
+const renderNotFound = async (
+  event: Event,
+  manifest: PageManifest,
+  routesManifest: RoutesManifest,
+  getPage: (page: string) => any
+): Promise<StaticRoute | void> => {
+  const route = notFoundPage(event.req.url ?? "", manifest, routesManifest);
+  if (route.isStatic) {
+    return route as StaticRoute;
+  }
+
+  return await renderRoute(event, route, manifest, routesManifest, getPage);
+};
+
 const renderFallback = async (
   event: Event,
   route: FallbackRoute,
@@ -35,11 +49,14 @@ const renderFallback = async (
 
   const page = getPage(route.page);
   try {
-    const { html, renderOpts } = await page.renderReqToHTML(
+    const { html, notFound, renderOpts } = await page.renderReqToHTML(
       req,
       res,
       "passthrough"
     );
+    if (notFound) {
+      return renderNotFound(event, manifest, routesManifest, getPage);
+    }
     return { isStatic: false, route, html, renderOpts };
   } catch (error) {
     return renderErrorPage(
@@ -94,14 +111,5 @@ export const handleFallback = async (
     }
   }
 
-  const errorRoute = notFoundPage(
-    event.req.url ?? "",
-    manifest,
-    routesManifest
-  );
-  if (errorRoute.isStatic) {
-    return errorRoute as StaticRoute;
-  }
-
-  return renderRoute(event, errorRoute, manifest, routesManifest, getPage);
+  return await renderNotFound(event, manifest, routesManifest, getPage);
 };
