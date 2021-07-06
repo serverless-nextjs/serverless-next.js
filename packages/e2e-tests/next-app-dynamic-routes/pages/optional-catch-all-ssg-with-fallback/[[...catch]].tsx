@@ -28,7 +28,7 @@ export async function getStaticProps(
   if (catchAll === "not-found") {
     return {
       notFound: true
-    }
+    };
   }
 
   return {
