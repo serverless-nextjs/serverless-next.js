@@ -214,6 +214,7 @@ const handler = (
   const headerNames = {};
   res.writeHead = (status, headers) => {
     response.status = status;
+    response.statusDescription = HttpStatusCodes[status];
 
     if (headers) {
       res.headers = Object.assign(res.headers, headers);

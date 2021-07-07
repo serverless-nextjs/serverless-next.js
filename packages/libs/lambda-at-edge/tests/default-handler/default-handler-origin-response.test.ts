@@ -65,6 +65,7 @@ describe("Lambda@Edge origin response", () => {
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
+          headers: {},
           status: "403"
         } as any
       });
@@ -79,7 +80,7 @@ describe("Lambda@Edge origin response", () => {
       });
 
       expect(response).toEqual({
-        status: "200",
+        status: 200,
         statusDescription: "OK",
         headers: {
           "cache-control": [
@@ -95,7 +96,8 @@ describe("Lambda@Edge origin response", () => {
             }
           ]
         },
-        body: "S3Body"
+        body: "UzNCb2R5",
+        bodyEncoding: "base64"
       });
     });
 
@@ -105,6 +107,7 @@ describe("Lambda@Edge origin response", () => {
         host: "mydistribution.cloudfront.net",
         config: { eventType: "origin-response" } as any,
         response: {
+          headers: {},
           status: "403"
         } as any
       });
@@ -119,7 +122,7 @@ describe("Lambda@Edge origin response", () => {
       });
 
       expect(response).toEqual({
-        status: "404",
+        status: 404,
         statusDescription: "Not Found",
         headers: {
           "cache-control": [
@@ -135,7 +138,8 @@ describe("Lambda@Edge origin response", () => {
             }
           ]
         },
-        body: "S3Body"
+        body: "UzNCb2R5",
+        bodyEncoding: "base64"
       });
     });
 
