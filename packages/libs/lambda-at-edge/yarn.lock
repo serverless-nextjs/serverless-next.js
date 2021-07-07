@@ -1180,9 +1180,9 @@
     "@types/node" "*"
 
 "@types/klaw@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.npmjs.org/@types/klaw/-/klaw-3.0.1.tgz#29f90021c0234976aa4eb97efced9cb6db9fa8b3"
-  integrity sha512-acnF3n9mYOr1aFJKFyvfNX0am9EtPUsYPq22QUCGdJE+MVt6UyAN1jwo+PmOPqXD4K7ZS9MtxDEp/un0lxFccA==
+  version "3.0.2"
+  resolved "https://registry.npmjs.org/@types/klaw/-/klaw-3.0.2.tgz#ce9cf2c0566b806d4fe86eb07082b483ad1ee3f6"
+  integrity sha512-v8smJUQ5SuoCh1EZ5B429DTGFDE0URnC9ix3wJpTB8Ofk7Rgi5Hj/jm9GffavHiXPeYgPRe3ASBfB6LT6ytceg==
   dependencies:
     "@types/node" "*"
 
