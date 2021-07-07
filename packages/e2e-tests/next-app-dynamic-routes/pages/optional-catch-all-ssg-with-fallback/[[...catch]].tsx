@@ -1,5 +1,5 @@
 import React from "react";
-import { GetServerSidePropsContext } from "next";
+import { GetServerSidePropsContext, GetStaticPropsResult } from "next";
 
 type OptionalCatchAllPageProps = {
   name: string;
@@ -22,8 +22,14 @@ export default function OptionalCatchAllPage(
 
 export async function getStaticProps(
   ctx: GetServerSidePropsContext
-): Promise<{ props: OptionalCatchAllPageProps }> {
+): Promise<GetStaticPropsResult<OptionalCatchAllPageProps>> {
   const catchAll = ((ctx.params?.catch as string[]) ?? []).join("/");
+
+  if (catchAll === "not-found") {
+    return {
+      notFound: true
+    };
+  }
 
   return {
     props: { name: "serverless-next.js", catch: catchAll }

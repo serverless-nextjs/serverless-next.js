@@ -345,4 +345,72 @@ describe("Fallback handler", () => {
       }
     );
   });
+
+  it.each`
+    uri                                              | page
+    ${"/_next/data/test-build-id/fallback/new.json"} | ${"pages/fallback/[slug].js"}
+  `(
+    "Returns 404 if $uri fallback returns notFound: true",
+    async ({ uri, page }) => {
+      const event = mockEvent(uri);
+      const request = toRequest(event);
+      const renderReqToHTML = jest.fn(() => ({
+        renderOpts: { isNotFound: true }
+      }));
+      getPage.mockReturnValueOnce({ renderReqToHTML });
+      const route = await handleFallback(
+        event,
+        await routeDefault(
+          request,
+          manifest,
+          prerenderManifest,
+          routesManifest
+        ),
+        manifest,
+        routesManifest,
+        getPage
+      );
+
+      expect(getPage).toHaveBeenCalledWith(page);
+      expect(renderReqToHTML).toHaveBeenCalled();
+      expect(route).toBeFalsy();
+      expect(event.res.statusCode).toEqual(404);
+    }
+  );
+
+  it.each`
+    uri                         | page
+    ${"/fallback-blocking/404"} | ${"pages/fallback-blocking/[slug].js"}
+  `(
+    "Returns 404 page if $uri fallback returns notFound: true",
+    async ({ uri, page }) => {
+      const event = mockEvent(uri);
+      const request = toRequest(event);
+      const renderReqToHTML = jest.fn(() => ({
+        renderOpts: { isNotFound: true }
+      }));
+      getPage.mockReturnValueOnce({ renderReqToHTML });
+      const route = await handleFallback(
+        event,
+        await routeDefault(
+          request,
+          manifest,
+          prerenderManifest,
+          routesManifest
+        ),
+        manifest,
+        routesManifest,
+        getPage
+      );
+
+      expect(getPage).toHaveBeenCalledWith(page);
+      expect(renderReqToHTML).toHaveBeenCalled();
+      expect(route).toBeTruthy();
+      if (route) {
+        expect(route.isStatic).toBeTruthy();
+        expect((route as any).file).toEqual("pages/404.html");
+        expect((route as any).statusCode).toEqual(404);
+      }
+    }
+  );
 });

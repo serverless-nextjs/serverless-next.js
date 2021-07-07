@@ -348,7 +348,7 @@ describe("Pages Tests", () => {
         prerendered: true
       },
       {
-        path: "/optional-catch-all-ssg-with-fallback/not-found",
+        path: "/optional-catch-all-ssg-with-fallback/not-prerendered",
         param: "",
         prerendered: false
       }
@@ -450,6 +450,49 @@ describe("Pages Tests", () => {
         //  However, verified manually that it works correctly.
       });
     });
+
+    [{ path: "/optional-catch-all-ssg-with-fallback/not-found" }].forEach(
+      ({ path }) => {
+        ["HEAD", "GET"].forEach((method) => {
+          it(`allows HTTP method for path ${path}: ${method} and returns 200 status`, () => {
+            cy.request({
+              url: path,
+              method: method,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.equal(200);
+            });
+          });
+        });
+
+        ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
+          it(`disallows HTTP method for path ${path} with 4xx status code: ${method}`, () => {
+            cy.request({
+              url: path,
+              method: method,
+              failOnStatusCode: false
+            }).then((response) => {
+              expect(response.status).to.be.gte(400);
+            });
+          });
+        });
+
+        it(`returns 404 on data request for ${path}`, () => {
+          const fullPath = `/_next/data/${buildId}${path.replace(
+            /\/$/,
+            "/index"
+          )}.json`;
+
+          cy.request({
+            url: fullPath,
+            method: "GET",
+            failOnStatusCode: false
+          }).then((response) => {
+            expect(response.status).to.equal(404);
+          });
+        });
+      }
+    );
   });
 
   describe("Dynamic SSR page", () => {

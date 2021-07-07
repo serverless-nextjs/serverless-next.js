@@ -93,6 +93,9 @@ export type PageManifest = Manifest & {
       nonDynamic: {
         [key: string]: NonDynamicSSG;
       };
+      notFound?: {
+        [key: string]: true;
+      };
     };
     ssr: {
       dynamic: { [key: string]: string };

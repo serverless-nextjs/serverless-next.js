@@ -23,6 +23,20 @@ type Fallback = {
   renderOpts: any;
 };
 
+const renderNotFound = async (
+  event: Event,
+  manifest: PageManifest,
+  routesManifest: RoutesManifest,
+  getPage: (page: string) => any
+): Promise<StaticRoute | void> => {
+  const route = notFoundPage(event.req.url ?? "", manifest, routesManifest);
+  if (route.isStatic) {
+    return route as StaticRoute;
+  }
+
+  return await renderRoute(event, route, manifest, routesManifest, getPage);
+};
+
 const renderFallback = async (
   event: Event,
   route: FallbackRoute,
@@ -40,6 +54,17 @@ const renderFallback = async (
       res,
       "passthrough"
     );
+
+    if (renderOpts.isNotFound) {
+      if (route.isData) {
+        res.setHeader("Content-Type", "application/json");
+        res.statusCode = 404;
+        res.end(JSON.stringify({ notFound: true }));
+        return;
+      }
+      return renderNotFound(event, manifest, routesManifest, getPage);
+    }
+
     return { isStatic: false, route, html, renderOpts };
   } catch (error) {
     return renderErrorPage(
@@ -94,14 +119,5 @@ export const handleFallback = async (
     }
   }
 
-  const errorRoute = notFoundPage(
-    event.req.url ?? "",
-    manifest,
-    routesManifest
-  );
-  if (errorRoute.isStatic) {
-    return errorRoute as StaticRoute;
-  }
-
-  return renderRoute(event, errorRoute, manifest, routesManifest, getPage);
+  return await renderNotFound(event, manifest, routesManifest, getPage);
 };

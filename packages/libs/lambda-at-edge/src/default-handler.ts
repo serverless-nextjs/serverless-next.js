@@ -378,39 +378,22 @@ const handleOriginResponse = async ({
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
     const bodyString = await getStream.default(s3Response.Body as Readable);
 
-    const statusCode = (fallbackRoute.statusCode || 200).toString();
-    const is404 = statusCode === "404";
-    const is500 = statusCode === "500";
-    return {
-      status: statusCode,
-      statusDescription: is500
-        ? "Internal Server Error"
-        : is404
-        ? "Not Found"
-        : "OK",
-      headers: {
-        ...response.headers,
-        ...getCustomHeaders(request.uri, routesManifest),
-        "content-type": [
-          {
-            key: "Content-Type",
-            value: "text/html"
-          }
-        ],
-        "cache-control": [
-          {
-            key: "Cache-Control",
-            value: is500
-              ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
-              : s3Response.CacheControl ??
-                (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
-                  ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
-                  : "public, max-age=0, s-maxage=2678400, must-revalidate")
-          }
-        ]
-      },
-      body: bodyString
-    };
+    const statusCode = fallbackRoute.statusCode || 200;
+    const is500 = statusCode === 500;
+
+    const cacheControl = is500
+      ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
+      : s3Response.CacheControl ??
+        (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+          ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+          : "public, max-age=0, s-maxage=2678400, must-revalidate");
+
+    res.writeHead(statusCode, {
+      "Cache-Control": cacheControl,
+      "Content-Type": "text/html"
+    });
+    res.end(bodyString);
+    return await responsePromise;
   }
 
   // This is a fallback route that should be stored in S3 before returning it
@@ -437,12 +420,7 @@ const handleOriginResponse = async ({
   const cacheControl =
     (isrResponse && isrResponse.cacheControl) ||
     "public, max-age=0, s-maxage=2678400, must-revalidate";
-  const outHeaders: OutgoingHttpHeaders = {};
-  Object.entries(response.headers).map(([name, headers]) => {
-    outHeaders[name] = headers.map(({ value }) => value);
-  });
 
-  res.writeHead(200, outHeaders);
   res.setHeader("Cache-Control", cacheControl);
 
   if (fallbackRoute.route.isData) {

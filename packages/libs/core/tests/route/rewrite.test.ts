@@ -73,7 +73,8 @@ describe("Rewriter Tests", () => {
           },
           ssg: {
             dynamic: {},
-            nonDynamic: {}
+            nonDynamic: {},
+            notFound: {}
           },
           ssr: {
             dynamic: {},
