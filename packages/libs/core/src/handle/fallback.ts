@@ -49,14 +49,22 @@ const renderFallback = async (
 
   const page = getPage(route.page);
   try {
-    const { html, notFound, renderOpts } = await page.renderReqToHTML(
+    const { html, renderOpts } = await page.renderReqToHTML(
       req,
       res,
       "passthrough"
     );
-    if (notFound) {
+
+    if (renderOpts.isNotFound) {
+      if (route.isData) {
+        res.setHeader("Content-Type", "application/json");
+        res.statusCode = 404;
+        res.end(JSON.stringify({ notFound: true }));
+        return;
+      }
       return renderNotFound(event, manifest, routesManifest, getPage);
     }
+
     return { isStatic: false, route, html, renderOpts };
   } catch (error) {
     return renderErrorPage(
