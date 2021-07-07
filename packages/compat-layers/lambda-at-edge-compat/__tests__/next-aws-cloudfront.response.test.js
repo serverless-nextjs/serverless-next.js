@@ -119,7 +119,36 @@ describe("Response Tests", () => {
     });
   });
 
-  it("writeHead preserves existing special CloudFront Headers", () => {
+  it("writeHead preserves existing Headers", () => {
+    expect.assertions(1);
+
+    const cloudFrontReadOnlyHeaders = {
+      "Content-Length": "1234",
+      "x-custom-1": "1"
+    };
+
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      },
+      response: {
+        headers: cloudFrontReadOnlyHeaders
+      }
+    });
+
+    res.writeHead(200, {});
+    res.end();
+
+    return responsePromise.then((response) => {
+      expect(response.headers).toEqual({
+        "content-length": "1234",
+        "x-custom-1": "1"
+      });
+    });
+  });
+
+  it("writeHead does not overwrite special CloudFront Headers", () => {
     expect.assertions(1);
 
     const cloudFrontReadOnlyHeaders = {

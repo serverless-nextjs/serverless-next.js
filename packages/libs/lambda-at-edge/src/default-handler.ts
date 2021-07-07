@@ -437,12 +437,7 @@ const handleOriginResponse = async ({
   const cacheControl =
     (isrResponse && isrResponse.cacheControl) ||
     "public, max-age=0, s-maxage=2678400, must-revalidate";
-  const outHeaders: OutgoingHttpHeaders = {};
-  Object.entries(response.headers).map(([name, headers]) => {
-    outHeaders[name] = headers.map(({ value }) => value);
-  });
 
-  res.writeHead(200, outHeaders);
   res.setHeader("Cache-Control", cacheControl);
 
   if (fallbackRoute.route.isData) {

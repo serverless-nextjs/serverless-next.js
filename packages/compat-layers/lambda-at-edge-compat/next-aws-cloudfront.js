@@ -92,9 +92,9 @@ const HttpStatusCodes = {
 
 const toCloudFrontHeaders = (headers, headerNames, originalHeaders) => {
   const result = {};
-  const lowerCaseOriginalHeaders = {};
-  Object.entries(originalHeaders).forEach(([header, value]) => {
-    lowerCaseOriginalHeaders[header.toLowerCase()] = value;
+
+  Object.entries(originalHeaders).forEach(([headerName, headerValue]) => {
+    result[headerName.toLowerCase()] = headerValue;
   });
 
   Object.entries(headers).forEach(([headerName, headerValue]) => {
@@ -102,9 +102,6 @@ const toCloudFrontHeaders = (headers, headerNames, originalHeaders) => {
     headerName = headerNames[headerKey] || headerName;
 
     if (readOnlyCloudFrontHeaders[headerKey]) {
-      if (lowerCaseOriginalHeaders[headerKey]) {
-        result[headerKey] = lowerCaseOriginalHeaders[headerKey];
-      }
       return;
     }
 
