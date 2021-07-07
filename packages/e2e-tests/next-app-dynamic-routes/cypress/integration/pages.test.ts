@@ -454,13 +454,13 @@ describe("Pages Tests", () => {
     [{ path: "/optional-catch-all-ssg-with-fallback/not-found" }].forEach(
       ({ path }) => {
         ["HEAD", "GET"].forEach((method) => {
-          it(`allows HTTP method for path ${path}: ${method} and returns 404 status`, () => {
+          it(`allows HTTP method for path ${path}: ${method} and returns 200 status`, () => {
             cy.request({
               url: path,
               method: method,
               failOnStatusCode: false
             }).then((response) => {
-              expect(response.status).to.equal(404);
+              expect(response.status).to.equal(200);
             });
           });
         });
