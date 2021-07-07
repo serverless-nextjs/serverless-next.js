@@ -1217,9 +1217,9 @@
     "@types/node" "*"
 
 "@types/send@^0.17.0":
-  version "0.17.0"
-  resolved "https://registry.npmjs.org/@types/send/-/send-0.17.0.tgz#2c8cd6a4a97efd0ae54be3bc16647d864be2f94a"
-  integrity sha512-Kh5ghRpkAcjAak9sCns9XTu9xL/hzJHMQIEi2xLZ8kJ1JVKPly0E0NA7snmSk9Ah7BndN8jEnltzz2VPjBMQIg==
+  version "0.17.1"
+  resolved "https://registry.npmjs.org/@types/send/-/send-0.17.1.tgz#ed4932b8a2a805f1fe362a70f4e62d0ac994e301"
+  integrity sha512-Cwo8LE/0rnvX7kIIa3QHCkcuF21c05Ayb0ZfxPiv0W8VRiZiNW/WuRupHKpqqGVGf7SUA44QSOUKaEd9lIrd/Q==
   dependencies:
     "@types/mime" "^1"
     "@types/node" "*"
