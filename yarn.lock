@@ -3035,7 +3035,7 @@
     node-fetch "^2.6.0"
     shortid "^2.2.14"
 
-"@serverless/components@^3.13.1":
+"@serverless/components@^3.13.2":
   version "3.13.2"
   resolved "https://registry.npmjs.org/@serverless/components/-/components-3.13.2.tgz#2bf1322441e36457ee615546a576cdaf96aae36e"
   integrity sha512-fIYqo9cONxQeNpyWFTTLi6+r2S1KivOU5sys6nVQSR24jRVqxSpPN2eMz6BCUB8rw7N4kf+wbQDLwlyFbIroyQ==
@@ -4276,10 +4276,10 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.935.0, aws-sdk@^2.937.0:
-  version "2.939.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.939.0.tgz#c07c9d726bcb2ffdb69016f880ae310ad72f36a5"
-  integrity sha512-2KEAtTlVMDcpHP6+P9JU+mXTNhX3KZ0StW0Qi87oh8EUoRITZj64FrUylNvrCg69thCliAcNzBdlA1g5Iq+qEA==
+aws-sdk@^2.935.0, aws-sdk@^2.939.0:
+  version "2.940.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.940.0.tgz#a5c9c2a9642df8a76811162bee529dafdbbefe33"
+  integrity sha512-3m3CglRKuSULo2bPBWUYeE6ugmNHVIw6pFru6bRy/s/em7+4GEZmB4TnlqACgds/X0NyQTKDhPUz0P237dGGmA==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -5597,10 +5597,10 @@ dateformat@^3.0.0:
   resolved "https://registry.npmjs.org/dateformat/-/dateformat-3.0.3.tgz#a6e37499a4d9a9cf85ef5872044d62901c9889ae"
   integrity sha512-jyCETtSl3VMZMWeRo7iY1FL19ges1t55hMo5yaam4Jrsm5EPL89UQkoQRyiI+Yf4k8r2ZpdngkV8hr1lIdjb3Q==
 
-dayjs@^1.10.4, dayjs@^1.10.5:
-  version "1.10.5"
-  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.10.5.tgz#5600df4548fc2453b3f163ebb2abbe965ccfb986"
-  integrity sha512-BUFis41ikLz+65iH6LHQCDm4YPMj5r1YFLdupPIyM4SGcXMmtiLQ7U37i+hGS8urIuqe7I/ou3IS1jVc4nbN4g==
+dayjs@^1.10.4, dayjs@^1.10.6:
+  version "1.10.6"
+  resolved "https://registry.npmjs.org/dayjs/-/dayjs-1.10.6.tgz#288b2aa82f2d8418a6c9d4df5898c0737ad02a63"
+  integrity sha512-AztC/IOW4L1Q41A86phW5Thhcrco3xuAA+YX/BLpLWWjRcTj5TOt/QImBLmCKlrF7u7k47arTnOyL6GnbG8Hvw==
 
 debug@2, debug@2.6.9, debug@^2.1.3:
   version "2.6.9"
@@ -11388,18 +11388,18 @@ serialize-javascript@^5.0.1:
     randombytes "^2.1.0"
 
 serverless@^2.44.0:
-  version "2.50.0"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.50.0.tgz#fe7c528cf3f5f7c949dcc6a67cb23ace5d8c338c"
-  integrity sha512-9n2Afh0vEI6guDAue3Fm1Xu1B7i7zVR+LC37AHUhhmAxYRu0hH6ao1ERdrgUhHbzmV2P42yLRD0osB4alrp8gw==
+  version "2.51.0"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.51.0.tgz#e9adad8261d71fbe5176a9c8127dcca8d274b493"
+  integrity sha512-Pi2GwZo1hLXUmVIgYFTjnc231Z4kbk240ZHN2bZw6twniX+QiuJIvmDNiVVUExZe0LzL9iaefuGd6AsqygE9Yw==
   dependencies:
     "@serverless/cli" "^1.5.2"
-    "@serverless/components" "^3.13.1"
+    "@serverless/components" "^3.13.2"
     "@serverless/dashboard-plugin" "^5.4.3"
     "@serverless/utils" "^5.3.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.937.0"
+    aws-sdk "^2.939.0"
     bluebird "^3.7.2"
     boxen "^5.0.1"
     cachedir "^2.3.0"
@@ -11408,7 +11408,7 @@ serverless@^2.44.0:
     ci-info "^3.2.0"
     cli-progress-footer "^1.1.1"
     d "^1.0.1"
-    dayjs "^1.10.5"
+    dayjs "^1.10.6"
     decompress "^4.2.1"
     dotenv "^10.0.0"
     essentials "^1.1.1"
