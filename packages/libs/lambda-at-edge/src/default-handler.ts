@@ -207,11 +207,6 @@ const handleOriginRequest = async ({
       ? `${routesManifest.basePath}`
       : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
 
-    // This should not be necessary with static pages,
-    // but makes it easier to test rewrites
-    const [, querystring] = (req.url ?? "").split("?");
-    request.querystring = querystring || "";
-
     const relativeFile = isData ? file : file.slice("pages".length);
     return staticRequest(request, relativeFile, path);
   }
