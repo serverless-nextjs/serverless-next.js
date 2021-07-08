@@ -187,7 +187,8 @@ describe("Builder Tests (with locales)", () => {
             srcRoute: null
           }
         },
-        dynamic: {}
+        dynamic: {},
+        notFound: {}
       });
 
       expect(publicFiles).toEqual({

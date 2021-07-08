@@ -207,7 +207,8 @@ describe("Builder Tests (dynamic)", () => {
             initialRevalidateSeconds: 60,
             srcRoute: null
           }
-        }
+        },
+        notFound: {}
       });
 
       expect(publicFiles).toEqual({

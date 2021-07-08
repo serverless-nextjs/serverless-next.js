@@ -111,7 +111,8 @@ describe("Builder Tests (no API routes)", () => {
             srcRoute: null
           }
         },
-        dynamic: {}
+        dynamic: {},
+        notFound: {}
       });
 
       expect(ssr).toEqual({
