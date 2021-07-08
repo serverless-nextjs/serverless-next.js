@@ -952,14 +952,14 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "3.2.0-alpha.16"
+  version "3.2.0-alpha.17"
   dependencies:
     "@serverless/core" "^1.1.2"
     aws-sdk "^2.935.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "3.2.0-alpha.13"
+  version "3.2.0-alpha.17"
   dependencies:
     "@serverless/aws-iam-role" "^1.0.0"
     "@serverless/aws-lambda-layer" "^1.0.0"
@@ -973,7 +973,7 @@
     ramda "^0.27.0"
 
 "@sls-next/aws-s3@link:../aws-s3":
-  version "3.2.0-alpha.13"
+  version "3.2.0-alpha.17"
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
@@ -989,12 +989,12 @@
   version "3.2.0-alpha.4"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "3.2.0-alpha.14"
+  version "3.2.0-alpha.17"
   dependencies:
     aws-sdk "^2.938.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "3.2.0-alpha.13"
+  version "3.2.0-alpha.17"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -1006,7 +1006,7 @@
   version "3.2.0-alpha.4"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "3.2.0-alpha.14"
+  version "3.2.0-alpha.17"
   dependencies:
     "@aws-sdk/client-s3" "^3.19.0"
     "@aws-sdk/client-sqs" "^3.19.0"
@@ -1024,10 +1024,10 @@
     send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:../../compat-layers/lambda-at-edge-compat":
-  version "3.1.0"
+  version "3.2.0-alpha.17"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "3.2.0-alpha.14"
+  version "3.2.0-alpha.17"
   dependencies:
     aws-sdk "^2.938.0"
     fast-glob "^3.2.5"
@@ -1260,9 +1260,9 @@ atob@^2.1.2:
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
 aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.920.0, aws-sdk@^2.935.0, aws-sdk@^2.938.0:
-  version "2.939.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.939.0.tgz#c07c9d726bcb2ffdb69016f880ae310ad72f36a5"
-  integrity sha512-2KEAtTlVMDcpHP6+P9JU+mXTNhX3KZ0StW0Qi87oh8EUoRITZj64FrUylNvrCg69thCliAcNzBdlA1g5Iq+qEA==
+  version "2.941.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.941.0.tgz#7172cc719737028a7bf06ebde93dfa8e3cdfb645"
+  integrity sha512-MzVYHaZNtWy7UgFnCBg8rXFfSd4svjUVkLpQnPb/XJb3Qq4082SN5ZjaDITFFAQs/xttV3jm5jtbbcc5dpICYg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
