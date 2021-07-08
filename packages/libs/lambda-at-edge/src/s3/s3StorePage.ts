@@ -1,5 +1,3 @@
-import { buildS3RetryStrategy } from "./s3RetryStrategy";
-
 interface S3StorePageOptions {
   basePath: string | undefined;
   uri: string;
@@ -25,8 +23,7 @@ export const s3StorePage = async (
 
   const s3 = new S3Client({
     region: options.region,
-    maxAttempts: 3,
-    retryStrategy: await buildS3RetryStrategy()
+    maxAttempts: 3
   });
 
   const s3BasePath = options.basePath

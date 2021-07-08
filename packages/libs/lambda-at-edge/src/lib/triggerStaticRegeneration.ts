@@ -1,5 +1,4 @@
 import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest";
-import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
 import { RegenerationEvent } from "../types";
 
 interface TriggerStaticRegenerationOptions {
@@ -26,8 +25,7 @@ export const triggerStaticRegeneration = async (
   const { SQSClient, SendMessageCommand } = await import("@aws-sdk/client-sqs");
   const sqs = new SQSClient({
     region,
-    maxAttempts: 1,
-    retryStrategy: await buildS3RetryStrategy()
+    maxAttempts: 1
   });
 
   const regenerationEvent: RegenerationEvent = {

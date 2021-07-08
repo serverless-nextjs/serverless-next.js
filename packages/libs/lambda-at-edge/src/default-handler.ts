@@ -31,10 +31,8 @@ import {
   RoutesManifest
 } from "./types";
 import { performance } from "perf_hooks";
-import { OutgoingHttpHeaders } from "http";
 import type { Readable } from "stream";
 import { externalRewrite } from "./routing/rewriter";
-import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
@@ -350,8 +348,7 @@ const handleOriginResponse = async ({
 
   const s3 = new S3Client({
     region: request.origin?.s3?.region,
-    maxAttempts: 3,
-    retryStrategy: await buildS3RetryStrategy()
+    maxAttempts: 3
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
 
