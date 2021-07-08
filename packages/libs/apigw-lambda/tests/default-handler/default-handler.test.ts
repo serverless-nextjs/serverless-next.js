@@ -2,6 +2,7 @@ import { handler } from "../../src/default-handler";
 import { createRequestEvent } from "../test-utils";
 import { EventResponse } from "../../src/types";
 import { S3Client } from "@aws-sdk/client-s3/S3Client";
+import { Readable } from "stream";
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
@@ -52,6 +53,7 @@ const mockPageRequire = (mockPagePath: string): void => {
 };
 
 const s3Client = new S3Client({});
+const mockS3Send = s3Client.send as jest.Mock;
 
 describe("Lambda@Edge", () => {
   let consoleWarnSpy: jest.SpyInstance;
@@ -320,6 +322,88 @@ describe("Lambda@Edge", () => {
         );
       });
     });
+
+    it("returns cache control header from S3 response", async () => {
+      const event = createRequestEvent({
+        uri: "/preview"
+      });
+      mockS3Send.mockReturnValueOnce({
+        Body: Readable.from(["S3Body"]),
+        CacheControl: "test",
+        ContentType: "text/html"
+      });
+
+      const response = await handler(event);
+      expect(mockS3Send).toHaveBeenCalled();
+      expect(response.headers).toHaveProperty("Cache-Control");
+      expect(response.headers?.["Cache-Control"]).toEqual("test");
+    });
+
+    it("returns a correct cache control header when an expiry header in the future is sent", async () => {
+      const event = createRequestEvent({
+        uri: "/preview"
+      });
+      mockS3Send.mockReturnValueOnce({
+        Body: Readable.from(["S3Body"]),
+        Expires: new Date(new Date().getTime() + 1000 * 3),
+        ContentType: "text/html"
+      });
+
+      const response = await handler(event);
+      expect(response.headers).toHaveProperty("Cache-Control");
+      expect(response.headers?.["Cache-Control"]).toEqual(
+        "public, max-age=0, s-maxage=3, must-revalidate"
+      );
+    });
+
+    it("returns a correct cache control header when an expiry header in the past is sent", async () => {
+      const event = createRequestEvent({
+        uri: "/preview"
+      });
+      mockS3Send.mockReturnValueOnce({
+        Body: Readable.from(["S3Body"]),
+        Expires: new Date(new Date().getTime() - 1000 * 3),
+        ContentType: "text/html"
+      });
+
+      const response = await handler(event);
+      expect(response.headers).toHaveProperty("Cache-Control");
+      expect(response.headers?.["Cache-Control"]).toEqual(
+        "public, max-age=0, s-maxage=0, must-revalidate"
+      );
+    });
+
+    it("returns a correct cache control header when a last-modified header is sent", async () => {
+      const event = createRequestEvent({
+        uri: "/preview"
+      });
+      mockS3Send.mockReturnValueOnce({
+        Body: Readable.from(["S3Body"]),
+        LastModified: new Date(new Date().getTime() - 1000 * 3),
+        ContentType: "text/html"
+      });
+
+      const response = await handler(event);
+      expect(response.headers).toHaveProperty("Cache-Control");
+      expect(response.headers?.["Cache-Control"]).toEqual(
+        "public, max-age=0, s-maxage=2, must-revalidate"
+      );
+    });
+    /*
+    it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
+      mockTriggerStaticRegeneration.mockReturnValueOnce(
+        Promise.resolve({ throttle: true })
+      );
+      const event = createRequestEvent({
+        uri: "/preview",
+      });
+
+      const response = await handler(event);
+      expect(response.headers).toHaveProperty("cache-control");
+      expect(response.headers["cache-control"][0].value).toBe(
+        "public, max-age=0, s-maxage=1, must-revalidate"
+      );
+    });*/
   });
 
   describe("Data Requests", () => {
@@ -433,64 +517,6 @@ describe("Lambda@Edge", () => {
         );
       });
     });
-
-    /*
-    it("returns a correct cache control header when an expiry header in the future is sent", async () => {
-      const event = createRequestEvent({
-        uri: "/customers",
-      });
-
-      const response = await handler(event);
-      expect(response.headers).toHaveProperty("cache-control");
-      expect(response.headers["cache-control"][0].value).toBe(
-        "public, max-age=0, s-maxage=3, must-revalidate"
-      );
-    });
-
-    it("returns a correct cache control header when an expiry header in the past is sent", async () => {
-      mockTriggerStaticRegeneration.mockReturnValueOnce(
-        Promise.resolve({ throttle: false })
-      );
-      const event = createRequestEvent({
-        uri: "/customers",
-      });
-
-      const response = await handler(event);
-      expect(response.headers).toHaveProperty("cache-control");
-      expect(response.headers["cache-control"][0].value).toBe(
-        "public, max-age=0, s-maxage=0, must-revalidate"
-      );
-    });
-
-    it("returns a correct cache control header when a last-modified header is sent", async () => {
-      mockTriggerStaticRegeneration.mockReturnValueOnce(
-        Promise.resolve({ throttle: false })
-      );
-      const event = createRequestEvent({
-        uri: "/preview",
-      });
-
-      const response = await handler(event);
-      expect(response.headers).toHaveProperty("cache-control");
-      expect(response.headers["cache-control"][0].value).toBe(
-        "public, max-age=0, s-maxage=2, must-revalidate"
-      );
-    });
-
-    it("returns a correct throttled cache header when 'throttle' value is returned true", async () => {
-      mockTriggerStaticRegeneration.mockReturnValueOnce(
-        Promise.resolve({ throttle: true })
-      );
-      const event = createRequestEvent({
-        uri: "/preview",
-      });
-
-      const response = await handler(event);
-      expect(response.headers).toHaveProperty("cache-control");
-      expect(response.headers["cache-control"][0].value).toBe(
-        "public, max-age=0, s-maxage=1, must-revalidate"
-      );
-    });*/
   });
 
   describe("S3 requests", () => {

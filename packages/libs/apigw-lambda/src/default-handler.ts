@@ -6,6 +6,7 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 import {
   ExternalRoute,
+  getStaticRegenerationResponse,
   handleApi,
   handleDefault,
   handleFallback,
@@ -28,6 +29,8 @@ import { httpCompat } from "./compat/apigw";
 import { createExternalRewriteResponse } from "./lib/createExternalRewriteResponse";
 import { s3StorePage } from "./lib/s3StorePage";
 
+const SERVER_CACHE_CONTROL_HEADER =
+  "public, max-age=0, s-maxage=2678400, must-revalidate";
 const SERVER_NO_CACHE_CACHE_CONTROL_HEADER =
   "public, max-age=0, s-maxage=0, must-revalidate";
 
@@ -74,7 +77,8 @@ export const handler = async (event: RequestEvent): Promise<EventResponse> => {
 const getS3File = async (
   res: ServerResponse,
   file: string,
-  path: string
+  path: string,
+  revalidate?: number | false
 ): Promise<boolean> => {
   // Lazily import only S3Client to reduce init times until actually needed
   const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
@@ -103,9 +107,16 @@ const getS3File = async (
     if (s3Response.ContentType) {
       res.setHeader("Content-Type", s3Response.ContentType);
     }
-    if (s3Response.CacheControl) {
-      res.setHeader("Cache-Control", s3Response.CacheControl);
-    }
+    const { cacheControl } = ((s3Response.Expires || revalidate) &&
+      getStaticRegenerationResponse({
+        expiresHeader: s3Response.Expires?.toJSON() || "",
+        lastModifiedHeader: s3Response.LastModified?.toJSON() || "",
+        initialRevalidateSeconds: revalidate
+      })) || {
+      cacheControl: s3Response.CacheControl || SERVER_CACHE_CONTROL_HEADER
+    };
+    res.setHeader("Cache-Control", cacheControl);
+
     res.write(bodyString);
     return true;
   } catch (error) {
@@ -114,7 +125,7 @@ const getS3File = async (
 };
 
 const handleStatic = (staticRoute: StaticRoute, res: ServerResponse) => {
-  const { file, isData } = staticRoute;
+  const { file, isData, revalidate } = staticRoute;
   const path = isData
     ? `${routesManifest.basePath}`
     : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
@@ -123,7 +134,7 @@ const handleStatic = (staticRoute: StaticRoute, res: ServerResponse) => {
   if (staticRoute.statusCode) {
     res.statusCode = staticRoute.statusCode;
   }
-  return getS3File(res, relativeFile, path);
+  return getS3File(res, relativeFile, path, revalidate);
 };
 
 const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
@@ -213,7 +224,7 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
   if (!fallbackRoute.isStatic) {
     const { renderOpts, html } = fallbackRoute;
     const { pageData } = renderOpts;
-    s3StorePage({
+    const { expires } = await s3StorePage({
       basePath: routesManifest.basePath,
       bucketName: manifest.bucketName,
       buildId: manifest.buildId,
@@ -222,6 +233,15 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
       region: manifest.region,
       uri: fallbackRoute.route.file
     });
+
+    const { cacheControl } = (expires &&
+      getStaticRegenerationResponse({
+        expiresHeader: expires.toJSON(),
+        lastModifiedHeader: undefined,
+        initialRevalidateSeconds: fallbackRoute.route.revalidate
+      })) || { cacheControl: SERVER_CACHE_CONTROL_HEADER };
+    res.setHeader("Cache-Control", cacheControl);
+
     if (fallbackRoute.route.isData) {
       res.setHeader("Content-Type", "application/json");
       res.end(pageData);
