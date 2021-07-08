@@ -24,7 +24,6 @@ import Stream from "stream";
 import { sendEtagResponse } from "../lib/sendEtagResponse";
 import { ImageConfig, ImagesManifest } from "../types";
 import { imageConfigDefault } from "./imageConfig";
-import { buildS3RetryStrategy } from "../s3/s3RetryStrategy";
 import * as fs from "fs";
 import fetch from "node-fetch";
 
@@ -230,8 +229,7 @@ export async function imageOptimizer(
       const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
       const s3 = new S3Client({
         region: region,
-        maxAttempts: 3,
-        retryStrategy: await buildS3RetryStrategy()
+        maxAttempts: 3
       });
 
       const { GetObjectCommand } = await import(
