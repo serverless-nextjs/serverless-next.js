@@ -93,7 +93,7 @@ describe("Image lambda handler", () => {
       });
 
       expect(MockGetObjectCommand).toBeCalledWith({
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: expectedS3Key
       });
     });

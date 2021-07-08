@@ -74,7 +74,7 @@ describe("Lambda@Edge origin response", () => {
 
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: "static-pages/build-id/fallback/[slug].html"
       });
 
@@ -114,7 +114,7 @@ describe("Lambda@Edge origin response", () => {
 
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: "static-pages/build-id/404.html"
       });
 
@@ -172,7 +172,7 @@ describe("Lambda@Edge origin response", () => {
 
       expect(s3Client.send).toHaveBeenNthCalledWith(1, {
         Command: "PutObjectCommand",
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: "_next/data/build-id/fallback-blocking/not-yet-built.json",
         Body: JSON.stringify({
           page: "pages/fallback-blocking/[slug].js"
@@ -182,7 +182,7 @@ describe("Lambda@Edge origin response", () => {
       });
       expect(s3Client.send).toHaveBeenNthCalledWith(2, {
         Command: "PutObjectCommand",
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: "static-pages/build-id/fallback-blocking/not-yet-built.html",
         Body: "<div>Rendered Page</div>",
         ContentType: "text/html",
@@ -236,7 +236,7 @@ describe("Lambda@Edge origin response", () => {
 
       expect(s3Client.send).toHaveBeenNthCalledWith(1, {
         Command: "PutObjectCommand",
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: "_next/data/build-id/fallback/not-yet-built.json",
         Body: JSON.stringify({
           page: "pages/fallback/[slug].js"
@@ -246,7 +246,7 @@ describe("Lambda@Edge origin response", () => {
       });
       expect(s3Client.send).toHaveBeenNthCalledWith(2, {
         Command: "PutObjectCommand",
-        Bucket: "my-bucket.s3.amazonaws.com",
+        Bucket: "my-bucket",
         Key: "static-pages/build-id/fallback/not-yet-built.html",
         Body: "<div>Rendered Page</div>",
         ContentType: "text/html",
