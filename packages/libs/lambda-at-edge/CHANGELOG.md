@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.19...v3.2.0-alpha.20) (2021-07-09)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix reconstruction of basepath index uri ([#1398](https://github.com/serverless-nextjs/serverless-next.js/issues/1398)) ([3483a48](https://github.com/serverless-nextjs/serverless-next.js/commit/3483a48a0341fd0ba882b5b58a4571ea96f6d238))
+
 # [3.2.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.18...v3.2.0-alpha.19) (2021-07-09)
 
 ### Bug Fixes
