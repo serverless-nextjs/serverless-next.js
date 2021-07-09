@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.19](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.18...v3.2.0-alpha.19) (2021-07-09)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix extraction of s3 bucket name ([#1382](https://github.com/serverless-nextjs/serverless-next.js/issues/1382)) ([72df9ad](https://github.com/serverless-nextjs/serverless-next.js/commit/72df9add8585727b278279bc0c5f9be8ad27cd7d))
+
 # [3.2.0-alpha.18](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.17...v3.2.0-alpha.18) (2021-07-08)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
