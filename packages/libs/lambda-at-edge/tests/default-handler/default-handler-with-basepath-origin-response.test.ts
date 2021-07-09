@@ -21,7 +21,7 @@ jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
 
 jest.mock(
   "../../src/manifest.json",
-  () => require("./default-build-manifest.json"),
+  () => require("./default-build-manifest-origin-response.json"),
   {
     virtual: true
   }
@@ -245,6 +245,24 @@ describe("Lambda@Edge origin response", () => {
         ContentType: "text/html",
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       });
+    });
+  });
+
+  describe("SSG page requests", () => {
+    it("index page has correct status code", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/index.html",
+        host: "mydistribution.cloudfront.net",
+        config: { eventType: "origin-response" } as any,
+        response: {
+          headers: {},
+          status: "200"
+        } as any
+      });
+
+      const response = await handler(event);
+      const cfResponse = response as CloudFrontResultResponse;
+      expect(cfResponse.status).toBe("200");
     });
   });
 
