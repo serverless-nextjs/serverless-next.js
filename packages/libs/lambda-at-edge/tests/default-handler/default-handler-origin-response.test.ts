@@ -21,7 +21,7 @@ jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
 
 jest.mock(
   "../../src/manifest.json",
-  () => require("./default-build-manifest.json"),
+  () => require("./default-build-manifest-origin-response.json"),
   {
     virtual: true
   }
@@ -260,7 +260,7 @@ describe("Lambda@Edge origin response", () => {
   });
 
   describe("SSG page requests", () => {
-    it("index page is routed properly", async () => {
+    it("index page has correct status code", async () => {
       const event = createCloudFrontEvent({
         uri: "/index.html",
         host: "mydistribution.cloudfront.net",
