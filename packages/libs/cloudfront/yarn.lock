@@ -8,9 +8,9 @@
   integrity sha512-QhhSbE1wJMbh+lDsb9G6UFmyojhEgoO7dFVDBkli80sp3sPFojGh6TJXsht9Qbe2VWi91pbj08+1Kvue61RwsQ==
 
 aws-sdk@^2.938.0:
-  version "2.942.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.942.0.tgz#594d2e629ab4a2286eaf69c54658cea3acce4ec7"
-  integrity sha512-9Y+DWSTvolTJe0nl55sKnsPgtfBCV8WKDE8cAUhgn9MIb4tAGpwejS14AUmqeZ12J58AsgPT3PffdI7Hq9IEtQ==
+  version "2.945.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.945.0.tgz#ebd90832a664a192b12edf755af31be70dc18909"
+  integrity sha512-tkcoFAUol7c+9ZBnXsBTKfsj9bNckJ7uzj7FdD/a8AMt/6/18LlEISCiuHFl9qr8MItcON7UgnphJdFCTV7zBw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
