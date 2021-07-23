@@ -1145,9 +1145,9 @@
   integrity sha512-FTgBI767POY/lKNDNbIzgAX6miIDBs6NTCbdlDb8TrWovHsSvaVIZDlTqym29C6UqhzwcJx4CYr+AlrMywA0cA==
 
 "@types/aws-lambda@^8.10.57":
-  version "8.10.78"
-  resolved "https://registry.npmjs.org/@types/aws-lambda/-/aws-lambda-8.10.78.tgz#dbb509837b6082962d6e7bc19f814e067ac9f5a2"
-  integrity sha512-+lZ8NuHT0qKEEpiZR4bF1G24SLrLwzdu0i9Cjdc3BGq6XJU6gBBYS5I0RJ8RdDCtgqgGdW8sOwsiZGHrC6mp0Q==
+  version "8.10.80"
+  resolved "https://registry.npmjs.org/@types/aws-lambda/-/aws-lambda-8.10.80.tgz#2b9f97ff2291383ee3e22c34a60ddd526caaba13"
+  integrity sha512-Vnz/FxDSjxNPAyBf+1qMDNnFhuHp/aKwp0EDdfSLj0W9UIQBXt16Rd4uZCpGnP2Dlmg5VyUCR2031ykPGQyNNQ==
 
 "@types/estree@*":
   version "0.0.48"
