@@ -105,22 +105,22 @@ describe("Rewrites Tests", () => {
     [
       {
         path: "/external-rewrite",
-        expectedRewrite: "https://jsonplaceholder.typicode.com",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/users",
         method: "GET",
         expectedStatus: 200
       },
       {
         path: "/api/external-rewrite",
-        expectedRewrite: "https://jsonplaceholder.typicode.com",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/users",
         method: "GET",
         expectedStatus: 200
       },
       {
         path: "/api/external-rewrite",
-        expectedRewrite: "https://jsonplaceholder.typicode.com",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/users",
         method: "POST",
         body: '{ "hello": "world" }', // Check that body can passed to external rewrite
-        expectedStatus: 404
+        expectedStatus: 201
       },
       {
         path: "/external-rewrite-issues?page=1",

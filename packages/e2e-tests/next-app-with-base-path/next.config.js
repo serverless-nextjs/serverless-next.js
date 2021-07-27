@@ -47,7 +47,7 @@ module.exports = {
       },
       {
         source: "/external-redirect-1",
-        destination: "https://jsonplaceholder.typicode.com",
+        destination: "https://jsonplaceholder.typicode.com/users",
         permanent: true
       },
       {

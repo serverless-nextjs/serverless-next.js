@@ -49,7 +49,7 @@ module.exports = {
       },
       {
         source: "/external-redirect-1",
-        destination: "https://jsonplaceholder.typicode.com",
+        destination: "https://jsonplaceholder.typicode.com/users",
         permanent: true
       },
       {
@@ -121,7 +121,7 @@ module.exports = {
       },
       {
         source: "/external-rewrite",
-        destination: "https://jsonplaceholder.typicode.com"
+        destination: "https://jsonplaceholder.typicode.com/users"
       },
       {
         source: "/external-rewrite-issues",
@@ -133,7 +133,7 @@ module.exports = {
       },
       {
         source: "/api/external-rewrite",
-        destination: "https://jsonplaceholder.typicode.com"
+        destination: "https://jsonplaceholder.typicode.com/users"
       },
       {
         source: "/api/external-rewrite-issues",
