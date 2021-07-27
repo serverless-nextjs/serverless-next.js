@@ -120,7 +120,7 @@ describe("Rewrites Tests", () => {
         expectedRewrite: "https://jsonplaceholder.typicode.com/users",
         method: "POST",
         body: '{ "hello": "world" }', // Check that body can passed to external rewrite
-        expectedStatus: 404
+        expectedStatus: 201
       },
       {
         path: "/external-rewrite-issues?page=1",
