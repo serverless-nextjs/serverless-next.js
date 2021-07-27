@@ -164,7 +164,7 @@ describe("Redirects Tests", () => {
       },
       {
         path: "/external-redirect-1",
-        expectedRedirect: "https://jsonplaceholder.typicode.com",
+        expectedRedirect: "https://jsonplaceholder.typicode.com/users",
         expectedStatus: 200,
         expectedRedirectStatus: 308
       },
