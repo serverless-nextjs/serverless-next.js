@@ -25,6 +25,7 @@ export type Origin =
       protocolPolicy: string;
       url: string;
       pathPatterns: Record<string, unknown>;
+      headers: Record<string, string>;
     };
 
 export const getOriginConfig = (
@@ -55,6 +56,15 @@ export const getOriginConfig = (
         : ""
     };
   } else {
+    if (typeof origin === "object" && origin.headers) {
+      originConfig.CustomHeaders.Quantity = Object.keys(origin.headers).length;
+      originConfig.CustomHeaders.Items = Object.keys(origin.headers).map(
+        (key) => ({
+          HeaderName: key,
+          HeaderValue: origin.headers[key]
+        })
+      );
+    }
     originConfig.CustomOriginConfig = {
       HTTPPort: 80,
       HTTPSPort: 443,
