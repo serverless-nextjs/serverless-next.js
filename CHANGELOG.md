@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.20...v3.2.0-alpha.21) (2021-07-27)
+
+### Bug Fixes
+
+- **aws-lambda:** fix test failure due to init() ([cde5af9](https://github.com/serverless-nextjs/serverless-next.js/commit/cde5af9e730f730eea6d074d440d37d2b00a379f))
+
+### Features
+
+- **aws-cloudfront:** add support for custom headers in custom origins ([#1448](https://github.com/serverless-nextjs/serverless-next.js/issues/1448)) ([dd2fa6e](https://github.com/serverless-nextjs/serverless-next.js/commit/dd2fa6e60180a71bc96bcf5325647414bc9e74cb))
+
 # [3.2.0-alpha.20](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.19...v3.2.0-alpha.20) (2021-07-09)
 
 ### Bug Fixes
