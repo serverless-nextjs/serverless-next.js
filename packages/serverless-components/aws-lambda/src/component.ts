@@ -49,6 +49,7 @@ class AwsLambda extends Component {
   state: any;
   save: () => void;
   load: (name: string) => any;
+  init: () => void;
 
   async default(inputs: Record<string, unknown> = {}) {
     this.context.status(`Deploying`);
