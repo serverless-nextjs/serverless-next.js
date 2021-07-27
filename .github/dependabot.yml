@@ -23,6 +23,7 @@ updates:
         # FIXME: some issue with fs-extra for some users? https://github.com/serverless-nextjs/serverless-next.js/issues/1240
       - dependency-name: "fs-extra"
       - dependency-name: "sharp" # This is manually built for Lambda Node.js 14.x runtime
+      - dependency-name: "globby" # 12.0.0 has breaking changes
     open-pull-requests-limit: 10
 
   - package-ecosystem: "github-actions"

@@ -1,7 +1,7 @@
 import { tmpdir } from "os";
 import * as path from "path";
 import * as archiver from "archiver";
-import { globby } from "globby";
+import * as globby from "globby";
 import { contains, isNil, last, split, equals, not, pick } from "ramda";
 import { readFile, createReadStream, createWriteStream } from "fs-extra";
 import { utils } from "@serverless/core";
@@ -29,7 +29,9 @@ const packDir = async (
     exclude.forEach((excludedItem) => patterns.push(`!${excludedItem}`));
   }
 
-  const files = (await globby(patterns, { cwd: inputDirPath, dot: true }))
+  const files = (
+    await globby.default(patterns, { cwd: inputDirPath, dot: true })
+  )
     .sort() // we must sort to ensure correct hash
     .map((file) => ({
       input: path.join(inputDirPath, file),
