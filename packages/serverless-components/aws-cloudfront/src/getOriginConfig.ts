@@ -58,10 +58,12 @@ export const getOriginConfig = (
   } else {
     if (typeof origin === "object" && origin.headers) {
       originConfig.CustomHeaders.Quantity = Object.keys(origin.headers).length;
-      originConfig.CustomHeaders.Items = Object.keys(origin.headers).map((key) => ({
-        HeaderName: key,
-        HeaderValue: origin.headers[key],
-      }))
+      originConfig.CustomHeaders.Items = Object.keys(origin.headers).map(
+        (key) => ({
+          HeaderName: key,
+          HeaderValue: origin.headers[key]
+        })
+      );
     }
     originConfig.CustomOriginConfig = {
       HTTPPort: 80,
