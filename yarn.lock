@@ -3278,16 +3278,34 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.17"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    jsonwebtoken "^8.5.1"
+    path-to-regexp "^6.1.0"
+    regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.21"
+  dependencies:
+    "@aws-sdk/client-s3" "^3.19.0"
+    "@aws-sdk/client-sqs" "^3.19.0"
+    "@hapi/accept" "^5.0.2"
+    "@sls-next/core" "link:packages/libs/core"
+    "@vercel/nft" "^0.13.1"
+    execa "^5.0.1"
+    fresh "^0.5.2"
+    fs-extra "^9.1.0"
+    get-stream "^6.0.0"
+    is-animated "^2.0.1"
+    klaw "^3.0.0"
+    node-fetch "^2.6.1"
+    path-to-regexp "^6.1.0"
+    send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "0.0.0"
-  uid ""
+  version "3.2.0-alpha.21"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -4238,9 +4256,9 @@ available-typed-arrays@^1.0.2:
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
 aws-sdk@^2.935.0, aws-sdk@^2.951.0:
-  version "2.954.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.954.0.tgz#5e9f43327af695c193064d5d7defb5c20d6f7d17"
-  integrity sha512-AbP7lUIBVHX1/dnDMgcmmkRYRU5FeBRqemtsV+BwHywEKeiDpVi024KNOIkZkd4NoYtRiLEOwTzUP9w1z/EnxQ==
+  version "2.955.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.955.0.tgz#0d4b1b3e23a41852402618e25a175e81c93873f6"
+  integrity sha512-/C3pYcZxlhrhHBzW2eHCtBiMqFQlBB7mpcR/lpKzCg1AqxOuC3zXbrjH4qIhauNWeOzwX75O0wlvnPob1HvV9w==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
