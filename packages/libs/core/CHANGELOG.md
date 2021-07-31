@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.22...v3.2.0-alpha.23) (2021-07-31)
+
+### Bug Fixes
+
+- **core, lambda-at-edge:** do not replace .html for public files in r… ([#1473](https://github.com/serverless-nextjs/serverless-next.js/issues/1473)) ([62c0fe2](https://github.com/serverless-nextjs/serverless-next.js/commit/62c0fe2e0c9d6341831d496bf143369d8df0a93e))
+
 # [3.2.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.16...v3.2.0-alpha.17) (2021-07-07)
 
 **Note:** Version bump only for package @sls-next/core
