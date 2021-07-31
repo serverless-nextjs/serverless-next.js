@@ -73,7 +73,7 @@ const handleLanguageRedirect = async (
   }
 };
 
-const handlePublicFiles = (
+export const handlePublicFiles = (
   uri: string,
   manifest: Manifest
 ): Route | undefined => {

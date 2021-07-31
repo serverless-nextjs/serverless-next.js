@@ -14,7 +14,8 @@ import {
   getCustomHeaders,
   StaticRoute,
   getStaticRegenerationResponse,
-  getThrottledStaticRegenerationCachePolicy
+  getThrottledStaticRegenerationCachePolicy,
+  handlePublicFiles
 } from "@sls-next/core";
 
 import {
@@ -138,6 +139,12 @@ const reconstructOriginalRequestUri = (
   s3Uri: string,
   manifest: OriginRequestDefaultHandlerManifest
 ) => {
+  // For public files we do not replace .html as it can cause public HTML files to be classified with wrong status code
+  const publicFile = handlePublicFiles(s3Uri, manifest);
+  if (publicFile) {
+    return `${basePath}${s3Uri}`;
+  }
+
   let originalUri = `${basePath}${s3Uri.replace(
     /(\.html)?$/,
     manifest.trailingSlash ? "/" : ""
