@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.23...v3.2.0-alpha.24) (2021-07-31)
+
+### Bug Fixes
+
+- **s3-static-assets:** ensure fast-glob is reading dot entries when f… ([#1475](https://github.com/serverless-nextjs/serverless-next.js/issues/1475)) ([efb3c93](https://github.com/serverless-nextjs/serverless-next.js/commit/efb3c93b527fc480c08ec1af5923bc159810926b))
+
 # [3.2.0-alpha.23](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.22...v3.2.0-alpha.23) (2021-07-31)
 
 ### Bug Fixes
