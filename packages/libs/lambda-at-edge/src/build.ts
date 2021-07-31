@@ -20,6 +20,7 @@ import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core/dist/build";
+import { NextI18nextIntegration } from "./build/third-party/next-i18next";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -331,6 +332,9 @@ class Builder {
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
+      ),
+      this.runThirdPartyIntegrations(
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR)
       )
     ]);
   }
@@ -784,6 +788,17 @@ class Builder {
 
     // Copy static assets to .serverless_nextjs directory
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
+  }
+
+  /**
+   * Run additional integrations for third-party libraries such as next-i18next.
+   * These are usually needed to add additional files into the lambda, etc.
+   * @param outputLambdaDir
+   */
+  async runThirdPartyIntegrations(outputLambdaDir: string): Promise<void> {
+    await Promise.all([
+      new NextI18nextIntegration(this.nextConfigDir, outputLambdaDir).execute()
+    ]);
   }
 }
 
