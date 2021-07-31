@@ -790,7 +790,7 @@ class Builder {
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
   }
 
-  async processThirdPartyIntegrations(outputLambdaDir: string) {
+  async processThirdPartyIntegrations(outputLambdaDir: string): Promise<void> {
     await Promise.all([
       new NextI18nextIntegration(this.nextConfigDir, outputLambdaDir).execute()
     ]);
