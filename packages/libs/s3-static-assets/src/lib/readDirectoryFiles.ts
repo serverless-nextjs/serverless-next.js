@@ -20,7 +20,8 @@ const readDirectoryFiles = (directory: string): Array<Entry> => {
 
   return glob.sync(path.posix.join(...directorySplit, "**", "*"), {
     onlyFiles: true,
-    stats: true
+    stats: true,
+    dot: true // To allow matching dot files or directories
   });
 };
 

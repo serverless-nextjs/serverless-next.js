@@ -19,16 +19,24 @@ describe("Static Files Tests", () => {
 
   describe("public files", () => {
     [
-      { path: "/basepath/app-store-badge.png", contentType: "image/png" },
-      { path: "/basepath/example.html", contentType: "text/html" }
-    ].forEach(({ path, contentType }) => {
-      it(`serves and caches file ${path}`, () => {
+      {
+        path: "/basepath/app-store-badge.png",
+        contentType: "image/png",
+        cacheable: true
+      },
+      {
+        path: "/basepath/example.html",
+        contentType: "text/html",
+        cacheable: false
+      }
+    ].forEach(({ path, contentType, cacheable }) => {
+      it(`serves file ${path} for content type ${contentType} and cacheable: ${cacheable}`, () => {
         // Request once to ensure cached
         cy.request(path);
         cy.request(path).then((response) => {
           expect(response.headers["content-type"]).to.equal(contentType);
           expect(response.status).to.equal(200);
-          cy.verifyResponseCacheStatus(response, true);
+          cy.verifyResponseCacheStatus(response, cacheable);
         });
       });
 
