@@ -1,3 +1,5 @@
 ---
 exclude_paths:
   - "**/CHANGELOG.md"
+  - "packages/deprecated/**"
+  - "packages/libs/lambda-at-edge/sharp_node_modules/**"
