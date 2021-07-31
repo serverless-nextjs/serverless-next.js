@@ -57,7 +57,7 @@ describe("Builder Tests (with third party integrations)", () => {
     afterEach(() => {
       fseEmptyDirSpy.mockRestore();
       fseRemoveSpy.mockRestore();
-      //return cleanupDir(outputDir);
+      return cleanupDir(outputDir);
     });
 
     describe("Default Handler Third Party Files", () => {
