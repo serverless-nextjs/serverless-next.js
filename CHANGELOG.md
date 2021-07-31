@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.22](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.21...v3.2.0-alpha.22) (2021-07-31)
+
+### Features
+
+- **lambda-at-edge:** detect and copy next-i18next files ([#1472](https://github.com/serverless-nextjs/serverless-next.js/issues/1472)) ([3ffc938](https://github.com/serverless-nextjs/serverless-next.js/commit/3ffc938ee463866692b1b5919566d9ea18438693))
+
 # [3.2.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.20...v3.2.0-alpha.21) (2021-07-27)
 
 ### Bug Fixes
