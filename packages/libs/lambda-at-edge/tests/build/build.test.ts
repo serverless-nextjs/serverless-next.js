@@ -175,6 +175,7 @@ describe("Builder Tests", () => {
         });
 
         expect(publicFiles).toEqual({
+          "/.well-known/test.txt": ".well-known/test.txt",
           "/favicon.ico": "favicon.ico",
           "/sub/image.png": "sub/image.png",
           "/sw.js": "sw.js"
@@ -355,7 +356,12 @@ describe("Builder Tests", () => {
         const publicFiles = await fse.readdir(
           join(outputDir, `${ASSETS_DIR}/public`)
         );
-        expect(publicFiles).toEqual(["favicon.ico", "sub", "sw.js"]);
+        expect(publicFiles).toEqual([
+          ".well-known",
+          "favicon.ico",
+          "sub",
+          "sw.js"
+        ]);
 
         const staticFiles = await fse.readdir(
           join(outputDir, `${ASSETS_DIR}/static`)

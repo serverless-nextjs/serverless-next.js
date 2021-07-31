@@ -20,7 +20,8 @@ describe("Static Files Tests", () => {
   describe("public files", () => {
     [
       { path: "/app-store-badge.png", contentType: "image/png" },
-      { path: "/example.html", contentType: "text/html" }
+      { path: "/example.html", contentType: "text/html" },
+      { path: "/.well-known/test.txt", contentType: "text/plain" }
     ].forEach(({ path, contentType }) => {
       it(`serves and caches file ${path}`, () => {
         // Request once to ensure cached
