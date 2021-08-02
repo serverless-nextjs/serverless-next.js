@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.26](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.25...v3.2.0-alpha.26) (2021-08-02)
+
+### Bug Fixes
+
+- **lambda-at-edge:** handle 404 status code returned by S3 in origin response handler ([#1487](https://github.com/serverless-nextjs/serverless-next.js/issues/1487)) ([6a3c5b0](https://github.com/serverless-nextjs/serverless-next.js/commit/6a3c5b0d657cff2ca40af87772122d8fade5d4f8))
+
 # [3.2.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.24...v3.2.0-alpha.25) (2021-08-02)
 
 ### Bug Fixes
