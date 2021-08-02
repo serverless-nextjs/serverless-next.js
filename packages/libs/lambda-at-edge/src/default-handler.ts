@@ -390,7 +390,7 @@ export const handler = async (
   }
 
   if (isOriginResponse(event)) {
-    debug(`[origin-response] event: ${JSON.stringify(event)}`);
+    debug(`[handle-origin-response] event: ${JSON.stringify(event)}`);
     response = await handleOriginResponse({
       event,
       manifest,
@@ -398,7 +398,7 @@ export const handler = async (
       context
     });
   } else {
-    debug(`[origin-request] event: ${JSON.stringify(event)}`);
+    debug(`[handle-origin-request] event: ${JSON.stringify(event)}`);
     response = await handleOriginRequest({
       event,
       manifest,
@@ -427,6 +427,45 @@ export const handler = async (
   debug(`[origin] final response: ${JSON.stringify(response)}`);
 
   return response;
+};
+
+/**
+ * check if this url and query params need to rewrite. And rewrite it if get configuration form serverless.yml
+ * Now, we can only support 1 url params, like rewrite /index.html?page=[number] to /page/[number].html
+ * For example,
+ *     urlRewrites:
+ *        - name: paginationRewrite
+ *          originUrl: /index.html?page=[number]
+ *          rewriteUrl: /page/[number].html
+ *
+ * @param manifest
+ * @param request
+ */
+const checkAndRewriteUrl = (
+  manifest: OriginRequestDefaultHandlerManifest,
+  request: CloudFrontRequest
+): void => {
+  const rewrites = manifest.urlRewrites;
+  debug(`[checkAndRewriteUrl] rewrites: ${JSON.stringify(rewrites)}`);
+
+  if (!rewrites || rewrites.length === 0) return;
+
+  debug(`[checkAndRewriteUrl] Before: ${request.uri}, ${request.querystring}`);
+
+  const requestParamName = `${request.querystring.split("=")[0]}`;
+  const requestParamValue = `${request.querystring.split("=")[1]}`;
+
+  if (!requestParamValue || !requestParamValue) return;
+
+  rewrites.forEach(({ originUrl, rewriteUrl }) => {
+    debug(`[originUrl: ${originUrl}, rewriteUrl: ${rewriteUrl}]`);
+    if (originUrl.startsWith(`${request.uri}?${requestParamName}=`)) {
+      request.uri = `/page/${requestParamValue}.html`;
+      request.querystring = "";
+    }
+  });
+
+  debug(`[checkAndRewriteUrl] After: ${request.uri}, ${request.querystring}`);
 };
 
 const handleOriginRequest = async ({
@@ -596,6 +635,7 @@ const handleOriginRequest = async ({
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
+      checkAndRewriteUrl(manifest, request);
       debug(`[origin-request] is html of fallback, uri: ${request.uri}`);
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js

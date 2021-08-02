@@ -9,7 +9,8 @@ import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   RoutesManifest,
-  OriginRequestImageHandlerManifest
+  OriginRequestImageHandlerManifest,
+  UrlRewriteList
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -53,6 +54,7 @@ type BuildOptions = {
   baseDir?: string;
   canonicalHostname?: string;
   distributionId: string;
+  urlRewrites?: UrlRewriteList;
 };
 
 const defaultBuildOptions = {
@@ -68,7 +70,8 @@ const defaultBuildOptions = {
   authentication: undefined,
   resolve: undefined,
   baseDir: process.cwd(),
-  distributionId: ""
+  distributionId: "",
+  urlRewrites: []
 };
 
 class Builder {
