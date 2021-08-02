@@ -99,9 +99,6 @@ class Builder {
         assetIgnorePatterns
       );
 
-      console.log("pub files: " + JSON.stringify(files));
-      console.log("nextConfigDir: " + this.nextConfigDir);
-
       return files
         .map((e) => normalizePath(e.path)) // normalization to unix paths needed for AWS
         .map((path) => path.replace(normalizePath(this.nextConfigDir), ""))

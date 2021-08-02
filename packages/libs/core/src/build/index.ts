@@ -25,8 +25,6 @@ export const prepareBuildManifests = async (
   apiManifest: ApiManifest;
   imageManifest: Manifest;
 }> => {
-  console.log(JSON.stringify(publicFiles)); // FIXME: for testing, remove it before check-in
-
   const {
     authentication,
     buildId,
