@@ -94,15 +94,18 @@ class Builder {
   async readPublicFiles(assetIgnorePatterns: string[]): Promise<string[]> {
     const dirExists = await fse.pathExists(join(this.nextConfigDir, "public"));
     if (dirExists) {
-      return (
-        await readDirectoryFiles(
-          join(this.nextConfigDir, "public"),
-          assetIgnorePatterns
-        )
-      )
-        .map((e) => e.path)
-        .map((e) => e.replace(this.nextConfigDir, ""))
-        .map((e) => normalizePath(e).replace("/public/", "")); // normalize paths to unix-style and remove public prefix
+      const files = await readDirectoryFiles(
+        join(this.nextConfigDir, "public"),
+        assetIgnorePatterns
+      );
+
+      console.log("pub files: " + JSON.stringify(files));
+      console.log("nextConfigDir: " + this.nextConfigDir);
+
+      return files
+        .map((e) => normalizePath(e.path)) // normalization to unix paths needed for AWS
+        .map((path) => path.replace(normalizePath(this.nextConfigDir), ""))
+        .map((path) => path.replace("/public/", ""));
     } else {
       return [];
     }
