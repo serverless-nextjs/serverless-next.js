@@ -1,6 +1,7 @@
 import fse from "fs-extra";
 import path from "path";
 import glob, { Entry } from "fast-glob";
+import normalizePath from "normalize-path";
 
 const readDirectoryFiles = async (
   directory: string,
@@ -11,17 +12,10 @@ const readDirectoryFiles = async (
     return [];
   }
 
-  // fast-glob only accepts posix paths
-  // we need to split directory by separator and use path.posix.join specifically to rejoin it
-  // this should enable it to work on windows
-  const directorySplit = directory.split(path.sep);
+  // fast-glob only accepts posix paths so we normalize it
+  const normalizedDirectory = normalizePath(directory);
 
-  // Ensure absolute path is preserved
-  if (directorySplit.length > 0 && directorySplit[0] === "") {
-    directorySplit[0] = "/";
-  }
-
-  return await glob(path.posix.join(...directorySplit, "**", "*"), {
+  return await glob(path.posix.join(normalizedDirectory, "**", "*"), {
     onlyFiles: true,
     stats: true,
     dot: true, // To allow matching dot files or directories
