@@ -9,7 +9,7 @@ updates:
     directory: "/" # Location of package manifests
     schedule:
       interval: "daily"
-    versioning-strategy: widen
+    versioning-strategy: increase
     # No point updating @sls-next/* dependencies as they are linked
     ignore:
       - dependency-name: "@sls-next/*"
