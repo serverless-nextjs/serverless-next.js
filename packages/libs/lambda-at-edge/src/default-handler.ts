@@ -249,12 +249,14 @@ const handleOriginResponse = async ({
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode;
 
-  if (response.status !== "403") {
+  // These statuses are returned when S3 does not have access to the page.
+  // 404 will also be returned if CloudFront has permissions to list objects.
+  if (response.status !== "403" && response.status !== "404") {
     response.headers = {
       ...response.headers,
       ...getCustomHeaders(request.uri, routesManifest)
     };
-    // Set 404 status code for static 400 page.
+    // Set 404 status code for static 404 page.
     if (statusCode === 404) {
       response.status = "404";
       response.statusDescription = "Not Found";
