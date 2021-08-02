@@ -1,3 +1,3 @@
-import { Item } from "klaw";
+import { Entry } from "fast-glob";
 
-export default (fileItem: Item): boolean => !fileItem.stats.isDirectory();
+export default (fileItem: Entry): boolean => !fileItem.stats?.isDirectory();

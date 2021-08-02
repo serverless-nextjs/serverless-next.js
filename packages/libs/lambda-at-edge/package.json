@@ -67,6 +67,7 @@
     "@sls-next/core": "link:../core",
     "@vercel/nft": "^0.13.1",
     "execa": "^5.0.1",
+    "fast-glob": "^3.2.7",
     "fresh": "^0.5.2",
     "fs-extra": "^9.1.0",
     "get-stream": "^6.0.0",

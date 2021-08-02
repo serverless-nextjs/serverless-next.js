@@ -232,7 +232,8 @@ class NextjsComponent extends Component {
       ...(typeof inputs.build === "object" ? inputs.build : {}),
       cwd: buildCwd,
       baseDir: buildBaseDir, // @ts-ignore
-      cleanupDotNext: inputs.build?.cleanupDotNext ?? true
+      cleanupDotNext: inputs.build?.cleanupDotNext ?? true, // @ts-ignore
+      assetIgnorePatterns: inputs.build?.assetIgnorePatterns ?? []
     };
 
     if (buildConfig.enabled) {
