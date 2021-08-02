@@ -254,7 +254,8 @@ class NextjsComponent extends Component {
             : undefined,
           authentication: inputs.authentication ?? undefined,
           baseDir: buildConfig.baseDir,
-          cleanupDotNext: buildConfig.cleanupDotNext
+          cleanupDotNext: buildConfig.cleanupDotNext,
+          assetIgnorePatterns: buildConfig.assetIgnorePatterns
         },
         nextStaticPath
       );

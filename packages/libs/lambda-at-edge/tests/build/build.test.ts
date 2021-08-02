@@ -45,7 +45,8 @@ describe("Builder Tests", () => {
           "example.com": "https://www.example.com",
           "another.com": "https://www.another.com/",
           "www.other.com": "https://other.com"
-        }
+        },
+        assetIgnorePatterns: ["**/public/ignored.txt"]
       });
       await builder.build();
 

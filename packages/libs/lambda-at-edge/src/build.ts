@@ -2,7 +2,6 @@ import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
-import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
 import {
   OriginRequestDefaultHandlerManifest,
@@ -16,11 +15,11 @@ import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core/dist/build";
 import { NextI18nextIntegration } from "./build/third-party/next-i18next";
+import normalizePath from "normalize-path";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -48,6 +47,7 @@ type BuildOptions = {
   ) => string | string[];
   baseDir?: string;
   cleanupDotNext?: boolean;
+  assetIgnorePatterns?: string[];
 };
 
 const defaultBuildOptions = {
@@ -63,7 +63,8 @@ const defaultBuildOptions = {
   authentication: undefined,
   resolve: undefined,
   baseDir: process.cwd(),
-  cleanupDotNext: true
+  cleanupDotNext: true,
+  assetIgnorePatterns: []
 };
 
 class Builder {
@@ -90,12 +91,18 @@ class Builder {
     }
   }
 
-  async readPublicFiles(): Promise<string[]> {
+  async readPublicFiles(assetIgnorePatterns: string[]): Promise<string[]> {
     const dirExists = await fse.pathExists(join(this.nextConfigDir, "public"));
     if (dirExists) {
-      return getAllFiles(join(this.nextConfigDir, "public"))
-        .map((e) => e.replace(this.nextConfigDir, ""))
-        .map((e) => e.split(path.sep).slice(2).join("/"));
+      const files = await readDirectoryFiles(
+        join(this.nextConfigDir, "public"),
+        assetIgnorePatterns
+      );
+
+      return files
+        .map((e) => normalizePath(e.path)) // normalization to unix paths needed for AWS
+        .map((path) => path.replace(normalizePath(this.nextConfigDir), ""))
+        .map((path) => path.replace("/public/", ""));
     } else {
       return [];
     }
@@ -518,7 +525,8 @@ class Builder {
    */
   async buildStaticAssets(
     defaultBuildManifest: OriginRequestDefaultHandlerManifest,
-    routesManifest: RoutesManifest
+    routesManifest: RoutesManifest,
+    ignorePatterns: string[]
   ) {
     const buildId = defaultBuildManifest.buildId;
     const basePath = routesManifest.basePath;
@@ -549,12 +557,13 @@ class Builder {
     );
 
     const buildStaticFiles = await readDirectoryFiles(
-      path.join(dotNextDirectory, "static")
+      path.join(dotNextDirectory, "static"),
+      ignorePatterns
     );
 
     const staticFileAssets = buildStaticFiles
       .filter(filterOutDirectories)
-      .map((fileItem: Item) => {
+      .map((fileItem) => {
         const source = fileItem.path;
         const destination = path.join(
           assetOutputDirectory,
@@ -622,9 +631,9 @@ class Builder {
         return Promise.resolve([]);
       }
 
-      const files = await readDirectoryFiles(directoryPath);
+      const files = await readDirectoryFiles(directoryPath, ignorePatterns);
 
-      return files.filter(filterOutDirectories).map((fileItem: Item) => {
+      return files.filter(filterOutDirectories).map((fileItem) => {
         const source = fileItem.path;
         const destination = path.join(
           assetOutputDirectory,
@@ -637,8 +646,10 @@ class Builder {
       });
     };
 
-    const publicDirAssets = await buildPublicOrStaticDirectory("public");
-    const staticDirAssets = await buildPublicOrStaticDirectory("static");
+    const [publicDirAssets, staticDirAssets] = await Promise.all([
+      buildPublicOrStaticDirectory("public"),
+      buildPublicOrStaticDirectory("static")
+    ]);
 
     return Promise.all([
       copyBuildId, // BUILD_ID
@@ -650,7 +661,11 @@ class Builder {
     ]);
   }
 
-  async cleanupDotNext(): Promise<void> {
+  async cleanupDotNext(shouldClean: boolean): Promise<void> {
+    if (!shouldClean) {
+      return;
+    }
+
     const exists = await fse.pathExists(this.dotNextDir);
 
     if (exists) {
@@ -667,18 +682,24 @@ class Builder {
   }
 
   async build(debugMode?: boolean): Promise<void> {
-    const { cmd, args, cwd, env, useServerlessTraceTarget, cleanupDotNext } =
-      Object.assign(defaultBuildOptions, this.buildOptions);
+    const {
+      cmd,
+      args,
+      cwd,
+      env,
+      useServerlessTraceTarget,
+      cleanupDotNext,
+      assetIgnorePatterns
+    } = Object.assign(defaultBuildOptions, this.buildOptions);
 
-    if (cleanupDotNext) {
-      await this.cleanupDotNext();
-    }
-
-    await fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
-    await fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR));
-    await fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
-    await fse.emptyDir(join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR));
-    await fse.emptyDir(join(this.outputDir, ASSETS_DIR));
+    await Promise.all([
+      this.cleanupDotNext(cleanupDotNext),
+      fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR)),
+      fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR)),
+      fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR)),
+      fse.emptyDir(join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR)),
+      fse.emptyDir(join(this.outputDir, ASSETS_DIR))
+    ]);
 
     const { restoreUserConfig } = await createServerlessConfig(
       cwd,
@@ -730,7 +751,7 @@ class Builder {
         routesManifest,
         await this.readPagesManifest(),
         prerenderManifest,
-        await this.readPublicFiles()
+        await this.readPublicFiles(assetIgnorePatterns)
       );
 
     const { enableHTTPCompression, logLambdaExecutionTimes } =
@@ -787,7 +808,11 @@ class Builder {
     }
 
     // Copy static assets to .serverless_nextjs directory
-    await this.buildStaticAssets(defaultBuildManifest, routesManifest);
+    await this.buildStaticAssets(
+      defaultBuildManifest,
+      routesManifest,
+      assetIgnorePatterns
+    );
   }
 
   /**

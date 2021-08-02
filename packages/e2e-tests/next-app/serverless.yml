@@ -3,6 +3,8 @@ next-app:
   inputs:
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
+      assetIgnorePatterns:
+        - "**/public/ignored.txt"
     cloudfront:
       defaults:
         forward:

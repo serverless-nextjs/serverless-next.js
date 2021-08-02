@@ -86,6 +86,7 @@ export type BuildOptions = {
   postBuildCommands?: string[];
   baseDir?: string;
   cleanupDotNext?: boolean;
+  assetIgnorePatterns?: string[];
 };
 
 export type LambdaType =
