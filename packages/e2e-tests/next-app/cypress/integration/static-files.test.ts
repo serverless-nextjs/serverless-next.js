@@ -62,5 +62,19 @@ describe("Static Files Tests", () => {
         });
       });
     });
+
+    [
+      {
+        path: "/ignored.txt"
+      }
+    ].forEach(({ path }) => {
+      it(`ignored file in serverless.yml returns 404 status code: ${path}`, () => {
+        cy.request({ url: path, method: "GET", failOnStatusCode: false }).then(
+          (response) => {
+            expect(response.status).to.equal(404);
+          }
+        );
+      });
+    });
   });
 });

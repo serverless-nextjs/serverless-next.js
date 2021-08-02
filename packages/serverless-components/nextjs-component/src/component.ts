@@ -232,8 +232,7 @@ class NextjsComponent extends Component {
       ...(typeof inputs.build === "object" ? inputs.build : {}),
       cwd: buildCwd,
       baseDir: buildBaseDir, // @ts-ignore
-      cleanupDotNext: inputs.build?.cleanupDotNext ?? true, // @ts-ignore
-      assetIgnorePatterns: inputs.build?.assetIgnorePatterns ?? []
+      cleanupDotNext: inputs.build?.cleanupDotNext ?? true
     };
 
     if (buildConfig.enabled) {
@@ -255,7 +254,8 @@ class NextjsComponent extends Component {
             : undefined,
           authentication: inputs.authentication ?? undefined,
           baseDir: buildConfig.baseDir,
-          cleanupDotNext: buildConfig.cleanupDotNext
+          cleanupDotNext: buildConfig.cleanupDotNext,
+          assetIgnorePatterns: buildConfig.assetIgnorePatterns
         },
         nextStaticPath
       );

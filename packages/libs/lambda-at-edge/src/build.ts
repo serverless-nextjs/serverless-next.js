@@ -2,7 +2,6 @@ import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
-import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
 import {
   OriginRequestDefaultHandlerManifest,
@@ -16,7 +15,6 @@ import createServerlessConfig from "./lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core/dist/build";
@@ -92,10 +90,16 @@ class Builder {
     }
   }
 
-  async readPublicFiles(): Promise<string[]> {
+  async readPublicFiles(assetIgnorePatterns: string[]): Promise<string[]> {
     const dirExists = await fse.pathExists(join(this.nextConfigDir, "public"));
     if (dirExists) {
-      return getAllFiles(join(this.nextConfigDir, "public"))
+      return (
+        await readDirectoryFiles(
+          join(this.nextConfigDir, "public"),
+          assetIgnorePatterns
+        )
+      )
+        .map((e) => e.path)
         .map((e) => e.replace(this.nextConfigDir, ""))
         .map((e) => e.split(path.sep).slice(2).join("/"));
     } else {
@@ -746,7 +750,7 @@ class Builder {
         routesManifest,
         await this.readPagesManifest(),
         prerenderManifest,
-        await this.readPublicFiles()
+        await this.readPublicFiles(assetIgnorePatterns)
       );
 
     const { enableHTTPCompression, logLambdaExecutionTimes } =
