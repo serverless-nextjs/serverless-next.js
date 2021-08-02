@@ -31,7 +31,7 @@
     "@types/node": "^16.0.0",
     "@types/ramda": "^0.27.41",
     "babel-eslint": "10.1.0",
-    "eslint": "7.31.0",
+    "eslint": "7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.14.0",
     "eslint-plugin-prettier": "^3.0.1",
