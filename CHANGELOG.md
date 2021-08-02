@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.24...v3.2.0-alpha.25) (2021-08-02)
+
+### Bug Fixes
+
+- **core:** locale redirect should not be lowercased ([#1484](https://github.com/serverless-nextjs/serverless-next.js/issues/1484)) ([f4ea8f5](https://github.com/serverless-nextjs/serverless-next.js/commit/f4ea8f58c2d104b287d7e5342cbf794bd6689f31))
+
 # [3.2.0-alpha.24](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.23...v3.2.0-alpha.24) (2021-07-31)
 
 ### Bug Fixes
