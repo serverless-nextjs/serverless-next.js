@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.27](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.26...v3.2.0-alpha.27) (2021-08-02)
+
+### Features
+
+- **lambda-at-edge:** couple build-related changes: ([#1485](https://github.com/serverless-nextjs/serverless-next.js/issues/1485)) ([a863dbf](https://github.com/serverless-nextjs/serverless-next.js/commit/a863dbf8b251818f3c2efc74af0634bf84d099cb))
+
 # [3.2.0-alpha.25](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.24...v3.2.0-alpha.25) (2021-08-02)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
