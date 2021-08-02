@@ -59,47 +59,54 @@ describe("Lambda@Edge origin response", () => {
     s3Client = new S3Client({});
   });
   describe("Fallback pages", () => {
-    it("serves fallback page from S3", async () => {
-      const event = createCloudFrontEvent({
-        uri: "/fallback/not-yet-built.html",
-        host: "mydistribution.cloudfront.net",
-        config: { eventType: "origin-response" } as any,
-        response: {
-          headers: {},
-          status: "403"
-        } as any
-      });
+    it.each`
+      statusCode
+      ${"403"}
+      ${"404"}
+    `(
+      "serves fallback page from S3 when S3 first returns status $statusCode",
+      async ({ statusCode }) => {
+        const event = createCloudFrontEvent({
+          uri: "/fallback/not-yet-built.html",
+          host: "mydistribution.cloudfront.net",
+          config: { eventType: "origin-response" } as any,
+          response: {
+            headers: {},
+            status: statusCode
+          } as any
+        });
 
-      const result = await handler(event);
-      const response = result as CloudFrontResponse;
+        const result = await handler(event);
+        const response = result as CloudFrontResponse;
 
-      expect(s3Client.send).toHaveBeenCalledWith({
-        Command: "GetObjectCommand",
-        Bucket: "my-bucket",
-        Key: "static-pages/build-id/fallback/[slug].html"
-      });
+        expect(s3Client.send).toHaveBeenCalledWith({
+          Command: "GetObjectCommand",
+          Bucket: "my-bucket",
+          Key: "static-pages/build-id/fallback/[slug].html"
+        });
 
-      expect(response).toEqual({
-        status: 200,
-        statusDescription: "OK",
-        headers: {
-          "cache-control": [
-            {
-              key: "Cache-Control",
-              value: "public, max-age=0, s-maxage=0, must-revalidate" // Fallback page shouldn't be cached as it will override the path for a just generated SSG page.
-            }
-          ],
-          "content-type": [
-            {
-              key: "Content-Type",
-              value: "text/html"
-            }
-          ]
-        },
-        body: "UzNCb2R5",
-        bodyEncoding: "base64"
-      });
-    });
+        expect(response).toEqual({
+          status: 200,
+          statusDescription: "OK",
+          headers: {
+            "cache-control": [
+              {
+                key: "Cache-Control",
+                value: "public, max-age=0, s-maxage=0, must-revalidate" // Fallback page shouldn't be cached as it will override the path for a just generated SSG page.
+              }
+            ],
+            "content-type": [
+              {
+                key: "Content-Type",
+                value: "text/html"
+              }
+            ]
+          },
+          body: "UzNCb2R5",
+          bodyEncoding: "base64"
+        });
+      }
+    );
 
     it("serves 404 page from S3 for fallback: false", async () => {
       const event = createCloudFrontEvent({
