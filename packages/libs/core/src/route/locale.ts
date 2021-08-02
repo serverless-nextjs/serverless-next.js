@@ -85,7 +85,8 @@ export const getAcceptLanguageLocale = async (
   routesManifest: RoutesManifest
 ) => {
   if (routesManifest.i18n) {
-    const defaultLocale = routesManifest.i18n.defaultLocale?.toLowerCase();
+    const defaultLocaleLowerCase =
+      routesManifest.i18n.defaultLocale?.toLowerCase();
     const locales = new Set(
       routesManifest.i18n.locales.map((locale) => locale.toLowerCase())
     );
@@ -94,12 +95,12 @@ export const getAcceptLanguageLocale = async (
     // so we ask for all to find the order preferred by user.
     const Accept = await import("@hapi/accept");
     for (const language of Accept.languages(acceptLanguage)) {
-      const locale = language.toLowerCase();
-      if (locale === defaultLocale) {
+      const localeLowerCase = language.toLowerCase();
+      if (localeLowerCase === defaultLocaleLowerCase) {
         break;
       }
-      if (locales.has(locale)) {
-        return `${routesManifest.basePath}/${locale}${
+      if (locales.has(localeLowerCase)) {
+        return `${routesManifest.basePath}/${language}${
           manifest.trailingSlash ? "/" : ""
         }`;
       }
