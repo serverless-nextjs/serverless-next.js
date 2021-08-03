@@ -449,7 +449,7 @@ const checkAndRewriteUrl = (
 ): void => {
   debug(`[checkAndRewriteUrl] manifest: ${JSON.stringify(manifest)}`);
   const rewrites = manifest.urlRewrites;
-  debug(`[checkAndRewriteUrl] rewrites: ${JSON.stringify(rewrites)}`);
+  debug(`[checkAndRewriteUrl] rewriteList: ${JSON.stringify(rewrites)}`);
 
   if (!rewrites || rewrites.length === 0) return;
 
