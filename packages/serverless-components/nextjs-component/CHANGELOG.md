@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.29](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.28...v3.2.0-alpha.29) (2021-08-03)
+
+### Bug Fixes
+
+- **nextjs-component:** allow setting custom regeneration lambda name ([#1491](https://github.com/serverless-nextjs/serverless-next.js/issues/1491)) ([b1b3534](https://github.com/serverless-nextjs/serverless-next.js/commit/b1b35345eea821a2e068a1a02a06ddf3f8c00f4d))
+
 # [3.2.0-alpha.28](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.27...v3.2.0-alpha.28) (2021-08-03)
 
 ### Bug Fixes
