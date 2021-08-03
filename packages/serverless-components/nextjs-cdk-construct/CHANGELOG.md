@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0-alpha.28](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.27...v3.2.0-alpha.28) (2021-08-03)
+
+### Bug Fixes
+
+- **nextjs-component, nextjs-cdk-construct:** create AWS resources for dynamic SSG ([#1476](https://github.com/serverless-nextjs/serverless-next.js/issues/1476)) ([#1477](https://github.com/serverless-nextjs/serverless-next.js/issues/1477)) ([7e9c923](https://github.com/serverless-nextjs/serverless-next.js/commit/7e9c923d62c1573fa6fca51f6d62854297d0d09d))
+
 # [3.2.0-alpha.27](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.26...v3.2.0-alpha.27) (2021-08-02)
 
 **Note:** Version bump only for package @sls-next/cdk-construct
