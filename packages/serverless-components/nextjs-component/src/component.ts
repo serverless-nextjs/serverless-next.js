@@ -580,7 +580,11 @@ class NextjsComponent extends Component {
           "regenerationLambda",
           "nodejs14.x"
         ) as string,
-        name: bucketOutputs.name,
+        name: readLambdaInputValue(
+          "name",
+          "regenerationLambda",
+          bucketOutputs.name
+        ) as string,
         tags: readLambdaInputValue(
           "tags",
           "regenerationLambda",
