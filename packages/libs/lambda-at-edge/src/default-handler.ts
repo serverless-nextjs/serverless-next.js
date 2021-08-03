@@ -457,12 +457,12 @@ const checkAndRewriteUrl = (
 
   const requestParamName = `${request.querystring.split("=")[0]}`;
   const requestParamValue = `${request.querystring.split("=")[1]}`;
-
-  if (!requestParamValue || !requestParamValue) return;
+  const requestUri = `${request.uri.split(".")[0]}`;
+  if (!requestParamValue || !requestParamValue || !requestUri) return;
 
   rewrites.forEach(({ originUrl, rewriteUrl }) => {
     debug(`[originUrl: ${originUrl}, rewriteUrl: ${rewriteUrl}]`);
-    if (originUrl.startsWith(`${request.uri}?${requestParamName}=`)) {
+    if (originUrl.startsWith(`${requestUri}?${requestParamName}=`)) {
       request.uri = `/page/${requestParamValue}`;
       request.querystring = "";
     }
@@ -637,8 +637,8 @@ const handleOriginRequest = async ({
     } else if (isHTMLPage || hasFallback) {
       s3Origin.path = `${basePath}/static-pages/${manifest.buildId}`;
       const pageName = uri === "/" ? "/index" : uri;
-      checkAndRewriteUrl(manifest, request);
       request.uri = `${pageName}.html`;
+      checkAndRewriteUrl(manifest, request);
       debug(`[origin-request] is html of fallback, uri: ${request.uri}`);
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
