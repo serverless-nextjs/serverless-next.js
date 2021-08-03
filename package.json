@@ -56,7 +56,7 @@
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^4.0.0",
     "@typescript-eslint/parser": "^4.26.1",
-    "aws-sdk": "^2.935.0",
+    "aws-sdk": "^2.959.0",
     "eslint": "^7.3.1",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^3.1.4",
