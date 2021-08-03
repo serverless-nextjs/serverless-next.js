@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.2.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.29...v3.2.0) (2021-08-03)
+
+**Note:** Version bump only for package serverless-nextjs-monorepo
+
 # [3.2.0-alpha.29](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.28...v3.2.0-alpha.29) (2021-08-03)
 
 ### Bug Fixes
