@@ -432,6 +432,7 @@ export const handler = async (
 /**
  * check if this url and query params need to rewrite. And rewrite it if get configuration form serverless.yml
  * Now, we can only support 1 url params, like rewrite /index.html?page=[number] to /page/[number].html
+ * We can use querystring lib if we want to support more functions.
  * For example,
  *     urlRewrites:
  *        - name: paginationRewrite
