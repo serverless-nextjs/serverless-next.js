@@ -503,7 +503,8 @@ class Builder {
       authentication: authentication,
       canonicalHostname: this.buildOptions.canonicalHostname,
       distributionId: this.buildOptions.distributionId,
-      enableHTTPCompression
+      enableHTTPCompression,
+      urlRewrites: this.buildOptions.urlRewrites
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {

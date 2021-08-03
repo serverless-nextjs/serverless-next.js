@@ -447,6 +447,7 @@ const checkAndRewriteUrl = (
   manifest: OriginRequestDefaultHandlerManifest,
   request: CloudFrontRequest
 ): void => {
+  debug(`[checkAndRewriteUrl] manifest: ${JSON.stringify(manifest)}`);
   const rewrites = manifest.urlRewrites;
   debug(`[checkAndRewriteUrl] rewrites: ${JSON.stringify(rewrites)}`);
 
