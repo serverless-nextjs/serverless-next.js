@@ -95,7 +95,13 @@ export class NextJSLambdaEdge extends cdk.Construct {
         "number"
     );
 
-    if (hasISRPages) {
+    const hasDynamicISRPages = Object.keys(
+      this.prerenderManifest.dynamicRoutes
+    ).some(
+      (key) => this.prerenderManifest.dynamicRoutes[key].fallback !== false
+    );
+
+    if (hasISRPages || hasDynamicISRPages) {
       this.regenerationQueue = new sqs.Queue(this, "RegenerationQueue", {
         // We call the queue the same name as the bucket so that we can easily
         // reference it from within the lambda@edge, given we can't use env vars
@@ -160,7 +166,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     this.bucket.grantReadWrite(this.defaultNextLambda);
     this.defaultNextLambda.currentVersion.addAlias("live");
 
-    if (hasISRPages && this.regenerationFunction) {
+    if ((hasISRPages || hasDynamicISRPages) && this.regenerationFunction) {
       this.bucket.grantReadWrite(this.regenerationFunction);
       this.regenerationQueue?.grantSendMessages(this.defaultNextLambda);
       this.regenerationFunction?.grantInvoke(this.defaultNextLambda);

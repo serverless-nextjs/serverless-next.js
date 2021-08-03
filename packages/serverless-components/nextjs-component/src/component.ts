@@ -453,6 +453,12 @@ class NextjsComponent extends Component {
           .initialRevalidateSeconds === "number"
     );
 
+    const hasDynamicISRPages = Object.keys(
+      defaultBuildManifest.pages.ssg.dynamic
+    ).some(
+      (key) => defaultBuildManifest.pages.ssg.dynamic[key].fallback !== false
+    );
+
     const readLambdaInputValue = (
       inputKey: "memory" | "timeout" | "name" | "runtime" | "roleArn" | "tags",
       lambdaType: LambdaType,
@@ -472,7 +478,7 @@ class NextjsComponent extends Component {
     };
 
     let queue;
-    if (hasISRPages) {
+    if (hasISRPages || hasDynamicISRPages) {
       queue = await sqs({
         name: `${bucketOutputs.name}.fifo`,
         deduplicationScope: "messageGroup",
@@ -522,7 +528,7 @@ class NextjsComponent extends Component {
       }
     }
 
-    if (hasISRPages) {
+    if (hasISRPages || hasDynamicISRPages) {
       const regenerationLambdaInput: LambdaInput = {
         region: bucketRegion, // make sure SQS region and regeneration lambda region are the same
         description: inputs.description
