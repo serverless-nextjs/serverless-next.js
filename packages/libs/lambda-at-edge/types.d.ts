@@ -73,6 +73,7 @@ export type OriginRequestDefaultHandlerManifest = {
     password: string;
   };
   canonicalHostname?: string;
+  urlRewrites?: UrlRewriteList;
 };
 
 export type OriginRequestImageHandlerManifest = {
@@ -168,3 +169,5 @@ export type PerfLogger = {
   now: () => number | undefined;
   log: (metricDescription: string, t1?: number, t2?: number) => void;
 };
+
+export type UrlRewriteList = { originUrl: string; rewriteUrl: string }[];

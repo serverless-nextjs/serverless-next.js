@@ -52,6 +52,7 @@ export type ServerlessComponentInputs = {
   authentication?: { username: string; password: string };
   imageOptimizer?: boolean;
   certificateArn?: string;
+  urlRewrites?: UrlRewriteOptions;
 };
 
 type CloudfrontOptions = Record<string, any>;
@@ -83,3 +84,5 @@ export type LambdaInput = {
   runtime: string;
   name?: string;
 };
+
+type UrlRewriteOptions = { originUrl: string; rewriteUrl: string }[];
