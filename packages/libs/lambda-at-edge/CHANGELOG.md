@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.25](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.24...@getjerry/lambda-at-edge@1.8.25) (2021-08-04)
+
+### Bug Fixes
+
+- **default-handler:** fix wrong response handler. ([086a4fb](https://github.com/getjerry/serverless-next.js/commit/086a4fbec8b4b9012084237dcab9898c14a26e0a))
+- **default-handler:** fix wrong response handler. ([e26f298](https://github.com/getjerry/serverless-next.js/commit/e26f298a99c7f587bfb402dd39fe1b17ffdf5ea1))
+- **default-handler:** fix wrong response handler. ([1acd94b](https://github.com/getjerry/serverless-next.js/commit/1acd94ba3e8df7e819bceabf4e08260c4631f7f3))
+
 ## [1.8.24](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.23...@getjerry/lambda-at-edge@1.8.24) (2021-08-03)
 
 **Note:** Version bump only for package @getjerry/lambda-at-edge
