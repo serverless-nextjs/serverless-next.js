@@ -90,9 +90,10 @@ export const getAcceptLanguageLocale = async (
   if (routesManifest.i18n) {
     const defaultLocaleLowerCase =
       routesManifest.i18n.defaultLocale?.toLowerCase();
-    const locales = new Set(
-      routesManifest.i18n.locales.map((locale) => locale.toLowerCase())
-    );
+    const localeMap: { [key: string]: string } = {};
+    for (const locale of routesManifest.i18n.locales) {
+      localeMap[locale.toLowerCase()] = locale;
+    }
 
     // Accept.language(header, locales) prefers the locales order,
     // so we ask for all to find the order preferred by user.
@@ -102,8 +103,8 @@ export const getAcceptLanguageLocale = async (
       if (localeLowerCase === defaultLocaleLowerCase) {
         break;
       }
-      if (locales.has(localeLowerCase)) {
-        return `${routesManifest.basePath}/${language}${
+      if (localeMap[localeLowerCase]) {
+        return `${routesManifest.basePath}/${localeMap[localeLowerCase]}${
           manifest.trailingSlash ? "/" : ""
         }`;
       }

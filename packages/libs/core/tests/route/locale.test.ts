@@ -1,4 +1,4 @@
-import { Headers, Manifest, RoutesManifest } from "../../src";
+import { Manifest, RoutesManifest } from "../../src";
 import {
   addDefaultLocaleToPath,
   dropLocaleFromPath,
@@ -19,7 +19,7 @@ describe("Locale Utils Tests", () => {
         redirects: [],
         rewrites: [],
         i18n: {
-          locales: ["en", "fr", "nl"],
+          locales: ["en", "fr", "nl", "en-GB"],
           defaultLocale: "en",
           localeDetection: true
         }
@@ -27,11 +27,13 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      path       | forceLocale | expectedPath
-      ${"/a"}    | ${null}     | ${"/en/a"}
-      ${"/en/a"} | ${null}     | ${"/en/a"}
-      ${"/fr/a"} | ${null}     | ${"/fr/a"}
-      ${"/nl/a"} | ${"en"}     | ${"/en/a"}
+      path          | forceLocale | expectedPath
+      ${"/a"}       | ${null}     | ${"/en/a"}
+      ${"/en/a"}    | ${null}     | ${"/en/a"}
+      ${"/fr/a"}    | ${null}     | ${"/fr/a"}
+      ${"/en-GB/a"} | ${null}     | ${"/en-GB/a"}
+      ${"/en-gb/a"} | ${null}     | ${"/en-GB/a"}
+      ${"/nl/a"}    | ${"en"}     | ${"/en/a"}
     `(
       "changes path $path to $expectedPath",
       ({ path, forceLocale, expectedPath }) => {
@@ -157,7 +159,7 @@ describe("Locale Utils Tests", () => {
         redirects: [],
         rewrites: [],
         i18n: {
-          locales: ["en", "fr"],
+          locales: ["en", "fr", "en-GB"],
           defaultLocale: "en",
           localeDetection: true
         }
@@ -168,6 +170,7 @@ describe("Locale Utils Tests", () => {
       path             | expectedPath
       ${"/en"}         | ${"/"}
       ${"/en/test"}    | ${"/test"}
+      ${"/en-GB/test"} | ${"/test"}
       ${"/fr/api/foo"} | ${"/api/foo"}
     `("changes path $path to $expectedPath", ({ path, expectedPath }) => {
       const newPath = dropLocaleFromPath(path, routesManifest);
@@ -179,6 +182,7 @@ describe("Locale Utils Tests", () => {
       path
       ${"/base/en"}         | ${"/base"}
       ${"/base/en/test"}    | ${"/base/test"}
+      ${"/base/en-GB/test"} | ${"/base/test"}
       ${"/base/fr/api/foo"} | ${"/base/api/foo"}
     `("keeps path $path unchanged", ({ path }) => {
       const newPath = dropLocaleFromPath(path, routesManifest);
@@ -201,7 +205,7 @@ describe("Locale Utils Tests", () => {
         redirects: [],
         rewrites: [],
         i18n: {
-          locales: ["en", "fr", "nl"],
+          locales: ["en", "en-GB", "fr", "nl"],
           defaultLocale: "en",
           localeDetection: true
         }
@@ -214,6 +218,8 @@ describe("Locale Utils Tests", () => {
       ${"nl"}                 | ${"/nl/"}
       ${"de, fr"}             | ${"/fr/"}
       ${"fr;q=0.7, nl;q=0.9"} | ${"/nl/"}
+      ${"en-GB"}              | ${"/en-GB/"}
+      ${"en-gb"}              | ${"/en-GB/"}
     `(
       "returns $expectedPath for $acceptLang",
       async ({ acceptLang, expectedPath }) => {
