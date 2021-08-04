@@ -58,7 +58,7 @@
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
     "sharp": "^0.28.3",
-    "ts-loader": "^9.2.3",
+    "ts-loader": "^9.2.5",
     "ts-node": "^10.0.0",
     "typescript": "^4.2.4"
   },
