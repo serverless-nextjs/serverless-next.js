@@ -48,7 +48,7 @@
     "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.1",
     "@types/jest": "^26.0.23",
-    "@types/lodash": "^4.14.170",
+    "@types/lodash": "^4.14.172",
     "@types/node": "^16.0.0",
     "@types/node-fetch": "^2.5.10",
     "@types/react": "^17.0.9",
