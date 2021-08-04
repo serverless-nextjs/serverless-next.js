@@ -455,15 +455,20 @@ const checkAndRewriteUrl = (
 
   debug(`[checkAndRewriteUrl] Before: ${request.uri}, ${request.querystring}`);
 
-  const requestParamName = `${request.querystring.split("=")[0]}`;
-  const requestParamValue = `${request.querystring.split("=")[1]}`;
-  const requestUri = `${request.uri.split(".")[0]}`;
-  if (!requestParamValue || !requestParamValue || !requestUri) return;
+  const requestParamName = request.querystring.split("=")[0];
+  const requestParamValue = request.querystring.split("=")[1];
+  const requestUri = request.uri.split(".")[0];
+  if (!requestParamName || !requestParamValue || !requestUri) return;
 
+  debug(
+    `[checkAndRewriteUrl] requestParamName: ${requestParamName}, requestParamValue: ${requestParamValue}，requestUri: ${requestUri}`
+  );
   rewrites.forEach(({ originUrl, rewriteUrl }) => {
-    debug(`[originUrl: ${originUrl}, rewriteUrl: ${rewriteUrl}]`);
+    debug(
+      `[originUrl: ${originUrl}, rewriteUrl: ${rewriteUrl}, prefix: ${requestUri}?${requestParamName}= ]`
+    );
     if (originUrl.startsWith(`${requestUri}?${requestParamName}=`)) {
-      request.uri = `/page/${requestParamValue}`;
+      request.uri = `/page/${requestParamValue}.html`;
       request.querystring = "";
     }
   });
