@@ -7,7 +7,9 @@ describe("Pages Tests", () => {
     [
       { path: "/ssr-page" },
       { path: "/en/ssr-page" },
-      { path: "/fr/ssr-page" }
+      { path: "/fr/ssr-page" },
+      { path: "/en-GB/ssr-page" },
+      { path: "/en-gb/ssr-page" }
     ].forEach(({ path }) => {
       it(`serves but does not cache page ${path}`, () => {
         cy.ensureRouteNotCached(path);
@@ -37,7 +39,9 @@ describe("Pages Tests", () => {
     [
       { path: "/ssr-page-2", locale: "en" },
       { path: "/en/ssr-page-2", locale: "en" },
-      { path: "/fr/ssr-page-2", locale: "fr" }
+      { path: "/fr/ssr-page-2", locale: "fr" },
+      { path: "/en-GB/ssr-page-2", locale: "en-GB" },
+      { path: "/en-gb/ssr-page-2", locale: "en-GB" }
     ].forEach(({ locale, path }) => {
       it(`serves but does not cache page ${path}`, () => {
         if (path === "/") {
@@ -75,10 +79,11 @@ describe("Pages Tests", () => {
 
   describe("SSG pages", () => {
     [
-      { path: "/ssg-page" },
-      { path: "/en/ssg-page" },
-      { path: "/fr/ssg-page" }
-    ].forEach(({ path }) => {
+      { path: "/ssg-page", locale: "en" },
+      { path: "/en/ssg-page", locale: "en" },
+      { path: "/fr/ssg-page", locale: "fr" },
+      { path: "/en-GB/ssg-page", locale: "en-GB" }
+    ].forEach(({ path, locale }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
 
@@ -92,6 +97,8 @@ describe("Pages Tests", () => {
 
         cy.ensureRouteCached(path);
         cy.visit(path);
+
+        cy.get("[data-cy=locale]").contains(locale);
       });
 
       it(`supports preview mode ${path}`, () => {

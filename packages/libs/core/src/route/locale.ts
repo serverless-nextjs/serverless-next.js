@@ -34,15 +34,17 @@ export function addDefaultLocaleToPath(
       ? routesManifest.basePath
       : "";
 
-    // If prefixed with a locale, return that path
+    // If prefixed with a locale, return that path with normalized locale
+    const pathLowerCase = path.toLowerCase();
     for (const locale of locales) {
       if (
-        path === `${basePath}/${locale}` ||
-        path.startsWith(`${basePath}/${locale}/`)
+        pathLowerCase === `${basePath}/${locale}`.toLowerCase() ||
+        pathLowerCase.startsWith(`${basePath}/${locale}/`.toLowerCase())
       ) {
-        return typeof forceLocale === "string"
-          ? path.replace(`${locale}/`, `${forceLocale}/`)
-          : path;
+        return path.replace(
+          new RegExp(`${basePath}/${locale}`, "i"),
+          `${basePath}/${forceLocale ?? locale}`
+        );
       }
     }
 
@@ -62,16 +64,17 @@ export function dropLocaleFromPath(
   routesManifest: RoutesManifest
 ): string {
   if (routesManifest.i18n) {
+    const pathLowerCase = path.toLowerCase();
     const locales = routesManifest.i18n.locales;
 
     // If prefixed with a locale, return path without
     for (const locale of locales) {
-      const prefix = `/${locale}`;
-      if (path === prefix) {
+      const prefixLowerCase = `/${locale.toLowerCase()}`;
+      if (pathLowerCase === prefixLowerCase) {
         return "/";
       }
-      if (path.startsWith(`${prefix}/`)) {
-        return `${path.slice(prefix.length)}`;
+      if (pathLowerCase.startsWith(`${prefixLowerCase}/`)) {
+        return `${pathLowerCase.slice(prefixLowerCase.length)}`;
       }
     }
   }
@@ -87,9 +90,10 @@ export const getAcceptLanguageLocale = async (
   if (routesManifest.i18n) {
     const defaultLocaleLowerCase =
       routesManifest.i18n.defaultLocale?.toLowerCase();
-    const locales = new Set(
-      routesManifest.i18n.locales.map((locale) => locale.toLowerCase())
-    );
+    const localeMap: { [key: string]: string } = {};
+    for (const locale of routesManifest.i18n.locales) {
+      localeMap[locale.toLowerCase()] = locale;
+    }
 
     // Accept.language(header, locales) prefers the locales order,
     // so we ask for all to find the order preferred by user.
@@ -99,8 +103,8 @@ export const getAcceptLanguageLocale = async (
       if (localeLowerCase === defaultLocaleLowerCase) {
         break;
       }
-      if (locales.has(localeLowerCase)) {
-        return `${routesManifest.basePath}/${language}${
+      if (localeMap[localeLowerCase]) {
+        return `${routesManifest.basePath}/${localeMap[localeLowerCase]}${
           manifest.trailingSlash ? "/" : ""
         }`;
       }
@@ -117,8 +121,13 @@ export function getLocalePrefixFromUri(
   }
 
   if (routesManifest.i18n) {
+    const uriLowerCase = uri.toLowerCase();
     for (const locale of routesManifest.i18n.locales) {
-      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
+      const localeLowerCase = locale.toLowerCase();
+      if (
+        uriLowerCase === `/${localeLowerCase}` ||
+        uriLowerCase.startsWith(`/${localeLowerCase}/`)
+      ) {
         return `/${locale}`;
       }
     }
