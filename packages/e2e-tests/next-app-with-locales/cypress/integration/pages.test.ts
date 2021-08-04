@@ -82,8 +82,7 @@ describe("Pages Tests", () => {
       { path: "/ssg-page", locale: "en" },
       { path: "/en/ssg-page", locale: "en" },
       { path: "/fr/ssg-page", locale: "fr" },
-      { path: "/en-GB/ssg-page", locale: "en-GB" },
-      { path: "/en-gb/ssg-page", locale: "en-GB" }
+      { path: "/en-GB/ssg-page", locale: "en-GB" }
     ].forEach(({ path, locale }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
