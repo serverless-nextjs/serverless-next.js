@@ -34,15 +34,17 @@ export function addDefaultLocaleToPath(
       ? routesManifest.basePath
       : "";
 
-    // If prefixed with a locale, return that path
+    // If prefixed with a locale, return that path with normalized locale
+    const pathLowerCase = path.toLowerCase();
     for (const locale of locales) {
       if (
-        path === `${basePath}/${locale}` ||
-        path.startsWith(`${basePath}/${locale}/`)
+        pathLowerCase === `${basePath}/${locale}`.toLowerCase() ||
+        pathLowerCase.startsWith(`${basePath}/${locale}/`.toLowerCase())
       ) {
-        return typeof forceLocale === "string"
-          ? path.replace(`${locale}/`, `${forceLocale}/`)
-          : path;
+        return path.replace(
+          new RegExp(`${basePath}/${locale}`, "i"),
+          `${basePath}/${forceLocale ?? locale}`
+        );
       }
     }
 
@@ -62,16 +64,17 @@ export function dropLocaleFromPath(
   routesManifest: RoutesManifest
 ): string {
   if (routesManifest.i18n) {
+    const pathLowerCase = path.toLowerCase();
     const locales = routesManifest.i18n.locales;
 
     // If prefixed with a locale, return path without
     for (const locale of locales) {
-      const prefix = `/${locale}`;
-      if (path === prefix) {
+      const prefixLowerCase = `/${locale.toLowerCase()}`;
+      if (pathLowerCase === prefixLowerCase) {
         return "/";
       }
-      if (path.startsWith(`${prefix}/`)) {
-        return `${path.slice(prefix.length)}`;
+      if (pathLowerCase.startsWith(`${prefixLowerCase}/`)) {
+        return `${pathLowerCase.slice(prefixLowerCase.length)}`;
       }
     }
   }
@@ -117,8 +120,13 @@ export function getLocalePrefixFromUri(
   }
 
   if (routesManifest.i18n) {
+    const uriLowerCase = uri.toLowerCase();
     for (const locale of routesManifest.i18n.locales) {
-      if (uri === `/${locale}` || uri.startsWith(`/${locale}/`)) {
+      const localeLowerCase = locale.toLowerCase();
+      if (
+        uriLowerCase === `/${localeLowerCase}` ||
+        uriLowerCase.startsWith(`/${localeLowerCase}/`)
+      ) {
         return `/${locale}`;
       }
     }

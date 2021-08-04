@@ -200,7 +200,7 @@ module.exports = {
     ];
   },
   i18n: {
-    locales: ["en", "fr"],
+    locales: ["en", "en-GB", "fr"],
     defaultLocale: "en"
   }
 };

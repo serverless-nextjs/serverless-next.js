@@ -1,24 +1,30 @@
 import React from "react";
-import { NextPageContext } from "next";
+import { useRouter } from "next/router";
 
 type IndexPageProps = {
   name: string;
 };
 
 export default function IndexPage(props: IndexPageProps): JSX.Element {
+  const {
+    query: { segments = [] },
+    locale
+  } = useRouter();
   return (
     <React.Fragment>
       <div>
-        {`Hello ${props.name}. This is an SSG page using getStaticProps(). It also has an image.`}
+        <p>
+          {`Hello ${props.name}. This is an SSG page using getStaticProps(). It also has an image.`}
+        </p>
+        <p data-cy="locale">{locale}</p>
+        <p data-cy="segments">{segments}</p>
       </div>
       <img src={"/app-store-badge.png"} alt={"An image"} />
     </React.Fragment>
   );
 }
 
-export async function getStaticProps(
-  ctx: NextPageContext
-): Promise<{ props: IndexPageProps }> {
+export function getStaticProps(): { props: IndexPageProps } {
   return {
     props: { name: "serverless-next.js" }
   };
