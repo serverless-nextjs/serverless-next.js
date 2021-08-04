@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.2.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0...v3.2.1-alpha.0) (2021-08-04)
+
+### Bug Fixes
+
+- **core:** allow lowercase locale prefixes by standardizing locale casing on server-side, update locale redirect casing ([#1496](https://github.com/serverless-nextjs/serverless-next.js/issues/1496)) ([a8765d1](https://github.com/serverless-nextjs/serverless-next.js/commit/a8765d1ff0e34b2e8d5f185e3aea84afed59b009))
+
 # [3.2.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.29...v3.2.0) (2021-08-03)
 
 **Note:** Version bump only for package @sls-next/core
