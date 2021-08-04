@@ -103,8 +103,12 @@ const addS3HostHeader = (
 
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
-const normaliseUri = (uri: string): string => {
-  if (basePath && uri.startsWith(basePath)) {
+const normaliseUri = (uri: string, isS3Response = false): string => {
+  // Remove first characters when
+  // 1. not s3 response
+  // 2. has basepath property
+  // 3. uri starts with basepath
+  if (!isS3Response && basePath && uri.startsWith(basePath)) {
     uri = uri.slice(basePath.length);
   }
 
@@ -767,7 +771,7 @@ const handleOriginResponse = async ({
   debug(`[origin-request]: ${JSON.stringify(request)}`);
 
   const { status } = response;
-  const uri = normaliseUri(request.uri);
+  const uri = normaliseUri(request.uri, true);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const isHTMLPage = prerenderManifest.routes[decodeURI(uri)];
   const isPublicFile = manifest.publicFiles[decodeURI(uri)];
