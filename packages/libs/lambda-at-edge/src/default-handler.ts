@@ -472,7 +472,7 @@ const checkAndRewriteUrl = (
       `[originUrl: ${originUrl}, rewriteUrl: ${rewriteUrl}, prefix: ${requestUri}?${requestParamName}= ]`
     );
     if (originUrl.startsWith(`${requestUri}?${requestParamName}=`)) {
-      request.uri = `/page/${requestParamValue}.html`;
+      request.uri = `${rewriteUrl.split("[")[0]}${requestParamValue}.html`;
       request.querystring = "";
     }
   });
