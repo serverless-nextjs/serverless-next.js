@@ -3069,10 +3069,10 @@
     node-fetch "^2.6.0"
     shortid "^2.2.14"
 
-"@serverless/components@^3.14.0":
-  version "3.14.0"
-  resolved "https://registry.npmjs.org/@serverless/components/-/components-3.14.0.tgz#11a9885e9bc29ad515cb5d4e25120df0d9099cd6"
-  integrity sha512-Ssuu+OcyWvisGIMZD4Lr9Uj20Ndgb9a8Z/Jw4VbhFS+grc89uK7vZR3pS9I4LTfTUKH4HUbMJXxDndNEFGgLAA==
+"@serverless/components@^3.14.2":
+  version "3.14.2"
+  resolved "https://registry.npmjs.org/@serverless/components/-/components-3.14.2.tgz#c4b69f90ed441a1432afb7557cea3aa827192a30"
+  integrity sha512-mizSDUxNKT+V1hx5edZFFbMBvtWY8FkponU3seWpmkkbv1FjNPpa2wURec89T5m4WadYJDQMCpKKCwYD4DOSow==
   dependencies:
     "@serverless/platform-client" "^4.2.2"
     "@serverless/platform-client-china" "^2.2.0"
@@ -3171,26 +3171,26 @@
     urlencode "^1.1.0"
     ws "^7.3.1"
 
-"@serverless/platform-client@^4.2.2", "@serverless/platform-client@^4.2.3", "@serverless/platform-client@^4.2.5":
-  version "4.2.5"
-  resolved "https://registry.npmjs.org/@serverless/platform-client/-/platform-client-4.2.5.tgz#2bc7eaabb2a5030eae11ab89f370c74504207047"
-  integrity sha512-PqQptakqHs6DHVY3fCqyMqdaFSKgehvUGrobWBUhcsmovnGY1Fzw9s3uqnqt2jmaCICNzPn/hPN+P+JbsG7itA==
+"@serverless/platform-client@^4.2.2", "@serverless/platform-client@^4.2.3", "@serverless/platform-client@^4.2.6":
+  version "4.2.6"
+  resolved "https://registry.npmjs.org/@serverless/platform-client/-/platform-client-4.2.6.tgz#bc37bbab64dd39ef8cddcf9b13ac849e4244bfdf"
+  integrity sha512-TVwlUvYnNjotd4010I9Vh0Dr0c2XByaUTEjpxLJm/Ti51Ka6vLIJ44JxuNZ6TmvkRh66yFZbaZUsVv6W4wNUVQ==
   dependencies:
-    adm-zip "^0.4.13"
+    adm-zip "^0.5.5"
     archiver "^5.3.0"
     axios "^0.21.1"
-    fast-glob "^3.2.5"
+    fast-glob "^3.2.7"
     https-proxy-agent "^5.0.0"
     ignore "^5.1.8"
     isomorphic-ws "^4.0.1"
-    js-yaml "^3.13.1"
+    js-yaml "^3.14.1"
     jwt-decode "^2.2.0"
     minimatch "^3.0.4"
     querystring "^0.2.1"
     run-parallel-limit "^1.1.0"
     throat "^5.0.0"
     traverse "^0.6.6"
-    ws "^7.4.6"
+    ws "^7.5.3"
 
 "@serverless/template@^1.1.3":
   version "1.1.4"
@@ -3950,12 +3950,7 @@ add-stream@^1.0.0:
   resolved "https://registry.npmjs.org/add-stream/-/add-stream-1.0.0.tgz#6a7990437ca736d5e1288db92bd3266d5f5cb2aa"
   integrity sha1-anmQQ3ynNtXhKI25K9MmbV9csqo=
 
-adm-zip@^0.4.13:
-  version "0.4.16"
-  resolved "https://registry.npmjs.org/adm-zip/-/adm-zip-0.4.16.tgz#cf4c508fdffab02c269cbc7f471a875f05570365"
-  integrity sha512-TFi4HBKSGfIKsK5YCkKaaFG2m4PEDyViZmEwof3MTIgzimHLto6muaHVpbrljdIvIrFZzEq/p4nafOeLcYegrg==
-
-adm-zip@^0.5.1, adm-zip@^0.5.4:
+adm-zip@^0.5.1, adm-zip@^0.5.4, adm-zip@^0.5.5:
   version "0.5.5"
   resolved "https://registry.npmjs.org/adm-zip/-/adm-zip-0.5.5.tgz#b6549dbea741e4050309f1bb4d47c47397ce2c4f"
   integrity sha512-IWwXKnCbirdbyXSfUDvCCrmYrOHANRZcc8NcRrvTlIApdl7PwE9oGcsYvNeJPAVY1M+70b4PxXGKIf8AEuiQ6w==
@@ -4278,7 +4273,7 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.951.0, aws-sdk@^2.961.0:
+aws-sdk@^2.960.0, aws-sdk@^2.961.0:
   version "2.961.0"
   resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.961.0.tgz#c3bde072c3a38f119f01c170e8dc84cddd2f646e"
   integrity sha512-71ELXHWd0roRT0FW8CnqGLYGKLksHARa7Yn8LPN3mF70FJt2LuvVAyK49IChoUczTjlzS78p+Y5197Tkky4N8g==
@@ -4880,10 +4875,10 @@ chalk@4.0.0:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
 
-chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.1:
-  version "4.1.1"
-  resolved "https://registry.npmjs.org/chalk/-/chalk-4.1.1.tgz#c80b3fab28bf6371e6863325eee67e618b77e6ad"
-  integrity sha512-diHzdDKxcU+bAsUboHLPEDQiw0qEe0qd7SYUn3HgcFlWgbDcfLGswOHYeGrHKzG9z6UYf01d9VFMfZxPM1xZSg==
+chalk@^4.0.0, chalk@^4.1.0, chalk@^4.1.1, chalk@^4.1.2:
+  version "4.1.2"
+  resolved "https://registry.npmjs.org/chalk/-/chalk-4.1.2.tgz#aac4e2b7734a740867aeb16bf02aad556a1e7a01"
+  integrity sha512-oKnbhFyRIXpUuez8iBMmyEa4nbj4IOQyuhc/wy9kY7/WVPcwIO9VA668Pu8RkO7+0G76SLROeyw9CpQ061i4mA==
   dependencies:
     ansi-styles "^4.1.0"
     supports-color "^7.1.0"
@@ -6588,7 +6583,7 @@ fast-diff@^1.1.2:
   resolved "https://registry.npmjs.org/fast-diff/-/fast-diff-1.2.0.tgz#73ee11982d86caaf7959828d519cfe927fac5f03"
   integrity sha512-xJuoT5+L99XlZ8twedaRf6Ax2TgQVxvgZOYoPKqZufmJib0tL2tegPBOZb1pVNgIhlqDlA0eO0c3wBvQcmzx4w==
 
-fast-glob@^3.1.1, fast-glob@^3.2.4, fast-glob@^3.2.5:
+fast-glob@^3.1.1, fast-glob@^3.2.4:
   version "3.2.5"
   resolved "https://registry.npmjs.org/fast-glob/-/fast-glob-3.2.5.tgz#7939af2a656de79a4f1901903ee8adcaa7cb9661"
   integrity sha512-2DtFcgT68wiTTiwZ2hNdJfcHNke9XOfnwmBRWXhmeKM8rF0TGwmC/Qto3S7RoZKp5cilZbxzO5iTNTQsJ+EeDg==
@@ -11398,24 +11393,24 @@ serialize-javascript@^5.0.1:
   dependencies:
     randombytes "^2.1.0"
 
-serverless@^2.44.0:
-  version "2.52.1"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.52.1.tgz#676540e9282ace955db85faf03752e3394871121"
-  integrity sha512-aDMJiSyCxqbJCt7011L0rMsxkd1lHSz8HotUiQWE8dFFqm3txZ1MpEy01bOLx4n35Qnyj1F8g+jmT9x+WnI2ZQ==
+serverless@^2.53.0:
+  version "2.53.0"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.53.0.tgz#2c1136b802143710bd9d5cc0a1730d1453bf5a20"
+  integrity sha512-2srJa55dQY4kx+aNGkevvZbJ/8j/C1TLD3AvZdpqgrRPNG41yfl1B3V/pXMmq5sfdpx09Fr8JOeNRgUgJUq7Aw==
   dependencies:
     "@serverless/cli" "^1.5.2"
-    "@serverless/components" "^3.14.0"
+    "@serverless/components" "^3.14.2"
     "@serverless/dashboard-plugin" "^5.4.3"
-    "@serverless/platform-client" "^4.2.5"
+    "@serverless/platform-client" "^4.2.6"
     "@serverless/utils" "^5.6.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.951.0"
+    aws-sdk "^2.960.0"
     bluebird "^3.7.2"
     boxen "^5.0.1"
     cachedir "^2.3.0"
-    chalk "^4.1.1"
+    chalk "^4.1.2"
     child-process-ext "^2.1.1"
     ci-info "^3.2.0"
     cli-progress-footer "^1.1.1"
@@ -11451,7 +11446,7 @@ serverless@^2.44.0:
     semver "^7.3.5"
     signal-exit "^3.0.3"
     tabtab "^3.0.2"
-    tar "^6.1.0"
+    tar "^6.1.6"
     timers-ext "^0.1.7"
     type "^2.5.0"
     untildify "^4.0.0"
@@ -12253,10 +12248,10 @@ tar@^4, tar@^4.4.12:
     safe-buffer "^5.1.2"
     yallist "^3.0.3"
 
-tar@^6.0.2, tar@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.npmjs.org/tar/-/tar-6.1.0.tgz#d1724e9bcc04b977b18d5c573b333a2207229a83"
-  integrity sha512-DUCttfhsnLCjwoDoFcI+B2iJgYa93vBnDUATYEeRx6sntCTdN01VnqsIuTlALXla/LWooNg0yEGeB+Y8WdFxGA==
+tar@^6.0.2, tar@^6.1.0, tar@^6.1.6:
+  version "6.1.6"
+  resolved "https://registry.npmjs.org/tar/-/tar-6.1.6.tgz#c23d797b0a1efe5d479b1490805c5443f3560c5d"
+  integrity sha512-oaWyu5dQbHaYcyZCTfyPpC+VmI62/OM2RTUYavTk1MDr1cwW5Boi3baeYQKiZbY2uSQJGr+iMOzb/JFxLrft+g==
   dependencies:
     chownr "^2.0.0"
     fs-minipass "^2.0.0"
@@ -13201,10 +13196,15 @@ write-pkg@^4.0.0:
     type-fest "^0.4.1"
     write-json-file "^3.2.0"
 
-ws@^7.3.1, ws@^7.4.5, ws@^7.4.6, ws@~7.4.2:
+ws@^7.3.1, ws@^7.4.5, ws@~7.4.2:
   version "7.4.6"
   resolved "https://registry.npmjs.org/ws/-/ws-7.4.6.tgz#5654ca8ecdeee47c33a9a4bf6d28e2be2980377c"
   integrity sha512-YmhHDO4MzaDLB+M9ym/mDA5z0naX8j7SIlT8f8z+I0VtzsRbekxEutHSme7NPS2qE8StCYQNUnfWdXta/Yu85A==
+
+ws@^7.5.3:
+  version "7.5.3"
+  resolved "https://registry.npmjs.org/ws/-/ws-7.5.3.tgz#160835b63c7d97bfab418fc1b8a9fced2ac01a74"
+  integrity sha512-kQ/dHIzuLrS6Je9+uv81ueZomEwH0qVYstcAQ4/Z93K8zeko9gtAbttJWzoC5ukqXY1PpoouV3+VSOqEAFt5wg==
 
 xml-name-validator@^3.0.0:
   version "3.0.0"
