@@ -1,12 +1,15 @@
 import { clone } from "ramda";
-import AWS from "aws-sdk";
+import AWS, { Credentials } from "aws-sdk";
 import * as _ from "lodash";
 
-const getDefaults = ({ defaults }) => {
+const getDefaults = ({ defaults }): Record<string, unknown> => {
   return clone(defaults);
 };
 
-const getQueue = async ({ sqs, queueUrl }) => {
+const getQueue = async ({
+  sqs,
+  queueUrl
+}): Promise<Record<string, unknown>> => {
   let queueAttributes = {};
   try {
     const response = await sqs
@@ -21,21 +24,21 @@ const getQueue = async ({ sqs, queueUrl }) => {
   return queueAttributes;
 };
 
-const getAccountId = async () => {
+const getAccountId = async (): Promise<string> => {
   const STS = new AWS.STS();
   const res = await STS.getCallerIdentity({}).promise();
   return res.Account;
 };
 
-const getUrl = ({ name, region, accountId }) => {
+const getUrl = ({ name, region, accountId }): string => {
   return `https://sqs.${region}.amazonaws.com/${accountId}/${name}`;
 };
 
-const getArn = ({ name, region, accountId }) => {
+const getArn = ({ name, region, accountId }): string => {
   return `arn:aws:sqs:${region}:${accountId}:${name}`;
 };
 
-const createAttributeMap = (config) => {
+const createAttributeMap = (config): { [key: string]: string } => {
   const attributeMap: { [key: string]: string } = {};
   if (typeof config.visibilityTimeout !== "undefined")
     attributeMap.VisibilityTimeout = config.visibilityTimeout.toString();
@@ -75,7 +78,12 @@ const createAttributeMap = (config) => {
   return attributeMap;
 };
 
-const createQueue = async ({ sqs, config }) => {
+const createQueue = async ({
+  sqs,
+  config
+}): Promise<{
+  arn: string;
+}> => {
   const params = {
     QueueName: config.name,
     Attributes: createAttributeMap(config),
@@ -93,7 +101,10 @@ const createQueue = async ({ sqs, config }) => {
   return { arn };
 };
 
-const getAttributes = async (sqs, queueUrl) => {
+const getAttributes = async (
+  sqs: AWS.SQS,
+  queueUrl: string
+): Promise<Record<string, unknown>> => {
   const params = {
     QueueUrl: queueUrl,
     AttributeNames: ["All"]
@@ -104,7 +115,11 @@ const getAttributes = async (sqs, queueUrl) => {
   return queueAttributes;
 };
 
-const setAttributes = async (sqs: AWS.SQS, queueUrl, config) => {
+const setAttributes = async (
+  sqs: AWS.SQS,
+  queueUrl: string,
+  config: Record<string, unknown>
+): Promise<void> => {
   const params = {
     QueueUrl: queueUrl,
     Attributes: createAttributeMap(config)
@@ -113,11 +128,20 @@ const setAttributes = async (sqs: AWS.SQS, queueUrl, config) => {
 };
 
 const configureTags = async (
-  context: any,
+  context: {
+    credentials: {
+      aws: Credentials;
+    };
+    instance: {
+      debugMode: boolean;
+    };
+    status(status: string): void;
+    debug(message: string): void;
+  },
   sqs: AWS.SQS,
-  queueUrl,
+  queueUrl: string,
   inputTags: { [key: string]: string }
-) => {
+): Promise<void> => {
   const currentTags = {};
 
   context.debug("Trying to get existing tags.");
@@ -150,7 +174,7 @@ const configureTags = async (
   }
 };
 
-const deleteQueue = async ({ sqs, queueUrl }) => {
+const deleteQueue = async ({ sqs, queueUrl }): Promise<void> => {
   try {
     await sqs.deleteQueue({ QueueUrl: queueUrl }).promise();
   } catch (error) {

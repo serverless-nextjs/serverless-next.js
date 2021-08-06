@@ -1,5 +1,5 @@
-import AWS from "aws-sdk";
-import { isEmpty, mergeDeepRight, pick } from "ramda";
+import AWS, { Credentials } from "aws-sdk";
+import { isEmpty, Merge, mergeDeepRight, pick } from "ramda";
 import { Component } from "@serverless/core";
 import {
   configureTags,
@@ -22,8 +22,23 @@ const defaults = {
 };
 
 class AwsSqsQueue extends Component {
-  context: any;
-  state: any;
+  context: {
+    credentials: {
+      aws: Credentials;
+    };
+    instance: {
+      debugMode: boolean;
+    };
+    status(status: string): void;
+    debug(message: string): void;
+  };
+  state: {
+    name?: string;
+    region?: string;
+    arn?: string;
+    url?: string;
+    tags?: { [key: string]: string };
+  };
   save: () => void;
 
   async default(
@@ -34,7 +49,22 @@ class AwsSqsQueue extends Component {
       url: undefined,
       tags: undefined
     }
-  ) {
+  ): Promise<
+    Pick<
+      Merge<
+        {
+          name: undefined;
+          region: undefined;
+          arn: undefined;
+          url: undefined;
+          tags: undefined;
+        },
+        Record<string, unknown>,
+        "deep"
+      >,
+      "name" | "region" | "arn" | "url" | "tags"
+    >
+  > {
     const config = mergeDeepRight(getDefaults({ defaults }), inputs);
     const accountId = await getAccountId();
 
@@ -116,7 +146,7 @@ class AwsSqsQueue extends Component {
     return pick(outputsList, config);
   }
 
-  async addEventSource(functionArn) {
+  async addEventSource(functionArn): Promise<void> {
     const lambda = new AWS.Lambda({
       region: this.state.region,
       credentials: this.context.credentials.aws
@@ -147,7 +177,7 @@ class AwsSqsQueue extends Component {
     inputs: { name: string } = {
       name: undefined
     }
-  ) {
+  ): Promise<Record<string, never>> {
     const config = mergeDeepRight(defaults, inputs);
     config.name = inputs.name || this.state.name || defaults.name;
 

@@ -16,7 +16,7 @@ import {
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
 describe("sqs component", () => {
-  const tmpStateFolder = (initialState?: any) => {
+  const tmpStateFolder = (initialState?: string) => {
     const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
     if (initialState) {
       fse.writeJSONSync(path.join(dir, "TestLambda.json"), initialState);
