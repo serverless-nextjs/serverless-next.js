@@ -73,6 +73,7 @@ export type ServerlessComponentInputs = {
   imageOptimizer?: boolean;
   certificateArn?: string;
   enableS3Acceleration?: boolean;
+  sqs?: { name: string; tags: { [key: string]: string } };
 };
 
 type CloudfrontOptions = Record<string, any>;

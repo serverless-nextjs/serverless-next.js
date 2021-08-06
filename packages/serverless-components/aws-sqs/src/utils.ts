@@ -1,8 +1,9 @@
-const { clone } = require("ramda");
+import { clone } from "ramda";
+import AWS from "aws-sdk";
+import * as _ from "lodash";
 
 const getDefaults = ({ defaults }) => {
-  const response = clone(defaults);
-  return response;
+  return clone(defaults);
 };
 
 const getQueue = async ({ sqs, queueUrl }) => {
@@ -20,8 +21,8 @@ const getQueue = async ({ sqs, queueUrl }) => {
   return queueAttributes;
 };
 
-const getAccountId = async (aws) => {
-  const STS = new aws.STS();
+const getAccountId = async () => {
+  const STS = new AWS.STS();
   const res = await STS.getCallerIdentity({}).promise();
   return res.Account;
 };
@@ -35,7 +36,7 @@ const getArn = ({ name, region, accountId }) => {
 };
 
 const createAttributeMap = (config) => {
-  const attributeMap = {};
+  const attributeMap: { [key: string]: string } = {};
   if (typeof config.visibilityTimeout !== "undefined")
     attributeMap.VisibilityTimeout = config.visibilityTimeout.toString();
   if (typeof config.maximumMessageSize !== "undefined")
@@ -77,7 +78,8 @@ const createAttributeMap = (config) => {
 const createQueue = async ({ sqs, config }) => {
   const params = {
     QueueName: config.name,
-    Attributes: createAttributeMap(config)
+    Attributes: createAttributeMap(config),
+    tags: undefined
   };
 
   if (config.fifoQueue) {
@@ -102,12 +104,50 @@ const getAttributes = async (sqs, queueUrl) => {
   return queueAttributes;
 };
 
-const setAttributes = async (sqs, queueUrl, config) => {
+const setAttributes = async (sqs: AWS.SQS, queueUrl, config) => {
   const params = {
     QueueUrl: queueUrl,
     Attributes: createAttributeMap(config)
   };
   await sqs.setQueueAttributes(params).promise();
+};
+
+const configureTags = async (
+  context: any,
+  sqs: AWS.SQS,
+  queueUrl,
+  inputTags: { [key: string]: string }
+) => {
+  const currentTags = {};
+
+  context.debug("Trying to get existing tags.");
+  const data = await sqs.listQueueTags({ QueueUrl: queueUrl }).promise();
+
+  if (data.Tags) {
+    Object.keys(data.Tags).forEach((key) => {
+      currentTags[key] = data.Tags[key];
+    });
+  }
+
+  // Sync tags if different from current tags
+  if (!_.isEqual(inputTags, currentTags)) {
+    context.debug("Tags have changed. Updating tags.");
+    await sqs
+      .untagQueue({
+        QueueUrl: queueUrl,
+        TagKeys: Object.keys(inputTags)
+      })
+      .promise();
+
+    await sqs
+      .tagQueue({
+        QueueUrl: queueUrl,
+        Tags: inputTags
+      })
+      .promise();
+  } else {
+    context.debug("Tags are the same as before, not doing anything.");
+  }
 };
 
 const deleteQueue = async ({ sqs, queueUrl }) => {
@@ -120,7 +160,7 @@ const deleteQueue = async ({ sqs, queueUrl }) => {
   }
 };
 
-module.exports = {
+export {
   createQueue,
   deleteQueue,
   getAccountId,
@@ -129,5 +169,6 @@ module.exports = {
   getDefaults,
   getQueue,
   getAttributes,
-  setAttributes
+  setAttributes,
+  configureTags
 };

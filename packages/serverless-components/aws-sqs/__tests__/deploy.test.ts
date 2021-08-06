@@ -1,17 +1,22 @@
-const fse = require("fs-extra");
-const os = require("os");
-const path = require("path");
-const {
+import * as fse from "fs-extra";
+import * as os from "os";
+import * as path from "path";
+import {
   mockListEventSourceMappingsPromise,
   mockCreateEventSourceMappingPromise,
   mockGetCallerIdentityPromise,
   mockGetQueueAttributesPromise,
   mockCreateQueuePromise,
-  mockDeleteQueuePromise
-} = require("aws-sdk");
+  mockDeleteQueuePromise,
+  mockListQueueTagsPromise,
+  mockTagQueuePromise,
+  mockUntagQueuePromise
+} from "../__mocks__/aws-sdk.mock";
+
+jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
 describe("sqs component", () => {
-  const tmpStateFolder = (initialState) => {
+  const tmpStateFolder = (initialState?: any) => {
     const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
     if (initialState) {
       fse.writeJSONSync(path.join(dir, "TestLambda.json"), initialState);
@@ -98,5 +103,41 @@ describe("sqs component", () => {
     await component.init();
     await component.remove();
     expect(mockDeleteQueuePromise).toBeCalledTimes(1);
+  });
+
+  it("configures queue tags when tags are different", async () => {
+    mockListQueueTagsPromise.mockResolvedValueOnce({
+      Tags: {
+        c: "d"
+      }
+    });
+
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default({ tags: { a: "b" } });
+
+    expect(mockListQueueTagsPromise).toBeCalledTimes(1);
+    expect(mockTagQueuePromise).toBeCalledTimes(1);
+    expect(mockUntagQueuePromise).toBeCalledTimes(1);
+  });
+
+  it("does not configure queue tags when tags are the same", async () => {
+    mockListQueueTagsPromise.mockResolvedValueOnce({
+      Tags: {
+        a: "b"
+      }
+    });
+
+    const component = new AwsSqsQueue("TestLambda", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default({ tags: { a: "b" } });
+
+    expect(mockListQueueTagsPromise).toBeCalledTimes(1);
+    expect(mockTagQueuePromise).not.toBeCalled();
+    expect(mockUntagQueuePromise).not.toBeCalled();
   });
 });
