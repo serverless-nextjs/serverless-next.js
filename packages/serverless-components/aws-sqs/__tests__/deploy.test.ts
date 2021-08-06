@@ -12,6 +12,7 @@ import {
   mockTagQueuePromise,
   mockUntagQueuePromise
 } from "../__mocks__/aws-sdk.mock";
+import AwsSqsQueue from "../src/component";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
@@ -26,8 +27,6 @@ describe("sqs component", () => {
   mockGetCallerIdentityPromise.mockResolvedValue({ Account: "123" });
   mockGetQueueAttributesPromise.mockResolvedValue({ Attributes: {} });
   mockCreateQueuePromise.mockResolvedValue({ QueueArn: "arn" });
-
-  const AwsSqsQueue = require("../serverless");
 
   beforeEach(() => {
     jest.restoreAllMocks();

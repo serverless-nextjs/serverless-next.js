@@ -40,6 +40,7 @@ class AwsSqsQueue extends Component {
     tags?: { [key: string]: string };
   };
   save: () => void;
+  init: () => void;
 
   async default(
     inputs = {
