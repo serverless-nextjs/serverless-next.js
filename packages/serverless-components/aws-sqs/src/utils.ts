@@ -207,7 +207,13 @@ const configureTags = async (
   }
 };
 
-const deleteQueue = async ({ sqs, queueUrl }): Promise<void> => {
+const deleteQueue = async ({
+  sqs,
+  queueUrl
+}: {
+  sqs: AWS.SQS;
+  queueUrl: string;
+}): Promise<void> => {
   try {
     await sqs.deleteQueue({ QueueUrl: queueUrl }).promise();
   } catch (error) {
