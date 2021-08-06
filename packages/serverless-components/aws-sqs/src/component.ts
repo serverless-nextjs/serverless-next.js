@@ -146,7 +146,7 @@ class AwsSqsQueue extends Component {
     return pick(outputsList, config);
   }
 
-  async addEventSource(functionArn): Promise<void> {
+  async addEventSource(functionArn: string): Promise<void> {
     const lambda = new AWS.Lambda({
       region: this.state.region,
       credentials: this.context.credentials.aws

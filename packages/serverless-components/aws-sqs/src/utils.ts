@@ -1,14 +1,26 @@
 import { clone } from "ramda";
 import AWS, { Credentials } from "aws-sdk";
 import * as _ from "lodash";
+import {
+  CreateQueueRequest,
+  CreateQueueResult,
+  TagMap
+} from "aws-sdk/clients/sqs";
 
-const getDefaults = ({ defaults }): Record<string, unknown> => {
+const getDefaults = ({
+  defaults
+}: {
+  defaults: Record<string, unknown>;
+}): Record<string, unknown> => {
   return clone(defaults);
 };
 
 const getQueue = async ({
   sqs,
   queueUrl
+}: {
+  sqs: AWS.SQS;
+  queueUrl: string;
 }): Promise<Record<string, unknown>> => {
   let queueAttributes = {};
   try {
@@ -30,11 +42,27 @@ const getAccountId = async (): Promise<string> => {
   return res.Account;
 };
 
-const getUrl = ({ name, region, accountId }): string => {
+const getUrl = ({
+  name,
+  region,
+  accountId
+}: {
+  name: string;
+  region: string;
+  accountId: string;
+}): string => {
   return `https://sqs.${region}.amazonaws.com/${accountId}/${name}`;
 };
 
-const getArn = ({ name, region, accountId }): string => {
+const getArn = ({
+  name,
+  region,
+  accountId
+}: {
+  name: string;
+  region: string;
+  accountId: string;
+}): string => {
   return `arn:aws:sqs:${region}:${accountId}:${name}`;
 };
 
@@ -81,11 +109,14 @@ const createAttributeMap = (config): { [key: string]: string } => {
 const createQueue = async ({
   sqs,
   config
+}: {
+  sqs: AWS.SQS;
+  config: Record<string, unknown>;
 }): Promise<{
-  arn: string;
+  url: string;
 }> => {
-  const params = {
-    QueueName: config.name,
+  const params: CreateQueueRequest = {
+    QueueName: config.name as string,
     Attributes: createAttributeMap(config),
     tags: undefined
   };
@@ -95,10 +126,12 @@ const createQueue = async ({
   }
 
   if (config.tags) {
-    params.tags = config.tags;
+    params.tags = config.tags as TagMap;
   }
-  const { QueueArn: arn } = await sqs.createQueue(params).promise();
-  return { arn };
+  const { QueueUrl: url }: CreateQueueResult = await sqs
+    .createQueue(params)
+    .promise();
+  return { url };
 };
 
 const getAttributes = async (
