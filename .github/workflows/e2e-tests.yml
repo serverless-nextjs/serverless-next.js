@@ -65,6 +65,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: "12.x"
+          cache: "yarn"
 
       - name: Build
         run: yarn --frozen-lockfile
@@ -145,6 +146,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
+          cache: "yarn"
 
       - name: "Download build"
         uses: actions/download-artifact@v2
