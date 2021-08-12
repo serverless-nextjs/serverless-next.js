@@ -3,11 +3,11 @@ import * as path from "path";
 import * as os from "os";
 import AwsSqsQueue from "./serverless"; // FIXME: loses coverage but for some reason jest doesn't work from root if importing from component.ts
 
-const createTmpDir = () => {
+const createTmpDir = (): Promise<string> => {
   return fse.mkdtemp(path.join(os.tmpdir(), "test-aws-sqs-"));
 };
 
-const createComponent = async (url?: string) => {
+const createComponent = async (url?: string): Promise<AwsSqsQueue> => {
   // create tmp folder to avoid state collisions between tests
   const tmpStateFolder = (initialState?: { url: string }) => {
     const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-aws-sqs-"));
