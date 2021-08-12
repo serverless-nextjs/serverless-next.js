@@ -29,6 +29,7 @@
     "aws-sdk": "^2.962.0"
   },
   "dependencies": {
+    "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.962.0",
     "lodash": "^4.17.21",
     "ramda": "^0.27.1"

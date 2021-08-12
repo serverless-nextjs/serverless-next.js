@@ -1,6 +1,5 @@
 import AWS, { Credentials } from "aws-sdk";
 import { isEmpty, Merge, mergeDeepRight, pick } from "ramda";
-import { Component } from "@serverless/core";
 import {
   configureTags,
   createQueue,
@@ -12,6 +11,7 @@ import {
   getUrl,
   setAttributes
 } from "./utils";
+import { Component } from "@serverless/core";
 
 const outputsList = ["arn", "url"];
 

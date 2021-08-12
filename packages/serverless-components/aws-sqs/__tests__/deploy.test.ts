@@ -1,6 +1,3 @@
-import * as fse from "fs-extra";
-import * as os from "os";
-import * as path from "path";
 import {
   mockListEventSourceMappingsPromise,
   mockCreateEventSourceMappingPromise,
@@ -11,19 +8,12 @@ import {
   mockListQueueTagsPromise,
   mockTagQueuePromise,
   mockUntagQueuePromise
-} from "../__mocks__/aws-sdk.mock";
-import AwsSqsQueue from "../src/component";
+} from "../__mocks__/aws-sqs-aws-sdk.mock";
+import { createComponent } from "../test-utils";
 
-jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
+jest.mock("aws-sdk", () => require("../__mocks__/aws-sqs-aws-sdk.mock"));
 
 describe("sqs component", () => {
-  const tmpStateFolder = (initialState?: string) => {
-    const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
-    if (initialState) {
-      fse.writeJSONSync(path.join(dir, "TestLambda.json"), initialState);
-    }
-    return dir;
-  };
   mockGetCallerIdentityPromise.mockResolvedValue({ Account: "123" });
   mockGetQueueAttributesPromise.mockResolvedValue({ Attributes: {} });
   mockCreateQueuePromise.mockResolvedValue({ QueueArn: "arn" });
@@ -33,11 +23,7 @@ describe("sqs component", () => {
   });
 
   it("creates a new queue", async () => {
-    const dir = tmpStateFolder();
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: dir
-    });
-    await component.init();
+    const component = await createComponent();
     await component.default();
     expect(mockCreateQueuePromise).toBeCalledTimes(1);
     expect(mockDeleteQueuePromise).toBeCalledTimes(0);
@@ -47,12 +33,7 @@ describe("sqs component", () => {
     mockGetQueueAttributesPromise.mockResolvedValueOnce({
       Attributes: { not: "empty" }
     });
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder({
-        url: "myQueueUrl"
-      })
-    });
-    await component.init();
+    const component = await createComponent("myQueueUrl");
     await component.default();
     expect(mockCreateQueuePromise).toBeCalledTimes(1);
     expect(mockDeleteQueuePromise).toBeCalledTimes(1);
@@ -62,10 +43,7 @@ describe("sqs component", () => {
     mockGetQueueAttributesPromise.mockResolvedValueOnce({
       Attributes: { not: "empty" }
     });
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
+    const component = await createComponent();
     await component.default();
     expect(mockCreateQueuePromise).toBeCalledTimes(1);
     expect(mockDeleteQueuePromise).toBeCalledTimes(0);
@@ -75,10 +53,8 @@ describe("sqs component", () => {
     mockListEventSourceMappingsPromise.mockResolvedValueOnce({
       EventSourceMappings: [1]
     });
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
+    const component = await createComponent();
+    await component.default();
     await component.addEventSource("arn");
     expect(mockCreateEventSourceMappingPromise).toBeCalledTimes(0);
   });
@@ -87,19 +63,15 @@ describe("sqs component", () => {
     mockListEventSourceMappingsPromise.mockResolvedValueOnce({
       EventSourceMappings: []
     });
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
+    const component = await createComponent();
+    await component.default();
     await component.addEventSource("arn");
     expect(mockCreateEventSourceMappingPromise).toBeCalledTimes(1);
   });
 
   it("calls the delete handler when component is deleted", async () => {
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
+    const component = await createComponent();
+    await component.default();
     await component.remove();
     expect(mockDeleteQueuePromise).toBeCalledTimes(1);
   });
@@ -111,10 +83,8 @@ describe("sqs component", () => {
       }
     });
 
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
+    const component = await createComponent();
+    // @ts-ignore
     await component.default({ tags: { a: "b" } });
 
     expect(mockListQueueTagsPromise).toBeCalledTimes(1);
@@ -129,10 +99,8 @@ describe("sqs component", () => {
       }
     });
 
-    const component = new AwsSqsQueue("TestLambda", {
-      stateRoot: tmpStateFolder()
-    });
-    await component.init();
+    const component = await createComponent();
+    // @ts-ignore
     await component.default({ tags: { a: "b" } });
 
     expect(mockListQueueTagsPromise).toBeCalledTimes(1);
