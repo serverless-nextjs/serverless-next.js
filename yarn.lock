@@ -3082,10 +3082,10 @@
     node-fetch "^2.6.0"
     shortid "^2.2.14"
 
-"@serverless/components@^3.14.2":
-  version "3.14.2"
-  resolved "https://registry.npmjs.org/@serverless/components/-/components-3.14.2.tgz#c4b69f90ed441a1432afb7557cea3aa827192a30"
-  integrity sha512-mizSDUxNKT+V1hx5edZFFbMBvtWY8FkponU3seWpmkkbv1FjNPpa2wURec89T5m4WadYJDQMCpKKCwYD4DOSow==
+"@serverless/components@^3.15.0":
+  version "3.15.0"
+  resolved "https://registry.npmjs.org/@serverless/components/-/components-3.15.0.tgz#80e5b3dc937a4c1e874a13b109c78613e7fee8dc"
+  integrity sha512-oi5a1QjyAoH4CiSCNB+kIyvXMcs3tfLMGXM+pk7Ns1ra5ZWoD3PImRQKRUu/2BTSYqB6iUM3+HmMQGT1yORgBg==
   dependencies:
     "@serverless/platform-client" "^4.2.2"
     "@serverless/platform-client-china" "^2.2.0"
@@ -4284,7 +4284,7 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.962.0, aws-sdk@^2.967.0:
+aws-sdk@^2.966.0, aws-sdk@^2.967.0:
   version "2.967.0"
   resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.967.0.tgz#e584b0fbdf60c89f128e113b18f382ac599ba82b"
   integrity sha512-1IuQZsYZS67AMtywea+hL737sWHzeAzCqX3tEKTieMI+Ip5UoY4rNmQbJlUo8ysY+u8lixoiCFivEQfb/DG1cw==
@@ -11373,20 +11373,20 @@ serialize-javascript@^5.0.1:
   dependencies:
     randombytes "^2.1.0"
 
-serverless@^2.53.1:
-  version "2.53.1"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.53.1.tgz#e78dfee543a967ff4d5028bc58ea60666257d090"
-  integrity sha512-LK7BWPCpMq0p1TcnJb4uCkxYYrbsM2J7FOCd29BYKmvvUrB+NzFeAVGE1sR/cPF6ECT0PWsR9NEADb24o5D2WA==
+serverless@^2.54.0:
+  version "2.54.0"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.54.0.tgz#bd2ebaecb979c8081f50f0ce0d0ba0d760d1cbb6"
+  integrity sha512-z/cVR0jg7QN2YRP9SvcJGM2nZPGI2b+EWxrbJy3PfY1VhBfJsODQjkdwOpsmiYVxX8UYxOrjO507JJRm2Fn3Aw==
   dependencies:
     "@serverless/cli" "^1.5.2"
-    "@serverless/components" "^3.14.2"
+    "@serverless/components" "^3.15.0"
     "@serverless/dashboard-plugin" "^5.4.3"
     "@serverless/platform-client" "^4.2.6"
     "@serverless/utils" "^5.6.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.962.0"
+    aws-sdk "^2.966.0"
     bluebird "^3.7.2"
     boxen "^5.0.1"
     cachedir "^2.3.0"
@@ -11426,7 +11426,7 @@ serverless@^2.53.1:
     semver "^7.3.5"
     signal-exit "^3.0.3"
     tabtab "^3.0.2"
-    tar "^6.1.6"
+    tar "^6.1.8"
     timers-ext "^0.1.7"
     type "^2.5.0"
     untildify "^4.0.0"
@@ -12228,10 +12228,10 @@ tar@^4, tar@^4.4.12:
     safe-buffer "^5.1.2"
     yallist "^3.0.3"
 
-tar@^6.0.2, tar@^6.1.0, tar@^6.1.6:
-  version "6.1.6"
-  resolved "https://registry.npmjs.org/tar/-/tar-6.1.6.tgz#c23d797b0a1efe5d479b1490805c5443f3560c5d"
-  integrity sha512-oaWyu5dQbHaYcyZCTfyPpC+VmI62/OM2RTUYavTk1MDr1cwW5Boi3baeYQKiZbY2uSQJGr+iMOzb/JFxLrft+g==
+tar@^6.0.2, tar@^6.1.0, tar@^6.1.8:
+  version "6.1.8"
+  resolved "https://registry.npmjs.org/tar/-/tar-6.1.8.tgz#4fc50cfe56511c538ce15b71e05eebe66530cbd4"
+  integrity sha512-sb9b0cp855NbkMJcskdSYA7b11Q8JsX4qe4pyUAfHp+Y6jBjJeek2ZVlwEfWayshEIwlIzXx0Fain3QG9JPm2A==
   dependencies:
     chownr "^2.0.0"
     fs-minipass "^2.0.0"
