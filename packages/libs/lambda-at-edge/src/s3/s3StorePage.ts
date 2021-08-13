@@ -42,13 +42,11 @@ export const s3StorePage = async (
     ? new Date(new Date().getTime() + 1000 * options.revalidate)
     : undefined;
 
-  const jsonBody = JSON.stringify(options.pageData);
   const s3JsonParams = {
     Bucket: options.bucketName,
     Key: `${s3BasePath}${jsonKey}`,
-    Body: jsonBody,
+    Body: JSON.stringify(options.pageData),
     ContentType: "application/json",
-    ContentLength: jsonBody.length,
     CacheControl: cacheControl,
     Expires: expires
   };
@@ -57,7 +55,6 @@ export const s3StorePage = async (
     Bucket: options.bucketName,
     Key: `${s3BasePath}${htmlKey}`,
     Body: options.html,
-    ContentLength: options.html.length,
     ContentType: "text/html",
     CacheControl: cacheControl,
     Expires: expires
