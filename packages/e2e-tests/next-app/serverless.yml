@@ -1,6 +1,9 @@
 next-app:
   component: "../../serverless-components/nextjs-component"
   inputs:
+    sqs:
+      tags:
+        foo: bar
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
       assetIgnorePatterns:

@@ -1298,4 +1298,43 @@ describe("Custom inputs", () => {
       expect(mockCreateInvalidation).not.toBeCalled();
     });
   });
+
+  describe("SQS inputs", () => {
+    const fixturePath = path.join(__dirname, "./fixtures/app-with-isr");
+    let tmpCwd: string;
+
+    beforeEach(() => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+    });
+
+    afterEach(() => {
+      process.chdir(tmpCwd);
+      return cleanupFixtureDirectory(fixturePath);
+    });
+
+    it("sets sqs inputs including name and tags", async () => {
+      await createNextComponent().default({
+        sqs: {
+          name: "customSQS",
+          tags: {
+            a: "b"
+          }
+        }
+      });
+      expect(mockSQS).toBeCalledWith({
+        deduplicationScope: "messageGroup",
+        fifoQueue: true,
+        fifoThroughputLimit: "perMessageGroupId",
+        name: "customSQS",
+        region: "us-east-1",
+        tags: {
+          a: "b"
+        },
+        visibilityTimeout: "30"
+      });
+    });
+  });
 });

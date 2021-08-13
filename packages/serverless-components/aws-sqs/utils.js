@@ -1,4 +1,5 @@
 const { clone } = require("ramda");
+const _ = require("lodash");
 
 const getDefaults = ({ defaults }) => {
   const response = clone(defaults);
@@ -120,6 +121,39 @@ const deleteQueue = async ({ sqs, queueUrl }) => {
   }
 };
 
+const configureTags = async (context, sqs, queueUrl, inputTags) => {
+  const currentTags = {};
+
+  context.debug("Trying to get existing tags.");
+  const data = await sqs.listQueueTags({ QueueUrl: queueUrl }).promise();
+
+  if (data.Tags) {
+    Object.keys(data.Tags).forEach((key) => {
+      currentTags[key] = data.Tags[key];
+    });
+  }
+
+  // Sync tags if different from current tags
+  if (!_.isEqual(inputTags, currentTags)) {
+    context.debug("Tags have changed. Updating tags.");
+    await sqs
+      .untagQueue({
+        QueueUrl: queueUrl,
+        TagKeys: Object.keys(inputTags)
+      })
+      .promise();
+
+    await sqs
+      .tagQueue({
+        QueueUrl: queueUrl,
+        Tags: inputTags
+      })
+      .promise();
+  } else {
+    context.debug("Tags are the same as before, not doing anything.");
+  }
+};
+
 module.exports = {
   createQueue,
   deleteQueue,
@@ -129,5 +163,6 @@ module.exports = {
   getDefaults,
   getQueue,
   getAttributes,
-  setAttributes
+  setAttributes,
+  configureTags
 };

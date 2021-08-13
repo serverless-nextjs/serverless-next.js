@@ -7,14 +7,19 @@ const {
   mockGetCallerIdentityPromise,
   mockGetQueueAttributesPromise,
   mockCreateQueuePromise,
-  mockDeleteQueuePromise
+  mockDeleteQueuePromise,
+  mockListQueueTagsPromise,
+  mockTagQueuePromise,
+  mockUntagQueuePromise
 } = require("aws-sdk");
+
+jest.mock("aws-sdk", () => require("../__mocks__/aws-sqs-aws-sdk.mock"));
 
 describe("sqs component", () => {
   const tmpStateFolder = (initialState) => {
-    const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-"));
+    const dir = fse.mkdtempSync(path.join(os.tmpdir(), "test-sqs-"));
     if (initialState) {
-      fse.writeJSONSync(path.join(dir, "TestLambda.json"), initialState);
+      fse.writeJSONSync(path.join(dir, "TestSqs.json"), initialState);
     }
     return dir;
   };
@@ -30,7 +35,7 @@ describe("sqs component", () => {
 
   it("creates a new queue", async () => {
     const dir = tmpStateFolder();
-    const component = new AwsSqsQueue("TestLambda", {
+    const component = new AwsSqsQueue("TestSqs", {
       stateRoot: dir
     });
     await component.init();
@@ -43,7 +48,7 @@ describe("sqs component", () => {
     mockGetQueueAttributesPromise.mockResolvedValueOnce({
       Attributes: { not: "empty" }
     });
-    const component = new AwsSqsQueue("TestLambda", {
+    const component = new AwsSqsQueue("TestSqs", {
       stateRoot: tmpStateFolder({
         url: "myQueueUrl"
       })
@@ -58,7 +63,7 @@ describe("sqs component", () => {
     mockGetQueueAttributesPromise.mockResolvedValueOnce({
       Attributes: { not: "empty" }
     });
-    const component = new AwsSqsQueue("TestLambda", {
+    const component = new AwsSqsQueue("TestSqs", {
       stateRoot: tmpStateFolder()
     });
     await component.init();
@@ -71,7 +76,7 @@ describe("sqs component", () => {
     mockListEventSourceMappingsPromise.mockResolvedValueOnce({
       EventSourceMappings: [1]
     });
-    const component = new AwsSqsQueue("TestLambda", {
+    const component = new AwsSqsQueue("TestSqs", {
       stateRoot: tmpStateFolder()
     });
     await component.init();
@@ -83,7 +88,7 @@ describe("sqs component", () => {
     mockListEventSourceMappingsPromise.mockResolvedValueOnce({
       EventSourceMappings: []
     });
-    const component = new AwsSqsQueue("TestLambda", {
+    const component = new AwsSqsQueue("TestSqs", {
       stateRoot: tmpStateFolder()
     });
     await component.init();
@@ -92,11 +97,47 @@ describe("sqs component", () => {
   });
 
   it("calls the delete handler when component is deleted", async () => {
-    const component = new AwsSqsQueue("TestLambda", {
+    const component = new AwsSqsQueue("TestSqs", {
       stateRoot: tmpStateFolder()
     });
     await component.init();
     await component.remove();
     expect(mockDeleteQueuePromise).toBeCalledTimes(1);
+  });
+
+  it("configures queue tags when tags are different", async () => {
+    mockListQueueTagsPromise.mockResolvedValueOnce({
+      Tags: {
+        c: "d"
+      }
+    });
+
+    const component = new AwsSqsQueue("TestSqs", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default({ tags: { a: "b" } });
+
+    expect(mockListQueueTagsPromise).toBeCalledTimes(1);
+    expect(mockTagQueuePromise).toBeCalledTimes(1);
+    expect(mockUntagQueuePromise).toBeCalledTimes(1);
+  });
+
+  it("does not configure queue tags when tags are the same", async () => {
+    mockListQueueTagsPromise.mockResolvedValueOnce({
+      Tags: {
+        a: "b"
+      }
+    });
+
+    const component = new AwsSqsQueue("TestSqs", {
+      stateRoot: tmpStateFolder()
+    });
+    await component.init();
+    await component.default({ tags: { a: "b" } });
+
+    expect(mockListQueueTagsPromise).toBeCalledTimes(1);
+    expect(mockTagQueuePromise).not.toBeCalled();
+    expect(mockUntagQueuePromise).not.toBeCalled();
   });
 });
