@@ -5,7 +5,7 @@ import { CloudFrontService } from "../services/cloudfront.service";
 import { RenderService } from "../services/render.service";
 import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
-import { debug } from "../lib/console";
+import { debug, isDevMode } from "../lib/console";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = 300;
@@ -34,7 +34,9 @@ export class RevalidateHandler {
       debug(
         `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
       );
-      return;
+      if (!isDevMode()) {
+        return;
+      }
     }
 
     debug(`[handler] Revalidate resource: ${JSON.stringify(resource)}`);

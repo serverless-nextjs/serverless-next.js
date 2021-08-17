@@ -7,3 +7,7 @@ export function debug(message: string): void {
 
   console.log(message);
 }
+
+export function isDevMode(): boolean {
+  return DEBUG;
+}
