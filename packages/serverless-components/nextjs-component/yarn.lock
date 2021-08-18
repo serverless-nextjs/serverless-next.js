@@ -967,7 +967,7 @@
   version "3.2.1-alpha.0"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.967.0"
+    aws-sdk "^2.970.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
@@ -978,7 +978,7 @@
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.967.0"
+    aws-sdk "^2.970.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
@@ -989,7 +989,7 @@
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.967.0"
+    aws-sdk "^2.970.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1003,7 +1003,7 @@
 "@sls-next/cloudfront@link:../../libs/cloudfront":
   version "3.2.1-alpha.0"
   dependencies:
-    aws-sdk "^2.967.0"
+    aws-sdk "^2.970.0"
 
 "@sls-next/core@link:../../libs/core":
   version "3.2.1-alpha.0"
@@ -1042,7 +1042,7 @@
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
   version "3.2.1-alpha.0"
   dependencies:
-    aws-sdk "^2.967.0"
+    aws-sdk "^2.970.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.27"
@@ -1273,10 +1273,10 @@ atob@^2.1.2:
   resolved "https://registry.npmjs.org/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.967.0:
-  version "2.967.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.967.0.tgz#e584b0fbdf60c89f128e113b18f382ac599ba82b"
-  integrity sha512-1IuQZsYZS67AMtywea+hL737sWHzeAzCqX3tEKTieMI+Ip5UoY4rNmQbJlUo8ysY+u8lixoiCFivEQfb/DG1cw==
+aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.970.0:
+  version "2.970.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.970.0.tgz#dc258b61b4727dcb5130c494376b598eb19f827b"
+  integrity sha512-9+ktvE5xgpHr3RsFOcq1SrhXLvU+jUji44jbecFZb5C2lzoEEB29aeN39OLJMW0ZuOrR+3TNum8c3f8YVx6A7w==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
