@@ -34,9 +34,7 @@ export class RevalidateHandler {
       debug(
         `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
       );
-      if (!isDevMode()) {
-        return;
-      }
+      return;
     }
 
     debug(`[handler] Revalidate resource: ${JSON.stringify(resource)}`);
