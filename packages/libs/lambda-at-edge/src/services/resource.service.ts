@@ -4,7 +4,12 @@ import {
   RevalidationEvent,
   RoutesManifest
 } from "../../types";
-import { Resource, FallbackRoute, PrerenderRoute } from "./resource";
+import {
+  Resource,
+  FallbackRoute,
+  PrerenderRoute,
+  ResourceForIndexPage
+} from "./resource";
 
 export class ResourceService {
   constructor(
@@ -13,13 +18,8 @@ export class ResourceService {
     private readonly routesManifest: RoutesManifest
   ) {}
 
-  public get(event: RevalidationEvent): Resource {
-    const request = event.Records[0].cf.request;
-    const resource = new Resource(
-      request.uri.replace(this.getBasePath(), ""),
-      this.getBasePath(),
-      this.getBuildId()
-    );
+  public get(event: RevalidationEvent): Resource | ResourceForIndexPage {
+    const resource = this.generateBasicResource(event);
     resource.routes = {
       fallback: this.findFallbackRoute(resource),
       prerender: this.findPrerenderRoute(resource),
@@ -29,6 +29,24 @@ export class ResourceService {
     };
 
     return resource;
+  }
+
+  private generateBasicResource(
+    event: RevalidationEvent
+  ): Resource | ResourceForIndexPage {
+    const request = event.Records[0].cf.request;
+    const uri = request.uri.replace(this.getBasePath(), "");
+
+    if (uri.endsWith("/index.html")) {
+      // for all */index page
+      return new ResourceForIndexPage(
+        uri,
+        this.getBasePath(),
+        this.getBuildId()
+      );
+    }
+
+    return new Resource(uri, this.getBasePath(), this.getBuildId());
   }
 
   public getBasePath(): string {
