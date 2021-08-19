@@ -30,6 +30,7 @@ export const s3StorePage = async (
     ? `${options.basePath.replace(/^\//, "")}/`
     : "";
   const baseKey = options.uri
+    .replace(/^\/$/, "index")
     .replace(/^\//, "")
     .replace(/\.(json|html)$/, "")
     .replace(/^_next\/data\/[^\/]*\//, "");
