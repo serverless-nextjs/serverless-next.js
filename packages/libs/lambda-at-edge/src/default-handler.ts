@@ -56,7 +56,7 @@ import { CloudFrontService } from "./services/cloudfront.service";
 import { S3Service } from "./services/s3.service";
 import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
-import { debug } from "./lib/console";
+import { debug, isDevMode } from "./lib/console";
 
 process.env.PRERENDER = "true";
 
@@ -212,7 +212,9 @@ const REVALIDATION_CONFIG = Object.values<RouteConfig>(
   PrerenderManifest.routes
 ).find((r) => typeof r.initialRevalidateSeconds === "number");
 
-const REVALIDATE_IN = REVALIDATION_CONFIG?.initialRevalidateSeconds || 4;
+const REVALIDATE_IN = isDevMode()
+  ? 1
+  : REVALIDATION_CONFIG?.initialRevalidateSeconds || 4;
 
 const REVALIDATIONS: RevalidationInterface = {};
 
