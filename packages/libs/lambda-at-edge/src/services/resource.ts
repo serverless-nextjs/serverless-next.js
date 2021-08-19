@@ -80,32 +80,4 @@ export class Resource {
       .replace(".json", "")
       .replace(".html", "");
   }
-
-  public getUri(): string {
-    return this.uri;
-  }
-
-  public getBasePath(): string {
-    return this.basePath;
-  }
-}
-
-/**
- * this resource is just for all /index pages
- * it means this resource uri should endsWith "/index.html";
- */
-export class ResourceForIndexPage extends Resource {
-  public getPagePath(): string | undefined {
-    //fixme: this is now just support pages/index,  pages/[some-path]/index not support yet.
-    return "pages/index.js";
-  }
-
-  public getCanonicalUri(): string {
-    //fixme: this is now just support pages/index,  pages/[some-path]/index not support yet.
-    return "/index";
-  }
-
-  public getHtmlUri(): string {
-    return this.getBasePath() || "";
-  }
 }

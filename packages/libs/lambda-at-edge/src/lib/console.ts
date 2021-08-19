@@ -1,4 +1,4 @@
-const DEBUG = true;
+const DEBUG = false;
 
 export function debug(message: string): void {
   if (!DEBUG) {
