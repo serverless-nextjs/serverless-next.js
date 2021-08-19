@@ -1,8 +1,8 @@
 import { createComponent } from "../test-utils";
 
 import {
-  mockCreateDistribution,
-  mockCreateDistributionPromise
+  mockCreateDistributionWithTags,
+  mockCreateDistributionWithTagsPromise
 } from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
@@ -14,7 +14,7 @@ describe("Configures custom error responses", () => {
   const origins = ["https://exampleorigin.com"];
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "distribution123"
       }
@@ -34,19 +34,21 @@ describe("Configures custom error responses", () => {
       ]
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          CustomErrorResponses: expect.objectContaining({
-            Quantity: 1,
-            Items: expect.arrayContaining([
-              {
-                ErrorCode: "404",
-                ErrorCachingMinTTL: "10",
-                ResponseCode: "404",
-                ResponsePagePath: "/404.html"
-              }
-            ])
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            CustomErrorResponses: expect.objectContaining({
+              Quantity: 1,
+              Items: expect.arrayContaining([
+                {
+                  ErrorCode: "404",
+                  ErrorCachingMinTTL: "10",
+                  ResponseCode: "404",
+                  ResponsePagePath: "/404.html"
+                }
+              ])
+            })
           })
         })
       })
@@ -58,12 +60,14 @@ describe("Configures custom error responses", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          CustomErrorResponses: expect.objectContaining({
-            Quantity: 0,
-            Items: []
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            CustomErrorResponses: expect.objectContaining({
+              Quantity: 0,
+              Items: []
+            })
           })
         })
       })

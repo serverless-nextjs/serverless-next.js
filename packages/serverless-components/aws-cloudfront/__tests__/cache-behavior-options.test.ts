@@ -1,9 +1,9 @@
 import { createComponent } from "../test-utils";
 
-const {
-  mockCreateDistribution,
-  mockCreateDistributionPromise
-} = require("aws-sdk");
+import {
+  mockCreateDistributionWithTags,
+  mockCreateDistributionWithTagsPromise
+} from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
@@ -11,7 +11,7 @@ describe("Input origin as a custom url", () => {
   let component;
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "distribution123"
       }
@@ -49,7 +49,7 @@ describe("Input origin as a custom url", () => {
       origins: ["https://mycustomorigin.com"]
     });
 
-    expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
   });
 
   it("creates distribution with custom behavior options", async () => {
@@ -82,6 +82,6 @@ describe("Input origin as a custom url", () => {
       ]
     });
 
-    expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
   });
 });

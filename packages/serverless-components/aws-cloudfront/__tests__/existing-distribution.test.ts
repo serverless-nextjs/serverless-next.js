@@ -6,7 +6,7 @@ import {
 } from "../test-utils";
 
 import {
-  mockCreateDistribution,
+  mockCreateDistributionWithTags,
   mockUpdateDistribution,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise
@@ -42,7 +42,7 @@ describe("Working with an existing distribution", () => {
       origins: ["https://exampleorigin.com"]
     });
 
-    expect(mockCreateDistribution).not.toBeCalled();
+    expect(mockCreateDistributionWithTags).not.toBeCalled();
   });
 
   it("should update the existing distribution by ID", async () => {

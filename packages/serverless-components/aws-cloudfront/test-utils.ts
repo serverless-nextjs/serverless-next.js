@@ -34,12 +34,42 @@ export const assertHasCacheBehavior = (spy, cacheBehavior) => {
   );
 };
 
+export const assertCDWTHasCacheBehavior = (spy, cacheBehavior) => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          CacheBehaviors: expect.objectContaining({
+            Items: expect.arrayContaining([
+              expect.objectContaining(cacheBehavior)
+            ])
+          })
+        })
+      })
+    })
+  );
+};
+
 export const assertHasOriginCount = (spy, expectedCount) => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
       DistributionConfig: expect.objectContaining({
         Origins: expect.objectContaining({
           Quantity: expectedCount
+        })
+      })
+    })
+  );
+};
+
+export const assertCDWTHasOriginCount = (spy, expectedCount) => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Quantity: expectedCount
+          })
         })
       })
     })
@@ -58,6 +88,20 @@ export const assertHasOrigin = (spy, origin) => {
   );
 };
 
+export const assertCDWTHasOrigin = (spy, origin) => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Items: expect.arrayContaining([expect.objectContaining(origin)])
+          })
+        })
+      })
+    })
+  );
+};
+
 export const assertHasCustomOriginConfig = (spy, originConfig) => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
@@ -68,6 +112,24 @@ export const assertHasCustomOriginConfig = (spy, originConfig) => {
               CustomOriginConfig: expect.objectContaining(originConfig)
             })
           ])
+        })
+      })
+    })
+  );
+};
+
+export const assertCDWTHasCustomOriginConfig = (spy, originConfig) => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Items: expect.arrayContaining([
+              expect.objectContaining({
+                CustomOriginConfig: expect.objectContaining(originConfig)
+              })
+            ])
+          })
         })
       })
     })

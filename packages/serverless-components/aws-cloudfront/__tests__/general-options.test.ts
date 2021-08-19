@@ -1,9 +1,9 @@
 import { createComponent } from "../test-utils";
 
 import {
-  mockCreateDistribution,
+  mockCreateDistributionWithTags,
   mockUpdateDistribution,
-  mockCreateDistributionPromise,
+  mockCreateDistributionWithTagsPromise,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise,
   mockListTagsForResource,
@@ -21,7 +21,7 @@ describe("General options propagation", () => {
   const origins = ["https://exampleorigin.com"];
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "distribution123",
         ARN: "distributionArn"
@@ -38,7 +38,8 @@ describe("General options propagation", () => {
     });
     mockUpdateDistributionPromise.mockResolvedValueOnce({
       Distribution: {
-        Id: "xyz"
+        Id: "distribution123",
+        ARN: "distributionArn"
       }
     });
 
@@ -51,10 +52,12 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          Comment: "test comment"
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            Comment: "test comment"
+          })
         })
       })
     );
@@ -79,10 +82,12 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          Enabled: false
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            Enabled: false
+          })
         })
       })
     );
@@ -107,13 +112,15 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          Aliases: {
-            Items: ["foo.example.com"],
-            Quantity: 1
-          }
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            Aliases: {
+              Items: ["foo.example.com"],
+              Quantity: 1
+            }
+          })
         })
       })
     );
@@ -160,10 +167,12 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          PriceClass: "PriceClass_All"
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            PriceClass: "PriceClass_All"
+          })
         })
       })
     );
@@ -190,11 +199,13 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          WebACLId:
-            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            WebACLId:
+              "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+          })
         })
       })
     );
@@ -224,11 +235,13 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          WebACLId:
-            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            WebACLId:
+              "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+          })
         })
       })
     );
@@ -261,16 +274,18 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          Restrictions: {
-            GeoRestriction: {
-              RestrictionType: "blacklist",
-              Quantity: 1,
-              Items: ["AA"]
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            Restrictions: {
+              GeoRestriction: {
+                RestrictionType: "blacklist",
+                Quantity: 1,
+                Items: ["AA"]
+              }
             }
-          }
+          })
         })
       })
     );
@@ -313,16 +328,18 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          Restrictions: {
-            GeoRestriction: {
-              RestrictionType: "blacklist",
-              Quantity: 1,
-              Items: ["AA"]
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            Restrictions: {
+              GeoRestriction: {
+                RestrictionType: "blacklist",
+                Quantity: 1,
+                Items: ["AA"]
+              }
             }
-          }
+          })
         })
       })
     );
@@ -373,16 +390,18 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          ViewerCertificate: {
-            CloudFrontDefaultCertificate: false,
-            ACMCertificateArn:
-              "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
-            SSLSupportMethod: "sni-only",
-            MinimumProtocolVersion: "TLSv1.2_2019"
-          }
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            ViewerCertificate: {
+              CloudFrontDefaultCertificate: false,
+              ACMCertificateArn:
+                "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
+              SSLSupportMethod: "sni-only",
+              MinimumProtocolVersion: "TLSv1.2_2019"
+            }
+          })
         })
       })
     );
@@ -421,14 +440,16 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          ViewerCertificate: {
-            CloudFrontDefaultCertificate: true,
-            SSLSupportMethod: "sni-only",
-            MinimumProtocolVersion: "TLSv1.2_2019"
-          }
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            ViewerCertificate: {
+              CloudFrontDefaultCertificate: true,
+              SSLSupportMethod: "sni-only",
+              MinimumProtocolVersion: "TLSv1.2_2019"
+            }
+          })
         })
       })
     );
@@ -444,27 +465,23 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalledWith(
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
       expect.objectContaining({
-        DistributionConfig: expect.objectContaining({
-          ViewerCertificate: {
-            CloudFrontDefaultCertificate: false,
-            IAMCertificateId: "12345",
-            SSLSupportMethod: "sni-only",
-            MinimumProtocolVersion: "TLSv1.2_2019"
-          }
+        DistributionConfigWithTags: expect.objectContaining({
+          DistributionConfig: expect.objectContaining({
+            ViewerCertificate: {
+              CloudFrontDefaultCertificate: false,
+              IAMCertificateId: "12345",
+              SSLSupportMethod: "sni-only",
+              MinimumProtocolVersion: "TLSv1.2_2019"
+            }
+          })
         })
       })
     );
   });
 
-  it("create distribution with tags", async () => {
-    mockListTagsForResourcePromise.mockResolvedValueOnce({
-      Tags: {
-        Items: [{ Key: "existingTag", Tag: "existingValue" }]
-      }
-    });
-
+  it("creates distribution with tags", async () => {
     await component.default({
       tags: {
         tag1: "val1",
@@ -473,7 +490,50 @@ describe("General options propagation", () => {
       origins
     });
 
-    expect(mockCreateDistribution).toBeCalled();
+    expect(mockCreateDistributionWithTags).toBeCalledWith(
+      expect.objectContaining({
+        DistributionConfigWithTags: expect.objectContaining({
+          Tags: {
+            Items: [
+              {
+                Key: "tag1",
+                Value: "val1"
+              },
+              {
+                Key: "tag2",
+                Value: "val2"
+              }
+            ]
+          }
+        })
+      })
+    );
+  });
+
+  it("updates distribution with tags", async () => {
+    mockListTagsForResourcePromise.mockResolvedValueOnce({
+      Tags: {
+        Items: [{ Key: "existingTag", Tag: "existingValue" }]
+      }
+    });
+
+    // Create distribution
+    await component.default({
+      origins
+    });
+
+    expect(mockCreateDistributionWithTags).toBeCalled();
+
+    // Update distribution
+    await component.default({
+      tags: {
+        tag1: "val1",
+        tag2: "val2"
+      },
+      origins
+    });
+
+    expect(mockUpdateDistribution).toBeCalled();
 
     expect(mockListTagsForResource).toBeCalledWith({
       Resource: "distributionArn"

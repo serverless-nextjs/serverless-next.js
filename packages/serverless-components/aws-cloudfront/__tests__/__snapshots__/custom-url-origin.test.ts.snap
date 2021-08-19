@@ -2,109 +2,114 @@
 
 exports[`Input origin as a custom url creates distribution with custom url origin and sets defaults 1`] = `
 Object {
-  "DistributionConfig": Object {
-    "Aliases": Object {
-      "Items": Array [],
-      "Quantity": 0,
-    },
-    "CacheBehaviors": Object {
-      "Items": Array [],
-      "Quantity": 0,
-    },
-    "CallerReference": "1566599541192",
-    "Comment": "",
-    "CustomErrorResponses": Object {
-      "Items": Array [],
-      "Quantity": 0,
-    },
-    "DefaultCacheBehavior": Object {
-      "AllowedMethods": Object {
-        "CachedMethods": Object {
+  "DistributionConfigWithTags": Object {
+    "DistributionConfig": Object {
+      "Aliases": Object {
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "CacheBehaviors": Object {
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "CallerReference": "1566599541192",
+      "Comment": "",
+      "CustomErrorResponses": Object {
+        "Items": Array [],
+        "Quantity": 0,
+      },
+      "DefaultCacheBehavior": Object {
+        "AllowedMethods": Object {
+          "CachedMethods": Object {
+            "Items": Array [
+              "HEAD",
+              "GET",
+            ],
+            "Quantity": 2,
+          },
           "Items": Array [
             "HEAD",
+            "DELETE",
+            "POST",
             "GET",
+            "OPTIONS",
+            "PUT",
+            "PATCH",
           ],
-          "Quantity": 2,
+          "Quantity": 7,
         },
-        "Items": Array [
-          "HEAD",
-          "DELETE",
-          "POST",
-          "GET",
-          "OPTIONS",
-          "PUT",
-          "PATCH",
-        ],
-        "Quantity": 7,
-      },
-      "Compress": false,
-      "DefaultTTL": 10,
-      "FieldLevelEncryptionId": "",
-      "ForwardedValues": Object {
-        "Cookies": Object {
-          "Forward": "none",
+        "Compress": false,
+        "DefaultTTL": 10,
+        "FieldLevelEncryptionId": "",
+        "ForwardedValues": Object {
+          "Cookies": Object {
+            "Forward": "none",
+          },
+          "Headers": Object {
+            "Items": Array [],
+            "Quantity": 0,
+          },
+          "QueryString": false,
+          "QueryStringCacheKeys": Object {
+            "Items": Array [],
+            "Quantity": 0,
+          },
         },
-        "Headers": Object {
+        "LambdaFunctionAssociations": Object {
+          "Items": Array [
+            Object {
+              "EventType": "origin-request",
+              "IncludeBody": true,
+              "LambdaFunctionARN": "arn:aws:lambda:us-east-1:123:function:originRequestFunction",
+            },
+          ],
+          "Quantity": 1,
+        },
+        "MaxTTL": 31536000,
+        "MinTTL": 0,
+        "SmoothStreaming": false,
+        "TargetOriginId": "mycustomorigin.com",
+        "TrustedSigners": Object {
+          "Enabled": false,
           "Items": Array [],
           "Quantity": 0,
         },
-        "QueryString": false,
-        "QueryStringCacheKeys": Object {
-          "Items": Array [],
-          "Quantity": 0,
-        },
+        "ViewerProtocolPolicy": "redirect-to-https",
       },
-      "LambdaFunctionAssociations": Object {
+      "Enabled": true,
+      "HttpVersion": "http2",
+      "Origins": Object {
         "Items": Array [
           Object {
-            "EventType": "origin-request",
-            "IncludeBody": true,
-            "LambdaFunctionARN": "arn:aws:lambda:us-east-1:123:function:originRequestFunction",
+            "CustomHeaders": Object {
+              "Items": Array [],
+              "Quantity": 0,
+            },
+            "CustomOriginConfig": Object {
+              "HTTPPort": 80,
+              "HTTPSPort": 443,
+              "OriginKeepaliveTimeout": 5,
+              "OriginProtocolPolicy": "https-only",
+              "OriginReadTimeout": 30,
+              "OriginSslProtocols": Object {
+                "Items": Array [
+                  "TLSv1.2",
+                ],
+                "Quantity": 1,
+              },
+            },
+            "DomainName": "mycustomorigin.com",
+            "Id": "mycustomorigin.com",
+            "OriginPath": "",
           },
         ],
         "Quantity": 1,
       },
-      "MaxTTL": 31536000,
-      "MinTTL": 0,
-      "SmoothStreaming": false,
-      "TargetOriginId": "mycustomorigin.com",
-      "TrustedSigners": Object {
-        "Enabled": false,
-        "Items": Array [],
-        "Quantity": 0,
-      },
-      "ViewerProtocolPolicy": "redirect-to-https",
+      "PriceClass": "PriceClass_All",
     },
-    "Enabled": true,
-    "HttpVersion": "http2",
-    "Origins": Object {
-      "Items": Array [
-        Object {
-          "CustomHeaders": Object {
-            "Items": Array [],
-            "Quantity": 0,
-          },
-          "CustomOriginConfig": Object {
-            "HTTPPort": 80,
-            "HTTPSPort": 443,
-            "OriginKeepaliveTimeout": 5,
-            "OriginProtocolPolicy": "https-only",
-            "OriginReadTimeout": 30,
-            "OriginSslProtocols": Object {
-              "Items": Array [
-                "TLSv1.2",
-              ],
-              "Quantity": 1,
-            },
-          },
-          "DomainName": "mycustomorigin.com",
-          "Id": "mycustomorigin.com",
-          "OriginPath": "",
-        },
-      ],
-      "Quantity": 1,
+    "Tags": Object {
+      "Items": Array [],
     },
-    "PriceClass": "PriceClass_All",
   },
 }
 `;

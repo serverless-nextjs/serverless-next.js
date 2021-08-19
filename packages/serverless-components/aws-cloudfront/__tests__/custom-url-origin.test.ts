@@ -1,9 +1,13 @@
-const { createComponent, assertHasOrigin } = require("../test-utils");
+import {
+  createComponent,
+  assertCDWTHasOrigin,
+  assertHasOrigin
+} from "../test-utils";
 
 import {
-  mockCreateDistribution,
+  mockCreateDistributionWithTags,
   mockUpdateDistribution,
-  mockCreateDistributionPromise,
+  mockCreateDistributionWithTagsPromise,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise
 } from "../__mocks__/aws-sdk.mock";
@@ -14,7 +18,7 @@ describe("Input origin as a custom url", () => {
   let component;
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "distribution123"
       }
@@ -46,7 +50,7 @@ describe("Input origin as a custom url", () => {
       origins: ["https://mycustomorigin.com"]
     });
 
-    assertHasOrigin(mockCreateDistribution, {
+    assertCDWTHasOrigin(mockCreateDistributionWithTags, {
       Id: "mycustomorigin.com",
       DomainName: "mycustomorigin.com",
       CustomOriginConfig: {
@@ -66,7 +70,7 @@ describe("Input origin as a custom url", () => {
       },
       OriginPath: ""
     });
-    expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
   });
 
   it("updates distribution", async () => {
