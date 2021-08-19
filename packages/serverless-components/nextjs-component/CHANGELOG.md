@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.1-alpha.0...v3.3.0-alpha.0) (2021-08-19)
+
+### Features
+
+- **aws-sqs:** support sqs tags/naming ([#1543](https://github.com/serverless-nextjs/serverless-next.js/issues/1543)) ([7bf2c67](https://github.com/serverless-nextjs/serverless-next.js/commit/7bf2c67e2ad9cf188284c9eb160f9a5251bb5fc2))
+
 ## [3.2.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0...v3.2.1-alpha.0) (2021-08-04)
 
 **Note:** Version bump only for package @sls-next/serverless-component
