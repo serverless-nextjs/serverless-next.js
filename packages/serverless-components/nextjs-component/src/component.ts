@@ -480,12 +480,13 @@ class NextjsComponent extends Component {
     let queue;
     if (hasISRPages || hasDynamicISRPages) {
       queue = await sqs({
-        name: `${bucketOutputs.name}.fifo`,
+        name: inputs.sqs?.name ?? `${bucketOutputs.name}.fifo`,
         deduplicationScope: "messageGroup",
         fifoThroughputLimit: "perMessageGroupId",
         visibilityTimeout: "30",
         fifoQueue: true,
-        region: bucketRegion // make sure SQS region and regeneration lambda region are the same
+        region: bucketRegion, // make sure SQS region and regeneration lambda region are the same
+        tags: inputs.sqs?.tags
       });
     }
 

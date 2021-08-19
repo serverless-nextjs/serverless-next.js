@@ -17,6 +17,10 @@
     "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@serverless/core": "^1.1.2",
+    "lodash": "^4.17.21"
+  },
   "peerDependencies": {
     "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.920.0"

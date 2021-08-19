@@ -9,18 +9,28 @@ const {
   getAccountId,
   getArn,
   getUrl,
-  setAttributes
+  setAttributes,
+  configureTags
 } = require("./utils");
 
 const outputsList = ["arn", "url"];
 
 const defaults = {
   name: "serverless",
-  region: "us-east-1"
+  region: "us-east-1",
+  tags: undefined
 };
 
 class AwsSqsQueue extends Component {
-  async default(inputs = {}) {
+  async default(
+    inputs = {
+      name: undefined,
+      region: undefined,
+      arn: undefined,
+      url: undefined,
+      tags: undefined
+    }
+  ) {
     const config = mergeDeepRight(getDefaults({ defaults }), inputs);
     const accountId = await getAccountId(aws);
 
@@ -86,10 +96,19 @@ class AwsSqsQueue extends Component {
       }
     }
 
+    // Synchronize tags if specified
+    if (config.tags) {
+      this.context.debug(
+        "Configuring SQS queue tags since they are specified."
+      );
+      await configureTags(this.context, sqs, queueUrl, config.tags);
+    }
+
     this.state.name = config.name;
     this.state.arn = config.arn;
     this.state.url = config.url;
     this.state.region = config.region;
+    this.state.tags = config.tags;
     await this.save();
 
     const outputs = pick(outputsList, config);
