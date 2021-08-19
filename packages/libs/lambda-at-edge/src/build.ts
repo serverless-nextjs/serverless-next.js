@@ -321,6 +321,12 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
           filter: (file: string) => {
+            const isIndexJS = pathToPosix(file).endsWith("index.js");
+
+            if (isIndexJS) {
+              // should keep all pages/index.js and pages/[some-path]/index.js in lambda folders
+              return true;
+            }
             const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
