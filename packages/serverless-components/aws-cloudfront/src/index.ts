@@ -33,8 +33,8 @@ const updateBucketsPolicies = async (
 const createCloudFrontDistribution = async (
   cf: AWS.CloudFront,
   s3: AWS.S3,
-  inputs
-) => {
+  inputs: Record<string, any>
+): Promise<{ id: string; arn: string; url: string }> => {
   const params = {
     DistributionConfig: {
       CallerReference: String(Date.now()),
@@ -168,11 +168,11 @@ const createCloudFrontDistribution = async (
 };
 
 const updateCloudFrontDistribution = async (
-  cf,
+  cf: any,
   s3: AWS.S3,
   distributionId: string,
-  inputs
-) => {
+  inputs: Record<string, any>
+): Promise<{ id: string; arn: string; url: string }> => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
 
@@ -355,7 +355,7 @@ const disableCloudFrontDistribution = async (cf, distributionId: string) => {
 const deleteCloudFrontDistribution = async (
   cf: AWS.CloudFront,
   distributionId: string
-) => {
+): Promise<void> => {
   try {
     const res = await cf
       .getDistributionConfig({ Id: distributionId })
