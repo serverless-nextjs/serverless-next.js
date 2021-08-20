@@ -93,15 +93,15 @@ export class Resource {
 /**
  * this resource is just for all /index pages
  * it means this resource uri should endsWith "/index.html";
+ * For pages/[somepath]/index, it will render with Resource and
+ * the js path is pages/[somapath].js
  */
 export class ResourceForIndexPage extends Resource {
   public getPagePath(): string | undefined {
-    //fixme: this is now just support pages/index,  pages/[some-path]/index not support yet.
     return "pages/index.js";
   }
 
   public getCanonicalUri(): string {
-    //fixme: this is now just support pages/index,  pages/[some-path]/index not support yet.
     return "/index";
   }
 
