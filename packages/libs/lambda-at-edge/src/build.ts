@@ -321,7 +321,7 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
           filter: (file: string) => {
-            const isIndexJS = pathToPosix(file).endsWith("index.js");
+            const isIndexJS = pathToPosix(file).endsWith("/index.js");
 
             if (isIndexJS) {
               // should keep all pages/index.js and pages/[some-path]/index.js in lambda folders
