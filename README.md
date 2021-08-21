@@ -520,7 +520,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | tags | `object` | `undefined` | Tags to assign to a Lambda. If undefined, the component will not update any tags. If set to an empty object, it will remove all tags. |
 | timeout | `number\|object` | `10` | Same as above |
 | handler | `string` | `index.handler` | When assigned a value, overrides the default function handler to allow for configuration. Copies `handler.js` in route into the Lambda folders. Your handler MUST still call the `default-handler` afterwards or your function won't work with Next.JS |
-| name | `string\|object` | / | When assigned a string, both the default and api lambdas will assigned name of that value. When assigned to an object, values for the default and api lambdas can be separately defined |
+| name | `object` | / | Names for all lambdas can be explicitly defined |
 | build | `boolean\|object` | `true` | When true builds and deploys app, when false assume the app has been built and uses the `.next` `.serverless_nextjs` directories in `nextConfigDir` to deploy. If an object is passed `build` allows for overriding what script gets called and with what arguments. |
 | build.cmd | `string` | `node_modules/.bin/next` | Build command, you may pass a no-op command (e.g `true` or `:` in Unix-based systems) which will then skip the Next.js build |
 | build.args | `Array\|string` | `['build']` | Arguments to pass to the build |
