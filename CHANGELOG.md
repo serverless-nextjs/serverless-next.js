@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.0...v3.3.0-alpha.1) (2021-08-21)
+
+### Bug Fixes
+
+- **aws-cloudfront:** set tags when creating distribution ([#1562](https://github.com/serverless-nextjs/serverless-next.js/issues/1562)) ([e5ddcf5](https://github.com/serverless-nextjs/serverless-next.js/commit/e5ddcf51bdaa35ea9d7756807b5674e14614bab9))
+
 # [3.3.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.1-alpha.0...v3.3.0-alpha.0) (2021-08-19)
 
 ### Features

@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "3.3.0-alpha.0",
+  "version": "3.3.0-alpha.1",
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
