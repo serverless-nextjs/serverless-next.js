@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.1...v3.3.0-alpha.2) (2021-08-21)
+
+### Bug Fixes
+
+- **nextjs-component:** do not allow same name to be specified across all lambdas([#1569](https://github.com/serverless-nextjs/serverless-next.js/issues/1569)) ([d7efc6c](https://github.com/serverless-nextjs/serverless-next.js/commit/d7efc6c5f4269884555409f0822ec9c1144868a6))
+
 # [3.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.0...v3.3.0-alpha.1) (2021-08-21)
 
 ### Bug Fixes
