@@ -467,6 +467,13 @@ class NextjsComponent extends Component {
       const inputValue = inputs[inputKey];
 
       if (typeof inputValue === "string" || typeof inputValue === "number") {
+        // For lambda name, we should not allow same name to be specified across all lambdas, as this can cause conflicts
+        if (inputKey === "name") {
+          throw new Error(
+            "Name cannot be specified across all Lambdas as it will cause conflicts."
+          );
+        }
+
         return inputValue;
       }
 
