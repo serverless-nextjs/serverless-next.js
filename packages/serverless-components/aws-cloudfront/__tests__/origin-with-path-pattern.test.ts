@@ -1,13 +1,15 @@
 import {
   createComponent,
   assertHasCacheBehavior,
-  assertHasOrigin
+  assertHasOrigin,
+  assertCDWTHasCacheBehavior,
+  assertCDWTHasOrigin
 } from "../test-utils";
 
 import {
-  mockCreateDistribution,
+  mockCreateDistributionWithTags,
   mockUpdateDistribution,
-  mockCreateDistributionPromise,
+  mockCreateDistributionWithTagsPromise,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise
 } from "../__mocks__/aws-sdk.mock";
@@ -18,7 +20,7 @@ describe("Input origin with path pattern", () => {
   let component;
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "xyz"
       }
@@ -44,18 +46,18 @@ describe("Input origin with path pattern", () => {
       ]
     });
 
-    assertHasOrigin(mockCreateDistribution, {
+    assertCDWTHasOrigin(mockCreateDistributionWithTags, {
       Id: "exampleorigin.com",
       DomainName: "exampleorigin.com"
     });
 
-    assertHasCacheBehavior(mockCreateDistribution, {
+    assertCDWTHasCacheBehavior(mockCreateDistributionWithTags, {
       PathPattern: "/some/path",
       MinTTL: 10,
       TargetOriginId: "exampleorigin.com"
     });
 
-    expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
   });
 
   it("updates distribution", async () => {

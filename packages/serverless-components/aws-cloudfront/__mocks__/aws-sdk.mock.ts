@@ -7,9 +7,9 @@ const promisifyMock = (mockFn: jest.Mock) => {
   return promise;
 };
 
-export const mockCreateDistribution = jest.fn();
-export const mockCreateDistributionPromise = promisifyMock(
-  mockCreateDistribution
+export const mockCreateDistributionWithTags = jest.fn();
+export const mockCreateDistributionWithTagsPromise = promisifyMock(
+  mockCreateDistributionWithTags
 );
 
 export const mockUpdateDistribution = jest.fn();
@@ -53,7 +53,7 @@ export const mockListTagsForResourcePromise = promisifyMock(
 
 export default {
   CloudFront: jest.fn(() => ({
-    createDistribution: mockCreateDistribution,
+    createDistributionWithTags: mockCreateDistributionWithTags,
     updateDistribution: mockUpdateDistribution,
     getDistributionConfig: mockGetDistributionConfig,
     deleteDistribution: mockDeleteDistribution,

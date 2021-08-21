@@ -3,6 +3,7 @@ import getDefaultCacheBehavior from "./getDefaultCacheBehavior";
 import createOriginAccessIdentity from "./createOriginAccessIdentity";
 import grantCloudFrontBucketAccess from "./grantCloudFrontBucketAccess";
 import getCustomErrorResponses from "./getCustomErrorResponses";
+import AWS from "aws-sdk";
 
 const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2019";
 const DEFAULT_SSL_SUPPORT_METHOD = "sni-only";
@@ -12,7 +13,11 @@ const servePrivateContentEnabled = (inputs) =>
     return origin && origin.private === true;
   });
 
-const updateBucketsPolicies = async (s3, origins, s3CanonicalUserId) => {
+const updateBucketsPolicies = async (
+  s3: AWS.S3,
+  origins,
+  s3CanonicalUserId: string
+) => {
   // update bucket policies with cloudfront access
   const bucketNames = origins.Items.filter(
     (origin) => origin.S3OriginConfig
@@ -25,7 +30,11 @@ const updateBucketsPolicies = async (s3, origins, s3CanonicalUserId) => {
   );
 };
 
-const createCloudFrontDistribution = async (cf, s3, inputs) => {
+const createCloudFrontDistribution = async (
+  cf: AWS.CloudFront,
+  s3: AWS.S3,
+  inputs: Record<string, any>
+): Promise<{ id: string; arn: string; url: string }> => {
   const params = {
     DistributionConfig: {
       CallerReference: String(Date.now()),
@@ -55,7 +64,11 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
       },
       PriceClass: inputs.priceClass,
       Enabled: inputs.enabled,
-      HttpVersion: "http2"
+      HttpVersion: "http2",
+      DefaultCacheBehavior: undefined
+    },
+    Tags: {
+      Items: []
     }
   };
 
@@ -136,7 +149,16 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
     };
   }
 
-  const res = await cf.createDistribution(params).promise();
+  // Set tags if any given in inputs
+  const tagsList = [];
+  for (const [key, value] of Object.entries(inputs.tags ?? {})) {
+    tagsList.push({ Key: key, Value: value });
+  }
+  params.Tags.Items = tagsList;
+
+  const res = await cf
+    .createDistributionWithTags({ DistributionConfigWithTags: params })
+    .promise();
 
   return {
     id: res.Distribution.Id,
@@ -145,7 +167,12 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
   };
 };
 
-const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
+const updateCloudFrontDistribution = async (
+  cf: any,
+  s3: AWS.S3,
+  distributionId: string,
+  inputs: Record<string, any>
+): Promise<{ id: string; arn: string; url: string }> => {
   // Update logic is a bit weird...
   // https://docs.aws.amazon.com/AWSJavaScriptSDK/latest/AWS/CloudFront.html#updateDistribution-property
 
@@ -303,7 +330,7 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   };
 };
 
-const disableCloudFrontDistribution = async (cf, distributionId) => {
+const disableCloudFrontDistribution = async (cf, distributionId: string) => {
   const params = await cf
     .getDistributionConfig({ Id: distributionId })
     .promise();
@@ -325,7 +352,10 @@ const disableCloudFrontDistribution = async (cf, distributionId) => {
   };
 };
 
-const deleteCloudFrontDistribution = async (cf, distributionId) => {
+const deleteCloudFrontDistribution = async (
+  cf: AWS.CloudFront,
+  distributionId: string
+): Promise<void> => {
   try {
     const res = await cf
       .getDistributionConfig({ Id: distributionId })

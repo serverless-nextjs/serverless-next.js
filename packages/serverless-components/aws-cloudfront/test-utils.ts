@@ -3,7 +3,7 @@ import * as os from "os";
 import * as path from "path";
 import CloudFrontComponent from "./src/component";
 
-export const createComponent = async () => {
+export const createComponent = async (): Promise<CloudFrontComponent> => {
   // mock to prevent jest snapshots changing every time
   Date.now = () => 1566599541192;
 
@@ -20,7 +20,7 @@ export const createComponent = async () => {
   return component;
 };
 
-export const assertHasCacheBehavior = (spy, cacheBehavior) => {
+export const assertHasCacheBehavior = (spy, cacheBehavior): void => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
       DistributionConfig: expect.objectContaining({
@@ -34,7 +34,23 @@ export const assertHasCacheBehavior = (spy, cacheBehavior) => {
   );
 };
 
-export const assertHasOriginCount = (spy, expectedCount) => {
+export const assertCDWTHasCacheBehavior = (spy, cacheBehavior): void => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          CacheBehaviors: expect.objectContaining({
+            Items: expect.arrayContaining([
+              expect.objectContaining(cacheBehavior)
+            ])
+          })
+        })
+      })
+    })
+  );
+};
+
+export const assertHasOriginCount = (spy, expectedCount): void => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
       DistributionConfig: expect.objectContaining({
@@ -46,7 +62,21 @@ export const assertHasOriginCount = (spy, expectedCount) => {
   );
 };
 
-export const assertHasOrigin = (spy, origin) => {
+export const assertCDWTHasOriginCount = (spy, expectedCount): void => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Quantity: expectedCount
+          })
+        })
+      })
+    })
+  );
+};
+
+export const assertHasOrigin = (spy, origin): void => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
       DistributionConfig: expect.objectContaining({
@@ -58,7 +88,21 @@ export const assertHasOrigin = (spy, origin) => {
   );
 };
 
-export const assertHasCustomOriginConfig = (spy, originConfig) => {
+export const assertCDWTHasOrigin = (spy, origin): void => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Items: expect.arrayContaining([expect.objectContaining(origin)])
+          })
+        })
+      })
+    })
+  );
+};
+
+export const assertHasCustomOriginConfig = (spy, originConfig): void => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
       DistributionConfig: expect.objectContaining({
@@ -68,6 +112,24 @@ export const assertHasCustomOriginConfig = (spy, originConfig) => {
               CustomOriginConfig: expect.objectContaining(originConfig)
             })
           ])
+        })
+      })
+    })
+  );
+};
+
+export const assertCDWTHasCustomOriginConfig = (spy, originConfig): void => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          Origins: expect.objectContaining({
+            Items: expect.arrayContaining([
+              expect.objectContaining({
+                CustomOriginConfig: expect.objectContaining(originConfig)
+              })
+            ])
+          })
         })
       })
     })

@@ -1,12 +1,12 @@
-const {
+import {
   createComponent,
-  assertHasCacheBehavior,
-  assertHasOrigin
-} = require("../test-utils");
+  assertCDWTHasCacheBehavior,
+  assertCDWTHasOrigin
+} from "../test-utils";
 
 import {
-  mockCreateDistribution,
-  mockCreateDistributionPromise
+  mockCreateDistributionWithTags,
+  mockCreateDistributionWithTagsPromise
 } from "../__mocks__/aws-sdk.mock";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
@@ -15,7 +15,7 @@ describe("Input origin with custom header", () => {
   let component;
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "xyz"
       }
@@ -44,7 +44,7 @@ describe("Input origin with custom header", () => {
       ]
     });
 
-    assertHasOrigin(mockCreateDistribution, {
+    assertCDWTHasOrigin(mockCreateDistributionWithTags, {
       Id: "exampleorigin.com",
       DomainName: "exampleorigin.com",
       CustomHeaders: {
@@ -53,12 +53,12 @@ describe("Input origin with custom header", () => {
       }
     });
 
-    assertHasCacheBehavior(mockCreateDistribution, {
+    assertCDWTHasCacheBehavior(mockCreateDistributionWithTags, {
       PathPattern: "/some/path",
       MinTTL: 10,
       TargetOriginId: "exampleorigin.com"
     });
 
-    expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
   });
 });

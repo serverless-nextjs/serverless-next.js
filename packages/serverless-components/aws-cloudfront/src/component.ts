@@ -77,7 +77,8 @@ class CloudFront extends Component {
         !equals(
           this.state.originAccessIdentityId,
           inputs.originAccessIdentityId
-        )
+        ) ||
+        !equals(this.state.tags, inputs.tags)
       ) {
         this.context.debug(
           `Updating CloudFront distribution of ID ${this.state.id}.`
@@ -89,19 +90,19 @@ class CloudFront extends Component {
           inputs
         );
       }
+
+      // Set distribution tags separately after updating distribution
+      if (inputs.tags && !equals(this.state.tags, inputs.tags)) {
+        this.context.debug(
+          `Updating tags for CloudFront distribution of ID ${this.state.id}.`
+        );
+        await setCloudFrontDistributionTags(cf, this.state.arn, inputs.tags);
+      }
     } else {
       this.context.debug(
         `Creating CloudFront distribution in the ${inputs.region} region.`
       );
       this.state = await createCloudFrontDistribution(cf, s3, inputs);
-    }
-
-    // Set distribution tags if present
-    if (inputs.tags && !equals(this.state.tags, inputs.tags)) {
-      this.context.debug(
-        `Updating tags for CloudFront distribution of ID ${this.state.id}.`
-      );
-      await setCloudFrontDistributionTags(cf, this.state.arn, inputs.tags);
     }
 
     this.state.region = inputs.region;

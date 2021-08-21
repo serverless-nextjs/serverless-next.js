@@ -1,9 +1,13 @@
-import { createComponent, assertHasCustomOriginConfig } from "../test-utils";
+import {
+  createComponent,
+  assertHasCustomOriginConfig,
+  assertCDWTHasCustomOriginConfig
+} from "../test-utils";
 
 import {
-  mockCreateDistribution,
+  mockCreateDistributionWithTags,
   mockUpdateDistribution,
-  mockCreateDistributionPromise,
+  mockCreateDistributionWithTagsPromise,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise
 } from "../__mocks__/aws-sdk.mock";
@@ -14,7 +18,7 @@ describe("Input origin with custom origin config", () => {
   let component;
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "xyz"
       }
@@ -33,11 +37,11 @@ describe("Input origin with custom origin config", () => {
       ]
     });
 
-    assertHasCustomOriginConfig(mockCreateDistribution, {
+    assertCDWTHasCustomOriginConfig(mockCreateDistributionWithTags, {
       OriginProtocolPolicy: "http-only"
     });
 
-    expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
   });
 
   it("updates distribution", async () => {

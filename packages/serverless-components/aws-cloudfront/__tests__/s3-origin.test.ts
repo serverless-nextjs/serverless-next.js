@@ -1,15 +1,18 @@
 import {
-  mockCreateDistribution,
+  mockCreateDistributionWithTags,
   mockUpdateDistribution,
-  mockCreateDistributionPromise,
+  mockCreateDistributionWithTagsPromise,
   mockGetDistributionConfigPromise,
   mockUpdateDistributionPromise,
   mockCreateCloudFrontOriginAccessIdentityPromise,
   mockGetCloudFrontOriginAccessIdentityPromise,
   mockPutBucketPolicy
 } from "../__mocks__/aws-sdk.mock";
-
-const { createComponent, assertHasOrigin } = require("../test-utils");
+import {
+  createComponent,
+  assertHasOrigin,
+  assertCDWTHasOrigin
+} from "../test-utils";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
@@ -17,7 +20,7 @@ describe("S3 origins", () => {
   let component;
 
   beforeEach(async () => {
-    mockCreateDistributionPromise.mockResolvedValueOnce({
+    mockCreateDistributionWithTagsPromise.mockResolvedValueOnce({
       Distribution: {
         Id: "distributionwithS3origin"
       }
@@ -32,7 +35,7 @@ describe("S3 origins", () => {
         origins: ["https://mybucket.s3.amazonaws.com"]
       });
 
-      assertHasOrigin(mockCreateDistribution, {
+      assertCDWTHasOrigin(mockCreateDistributionWithTags, {
         Id: "mybucket",
         DomainName: "mybucket.s3.amazonaws.com",
         S3OriginConfig: {
@@ -45,7 +48,7 @@ describe("S3 origins", () => {
         OriginPath: ""
       });
 
-      expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+      expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
     });
 
     it("updates distribution", async () => {
@@ -106,7 +109,7 @@ describe("S3 origins", () => {
         )
       });
 
-      assertHasOrigin(mockCreateDistribution, {
+      assertCDWTHasOrigin(mockCreateDistributionWithTags, {
         Id: "mybucket",
         DomainName: "mybucket.s3.amazonaws.com",
         S3OriginConfig: {
@@ -120,7 +123,7 @@ describe("S3 origins", () => {
         OriginPath: ""
       });
 
-      expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+      expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
     });
 
     it("updates distribution", async () => {
@@ -183,7 +186,7 @@ describe("S3 origins", () => {
         CustomHeaders: { Items: [], Quantity: 0 }
       });
 
-      expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+      expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
     });
 
     it("updates distribution persisting existing identity", async () => {
@@ -249,7 +252,7 @@ describe("S3 origins", () => {
         origins: ["https://mybucket.s3.eu-west-1.amazonaws.com"]
       });
 
-      assertHasOrigin(mockCreateDistribution, {
+      assertCDWTHasOrigin(mockCreateDistributionWithTags, {
         Id: "mybucket",
         DomainName: "mybucket.s3.eu-west-1.amazonaws.com",
         S3OriginConfig: {
@@ -262,7 +265,7 @@ describe("S3 origins", () => {
         OriginPath: ""
       });
 
-      expect(mockCreateDistribution.mock.calls[0][0]).toMatchSnapshot();
+      expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
     });
 
     it("updates distribution", async () => {
