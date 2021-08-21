@@ -1,2 +1,2 @@
 next-app-dynamic-routes:
-  component: "../../serverless-components/nextjs-component"
+  component: "@sls-next/serverless-component@3.3.0-alpha.1"

@@ -1,5 +1,5 @@
 next-app-with-locales:
-  component: "../../serverless-components/nextjs-component"
+  component: "@sls-next/serverless-component@3.3.0-alpha.1"
   inputs:
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
