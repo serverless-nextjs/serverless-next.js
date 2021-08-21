@@ -576,7 +576,6 @@ describe("Custom inputs", () => {
     inputName                                                     | expectedName
     ${undefined}                                                  | ${{ defaultName: undefined, apiName: undefined }}
     ${{}}                                                         | ${{ defaultName: undefined, apiName: undefined }}
-    ${"fooFunction"}                                              | ${{ defaultName: "fooFunction", apiName: "fooFunction" }}
     ${{ defaultLambda: "fooFunction" }}                           | ${{ defaultName: "fooFunction", apiName: undefined }}
     ${{ apiLambda: "fooFunction" }}                               | ${{ defaultName: undefined, apiName: "fooFunction" }}
     ${{ defaultLambda: "fooFunction", apiLambda: "barFunction" }} | ${{ defaultName: "fooFunction", apiName: "barFunction" }}
@@ -606,7 +605,8 @@ describe("Custom inputs", () => {
       const { defaultName, apiName } = expectedName;
 
       const expectedDefaultObject = {
-        code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR)
+        code: path.join(fixturePath, DEFAULT_LAMBDA_CODE_DIR),
+        name: undefined
       };
       if (defaultName) expectedDefaultObject.name = defaultName;
 
@@ -615,7 +615,8 @@ describe("Custom inputs", () => {
       );
 
       const expectedApiObject = {
-        code: path.join(fixturePath, API_LAMBDA_CODE_DIR)
+        code: path.join(fixturePath, API_LAMBDA_CODE_DIR),
+        name: undefined
       };
       if (apiName) expectedApiObject.name = apiName;
 
