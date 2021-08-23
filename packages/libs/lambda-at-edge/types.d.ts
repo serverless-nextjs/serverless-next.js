@@ -74,6 +74,7 @@ export type OriginRequestDefaultHandlerManifest = {
   };
   canonicalHostname?: string;
   urlRewrites?: UrlRewriteList;
+  enableDebugMode: boolean;
 };
 
 export type OriginRequestImageHandlerManifest = {

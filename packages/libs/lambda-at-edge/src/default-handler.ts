@@ -59,6 +59,7 @@ import { RenderService } from "./services/render.service";
 import { debug, isDevMode } from "./lib/console";
 
 process.env.PRERENDER = "true";
+process.env.DEBUGMODE = Manifest.enableDebugMode;
 
 interface FoundFallbackInterface {
   routeRegex: string;

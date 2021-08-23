@@ -1,4 +1,4 @@
-const DEBUG = false;
+const DEBUG = process.env.DEBUGMODE ? JSON.parse(process.env.DEBUGMODE) : false;
 
 export function debug(message: string): void {
   if (!DEBUG) {

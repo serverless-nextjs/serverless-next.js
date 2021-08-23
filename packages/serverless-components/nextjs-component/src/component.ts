@@ -244,7 +244,8 @@ class NextjsComponent extends Component {
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,
           authentication: inputs.authentication ?? undefined,
-          urlRewrites: inputs.urlRewrites ?? undefined
+          urlRewrites: inputs.urlRewrites ?? undefined,
+          enableDebugMode: inputs.enableDebugMode ?? false
         },
         nextStaticPath
       );
