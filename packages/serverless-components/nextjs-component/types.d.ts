@@ -53,6 +53,7 @@ export type ServerlessComponentInputs = {
   imageOptimizer?: boolean;
   certificateArn?: string;
   urlRewrites?: UrlRewriteOptions;
+  enableDebugMode?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

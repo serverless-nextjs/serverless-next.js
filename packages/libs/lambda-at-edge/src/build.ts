@@ -55,6 +55,7 @@ type BuildOptions = {
   canonicalHostname?: string;
   distributionId: string;
   urlRewrites?: UrlRewriteList;
+  enableDebugMode?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -71,7 +72,8 @@ const defaultBuildOptions = {
   resolve: undefined,
   baseDir: process.cwd(),
   distributionId: "",
-  urlRewrites: []
+  urlRewrites: [],
+  enableDebugMode: false
 };
 
 class Builder {
@@ -510,7 +512,8 @@ class Builder {
       canonicalHostname: this.buildOptions.canonicalHostname,
       distributionId: this.buildOptions.distributionId,
       enableHTTPCompression,
-      urlRewrites: this.buildOptions.urlRewrites
+      urlRewrites: this.buildOptions.urlRewrites,
+      enableDebugMode: this.buildOptions.enableDebugMode
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
