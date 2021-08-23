@@ -1,7 +1,5 @@
-const DEBUG = process.env.DEBUGMODE ? JSON.parse(process.env.DEBUGMODE) : false;
-
 export function debug(message: string): void {
-  if (!DEBUG) {
+  if (!isDevMode()) {
     return;
   }
 
@@ -9,5 +7,5 @@ export function debug(message: string): void {
 }
 
 export function isDevMode(): boolean {
-  return DEBUG;
+  return process.env.DEBUGMODE === "true";
 }
