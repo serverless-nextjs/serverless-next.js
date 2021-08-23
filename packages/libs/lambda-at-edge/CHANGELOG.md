@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.41](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.31...@getjerry/lambda-at-edge@1.8.41) (2021-08-23)
+
+**Note:** Version bump only for package @getjerry/lambda-at-edge
+
 ## [1.8.30](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.31...@getjerry/lambda-at-edge@1.8.30) (2021-08-23)
 
 **Note:** Version bump only for package @getjerry/lambda-at-edge
