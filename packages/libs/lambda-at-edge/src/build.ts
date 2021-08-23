@@ -55,7 +55,7 @@ type BuildOptions = {
   canonicalHostname?: string;
   distributionId: string;
   urlRewrites?: UrlRewriteList;
-  enableDebugMode: boolean;
+  enableDebugMode?: boolean;
 };
 
 const defaultBuildOptions = {
