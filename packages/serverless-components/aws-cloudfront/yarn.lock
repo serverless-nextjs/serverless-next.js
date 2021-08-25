@@ -911,10 +911,10 @@
   resolved "https://registry.npmjs.org/@types/json5/-/json5-0.0.29.tgz#ee28707ae94e11d2b827bcbe5270bcea7f3e71ee"
   integrity sha1-7ihweulOEdK4J7y+UnC86n8+ce4=
 
-"@types/node@*", "@types/node@^16.6.2":
-  version "16.6.2"
-  resolved "https://registry.npmjs.org/@types/node/-/node-16.6.2.tgz#331b7b9f8621c638284787c5559423822fdffc50"
-  integrity sha512-LSw8TZt12ZudbpHc6EkIyDM3nHVWKYrAvGy6EAJfNfjusbwnThqjqxUKKRwuV3iWYeW/LYMzNgaq3MaLffQ2xA==
+"@types/node@*", "@types/node@^16.7.1":
+  version "16.7.1"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.7.1.tgz#c6b9198178da504dfca1fd0be9b2e1002f1586f0"
+  integrity sha512-ncRdc45SoYJ2H4eWU9ReDfp3vtFqDYhjOsKlFFUDEn8V1Bgr2RjYal8YT5byfadWIRluhPFU6JiDOl0H6Sl87A==
 
 "@types/prettier@^2.1.5":
   version "2.3.0"
