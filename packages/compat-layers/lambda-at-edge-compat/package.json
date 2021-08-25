@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.82"
+    "@types/aws-lambda": "^8.10.83"
   }
 }
