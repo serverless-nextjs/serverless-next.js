@@ -61,10 +61,10 @@ jobs:
           sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-      - name: Use Node.js 12.x
+      - name: Use Node.js 14.x
         uses: actions/setup-node@v2
         with:
-          node-version: "12.x"
+          node-version: "14.x"
           cache: "yarn"
 
       - name: Build
@@ -103,7 +103,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [12.x]
+        node-version: [14.x]
         os: [ubuntu-latest]
         app:
           # Current minor version of Next.js
@@ -121,7 +121,7 @@ jobs:
           - prev-next-app-dynamic-routes
         # Add additional single app for windows e2e testing
         include:
-          - node-version: 12.x
+          - node-version: 14.x
             os: windows-latest
             app: next-app-windows
     steps:
