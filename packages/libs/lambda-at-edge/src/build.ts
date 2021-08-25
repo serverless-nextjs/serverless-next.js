@@ -9,7 +9,8 @@ import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
   RoutesManifest,
-  OriginRequestImageHandlerManifest
+  OriginRequestImageHandlerManifest,
+  UrlRewriteList
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -53,6 +54,8 @@ type BuildOptions = {
   baseDir?: string;
   canonicalHostname?: string;
   distributionId: string;
+  urlRewrites?: UrlRewriteList;
+  enableDebugMode?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -68,7 +71,9 @@ const defaultBuildOptions = {
   authentication: undefined,
   resolve: undefined,
   baseDir: process.cwd(),
-  distributionId: ""
+  distributionId: "",
+  urlRewrites: [],
+  enableDebugMode: false
 };
 
 class Builder {
@@ -318,6 +323,12 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
           filter: (file: string) => {
+            const isIndexJS = pathToPosix(file).endsWith("/index.js");
+
+            if (isIndexJS) {
+              // should keep all pages/index.js and pages/[some-path]/index.js in lambda folders
+              return true;
+            }
             const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
@@ -500,7 +511,9 @@ class Builder {
       authentication: authentication,
       canonicalHostname: this.buildOptions.canonicalHostname,
       distributionId: this.buildOptions.distributionId,
-      enableHTTPCompression
+      enableHTTPCompression,
+      urlRewrites: this.buildOptions.urlRewrites,
+      enableDebugMode: this.buildOptions.enableDebugMode
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {

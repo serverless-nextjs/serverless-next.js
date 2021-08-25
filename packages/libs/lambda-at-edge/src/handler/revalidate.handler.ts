@@ -5,10 +5,10 @@ import { CloudFrontService } from "../services/cloudfront.service";
 import { RenderService } from "../services/render.service";
 import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
-import { debug } from "../lib/console";
+import { debug, isDevMode } from "../lib/console";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
-const REVALIDATE_TRIGGER_GAP_SECONDS = 300;
+const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
 
 export class RevalidateHandler {
   constructor(
@@ -43,15 +43,23 @@ export class RevalidateHandler {
       throw new Error(`Page for ${resource.getPagePath()} not found`);
     }
 
-    debug(`JSON CANDIDATE ETAG: ${candidatePage.getJsonEtag()}`);
-    debug(`HTML CANDIDATE ETAG: ${candidatePage.getHtmlEtag()}`);
+    debug(
+      `Current HTML ETAG: ${htmlHeader.getETag()}, Candidate Page HTML ETAG: ${candidatePage.getHtmlEtag()}`
+    );
+
+    debug(
+      `Current JSON ETAG: ${jsonHeader.getETag()}, Candidate Page JSON ETAG: ${candidatePage.getJsonEtag()}`
+    );
+
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
     if (
       htmlHeader.getETag() !== candidatePage.getHtmlEtag() ||
       jsonHeader.getETag() !== candidatePage.getJsonEtag()
     ) {
-      debug(`[handler] Resource changed, update S3 cache and invalidate`);
+      debug(
+        `[handler] Resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
+      );
 
       await Promise.all([
         this.s3Service.putObject(

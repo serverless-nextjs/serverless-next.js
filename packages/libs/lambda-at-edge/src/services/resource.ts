@@ -80,4 +80,32 @@ export class Resource {
       .replace(".json", "")
       .replace(".html", "");
   }
+
+  public getUri(): string {
+    return this.uri;
+  }
+
+  public getBasePath(): string {
+    return this.basePath;
+  }
+}
+
+/**
+ * this resource is just for all /index pages
+ * it means this resource uri should endsWith "/index.html";
+ * For pages/[somepath]/index, it will render with Resource and
+ * the js path is pages/[somapath].js
+ */
+export class ResourceForIndexPage extends Resource {
+  public getPagePath(): string | undefined {
+    return "pages/index.js";
+  }
+
+  public getCanonicalUri(): string {
+    return "/index";
+  }
+
+  public getHtmlUri(): string {
+    return this.getBasePath() || "";
+  }
 }

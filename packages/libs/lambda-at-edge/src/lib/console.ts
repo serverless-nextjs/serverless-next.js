@@ -1,9 +1,11 @@
-const DEBUG = false;
-
 export function debug(message: string): void {
-  if (!DEBUG) {
+  if (!isDevMode()) {
     return;
   }
 
   console.log(message);
+}
+
+export function isDevMode(): boolean {
+  return process.env.DEBUGMODE === "true";
 }
