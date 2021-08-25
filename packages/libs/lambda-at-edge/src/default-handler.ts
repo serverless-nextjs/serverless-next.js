@@ -47,7 +47,10 @@ import {
   isExternalRewrite
 } from "./routing/rewriter";
 import { addHeadersToResponse } from "./headers/addHeaders";
-import { isValidPreviewRequest } from "./lib/isValidPreviewRequest";
+import {
+  isValidPreviewRequest,
+  setJerryAuth
+} from "./lib/PreviewRequestHelper";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import { buildS3RetryStrategy } from "./s3/s3RetryStrategy";
 import { createETag } from "./lib/etag";
@@ -665,6 +668,20 @@ const handleOriginRequest = async ({
       rewrittenUri
     }
   );
+
+  // Preview data is not usable in preview api:
+  // Token bypass can not be used due to Next preview data size limit
+  // https://github.com/vercel/next.js/issues/19685
+  // So we set auth token to preview data before SSR.
+  if (isPreviewRequest) {
+    setJerryAuth(
+      request,
+      req,
+      prerenderManifest.preview.previewModeSigningKey,
+      prerenderManifest.preview.previewModeEncryptionKey
+    );
+  }
+
   try {
     // If page is _error.js, set status to 404 so _error.js will render a 404 page
     if (pagePath === "pages/_error.js") {
@@ -702,6 +719,11 @@ const handleOriginRequest = async ({
   log("SSR execution time", tBeforeSSR, tAfterSSR);
 
   setCloudFrontResponseStatus(response, res);
+
+  // We want data to be real time when previewing.
+  if (isPreviewRequest) {
+    setCacheControlToNoCache(response);
+  }
 
   return response;
 };
@@ -1118,4 +1140,17 @@ const setCloudFrontResponseStatus = (
     response.status = "500";
     response.statusDescription = "Internal Server Error";
   }
+};
+
+// This sets CloudFront response with strict no-cache.
+const setCacheControlToNoCache = (response: CloudFrontResultResponse): void => {
+  response.headers = {
+    ...response.headers,
+    "cache-control": [
+      {
+        key: "Cache-Control",
+        value: "public, max-age=0, s-maxage=0, must-revalidate"
+      }
+    ]
+  };
 };
