@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/serverless-cli",
-  "version": "3.3.0-alpha.1",
+  "version": "3.3.0-alpha.3",
   "description": "Serverless Components CLI (forked)",
   "main": "./src/index.js",
   "bin": {

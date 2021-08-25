@@ -3,6 +3,14 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-08-25)
+
+### Bug Fixes
+
+- **core:** fix preview mode with a dynamic route is used ([#1585](https://github.com/serverless-nextjs/serverless-next.js/issues/1585)) ([316bd2a](https://github.com/serverless-nextjs/serverless-next.js/commit/316bd2a348f726bf8fc116b8b759acd9103d5037)), closes [#1527](https://github.com/serverless-nextjs/serverless-next.js/issues/1527)
+- **lambda-at-edge:** fix ISR issue with index.ts ([#1563](https://github.com/serverless-nextjs/serverless-next.js/issues/1563)) ([d327ddf](https://github.com/serverless-nextjs/serverless-next.js/commit/d327ddf1f6d3d662cd6efd6a99aec976a430696d))
+- **nextjs-component:** add webpack dependency ([3aa0b6d](https://github.com/serverless-nextjs/serverless-next.js/commit/3aa0b6d097bbdc5b978c1bff73db671e082c61a8))
+
 # [3.3.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.1...v3.3.0-alpha.2) (2021-08-21)
 
 ### Bug Fixes

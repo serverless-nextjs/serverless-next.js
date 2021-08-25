@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-08-25)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix ISR issue with index.ts ([#1563](https://github.com/serverless-nextjs/serverless-next.js/issues/1563)) ([d327ddf](https://github.com/serverless-nextjs/serverless-next.js/commit/d327ddf1f6d3d662cd6efd6a99aec976a430696d))
+
 # [3.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.0...v3.3.0-alpha.1) (2021-08-21)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge

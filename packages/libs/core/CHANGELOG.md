@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-08-25)
+
+### Bug Fixes
+
+- **core:** fix preview mode with a dynamic route is used ([#1585](https://github.com/serverless-nextjs/serverless-next.js/issues/1585)) ([316bd2a](https://github.com/serverless-nextjs/serverless-next.js/commit/316bd2a348f726bf8fc116b8b759acd9103d5037)), closes [#1527](https://github.com/serverless-nextjs/serverless-next.js/issues/1527)
+
 # [3.3.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.0...v3.3.0-alpha.1) (2021-08-21)
 
 **Note:** Version bump only for package @sls-next/core
