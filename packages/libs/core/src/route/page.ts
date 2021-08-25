@@ -93,7 +93,7 @@ export const handlePageReq = (
   const dynamic = matchDynamicRoute(localeUri, pages.dynamic);
 
   const dynamicSSG = dynamic && pages.ssg.dynamic[dynamic];
-  if (dynamicSSG) {
+  if (dynamicSSG && !isPreview) {
     return {
       isData: false,
       isStatic: true,
