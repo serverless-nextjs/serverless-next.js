@@ -6,6 +6,7 @@ interface TriggerStaticRegenerationOptions {
   response: AWSLambda.CloudFrontResponse;
   basePath: string | undefined;
   pagePath: string;
+  queueName: string;
 }
 
 export const triggerStaticRegeneration = async (
@@ -13,6 +14,7 @@ export const triggerStaticRegeneration = async (
 ): Promise<{ throttle: boolean }> => {
   const { region } = options.request.origin?.s3 || {};
   const bucketName = s3BucketNameFromEventRequest(options.request);
+  const queueName = options.queueName;
 
   if (!bucketName) {
     throw new Error("Expected bucket name to be defined");
@@ -39,7 +41,7 @@ export const triggerStaticRegeneration = async (
   try {
     await sqs.send(
       new SendMessageCommand({
-        QueueUrl: `https://sqs.${region}.amazonaws.com/${bucketName}.fifo`,
+        QueueUrl: `https://sqs.${region}.amazonaws.com/${queueName}`,
         MessageBody: JSON.stringify(regenerationEvent), // This is not used, however it is a required property
         // We only want to trigger the regeneration once for every previous
         // update. This will prevent the case where this page is being

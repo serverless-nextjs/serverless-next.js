@@ -255,7 +255,8 @@ class NextjsComponent extends Component {
           authentication: inputs.authentication ?? undefined,
           baseDir: buildConfig.baseDir,
           cleanupDotNext: buildConfig.cleanupDotNext,
-          assetIgnorePatterns: buildConfig.assetIgnorePatterns
+          assetIgnorePatterns: buildConfig.assetIgnorePatterns,
+          regenerationQueueName: inputs.sqs?.name
         },
         nextStaticPath
       );

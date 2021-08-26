@@ -48,6 +48,7 @@ type BuildOptions = {
   baseDir?: string;
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
+  regenerationQueueName?: string;
 };
 
 const defaultBuildOptions = {
@@ -64,7 +65,8 @@ const defaultBuildOptions = {
   resolve: undefined,
   baseDir: process.cwd(),
   cleanupDotNext: true,
-  assetIgnorePatterns: []
+  assetIgnorePatterns: [],
+  regenerationQueueName: undefined
 };
 
 class Builder {
@@ -754,8 +756,11 @@ class Builder {
         await this.readPublicFiles(assetIgnorePatterns)
       );
 
-    const { enableHTTPCompression, logLambdaExecutionTimes } =
-      this.buildOptions;
+    const {
+      enableHTTPCompression,
+      logLambdaExecutionTimes,
+      regenerationQueueName
+    } = this.buildOptions;
 
     const apiBuildManifest = {
       ...apiManifest,
@@ -764,7 +769,8 @@ class Builder {
     const defaultBuildManifest = {
       ...pageManifest,
       enableHTTPCompression,
-      logLambdaExecutionTimes
+      logLambdaExecutionTimes,
+      regenerationQueueName
     };
     const imageBuildManifest = {
       ...imageManifest,

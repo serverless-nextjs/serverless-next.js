@@ -13,6 +13,7 @@ export type OriginRequestApiHandlerManifest = ApiManifest & {
 export type OriginRequestDefaultHandlerManifest = PageManifest & {
   logLambdaExecutionTimes?: boolean;
   enableHTTPCompression?: boolean;
+  regenerationQueueName?: string;
 };
 
 export type OriginRequestImageHandlerManifest = {

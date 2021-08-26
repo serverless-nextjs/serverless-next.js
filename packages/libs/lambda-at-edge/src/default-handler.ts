@@ -299,11 +299,19 @@ const handleOriginResponse = async ({
         staticRoute?.page &&
         staticRegenerationResponse.secondsRemainingUntilRevalidation === 0
       ) {
+        const regenerationQueueName =
+          manifest.regenerationQueueName ?? `${bucketName}.fifo`; // if queue name not specified, we used [bucketName].fifo as used in deployment
+
+        if (!regenerationQueueName) {
+          throw new Error("Regeneration queue name is undefined.");
+        }
+
         const { throttle } = await triggerStaticRegeneration({
           basePath,
           request,
           response,
-          pagePath: staticRoute.page
+          pagePath: staticRoute.page,
+          queueName: regenerationQueueName
         });
 
         // Occasionally we will get rate-limited by the Queue (in the event we
