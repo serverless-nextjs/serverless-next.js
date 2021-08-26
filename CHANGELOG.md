@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.3...v3.3.0-alpha.4) (2021-08-26)
+
+### Bug Fixes
+
+- **lambda-at-edge, nextjs-component:** fix triggering regeneration when sqs queue has custom name ([#1595](https://github.com/serverless-nextjs/serverless-next.js/issues/1595)) ([396b8dc](https://github.com/serverless-nextjs/serverless-next.js/commit/396b8dc0a09a8372f339c1cef49a601155008c94))
+
 # [3.3.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-08-25)
 
 ### Bug Fixes
