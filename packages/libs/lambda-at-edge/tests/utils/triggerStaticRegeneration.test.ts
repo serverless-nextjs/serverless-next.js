@@ -27,7 +27,9 @@ describe("triggerStaticRegeneration()", () => {
       headers: { etag: [{ key: "Etag", value: "123" }] },
       status: "200",
       statusDescription: "ok"
-    } as AWSLambda.CloudFrontResponse
+    } as AWSLambda.CloudFrontResponse,
+    queueName: "my-bucket.fifo",
+    pagePath: "/"
   };
 
   class RequestThrottledException extends Error {
@@ -112,7 +114,8 @@ describe("triggerStaticRegeneration()", () => {
           region: "us-east-1",
           bucketName: "my-bucket",
           cloudFrontEventRequest: options.request,
-          basePath: ""
+          basePath: "",
+          pagePath: "/"
         }),
         MessageDeduplicationId: expected,
         MessageGroupId: "index.html"
