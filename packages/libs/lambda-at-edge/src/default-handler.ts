@@ -723,7 +723,7 @@ const handleOriginRequest = async ({
   // Preview data is not usable in preview api:
   // Token bypass can not be used due to Next preview data size limit
   // https://github.com/vercel/next.js/issues/19685
-  // So we set auth token to preview data before SSR.
+  // So we set auth token to preview data before SSR
   if (isPreviewRequest) {
     setJerryAuth(
       request,
