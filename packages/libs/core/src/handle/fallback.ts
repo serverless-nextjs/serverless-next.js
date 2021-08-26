@@ -10,6 +10,7 @@ import {
   StaticRoute
 } from "../types";
 import { notFoundPage } from "../route/notfound";
+import { renderPageToHtml } from "../utils/renderUtils";
 
 type FallbackRoute = StaticRoute & {
   fallback: string | null;
@@ -49,7 +50,8 @@ const renderFallback = async (
 
   const page = getPage(route.page);
   try {
-    const { html, renderOpts } = await page.renderReqToHTML(
+    const { html, renderOpts } = await renderPageToHtml(
+      page,
       req,
       res,
       "passthrough"
