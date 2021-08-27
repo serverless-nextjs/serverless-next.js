@@ -37,7 +37,7 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         buildId: manifest.buildId,
         pageData: renderOpts.pageData,
         region: regenerationEvent.region,
-        revalidate: renderOpts.revalidate
+        revalidate: renderOpts.revalidate as number
       });
     })
   );

@@ -17,13 +17,13 @@ export const renderPageToHtml = async (
       res: ServerResponse,
       renderMode: string | boolean
     ) =>
-      | PromiseLike<{ renderOpts: Record<string, unknown>; html: string }>
-      | { renderOpts: Record<string, unknown>; html: string };
+      | PromiseLike<{ renderOpts: Record<string, any>; html: string }>
+      | { renderOpts: Record<string, any>; html: string };
   },
   req: IncomingMessage,
   res: ServerResponse,
   renderMode: "export" | "passthrough" | true
-): Promise<{ html: string; renderOpts: Record<string, unknown> }> => {
+): Promise<{ html: string; renderOpts: Record<string, any> }> => {
   const { renderOpts, html: htmlResult } = await page.renderReqToHTML(
     req,
     res,
