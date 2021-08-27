@@ -6,6 +6,7 @@ import {
   RegenerationEvent
 } from "./types";
 import { s3StorePage } from "./s3/s3StorePage";
+import { renderPageToHtml } from "@sls-next/core";
 
 export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
   await Promise.all(
@@ -21,7 +22,8 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
       // eslint-disable-next-line @typescript-eslint/no-var-requires
       const page = require(`./${regenerationEvent.pagePath}`);
 
-      const { renderOpts, html } = await page.renderReqToHTML(
+      const { renderOpts, html } = await renderPageToHtml(
+        page,
         req,
         res,
         "passthrough"
@@ -35,7 +37,7 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         buildId: manifest.buildId,
         pageData: renderOpts.pageData,
         region: regenerationEvent.region,
-        revalidate: renderOpts.revalidate
+        revalidate: renderOpts.revalidate as number
       });
     })
   );
