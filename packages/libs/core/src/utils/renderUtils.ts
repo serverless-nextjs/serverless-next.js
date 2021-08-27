@@ -4,7 +4,7 @@ import { IncomingMessage, ServerResponse } from "http";
 /**
  * Render to HTML helper. Starting in Next.js 11.1 a change was introduced so renderReqToHTML no longer returns a string.
  * See: https://github.com/vercel/next.js/pull/27319
- * This is a helper to properly render it in either format.
+ * This is a helper to properly render it in backwards compatible way.
  * @param page
  * @param req
  * @param res
