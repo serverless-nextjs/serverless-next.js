@@ -11,11 +11,19 @@ import { IncomingMessage, ServerResponse } from "http";
  * @param renderMode
  */
 export const renderPageToHtml = async (
-  page: any, // @ts-ignore
+  page: {
+    renderReqToHTML: (
+      req: IncomingMessage,
+      res: ServerResponse,
+      renderMode: string | boolean
+    ) =>
+      | PromiseLike<{ renderOpts: Record<string, unknown>; html: string }>
+      | { renderOpts: Record<string, unknown>; html: string };
+  },
   req: IncomingMessage,
   res: ServerResponse,
   renderMode: "export" | "passthrough" | true
-) => {
+): Promise<{ html: string; renderOpts: Record<string, unknown> }> => {
   const { renderOpts, html: htmlResult } = await page.renderReqToHTML(
     req,
     res,
