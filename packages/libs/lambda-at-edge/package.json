@@ -50,6 +50,8 @@
     "@types/node": "^16.7.8",
     "@types/node-fetch": "^2.5.7",
     "@types/normalize-path": "^3.0.0",
+    "@types/react": "17.0.19",
+    "@types/react-dom": "^17.0.9",
     "@types/send": "^0.17.0",
     "@types/sharp": "^0.28.1",
     "fetch-mock-jest": "^1.5.1",

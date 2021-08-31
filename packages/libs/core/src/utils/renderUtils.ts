@@ -1,4 +1,4 @@
-import { resultToChunks } from "next/dist/server/utils";
+import { resultsToString } from "next/dist/server/utils";
 import { IncomingMessage, ServerResponse } from "http";
 
 /**
@@ -15,14 +15,14 @@ export const renderPageToHtml = async (
     renderReqToHTML: (
       req: IncomingMessage,
       res: ServerResponse,
-      renderMode: string | boolean
+      renderMode?: "export" | "passthrough" | true
     ) =>
       | PromiseLike<{ renderOpts: Record<string, any>; html: string }>
       | { renderOpts: Record<string, any>; html: string };
   },
   req: IncomingMessage,
   res: ServerResponse,
-  renderMode: "export" | "passthrough" | true
+  renderMode?: "export" | "passthrough" | true
 ): Promise<{ html: string; renderOpts: Record<string, any> }> => {
   const { renderOpts, html: htmlResult } = await page.renderReqToHTML(
     req,
@@ -31,11 +31,18 @@ export const renderPageToHtml = async (
   );
 
   let html;
-  if (typeof htmlResult === "string") {
-    html = htmlResult;
-  } else {
-    const htmlChunks = htmlResult ? await resultToChunks(htmlResult) : [];
-    html = htmlChunks.join("");
+  try {
+    if (typeof htmlResult === "string") {
+      html = htmlResult; // Next.js < 11.1
+    } else {
+      html = htmlResult ? await resultsToString([htmlResult]) : ""; // Next >= 11.1.1
+    }
+  } catch (e) {
+    // Fallback to using renderReqToHtml without renderMode specified,
+    // which will render html based on the page's renderReqToHtml,
+    // which should always work (but adds another *warm* render cost)
+    console.log("Falling back to using page's rendering function for html");
+    html = (await page.renderReqToHTML(req, res)) as unknown as string;
   }
 
   return { html, renderOpts };
