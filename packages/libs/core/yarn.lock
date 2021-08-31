@@ -151,6 +151,11 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-16.7.2.tgz#0465a39b5456b61a04d98bd5545f8b34be340cb7"
   integrity sha512-TbG4TOx9hng8FKxaVrCisdaxKxqEwJ3zwHoCWXZ0Jw6mnvTInpaB99/2Cy4+XxpXtjNv9/TgfGSvZFyfV/t8Fw==
 
+"@types/zen-observable@^0.8.3":
+  version "0.8.3"
+  resolved "https://registry.npmjs.org/@types/zen-observable/-/zen-observable-0.8.3.tgz#781d360c282436494b32fe7d9f7f8e64b3118aa3"
+  integrity sha512-fbF6oTd4sGGy0xjHPKAt+eS2CrxJ3+6gQ3FGcBoIJR2TLAyCkCyI8JqZNy+FeON0AhVgNJoUumVoZQjBFUqHkw==
+
 anser@1.4.9:
   version "1.4.9"
   resolved "https://registry.npmjs.org/anser/-/anser-1.4.9.tgz#1f85423a5dcf8da4631a341665ff675b96845760"
