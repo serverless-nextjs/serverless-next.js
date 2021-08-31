@@ -11,8 +11,7 @@
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "allowJs": true,
-    "skipLibCheck": true
+    "allowJs": true
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts"]
