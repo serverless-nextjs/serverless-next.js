@@ -31,11 +31,11 @@ export const renderPageToHtml = async (
   );
 
   let html;
-  if (typeof htmlResult === "string") {
-    html = htmlResult;
-  } else {
+  if (typeof htmlResult === "function") {
     const htmlChunks = htmlResult ? await resultToChunks(htmlResult) : [];
     html = htmlChunks.join("");
+  } else {
+    html = htmlResult;
   }
 
   return { html, renderOpts };
