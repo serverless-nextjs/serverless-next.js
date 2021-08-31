@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.3.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.5...v3.3.0-alpha.6) (2021-08-31)
+
+### Bug Fixes
+
+- **core:** fix renderPageToHtml for work for all next.js versions ([#1611](https://github.com/serverless-nextjs/serverless-next.js/issues/1611)) ([d3a10b2](https://github.com/serverless-nextjs/serverless-next.js/commit/d3a10b2d7ed9d14afd1a09436f9fbf911fde001e))
+
 # [3.3.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.4...v3.3.0-alpha.5) (2021-08-27)
 
 ### Bug Fixes
