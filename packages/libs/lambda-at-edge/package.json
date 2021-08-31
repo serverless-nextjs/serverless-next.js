@@ -84,8 +84,5 @@
   },
   "peerDependencies": {
     "builtin-modules": "^3.2.0"
-  },
-  "resolutions": {
-    "next": "^11.1.2"
   }
 }
