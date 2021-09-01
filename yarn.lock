@@ -3344,17 +3344,17 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "3.3.0-alpha.5"
+  version "3.3.0"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
     jsonwebtoken "^8.5.1"
-    next "^11.1.0"
+    next "^11.1.2"
     path-to-regexp "^6.1.0"
     regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "3.3.0-alpha.5"
+  version "3.3.0"
   dependencies:
     "@aws-sdk/client-s3" "^3.28.0"
     "@aws-sdk/client-sqs" "^3.28.0"
@@ -3373,7 +3373,7 @@
     send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "3.3.0-alpha.3"
+  version "3.3.0"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -3589,10 +3589,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@>=13.7.0", "@types/node@^16.7.8":
-  version "16.7.8"
-  resolved "https://registry.npmjs.org/@types/node/-/node-16.7.8.tgz#2448be5f24fe6b77114632b6350fcd219334651e"
-  integrity sha512-8upnoQU0OPzbIkm+ZMM0zCeFCkw2s3mS0IWdx0+AAaWqm4fkBb0UJp8Edl7FVKRamYbpJC/aVsHpKWBIbiC7Zg==
+"@types/node@*", "@types/node@>=13.7.0", "@types/node@^16.7.10":
+  version "16.7.10"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.7.10.tgz#7aa732cc47341c12a16b7d562f519c2383b6d4fc"
+  integrity sha512-S63Dlv4zIPb8x6MMTgDq5WWRJQe56iBEY0O3SOFA9JrRienkOVDXSXBjjJw6HTNQYSE2JI6GMCR6LVbIMHJVvA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.0"
