@@ -203,6 +203,12 @@ export const prepareBuildManifests = async (
       }
     }
 
+    // We need the SSR dynamic pages to still have the keys without the locale
+    // so that default locale ISR will work (as it uses non-locale source route as the right SSR page to use)
+    for (const key in ssrPages.dynamic) {
+      localeSsrPages.dynamic[key] = ssrPages.dynamic[key];
+    }
+
     pageManifest.pages.ssr = {
       dynamic: localeSsrPages.dynamic,
       nonDynamic: localeSsrPages.nonDynamic
