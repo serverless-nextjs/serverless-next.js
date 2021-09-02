@@ -21,7 +21,7 @@
   "dependencies": {
     "isomorphic-fetch": "2.2.1",
     "next-i18next": "^8.5.5",
-    "next": "10.2.2",
+    "next": "11.1.2",
     "react": "17.0.1",
     "react-dom": "17.0.1"
   },
