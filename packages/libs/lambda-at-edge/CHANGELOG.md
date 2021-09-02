@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.1-alpha.0...v3.3.1-alpha.1) (2021-09-02)
+
+### Bug Fixes
+
+- **lambda-at-edge, e2e-tests:** fix and add e2e tests for ISR pages when locales are used ([#1622](https://github.com/serverless-nextjs/serverless-next.js/issues/1622)) ([6acc057](https://github.com/serverless-nextjs/serverless-next.js/commit/6acc057aad85b4caab1e2f71db8f8a90b3b54fc1))
+
 ## [3.3.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0...v3.3.1-alpha.0) (2021-09-02)
 
 ### Bug Fixes
