@@ -76,6 +76,24 @@ describe("Builder Tests (with locales)", () => {
 
       expect(dynamic).toEqual([
         {
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/customers/[customer]"
+        },
+        {
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$",
+          route: "/customers/[customer]/profile"
+        },
+        {
+          regex:
+            "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/customers/[customer]/[post]"
+        },
+        {
+          regex:
+            "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$",
+          route: "/customers/[...catchAll]"
+        },
+        {
           regex: "^\\/en\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
           route: "/en/blog/[post]"
         },
@@ -126,11 +144,22 @@ describe("Builder Tests (with locales)", () => {
         {
           regex: "^\\/nl(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
           route: "/nl/[root]"
+        },
+        {
+          regex: "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$",
+          route: "/[root]"
         }
       ]);
 
       expect(ssr).toEqual({
         dynamic: {
+          "/[root]": "pages/[root].js",
+          "/customers/[...catchAll]": "pages/customers/[...catchAll].js",
+          "/customers/[customer]": "pages/customers/[customer].js",
+          "/customers/[customer]/[post]":
+            "pages/customers/[customer]/[post].js",
+          "/customers/[customer]/profile":
+            "pages/customers/[customer]/profile.js",
           "/en/[root]": "pages/[root].js",
           "/en/customers/[...catchAll]": "pages/customers/[...catchAll].js",
           "/en/customers/[customer]": "pages/customers/[customer].js",

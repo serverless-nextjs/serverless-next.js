@@ -80,6 +80,11 @@ describe("Builder Tests (dynamic)", () => {
 
       expect(dynamic).toEqual([
         {
+          route: "/catchall/[...slug]",
+          regex:
+            "^\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        {
           route: "/en/catchall/[...slug]",
           regex:
             "^\\/en\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
@@ -102,6 +107,14 @@ describe("Builder Tests (dynamic)", () => {
             "^\\/en\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         },
         {
+          route: "/fallback/[slug]",
+          regex: "^\\/fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/fallback-blocking/[slug]",
+          regex: "^\\/fallback-blocking(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
           route: "/nl/catchall/[...slug]",
           regex:
             "^\\/nl\\/catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
@@ -122,22 +135,37 @@ describe("Builder Tests (dynamic)", () => {
           route: "/nl/optional-catchall/[[...slug]]",
           regex:
             "^\\/nl\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        {
+          route: "/no-fallback/[slug]",
+          regex: "^\\/no-fallback(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
+        },
+        {
+          route: "/optional-catchall/[[...slug]]",
+          regex:
+            "^\\/optional-catchall(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
         }
       ]);
 
       expect(ssr).toEqual({
         dynamic: {
+          "/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/en/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/en/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
           "/en/fallback/[slug]": "pages/fallback/[slug].js",
           "/en/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/en/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js",
+          "/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
+          "/fallback/[slug]": "pages/fallback/[slug].js",
           "/nl/catchall/[...slug]": "pages/catchall/[...slug].js",
           "/nl/fallback-blocking/[slug]": "pages/fallback-blocking/[slug].js",
           "/nl/fallback/[slug]": "pages/fallback/[slug].js",
           "/nl/no-fallback/[slug]": "pages/no-fallback/[slug].js",
           "/nl/optional-catchall/[[...slug]]":
+            "pages/optional-catchall/[[...slug]].js",
+          "/no-fallback/[slug]": "pages/no-fallback/[slug].js",
+          "/optional-catchall/[[...slug]]":
             "pages/optional-catchall/[[...slug]].js"
         },
         nonDynamic: {
