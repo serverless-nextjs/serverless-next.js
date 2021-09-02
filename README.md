@@ -87,7 +87,7 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that object format is not yet supported.
 - [x] [Image Optimization](https://nextjs.org/docs/basic-features/image-optimization)
 - [x] [Next.js 10 Localization](https://nextjs.org/blog/next-10). See: https://github.com/serverless-nextjs/serverless-next.js/issues/721 for more details and tips. We also automatically detect and copy the default configuration files if you are using the `next-i18next` package.
-- [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions (to be documented) on your deployment user. See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work.
+- [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions on your deployment user (note, adding ISR to an existing app requires manually updating the Lambda role's permissions for now - see https://github.com/serverless-nextjs/serverless-next.js/issues/1510). See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work.
 
 ### Getting started
 
