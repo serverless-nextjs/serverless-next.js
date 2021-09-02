@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.3.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0...v3.3.1-alpha.0) (2021-09-02)
+
+### Bug Fixes
+
+- **lambda-at-edge:** sqs messageGroupId should be a hash to allow for long URIs ([#1621](https://github.com/serverless-nextjs/serverless-next.js/issues/1621)) ([1b758c8](https://github.com/serverless-nextjs/serverless-next.js/commit/1b758c87dfa2059aa13a94c730c5bd5fb24fae1a))
+
 # [3.3.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.6...v3.3.0) (2021-09-01)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
