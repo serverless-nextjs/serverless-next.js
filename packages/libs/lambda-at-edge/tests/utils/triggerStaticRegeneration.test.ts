@@ -118,7 +118,7 @@ describe("triggerStaticRegeneration()", () => {
           pagePath: "/"
         }),
         MessageDeduplicationId: expected,
-        MessageGroupId: "index.html"
+        MessageGroupId: "eacf331f0ffc35d4b482f1d15a887d3b" // md5 hash of "index.html"
       });
     }
   );

@@ -1,5 +1,6 @@
 import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest";
 import { RegenerationEvent } from "../types";
+import * as crypto from "crypto";
 
 interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
@@ -39,6 +40,13 @@ export const triggerStaticRegeneration = async (
   };
 
   try {
+    // Hash URI for messageGroupId to allow for long URIs, as SQS has limit of 128 characters
+    // MD5 is used since this is only used for grouping purposes
+    const hashedUri = crypto
+      .createHash("md5")
+      .update(options.request.uri)
+      .digest("hex");
+
     await sqs.send(
       new SendMessageCommand({
         QueueUrl: `https://sqs.${region}.amazonaws.com/${queueName}`,
@@ -53,7 +61,7 @@ export const triggerStaticRegeneration = async (
             .toString(),
         // Only deduplicate based on the object, i.e. we can generate
         // different pages in parallel, just not the same one
-        MessageGroupId: options.request.uri
+        MessageGroupId: hashedUri
       })
     );
     return { throttle: false };
