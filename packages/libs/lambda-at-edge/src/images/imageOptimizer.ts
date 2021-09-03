@@ -253,7 +253,7 @@ export async function imageOptimizer(
       if (CacheControl) {
         res.setHeader("Cache-Control", CacheControl);
       }
-    } catch (err) {
+    } catch (err: any) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
       console.error(
