@@ -1,6 +1,7 @@
 import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest";
 import { RegenerationEvent } from "../types";
 import * as crypto from "crypto";
+import { AWSError } from "aws-sdk";
 
 interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
@@ -65,7 +66,7 @@ export const triggerStaticRegeneration = async (
       })
     );
     return { throttle: false };
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === "RequestThrottled") {
       return { throttle: true };
     } else {
