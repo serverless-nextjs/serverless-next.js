@@ -1,7 +1,6 @@
 import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest";
 import { RegenerationEvent } from "../types";
 import * as crypto from "crypto";
-import { AWSError } from "aws-sdk";
 
 interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
