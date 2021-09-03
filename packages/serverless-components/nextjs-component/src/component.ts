@@ -163,10 +163,8 @@ class NextjsComponent extends Component {
     }
 
     if (stillToMatch.size > 0) {
-      throw Error(
-        `CloudFront input failed validation. Could not find next.js pages for "${[
-          ...stillToMatch
-        ]}"`
+      this.context.debug(
+        "There are other CloudFront path inputs that are not next.js pages, which will be added as custom behaviors."
       );
     }
   }
