@@ -85,7 +85,7 @@ export default async ({
         useAccelerateEndpoint: true
       });
     }
-  } catch (err) {
+  } catch (err: any) {
     console.warn(
       `Checking for bucket acceleration failed, falling back to non-accelerated S3 client. Err: ${err.message}`
     );
@@ -189,7 +189,7 @@ export default async ({
           .promise();
 
         return data.Body?.toString("utf-8");
-      } catch (e) {
+      } catch (e: any) {
         if (e.code === "NoSuchKey") {
           return undefined;
         }

@@ -65,7 +65,7 @@ export const triggerStaticRegeneration = async (
       })
     );
     return { throttle: false };
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === "RequestThrottled") {
       return { throttle: true };
     } else {
