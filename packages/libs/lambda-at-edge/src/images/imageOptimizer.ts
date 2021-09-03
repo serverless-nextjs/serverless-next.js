@@ -288,7 +288,7 @@ export async function imageOptimizer(
   if (!sharp) {
     try {
       sharp = require("sharp");
-    } catch (error) {
+    } catch (error: any) {
       if (error.code === "MODULE_NOT_FOUND") {
         error.message += "\n\nLearn more: https://err.sh/next.js/install-sharp";
         console.error(error.stack);
@@ -327,7 +327,7 @@ export async function imageOptimizer(
     const filename = join(hashDir, `${expireAt}.${etag}.${extension}`);
     await promises.writeFile(filename, optimizedBuffer);
     sendResponse(req, res, contentType, optimizedBuffer);
-  } catch (error) {
+  } catch (error: any) {
     console.error(
       "Error processing image with sharp, returning upstream image as fallback instead: " +
         error.stack
