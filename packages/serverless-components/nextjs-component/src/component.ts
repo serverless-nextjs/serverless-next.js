@@ -254,7 +254,8 @@ class NextjsComponent extends Component {
           baseDir: buildConfig.baseDir,
           cleanupDotNext: buildConfig.cleanupDotNext,
           assetIgnorePatterns: buildConfig.assetIgnorePatterns,
-          regenerationQueueName: inputs.sqs?.name
+          regenerationQueueName: inputs.sqs?.name,
+          separateApiLambda: buildConfig.separateApiLambda ?? true
         },
         nextStaticPath
       );
@@ -439,10 +440,17 @@ class NextjsComponent extends Component {
       }
     };
 
+    const buildOptions = (inputs.build ?? {}) as BuildOptions;
+
+    const hasSeparateApiLambda = buildOptions.separateApiLambda ?? true;
+
     const hasAPIPages =
+      hasSeparateApiLambda &&
       apiBuildManifest &&
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
+
+    const shouldBuildApiLambda = hasAPIPages && hasSeparateApiLambda;
 
     const hasISRPages = Object.keys(
       defaultBuildManifest.pages.ssg.nonDynamic
@@ -607,7 +615,7 @@ class NextjsComponent extends Component {
       await sqs.addEventSource(regenerationLambdaResult.name);
     }
 
-    if (hasAPIPages) {
+    if (shouldBuildApiLambda) {
       const apiEdgeLambdaInput: LambdaInput = {
         description: inputs.description
           ? `${inputs.description} (API)`

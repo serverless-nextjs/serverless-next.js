@@ -88,6 +88,7 @@ export type BuildOptions = {
   baseDir?: string;
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
+  separateApiLambda?: boolean;
 };
 
 export type LambdaType =

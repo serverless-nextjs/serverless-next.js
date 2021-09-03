@@ -8,6 +8,7 @@ import del from "rollup-plugin-delete";
 
 const LOCAL_EXTERNALS = [
   "./manifest.json",
+  "./api-manifest.json",
   "./routes-manifest.json",
   "./prerender-manifest.json",
   "./images-manifest.json"
