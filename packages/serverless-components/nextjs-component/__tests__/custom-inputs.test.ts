@@ -941,41 +941,6 @@ describe("Custom inputs", () => {
   });
 
   describe.each`
-    cloudFrontInput                                | expectedErrorMessage
-    ${{ "some-invalid-page-route": { ttl: 100 } }} | ${'Could not find next.js pages for "some-invalid-page-route"'}
-  `(
-    "Invalid cloudfront inputs",
-    ({ cloudFrontInput, expectedErrorMessage }) => {
-      const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
-      let tmpCwd: string;
-
-      beforeEach(() => {
-        tmpCwd = process.cwd();
-        process.chdir(fixturePath);
-
-        mockServerlessComponentDependencies({ expectedDomain: undefined });
-      });
-
-      afterEach(() => {
-        process.chdir(tmpCwd);
-        return cleanupFixtureDirectory(fixturePath);
-      });
-
-      it("throws the correct error", async () => {
-        expect.assertions(1);
-
-        try {
-          await createNextComponent().default({
-            cloudfront: cloudFrontInput
-          });
-        } catch (err) {
-          expect(err.message).toContain(expectedErrorMessage);
-        }
-      });
-    }
-  );
-
-  describe.each`
     cloudFrontInput                                                  | pathName
     ${{ api: { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}        | ${"api"}
     ${{ "api/test": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }} | ${"api/test"}
