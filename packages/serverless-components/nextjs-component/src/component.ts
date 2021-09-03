@@ -445,7 +445,6 @@ class NextjsComponent extends Component {
     const hasSeparateApiLambda = buildOptions.separateApiLambda ?? true;
 
     const hasAPIPages =
-      hasSeparateApiLambda &&
       apiBuildManifest &&
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
