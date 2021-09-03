@@ -445,7 +445,6 @@ class NextjsComponent extends Component {
     const hasSeparateApiLambda = buildOptions.separateApiLambda ?? true;
 
     const hasAPIPages =
-      hasSeparateApiLambda &&
       apiBuildManifest &&
       (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(apiBuildManifest.apis.dynamic).length > 0);
@@ -807,6 +806,30 @@ class NextjsComponent extends Component {
         "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
       }
     };
+
+    // If we aren't using separate API Lambda but have API pages then ensure that API path pattern is set correctly
+    if (!hasSeparateApiLambda && hasAPIPages) {
+      cloudFrontOrigins[0].pathPatterns[
+        this.pathPattern("api/*", routesManifest)
+      ] = {
+        minTTL: 0,
+        defaultTTL: 0,
+        maxTTL: 31536000,
+        allowedHttpMethods: [
+          "HEAD",
+          "DELETE",
+          "POST",
+          "GET",
+          "OPTIONS",
+          "PUT",
+          "PATCH"
+        ],
+        // lambda@edge key is last and therefore cannot be overridden
+        "lambda@edge": {
+          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaOutputs.version}`
+        }
+      };
+    }
 
     // validate that the custom config paths match generated paths in the manifest
     this.validatePathPatterns(
