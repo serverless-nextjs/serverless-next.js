@@ -13,6 +13,7 @@ import {
   PublicFileRoute,
   StaticRoute
 } from "@sls-next/core";
+import { _Error } from "@aws-sdk/client-s3";
 
 import {
   BuildManifest,
@@ -120,6 +121,10 @@ const getS3File = async (
     res.write(bodyString);
     return true;
   } catch (error) {
+    const _error = error as _Error;
+    if (_error && _error.Code !== "NoSuchKey") {
+      console.warn(`Unexpected S3 exception ${_error.Code}: ${_error.Message}`);
+    }
     return false;
   }
 };
@@ -199,7 +204,7 @@ const handleRequest = async (event: RequestEvent): Promise<EventResponse> => {
   } else {
     const staticRoute: StaticRoute = route;
     if (await handleStatic(staticRoute, res)) {
-      if (staticRoute.statusCode == 500) {
+      if (staticRoute.statusCode === 500) {
         res.setHeader("Cache-Control", SERVER_NO_CACHE_CACHE_CONTROL_HEADER);
       }
       res.end();
