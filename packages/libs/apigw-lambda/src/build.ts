@@ -3,12 +3,10 @@ import fse from "fs-extra";
 import getAllFiles from "./lib/getAllFilesInDirectory";
 import path from "path";
 import { BuildManifest, RoutesManifest } from "./types";
-import pathToPosix from "./lib/pathToPosix";
 import createServerlessConfig from "./lib/createServerlessConfig";
-import readDirectoryFiles from "./lib/readDirectoryFiles";
-import filterOutDirectories from "./lib/filterOutDirectories";
 import { Item } from "klaw";
 import { prepareBuildManifests } from "@sls-next/core";
+import { filterOutDirectories, pathToPosix, readDirectoryFiles } from "@sls-next/core/dist/utils/fs";
 import { NextConfig } from "@sls-next/core/dist/build";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";

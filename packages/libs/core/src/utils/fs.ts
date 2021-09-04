@@ -3,9 +3,14 @@ import path from "path";
 import glob, { Entry } from "fast-glob";
 import normalizePath from "normalize-path";
 
-const readDirectoryFiles = async (
+export const filterOutDirectories = (fileItem: Entry): boolean =>
+  !fileItem.stats?.isDirectory();
+
+export const pathToPosix = (path: string): string => path.replace(/\\/g, "/");
+
+export const readDirectoryFiles = async (
   directory: string,
-  ignorePatterns: string[]
+  ignorePatterns?: string[]
 ): Promise<Array<Entry>> => {
   const directoryExists = fse.pathExistsSync(directory);
   if (!directoryExists) {
@@ -19,8 +24,6 @@ const readDirectoryFiles = async (
     onlyFiles: true,
     stats: true,
     dot: true, // To allow matching dot files or directories
-    ignore: ignorePatterns
+    ignore: ignorePatterns ?? []
   });
 };
-
-export default readDirectoryFiles;
