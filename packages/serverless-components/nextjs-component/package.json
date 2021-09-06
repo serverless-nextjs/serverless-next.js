@@ -44,7 +44,7 @@
     "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
     "aws-sdk": "^2.983.0",
     "fs-extra": "^9.1.0",
-    "webpack": "^5.51.2"
+    "webpack": "^5.52.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
