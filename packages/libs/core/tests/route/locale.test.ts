@@ -1,4 +1,4 @@
-import { Manifest, Request, RoutesManifest } from "../../src";
+import { Manifest, RoutesManifest } from "../../src";
 import {
   addDefaultLocaleToPath,
   dropLocaleFromPath,

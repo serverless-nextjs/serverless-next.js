@@ -1,6 +1,6 @@
 import { addDefaultLocaleToPath, findDomainLocale } from "./locale";
 import { compileDestination, matchPath } from "../match";
-import { PageManifest, RewriteData, RoutesManifest, Request } from "../types";
+import { PageManifest, Request, RewriteData, RoutesManifest } from "../types";
 import { handlePageReq } from "../route/page";
 
 /**
