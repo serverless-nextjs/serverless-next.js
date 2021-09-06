@@ -1,16 +1,15 @@
 import { Manifest, Request, RoutesManifest } from "../types";
-import { IncomingMessage } from "http";
 import { parse } from "cookie";
 
 export const findDomainLocale = (
-  req: IncomingMessage,
+  req: Request,
   manifest: RoutesManifest
 ): string | null => {
   const domains = manifest.i18n?.domains;
   if (domains) {
-    const hostHeaders = req.headers.host?.split(",");
+    const hostHeaders = req.headers.host;
     if (hostHeaders && hostHeaders.length > 0) {
-      const host = hostHeaders[0];
+      const host = hostHeaders[0].value.split(":")[0];
       const matchedDomain = domains.find((d) => d.domain === host);
 
       if (matchedDomain) {

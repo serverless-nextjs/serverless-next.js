@@ -103,7 +103,13 @@ describe("Rewriter Tests", () => {
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {
-        const rewrite = getRewritePath(path, routesManifest, pageManifest);
+        const req = {
+          headers: {
+            host: [{ key: "Host", value: "next-serverless.com" }]
+          },
+          uri: path
+        };
+        const rewrite = getRewritePath(req, path, routesManifest, pageManifest);
 
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);
