@@ -1093,32 +1093,32 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.983.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
     "@serverless/aws-iam-role" "^1.0.0"
     "@serverless/aws-lambda-layer" "^1.0.0"
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.983.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
     ramda "^0.27.0"
 
 "@sls-next/aws-s3@link:../aws-s3":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.983.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1133,12 +1133,12 @@
     lodash "^4.17.21"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.983.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "3.3.1-alpha.1"
+  version "3.4.0-alpha.0"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -1151,7 +1151,7 @@
   version "3.2.0"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "3.3.1-alpha.1"
+  version "3.4.0-alpha.0"
   dependencies:
     "@aws-sdk/client-s3" "^3.29.0"
     "@aws-sdk/client-sqs" "^3.29.0"
@@ -1173,9 +1173,9 @@
   version "3.3.0"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.983.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.27"
@@ -1700,10 +1700,10 @@ aws-crt@^1.9.0:
     mqtt "^4.2.8"
     websocket-stream "^5.5.2"
 
-aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.982.0:
-  version "2.982.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.982.0.tgz#0c7d874ab11ed5b054a411bc01678937c6def013"
-  integrity sha512-5w+m8Ia35NqB4TOZHEKts5zSV+FTdc7hTYbN4N4lZ4YU3cLTMt496ojh5UI3Deo8IIlqgTf3UVuq6Y6cPpVxkg==
+aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.983.0:
+  version "2.983.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.983.0.tgz#4c6d98d802b2cf159acbc105979b892b427b5fb3"
+  integrity sha512-i4QMJt5hEYzhoDzmbo0v+aAuHQPXM6ah15GBKObbxwYxmzK9wjMG+FH3DiWZZHdFsf3C+p1zDg4rIr63jmOeBw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
