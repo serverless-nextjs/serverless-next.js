@@ -47,7 +47,7 @@
     "@types/fresh": "^0.5.0",
     "@types/fs-extra": "^9.0.1",
     "@types/klaw": "^3.0.1",
-    "@types/node": "^16.7.10",
+    "@types/node": "^16.7.11",
     "@types/node-fetch": "^2.5.7",
     "@types/normalize-path": "^3.0.0",
     "@types/react": "17.0.20",
