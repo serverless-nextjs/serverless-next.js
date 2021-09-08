@@ -343,7 +343,8 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
       ),
       this.runThirdPartyIntegrations(
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR)
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
+        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR)
       )
     ]);
   }
@@ -824,11 +825,22 @@ class Builder {
   /**
    * Run additional integrations for third-party libraries such as next-i18next.
    * These are usually needed to add additional files into the lambda, etc.
-   * @param outputLambdaDir
+   * @param defaultLambdaDir
+   * @param regenerationLambdaDir
    */
-  async runThirdPartyIntegrations(outputLambdaDir: string): Promise<void> {
+  async runThirdPartyIntegrations(
+    defaultLambdaDir: string,
+    regenerationLambdaDir: string
+  ): Promise<void> {
     await Promise.all([
-      new NextI18nextIntegration(this.nextConfigDir, outputLambdaDir).execute()
+      new NextI18nextIntegration(
+        this.nextConfigDir,
+        defaultLambdaDir
+      ).execute(),
+      new NextI18nextIntegration(
+        this.nextConfigDir,
+        regenerationLambdaDir
+      ).execute()
     ]);
   }
 }

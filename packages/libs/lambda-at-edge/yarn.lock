@@ -1389,14 +1389,8 @@
     picomatch "^2.2.2"
 
 "@sls-next/core@link:../core":
-  version "3.4.0-alpha.0"
-  dependencies:
-    "@hapi/accept" "^5.0.1"
-    cookie "^0.4.1"
-    jsonwebtoken "^8.5.1"
-    next "^11.1.2"
-    path-to-regexp "^6.1.0"
-    regex-parser "^2.2.10"
+  version "0.0.0"
+  uid ""
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
