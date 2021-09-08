@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.0...v3.4.0-alpha.1) (2021-09-08)
+
+### Features
+
+- **core:** add domain locale detection for rewrites and non default locales ([#1640](https://github.com/serverless-nextjs/serverless-next.js/issues/1640)) ([#1641](https://github.com/serverless-nextjs/serverless-next.js/issues/1641)) ([cbab741](https://github.com/serverless-nextjs/serverless-next.js/commit/cbab7419e8bddfbde8b97104d0229307fc5694d8))
+
 # [3.4.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.1-alpha.1...v3.4.0-alpha.0) (2021-09-03)
 
 **Note:** Version bump only for package @sls-next/core

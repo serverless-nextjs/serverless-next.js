@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.0...v3.4.0-alpha.1) (2021-09-08)
+
+### Bug Fixes
+
+- **lambda-at-edge:** copy next-i18next files to regeneration handler ([#1653](https://github.com/serverless-nextjs/serverless-next.js/issues/1653)) ([1c14f38](https://github.com/serverless-nextjs/serverless-next.js/commit/1c14f38a8991824730574b93aff779ec42a892ef))
+
 # [3.4.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.1-alpha.1...v3.4.0-alpha.0) (2021-09-03)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge
