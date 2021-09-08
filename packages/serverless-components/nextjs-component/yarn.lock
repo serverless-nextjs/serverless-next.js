@@ -1093,32 +1093,32 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.984.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
     "@serverless/aws-iam-role" "^1.0.0"
     "@serverless/aws-lambda-layer" "^1.0.0"
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.984.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
     ramda "^0.27.0"
 
 "@sls-next/aws-s3@link:../aws-s3":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.984.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1133,12 +1133,12 @@
     lodash "^4.17.21"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.984.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "3.3.1-alpha.1"
+  version "3.4.0-alpha.0"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -1151,7 +1151,7 @@
   version "3.2.0"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "3.3.1-alpha.1"
+  version "3.4.0-alpha.0"
   dependencies:
     "@aws-sdk/client-s3" "^3.29.0"
     "@aws-sdk/client-sqs" "^3.29.0"
@@ -1173,9 +1173,9 @@
   version "3.3.0"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "3.3.1-alpha.0"
+  version "3.4.0-alpha.0"
   dependencies:
-    aws-sdk "^2.982.0"
+    aws-sdk "^2.984.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.27"
@@ -1700,10 +1700,10 @@ aws-crt@^1.9.0:
     mqtt "^4.2.8"
     websocket-stream "^5.5.2"
 
-aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.982.0:
-  version "2.982.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.982.0.tgz#0c7d874ab11ed5b054a411bc01678937c6def013"
-  integrity sha512-5w+m8Ia35NqB4TOZHEKts5zSV+FTdc7hTYbN4N4lZ4YU3cLTMt496ojh5UI3Deo8IIlqgTf3UVuq6Y6cPpVxkg==
+aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.984.0:
+  version "2.984.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.984.0.tgz#fee0e73d63826a413cc7053c5daeb518d3261561"
+  integrity sha512-wFwNKhlO03V7UnpIge2qT/gYOMvGUlmVuFgF2gQRIkt6lWYvnf8/QDTCKZLhGBpC8/mml10m0CM3khMNwU1KVQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -4202,29 +4202,17 @@ miller-rabin@^4.0.0:
     bn.js "^4.0.0"
     brorand "^1.0.1"
 
-mime-db@1.48.0:
-  version "1.48.0"
-  resolved "https://registry.npmjs.org/mime-db/-/mime-db-1.48.0.tgz#e35b31045dd7eada3aaad537ed88a33afbef2d1d"
-  integrity sha512-FM3QwxV+TnZYQ2aRqhlKBMHxk10lTbMt3bBkMAp54ddrNeVSfcQYOOKuGuy3Ddrm38I04If834fOUSq1yzslJQ==
-
 mime-db@1.49.0:
   version "1.49.0"
   resolved "https://registry.npmjs.org/mime-db/-/mime-db-1.49.0.tgz#f3dfde60c99e9cf3bc9701d687778f537001cbed"
   integrity sha512-CIc8j9URtOVApSFCQIF+VBkX1RwXp/oMMOrqdyXSBXq5RWNEsRfyj1kiRnQgmNXmHxPoFIxOroKA3zcU9P+nAA==
 
-mime-types@^2.1.12, mime-types@~2.1.19:
+mime-types@^2.1.12, mime-types@^2.1.22, mime-types@^2.1.27, mime-types@~2.1.19:
   version "2.1.32"
   resolved "https://registry.npmjs.org/mime-types/-/mime-types-2.1.32.tgz#1d00e89e7de7fe02008db61001d9e02852670fd5"
   integrity sha512-hJGaVS4G4c9TSMYh2n6SQAGrC4RnfU+daP8G7cSCmaqNjiOoUY0VHCMS42pxnQmVF1GWwFhbHWn3RIxCqTmZ9A==
   dependencies:
     mime-db "1.49.0"
-
-mime-types@^2.1.22, mime-types@^2.1.27:
-  version "2.1.31"
-  resolved "https://registry.npmjs.org/mime-types/-/mime-types-2.1.31.tgz#a00d76b74317c61f9c2db2218b8e9f8e9c5c9e6b"
-  integrity sha512-XGZnNzm3QvgKxa8dpzyhFTHmpP3l5YNusmne07VUOXxou9CqUqYa/HBy124RqtVh/O2pECas/MOcsDgpilPOPg==
-  dependencies:
-    mime-db "1.48.0"
 
 mime@1.6.0:
   version "1.6.0"
@@ -6129,10 +6117,10 @@ webpack-sources@^3.2.0:
   resolved "https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.2.0.tgz#b16973bcf844ebcdb3afde32eda1c04d0b90f89d"
   integrity sha512-fahN08Et7P9trej8xz/Z7eRu8ltyiygEo/hnRi9KqBUs80KeDcnf96ZJo++ewWd84fEf3xSX9bp4ZS9hbw0OBw==
 
-webpack@^5.51.2:
-  version "5.51.2"
-  resolved "https://registry.npmjs.org/webpack/-/webpack-5.51.2.tgz#f765d258b0bf6abda3c5f21bf855a25720e9796f"
-  integrity sha512-odydxP4WA3XYYzwSQUivPxywdzMlY42bbfxMwCaEtHb+i/N9uzKSHcLgWkXo/Gsa+4Zlzf3Jg0hEHn1FnZpk2Q==
+webpack@^5.52.0:
+  version "5.52.0"
+  resolved "https://registry.npmjs.org/webpack/-/webpack-5.52.0.tgz#88d997c2c3ebb62abcaa453d2a26e0fd917c71a3"
+  integrity sha512-yRZOat8jWGwBwHpco3uKQhVU7HYaNunZiJ4AkAVQkPCUGoZk/tiIXiwG+8HIy/F+qsiZvSOa+GLQOj3q5RKRYg==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.50"
