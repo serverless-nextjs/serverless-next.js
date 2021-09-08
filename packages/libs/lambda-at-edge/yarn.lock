@@ -1472,10 +1472,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@^16.7.10":
-  version "16.7.10"
-  resolved "https://registry.npmjs.org/@types/node/-/node-16.7.10.tgz#7aa732cc47341c12a16b7d562f519c2383b6d4fc"
-  integrity sha512-S63Dlv4zIPb8x6MMTgDq5WWRJQe56iBEY0O3SOFA9JrRienkOVDXSXBjjJw6HTNQYSE2JI6GMCR6LVbIMHJVvA==
+"@types/node@*", "@types/node@^16.7.13":
+  version "16.7.13"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.7.13.tgz#86fae356b03b5a12f2506c6cf6cd9287b205973f"
+  integrity sha512-pLUPDn+YG3FYEt/pHI74HmnJOWzeR+tOIQzUx93pi9M7D8OE7PSLr97HboXwk5F+JS+TLtWuzCOW97AHjmOXXA==
 
 "@types/normalize-path@^3.0.0":
   version "3.0.0"
@@ -1494,10 +1494,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@17.0.19":
-  version "17.0.19"
-  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.19.tgz#8f2a85e8180a43b57966b237d26a29481dacc991"
-  integrity sha512-sX1HisdB1/ZESixMTGnMxH9TDe8Sk709734fEQZzCV/4lSu9kJCPbo2PbTRoZM+53Pp0P10hYVyReUueGwUi4A==
+"@types/react@*", "@types/react@17.0.20":
+  version "17.0.20"
+  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.20.tgz#a4284b184d47975c71658cd69e759b6bd37c3b8c"
+  integrity sha512-wWZrPlihslrPpcKyCSlmIlruakxr57/buQN1RjlIeaaTWDLtJkTtRW429MoQJergvVKc4IWBpRhWw7YNh/7GVA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -1523,10 +1523,10 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
-"@types/sharp@^0.28.6":
-  version "0.28.6"
-  resolved "https://registry.npmjs.org/@types/sharp/-/sharp-0.28.6.tgz#41e4f904b39e5269328080e0bd1d008ae5bc8b21"
-  integrity sha512-AjKjo5vk5mkcTrWL0U1zFUdCp/uqLebvbe7ezAJx0tgp6ST9JmfsYK1q1lpjfPM5S1YQ1wr5uboPSu2S8UO9yw==
+"@types/sharp@^0.29.0":
+  version "0.29.0"
+  resolved "https://registry.npmjs.org/@types/sharp/-/sharp-0.29.0.tgz#ff717fac89836022bdc76233659a2ab77b9e8bc3"
+  integrity sha512-4NnheFjVvjMUMq8wna3tgvhbU89sBQTHy+ekM2wLWeq9b4TgdOywVBT1chQfwVfEZGVyuLrEtqiP3SA/NVMlbA==
   dependencies:
     "@types/node" "*"
 
