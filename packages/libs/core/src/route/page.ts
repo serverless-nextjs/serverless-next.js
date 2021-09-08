@@ -1,5 +1,9 @@
 import { normalise } from "./basepath";
-import { addDefaultLocaleToPath, dropLocaleFromPath } from "./locale";
+import {
+  addDefaultLocaleToPath,
+  dropLocaleFromPath,
+  findDomainLocale
+} from "./locale";
 import { matchDynamicRoute } from "../match";
 import { notFoundPage } from "./notfound";
 import { getRewritePath, isExternalRewrite } from "./rewrite";
@@ -7,7 +11,8 @@ import {
   ExternalRoute,
   PageManifest,
   PageRoute,
-  RoutesManifest
+  RoutesManifest,
+  Request
 } from "../types";
 
 const pageHtml = (localeUri: string) => {
@@ -18,6 +23,7 @@ const pageHtml = (localeUri: string) => {
 };
 
 export const handlePageReq = (
+  req: Request,
   uri: string,
   manifest: PageManifest,
   routesManifest: RoutesManifest,
@@ -26,7 +32,11 @@ export const handlePageReq = (
 ): ExternalRoute | PageRoute => {
   const { pages } = manifest;
   const localeUri = normalise(
-    addDefaultLocaleToPath(uri, routesManifest),
+    addDefaultLocaleToPath(
+      uri,
+      routesManifest,
+      findDomainLocale(req, routesManifest)
+    ),
     routesManifest
   );
   if (pages.html.nonDynamic[localeUri]) {
@@ -67,7 +77,8 @@ export const handlePageReq = (
     };
   }
 
-  const rewrite = !isRewrite && getRewritePath(uri, routesManifest, manifest);
+  const rewrite =
+    !isRewrite && getRewritePath(req, uri, routesManifest, manifest);
   if (rewrite) {
     const [path, querystring] = rewrite.split("?");
     if (isExternalRewrite(path)) {
@@ -78,6 +89,7 @@ export const handlePageReq = (
       };
     }
     const route = handlePageReq(
+      req,
       path,
       manifest,
       routesManifest,

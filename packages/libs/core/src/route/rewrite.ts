@@ -1,6 +1,6 @@
-import { addDefaultLocaleToPath } from "./locale";
+import { addDefaultLocaleToPath, findDomainLocale } from "./locale";
 import { compileDestination, matchPath } from "../match";
-import { PageManifest, RewriteData, RoutesManifest } from "../types";
+import { PageManifest, Request, RewriteData, RoutesManifest } from "../types";
 import { handlePageReq } from "../route/page";
 
 /**
@@ -10,12 +10,16 @@ import { handlePageReq } from "../route/page";
  * @param routesManifest
  */
 export function getRewritePath(
+  req: Request,
   uri: string,
   routesManifest: RoutesManifest,
   pageManifest?: PageManifest
 ): string | undefined {
-  const path = addDefaultLocaleToPath(uri, routesManifest);
-
+  const path = addDefaultLocaleToPath(
+    uri,
+    routesManifest,
+    findDomainLocale(req, routesManifest)
+  );
   const rewrites: RewriteData[] = routesManifest.rewrites;
 
   for (const rewrite of rewrites) {
@@ -33,6 +37,7 @@ export function getRewritePath(
     // No-op rewrite support for pages: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
     if (pageManifest && path === destination) {
       const url = handlePageReq(
+        req,
         destination,
         pageManifest,
         routesManifest,

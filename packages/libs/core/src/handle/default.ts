@@ -33,7 +33,7 @@ export const renderRoute = async (
     req.url = addDefaultLocaleToPath(
       req.url,
       routesManifest,
-      findDomainLocale(req, routesManifest)
+      findDomainLocale(toRequest(event), routesManifest)
     );
   }
 

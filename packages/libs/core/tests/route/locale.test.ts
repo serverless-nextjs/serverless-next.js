@@ -82,9 +82,10 @@ describe("Locale Utils Tests", () => {
     `("$host is resolved to $expectedResult", ({ host, expectedResult }) => {
       const req = {
         headers: {
-          host
-        }
-      } as unknown as IncomingMessage;
+          host: [{ key: "Host", value: host }]
+        },
+        uri: "/test"
+      };
       const newPath = findDomainLocale(req, routesManifest);
 
       expect(newPath).toBe(expectedResult);

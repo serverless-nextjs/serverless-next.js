@@ -122,7 +122,7 @@ export const routeApi = (
     return redirect;
   }
 
-  return handleApiReq(req.uri, manifest, routesManifest);
+  return handleApiReq(req, req.uri, manifest, routesManifest);
 };
 
 /*
@@ -181,6 +181,6 @@ export const routeDefault = async (
   if (isDataReq) {
     return handleDataReq(uri, manifest, routesManifest, isPreview);
   } else {
-    return handlePageReq(req.uri, manifest, routesManifest, isPreview);
+    return handlePageReq(req, req.uri, manifest, routesManifest, isPreview);
   }
 };

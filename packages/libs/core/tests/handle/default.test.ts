@@ -420,7 +420,6 @@ describe("Default handler", () => {
         routesManifest,
         getPage
       );
-
       expect(route).toBeTruthy();
       if (route) {
         expect(route.isExternal).toBeTruthy();
