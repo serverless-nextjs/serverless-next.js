@@ -808,6 +808,11 @@ describe("Custom inputs", () => {
         "PUT",
         "PATCH"
       ],
+      forward: {
+        cookies: "all",
+        headers: ["Authorization", "Host"],
+        queryString: true
+      },
       "lambda@edge": {
         ...(expectedInConfig["api/*"] &&
           expectedInConfig["api/*"]["lambda@edge"]),
@@ -844,6 +849,7 @@ describe("Custom inputs", () => {
         ],
         forward: {
           cookies: "all",
+          headers: ["Authorization", "Host"],
           queryString: true
         },
         compress: true,
@@ -869,6 +875,11 @@ describe("Custom inputs", () => {
               defaultTTL: 0,
               maxTTL: 31536000,
               allowedHttpMethods: ["HEAD", "GET"],
+              forward: {
+                cookies: "all",
+                headers: ["Authorization", "Host"],
+                queryString: true
+              },
               "lambda@edge": {
                 "origin-request":
                   "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
@@ -880,6 +891,11 @@ describe("Custom inputs", () => {
               minTTL: 0,
               defaultTTL: 0,
               maxTTL: 31536000,
+              forward: {
+                cookies: "all",
+                headers: ["Authorization", "Host"],
+                queryString: true
+              },
               ...expectedApiCacheBehaviour
             },
             "_next/image*": {
@@ -893,7 +909,15 @@ describe("Custom inputs", () => {
               forward: {
                 headers: ["Accept"]
               },
-              allowedHttpMethods: expect.any(Array)
+              allowedHttpMethods: [
+                "HEAD",
+                "DELETE",
+                "POST",
+                "GET",
+                "OPTIONS",
+                "PUT",
+                "PATCH"
+              ]
             },
             "static/*": {
               ...customPageCacheBehaviours["static/*"],
@@ -975,18 +999,9 @@ describe("Custom inputs", () => {
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
       };
 
-      // If path is api/*, then it has allowed HTTP methods by default
-      if (pathName === "api/*") {
-        cloudFrontInput[pathName]["allowedHttpMethods"] = [
-          "HEAD",
-          "DELETE",
-          "POST",
-          "GET",
-          "OPTIONS",
-          "PUT",
-          "PATCH"
-        ];
-      }
+      // we want to make sure that default behaviors are combined correctly
+      const apiCloudFrontInput = cloudFrontInput["api/*"];
+      delete cloudFrontInput["api/*"];
 
       const expectedInput = {
         origins: [
@@ -1002,7 +1017,12 @@ describe("Custom inputs", () => {
                     "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
                 },
                 maxTTL: 31536000,
-                minTTL: 0
+                minTTL: 0,
+                forward: {
+                  cookies: "all",
+                  headers: ["Authorization", "Host"],
+                  queryString: true
+                }
               },
               "_next/static/*": {
                 defaultTTL: 86400,
@@ -1024,13 +1044,19 @@ describe("Custom inputs", () => {
                   "PUT",
                   "PATCH"
                 ],
+                forward: {
+                  cookies: "all",
+                  headers: ["Authorization", "Host"],
+                  queryString: true
+                },
                 defaultTTL: 0,
                 "lambda@edge": {
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
                 },
                 maxTTL: 31536000,
-                minTTL: 0
+                minTTL: 0,
+                ...apiCloudFrontInput
               },
               "_next/image*": {
                 minTTL: 0,
@@ -1043,7 +1069,15 @@ describe("Custom inputs", () => {
                 forward: {
                   headers: ["Accept"]
                 },
-                allowedHttpMethods: expect.any(Array)
+                allowedHttpMethods: [
+                  "HEAD",
+                  "DELETE",
+                  "POST",
+                  "GET",
+                  "OPTIONS",
+                  "PUT",
+                  "PATCH"
+                ]
               },
               "static/*": {
                 defaultTTL: 86400,

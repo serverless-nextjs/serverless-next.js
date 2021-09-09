@@ -150,6 +150,10 @@ module.exports = {
       {
         source: "/no-op-rewrite",
         destination: "/ssr-page"
+      },
+      {
+        source: "/api/external-rewrite-internal-api",
+        destination: "/api/basic-api"
       }
     ];
   },
