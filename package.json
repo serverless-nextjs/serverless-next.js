@@ -95,7 +95,8 @@
       "/scripts/",
       "babel.config.js",
       "jest.config.js",
-      "<rootDir>/packages/serverless-components/aws-s3"
+      "<rootDir>/packages/serverless-components/aws-s3",
+      "<rootDir>/packages/serverless-components/nextjs-component/bin"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",

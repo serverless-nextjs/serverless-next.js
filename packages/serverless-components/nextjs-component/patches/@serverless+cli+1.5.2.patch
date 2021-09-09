@@ -1,0 +1,113 @@
+diff --git a/node_modules/@serverless/cli/src/Context.js b/node_modules/@serverless/cli/src/Context.js
+index 4fb9da9..f8919a4 100644
+--- a/node_modules/@serverless/cli/src/Context.js
++++ b/node_modules/@serverless/cli/src/Context.js
+@@ -153,7 +153,11 @@ class CLI {
+     process.stdout.write(ansiEscapes.cursorShow)
+     if (!this.isStatusEngineActive()) {
+       console.log() // eslint-disable-line
+-      process.exit(0)
++      if (reason === 'error') {
++        process.exit(1)
++      } else {
++        process.exit(0)
++      }
+       return
+     }
+     return this.statusEngineStop(reason, message)
+@@ -244,44 +248,46 @@ class CLI {
+       this._.entity = entity
+     }
+ 
+-    // Loading dots
+-    if (this._.status.loadingDotCount === 0) {
+-      this._.status.loadingDots = `.`
+-    } else if (this._.status.loadingDotCount === 2) {
+-      this._.status.loadingDots = `..`
+-    } else if (this._.status.loadingDotCount === 4) {
+-      this._.status.loadingDots = `...`
+-    } else if (this._.status.loadingDotCount === 6) {
+-      this._.status.loadingDots = ''
+-    }
+-    this._.status.loadingDotCount++
+-    if (this._.status.loadingDotCount > 8) {
+-      this._.status.loadingDotCount = 0
+-    }
++    if (process.stdout.isTTY) {
++      // Loading dots
++      if (this._.status.loadingDotCount === 0) {
++        this._.status.loadingDots = `.`
++      } else if (this._.status.loadingDotCount === 2) {
++        this._.status.loadingDots = `..`
++      } else if (this._.status.loadingDotCount === 4) {
++        this._.status.loadingDots = `...`
++      } else if (this._.status.loadingDotCount === 6) {
++        this._.status.loadingDots = ''
++      }
++      this._.status.loadingDotCount++
++      if (this._.status.loadingDotCount > 8) {
++        this._.status.loadingDotCount = 0
++      }
+ 
+-    // Clear any existing content
+-    process.stdout.write(ansiEscapes.eraseDown)
++      // Clear any existing content
++      process.stdout.write(ansiEscapes.eraseDown)
+ 
+-    // Write content
+-    console.log() // eslint-disable-line
+-    let content = ' '
+-    if (this._.useTimer) {
+-      content += ` ${grey(this._.seconds + 's')}`
+-      content += ` ${grey(figures.pointerSmall)}`
+-    }
++      // Write content
++      console.log() // eslint-disable-line
++      let content = ' '
++      if (this._.useTimer) {
++        content += ` ${grey(this._.seconds + 's')}`
++        content += ` ${grey(figures.pointerSmall)}`
++      }
+ 
+-    content += ` ${this._.entity}`
+-    content += ` ${grey(figures.pointerSmall)} ${grey(this._.status.message)}`
+-    content += ` ${grey(this._.status.loadingDots)}`
+-    process.stdout.write(content)
+-    console.log() // eslint-disable-line
++      content += ` ${this._.entity}`
++      content += ` ${grey(figures.pointerSmall)} ${grey(this._.status.message)}`
++      content += ` ${grey(this._.status.loadingDots)}`
++      process.stdout.write(content)
++      console.log() // eslint-disable-line
+ 
+-    // Get cursor starting position according to terminal & content width
+-    const startingPosition = this.getRelativeVerticalCursorPosition(content)
++      // Get cursor starting position according to terminal & content width
++      const startingPosition = this.getRelativeVerticalCursorPosition(content)
+ 
+-    // Put cursor to starting position for next view
+-    process.stdout.write(ansiEscapes.cursorUp(startingPosition))
+-    process.stdout.write(ansiEscapes.cursorLeft)
++      // Put cursor to starting position for next view
++      process.stdout.write(ansiEscapes.cursorUp(startingPosition))
++      process.stdout.write(ansiEscapes.cursorLeft)
++    }
+   }
+ 
+   renderLog(msg) {
+diff --git a/node_modules/@serverless/cli/src/index.js b/node_modules/@serverless/cli/src/index.js
+index ee52b08..9652a4e 100644
+--- a/node_modules/@serverless/cli/src/index.js
++++ b/node_modules/@serverless/cli/src/index.js
+@@ -233,11 +233,9 @@ const runComponents = async (serverlessFileArg) => {
+       }
+     }
+     context.close('done')
+-    process.exit(0)
+   } catch (e) {
+     context.renderError(e)
+     context.close('error', e)
+-    process.exit(1)
+   }
+ }
+ 

@@ -290,13 +290,12 @@ async function runEndToEndTest(): Promise<boolean> {
       { stdio: "inherit" }
     );
 
-    // Sleep a few seconds to prevent exhausting API limits.
-    // (likely not needed anymore due to changing retry policy)
-    // await new Promise((resolve) => setTimeout(resolve, Math.random() * 15000));
-
     // Deploy
     console.info("Deploying serverless-next.js app.");
-    execSync("npx serverless", { stdio: "inherit" });
+    execSync(
+      "node ../../serverless-components/nextjs-component/dist/bin/serverless-patched.js --debug",
+      { stdio: "inherit" }
+    );
 
     // Get Next.js build ID and URL
     console.info("Getting Next.js build ID");
