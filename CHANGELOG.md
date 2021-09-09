@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.2...v3.4.0-alpha.3) (2021-09-09)
+
+### Bug Fixes
+
+- **nextjs-component:** fix broken install since patch-package is required as dependency, not dev-dependency ([79af0e8](https://github.com/serverless-nextjs/serverless-next.js/commit/79af0e80afe36a03d8383786237df2c31503fbf8))
+
 # [3.4.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.1...v3.4.0-alpha.2) (2021-09-09)
 
 ### Features
