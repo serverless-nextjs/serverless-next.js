@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+
 import { execSync } from "child_process";
 const findUpSync = require("find-up").sync;
 
