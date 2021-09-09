@@ -1,0 +1,50 @@
+{
+  "name": "@sls-next/serverless-patched",
+  "version": "3.4.0-alpha.2",
+  "description": "Patched serverless package",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/serverless-patched.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
+    "directory": "packages/libs/serverless-patched"
+  },
+  "scripts": {
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist",
+    "postinstall": "patch-package"
+  },
+  "keywords": [
+    "AWS",
+    "S3",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Phang <serverlessnextjs@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@serverless/cli": "^1.5.2",
+    "find-up": "^5.0.0",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
+    "serverless": "^2.57.0"
+  },
+  "devDependencies": {
+    "@types/node": "^16.9.1",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.2"
+  },
+  "bin": {
+    "serverless-patched": "./dist/serverless-patched.js"
+  }
+}
