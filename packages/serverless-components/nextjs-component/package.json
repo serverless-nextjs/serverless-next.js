@@ -10,13 +10,13 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
-    "directory": "packages/serverless-components/nextjs-component",
-    "postinstall": "patch-package"
+    "directory": "packages/serverless-components/nextjs-component"
   },
   "scripts": {
     "prepare": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json",
-    "clean": "yarn rimraf dist"
+    "clean": "yarn rimraf dist",
+    "postinstall": "patch-package"
   },
   "keywords": [
     "serverless",
