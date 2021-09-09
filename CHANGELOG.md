@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.3...v3.4.0-alpha.4) (2021-09-09)
+
+### Features
+
+- **nextjs-component:** forward common headers such as authorization and host by default ([#1660](https://github.com/serverless-nextjs/serverless-next.js/issues/1660)) ([793f0a2](https://github.com/serverless-nextjs/serverless-next.js/commit/793f0a205bc066c72b614c2821143c76d839500f))
+
 # [3.4.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.2...v3.4.0-alpha.3) (2021-09-09)
 
 ### Bug Fixes
