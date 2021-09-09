@@ -310,10 +310,19 @@ describe.each`
     it("creates distribution", () => {
       expect(mockCloudFront).toBeCalledWith({
         defaults: {
-          allowedHttpMethods: expect.any(Array),
+          allowedHttpMethods: [
+            "HEAD",
+            "DELETE",
+            "POST",
+            "GET",
+            "OPTIONS",
+            "PUT",
+            "PATCH"
+          ],
           forward: {
-            queryString: true,
-            cookies: "all"
+            cookies: "all",
+            headers: ["Authorization", "Host"],
+            queryString: true
           },
           minTTL: 0,
           defaultTTL: 0,
@@ -346,6 +355,11 @@ describe.each`
                 defaultTTL: 0,
                 maxTTL: 31536000,
                 allowedHttpMethods: ["HEAD", "GET"],
+                forward: {
+                  cookies: "all",
+                  headers: ["Authorization", "Host"],
+                  queryString: true
+                },
                 "lambda@edge": {
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
@@ -371,7 +385,20 @@ describe.each`
                   "origin-request":
                     "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
                 },
-                allowedHttpMethods: expect.any(Array)
+                allowedHttpMethods: [
+                  "HEAD",
+                  "DELETE",
+                  "POST",
+                  "GET",
+                  "OPTIONS",
+                  "PUT",
+                  "PATCH"
+                ],
+                forward: {
+                  cookies: "all",
+                  headers: ["Authorization", "Host"],
+                  queryString: true
+                }
               },
               "_next/image*": {
                 minTTL: 0,
@@ -384,7 +411,15 @@ describe.each`
                 forward: {
                   headers: ["Accept"]
                 },
-                allowedHttpMethods: expect.any(Array)
+                allowedHttpMethods: [
+                  "HEAD",
+                  "DELETE",
+                  "POST",
+                  "GET",
+                  "OPTIONS",
+                  "PUT",
+                  "PATCH"
+                ]
               }
             }
           }

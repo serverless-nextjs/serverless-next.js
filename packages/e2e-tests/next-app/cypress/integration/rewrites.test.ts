@@ -177,5 +177,25 @@ describe("Rewrites Tests", () => {
         });
       });
     });
+
+    it("externally rewrites to /api/basic-api with correct method, body and forwarded auth headers", () => {
+      cy.request({
+        url: "/api/external-rewrite-internal-api",
+        method: "POST",
+        body: "blah",
+        failOnStatusCode: false,
+        headers: { Authorization: `Bearer 12345` }
+      }).then((response) => {
+        expect(response.status).to.equal(200);
+
+        // body should be the same as /api/basic-api
+        expect(response.body).to.deep.equal({
+          name: "This is a basic API route.",
+          method: "POST",
+          body: "blah",
+          authorization: "Bearer 12345" // authorization header is forwarded via CF, and external rewrite should forward it as well
+        });
+      });
+    });
   });
 });

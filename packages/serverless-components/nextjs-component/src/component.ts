@@ -661,6 +661,13 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
+        forward: {
+          headers: routesManifest.i18n
+            ? ["Accept-Language", "Authorization", "Host"]
+            : ["Authorization", "Host"],
+          cookies: "all",
+          queryString: true
+        },
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
           "origin-request": `${apiEdgeLambdaOutputs.arn}:${apiEdgeLambdaPublishOutputs.version}`
@@ -782,6 +789,11 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 31536000,
       allowedHttpMethods: ["HEAD", "GET"],
+      forward: {
+        cookies: "all",
+        headers: ["Authorization", "Host"],
+        queryString: true
+      },
       "lambda@edge": {
         "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
         "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
@@ -850,7 +862,9 @@ class NextjsComponent extends Component {
         maxTTL: 31536000,
         ...cloudFrontDefaults,
         forward: {
-          headers: routesManifest.i18n ? ["Accept-Language"] : undefined,
+          headers: routesManifest.i18n
+            ? ["Accept-Language", "Authorization", "Host"]
+            : ["Authorization", "Host"],
           cookies: "all",
           queryString: true,
           ...cloudFrontDefaults.forward
