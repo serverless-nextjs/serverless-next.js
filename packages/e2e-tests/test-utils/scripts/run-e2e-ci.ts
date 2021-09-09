@@ -293,7 +293,7 @@ async function runEndToEndTest(): Promise<boolean> {
     // Deploy
     console.info("Deploying serverless-next.js app.");
     execSync(
-      "node ../../serverless-components/nextjs-component/dist/bin/serverless-patched.js --debug",
+      "node ../../libs/serverless-patched/dist/serverless-patched.js --debug",
       { stdio: "inherit" }
     );
 
