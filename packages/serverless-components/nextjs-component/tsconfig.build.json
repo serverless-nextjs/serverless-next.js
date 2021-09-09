@@ -4,5 +4,5 @@
     "sourceMap": false,
     "removeComments": true
   },
-  "include": ["./src/", ".d.ts"]
+  "include": ["./src/", ".d.ts", "./bin/"]
 }

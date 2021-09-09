@@ -10,7 +10,8 @@
   "repository": {
     "type": "git",
     "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
-    "directory": "packages/serverless-components/nextjs-component"
+    "directory": "packages/serverless-components/nextjs-component",
+    "postinstall": "patch-package"
   },
   "scripts": {
     "prepare": "yarn clean && yarn build",
@@ -44,11 +45,17 @@
     "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
     "aws-sdk": "^2.984.0",
     "fs-extra": "^9.1.0",
+    "serverless": "^2.57.0",
     "webpack": "^5.52.0"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.1",
+    "patch-package": "^6.4.7",
+    "postinstall-postinstall": "^2.1.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.4.2"
+  },
+  "bin": {
+    "serverless-patched": "./dist/bin/serverless-patched.js"
   }
 }

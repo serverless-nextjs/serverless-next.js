@@ -6,7 +6,7 @@
     "dev": "next",
     "build": "next build",
     "start": "next start -p $PORT",
-    "serverless": "serverless",
+    "serverless": "node ../../serverless-components/nextjs-component/dist/bin/serverless-patched.js",
     "e2e": "cypress run",
     "e2e:ci": "ISR_PAGE_PATH=/revalidated-ssg-page DYNAMIC_ISR_PAGE_PATH=/revalidated-ssg-pages/101 SSG_PAGE_PATH=/ssg-page SSR_PAGE_PATH=/ssr-page APP_NAME=next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
   },

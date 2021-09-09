@@ -1,3 +1,3 @@
-const component = require("./dist/component.js");
+const component = require("./dist/src/component.js");
 
 module.exports = component.default;
