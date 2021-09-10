@@ -34,6 +34,6 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.24.2",
     "eslint-plugin-prettier": "^4.0.0",
-    "prettier": "^2.3.1"
+    "prettier": "^2.4.0"
   }
 }
