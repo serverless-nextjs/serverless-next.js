@@ -124,7 +124,7 @@
   "dependencies": {
     "opencollective-postinstall": "^2.0.3",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^3.0.0"
   },
   "collective": {
     "type": "opencollective",

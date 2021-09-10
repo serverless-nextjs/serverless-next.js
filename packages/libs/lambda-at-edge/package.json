@@ -79,7 +79,7 @@
     "fs-extra": "^9.1.0",
     "get-stream": "^6.0.0",
     "is-animated": "^2.0.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^3.0.0",
     "normalize-path": "^3.0.0",
     "path-to-regexp": "^6.1.0",
     "send": "^0.17.1"
