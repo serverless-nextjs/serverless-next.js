@@ -42,7 +42,7 @@
   "devDependencies": {
     "@babel/core": "7.15.5",
     "@babel/plugin-proposal-class-properties": "^7.13.0",
-    "@babel/preset-env": "^7.15.4",
+    "@babel/preset-env": "^7.15.6",
     "@babel/preset-typescript": "^7.15.0",
     "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
