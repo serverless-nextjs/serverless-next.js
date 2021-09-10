@@ -34,7 +34,7 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
     "@serverless/cli": "^1.5.2",
-    "find-up": "^5.0.0",
+    "find-up": "^6.0.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
     "serverless": "^2.57.0"
