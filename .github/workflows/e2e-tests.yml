@@ -96,6 +96,14 @@ jobs:
           path: build-${{ matrix.os }}.tar.gz
           retention-days: 1
 
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 15
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
   run-e2e-tests:
     needs: [initialize]
     runs-on: ${{ matrix.os }}
@@ -160,14 +168,6 @@ jobs:
         if: ${{ !startsWith(matrix.app, 'prev') }}
         working-directory: packages/e2e-tests/${{ matrix.app }}
         run: yarn add next@latest
-
-      - name: Wait for existing workflow to complete before e2e tests
-        uses: softprops/turnstyle@v1
-        with:
-          poll-interval-seconds: 30
-          same-branch-only: false
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run e2e tests
         working-directory: packages/e2e-tests/${{ matrix.app }}
