@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/node": "^16.9.1",
     "rimraf": "^3.0.2",
-    "typescript": "^4.4.2"
+    "typescript": "^4.4.3"
   },
   "bin": {
     "serverless-patched": "./dist/serverless-patched.js"
