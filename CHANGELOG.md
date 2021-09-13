@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.5...v3.4.0-alpha.6) (2021-09-13)
+
+### Bug Fixes
+
+- **core:** fallback to using page's html render function when html is empty ([#1680](https://github.com/serverless-nextjs/serverless-next.js/issues/1680)) ([ef38698](https://github.com/serverless-nextjs/serverless-next.js/commit/ef38698dff32778904df7902fb51952256f43bd4))
+
 # [3.4.0-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.4...v3.4.0-alpha.5) (2021-09-09)
 
 ### Bug Fixes
