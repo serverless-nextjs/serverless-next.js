@@ -41,7 +41,16 @@ export const renderPageToHtml = async (
     // Fallback to using renderReqToHtml without renderMode specified,
     // which will render html based on the page's renderReqToHtml,
     // which should always work (but adds another *warm* render cost)
-    console.log("Falling back to using page's rendering function for html");
+    console.log(
+      "Exception occurred, falling back to using page's rendering function for html"
+    );
+    html = (await page.renderReqToHTML(req, res)) as unknown as string;
+  }
+
+  if (!html || html === "") {
+    console.log(
+      "html is empty, falling back to using page's rendering function for html"
+    );
     html = (await page.renderReqToHTML(req, res)) as unknown as string;
   }
 
