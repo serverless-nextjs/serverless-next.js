@@ -157,10 +157,10 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.10.0":
-  version "5.10.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.10.0.tgz#b4f1f312518730b1bbec3f61771d5d4ddfe149d4"
-  integrity sha512-bRv5o+uR2/o6PCvRI+9mAe6quhqAyJIybI3RH/UXiRzP3qNtbt9RnZDhAe2wjNidf+8iA5UYeLRt2MG3Mb9X3w==
+"@serverless/utils@^5.11.0":
+  version "5.11.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.11.0.tgz#9d03170eb93ceffd8fd9854d7534ec037b1a3e60"
+  integrity sha512-If0WtoF0AGVjNs9zUFyvQtHt/4/UPjAlHf7gFwkxZwL6C+tUgJp+mSPIjvHUVS3NQQNGJWenaXoooEWay/cIiQ==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
@@ -178,8 +178,8 @@
     js-yaml "^4.1.0"
     jwt-decode "^3.1.2"
     lodash "^4.17.21"
-    log "^6.1.0"
-    log-node "^8.0.0"
+    log "^6.2.0"
+    log-node "^8.0.1"
     make-dir "^3.1.0"
     memoizee "^0.4.15"
     ncjsm "^4.2.0"
@@ -1943,10 +1943,10 @@ lodash@4.17.x, lodash@^4.17.15, lodash@^4.17.19, lodash@^4.17.21:
   resolved "https://registry.npmjs.org/lodash/-/lodash-4.17.21.tgz#679591c564c3bffaae8454cf0b3df370c3d6911c"
   integrity sha512-v2kDEe57lecTulaDIuNTPy3Ry4gLGJ6Z1O3vE1krgXZNrsQ+LFTGHVxVjcXPs17LhbZVGedAJv8XZ1tvj5FvSg==
 
-log-node@^8.0.0:
-  version "8.0.0"
-  resolved "https://registry.npmjs.org/log-node/-/log-node-8.0.0.tgz#216cd57e407a3291cfd1602d0faeef6e8346df14"
-  integrity sha512-ogrmq+slTOCXG6TMgXxZ2lkfm00CrnO8LLgvqpvEzDhzJ/DmOCGj2AlSjEClk36k7S4k1HNw3WLwF2nqx15SKQ==
+log-node@^8.0.1:
+  version "8.0.1"
+  resolved "https://registry.npmjs.org/log-node/-/log-node-8.0.1.tgz#641b6bc47528f47999552069a75cb0404ed3f989"
+  integrity sha512-w6ii8zZo+O4Os9EBB0+ruaeVU6CysNgYj/cUDOtobBxnNPRHynjMjzyqjEuNKGT/AD89sZzGh0pS3/0ZPRR1iQ==
   dependencies:
     cli-color "^2.0.0"
     cli-sprintf-format "^1.1.0"
@@ -1957,16 +1957,16 @@ log-node@^8.0.0:
     supports-color "^8.1.1"
     type "^2.5.0"
 
-log@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.npmjs.org/log/-/log-6.1.0.tgz#f5af83e2098b68d1b9e78eb9b761abe5c300663b"
-  integrity sha512-ZulFTrSNfKd8AlMNhl2sQ/jphhTReGeYYsB/ABV1u3jADp2wedQ7+uhSaXlBdu3VMM5PS0ribMFb0UJMesaGng==
+log@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.npmjs.org/log/-/log-6.2.0.tgz#7a7766c00a93e7a2c28ac8d44afd0bf6383b4ead"
+  integrity sha512-W1sDY5FqR6wlpygW8ZFSxCfBhKx/RzCHK5S+Br8zA14bAnwSgCm5hToIWzi0Yhy6x9Ppw7pyIV06r8F5cSRHUw==
   dependencies:
     d "^1.0.1"
     duration "^0.2.2"
-    es5-ext "^0.10.50"
+    es5-ext "^0.10.53"
     event-emitter "^0.3.5"
-    sprintf-kit "^2.0.0"
+    sprintf-kit "^2.0.1"
     type "^2.5.0"
 
 lowercase-keys@^1.0.0, lowercase-keys@^1.0.1:
@@ -2704,7 +2704,7 @@ sprintf-js@~1.0.2:
   resolved "https://registry.npmjs.org/sprintf-js/-/sprintf-js-1.0.3.tgz#04e6926f662895354f3dd015203633b857297e2c"
   integrity sha1-BOaSb2YolTVPPdAVIDYzuFcpfiw=
 
-sprintf-kit@2, sprintf-kit@^2.0.0, sprintf-kit@^2.0.1:
+sprintf-kit@2, sprintf-kit@^2.0.1:
   version "2.0.1"
   resolved "https://registry.npmjs.org/sprintf-kit/-/sprintf-kit-2.0.1.tgz#bb837e8fa4b28f094531d8e33669120027236bb8"
   integrity sha512-2PNlcs3j5JflQKcg4wpdqpZ+AjhQJ2OZEo34NXDtlB0tIPG84xaaXhpA8XFacFiwjKA4m49UOYG83y3hbMn/gQ==
