@@ -24,7 +24,7 @@ assignees: ""
 <!-- If applicable, add screenshots or a minimal repro (e.g code or configuration snippet or repository) to help explain your problem. If you have a runtime issue from Lambda/CloudFront, please check CloudWatch logs (note that Lambda@Edge logs are in a region closest to where you access CloudFront - NOT necessarily in `us-east-1` where the original Lambda is created) and post any logs or stacktraces if possible. See here for how to check logs: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/lambda-edge-testing-debugging.html#lambda-edge-identifying-function-errors. If you have a build or deploy issue, please run with serverless --debug and post the logs. Please also post your serverless.yml. -->
 
 ### Versions
-<!-- Please add your OS and @sls-next/serverless-component and Next.js versions below. Note that only the last sub-versions within the last two major version of Next.js are officially tested and supported. -->
+<!-- Please add your OS from where you are deploying (e.g Mac, Windows, Ubuntu via GitHub CI) and @sls-next/serverless-component and Next.js versions below. Note that only the last sub-versions within the last two major version of Next.js are officially tested and supported. -->
 
 - OS/Environment:
 - @sls-next/serverless-component version:
