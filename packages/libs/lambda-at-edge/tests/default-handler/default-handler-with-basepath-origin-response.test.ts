@@ -28,6 +28,15 @@ jest.mock(
 );
 
 jest.mock(
+  "../../src/api-manifest.json",
+  // eslint-disable-next-line @typescript-eslint/no-var-requires
+  () => require("./api-build-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
+jest.mock(
   "../../src/prerender-manifest.json",
   () => require("./prerender-manifest.json"),
   {

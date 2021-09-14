@@ -49,6 +49,7 @@ type BuildOptions = {
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
   regenerationQueueName?: string;
+  separateApiLambda?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -66,7 +67,8 @@ const defaultBuildOptions = {
   baseDir: process.cwd(),
   cleanupDotNext: true,
   assetIgnorePatterns: [],
-  regenerationQueueName: undefined
+  regenerationQueueName: undefined,
+  separateApiLambda: true
 };
 
 class Builder {
@@ -273,7 +275,9 @@ class Builder {
   }
 
   async buildDefaultLambda(
-    buildManifest: OriginRequestDefaultHandlerManifest
+    buildManifest: OriginRequestDefaultHandlerManifest,
+    apiBuildManifest: OriginRequestApiHandlerManifest,
+    separateApiLambda: boolean
   ): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
@@ -300,6 +304,10 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
       ),
+      fse.writeJson(
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "api-manifest.json"),
+        apiBuildManifest
+      ),
       fse.copy(
         join(this.serverlessDir, "pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
@@ -307,7 +315,9 @@ class Builder {
           filter: (file: string) => {
             const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
-            const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
+            const isNotApiPage = separateApiLambda
+              ? pathToPosix(file).indexOf("pages/api") === -1
+              : true;
 
             // If there are API routes, include all JS files.
             // If there are no API routes, include only JS files that used for SSR (including fallback).
@@ -692,7 +702,8 @@ class Builder {
       env,
       useServerlessTraceTarget,
       cleanupDotNext,
-      assetIgnorePatterns
+      assetIgnorePatterns,
+      separateApiLambda
     } = Object.assign(defaultBuildOptions, this.buildOptions);
 
     await Promise.all([
@@ -778,14 +789,19 @@ class Builder {
       enableHTTPCompression
     };
 
-    await this.buildDefaultLambda(defaultBuildManifest);
+    await this.buildDefaultLambda(
+      defaultBuildManifest,
+      apiBuildManifest,
+      separateApiLambda
+    );
     await this.buildRegenerationHandler(defaultBuildManifest);
 
     const hasAPIPages =
       Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
       Object.keys(apiBuildManifest.apis.dynamic).length > 0;
 
-    if (hasAPIPages) {
+    // Only build API lambda if we have API pages and using a separate API lambda
+    if (hasAPIPages && separateApiLambda) {
       await this.buildApiLambda(apiBuildManifest);
     }
 

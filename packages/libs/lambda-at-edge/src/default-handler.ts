@@ -4,18 +4,21 @@ import PrerenderManifest from "./prerender-manifest.json";
 import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
+// @ts-ignore
+import ApiManifest from "./api-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   ExternalRoute,
-  handleDefault,
-  handleFallback,
-  PublicFileRoute,
-  routeDefault,
   getCustomHeaders,
-  StaticRoute,
   getStaticRegenerationResponse,
   getThrottledStaticRegenerationCachePolicy,
-  handlePublicFiles
+  handleApi,
+  handleDefault,
+  handleFallback,
+  handlePublicFiles,
+  PublicFileRoute,
+  routeDefault,
+  StaticRoute
 } from "@sls-next/core";
 
 import {
@@ -24,6 +27,7 @@ import {
   CloudFrontS3Origin
 } from "aws-lambda";
 import {
+  OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
   OriginRequestEvent,
   OriginResponseEvent,
@@ -33,7 +37,10 @@ import {
 } from "./types";
 import { performance } from "perf_hooks";
 import type { Readable } from "stream";
-import { externalRewrite } from "./routing/rewriter";
+import {
+  createExternalRewriteResponse,
+  externalRewrite
+} from "./routing/rewriter";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
@@ -85,6 +92,7 @@ export const handler = async (
   event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
+  const apiManifest: OriginRequestApiHandlerManifest = ApiManifest;
   let response: CloudFrontResultResponse | CloudFrontRequest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const routesManifest: RoutesManifest = RoutesManifestJson;
@@ -104,6 +112,7 @@ export const handler = async (
     response = await handleOriginRequest({
       event,
       manifest,
+      apiManifest,
       prerenderManifest,
       routesManifest
     });
@@ -159,11 +168,13 @@ const reconstructOriginalRequestUri = (
 const handleOriginRequest = async ({
   event,
   manifest,
+  apiManifest,
   prerenderManifest,
   routesManifest
 }: {
   event: OriginRequestEvent;
   manifest: OriginRequestDefaultHandlerManifest;
+  apiManifest: OriginRequestApiHandlerManifest;
   prerenderManifest: PrerenderManifestType;
   routesManifest: RoutesManifest;
 }) => {
@@ -174,6 +185,23 @@ const handleOriginRequest = async ({
       enableHTTPCompression: manifest.enableHTTPCompression
     }
   );
+
+  // TOOO: handle cross rewrites from API <-> Pages
+  if (request.uri.startsWith(`${routesManifest.basePath}/api`)) {
+    const externalApi = await handleApi(
+      { req, res, responsePromise },
+      apiManifest,
+      routesManifest,
+      (pagePath: string) => require(`./${pagePath}`)
+    );
+
+    if (externalApi) {
+      const { path } = externalApi;
+      await createExternalRewriteResponse(path, req, res, request.body?.data);
+    }
+
+    return await responsePromise;
+  }
 
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
 

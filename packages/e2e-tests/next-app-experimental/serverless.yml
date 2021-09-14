@@ -1,0 +1,29 @@
+next-app-experimental:
+  component: "../../serverless-components/nextjs-component"
+  inputs:
+    sqs:
+      tags:
+        foo: bar
+    build:
+      separateApiLambda: false
+      postBuildCommands: ["node scripts/post-build-test.js"]
+      assetIgnorePatterns:
+        - "**/public/ignored.txt"
+    cloudfront:
+      defaults:
+        forward:
+          headers: [Authorization]
+      tags:
+        tag1: val1
+    tags:
+      defaultLambda:
+        tag1: val1
+      apiLambda:
+        tag2: val2
+      imageLambda:
+        tag3: val3
+      regenerationLambda:
+        tag4: val4
+    bucketTags:
+      tag1: val1
+      tag2: val2
