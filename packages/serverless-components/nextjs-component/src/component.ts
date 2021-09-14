@@ -79,6 +79,21 @@ class NextjsComponent extends Component {
     );
   }
 
+  /**
+   * API manifest within the default handler.
+   * @param nextConfigPath
+   */
+  readDefaultApiBuildManifest(
+    nextConfigPath: string
+  ): Promise<OriginRequestApiHandlerManifest> {
+    return readJSON(
+      join(
+        nextConfigPath,
+        ".serverless_nextjs/default-lambda/api-manifest.json"
+      )
+    );
+  }
+
   readRoutesManifest(nextConfigPath: string): Promise<RoutesManifest> {
     return readJSON(join(nextConfigPath, ".next/routes-manifest.json"));
   }
@@ -323,11 +338,13 @@ class NextjsComponent extends Component {
 
     const [
       defaultBuildManifest,
-      apiBuildManifest,
+      defaultApiBuildManifest,
+      separateApiBuildManifest,
       imageBuildManifest,
       routesManifest
     ] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
+      this.readDefaultApiBuildManifest(nextConfigPath),
       this.readApiBuildManifest(nextConfigPath),
       this.readImageBuildManifest(nextConfigPath),
       this.readRoutesManifest(nextConfigPath)
@@ -440,16 +457,15 @@ class NextjsComponent extends Component {
       }
     };
 
-    const buildOptions = (inputs.build ?? {}) as BuildOptions;
+    const hasSeparateAPIPages =
+      separateApiBuildManifest &&
+      (Object.keys(separateApiBuildManifest.apis.nonDynamic).length > 0 ||
+        Object.keys(separateApiBuildManifest.apis.dynamic).length > 0);
 
-    const hasSeparateApiLambda = buildOptions.separateApiLambda ?? true;
-
-    const hasAPIPages =
-      apiBuildManifest &&
-      (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
-        Object.keys(apiBuildManifest.apis.dynamic).length > 0);
-
-    const shouldBuildApiLambda = hasAPIPages && hasSeparateApiLambda;
+    const hasConsolidatedApiPages =
+      defaultApiBuildManifest &&
+      (Object.keys(defaultApiBuildManifest.apis.nonDynamic).length > 0 ||
+        Object.keys(defaultApiBuildManifest.apis.dynamic).length > 0);
 
     const hasISRPages = Object.keys(
       defaultBuildManifest.pages.ssg.nonDynamic
@@ -614,7 +630,8 @@ class NextjsComponent extends Component {
       await sqs.addEventSource(regenerationLambdaResult.name);
     }
 
-    if (shouldBuildApiLambda) {
+    // Only upload separate API lambda + set cache behavior if api-lambda directory is populated
+    if (hasSeparateAPIPages) {
       const apiEdgeLambdaInput: LambdaInput = {
         description: inputs.description
           ? `${inputs.description} (API)`
@@ -807,8 +824,12 @@ class NextjsComponent extends Component {
       }
     };
 
-    // If we aren't using separate API Lambda but have API pages then ensure that API path pattern is set correctly
-    if (!hasSeparateApiLambda && hasAPIPages) {
+    // If we are using consolidated API pages (within default lambda), we need to ensure api/* behavior is set correctly.
+    // Note that if there are no consolidated API pages then existing api/* is not deleted.
+    // We do so for a couple reasons:
+    // 1. API pages don't need origin response handler as it's not retrieving from S3 origin
+    // 2. Override existing api/* behavior to ensure old separate API lambda isn't there
+    if (hasConsolidatedApiPages) {
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
@@ -824,9 +845,16 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
+        forward: {
+          headers: routesManifest.i18n
+            ? ["Accept-Language", "Authorization", "Host"]
+            : ["Authorization", "Host"],
+          cookies: "all",
+          queryString: true
+        },
         // lambda@edge key is last and therefore cannot be overridden
         "lambda@edge": {
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaOutputs.version}`
+          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         }
       };
     }
