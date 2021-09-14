@@ -1,5 +1,4 @@
 import React from "react";
-import { NextPageContext } from "next";
 
 type ErroredPageProps = {
   name: string;
@@ -14,7 +13,7 @@ export default function ErroredPageProps(props: ErroredPageProps): JSX.Element {
 }
 
 // getInitialProps() is the old way of doing SSR
-ErroredPageProps.getInitialProps = (ctx: NextPageContext): ErroredPageProps => {
+ErroredPageProps.getInitialProps = (): ErroredPageProps => {
   // Simulate a server-side error by always throwing an error.
   throw new Error(`Error occurred!`);
 };

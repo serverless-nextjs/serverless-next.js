@@ -1,5 +1,4 @@
 import React from "react";
-import { NextPageContext } from "next";
 
 type SSRPageProps = {
   name: string;
@@ -14,6 +13,6 @@ export default function SSRPage(props: SSRPageProps): JSX.Element {
 }
 
 // getInitialProps() is the old way of doing SSR
-SSRPage.getInitialProps = (ctx: NextPageContext): SSRPageProps => {
+SSRPage.getInitialProps = (): SSRPageProps => {
   return { name: "serverless-next.js" };
 };

@@ -1,5 +1,4 @@
 import React from "react";
-import { NextPageContext } from "next";
 
 type ErroredPageNewSsrProps = {
   name: string;
@@ -15,7 +14,7 @@ export default function ErroredPageNewSsr(
   );
 }
 
-export function getServerSideProps(ctx: NextPageContext): {
+export function getServerSideProps(): {
   props: ErroredPageNewSsrProps;
 } {
   throw new Error("Error occurred!");

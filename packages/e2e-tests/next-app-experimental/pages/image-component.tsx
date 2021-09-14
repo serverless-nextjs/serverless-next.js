@@ -1,12 +1,13 @@
 import React from "react";
-import { GetStaticPropsContext } from "next";
 import Image from "next/image";
 
 type ImageComponentProps = {
   name: string;
 };
 
-export default function ImageComponentPage(props: any): JSX.Element {
+export default function ImageComponentPage(
+  props: ImageComponentProps
+): JSX.Element {
   return (
     <React.Fragment>
       {`Hello ${props.name}! This is an SSG Page using getStaticProps() and with the new Image component.`}
@@ -20,7 +21,7 @@ export default function ImageComponentPage(props: any): JSX.Element {
   );
 }
 
-export function getStaticProps(ctx: GetStaticPropsContext): {
+export function getStaticProps(): {
   props: ImageComponentProps;
 } {
   return {
