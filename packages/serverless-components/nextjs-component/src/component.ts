@@ -457,12 +457,17 @@ class NextjsComponent extends Component {
       }
     };
 
+    const buildOptions = (inputs.build ?? {}) as BuildOptions;
+    const hasSeparateApiLambdaOption = buildOptions.separateApiLambda ?? true;
+
     const hasSeparateAPIPages =
+      hasSeparateApiLambdaOption &&
       separateApiBuildManifest &&
       (Object.keys(separateApiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(separateApiBuildManifest.apis.dynamic).length > 0);
 
     const hasConsolidatedApiPages =
+      !hasSeparateApiLambdaOption &&
       defaultApiBuildManifest &&
       (Object.keys(defaultApiBuildManifest.apis.nonDynamic).length > 0 ||
         Object.keys(defaultApiBuildManifest.apis.dynamic).length > 0);
