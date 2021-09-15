@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.7...v3.4.0-alpha.8) (2021-09-15)
+
+### Features
+
+- **core, nextjs-component:** improve routing and support cross rewrites for consolidated API pages in default lambda ([#1693](https://github.com/serverless-nextjs/serverless-next.js/issues/1693)) ([f058d51](https://github.com/serverless-nextjs/serverless-next.js/commit/f058d5111d8ba1bcb02cc81cd4d52b43fd4d52ee))
+
 # [3.4.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.5...v3.4.0-alpha.6) (2021-09-13)
 
 ### Bug Fixes
