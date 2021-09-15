@@ -53,7 +53,7 @@
     "@types/react": "17.0.20",
     "@types/react-dom": "^17.0.9",
     "@types/send": "^0.17.0",
-    "@types/sharp": "^0.29.1",
+    "@types/sharp": "^0.29.2",
     "fetch-mock-jest": "^1.5.1",
     "klaw": "^3.0.0",
     "rimraf": "^3.0.2",
