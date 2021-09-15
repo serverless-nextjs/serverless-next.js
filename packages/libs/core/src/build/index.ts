@@ -163,8 +163,7 @@ export const prepareBuildManifests = async (
   // Include only SSR routes that are in runtime use
   const ssrPages = (pageManifest.pages.ssr = usedSSR(
     pageManifest,
-    routesManifest,
-    apiPages.dynamic.length > 0 || Object.keys(apiPages.nonDynamic).length > 0
+    routesManifest
   ));
 
   // Duplicate unlocalized routes for all specified locales.
