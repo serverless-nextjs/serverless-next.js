@@ -42,7 +42,7 @@
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
     "@sls-next/s3-static-assets": "link:../../libs/s3-static-assets",
-    "aws-sdk": "^2.988.0",
+    "aws-sdk": "^2.989.0",
     "fs-extra": "^9.1.0",
     "webpack": "^5.52.1"
   },
