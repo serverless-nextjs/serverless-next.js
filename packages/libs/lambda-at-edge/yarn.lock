@@ -1389,7 +1389,7 @@
     picomatch "^2.2.2"
 
 "@sls-next/core@link:../core":
-  version "3.4.0-alpha.1"
+  version "3.4.0-alpha.6"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -1529,10 +1529,10 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
-"@types/sharp@^0.29.1":
-  version "0.29.1"
-  resolved "https://registry.npmjs.org/@types/sharp/-/sharp-0.29.1.tgz#99fed5efb144b8b56188c4dfed3a114679413f40"
-  integrity sha512-UOQu+7MY/TRlVNjVuNtLpAlekKWNZNZzYtIDHRzPloKRkPW8jlPh1RsUIhyG98OibzzneqoAhb31C5j42ERFwA==
+"@types/sharp@^0.29.2":
+  version "0.29.2"
+  resolved "https://registry.npmjs.org/@types/sharp/-/sharp-0.29.2.tgz#b4e932e982e258d1013236c8b4bcc14f9883c9a3"
+  integrity sha512-tIbMvtPa8kMyFMKNhpsPT1HO3CgXLuiCAA8bxHAGAZLyALpYvYc4hUu3pu0+3oExQA5LwvHrWp+OilgXCYVQgg==
   dependencies:
     "@types/node" "*"
 
