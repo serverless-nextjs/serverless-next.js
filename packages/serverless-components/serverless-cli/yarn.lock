@@ -157,15 +157,15 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.11.0":
-  version "5.11.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.11.0.tgz#9d03170eb93ceffd8fd9854d7534ec037b1a3e60"
-  integrity sha512-If0WtoF0AGVjNs9zUFyvQtHt/4/UPjAlHf7gFwkxZwL6C+tUgJp+mSPIjvHUVS3NQQNGJWenaXoooEWay/cIiQ==
+"@serverless/utils@^5.12.0":
+  version "5.12.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.12.0.tgz#dfbbea8037130d864f49280c943fe60c63f9a910"
+  integrity sha512-C0KX/QI0ezLuM8oUrMYWUzYlQWdKJ1G1Zqk8gZC03eEu4p4zDZvbJNneEOyPRUTeu8E9hYkpCv9URUAcsUpt6w==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
     ci-info "^3.2.0"
-    cli-progress-footer "^2.0.0"
+    cli-progress-footer "^2.0.2"
     content-disposition "^0.5.3"
     decompress "^4.2.1"
     event-emitter "^0.3.5"
@@ -603,16 +603,17 @@ cli-cursor@^3.1.0:
   dependencies:
     restore-cursor "^3.1.0"
 
-cli-progress-footer@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.npmjs.org/cli-progress-footer/-/cli-progress-footer-2.0.0.tgz#7e3a131fd4af30d33e87a7275816d38968e016e7"
-  integrity sha512-+MWvSb0KGFOetUptNubegAYWj9NyDwI1XPrfvYE+YWOsufBinF/M7G3VLMjBEGvqSnLYM2nnAX76cHHh0eXsBg==
+cli-progress-footer@^2.0.2:
+  version "2.0.2"
+  resolved "https://registry.npmjs.org/cli-progress-footer/-/cli-progress-footer-2.0.2.tgz#f1f4f9c7b8630e3ffae23cd0c6042ac361c025d0"
+  integrity sha512-FQbhQKqyRG463NbIj+XOIODJYNAf6juqIzZ5YvN1+25mvfWw+gdLzN/a64hYLlxr8OUlA5gzgxoqQTyKemko7g==
   dependencies:
     cli-color "^2.0.0"
-    d "1"
-    es5-ext "^0.10.47"
+    d "^1.0.1"
+    es5-ext "^0.10.53"
     process-utils "^4.0.0"
     timers-ext "^0.1.7"
+    type "^2.5.0"
 
 cli-sprintf-format@^1.1.0:
   version "1.1.0"
@@ -947,7 +948,7 @@ es-to-primitive@^1.2.1:
     is-date-object "^1.0.1"
     is-symbol "^1.0.2"
 
-es5-ext@^0.10.12, es5-ext@^0.10.35, es5-ext@^0.10.46, es5-ext@^0.10.47, es5-ext@^0.10.49, es5-ext@^0.10.50, es5-ext@^0.10.51, es5-ext@^0.10.53, es5-ext@~0.10.14, es5-ext@~0.10.2, es5-ext@~0.10.46:
+es5-ext@^0.10.12, es5-ext@^0.10.35, es5-ext@^0.10.46, es5-ext@^0.10.49, es5-ext@^0.10.50, es5-ext@^0.10.51, es5-ext@^0.10.53, es5-ext@~0.10.14, es5-ext@~0.10.2, es5-ext@~0.10.46:
   version "0.10.53"
   resolved "https://registry.npmjs.org/es5-ext/-/es5-ext-0.10.53.tgz#93c5a3acfdbef275220ad72644ad02ee18368de1"
   integrity sha512-Xs2Stw6NiNHWypzRTY1MtaG/uJlwCk8kH81920ma8mvN8Xq1gsfhZvpkImLQArw8AHnv8MT2I45J3c0R8slE+Q==
