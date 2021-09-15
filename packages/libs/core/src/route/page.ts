@@ -12,7 +12,8 @@ import {
   PageManifest,
   PageRoute,
   RoutesManifest,
-  Request
+  Request,
+  ApiRoute
 } from "../types";
 
 const pageHtml = (localeUri: string) => {
@@ -29,7 +30,7 @@ export const handlePageReq = (
   routesManifest: RoutesManifest,
   isPreview: boolean,
   isRewrite?: boolean
-): ExternalRoute | PageRoute => {
+): ExternalRoute | PageRoute | ApiRoute => {
   const { pages } = manifest;
   const localeUri = normalise(
     addDefaultLocaleToPath(
@@ -70,11 +71,18 @@ export const handlePageReq = (
     return notFoundPage(uri, manifest, routesManifest);
   }
   if (pages.ssr.nonDynamic[localeUri]) {
-    return {
-      isData: false,
-      isRender: true,
-      page: pages.ssr.nonDynamic[localeUri]
-    };
+    if (localeUri.startsWith("/api/")) {
+      return {
+        isApi: true,
+        page: pages.ssr.nonDynamic[localeUri]
+      };
+    } else {
+      return {
+        isData: false,
+        isRender: true,
+        page: pages.ssr.nonDynamic[localeUri]
+      };
+    }
   }
 
   const rewrite =
@@ -116,11 +124,18 @@ export const handlePageReq = (
   }
   const dynamicSSR = dynamic && pages.ssr.dynamic[dynamic];
   if (dynamicSSR) {
-    return {
-      isData: false,
-      isRender: true,
-      page: dynamicSSR
-    };
+    if (dynamic.startsWith("/api/")) {
+      return {
+        isApi: true,
+        page: dynamicSSR
+      };
+    } else {
+      return {
+        isData: false,
+        isRender: true,
+        page: dynamicSSR
+      };
+    }
   }
   const dynamicHTML = dynamic && pages.html.dynamic[dynamic];
   if (dynamicHTML) {

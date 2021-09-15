@@ -30,6 +30,8 @@ export const prepareBuildManifests = async (
     buildId,
     domainRedirects: unnormalisedDomainRedirects
   } = buildOptions;
+
+  const separateApiLambda = buildOptions.separateApiLambda ?? true;
   const domainRedirects = normaliseDomainRedirects(unnormalisedDomainRedirects);
 
   const pageManifest: PageManifest = {
@@ -53,7 +55,8 @@ export const prepareBuildManifests = async (
     publicFiles: {},
     trailingSlash: nextConfig?.trailingSlash ?? false,
     domainRedirects,
-    authentication
+    authentication,
+    hasApiPages: false
   };
 
   const apiManifest: ApiManifest = {
@@ -72,7 +75,12 @@ export const prepareBuildManifests = async (
   const dynamicApi: DynamicPageKeyValue = {};
 
   const isHtmlPage = (path: string): boolean => path.endsWith(".html");
-  const isApiPage = (path: string): boolean => path.startsWith("pages/api");
+
+  // If we are using separate API lambda then API pages go into their own manifest. Otherwise they can be added to
+  // default manifest as well
+  const isApiPage = (path: string): boolean => {
+    return path.startsWith("pages/api");
+  };
 
   Object.entries(pagesManifest).forEach(([route, pageFile]) => {
     // Check for optional catch all dynamic routes vs. other types of dynamic routes
@@ -86,6 +94,11 @@ export const prepareBuildManifests = async (
       ? route.split("/[[")[0] || "/"
       : "";
 
+    // To easily track whether default handler has any API pages
+    if (!pageManifest.hasApiPages && isApiPage(pageFile)) {
+      pageManifest.hasApiPages = true;
+    }
+
     if (isHtmlPage(pageFile)) {
       if (isOtherDynamicRoute) {
         htmlPages.dynamic[route] = pageFile;
@@ -95,7 +108,8 @@ export const prepareBuildManifests = async (
       } else {
         htmlPages.nonDynamic[route] = pageFile;
       }
-    } else if (isApiPage(pageFile)) {
+    } else if (separateApiLambda && isApiPage(pageFile)) {
+      // We only want to put API pages in a separate manifest when separateApiLambda is set to true
       if (isOtherDynamicRoute) {
         dynamicApi[route] = {
           file: pageFile,
@@ -149,8 +163,7 @@ export const prepareBuildManifests = async (
   // Include only SSR routes that are in runtime use
   const ssrPages = (pageManifest.pages.ssr = usedSSR(
     pageManifest,
-    routesManifest,
-    apiPages.dynamic.length > 0 || Object.keys(apiPages.nonDynamic).length > 0
+    routesManifest
   ));
 
   // Duplicate unlocalized routes for all specified locales.

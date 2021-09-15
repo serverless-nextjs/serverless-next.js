@@ -79,21 +79,6 @@ class NextjsComponent extends Component {
     );
   }
 
-  /**
-   * API manifest within the default handler.
-   * @param nextConfigPath
-   */
-  readDefaultApiBuildManifest(
-    nextConfigPath: string
-  ): Promise<OriginRequestApiHandlerManifest> {
-    return readJSON(
-      join(
-        nextConfigPath,
-        ".serverless_nextjs/default-lambda/api-manifest.json"
-      )
-    );
-  }
-
   readRoutesManifest(nextConfigPath: string): Promise<RoutesManifest> {
     return readJSON(join(nextConfigPath, ".next/routes-manifest.json"));
   }
@@ -338,13 +323,11 @@ class NextjsComponent extends Component {
 
     const [
       defaultBuildManifest,
-      defaultApiBuildManifest,
-      separateApiBuildManifest,
+      apiBuildManifest,
       imageBuildManifest,
       routesManifest
     ] = await Promise.all([
       this.readDefaultBuildManifest(nextConfigPath),
-      this.readDefaultApiBuildManifest(nextConfigPath),
       this.readApiBuildManifest(nextConfigPath),
       this.readImageBuildManifest(nextConfigPath),
       this.readRoutesManifest(nextConfigPath)
@@ -462,15 +445,12 @@ class NextjsComponent extends Component {
 
     const hasSeparateAPIPages =
       hasSeparateApiLambdaOption &&
-      separateApiBuildManifest &&
-      (Object.keys(separateApiBuildManifest.apis.nonDynamic).length > 0 ||
-        Object.keys(separateApiBuildManifest.apis.dynamic).length > 0);
+      apiBuildManifest &&
+      (Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
+        Object.keys(apiBuildManifest.apis.dynamic).length > 0);
 
     const hasConsolidatedApiPages =
-      !hasSeparateApiLambdaOption &&
-      defaultApiBuildManifest &&
-      (Object.keys(defaultApiBuildManifest.apis.nonDynamic).length > 0 ||
-        Object.keys(defaultApiBuildManifest.apis.dynamic).length > 0);
+      !hasSeparateApiLambdaOption && defaultBuildManifest.hasApiPages;
 
     const hasISRPages = Object.keys(
       defaultBuildManifest.pages.ssg.nonDynamic

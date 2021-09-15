@@ -7,6 +7,7 @@ export type BuildOptions = {
   domainRedirects: {
     [key: string]: string;
   };
+  separateApiLambda?: boolean;
 };
 
 export type NextConfig = {

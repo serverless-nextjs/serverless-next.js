@@ -5,6 +5,7 @@ import { toRequest } from "./request";
 import { routeDefault } from "../route";
 import { addDefaultLocaleToPath, findDomainLocale } from "../route/locale";
 import {
+  ApiRoute,
   Event,
   ExternalRoute,
   PageManifest,
@@ -52,6 +53,7 @@ export const renderRoute = async (
       );
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
+    } else if (route.isApi) {
     } else {
       await Promise.race([page.render(req, res), event.responsePromise]);
     }
@@ -98,6 +100,7 @@ export const handleDefault = async (
   if (route.isRedirect) {
     return redirect(event, route as RedirectRoute);
   }
+
   if (route.isRender) {
     return renderRoute(
       event,
@@ -107,6 +110,14 @@ export const handleDefault = async (
       getPage
     );
   }
+
+  if (route.isApi) {
+    const { page } = route as ApiRoute;
+    setCustomHeaders(event, routesManifest);
+    getPage(page).default(event.req, event.res);
+    return;
+  }
+
   if (route.isUnauthorized) {
     return unauthorized(event, route as UnauthorizedRoute);
   }

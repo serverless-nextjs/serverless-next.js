@@ -38,15 +38,14 @@ const filterNonDynamic = (
 };
 
 /*
- * Keeps only requires SSR pages.
+ * Keeps only required SSR pages.
  */
 export const usedSSR = (
   manifest: PageManifest,
-  routesManifest: RoutesManifest,
-  hasApi: boolean
+  routesManifest: RoutesManifest
 ) => {
-  // Preview mode means everything has to be kept
-  if (hasApi) {
+  // If there are API pages, preview mode is possible meaning everything has to be kept
+  if (manifest.hasApiPages) {
     return manifest.pages.ssr;
   }
 
