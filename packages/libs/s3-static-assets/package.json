@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/s3-static-assets",
-  "version": "3.4.0-alpha.6",
+  "version": "3.4.0-alpha.7",
   "description": "Handles upload to S3 of next.js static assets",
   "publishConfig": {
     "access": "public"

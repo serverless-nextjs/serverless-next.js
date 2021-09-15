@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.6...v3.4.0-alpha.7) (2021-09-15)
+
+**Note:** Version bump only for package @sls-next/s3-static-assets
+
 # [3.4.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.5...v3.4.0-alpha.6) (2021-09-13)
 
 **Note:** Version bump only for package @sls-next/s3-static-assets
