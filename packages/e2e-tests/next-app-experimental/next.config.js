@@ -150,6 +150,14 @@ module.exports = {
       {
         source: "/no-op-rewrite",
         destination: "/ssr-page"
+      },
+      {
+        source: "/cross-rewrite",
+        destination: "/api/basic-api"
+      },
+      {
+        source: "/api/cross-rewrite",
+        destination: "/ssr-page"
       }
     ];
   },

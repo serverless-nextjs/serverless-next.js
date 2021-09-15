@@ -75,6 +75,18 @@ describe("Rewrites Tests", () => {
         path: "/no-op-rewrite",
         expectedRewrite: "/ssr-page",
         expectedStatus: 200
+      },
+      {
+        // rewrite from pages -> api
+        path: "/cross-rewrite",
+        expectedRewrite: "/api/basic-api",
+        expectedStatus: 200
+      },
+      {
+        // rewrite from api -> pages
+        path: "/api/cross-rewrite",
+        expectedRewrite: "/ssr-page",
+        expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, expectedStatus }) => {
       it(`rewrites path ${path} to ${expectedRewrite}`, () => {

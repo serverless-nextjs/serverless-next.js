@@ -106,6 +106,7 @@ export type PageManifest = Manifest & {
     [key: string]: string;
   };
   trailingSlash: boolean;
+  hasApiPages: boolean;
 };
 
 export type HeaderData = {
@@ -217,4 +218,5 @@ export type Route =
   | RedirectRoute
   | RenderRoute
   | StaticRoute
+  | ApiRoute
   | UnauthorizedRoute;

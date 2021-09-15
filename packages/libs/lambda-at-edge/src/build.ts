@@ -304,10 +304,6 @@ class Builder {
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         buildManifest
       ),
-      fse.writeJson(
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "api-manifest.json"),
-        apiBuildManifest
-      ),
       fse.copy(
         join(this.serverlessDir, "pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
