@@ -3457,7 +3457,7 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "3.4.0-alpha.6"
+  version "3.4.0-alpha.8"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -3467,7 +3467,7 @@
     regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     "@aws-sdk/client-s3" "^3.31.0"
     "@aws-sdk/client-sqs" "^3.31.0"
@@ -3674,10 +3674,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/lodash@^4.14.123", "@types/lodash@^4.14.172":
-  version "4.14.172"
-  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.172.tgz#aad774c28e7bfd7a67de25408e03ee5a8c3d028a"
-  integrity sha512-/BHF5HAx3em7/KkzVKm3LrsD6HZAXuXO1AJZQ3cRRBZj4oHZDviWPYu0aEplAqDFNHZPW6d3G7KN+ONcCCC7pw==
+"@types/lodash@^4.14.123", "@types/lodash@^4.14.173":
+  version "4.14.173"
+  resolved "https://registry.npmjs.org/@types/lodash/-/lodash-4.14.173.tgz#9d3b674c67a26cf673756f6aca7b429f237f91ed"
+  integrity sha512-vv0CAYoaEjCw/mLy96GBTnRoZrSxkGE0BKzKimdR8P3OzrNYNvBgtW7p055A+E8C31vXNUhWKoFCbhq7gbyhFg==
 
 "@types/long@^4.0.1":
   version "4.0.1"
