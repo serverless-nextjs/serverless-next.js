@@ -157,10 +157,10 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.12.0":
-  version "5.12.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.12.0.tgz#dfbbea8037130d864f49280c943fe60c63f9a910"
-  integrity sha512-C0KX/QI0ezLuM8oUrMYWUzYlQWdKJ1G1Zqk8gZC03eEu4p4zDZvbJNneEOyPRUTeu8E9hYkpCv9URUAcsUpt6w==
+"@serverless/utils@^5.13.0":
+  version "5.13.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.13.0.tgz#6a9d54d28f85ce41c6bc558cb4c104543c7f0d14"
+  integrity sha512-fsE+i/I9gBWbb7xed+OBnVNhXne2ti3fT/Ck6a87UldKgsoVGizY/j65B8SW7JMHijDX1OdFBUIpnP7uWFefhQ==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
