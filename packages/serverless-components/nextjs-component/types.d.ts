@@ -89,6 +89,7 @@ export type BuildOptions = {
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
   separateApiLambda?: boolean;
+  deprecateOriginResponseHandler?: boolean;
 };
 
 export type LambdaType =

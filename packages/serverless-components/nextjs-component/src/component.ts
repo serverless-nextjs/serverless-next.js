@@ -255,7 +255,9 @@ class NextjsComponent extends Component {
           cleanupDotNext: buildConfig.cleanupDotNext,
           assetIgnorePatterns: buildConfig.assetIgnorePatterns,
           regenerationQueueName: inputs.sqs?.name,
-          separateApiLambda: buildConfig.separateApiLambda ?? true
+          separateApiLambda: buildConfig.separateApiLambda ?? true,
+          deprecateOriginResponseHandler:
+            buildConfig.deprecateOriginResponseHandler ?? false
         },
         nextStaticPath
       );
@@ -804,7 +806,9 @@ class NextjsComponent extends Component {
         queryString: true
       },
       "lambda@edge": {
-        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": buildOptions.deprecateOriginResponseHandler
+          ? undefined
+          : `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
         "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
       }
     };
@@ -926,7 +930,9 @@ class NextjsComponent extends Component {
         "lambda@edge": {
           ...defaultLambdaAtEdgeConfig,
           "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-          "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          "origin-response": buildOptions.deprecateOriginResponseHandler
+            ? undefined
+            : `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
         },
         compress: true
       },

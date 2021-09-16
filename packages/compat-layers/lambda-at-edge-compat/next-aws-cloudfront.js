@@ -109,16 +109,20 @@ const toCloudFrontHeaders = (headers, headerNames, originalHeaders) => {
 
     if (headerValue instanceof Array) {
       headerValue.forEach((val) => {
-        result[headerKey].push({
-          key: headerName,
-          value: val.toString()
-        });
+        if (val) {
+          result[headerKey].push({
+            key: headerName,
+            value: val.toString()
+          });
+        }
       });
     } else {
-      result[headerKey].push({
-        key: headerName,
-        value: headerValue.toString()
-      });
+      if (headerValue) {
+        result[headerKey].push({
+          key: headerName,
+          value: headerValue.toString()
+        });
+      }
     }
   });
 

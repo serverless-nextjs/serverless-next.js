@@ -14,6 +14,7 @@ export type OriginRequestDefaultHandlerManifest = PageManifest & {
   logLambdaExecutionTimes?: boolean;
   enableHTTPCompression?: boolean;
   regenerationQueueName?: string;
+  deprecateOriginResponseHandler?: boolean;
 };
 
 export type OriginRequestImageHandlerManifest = {
