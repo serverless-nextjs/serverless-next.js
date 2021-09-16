@@ -559,13 +559,21 @@ const renderStaticPage = async ({
     Key: s3Key
   };
 
-  const s3Response = await s3.send(new GetObjectCommand(s3Params));
-  const bodyString = await getStream.default(s3Response.Body as Readable);
-  const s3StatusCode = s3Response.$metadata.httpStatusCode;
+  let s3StatusCode;
+  let bodyString;
+  let s3Response;
+
+  try {
+    s3Response = await s3.send(new GetObjectCommand(s3Params));
+    bodyString = await getStream.default(s3Response.Body as Readable);
+    s3StatusCode = s3Response.$metadata.httpStatusCode;
+  } catch (e: any) {
+    s3StatusCode = e.statusCode;
+  }
 
   // These statuses are returned when S3 does not have access to the page.
   // 404 will also be returned if CloudFront has permissions to list objects.
-  if (s3StatusCode !== 403 && s3StatusCode !== 404) {
+  if (s3Response && s3StatusCode !== 403 && s3StatusCode !== 404) {
     let cacheControl = s3Response.CacheControl;
 
     // If these are error pages, then just return them
