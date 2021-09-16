@@ -141,7 +141,7 @@ const staticRequest = async (
     );
 
     const bucketName = s3BucketNameFromEventRequest(request) ?? "";
-    const s3Key = path.slice(1) + file; // need to remove leading slash from path for s3 key
+    const s3Key = (path + file).slice(1); // need to remove leading slash from path for s3 key
 
     return await renderStaticPage({
       route: route,
@@ -525,12 +525,16 @@ const renderStaticPage = async ({
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode;
 
-  // For PUT, DELETE, PATCH, POST just return a 405 response as these are unsupported S3 methods
+  // For PUT, DELETE, PATCH, POST, OPTIONS just return a 405 response as these are unsupported S3 methods
+  // when using CloudFront S3 origin to return the page, so we keep it in parity.
+  // TODO: now that we are directly calling S3 in the origin request handler,
+  //  we could implement OPTIONS method as well.
   if (
     request.method === "PUT" ||
     request.method === "DELETE" ||
     request.method === "PATCH" ||
-    request.method === "POST"
+    request.method === "POST" ||
+    request.method === "OPTIONS"
   ) {
     res.writeHead(405);
     res.end();
@@ -554,8 +558,6 @@ const renderStaticPage = async ({
     Bucket: bucketName,
     Key: s3Key
   };
-
-  console.log(JSON.stringify(s3Params));
 
   const s3Response = await s3.send(new GetObjectCommand(s3Params));
   const bodyString = await getStream.default(s3Response.Body as Readable);
