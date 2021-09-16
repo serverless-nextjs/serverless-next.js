@@ -42,7 +42,7 @@ export const renderStaticPage = async ({
   s3Key: string;
   s3Uri: string;
   basePath: string;
-}) => {
+}): Promise<CloudFrontResultResponse> => {
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;
 
