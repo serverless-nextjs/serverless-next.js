@@ -96,7 +96,8 @@
       "babel.config.js",
       "jest.config.js",
       "<rootDir>/packages/serverless-components/aws-s3",
-      "<rootDir>/packages/libs/serverless-patched"
+      "<rootDir>/packages/libs/serverless-patched",
+      "<rootDir>/packages/libs/lambda-at-edge/src/render/renderStaticPage.ts"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",
