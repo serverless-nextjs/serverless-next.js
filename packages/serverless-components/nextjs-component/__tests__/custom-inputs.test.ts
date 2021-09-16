@@ -608,19 +608,19 @@ describe("Custom inputs", () => {
     // ignore custom lambda@edge origin-request trigger set on the api cache behaviour
     [
       {
-        "api/*": {
+        "api/preview": {
           minTTL: 500,
           defaultTTL: 500,
           maxTTL: 500,
           "lambda@edge": { "origin-request": "ignored value" }
         }
       },
-      { "api/*": { minTTL: 500, defaultTTL: 500, maxTTL: 500 } }
+      { "api/preview": { minTTL: 500, defaultTTL: 500, maxTTL: 500 } }
     ],
     // allow other lambda@edge triggers on the api cache behaviour
     [
       {
-        "api/*": {
+        "api/preview": {
           minTTL: 500,
           defaultTTL: 500,
           maxTTL: 500,
@@ -628,7 +628,7 @@ describe("Custom inputs", () => {
         }
       },
       {
-        "api/*": {
+        "api/preview": {
           minTTL: 500,
           defaultTTL: 500,
           maxTTL: 500,
@@ -724,7 +724,7 @@ describe("Custom inputs", () => {
     };
 
     const expectedApiCacheBehaviour = {
-      ...expectedInConfig["api/*"],
+      ...expectedInConfig["api/preview"],
       allowedHttpMethods: [
         "HEAD",
         "DELETE",
@@ -735,8 +735,8 @@ describe("Custom inputs", () => {
         "PATCH"
       ],
       "lambda@edge": {
-        ...(expectedInConfig["api/*"] &&
-          expectedInConfig["api/*"]["lambda@edge"]),
+        ...(expectedInConfig["api/preview"] &&
+          expectedInConfig["api/preview"]["lambda@edge"]),
         "origin-request":
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
       }
@@ -803,7 +803,7 @@ describe("Custom inputs", () => {
                   "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
               }
             },
-            "api/*": {
+            "api/preview": {
               minTTL: 0,
               defaultTTL: 0,
               maxTTL: 31536000,
@@ -903,10 +903,10 @@ describe("Custom inputs", () => {
   );
 
   describe.each`
-    cloudFrontInput                                                  | pathName
-    ${{ api: { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}        | ${"api"}
-    ${{ "api/test": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }} | ${"api/test"}
-    ${{ "api/*": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}    | ${"api/*"}
+    cloudFrontInput                                                     | pathName
+    ${{ api: { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}           | ${"api"}
+    ${{ "api/test": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }}    | ${"api/test"}
+    ${{ "api/preview": { minTTL: 100, maxTTL: 100, defaultTTL: 100 } }} | ${"api/preview"}
   `("API cloudfront inputs", ({ cloudFrontInput, pathName }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
     let tmpCwd: string;
@@ -937,8 +937,8 @@ describe("Custom inputs", () => {
           "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
       };
 
-      // If path is api/*, then it has allowed HTTP methods by default
-      if (pathName === "api/*") {
+      // If path is api/preview, then it has allowed HTTP methods by default
+      if (pathName === "api/preview") {
         cloudFrontInput[pathName]["allowedHttpMethods"] = [
           "HEAD",
           "DELETE",
@@ -976,7 +976,7 @@ describe("Custom inputs", () => {
                 maxTTL: 31536000,
                 minTTL: 0
               },
-              "api/*": {
+              "api/preview": {
                 allowedHttpMethods: [
                   "HEAD",
                   "DELETE",
@@ -1210,17 +1210,17 @@ describe("Custom inputs", () => {
         }
       });
       expect(mockCreateInvalidation).toBeCalledWith(
-        expect.objectContaining({ paths: pathsConfig })
+        expect.objectContaining({ paths: ["/*"] })
       );
     });
 
-    it("skips invalidation", async () => {
+    it("default invalidation", async () => {
       await createNextComponent().default({
         cloudfront: {
           paths: []
         }
       });
-      expect(mockCreateInvalidation).not.toBeCalled();
+      expect(mockCreateInvalidation).toBeCalledTimes(1);
     });
   });
 });

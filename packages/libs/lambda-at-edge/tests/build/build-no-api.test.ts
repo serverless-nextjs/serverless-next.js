@@ -183,7 +183,8 @@ describe("Builder Tests (no API routes)", () => {
       // JS files used only for prerendering at build time (contact.js, index.js) are not included since there are no API routes
       expect(pages).not.toContain(["contact.js", "index.js"]);
 
-      expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
+      // add index js to render landing page
+      expect(pages).toEqual(["_error.js", "blog.js", "customers", "index.js"]);
       expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
     });
   });

@@ -65,7 +65,7 @@ describe("Image lambda handler", () => {
           "cache-control": [
             {
               key: "cache-control",
-              value: "public, max-age=60, s-maxage=2678400, immutable"
+              value: "public, max-age=31536000, immutable"
             }
           ],
           etag: [
@@ -121,7 +121,7 @@ describe("Image lambda handler", () => {
           "cache-control": [
             {
               key: "cache-control",
-              value: "public, max-age=60, s-maxage=2678400, immutable"
+              value: "public, max-age=31536000, immutable"
             }
           ],
           etag: [
