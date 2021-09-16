@@ -256,8 +256,8 @@ class NextjsComponent extends Component {
           assetIgnorePatterns: buildConfig.assetIgnorePatterns,
           regenerationQueueName: inputs.sqs?.name,
           separateApiLambda: buildConfig.separateApiLambda ?? true,
-          deprecateOriginResponseHandler:
-            buildConfig.deprecateOriginResponseHandler ?? false
+          disableOriginResponseHandler:
+            buildConfig.disableOriginResponseHandler ?? false
         },
         nextStaticPath
       );
@@ -805,7 +805,7 @@ class NextjsComponent extends Component {
         headers: ["Authorization", "Host"],
         queryString: true
       },
-      "lambda@edge": buildOptions.deprecateOriginResponseHandler
+      "lambda@edge": buildOptions.disableOriginResponseHandler
         ? {
             "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
           }
@@ -929,7 +929,7 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
-        "lambda@edge": buildOptions.deprecateOriginResponseHandler
+        "lambda@edge": buildOptions.disableOriginResponseHandler
           ? {
               ...defaultLambdaAtEdgeConfig,
               "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`

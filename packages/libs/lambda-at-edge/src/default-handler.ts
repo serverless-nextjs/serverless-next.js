@@ -132,7 +132,7 @@ const staticRequest = async (
   routesManifest: RoutesManifest
 ) => {
   const request = event.Records[0].cf.request;
-  if (manifest.deprecateOriginResponseHandler) {
+  if (manifest.disableOriginResponseHandler) {
     const { req, res, responsePromise } = lambdaAtEdgeCompat(
       event.Records[0].cf,
       {
