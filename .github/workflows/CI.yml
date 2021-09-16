@@ -34,3 +34,4 @@ jobs:
       - run: yarn --frozen-lockfile
       - run: yarn test
       - run: yarn integration
+      - run: yarn install
