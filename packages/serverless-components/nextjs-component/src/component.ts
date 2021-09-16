@@ -805,12 +805,14 @@ class NextjsComponent extends Component {
         headers: ["Authorization", "Host"],
         queryString: true
       },
-      "lambda@edge": {
-        "origin-response": buildOptions.deprecateOriginResponseHandler
-          ? undefined
-          : `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-      }
+      "lambda@edge": buildOptions.deprecateOriginResponseHandler
+        ? {
+            "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          }
+        : {
+            "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+            "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          }
     };
 
     // If we are using consolidated API pages (within default lambda), we need to ensure api/* behavior is set correctly.
@@ -927,13 +929,16 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
-        "lambda@edge": {
-          ...defaultLambdaAtEdgeConfig,
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-          "origin-response": buildOptions.deprecateOriginResponseHandler
-            ? undefined
-            : `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-        },
+        "lambda@edge": buildOptions.deprecateOriginResponseHandler
+          ? {
+              ...defaultLambdaAtEdgeConfig,
+              "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+            }
+          : {
+              ...defaultLambdaAtEdgeConfig,
+              "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+              "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+            },
         compress: true
       },
       origins: cloudFrontOrigins,
