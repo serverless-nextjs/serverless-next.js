@@ -1536,14 +1536,15 @@
   dependencies:
     "@types/node" "*"
 
-"@vercel/nft@^0.13.1":
-  version "0.13.1"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.13.1.tgz#98df07e04620069ba63fff92af490c5842a2f31f"
-  integrity sha512-7pBTfSkwhhcPAeGVsFml5YX7LCZgtocP+zTAknnRK2u/RsV3GGqOD5yw7CtbgTpfjY8NfXWzwoxF1zOUEVsbww==
+"@vercel/nft@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.14.0.tgz#e9a6c33508881837ede68d59763fa1dc9fab7cbb"
+  integrity sha512-E3fVM+/ZygEs4AS9Wyx/ZyzpvjGMs20E0IfuqGgixUIj0Xnebl0260WqVvKLVuw/Z9oK4ZwoC+n/6JIMWivpfw==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
     acorn-class-fields "^1.0.0"
+    acorn-private-class-elements "^1.0.0"
     acorn-static-class-features "^1.0.0"
     bindings "^1.4.0"
     estree-walker "^0.6.1"
@@ -2781,12 +2782,7 @@ globby@^10.0.1:
     merge2 "^1.2.3"
     slash "^3.0.0"
 
-graceful-fs@^4.1.15, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.2, graceful-fs@^4.2.4:
-  version "4.2.6"
-  resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.6.tgz#ff040b2b0853b23c3d31027523706f1885d76bee"
-  integrity sha512-nTnJ528pbqxYanhpDYsi4Rd8MAeaBA67+RZ10CM1m3bTAVFEDcd5AuA4a6W5YkGZ1iNXHzZz8T6TBKLeBuNriQ==
-
-graceful-fs@^4.1.2:
+graceful-fs@^4.1.15, graceful-fs@^4.1.2, graceful-fs@^4.1.6, graceful-fs@^4.1.9, graceful-fs@^4.2.0, graceful-fs@^4.2.2, graceful-fs@^4.2.4:
   version "4.2.8"
   resolved "https://registry.npmjs.org/graceful-fs/-/graceful-fs-4.2.8.tgz#e412b8d33f5e006593cbd3cee6df9f2cebbe802a"
   integrity sha512-qkIilPUYcNhJpd33n0GBXTB1MMPp14TxEsEs0pTrsSVucApsYzW5V+Q8Qxhik6KU3evy+qkAAowTByymK0avdg==

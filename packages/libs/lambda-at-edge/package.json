@@ -72,7 +72,7 @@
     "@aws-sdk/client-sqs": "^3.31.0",
     "@hapi/accept": "^5.0.2",
     "@sls-next/core": "link:../core",
-    "@vercel/nft": "^0.13.1",
+    "@vercel/nft": "^0.14.0",
     "execa": "^5.0.1",
     "fast-glob": "^3.2.7",
     "fresh": "^0.5.2",
