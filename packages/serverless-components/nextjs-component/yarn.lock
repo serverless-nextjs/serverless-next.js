@@ -1078,14 +1078,14 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     "@serverless/core" "^1.1.2"
     aws-sdk "^2.989.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     "@serverless/aws-iam-role" "^1.0.0"
     "@serverless/aws-lambda-layer" "^1.0.0"
@@ -1099,7 +1099,7 @@
     ramda "^0.27.0"
 
 "@sls-next/aws-s3@link:../aws-s3":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
@@ -1118,12 +1118,12 @@
     lodash "^4.17.21"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     aws-sdk "^2.989.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "3.4.0-alpha.6"
+  version "3.4.0-alpha.8"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -1136,7 +1136,7 @@
   version "3.2.0"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     "@aws-sdk/client-s3" "^3.31.0"
     "@aws-sdk/client-sqs" "^3.31.0"
@@ -1158,7 +1158,7 @@
   version "3.3.0"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "3.4.0-alpha.7"
+  version "3.4.0-alpha.8"
   dependencies:
     aws-sdk "^2.989.0"
     fast-glob "^3.2.5"
@@ -5437,10 +5437,10 @@ webpack-sources@^3.2.0:
   resolved "https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.2.0.tgz#b16973bcf844ebcdb3afde32eda1c04d0b90f89d"
   integrity sha512-fahN08Et7P9trej8xz/Z7eRu8ltyiygEo/hnRi9KqBUs80KeDcnf96ZJo++ewWd84fEf3xSX9bp4ZS9hbw0OBw==
 
-webpack@^5.52.1:
-  version "5.52.1"
-  resolved "https://registry.npmjs.org/webpack/-/webpack-5.52.1.tgz#2dc1d9029ecb7acfb80da7bf67baab67baa517a7"
-  integrity sha512-wkGb0hLfrS7ML3n2xIKfUIwHbjB6gxwQHyLmVHoAqEQBw+nWo+G6LoHL098FEXqahqximsntjBLuewStrnJk0g==
+webpack@^5.53.0:
+  version "5.53.0"
+  resolved "https://registry.npmjs.org/webpack/-/webpack-5.53.0.tgz#f463cd9c6fc1356ae4b9b7ac911fd1f5b2df86af"
+  integrity sha512-RZ1Z3z3ni44snoWjfWeHFyzvd9HMVYDYC5VXmlYUT6NWgEOWdCNpad5Fve2CzzHoRED7WtsKe+FCyP5Vk4pWiQ==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.50"
