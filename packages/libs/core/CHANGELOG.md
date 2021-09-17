@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.8...v3.4.0-alpha.9) (2021-09-17)
+
+### Features
+
+- **core, lambda-at-edge, nextjs-component:** experimental - allow serving static pages/data from origin request handler only (and disable origin response handler) ([#1696](https://github.com/serverless-nextjs/serverless-next.js/issues/1696)) ([7fcdc7f](https://github.com/serverless-nextjs/serverless-next.js/commit/7fcdc7fd4970402c7f19e09a7fa90d22a82804e4))
+
 # [3.4.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.7...v3.4.0-alpha.8) (2021-09-15)
 
 ### Features
