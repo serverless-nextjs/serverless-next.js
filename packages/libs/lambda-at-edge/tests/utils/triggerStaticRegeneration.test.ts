@@ -23,11 +23,8 @@ describe("triggerStaticRegeneration()", () => {
         }
       }
     } as AWSLambda.CloudFrontRequest,
-    response: {
-      headers: { etag: [{ key: "Etag", value: "123" }] },
-      status: "200",
-      statusDescription: "ok"
-    } as AWSLambda.CloudFrontResponse,
+    eTag: "123",
+    lastModified: "1",
     queueName: "my-bucket.fifo",
     pagePath: "/"
   };
@@ -99,13 +96,8 @@ describe("triggerStaticRegeneration()", () => {
       mockSQSClient.mockImplementationOnce(() => ({ send: jest.fn() }));
       const staticRegeneratedResponse = await triggerStaticRegeneration({
         ...options,
-        response: {
-          ...options.response,
-          headers: {
-            ["last-modified"]: [{ key: "Last-Modified", value: lastModified }],
-            ["etag"]: [{ key: "etag", value: etag }]
-          }
-        }
+        eTag: etag,
+        lastModified: lastModified
       });
       expect(staticRegeneratedResponse.throttle).toBe(false);
       expect(mockSendMessageCommand).toHaveBeenCalledWith({

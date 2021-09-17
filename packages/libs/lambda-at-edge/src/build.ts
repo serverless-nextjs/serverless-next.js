@@ -50,6 +50,7 @@ type BuildOptions = {
   assetIgnorePatterns?: string[];
   regenerationQueueName?: string;
   separateApiLambda?: boolean;
+  disableOriginResponseHandler?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -767,7 +768,8 @@ class Builder {
     const {
       enableHTTPCompression,
       logLambdaExecutionTimes,
-      regenerationQueueName
+      regenerationQueueName,
+      disableOriginResponseHandler
     } = this.buildOptions;
 
     const apiBuildManifest = {
@@ -778,7 +780,8 @@ class Builder {
       ...pageManifest,
       enableHTTPCompression,
       logLambdaExecutionTimes,
-      regenerationQueueName
+      regenerationQueueName,
+      disableOriginResponseHandler
     };
     const imageBuildManifest = {
       ...imageManifest,

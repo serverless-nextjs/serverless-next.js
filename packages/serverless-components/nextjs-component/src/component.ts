@@ -255,7 +255,9 @@ class NextjsComponent extends Component {
           cleanupDotNext: buildConfig.cleanupDotNext,
           assetIgnorePatterns: buildConfig.assetIgnorePatterns,
           regenerationQueueName: inputs.sqs?.name,
-          separateApiLambda: buildConfig.separateApiLambda ?? true
+          separateApiLambda: buildConfig.separateApiLambda ?? true,
+          disableOriginResponseHandler:
+            buildConfig.disableOriginResponseHandler ?? false
         },
         nextStaticPath
       );
@@ -803,10 +805,14 @@ class NextjsComponent extends Component {
         headers: ["Authorization", "Host"],
         queryString: true
       },
-      "lambda@edge": {
-        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-      }
+      "lambda@edge": buildOptions.disableOriginResponseHandler
+        ? {
+            "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          }
+        : {
+            "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+            "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+          }
     };
 
     // If we are using consolidated API pages (within default lambda), we need to ensure api/* behavior is set correctly.
@@ -923,11 +929,16 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
-        "lambda@edge": {
-          ...defaultLambdaAtEdgeConfig,
-          "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-          "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-        },
+        "lambda@edge": buildOptions.disableOriginResponseHandler
+          ? {
+              ...defaultLambdaAtEdgeConfig,
+              "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+            }
+          : {
+              ...defaultLambdaAtEdgeConfig,
+              "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+              "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+            },
         compress: true
       },
       origins: cloudFrontOrigins,

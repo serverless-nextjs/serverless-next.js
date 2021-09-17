@@ -8,6 +8,7 @@ export type BuildOptions = {
     [key: string]: string;
   };
   separateApiLambda?: boolean;
+  disableOriginResponseHandler?: boolean;
 };
 
 export type NextConfig = {

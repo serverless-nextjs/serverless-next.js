@@ -4,7 +4,8 @@ import * as crypto from "crypto";
 
 interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
-  response: AWSLambda.CloudFrontResponse;
+  eTag: string | undefined;
+  lastModified: string | undefined;
   basePath: string | undefined;
   pagePath: string;
   queueName: string;
@@ -55,10 +56,10 @@ export const triggerStaticRegeneration = async (
         // update. This will prevent the case where this page is being
         // requested again whilst its already started to regenerate.
         MessageDeduplicationId:
-          options.response.headers["etag"]?.[0].value ||
-          new Date(options.response.headers["last-modified"]?.[0].value)
-            .getTime()
-            .toString(),
+          options.eTag ??
+          (options.lastModified
+            ? new Date(options.lastModified).getTime().toString()
+            : new Date().getTime().toString()),
         // Only deduplicate based on the object, i.e. we can generate
         // different pages in parallel, just not the same one
         MessageGroupId: hashedUri

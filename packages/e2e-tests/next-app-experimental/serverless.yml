@@ -6,6 +6,7 @@ next-app-experimental:
         foo: bar
     build:
       separateApiLambda: false
+      disableOriginResponseHandler: true
       postBuildCommands: ["node scripts/post-build-test.js"]
       assetIgnorePatterns:
         - "**/public/ignored.txt"

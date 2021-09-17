@@ -6,6 +6,7 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 // @ts-ignore
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
+import { renderStaticPage } from "./render/renderStaticPage";
 import {
   ExternalRoute,
   getCustomHeaders,
@@ -15,6 +16,7 @@ import {
   handleFallback,
   handlePublicFiles,
   PublicFileRoute,
+  Route,
   routeDefault,
   StaticRoute
 } from "@sls-next/core";
@@ -122,18 +124,48 @@ export const handler = async (
   return response;
 };
 
-const staticRequest = (
-  request: CloudFrontRequest,
+const staticRequest = async (
+  event: OriginRequestEvent,
   file: string,
-  path: string
+  path: string,
+  route: Route,
+  manifest: OriginRequestDefaultHandlerManifest,
+  routesManifest: RoutesManifest
 ) => {
-  const s3Origin = request.origin?.s3 as CloudFrontS3Origin;
-  const s3Domain = normaliseS3OriginDomain(s3Origin);
-  s3Origin.domainName = s3Domain;
-  s3Origin.path = path;
-  request.uri = file;
-  addS3HostHeader(request, s3Domain);
-  return request;
+  const request = event.Records[0].cf.request;
+  if (manifest.disableOriginResponseHandler) {
+    const { req, res, responsePromise } = lambdaAtEdgeCompat(
+      event.Records[0].cf,
+      {
+        enableHTTPCompression: manifest.enableHTTPCompression
+      }
+    );
+
+    const bucketName = s3BucketNameFromEventRequest(request) ?? "";
+    const s3Key = (path + file).slice(1); // need to remove leading slash from path for s3 key
+
+    return await renderStaticPage({
+      route: route,
+      request: request,
+      req: req,
+      res: res,
+      responsePromise: responsePromise,
+      manifest: manifest,
+      routesManifest: routesManifest,
+      bucketName: bucketName,
+      s3Key: s3Key,
+      s3Uri: file,
+      basePath: basePath
+    });
+  } else {
+    const s3Origin = request.origin?.s3 as CloudFrontS3Origin;
+    const s3Domain = normaliseS3OriginDomain(s3Origin);
+    s3Origin.domainName = s3Domain;
+    s3Origin.path = path;
+    request.uri = file;
+    addS3HostHeader(request, s3Domain);
+    return request;
+  }
 };
 
 const reconstructOriginalRequestUri = (
@@ -205,7 +237,14 @@ const handleOriginRequest = async ({
 
   if (route.isPublicFile) {
     const { file } = route as PublicFileRoute;
-    return staticRequest(request, file, `${routesManifest.basePath}/public`);
+    return await staticRequest(
+      event,
+      file,
+      `${routesManifest.basePath}/public`,
+      route,
+      manifest,
+      routesManifest
+    );
   }
   if (route.isStatic) {
     const { file, isData } = route as StaticRoute;
@@ -214,7 +253,14 @@ const handleOriginRequest = async ({
       : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
 
     const relativeFile = isData ? file : file.slice("pages".length);
-    return staticRequest(request, relativeFile, path);
+    return await staticRequest(
+      event,
+      relativeFile,
+      path,
+      route,
+      manifest,
+      routesManifest
+    );
   }
 
   const external: ExternalRoute = route;
@@ -311,7 +357,8 @@ const handleOriginResponse = async ({
         const { throttle } = await triggerStaticRegeneration({
           basePath,
           request,
-          response,
+          eTag: response.headers["etag"]?.[0].value,
+          lastModified: response.headers["etag"]?.[0].value,
           pagePath: staticRoute.page,
           queueName: regenerationQueueName
         });
