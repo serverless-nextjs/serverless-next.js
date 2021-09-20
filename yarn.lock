@@ -3457,7 +3457,7 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/core@link:packages/libs/core":
-  version "3.4.0-alpha.8"
+  version "3.4.0-alpha.9"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -3467,13 +3467,13 @@
     regex-parser "^2.2.10"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "3.4.0-alpha.8"
+  version "3.4.0-alpha.9"
   dependencies:
     "@aws-sdk/client-s3" "^3.31.0"
     "@aws-sdk/client-sqs" "^3.31.0"
     "@hapi/accept" "^5.0.2"
     "@sls-next/core" "link:packages/libs/core"
-    "@vercel/nft" "^0.13.1"
+    "@vercel/nft" "^0.14.0"
     execa "^5.0.1"
     fast-glob "^3.2.7"
     fresh "^0.5.2"
@@ -3486,7 +3486,7 @@
     send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "3.3.0"
+  version "3.4.0-alpha.9"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -3854,14 +3854,15 @@
     "@typescript-eslint/types" "4.31.1"
     eslint-visitor-keys "^2.0.0"
 
-"@vercel/nft@^0.13.1":
-  version "0.13.1"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.13.1.tgz#98df07e04620069ba63fff92af490c5842a2f31f"
-  integrity sha512-7pBTfSkwhhcPAeGVsFml5YX7LCZgtocP+zTAknnRK2u/RsV3GGqOD5yw7CtbgTpfjY8NfXWzwoxF1zOUEVsbww==
+"@vercel/nft@^0.14.0":
+  version "0.14.0"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.14.0.tgz#e9a6c33508881837ede68d59763fa1dc9fab7cbb"
+  integrity sha512-E3fVM+/ZygEs4AS9Wyx/ZyzpvjGMs20E0IfuqGgixUIj0Xnebl0260WqVvKLVuw/Z9oK4ZwoC+n/6JIMWivpfw==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
     acorn-class-fields "^1.0.0"
+    acorn-private-class-elements "^1.0.0"
     acorn-static-class-features "^1.0.0"
     bindings "^1.4.0"
     estree-walker "^0.6.1"
@@ -4403,10 +4404,10 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.988.0, aws-sdk@^2.990.0:
-  version "2.990.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.990.0.tgz#7ff0bbc5fe487b02feb831e192bc6610b3272424"
-  integrity sha512-VeXibY45QqI8vuT2YOK3PyV3ZvXQUUY6Lz8XZjuKW4JDVgU1PK6OY8w9QccOEwE2Y0dlM/K05cgvRWeJH8AeLg==
+aws-sdk@^2.988.0, aws-sdk@^2.991.0:
+  version "2.991.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.991.0.tgz#ba858c65cb71e1eeea39523463cf5ef258a73e8f"
+  integrity sha512-TybluMJhRBZ0h5HGupHPTfamwtsJlW56HddJpMbsIjvmh4LGupajrkEwLQYW7osFXQ1S/xuE+0QIy6vWgOpT0g==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
