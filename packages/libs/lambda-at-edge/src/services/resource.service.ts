@@ -12,6 +12,8 @@ import {
 } from "./resource";
 import { debug } from "../lib/console";
 
+const _ = require("lodash");
+
 export class ResourceService {
   constructor(
     private readonly manifest: Manifest,
