@@ -7,11 +7,12 @@ import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
 import { debug, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
-import isEqual from "lodash/isEqual";
-import isEmpty from "lodash/isEmpty";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
+
+const isEqual = require("lodash.isequal");
+const isEmpty = require("lodash.isempty");
 
 export class RevalidateHandler {
   constructor(
