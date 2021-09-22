@@ -29,9 +29,10 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         "passthrough"
       );
 
+      const normalizedUri = regenerationEvent.pageS3Path.replace(`static-pages/${manifest.buildId}`,'')
       await s3StorePage({
         html,
-        uri: regenerationEvent.cloudFrontEventRequest.uri,
+        uri: normalizedUri,
         basePath: regenerationEvent.basePath,
         bucketName: regenerationEvent.bucketName,
         buildId: manifest.buildId,

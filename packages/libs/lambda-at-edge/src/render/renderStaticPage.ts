@@ -128,6 +128,7 @@ export const renderStaticPage = async ({
           const { throttle } = await triggerStaticRegeneration({
             basePath,
             request,
+            pageS3Path: s3Key,
             eTag: s3Response.ETag,
             lastModified: s3Response.LastModified?.getTime().toString(),
             pagePath: staticRoute.page,
