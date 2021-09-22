@@ -11,8 +11,8 @@ import { Resource, ResourceForIndexPage } from "../services/resource";
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
 
-const isEqual = require("lodash.isequal");
-const isEmpty = require("lodash.isempty");
+const _ = require("../lib/lodash.min");
+console.log(_.isEmpty("f"));
 
 export class RevalidateHandler {
   constructor(
