@@ -10,6 +10,9 @@ import { debug, isDevMode } from "../lib/console";
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
 
+const _ = require("../lib/lodash.min");
+console.log(_.isEmpty("f"));
+
 export class RevalidateHandler {
   constructor(
     private resourceService: ResourceService,
