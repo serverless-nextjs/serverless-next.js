@@ -42,7 +42,7 @@
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/jsonwebtoken": "^8.5.5",
-    "@types/react": "^17.0.21",
+    "@types/react": "^17.0.24",
     "@types/react-dom": "^17.0.9",
     "@types/zen-observable": "^0.8.3",
     "rimraf": "^3.0.2",
