@@ -4,6 +4,7 @@ import {
   HeadObjectCommand,
   HeadObjectCommandOutput
 } from "@aws-sdk/client-s3";
+import { GetObjectCommand } from "@aws-sdk/client-s3/commands/GetObjectCommand";
 
 interface S3ServiceOptions {
   bucketName?: string;
@@ -70,5 +71,39 @@ export class S3Service {
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       })
     );
+  }
+
+  public async getObject(key: string): Promise<any> {
+    if (!this.options.bucketName) {
+      throw new Error("Bucket name not configured");
+    }
+
+    const data = new Promise(async (resolve, reject) => {
+      const getObjectCommand = new GetObjectCommand({
+        Key: key,
+        Bucket: this.options.bucketName
+      });
+
+      try {
+        const response = await this.client.send(getObjectCommand);
+
+        // Store all of data chunks returned from the response data stream
+        // into an array then use Array#join() to use the returned contents as a String
+        let responseDataChunks: any[] = [];
+
+        // Attach a 'data' listener to add the chunks of data to our array
+        // Each chunk is a Buffer instance
+        // @ts-ignore
+        response.Body.on("data", (chunk) => responseDataChunks.push(chunk));
+
+        // Once the stream has no more data, join the chunks into a string and return the string
+        // @ts-ignore
+        response.Body.once("end", () => resolve(responseDataChunks.join("")));
+      } catch (err) {
+        // Handle the error or throw
+        return reject(err);
+      }
+    });
+    return data;
   }
 }

@@ -2,10 +2,13 @@ import { Context } from "aws-lambda";
 
 import { RevalidationEvent } from "../../types";
 import { CloudFrontService } from "../services/cloudfront.service";
-import { RenderService } from "../services/render.service";
+import { Page, RenderService, S3JsonFile } from "../services/render.service";
 import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
 import { debug, isDevMode } from "../lib/console";
+import { Resource, ResourceForIndexPage } from "../services/resource";
+import isEqual from "lodash/isEqual";
+import isEmpty from "lodash/isEmpty";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
@@ -53,10 +56,7 @@ export class RevalidateHandler {
 
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
-    if (
-      htmlHeader.getETag() !== candidatePage.getHtmlEtag() ||
-      jsonHeader.getETag() !== candidatePage.getJsonEtag()
-    ) {
+    if (await this.isContentChanged(candidatePage, resource)) {
       debug(
         `[handler] Resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
@@ -94,5 +94,52 @@ export class RevalidateHandler {
       new Date() <
       new Date(lastModified!.getTime() + REVALIDATE_TRIGGER_GAP_SECONDS * 1000)
     );
+  }
+
+  //compare diffs between old s3 json files and new candidate page
+  private async isContentChanged(
+    candidatePage: Page,
+    resource: Resource | ResourceForIndexPage
+  ): Promise<boolean> {
+    debug(`[isContentChanged] resource json key: ${resource.getJsonKey()}`);
+
+    const oldData: S3JsonFile = JSON.parse(
+      await this.s3Service.getObject(resource.getJsonKey())
+    );
+
+    const newData: S3JsonFile = candidatePage.getJson();
+
+    const isContentFulDataChanged =
+      !isEmpty(oldData.pageProps?.contentfulCache) &&
+      !isEqual(
+        oldData.pageProps?.contentfulCache,
+        newData.pageProps?.contentfulCache
+      );
+
+    const isApolloStateDataChanged =
+      !isEmpty(oldData.pageProps?.initialApolloState) &&
+      !isEqual(
+        oldData.pageProps?.initialApolloState,
+        newData.pageProps?.initialApolloState
+      );
+
+    debug(
+      `[isContentChanged] old contentFul is empty : ${isEmpty(
+        oldData.pageProps?.contentfulCache
+      )}. old apolloState data is empty : ${isEmpty(
+        oldData.pageProps?.initialApolloState
+      )}`
+    );
+    debug(
+      `[isContentChanged] contentFul is equal : ${isEqual(
+        oldData.pageProps?.contentfulCache,
+        newData.pageProps?.contentfulCache
+      )}. apolloState data is equal : ${isEqual(
+        oldData.pageProps?.initialApolloState,
+        newData.pageProps?.initialApolloState
+      )}. `
+    );
+
+    return isContentFulDataChanged || isApolloStateDataChanged;
   }
 }

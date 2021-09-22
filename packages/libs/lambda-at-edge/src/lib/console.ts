@@ -7,5 +7,5 @@ export function debug(message: string): void {
 }
 
 export function isDevMode(): boolean {
-  return process.env.DEBUGMODE === "true";
+  return true;
 }
