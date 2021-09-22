@@ -11,9 +11,6 @@ import { Resource, ResourceForIndexPage } from "../services/resource";
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
 
-const isEqual = require("lodash.isequal");
-const isEmpty = require("lodash.isempty");
-
 export class RevalidateHandler {
   constructor(
     private resourceService: ResourceService,
@@ -102,6 +99,8 @@ export class RevalidateHandler {
     candidatePage: Page,
     resource: Resource | ResourceForIndexPage
   ): Promise<boolean> {
+    const isEqual = require("lodash.isequal");
+    const isEmpty = require("lodash.isempty");
     debug(`[isContentChanged] resource json key: ${resource.getJsonKey()}`);
 
     const oldData: S3JsonFile = JSON.parse(
