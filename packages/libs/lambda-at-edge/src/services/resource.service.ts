@@ -12,7 +12,8 @@ import {
 } from "./resource";
 import { debug } from "../lib/console";
 
-const _ = require("lodash");
+const _ = require("../../../tools/lodash.min");
+const a = _.isEmpty("d");
 
 export class ResourceService {
   constructor(
