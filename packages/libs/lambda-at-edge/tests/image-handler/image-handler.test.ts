@@ -1,12 +1,13 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
-import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
+import { CloudFrontResponseResult } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import sharp from "sharp";
-import fetchMock from "fetch-mock";
 import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
 
 const MockGetObjectCommand = jest.fn();
+
+jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
 jest.mock("@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
@@ -43,13 +44,6 @@ jest.mock(
 );
 
 describe("Image lambda handler", () => {
-  if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {
-      // do nothing
-    });
-    return;
-  }
-
   describe("Routes", () => {
     it.each`
       imagePath                         | expectedS3Key
@@ -197,9 +191,13 @@ describe("Image lambda handler", () => {
         .png()
         .toBuffer();
 
+      const fetchMock = require("node-fetch");
+
       fetchMock.get("https://allowed.com/image.png", {
         body: imageBuffer,
-        headers: { "Content-Type": "image/png" }
+        headers: {
+          "Content-Type": "image/png"
+        }
       });
 
       const event = createCloudFrontEvent({
@@ -209,7 +207,7 @@ describe("Image lambda handler", () => {
           accept: [
             {
               key: "Accept",
-              value: "image/webp"
+              value: "image/png"
             }
           ]
         }
@@ -231,7 +229,7 @@ describe("Image lambda handler", () => {
               value: expect.any(String)
             }
           ],
-          "content-type": [{ key: "Content-Type", value: "image/webp" }]
+          "content-type": [{ key: "Content-Type", value: "image/png" }]
         },
         status: 200,
         statusDescription: "OK",
