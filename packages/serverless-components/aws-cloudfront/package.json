@@ -27,7 +27,7 @@
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.15.0",
-    "@types/fs-extra": "^9.0.11",
+    "@types/fs-extra": "^9.0.13",
     "@types/node": "^16.9.6",
     "@types/ramda": "^0.27.41",
     "babel-eslint": "10.1.0",
