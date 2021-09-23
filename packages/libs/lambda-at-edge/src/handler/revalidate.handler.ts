@@ -97,7 +97,14 @@ export class RevalidateHandler {
     );
   }
 
-  //compare diffs between old s3 json files and new candidate page
+  /**
+   * compare diffs between old s3 json files and new candidate page.
+   * The page data is saved in contentfulCache and apolloState. So, we should
+   * only compare this two values.
+   * @param candidatePage
+   * @param resource
+   * @private
+   */
   private async isContentChanged(
     candidatePage: Page,
     resource: Resource | ResourceForIndexPage
@@ -110,6 +117,7 @@ export class RevalidateHandler {
 
     const newData: S3JsonFile = candidatePage.getJson();
 
+    // some pages may do not have contentful data.
     const isContentFulDataChanged =
       !_.isEmpty(oldData.pageProps?.contentfulCache) &&
       !_.isEqual(
@@ -117,6 +125,7 @@ export class RevalidateHandler {
         newData.pageProps?.contentfulCache
       );
 
+    // some pages may do not have ApolloStateData.
     const isApolloStateDataChanged =
       !_.isEmpty(oldData.pageProps?.initialApolloState) &&
       !_.isEqual(

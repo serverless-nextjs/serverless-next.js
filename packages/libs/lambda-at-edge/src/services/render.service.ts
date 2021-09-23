@@ -29,6 +29,9 @@ export class Page {
   }
 }
 
+/**
+ * this is how s3 file json organized.
+ */
 export interface S3JsonFile {
   pageProps?: {
     contentfulCache?: [];
