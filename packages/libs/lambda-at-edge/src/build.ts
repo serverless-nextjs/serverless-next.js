@@ -515,7 +515,6 @@ class Builder {
       urlRewrites: this.buildOptions.urlRewrites,
       enableDebugMode: this.buildOptions.enableDebugMode
     };
-    console.log(518, this.buildOptions.enableDebugMode);
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
       apis: {
