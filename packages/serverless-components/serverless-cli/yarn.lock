@@ -157,15 +157,15 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.13.0":
-  version "5.13.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.13.0.tgz#6a9d54d28f85ce41c6bc558cb4c104543c7f0d14"
-  integrity sha512-fsE+i/I9gBWbb7xed+OBnVNhXne2ti3fT/Ck6a87UldKgsoVGizY/j65B8SW7JMHijDX1OdFBUIpnP7uWFefhQ==
+"@serverless/utils@^5.15.0":
+  version "5.15.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.15.0.tgz#a0284c6fa1d5d936ae54adbea86369eaf7c3b469"
+  integrity sha512-KH7sHbTRWCPNewp3Jg+CmmDox82L1xqr18byex3R6s0nAHSNmNwKJl30fIS1Co4u9qKOLCl4/rWjtofKJTFbCg==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
     ci-info "^3.2.0"
-    cli-progress-footer "^2.0.2"
+    cli-progress-footer "^2.1.1"
     content-disposition "^0.5.3"
     decompress "^4.2.1"
     event-emitter "^0.3.5"
@@ -603,10 +603,10 @@ cli-cursor@^3.1.0:
   dependencies:
     restore-cursor "^3.1.0"
 
-cli-progress-footer@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.npmjs.org/cli-progress-footer/-/cli-progress-footer-2.0.2.tgz#f1f4f9c7b8630e3ffae23cd0c6042ac361c025d0"
-  integrity sha512-FQbhQKqyRG463NbIj+XOIODJYNAf6juqIzZ5YvN1+25mvfWw+gdLzN/a64hYLlxr8OUlA5gzgxoqQTyKemko7g==
+cli-progress-footer@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.npmjs.org/cli-progress-footer/-/cli-progress-footer-2.1.1.tgz#ed45cccc22f95284f715a38ae3e4191ebe3bdf04"
+  integrity sha512-fBEAKLDp/CCMzQSeEbvz4POvomCekmT0LodI/mchzrjIPeLXQHJ9Gb28leAqEjdc9wyV40cjsB2aWpvO5MA7Pw==
   dependencies:
     cli-color "^2.0.0"
     d "^1.0.1"
