@@ -373,6 +373,9 @@ export const handler = async (
   const tHandlerBegin = now();
 
   if (event.revalidate) {
+    console.log("handler", Manifest);
+    process.env.DEBUGMODE = Manifest.enableDebugMode;
+
     const { domainName, region } = event.Records[0].cf.request.origin!.s3!;
     const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
