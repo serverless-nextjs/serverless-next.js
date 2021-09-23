@@ -110,31 +110,31 @@ export class RevalidateHandler {
     const newData: S3JsonFile = candidatePage.getJson();
 
     const isContentFulDataChanged =
-      !isEmpty(oldData.pageProps?.contentfulCache) &&
-      !isEqual(
+      !_.isEmpty(oldData.pageProps?.contentfulCache) &&
+      !_.isEqual(
         oldData.pageProps?.contentfulCache,
         newData.pageProps?.contentfulCache
       );
 
     const isApolloStateDataChanged =
-      !isEmpty(oldData.pageProps?.initialApolloState) &&
-      !isEqual(
+      !_.isEmpty(oldData.pageProps?.initialApolloState) &&
+      !_.isEqual(
         oldData.pageProps?.initialApolloState,
         newData.pageProps?.initialApolloState
       );
 
     debug(
-      `[isContentChanged] old contentFul is empty : ${isEmpty(
+      `[isContentChanged] old contentFul is empty : ${_.isEmpty(
         oldData.pageProps?.contentfulCache
-      )}. old apolloState data is empty : ${isEmpty(
+      )}. old apolloState data is empty : ${_.isEmpty(
         oldData.pageProps?.initialApolloState
       )}`
     );
     debug(
-      `[isContentChanged] contentFul is equal : ${isEqual(
+      `[isContentChanged] contentFul is equal : ${_.isEqual(
         oldData.pageProps?.contentfulCache,
         newData.pageProps?.contentfulCache
-      )}. apolloState data is equal : ${isEqual(
+      )}. apolloState data is equal : ${_.isEqual(
         oldData.pageProps?.initialApolloState,
         newData.pageProps?.initialApolloState
       )}. `
