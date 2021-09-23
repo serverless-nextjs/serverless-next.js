@@ -12,8 +12,6 @@ import * as _ from "../lib/lodash";
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
 
-console.log(_.isEmpty("f"));
-
 export class RevalidateHandler {
   constructor(
     private resourceService: ResourceService,
