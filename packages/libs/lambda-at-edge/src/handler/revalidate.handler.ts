@@ -78,8 +78,9 @@ export class RevalidateHandler {
         resource.getHtmlUri(),
         resource.getJsonUri()
       ]);
+      return;
     }
-
+    debug(`[handler] Resource is not changed.}`);
     return;
   }
 
