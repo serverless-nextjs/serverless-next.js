@@ -83,62 +83,6 @@ describe("Image lambda handler", () => {
       });
     });
 
-    it("serves external image request", async () => {
-      const imageBuffer: Buffer = await sharp({
-        create: {
-          width: 100,
-          height: 100,
-          channels: 4,
-          background: { r: 0, g: 0, b: 0, alpha: 1 }
-        }
-      })
-        .png()
-        .toBuffer();
-
-      fetchMock.get("https://allowed.com/image.png", {
-        body: imageBuffer,
-        headers: { "Content-Type": "image/png" }
-      });
-
-      const event = createCloudFrontEvent({
-        uri:
-          "/_next/image?url=https%3A%2F%2Fallowed.com%2Fimage.png&q=100&w=64",
-        host: "mydistribution.cloudfront.net",
-        requestHeaders: {
-          accept: [
-            {
-              key: "accept",
-              value: "image/webp"
-            }
-          ]
-        }
-      });
-
-      const response = (await handler(event)) as CloudFrontResponseResult;
-
-      expect(response).toEqual({
-        headers: {
-          "cache-control": [
-            {
-              key: "cache-control",
-              value: "public, max-age=31536000, immutable"
-            }
-          ],
-          etag: [
-            {
-              key: "etag",
-              value: expect.any(String)
-            }
-          ],
-          "content-type": [{ key: "content-type", value: "image/webp" }]
-        },
-        status: 200,
-        statusDescription: "OK",
-        body: expect.any(String),
-        bodyEncoding: "base64"
-      });
-    });
-
     it("return 500 response when s3 throws an error", async () => {
       const event = createCloudFrontEvent({
         uri: "/_next/image?url=%2Fthrow-error.png&q=100&w=128",
