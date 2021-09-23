@@ -223,6 +223,7 @@ class NextjsComponent extends Component {
       cwd: buildCwd
     };
 
+    console.log(226, inputs.enableDebugMode);
     if (buildConfig.enabled) {
       const builder = new Builder(
         nextConfigPath,
