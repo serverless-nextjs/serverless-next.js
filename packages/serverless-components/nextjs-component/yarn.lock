@@ -1082,7 +1082,7 @@
   version "3.4.0-alpha.8"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.993.0"
+    aws-sdk "^2.994.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
@@ -1093,7 +1093,7 @@
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.993.0"
+    aws-sdk "^2.994.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
@@ -1104,7 +1104,7 @@
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.993.0"
+    aws-sdk "^2.994.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1121,7 +1121,7 @@
 "@sls-next/cloudfront@link:../../libs/cloudfront":
   version "3.4.0-alpha.8"
   dependencies:
-    aws-sdk "^2.993.0"
+    aws-sdk "^2.994.0"
 
 "@sls-next/core@link:../../libs/core":
   version "3.4.0-alpha.9"
@@ -1161,7 +1161,7 @@
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
   version "3.4.0-alpha.8"
   dependencies:
-    aws-sdk "^2.993.0"
+    aws-sdk "^2.994.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.27"
@@ -1640,10 +1640,10 @@ available-typed-arrays@^1.0.4:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.993.0:
-  version "2.993.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.993.0.tgz#872c038b9cf78d35d6d90d99fd9b2973f99209ca"
-  integrity sha512-uAxPVkGM0+hWt+OmFUtNgQmmo3tQUW1MJD8wBWFpfw97QpG2WPMv6fEFBJmuaVt0LkElgTs+9oKJsu9WkPIC9Q==
+aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.994.0:
+  version "2.994.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.994.0.tgz#5715fd0ad6a713634fb1817883b7fe451e627620"
+  integrity sha512-NBGY9IgE3EsIkIhylR6pwVx9ETrVZ6fCzd7/Ptzjx7Ccw4L2sMhl4EiBAW2sp5M7PZz5DnEQHdAQstqmdxggaQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
