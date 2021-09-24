@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.44](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.43...@getjerry/lambda-at-edge@1.8.44) (2021-09-24)
+
+### Reverts
+
+- Revert "chore(release): publish" ([0a87abd](https://github.com/getjerry/serverless-next.js/commit/0a87abd66df649ae11f5923adc78fdadba8a8c49))
+- Revert "add" ([610b933](https://github.com/getjerry/serverless-next.js/commit/610b9338a9e92b11220c03bcf13005e52048dfb5))
+- Revert "fix" ([256ae2f](https://github.com/getjerry/serverless-next.js/commit/256ae2fc3afda203bc77f665cc32dec48332640c))
+- Revert "Update revalidate.handler.ts" ([93d93ed](https://github.com/getjerry/serverless-next.js/commit/93d93edf9a3c3cd3f17815aec3460f1ca1e37fc5))
+- Revert "fix" ([5f51995](https://github.com/getjerry/serverless-next.js/commit/5f51995d9df7468efe32c5bdcc156ceacdc7e7eb))
+
 ## [1.8.43](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.42...@getjerry/lambda-at-edge@1.8.43) (2021-09-09)
 
 **Note:** Version bump only for package @getjerry/lambda-at-edge
