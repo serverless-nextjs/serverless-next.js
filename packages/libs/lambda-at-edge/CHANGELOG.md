@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.9...v3.4.0-alpha.10) (2021-09-24)
+
+### Bug Fixes
+
+- **lambda-at-edge:** fix static regeneration while running in ISR mode [#1729](https://github.com/serverless-nextjs/serverless-next.js/issues/1729) ([#1731](https://github.com/serverless-nextjs/serverless-next.js/issues/1731)) ([b32c0e8](https://github.com/serverless-nextjs/serverless-next.js/commit/b32c0e82128ce5356a8249cc5a4246cd480bd484))
+
 # [3.4.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.8...v3.4.0-alpha.9) (2021-09-17)
 
 ### Features
