@@ -2,7 +2,7 @@ import lambdaAtEdgeCompat from "@getjerry/next-aws-cloudfront";
 import { createETag } from "../lib/etag";
 import { debug } from "../lib/console";
 
-class Page {
+export class Page {
   constructor(
     private readonly json: Record<string, unknown>,
     private readonly html: string
@@ -23,6 +23,23 @@ class Page {
   public getJsonBody() {
     return JSON.stringify(this.json);
   }
+
+  public getJson() {
+    return this.json;
+  }
+}
+
+/**
+ * this is how s3 file json organized.
+ */
+export interface S3JsonFile {
+  pageProps?: {
+    contentfulCache?: [];
+    initialApolloState?: any;
+    preview?: boolean;
+    generatedAt?: string;
+  };
+  __N_SSG?: string;
 }
 
 export class RenderService {

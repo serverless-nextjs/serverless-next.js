@@ -18,6 +18,10 @@ export class CloudFrontService {
     }
     debug(`[cloudfront] Invalidate paths: ${JSON.stringify(paths)}`);
 
+    paths.map((path) => {
+      console.log(`[cloudfront] ISR Invalidate paths: ${path}`);
+    });
+
     const res = await this.client.send(
       new CreateInvalidationCommand({
         DistributionId: this.options.distributionId,
