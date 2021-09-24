@@ -157,16 +157,17 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.15.0":
-  version "5.15.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.15.0.tgz#a0284c6fa1d5d936ae54adbea86369eaf7c3b469"
-  integrity sha512-KH7sHbTRWCPNewp3Jg+CmmDox82L1xqr18byex3R6s0nAHSNmNwKJl30fIS1Co4u9qKOLCl4/rWjtofKJTFbCg==
+"@serverless/utils@^5.16.0":
+  version "5.16.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.16.0.tgz#aecd12ca1c25c3f638bd5f08019a1447f2e1e8c8"
+  integrity sha512-oxxfpJ7BowcJZ9cQxf02bPbCViEaU78iT6fN15/6DGD1KAm+b6h0o/962DNg5g1+QSVLsM1iP2upypf5iTjEzA==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
     ci-info "^3.2.0"
     cli-progress-footer "^2.1.1"
     content-disposition "^0.5.3"
+    d "^1.0.1"
     decompress "^4.2.1"
     event-emitter "^0.3.5"
     ext-name "^5.0.0"
