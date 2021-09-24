@@ -47,6 +47,7 @@ export interface RegenerationEvent {
   basePath: string | undefined;
   region: string;
   bucketName: string;
+  pageS3Path: string;
   cloudFrontEventRequest: AWSLambda.CloudFrontRequest;
 }
 

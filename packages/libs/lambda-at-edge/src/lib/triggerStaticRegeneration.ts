@@ -8,6 +8,7 @@ interface TriggerStaticRegenerationOptions {
   lastModified: string | undefined;
   basePath: string | undefined;
   pagePath: string;
+  pageS3Path: string;
   queueName: string;
 }
 
@@ -35,6 +36,7 @@ export const triggerStaticRegeneration = async (
   const regenerationEvent: RegenerationEvent = {
     region,
     bucketName,
+    pageS3Path: options.pageS3Path,
     cloudFrontEventRequest: options.request,
     basePath: options.basePath,
     pagePath: options.pagePath
