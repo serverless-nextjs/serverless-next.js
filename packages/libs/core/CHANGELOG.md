@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.10...v3.4.0-alpha.11) (2021-09-25)
+
+### Bug Fixes
+
+- **core:** handle external redirect destinations with query parameters correctly ([#1744](https://github.com/serverless-nextjs/serverless-next.js/issues/1744)) ([58001fc](https://github.com/serverless-nextjs/serverless-next.js/commit/58001fc993c432af0309ccbbe4541a6bd1d00d08))
+
 # [3.4.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.9...v3.4.0-alpha.10) (2021-09-24)
 
 **Note:** Version bump only for package @sls-next/core
