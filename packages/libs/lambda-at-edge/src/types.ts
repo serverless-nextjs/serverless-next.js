@@ -50,32 +50,3 @@ export interface RegenerationEvent {
   pageS3Path: string;
   cloudFrontEventRequest: AWSLambda.CloudFrontRequest;
 }
-
-export type PreRenderedManifest = {
-  version: 2;
-  routes: {
-    [route: string]: {
-      initialRevalidateSeconds: number | false;
-      srcRoute: string | null;
-      dataRoute: string;
-    };
-  };
-  dynamicRoutes: {
-    [route: string]: {
-      routeRegex: string;
-      fallback: string | false;
-      dataRoute: string;
-      dataRouteRegex: string;
-    };
-  };
-  preview: {
-    previewModeId: string;
-    previewModeSigningKey: string;
-    previewModeEncryptionKey: string;
-  };
-};
-
-export type PerfLogger = {
-  now: () => number | undefined;
-  log: (metricDescription: string, t1?: number, t2?: number) => void;
-};
