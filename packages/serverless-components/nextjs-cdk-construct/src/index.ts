@@ -12,9 +12,9 @@ import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
-  RoutesManifest,
-  PreRenderedManifest
+  RoutesManifest
 } from "@sls-next/lambda-at-edge";
+import { PreRenderedManifest } from "@sls-next/core";
 import * as fs from "fs-extra";
 import * as path from "path";
 import {

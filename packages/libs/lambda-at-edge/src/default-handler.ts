@@ -30,10 +30,12 @@ import {
   OriginRequestDefaultHandlerManifest,
   OriginRequestEvent,
   OriginResponseEvent,
-  PerfLogger,
-  PreRenderedManifest as PrerenderManifestType,
   RoutesManifest
 } from "./types";
+import {
+  PreRenderedManifest as PrerenderManifestType,
+  PerfLogger
+} from "@sls-next/core";
 import { performance } from "perf_hooks";
 import type { Readable } from "stream";
 import { externalRewrite } from "./routing/rewriter";
