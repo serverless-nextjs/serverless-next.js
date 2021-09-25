@@ -37,6 +37,11 @@ describe("Redirector Tests", () => {
             statusCode: 308
           },
           {
+            source: "/external-2",
+            destination: "https://example.com/?a=b",
+            statusCode: 308
+          },
+          {
             source: "/invalid-destination",
             destination: "ftp://example.com",
             statusCode: 308
@@ -46,16 +51,17 @@ describe("Redirector Tests", () => {
     });
 
     it.each`
-      path                      | expectedRedirect         | expectedStatusCode
-      ${"/a"}                   | ${"/b"}                  | ${308}
-      ${"/c"}                   | ${"/d"}                  | ${302}
-      ${"/old-blog/abc"}        | ${"/news/abc"}           | ${308}
-      ${"/old-users/1234"}      | ${"/users/1234"}         | ${307}
-      ${"/old-users/abc"}       | ${null}                  | ${null}
-      ${"/external"}            | ${"https://example.com"} | ${308}
-      ${"/invalid-destination"} | ${null}                  | ${null}
-      ${"/en/a"}                | ${"/en/b"}               | ${308}
-      ${"/fr/a"}                | ${"/fr/b"}               | ${308}
+      path                      | expectedRedirect              | expectedStatusCode
+      ${"/a"}                   | ${"/b"}                       | ${308}
+      ${"/c"}                   | ${"/d"}                       | ${302}
+      ${"/old-blog/abc"}        | ${"/news/abc"}                | ${308}
+      ${"/old-users/1234"}      | ${"/users/1234"}              | ${307}
+      ${"/old-users/abc"}       | ${null}                       | ${null}
+      ${"/external"}            | ${"https://example.com"}      | ${308}
+      ${"/external-2"}          | ${"https://example.com/?a=b"} | ${308}
+      ${"/invalid-destination"} | ${null}                       | ${null}
+      ${"/en/a"}                | ${"/en/b"}                    | ${308}
+      ${"/fr/a"}                | ${"/fr/b"}                    | ${308}
     `(
       "redirects path $path to $expectedRedirect",
       ({ path, expectedRedirect, expectedStatusCode }) => {

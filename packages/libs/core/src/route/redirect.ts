@@ -147,8 +147,8 @@ export async function getLanguageRedirectPath(
 
 /**
  * Get the redirect of the given path, if it exists.
- * @param path
- * @param manifest
+ * @param request
+ * @param routesManifest
  */
 export function getRedirectPath(
   request: Request,
