@@ -22,7 +22,7 @@ export function matchPath(path: string, source: string): Match {
  */
 export function compileDestination(
   destination: string,
-  params: object
+  params: any
 ): string | null {
   try {
     const destinationLowerCase = destination.toLowerCase();
@@ -30,10 +30,10 @@ export function compileDestination(
       destinationLowerCase.startsWith("https://") ||
       destinationLowerCase.startsWith("http://")
     ) {
-      // Handle external URLs
-      const { origin, pathname } = new URL(destination);
+      // Handle external URL redirects
+      const { origin, pathname, search } = new URL(destination);
       const toPath = compile(pathname, { encode: encodeURIComponent });
-      const compiledDestination = `${origin}${toPath(params)}`;
+      const compiledDestination = `${origin}${toPath(params)}${search}`;
 
       // Remove trailing slash if original destination didn't have it
       if (!destination.endsWith("/") && compiledDestination.endsWith("/")) {
