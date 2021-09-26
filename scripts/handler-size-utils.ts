@@ -14,6 +14,10 @@ export const PLATFORM_CONFIGS: Record<string, HandlerConfiguration> = {
         Standard: "dist/default-handler/standard",
         Minified: "dist/default-handler/minified"
       },
+      "Default Lambda V2": {
+        Standard: "dist/default-handler-v2/standard",
+        Minified: "dist/default-handler-v2/minified"
+      },
       "API Lambda": {
         Standard: "dist/api-handler/standard",
         Minified: "dist/api-handler/minified"
@@ -25,6 +29,10 @@ export const PLATFORM_CONFIGS: Record<string, HandlerConfiguration> = {
       "Regeneration Lambda": {
         Standard: "dist/regeneration-handler/standard",
         Minified: "dist/regeneration-handler/minified"
+      },
+      "Regeneration Lambda V2": {
+        Standard: "dist/regeneration-handler-v2/standard",
+        Minified: "dist/regeneration-handler-v2/minified"
       }
     }
   }

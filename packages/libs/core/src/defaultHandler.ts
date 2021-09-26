@@ -17,7 +17,27 @@ import {
 import { PageManifest } from "./types";
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
 import { performance } from "perf_hooks";
-import { PlatformClient } from "./platform/platformClient";
+import { PlatformClient } from "./platform";
+
+const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
+  if (logLambdaExecutionTimes) {
+    return {
+      now: () => performance.now(),
+      log: (metricDescription: string, t1?: number, t2?: number): void => {
+        if (!t1 || !t2) {
+          return;
+        }
+        console.log(`${metricDescription}: ${t2 - t1} (ms)`);
+      }
+    };
+  }
+  return {
+    now: () => 0,
+    log: () => {
+      // intentionally empty
+    }
+  };
+};
 
 const createExternalRewriteResponse = async (
   customRewrite: string,
@@ -57,11 +77,6 @@ const createExternalRewriteResponse = async (
     });
   }
 
-  for (const [name, val] of fetchResponse.headers.entries()) {
-    if (!platformClient.isIgnoredHeader(name)) {
-      res.setHeader(name, val);
-    }
-  }
   res.statusCode = fetchResponse.status;
   res.end(await fetchResponse.buffer());
 };
@@ -119,12 +134,11 @@ const staticRequest = async (
   }
 
   // Get page response using platform client
-  const pageResponse = platformClient.getObject(pageKey);
+  const pageResponse = await platformClient.getObject(pageKey);
 
-  const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
+  const normalizedBasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
 
-  // These statuses are returned when S3 does not have access to the page.
-  // 404 will also be returned if CloudFront has permissions to list objects.
+  // These statuses are returned when the object store does not have access to the page or page is not found
   if (pageResponse.statusCode !== 403 && pageResponse.statusCode !== 404) {
     let cacheControl = pageResponse.headers.cacheControl;
 
@@ -149,14 +163,17 @@ const staticRequest = async (
           staticRoute?.page &&
           staticRegenerationResponse.secondsRemainingUntilRevalidation === 0
         ) {
+          if (!req.url) {
+            throw new Error("Request url is unexpectedly undefined");
+          }
+
           const { throttle } = await platformClient.triggerStaticRegeneration({
             basePath,
-            pageKey: pageKey,
             eTag: pageResponse.headers.eTag,
-            lastModified: pageResponse.headers.lastModified
-              ?.getTime()
-              .toString(),
-            pagePath: staticRoute.page
+            lastModified: pageResponse.headers.lastModified,
+            pagePath: staticRoute.page,
+            pageKey,
+            requestUri: req.url
           });
 
           // Occasionally we will get rate-limited by the Queue (in the event we
@@ -208,9 +225,9 @@ const staticRequest = async (
   // Either a fallback: true page or a static error page
   if (fallbackRoute.isStatic) {
     const file = fallbackRoute.file.slice("pages".length);
-    const pageKey = `${s3BasePath}static-pages/${manifest.buildId}${file}`;
+    const pageKey = `${normalizedBasePath}static-pages/${manifest.buildId}${file}`;
 
-    const pageResponse = platformClient.getObject(pageKey);
+    const pageResponse = await platformClient.getObject(pageKey);
 
     const statusCode = fallbackRoute.statusCode || 200;
     const is500 = statusCode === 500;
@@ -218,7 +235,7 @@ const staticRequest = async (
     const cacheControl = is500
       ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
       : pageResponse.headers.CacheControl ??
-        (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+        (fallbackRoute.fallback // Use cache-control from object response if possible, otherwise use defaults
           ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
           : "public, max-age=0, s-maxage=2678400, must-revalidate");
 
@@ -230,7 +247,7 @@ const staticRequest = async (
     return await responsePromise;
   }
 
-  // This is a fallback route that should be stored in S3 before returning it
+  // This is a fallback route that should be stored in object store before returning it
   const { renderOpts, html } = fallbackRoute;
   const { expires } = await platformClient.storePage({
     html,
@@ -266,26 +283,8 @@ const staticRequest = async (
   return await responsePromise;
 };
 
-const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
-  if (logLambdaExecutionTimes) {
-    return {
-      now: () => performance.now(),
-      log: (metricDescription: string, t1?: number, t2?: number): void => {
-        if (!t1 || !t2) return;
-        console.log(`${metricDescription}: ${t2 - t1} (ms)`);
-      }
-    };
-  }
-  return {
-    now: () => 0,
-    log: () => {
-      // intentionally empty
-    }
-  };
-};
-
 /**
- * Platform-agnostic page handler that handles all pages (SSR, SSG, and API).
+ * Platform-agnostic handler that handles all pages (SSR, SSG, and API) and public files.
  * It requires passing a platform client which will implement methods for retrieving/storing pages, and triggering static regeneration.
  * @param req
  * @param res
@@ -296,7 +295,7 @@ const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
  * @param options
  * @param platformClient
  */
-export const pageHandler = async ({
+export const defaultHandler = async ({
   req,
   res,
   responsePromise,
@@ -314,7 +313,7 @@ export const pageHandler = async ({
   routesManifest: RoutesManifest;
   options: { logExecutionTimes: boolean };
   platformClient: PlatformClient;
-}) => {
+}): Promise<void> => {
   const { now, log } = perfLogger(options.logExecutionTimes);
 
   let tBeforeSSR = null;
@@ -378,5 +377,5 @@ export const pageHandler = async ({
 
   const external: ExternalRoute = route;
   const { path } = external;
-  return externalRewrite(req, res, path, platformClient);
+  return await externalRewrite(req, res, path, platformClient);
 };

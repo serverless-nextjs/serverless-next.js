@@ -1,6 +1,6 @@
 export type ObjectResponse = {
-  body: string;
-  headers: any;
+  body: string | undefined;
+  headers: { [key: string]: string | undefined };
   statusCode: number;
 };
 
@@ -15,10 +15,11 @@ export type StorePageOptions = {
 
 export type TriggerStaticRegenerationOptions = {
   basePath: string;
-  pageKey: string;
-  eTag: any;
+  eTag: string | undefined;
   lastModified: string | undefined;
-  pagePath: any;
+  pagePath: string; // path to page to require
+  pageKey: string; // object store key
+  requestUri: string;
 };
 
 /**
@@ -27,18 +28,11 @@ export type TriggerStaticRegenerationOptions = {
  */
 export interface PlatformClient {
   /**
-   * Whether this header should be ignored.
-   * For example, some platforms such as AWS CloudFront may not allow certain headers to be added to the response.
-   * @param name
-   */
-  isIgnoredHeader(name: string): boolean;
-
-  /**
    * Get an object from this platform's object store.
    * This can be a page or other file.
    * @param pageKey
    */
-  getObject(pageKey: string): ObjectResponse;
+  getObject(pageKey: string): Promise<ObjectResponse>;
 
   /**
    * Trigger static regeneration for this page.

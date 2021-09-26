@@ -27,7 +27,10 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
-      - run: yarn --frozen-lockfile
+      - name: Run yarn install
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn --frozen-lockfile
 
       - name: Upload handler sizes to S3
         if: ${{ github.ref == 'refs/heads/master' && matrix.node-version == '14.x' }}

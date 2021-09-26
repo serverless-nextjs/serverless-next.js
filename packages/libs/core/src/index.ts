@@ -4,3 +4,6 @@ export * from "./revalidate";
 export * from "./route";
 export * from "./types";
 export * from "./utils";
+export * from "./defaultHandler";
+export * from "./regenerationHandler";
+export * from "./platform";
