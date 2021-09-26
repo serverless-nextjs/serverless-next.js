@@ -240,13 +240,17 @@ const staticRequest = async (
           staticRoute?.page &&
           staticRegenerationResponse.secondsRemainingUntilRevalidation === 0
         ) {
+          if (!req.url) {
+            throw new Error("Request url is unexpectedly undefined");
+          }
+
           const { throttle } = await platformClient.triggerStaticRegeneration({
             basePath,
             eTag: pageResponse.headers.eTag,
             lastModified: pageResponse.headers.lastModified,
             pagePath: staticRoute.page,
             pageKey: pageKey,
-            requestUri: req.url!
+            requestUri: req.url
           });
 
           // Occasionally we will get rate-limited by the Queue (in the event we
