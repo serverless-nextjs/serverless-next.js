@@ -77,6 +77,9 @@ const createExternalRewriteResponse = async (
     });
   }
 
+  for (const [name, val] of fetchResponse.headers.entries()) {
+    res.setHeader(name, val);
+  }
   res.statusCode = fetchResponse.status;
   res.end(await fetchResponse.buffer());
 };

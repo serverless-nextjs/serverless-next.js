@@ -258,7 +258,7 @@ class NextjsComponent extends Component {
           separateApiLambda: buildConfig.separateApiLambda ?? true,
           disableOriginResponseHandler:
             buildConfig.disableOriginResponseHandler ?? false,
-          useV2Handler: buildConfig.useV2Handler ?? true // FIXME: change back to false after testing e2e tests as it fails unit tests
+          useV2Handler: buildConfig.useV2Handler ?? false
         },
         nextStaticPath
       );
