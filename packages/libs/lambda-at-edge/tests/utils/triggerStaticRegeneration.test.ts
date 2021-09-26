@@ -1,4 +1,5 @@
 import { triggerStaticRegeneration } from "../../src/lib/triggerStaticRegeneration";
+import { jest } from "@jest/globals";
 
 describe("triggerStaticRegeneration()", () => {
   const mockSQSClient = jest.fn();
