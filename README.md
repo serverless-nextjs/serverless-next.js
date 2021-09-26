@@ -82,7 +82,7 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Base path](https://nextjs.org/docs/api-reference/next.config.js/basepath)
 - [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [x] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
-- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). Caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that object format is not yet supported.
+- [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). Caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that the new `has` matching format (https://nextjs.org/docs/api-reference/next.config.js/redirects#header-cookie-and-query-matching) is not yet supported.
 - [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). Caveat: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that object format is not yet supported.
 - [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that object format is not yet supported.
 - [x] [Image Optimization](https://nextjs.org/docs/basic-features/image-optimization)
