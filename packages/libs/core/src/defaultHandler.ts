@@ -24,7 +24,9 @@ const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
     return {
       now: () => performance.now(),
       log: (metricDescription: string, t1?: number, t2?: number): void => {
-        if (!t1 || !t2) return;
+        if (!t1 || !t2) {
+          return;
+        }
         console.log(`${metricDescription}: ${t2 - t1} (ms)`);
       }
     };
@@ -375,5 +377,5 @@ export const defaultHandler = async ({
 
   const external: ExternalRoute = route;
   const { path } = external;
-  return externalRewrite(req, res, path, platformClient);
+  return await externalRewrite(req, res, path, platformClient);
 };
