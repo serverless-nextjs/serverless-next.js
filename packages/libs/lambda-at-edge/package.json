@@ -73,7 +73,7 @@
     "@hapi/accept": "^5.0.2",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "@vercel/nft": "^0.14.0",
+    "@vercel/nft": "^0.15.0",
     "execa": "^5.0.1",
     "fast-glob": "^3.2.7",
     "fresh": "^0.5.2",

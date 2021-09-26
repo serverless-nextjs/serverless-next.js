@@ -44,7 +44,7 @@ type BuildOptions = {
     parent: string,
     job: Job,
     cjsResolve: boolean
-  ) => string | string[];
+  ) => Promise<string | string[]>;
   baseDir?: string;
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
