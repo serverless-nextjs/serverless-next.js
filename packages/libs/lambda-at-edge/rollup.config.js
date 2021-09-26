@@ -51,10 +51,14 @@ const generateConfig = (input) => ({
 export default [
   { filename: "default-handler", minify: false },
   { filename: "default-handler", minify: true },
+  { filename: "default-handler-v2", minify: false },
+  { filename: "default-handler-v2", minify: true },
   { filename: "api-handler", minify: false },
   { filename: "api-handler", minify: true },
   { filename: "image-handler", minify: false },
   { filename: "image-handler", minify: true },
   { filename: "regeneration-handler", minify: false },
-  { filename: "regeneration-handler", minify: true }
+  { filename: "regeneration-handler", minify: true },
+  { filename: "regeneration-handler-v2", minify: false },
+  { filename: "regeneration-handler-v2", minify: true }
 ].map(generateConfig);

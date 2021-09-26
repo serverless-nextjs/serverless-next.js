@@ -249,3 +249,13 @@ export type PerfLogger = {
   now: () => number | undefined;
   log: (metricDescription: string, t1?: number, t2?: number) => void;
 };
+
+export type RegenerationEvent = {
+  pagePath: string;
+  basePath: string;
+  pageKey: string;
+  storeName: string;
+  storeRegion: string;
+  queueName: string;
+  queueRegion: string;
+};

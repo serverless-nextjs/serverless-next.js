@@ -1,0 +1,44 @@
+{
+  "name": "@sls-next/aws-common",
+  "version": "3.4.0-alpha.10",
+  "description": "Common AWS code that is used in Lambda, Lambda@Edge and other AWS platforms.",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
+    "directory": "packages/libs/aws-common"
+  },
+  "scripts": {
+    "prepare": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist"
+  },
+  "keywords": [
+    "AWS",
+    "S3",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Phang <serverlessnextjs@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.34.0",
+    "@aws-sdk/client-sqs": "^3.34.0",
+    "@sls-next/core": "link:../core"
+  },
+  "devDependencies": {
+    "@types/node": "^16.9.6",
+    "rimraf": "^3.0.2",
+    "typescript": "^4.4.3"
+  }
+}

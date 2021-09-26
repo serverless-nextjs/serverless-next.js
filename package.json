@@ -98,7 +98,8 @@
       "<rootDir>/packages/serverless-components/aws-s3",
       "<rootDir>/packages/libs/serverless-patched",
       "<rootDir>/packages/libs/lambda-at-edge/src/render/renderStaticPage.ts",
-      "<rootDir>/packages/libs/core/src/pageHandler.ts",
+      "<rootDir>/packages/libs/core/src/defaultHandler.ts",
+      "<rootDir>/packages/libs/core/src/regenerationHandler.ts",
       "<rootDir>/packages/libs/core/src/platform/platformClient.ts"
     ],
     "watchPathIgnorePatterns": [
