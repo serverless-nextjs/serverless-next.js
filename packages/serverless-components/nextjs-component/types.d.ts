@@ -90,6 +90,7 @@ export type BuildOptions = {
   assetIgnorePatterns?: string[];
   separateApiLambda?: boolean;
   disableOriginResponseHandler?: boolean;
+  useV2Handler?: boolean;
 };
 
 export type LambdaType =

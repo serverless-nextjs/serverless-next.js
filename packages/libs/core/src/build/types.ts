@@ -9,6 +9,7 @@ export type BuildOptions = {
   };
   separateApiLambda?: boolean;
   disableOriginResponseHandler?: boolean;
+  useV2Handler?: boolean;
 };
 
 export type NextConfig = {
