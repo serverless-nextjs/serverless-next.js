@@ -19,101 +19,22 @@ import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
 import { performance } from "perf_hooks";
 import { PlatformClient } from "./platform";
 
-/**
- * Platform-agnostic handler that handles all pages (SSR, SSG, and API) and public files.
- * It requires passing a platform client which will implement methods for retrieving/storing pages, and triggering static regeneration.
- * @param req
- * @param res
- * @param responsePromise
- * @param manifest
- * @param prerenderManifest
- * @param routesManifest
- * @param options
- * @param platformClient
- */
-export const defaultHandler = async ({
-  req,
-  res,
-  responsePromise,
-  manifest,
-  prerenderManifest,
-  routesManifest,
-  options,
-  platformClient
-}: {
-  req: IncomingMessage;
-  res: ServerResponse;
-  responsePromise: Promise<any>;
-  manifest: PageManifest;
-  prerenderManifest: PrerenderManifestType;
-  routesManifest: RoutesManifest;
-  options: { logExecutionTimes: boolean };
-  platformClient: PlatformClient;
-}): Promise<void> => {
-  const { now, log } = perfLogger(options.logExecutionTimes);
-
-  let tBeforeSSR = null;
-  const getPage = (pagePath: string) => {
-    const tBeforePageRequire = now();
-    const page = require(`./${pagePath}`); // eslint-disable-line
-    const tAfterPageRequire = (tBeforeSSR = now());
-    log("Require JS execution time", tBeforePageRequire, tAfterPageRequire);
-    return page;
+const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
+  if (logLambdaExecutionTimes) {
+    return {
+      now: () => performance.now(),
+      log: (metricDescription: string, t1?: number, t2?: number): void => {
+        if (!t1 || !t2) return;
+        console.log(`${metricDescription}: ${t2 - t1} (ms)`);
+      }
+    };
+  }
+  return {
+    now: () => 0,
+    log: () => {
+      // intentionally empty
+    }
   };
-
-  const route = await handleDefault(
-    { req, res, responsePromise },
-    manifest,
-    prerenderManifest,
-    routesManifest,
-    getPage
-  );
-  if (tBeforeSSR) {
-    const tAfterSSR = now();
-    log("SSR execution time", tBeforeSSR, tAfterSSR);
-  }
-
-  if (!route) {
-    return await responsePromise;
-  }
-
-  if (route.isPublicFile) {
-    const { file } = route as PublicFileRoute;
-    return await staticRequest(
-      req,
-      res,
-      responsePromise,
-      file,
-      `${routesManifest.basePath}/public`,
-      route,
-      manifest,
-      routesManifest,
-      platformClient
-    );
-  }
-  if (route.isStatic) {
-    const { file, isData } = route as StaticRoute;
-    const path = isData
-      ? `${routesManifest.basePath}`
-      : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
-
-    const relativeFile = isData ? file : file.slice("pages".length);
-    return await staticRequest(
-      req,
-      res,
-      responsePromise,
-      relativeFile,
-      path,
-      route,
-      manifest,
-      routesManifest,
-      platformClient
-    );
-  }
-
-  const external: ExternalRoute = route;
-  const { path } = external;
-  return externalRewrite(req, res, path, platformClient);
 };
 
 const createExternalRewriteResponse = async (
@@ -249,7 +170,7 @@ const staticRequest = async (
             eTag: pageResponse.headers.eTag,
             lastModified: pageResponse.headers.lastModified,
             pagePath: staticRoute.page,
-            pageKey: pageKey,
+            pageKey,
             requestUri: req.url
           });
 
@@ -360,20 +281,99 @@ const staticRequest = async (
   return await responsePromise;
 };
 
-const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
-  if (logLambdaExecutionTimes) {
-    return {
-      now: () => performance.now(),
-      log: (metricDescription: string, t1?: number, t2?: number): void => {
-        if (!t1 || !t2) return;
-        console.log(`${metricDescription}: ${t2 - t1} (ms)`);
-      }
-    };
-  }
-  return {
-    now: () => 0,
-    log: () => {
-      // intentionally empty
-    }
+/**
+ * Platform-agnostic handler that handles all pages (SSR, SSG, and API) and public files.
+ * It requires passing a platform client which will implement methods for retrieving/storing pages, and triggering static regeneration.
+ * @param req
+ * @param res
+ * @param responsePromise
+ * @param manifest
+ * @param prerenderManifest
+ * @param routesManifest
+ * @param options
+ * @param platformClient
+ */
+export const defaultHandler = async ({
+  req,
+  res,
+  responsePromise,
+  manifest,
+  prerenderManifest,
+  routesManifest,
+  options,
+  platformClient
+}: {
+  req: IncomingMessage;
+  res: ServerResponse;
+  responsePromise: Promise<any>;
+  manifest: PageManifest;
+  prerenderManifest: PrerenderManifestType;
+  routesManifest: RoutesManifest;
+  options: { logExecutionTimes: boolean };
+  platformClient: PlatformClient;
+}): Promise<void> => {
+  const { now, log } = perfLogger(options.logExecutionTimes);
+
+  let tBeforeSSR = null;
+  const getPage = (pagePath: string) => {
+    const tBeforePageRequire = now();
+    const page = require(`./${pagePath}`); // eslint-disable-line
+    const tAfterPageRequire = (tBeforeSSR = now());
+    log("Require JS execution time", tBeforePageRequire, tAfterPageRequire);
+    return page;
   };
+
+  const route = await handleDefault(
+    { req, res, responsePromise },
+    manifest,
+    prerenderManifest,
+    routesManifest,
+    getPage
+  );
+  if (tBeforeSSR) {
+    const tAfterSSR = now();
+    log("SSR execution time", tBeforeSSR, tAfterSSR);
+  }
+
+  if (!route) {
+    return await responsePromise;
+  }
+
+  if (route.isPublicFile) {
+    const { file } = route as PublicFileRoute;
+    return await staticRequest(
+      req,
+      res,
+      responsePromise,
+      file,
+      `${routesManifest.basePath}/public`,
+      route,
+      manifest,
+      routesManifest,
+      platformClient
+    );
+  }
+  if (route.isStatic) {
+    const { file, isData } = route as StaticRoute;
+    const path = isData
+      ? `${routesManifest.basePath}`
+      : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
+
+    const relativeFile = isData ? file : file.slice("pages".length);
+    return await staticRequest(
+      req,
+      res,
+      responsePromise,
+      relativeFile,
+      path,
+      route,
+      manifest,
+      routesManifest,
+      platformClient
+    );
+  }
+
+  const external: ExternalRoute = route;
+  const { path } = external;
+  return externalRewrite(req, res, path, platformClient);
 };

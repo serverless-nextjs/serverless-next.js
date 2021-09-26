@@ -5,6 +5,7 @@ import { AwsPlatformClient } from "@sls-next/aws-common";
 import Stream from "stream";
 import http from "http";
 import { regenerationHandler, RegenerationEvent } from "@sls-next/core";
+import AWSLambda from "aws-lambda";
 
 export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
   await Promise.all(
