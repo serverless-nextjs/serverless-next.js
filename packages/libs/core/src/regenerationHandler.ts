@@ -16,7 +16,7 @@ export const regenerationHandler = async ({
   regenerationEvent: RegenerationEvent;
   manifest: PageManifest;
   platformClient: PlatformClient;
-}) => {
+}): Promise<void> => {
   const page = require(`./${regenerationEvent.pagePath}`);
 
   const { renderOpts, html } = await renderPageToHtml(

@@ -49,7 +49,7 @@ export const defaultHandler = async ({
   routesManifest: RoutesManifest;
   options: { logExecutionTimes: boolean };
   platformClient: PlatformClient;
-}) => {
+}): Promise<void> => {
   const { now, log } = perfLogger(options.logExecutionTimes);
 
   let tBeforeSSR = null;
