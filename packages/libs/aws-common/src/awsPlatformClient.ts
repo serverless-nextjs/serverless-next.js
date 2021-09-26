@@ -6,6 +6,15 @@ import {
   RegenerationEvent
 } from "@sls-next/core";
 import type { Readable } from "stream";
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client
+} from "@aws-sdk/client-s3";
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
+// FIXME: using static imports for AWS clients instead of dynamic imports are not imported correctly (if (1) imported from root @aws-sdk/client-sqs it works but isn't treeshook and
+// (2) if dynamically imported from deeper @aws-sdk/client-sqs/SQSClient it doesn't resolve and is treated as external. However (2) is working in the old way where AWS clients are direct dependencies of lambda-at-edge. Might be due to nested dynamic imports?
+// However it should be negligible as these clients are pretty lightweight.
 
 /**
  * Client to access pages/files, store pages to S3 and trigger SQS regeneration.
@@ -29,14 +38,10 @@ export class AwsPlatformClient implements PlatformClient {
   }
 
   public async getObject(pageKey: string): Promise<ObjectResponse> {
-    const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
     const s3 = new S3Client({
       region: this.bucketRegion,
       maxAttempts: 3
     });
-    const { GetObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/GetObjectCommand"
-    );
     // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
     const getStream = await import("get-stream");
     const s3Params = {
@@ -55,6 +60,10 @@ export class AwsPlatformClient implements PlatformClient {
     } catch (e: any) {
       s3StatusCode = e.statusCode;
 
+      console.info(
+        "Got error response from S3. Will default to returning empty response. Error: " +
+          JSON.stringify(e)
+      );
       return {
         body: undefined,
         headers: {},
@@ -83,8 +92,6 @@ export class AwsPlatformClient implements PlatformClient {
   public async storePage(
     options: StorePageOptions
   ): Promise<{ cacheControl: string | undefined; expires: Date | undefined }> {
-    const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
-
     const s3 = new S3Client({
       region: this.bucketRegion,
       maxAttempts: 3
@@ -125,9 +132,6 @@ export class AwsPlatformClient implements PlatformClient {
       Expires: expires
     };
 
-    const { PutObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/PutObjectCommand"
-    );
     await Promise.all([
       s3.send(new PutObjectCommand(s3JsonParams)),
       s3.send(new PutObjectCommand(s3HtmlParams))
@@ -146,9 +150,6 @@ export class AwsPlatformClient implements PlatformClient {
       throw new Error("SQS regeneration queue region and name is not set.");
     }
 
-    const { SQSClient, SendMessageCommand } = await import(
-      "@aws-sdk/client-sqs"
-    );
     const sqs = new SQSClient({
       region: this.regenerationQueueRegion,
       maxAttempts: 1

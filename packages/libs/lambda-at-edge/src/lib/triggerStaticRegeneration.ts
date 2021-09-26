@@ -27,7 +27,12 @@ export const triggerStaticRegeneration = async (
     throw new Error("Expected region to be defined");
   }
 
-  const { SQSClient, SendMessageCommand } = await import("@aws-sdk/client-sqs");
+  // Dynamic imports don't get treeshook so we need to import as deep as possible for only the code we need.
+  const { SQSClient } = await import("@aws-sdk/client-sqs/SQSClient");
+  const { SendMessageCommand } = await import(
+    "@aws-sdk/client-sqs/commands/SendMessageCommand"
+  );
+
   const sqs = new SQSClient({
     region,
     maxAttempts: 1

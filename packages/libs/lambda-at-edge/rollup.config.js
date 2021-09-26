@@ -29,11 +29,18 @@ const generateConfig = (input) => ({
       }`
     }),
     json(),
+    nodeResolve({
+      preferBuiltins: true
+    }),
     commonjs(),
     externals({
-      exclude: ["@sls-next/next-aws-cloudfront", "@sls-next/core", "next"]
+      exclude: [
+        "@sls-next/next-aws-cloudfront",
+        "@sls-next/core",
+        "@sls-next/aws-common",
+        "next"
+      ]
     }),
-    nodeResolve(),
     typescript({
       tsconfig: "tsconfig.bundle.json"
     }),

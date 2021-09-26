@@ -3,14 +3,16 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "declaration": true,
-    "target": "ES2015",
-    "module": "CommonJS",
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "target": "ES2019",
+    "module": "ES2020",
     "moduleResolution": "node",
     "noImplicitAny": true,
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts"]

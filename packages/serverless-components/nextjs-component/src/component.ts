@@ -444,8 +444,14 @@ class NextjsComponent extends Component {
     };
 
     const buildOptions = (inputs.build ?? {}) as BuildOptions;
-    const hasSeparateApiLambdaOption =
-      (!buildOptions.useV2Handler && buildOptions.separateApiLambda) ?? true;
+    let hasSeparateApiLambdaOption;
+    if (buildOptions.useV2Handler) {
+      // If v2 handler option is enabled, then there is no separate API lambda.
+      hasSeparateApiLambdaOption = false;
+    } else {
+      // If v2 handler option is disabled, then we check whether app wants to use separate API lambda in v1 handlers.
+      hasSeparateApiLambdaOption = buildOptions.separateApiLambda ?? true;
+    }
 
     const hasSeparateAPIPages =
       hasSeparateApiLambdaOption &&

@@ -138,7 +138,10 @@ const staticRequest = async (
 
   const normalizedBasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
 
-  // These statuses are returned when the object store does not have access to the page or page is not found
+  // These 403/404 statuses are returned when the object store does not have access to the page or page is not found in the store.
+  // Thus, we may need to return a fallback in those cases.
+  // Normally status code is 200 otherwise.
+  // TODO: we may also want to handle other unexpected status codes (5xx etc.) such as by rendering an error page from the handler itself.
   if (pageResponse.statusCode !== 403 && pageResponse.statusCode !== 404) {
     let cacheControl = pageResponse.headers.cacheControl;
 

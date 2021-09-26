@@ -6,6 +6,7 @@
     "access": "public"
   },
   "main": "dist/index.js",
+  "module": "dist/module/index.js",
   "directories": {
     "dist": "dist"
   },
@@ -16,7 +17,7 @@
   },
   "scripts": {
     "prepare": "yarn clean && yarn build",
-    "build": "tsc -p tsconfig.build.json",
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.module.json",
     "clean": "yarn rimraf dist"
   },
   "keywords": [
