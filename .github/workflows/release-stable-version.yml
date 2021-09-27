@@ -34,10 +34,19 @@ jobs:
           node-version: ${{ matrix.node-version }}
 
       - name: Run all test
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
         run: yarn test
 
       - name: Run build scripts
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
         run: yarn install
 
       - name: Release
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
         run: GH_TOKEN=${{secrets.GH_TOKEN}} yarn graduate
