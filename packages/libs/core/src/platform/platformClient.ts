@@ -7,12 +7,13 @@ export type ObjectResponse = {
   expires: string | undefined;
   eTag: string | undefined;
   statusCode: number;
+  cacheControl: string | undefined;
 };
 
 export type StorePageOptions = {
   basePath: string;
-  revalidate: any;
-  html: any;
+  revalidate: number;
+  html: string;
   buildId: string;
   pageData: any;
   uri: string;

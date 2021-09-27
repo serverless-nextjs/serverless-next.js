@@ -139,8 +139,6 @@ const staticRequest = async (
   // Get file/page response by calling the platform's client
   const fileResponse = await platformClient.getObject(fileKey);
 
-  const normalizedBasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-
   // These 403/404 statuses are returned when the object store does not have access to the page or page is not found in the store.
   // Thus, we may need to return a fallback in those cases.
   // Normally status code is 200 otherwise.
@@ -179,7 +177,7 @@ const staticRequest = async (
             lastModified: fileResponse.lastModified,
             pagePath: staticRoute.page,
             pageKey: fileKey,
-            req: req
+            req
           });
 
           // Occasionally we will get rate-limited by the Queue (in the event we
@@ -223,6 +221,8 @@ const staticRequest = async (
     getPage
   );
 
+  console.log(JSON.stringify(fallbackRoute));
+
   // Already handled dynamic error path
   if (!fallbackRoute) {
     return await responsePromise;
@@ -231,16 +231,19 @@ const staticRequest = async (
   // Either a fallback: true page or a static error page
   if (fallbackRoute.isStatic) {
     const file = fallbackRoute.file.slice("pages".length);
+    const normalizedBasePath = basePath
+      ? `${basePath.replace(/^\//, "")}/`
+      : "";
     const pageKey = `${normalizedBasePath}static-pages/${manifest.buildId}${file}`;
 
     const pageResponse = await platformClient.getObject(pageKey);
 
-    const statusCode = fallbackRoute.statusCode || 200;
+    const statusCode = fallbackRoute.statusCode ?? 200;
     const is500 = statusCode === 500;
 
     const cacheControl = is500
       ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
-      : pageResponse.headers.CacheControl ??
+      : pageResponse.cacheControl ??
         (fallbackRoute.fallback // Use cache-control from object response if possible, otherwise use defaults
           ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
           : "public, max-age=0, s-maxage=2678400, must-revalidate");

@@ -89,7 +89,7 @@ export const renderStaticPage = async ({
     bodyString = await getStream.default(s3Response.Body as Readable);
     s3StatusCode = s3Response.$metadata.httpStatusCode;
   } catch (e: any) {
-    s3StatusCode = e.statusCode;
+    s3StatusCode = e.$metadata.httpStatusCode;
   }
 
   // These statuses are returned when S3 does not have access to the page.

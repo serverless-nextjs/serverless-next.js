@@ -262,6 +262,4 @@ export type RegenerationEvent = {
   pageKey: string;
   storeName: string;
   storeRegion: string;
-  queueName: string;
-  queueRegion: string;
 };
