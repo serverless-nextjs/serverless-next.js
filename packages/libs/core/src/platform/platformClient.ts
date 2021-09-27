@@ -2,6 +2,7 @@ export type ObjectResponse = {
   body: Buffer | undefined;
   headers: { [key: string]: string | undefined };
   lastModified: string | undefined;
+  expires: string | undefined;
   statusCode: number;
 };
 

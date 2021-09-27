@@ -68,6 +68,7 @@ export class AwsPlatformClient implements PlatformClient {
         body: undefined,
         headers: {},
         statusCode: s3StatusCode,
+        expires: undefined,
         lastModified: undefined
       };
     }
@@ -86,6 +87,7 @@ export class AwsPlatformClient implements PlatformClient {
         "Accept-Ranges": s3Response.AcceptRanges
       },
       lastModified: s3Response.LastModified?.getTime().toString(),
+      expires: s3Response.Expires?.toString(),
       statusCode: s3StatusCode
     };
   }

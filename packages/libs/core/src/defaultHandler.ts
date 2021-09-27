@@ -158,7 +158,7 @@ const staticRequest = async (
       // Otherwise we may need to do static regeneration
       const staticRegenerationResponse = getStaticRegenerationResponse({
         expiresHeader: fileResponse.headers.expires?.toString() ?? "",
-        lastModifiedHeader: fileResponse.headers.lastModified?.toString() ?? "",
+        lastModifiedHeader: fileResponse.lastModified?.toString() ?? "",
         initialRevalidateSeconds: staticRoute?.revalidate
       });
 
