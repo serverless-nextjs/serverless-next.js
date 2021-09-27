@@ -175,11 +175,11 @@ const staticRequest = async (
 
           const { throttle } = await platformClient.triggerStaticRegeneration({
             basePath,
-            eTag: fileResponse.headers.eTag,
-            lastModified: fileResponse.headers.lastModified,
+            eTag: fileResponse.headers.ETag,
+            lastModified: fileResponse.lastModified,
             pagePath: staticRoute.page,
             pageKey: fileKey,
-            requestUri: req.url
+            req: req
           });
 
           // Occasionally we will get rate-limited by the Queue (in the event we

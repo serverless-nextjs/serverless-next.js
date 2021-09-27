@@ -1,5 +1,5 @@
 // Incoming data
-import { IncomingMessage, ServerResponse } from "http";
+import { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http";
 
 export type Header = {
   key?: string;
@@ -250,7 +250,13 @@ export type PerfLogger = {
   log: (metricDescription: string, t1?: number, t2?: number) => void;
 };
 
+export type RegenerationEventRequest = {
+  url: string | undefined;
+  headers: IncomingHttpHeaders;
+};
+
 export type RegenerationEvent = {
+  request: RegenerationEventRequest;
   pagePath: string;
   basePath: string;
   pageKey: string;

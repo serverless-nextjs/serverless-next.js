@@ -1,8 +1,11 @@
+import { IncomingMessage } from "http";
+
 export type ObjectResponse = {
   body: Buffer | undefined;
   headers: { [key: string]: string | undefined };
   lastModified: string | undefined;
   expires: string | undefined;
+  eTag: string | undefined;
   statusCode: number;
 };
 
@@ -21,7 +24,7 @@ export type TriggerStaticRegenerationOptions = {
   lastModified: string | undefined;
   pagePath: string; // path to page to require
   pageKey: string; // object store key
-  requestUri: string;
+  req: IncomingMessage;
 };
 
 /**

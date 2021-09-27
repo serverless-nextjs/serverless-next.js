@@ -69,7 +69,8 @@ export class AwsPlatformClient implements PlatformClient {
         headers: {},
         statusCode: s3StatusCode,
         expires: undefined,
-        lastModified: undefined
+        lastModified: undefined,
+        eTag: undefined
       };
     }
 
@@ -86,8 +87,9 @@ export class AwsPlatformClient implements PlatformClient {
         ETag: s3Response.ETag,
         "Accept-Ranges": s3Response.AcceptRanges
       },
-      lastModified: s3Response.LastModified?.getTime().toString(),
+      lastModified: s3Response.LastModified?.toString(),
       expires: s3Response.Expires?.toString(),
+      eTag: s3Response.ETag,
       statusCode: s3StatusCode
     };
   }
@@ -159,13 +161,15 @@ export class AwsPlatformClient implements PlatformClient {
     });
 
     const regenerationEvent: RegenerationEvent = {
+      request: {
+        url: options.req.url,
+        headers: options.req.headers
+      },
       pagePath: options.pagePath,
       basePath: options.basePath,
       pageKey: options.pageKey,
       storeName: this.bucketName,
-      storeRegion: this.bucketRegion,
-      queueName: this.regenerationQueueName,
-      queueRegion: this.regenerationQueueRegion
+      storeRegion: this.bucketRegion
     };
 
     try {
@@ -174,7 +178,7 @@ export class AwsPlatformClient implements PlatformClient {
       // MD5 is used since this is only used for grouping purposes
       const hashedUri = crypto
         .createHash("md5")
-        .update(options.requestUri)
+        .update(options.req.url ?? "")
         .digest("hex");
 
       await sqs.send(
