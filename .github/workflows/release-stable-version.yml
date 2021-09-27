@@ -8,45 +8,27 @@ on:
         required: true
 
 jobs:
-  deploy:
-    name: ${{ github.event.inputs.name }} release stable serverless-next version
+  build:
     runs-on: [ubuntu-latest]
-
+    name: "Release stable version"
     strategy:
-      fail-fast: false
       matrix:
         node-version: [12.x]
 
-    env:
-      NODE_OPTIONS: "--max_old_space_size=8192"
-
     steps:
-      - name: Checkout(Latest)
-        uses: actions/checkout@v2
-        if: github.event.inputs.git-ref == ''
-        with:
-          fetch-depth: 0
-          persist-credentials: false
-
+      - uses: actions/checkout@v2
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-
-      - name: Run all test
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-        run: yarn test
-
-      - name: Run build scripts
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-        run: yarn install
-
-      - name: Release
-        uses: actions/setup-node@v1
-        with:
-          node-version: ${{ matrix.node-version }}
-        run: GH_TOKEN=${{secrets.GH_TOKEN}} yarn graduate
+      #- name: Restore Node Modules
+      #id: cache-lerna
+      #uses: actions/cache@master
+      #with:
+      #path: |
+      #node_modules
+      #*/*/node_modules
+      #key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
+      - run: yarn test
+      - run: yarn install
+      - run: GH_TOKEN=${{secrets.GH_TOKEN}} yarn graduate
