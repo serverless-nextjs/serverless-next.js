@@ -1,0 +1,49 @@
+name: Release stable version
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: "Who triggered this?"
+        required: true
+
+jobs:
+  deploy:
+    name: ${{ github.event.inputs.name }} release stable serverless-next version
+    runs-on: [ubuntu-latest]
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [12.x]
+
+    env:
+      NODE_OPTIONS: "--max_old_space_size=8192"
+
+    steps:
+      - name: Checkout(Latest)
+        uses: actions/checkout@v2
+        if: github.event.inputs.git-ref == ''
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - uses: fusion-engineering/setup-git-credentials@v2.0.3
+        with:
+          credentials: ${{secrets.GIT_CREDENTIALS}}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Run all test
+        run: yarn test
+
+      - name: Run build scripts
+        run: yarn install
+
+      - name: Release
+        run: yarn graduate
+        env:
+          GIT_CREDENTIALS: ${{secrets.GIT_CREDENTIALS}}
