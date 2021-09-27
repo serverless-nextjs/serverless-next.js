@@ -437,7 +437,7 @@ const handleOriginResponse = async ({
     };
 
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
-    const bodyString = await getStream.default(s3Response.Body as Readable);
+    const bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
 
     const statusCode = fallbackRoute.statusCode || 200;
     const is500 = statusCode === 500;
@@ -453,7 +453,7 @@ const handleOriginResponse = async ({
       "Cache-Control": cacheControl,
       "Content-Type": "text/html"
     });
-    res.end(bodyString);
+    res.end(bodyBuffer);
     return await responsePromise;
   }
 

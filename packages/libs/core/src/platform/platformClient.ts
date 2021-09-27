@@ -1,13 +1,19 @@
+import { IncomingMessage } from "http";
+
 export type ObjectResponse = {
-  body: string | undefined;
+  body: Buffer | undefined;
   headers: { [key: string]: string | undefined };
+  lastModified: string | undefined;
+  expires: string | undefined;
+  eTag: string | undefined;
   statusCode: number;
+  cacheControl: string | undefined;
 };
 
 export type StorePageOptions = {
   basePath: string;
-  revalidate: any;
-  html: any;
+  revalidate: number;
+  html: string;
   buildId: string;
   pageData: any;
   uri: string;
@@ -19,7 +25,7 @@ export type TriggerStaticRegenerationOptions = {
   lastModified: string | undefined;
   pagePath: string; // path to page to require
   pageKey: string; // object store key
-  requestUri: string;
+  req: IncomingMessage;
 };
 
 /**

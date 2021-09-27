@@ -6,6 +6,15 @@ import {
   RegenerationEvent
 } from "@sls-next/core";
 import type { Readable } from "stream";
+import {
+  GetObjectCommand,
+  PutObjectCommand,
+  S3Client
+} from "@aws-sdk/client-s3";
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
+// FIXME: using static imports for AWS clients instead of dynamic imports are not imported correctly (if (1) imported from root @aws-sdk/client-sqs it works but isn't treeshook and
+// (2) if dynamically imported from deeper @aws-sdk/client-sqs/SQSClient it doesn't resolve and is treated as external. However (2) is working in the old way where AWS clients are direct dependencies of lambda-at-edge. Might be due to nested dynamic imports?
+// However it should be negligible as these clients are pretty lightweight.
 
 /**
  * Client to access pages/files, store pages to S3 and trigger SQS regeneration.
@@ -29,14 +38,10 @@ export class AwsPlatformClient implements PlatformClient {
   }
 
   public async getObject(pageKey: string): Promise<ObjectResponse> {
-    const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
     const s3 = new S3Client({
       region: this.bucketRegion,
       maxAttempts: 3
     });
-    const { GetObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/GetObjectCommand"
-    );
     // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
     const getStream = await import("get-stream");
     const s3Params = {
@@ -45,25 +50,33 @@ export class AwsPlatformClient implements PlatformClient {
     };
 
     let s3StatusCode;
-    let bodyString;
+    let bodyBuffer;
     let s3Response;
 
     try {
       s3Response = await s3.send(new GetObjectCommand(s3Params));
-      bodyString = await getStream.default(s3Response.Body as Readable);
+      bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
       s3StatusCode = s3Response.$metadata.httpStatusCode ?? 200; // assume OK if not set, but it should be
     } catch (e: any) {
-      s3StatusCode = e.statusCode;
+      s3StatusCode = e.$metadata.httpStatusCode;
 
+      console.info(
+        "Got error response from S3. Will default to returning empty response. Error: " +
+          JSON.stringify(e)
+      );
       return {
         body: undefined,
         headers: {},
-        statusCode: s3StatusCode
+        statusCode: s3StatusCode,
+        expires: undefined,
+        lastModified: undefined,
+        eTag: undefined,
+        cacheControl: undefined
       };
     }
 
     return {
-      body: bodyString,
+      body: bodyBuffer,
       headers: {
         "Cache-Control": s3Response.CacheControl,
         "Content-Disposition": s3Response.ContentDisposition,
@@ -73,9 +86,12 @@ export class AwsPlatformClient implements PlatformClient {
         "Content-Encoding": s3Response.ContentEncoding,
         "Content-Range": s3Response.ContentRange,
         ETag: s3Response.ETag,
-        LastModified: s3Response.LastModified?.getTime().toString(),
         "Accept-Ranges": s3Response.AcceptRanges
       },
+      lastModified: s3Response.LastModified?.toString(),
+      expires: s3Response.Expires?.toString(),
+      eTag: s3Response.ETag,
+      cacheControl: s3Response.CacheControl,
       statusCode: s3StatusCode
     };
   }
@@ -83,8 +99,6 @@ export class AwsPlatformClient implements PlatformClient {
   public async storePage(
     options: StorePageOptions
   ): Promise<{ cacheControl: string | undefined; expires: Date | undefined }> {
-    const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
-
     const s3 = new S3Client({
       region: this.bucketRegion,
       maxAttempts: 3
@@ -125,9 +139,6 @@ export class AwsPlatformClient implements PlatformClient {
       Expires: expires
     };
 
-    const { PutObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/PutObjectCommand"
-    );
     await Promise.all([
       s3.send(new PutObjectCommand(s3JsonParams)),
       s3.send(new PutObjectCommand(s3HtmlParams))
@@ -146,22 +157,21 @@ export class AwsPlatformClient implements PlatformClient {
       throw new Error("SQS regeneration queue region and name is not set.");
     }
 
-    const { SQSClient, SendMessageCommand } = await import(
-      "@aws-sdk/client-sqs"
-    );
     const sqs = new SQSClient({
       region: this.regenerationQueueRegion,
       maxAttempts: 1
     });
 
     const regenerationEvent: RegenerationEvent = {
+      request: {
+        url: options.req.url,
+        headers: options.req.headers
+      },
       pagePath: options.pagePath,
       basePath: options.basePath,
       pageKey: options.pageKey,
       storeName: this.bucketName,
-      storeRegion: this.bucketRegion,
-      queueName: this.regenerationQueueName,
-      queueRegion: this.regenerationQueueRegion
+      storeRegion: this.bucketRegion
     };
 
     try {
@@ -170,7 +180,7 @@ export class AwsPlatformClient implements PlatformClient {
       // MD5 is used since this is only used for grouping purposes
       const hashedUri = crypto
         .createHash("md5")
-        .update(options.requestUri)
+        .update(options.req.url ?? "")
         .digest("hex");
 
       await sqs.send(

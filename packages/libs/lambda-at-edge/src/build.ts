@@ -51,6 +51,7 @@ type BuildOptions = {
   regenerationQueueName?: string;
   separateApiLambda?: boolean;
   disableOriginResponseHandler?: boolean;
+  useV2Handler?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -69,7 +70,8 @@ const defaultBuildOptions = {
   cleanupDotNext: true,
   assetIgnorePatterns: [],
   regenerationQueueName: undefined,
-  separateApiLambda: true
+  separateApiLambda: true,
+  useV2Handler: false
 };
 
 class Builder {
@@ -222,7 +224,9 @@ class Builder {
       | "api-handler"
       | "default-handler"
       | "image-handler"
-      | "regeneration-handler",
+      | "regeneration-handler"
+      | "default-handler-v2"
+      | "regeneration-handler-v2",
     destination: string,
     shouldMinify: boolean
   ): Promise<void> {
@@ -278,7 +282,8 @@ class Builder {
   async buildDefaultLambda(
     buildManifest: OriginRequestDefaultHandlerManifest,
     apiBuildManifest: OriginRequestApiHandlerManifest,
-    separateApiLambda: boolean
+    separateApiLambda: boolean,
+    useV2Handler: boolean
   ): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
@@ -287,7 +292,7 @@ class Builder {
     return Promise.all([
       this.copyTraces(buildManifest, DEFAULT_LAMBDA_CODE_DIR),
       this.processAndCopyHandler(
-        "default-handler",
+        useV2Handler ? "default-handler-v2" : "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
@@ -312,9 +317,10 @@ class Builder {
           filter: (file: string) => {
             const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
-            const isNotApiPage = separateApiLambda
-              ? pathToPosix(file).indexOf("pages/api") === -1
-              : true;
+            const isNotApiPage =
+              separateApiLambda && !useV2Handler
+                ? pathToPosix(file).indexOf("pages/api") === -1
+                : true;
 
             // If there are API routes, include all JS files.
             // If there are no API routes, include only JS files that used for SSR (including fallback).
@@ -417,7 +423,8 @@ class Builder {
   }
 
   async buildRegenerationHandler(
-    buildManifest: OriginRequestDefaultHandlerManifest
+    buildManifest: OriginRequestDefaultHandlerManifest,
+    useV2Handler: boolean
   ): Promise<void> {
     await Promise.all([
       this.copyTraces(buildManifest, REGENERATION_LAMBDA_CODE_DIR),
@@ -426,7 +433,7 @@ class Builder {
         buildManifest
       ),
       this.processAndCopyHandler(
-        "regeneration-handler",
+        useV2Handler ? "regeneration-handler-v2" : "regeneration-handler",
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
@@ -700,7 +707,8 @@ class Builder {
       useServerlessTraceTarget,
       cleanupDotNext,
       assetIgnorePatterns,
-      separateApiLambda
+      separateApiLambda,
+      useV2Handler
     } = Object.assign(defaultBuildOptions, this.buildOptions);
 
     await Promise.all([
@@ -791,16 +799,17 @@ class Builder {
     await this.buildDefaultLambda(
       defaultBuildManifest,
       apiBuildManifest,
-      separateApiLambda
+      separateApiLambda,
+      useV2Handler
     );
-    await this.buildRegenerationHandler(defaultBuildManifest);
+    await this.buildRegenerationHandler(defaultBuildManifest, useV2Handler);
 
     const hasAPIPages =
       Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
       Object.keys(apiBuildManifest.apis.dynamic).length > 0;
 
     // Only build API lambda if we have API pages and using a separate API lambda
-    if (hasAPIPages && separateApiLambda) {
+    if (hasAPIPages && separateApiLambda && !useV2Handler) {
       await this.buildApiLambda(apiBuildManifest);
     }
 

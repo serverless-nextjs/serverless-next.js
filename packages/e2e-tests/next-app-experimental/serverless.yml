@@ -5,8 +5,9 @@ next-app-experimental:
       tags:
         foo: bar
     build:
-      separateApiLambda: false
-      disableOriginResponseHandler: true
+      useV2Handler: true
+      #separateApiLambda: false
+      #disableOriginResponseHandler: true
       postBuildCommands: ["node scripts/post-build-test.js"]
       assetIgnorePatterns:
         - "**/public/ignored.txt"

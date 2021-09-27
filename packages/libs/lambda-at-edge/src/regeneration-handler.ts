@@ -33,13 +33,6 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         .replace(`static-pages/${manifest.buildId}`, "")
         .replace(".js", "");
 
-      console.log(
-        "pageS3Path",
-        regenerationEvent.pageS3Path,
-        "normalizedUri",
-        normalizedUri
-      );
-
       await s3StorePage({
         html,
         uri: normalizedUri,

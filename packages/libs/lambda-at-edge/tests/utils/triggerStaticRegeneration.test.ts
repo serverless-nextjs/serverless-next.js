@@ -1,13 +1,17 @@
 import { triggerStaticRegeneration } from "../../src/lib/triggerStaticRegeneration";
+import { jest } from "@jest/globals";
 
 describe("triggerStaticRegeneration()", () => {
   const mockSQSClient = jest.fn();
   const mockSendMessageCommand = jest.fn();
   beforeEach(() => {
     mockSQSClient.mockReset();
-    jest.mock("@aws-sdk/client-sqs", () => ({
+    jest.mock("@aws-sdk/client-sqs/SQSClient", () => ({
       __esModule: true,
-      SQSClient: mockSQSClient,
+      SQSClient: mockSQSClient
+    }));
+    jest.mock("@aws-sdk/client-sqs/commands/SendMessageCommand", () => ({
+      _esModule: true,
       SendMessageCommand: mockSendMessageCommand
     }));
   });
@@ -26,7 +30,8 @@ describe("triggerStaticRegeneration()", () => {
     eTag: "123",
     lastModified: "1",
     queueName: "my-bucket.fifo",
-    pagePath: "/"
+    pagePath: "/",
+    pageS3Path: "/static-pages/build-id/index.html"
   };
 
   class RequestThrottledException extends Error {
@@ -105,6 +110,7 @@ describe("triggerStaticRegeneration()", () => {
         MessageBody: JSON.stringify({
           region: "us-east-1",
           bucketName: "my-bucket",
+          pageS3Path: "/static-pages/build-id/index.html",
           cloudFrontEventRequest: options.request,
           basePath: "",
           pagePath: "/"

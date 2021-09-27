@@ -257,7 +257,8 @@ class NextjsComponent extends Component {
           regenerationQueueName: inputs.sqs?.name,
           separateApiLambda: buildConfig.separateApiLambda ?? true,
           disableOriginResponseHandler:
-            buildConfig.disableOriginResponseHandler ?? false
+            buildConfig.disableOriginResponseHandler ?? false,
+          useV2Handler: buildConfig.useV2Handler ?? false
         },
         nextStaticPath
       );
@@ -443,7 +444,8 @@ class NextjsComponent extends Component {
     };
 
     const buildOptions = (inputs.build ?? {}) as BuildOptions;
-    const hasSeparateApiLambdaOption = buildOptions.separateApiLambda ?? true;
+    const hasSeparateApiLambdaOption =
+      (!buildOptions.useV2Handler && buildOptions.separateApiLambda) ?? true; // using v2 handler automatically combines the handlers
 
     const hasSeparateAPIPages =
       hasSeparateApiLambdaOption &&

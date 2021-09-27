@@ -77,6 +77,9 @@ const createExternalRewriteResponse = async (
     });
   }
 
+  for (const [name, val] of fetchResponse.headers.entries()) {
+    res.setHeader(name, val);
+  }
   res.statusCode = fetchResponse.status;
   res.end(await fetchResponse.buffer());
 };
@@ -114,7 +117,7 @@ const staticRequest = async (
   platformClient: PlatformClient
 ) => {
   const basePath = routesManifest.basePath;
-  const pageKey = (path + file).slice(1); // need to remove leading slash from path for page key
+  const fileKey = (path + file).slice(1); // need to remove leading slash from path for page/file key
 
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;
@@ -133,14 +136,15 @@ const staticRequest = async (
     return await responsePromise;
   }
 
-  // Get page response using platform client
-  const pageResponse = await platformClient.getObject(pageKey);
+  // Get file/page response by calling the platform's client
+  const fileResponse = await platformClient.getObject(fileKey);
 
-  const normalizedBasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-
-  // These statuses are returned when the object store does not have access to the page or page is not found
-  if (pageResponse.statusCode !== 403 && pageResponse.statusCode !== 404) {
-    let cacheControl = pageResponse.headers.cacheControl;
+  // These 403/404 statuses are returned when the object store does not have access to the page or page is not found in the store.
+  // Thus, we may need to return a fallback in those cases.
+  // Normally status code is 200 otherwise.
+  // TODO: we may also want to handle other unexpected status codes (5xx etc.) such as by rendering an error page from the handler itself.
+  if (fileResponse.statusCode !== 403 && fileResponse.statusCode !== 404) {
+    let cacheControl = fileResponse.headers["Cache-Control"];
 
     // If these are error pages, then just return them
     if (statusCode === 404 || statusCode === 500) {
@@ -151,8 +155,8 @@ const staticRequest = async (
     } else {
       // Otherwise we may need to do static regeneration
       const staticRegenerationResponse = getStaticRegenerationResponse({
-        expiresHeader: pageResponse.headers.expires?.toString() ?? "",
-        lastModifiedHeader: pageResponse.headers.lastModified?.toString() ?? "",
+        expiresHeader: fileResponse.expires?.toString() ?? "",
+        lastModifiedHeader: fileResponse.lastModified?.toString() ?? "",
         initialRevalidateSeconds: staticRoute?.revalidate
       });
 
@@ -169,11 +173,11 @@ const staticRequest = async (
 
           const { throttle } = await platformClient.triggerStaticRegeneration({
             basePath,
-            eTag: pageResponse.headers.eTag,
-            lastModified: pageResponse.headers.lastModified,
+            eTag: fileResponse.headers.ETag,
+            lastModified: fileResponse.lastModified,
             pagePath: staticRoute.page,
-            pageKey,
-            requestUri: req.url
+            pageKey: fileKey,
+            req
           });
 
           // Occasionally we will get rate-limited by the Queue (in the event we
@@ -195,13 +199,13 @@ const staticRequest = async (
     }
 
     const headers: OutgoingHttpHeaders = {
-      ...pageResponse.headers,
+      ...fileResponse.headers,
       "Cache-Control": cacheControl,
       ...convertedCustomHeaders
     };
 
     res.writeHead(statusCode, headers);
-    res.end(pageResponse.body);
+    res.end(fileResponse.body);
     return await responsePromise;
   }
 
@@ -217,6 +221,8 @@ const staticRequest = async (
     getPage
   );
 
+  console.log(JSON.stringify(fallbackRoute));
+
   // Already handled dynamic error path
   if (!fallbackRoute) {
     return await responsePromise;
@@ -225,16 +231,19 @@ const staticRequest = async (
   // Either a fallback: true page or a static error page
   if (fallbackRoute.isStatic) {
     const file = fallbackRoute.file.slice("pages".length);
+    const normalizedBasePath = basePath
+      ? `${basePath.replace(/^\//, "")}/`
+      : "";
     const pageKey = `${normalizedBasePath}static-pages/${manifest.buildId}${file}`;
 
     const pageResponse = await platformClient.getObject(pageKey);
 
-    const statusCode = fallbackRoute.statusCode || 200;
+    const statusCode = fallbackRoute.statusCode ?? 200;
     const is500 = statusCode === 500;
 
     const cacheControl = is500
       ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
-      : pageResponse.headers.CacheControl ??
+      : pageResponse.cacheControl ??
         (fallbackRoute.fallback // Use cache-control from object response if possible, otherwise use defaults
           ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
           : "public, max-age=0, s-maxage=2678400, must-revalidate");

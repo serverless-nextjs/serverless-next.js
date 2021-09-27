@@ -31,7 +31,8 @@ export const prepareBuildManifests = async (
     domainRedirects: unnormalisedDomainRedirects
   } = buildOptions;
 
-  const separateApiLambda = buildOptions.separateApiLambda ?? true;
+  const separateApiLambda =
+    (!buildOptions.useV2Handler && buildOptions.separateApiLambda) ?? true;
   const domainRedirects = normaliseDomainRedirects(unnormalisedDomainRedirects);
 
   const pageManifest: PageManifest = {
@@ -76,8 +77,6 @@ export const prepareBuildManifests = async (
 
   const isHtmlPage = (path: string): boolean => path.endsWith(".html");
 
-  // If we are using separate API lambda then API pages go into their own manifest. Otherwise they can be added to
-  // default manifest as well
   const isApiPage = (path: string): boolean => {
     return path.startsWith("pages/api");
   };

@@ -17,8 +17,10 @@
   },
   "include": [
     "./src/default-handler.ts",
+    "./src/default-handler-v2.ts",
     "./src/api-handler.ts",
     "./src/image-handler.ts",
-    "./src/regeneration-handler.ts"
+    "./src/regeneration-handler.ts",
+    "./src/regeneration-handler-v2.ts"
   ]
 }
