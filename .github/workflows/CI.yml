@@ -1,10 +1,6 @@
 name: check test and install
 
-on:
-  push:
-    branches: [master]
-  pull_request:
-    branches: [master]
+on: [pull_request]
 
 jobs:
   build:
