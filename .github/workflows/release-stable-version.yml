@@ -28,10 +28,6 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
 
-      - uses: fusion-engineering/setup-git-credentials@v2.0.3
-        with:
-          credentials: ${{secrets.GIT_CREDENTIALS}}
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
@@ -44,6 +40,4 @@ jobs:
         run: yarn install
 
       - name: Release
-        run: yarn graduate
-        env:
-          GIT_CREDENTIALS: ${{secrets.GIT_CREDENTIALS}}
+        run: GH_TOKEN=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 yarn graduate
