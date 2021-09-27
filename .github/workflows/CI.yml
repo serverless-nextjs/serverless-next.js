@@ -33,5 +33,4 @@ jobs:
       #key: ${{ runner.os }}-${{ hashFiles('**/yarn.lock') }}
       - run: yarn --frozen-lockfile
       - run: yarn test
-      - run: yarn integration
       - run: yarn install
