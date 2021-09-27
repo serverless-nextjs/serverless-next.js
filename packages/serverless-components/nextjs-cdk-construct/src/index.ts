@@ -78,7 +78,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
     this.defaultManifest = this.readDefaultManifest();
     this.prerenderManifest = this.readPrerenderManifest();
     this.bucket = new s3.Bucket(this, "PublicAssets", {
-      publicReadAccess: true,
+      publicReadAccess: false, // CloudFront/Lambdas are granted access so we don't want it publicly available
 
       // Given this resource is created internally and also should only contain
       // assets uploaded by this library we should be able to safely delete all
@@ -308,7 +308,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           viewerProtocolPolicy:
             cloudfront.ViewerProtocolPolicy.REDIRECT_TO_HTTPS,
           origin: new origins.S3Origin(this.bucket),
-          allowedMethods: cloudfront.AllowedMethods.ALLOW_GET_HEAD_OPTIONS,
+          allowedMethods: cloudfront.AllowedMethods.ALLOW_ALL,
           cachedMethods: cloudfront.CachedMethods.CACHE_GET_HEAD_OPTIONS,
           compress: true,
           cachePolicy: this.nextLambdaCachePolicy,

@@ -1742,6 +1742,10 @@ Object {
               "GET",
               "HEAD",
               "OPTIONS",
+              "PUT",
+              "PATCH",
+              "POST",
+              "DELETE",
             ],
             "CachePolicyId": Object {
               "Ref": "StackNextLambdaCacheF214CEF2",
@@ -2165,25 +2169,6 @@ Object {
         },
         "PolicyDocument": Object {
           "Statement": Array [
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "StackPublicAssets8F0F4FE8",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
@@ -4280,6 +4265,10 @@ Object {
               "GET",
               "HEAD",
               "OPTIONS",
+              "PUT",
+              "PATCH",
+              "POST",
+              "DELETE",
             ],
             "CachePolicyId": Object {
               "Ref": "StackNextLambdaCacheF214CEF2",
@@ -4703,25 +4692,6 @@ Object {
         },
         "PolicyDocument": Object {
           "Statement": Array [
-            Object {
-              "Action": "s3:GetObject",
-              "Effect": "Allow",
-              "Principal": "*",
-              "Resource": Object {
-                "Fn::Join": Array [
-                  "",
-                  Array [
-                    Object {
-                      "Fn::GetAtt": Array [
-                        "StackPublicAssets8F0F4FE8",
-                        "Arn",
-                      ],
-                    },
-                    "/*",
-                  ],
-                ],
-              },
-            },
             Object {
               "Action": Array [
                 "s3:GetObject*",
