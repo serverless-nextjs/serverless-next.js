@@ -65,7 +65,7 @@ export const handler = async (
     prerenderManifest,
     routesManifest,
     options: {
-      logExecutionTimes: true
+      logExecutionTimes: manifest.logLambdaExecutionTimes ?? false
     },
     platformClient: awsPlatformClient
   });

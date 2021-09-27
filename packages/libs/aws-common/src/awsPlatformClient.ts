@@ -50,12 +50,12 @@ export class AwsPlatformClient implements PlatformClient {
     };
 
     let s3StatusCode;
-    let bodyString;
+    let bodyBuffer;
     let s3Response;
 
     try {
       s3Response = await s3.send(new GetObjectCommand(s3Params));
-      bodyString = await getStream.default(s3Response.Body as Readable);
+      bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
       s3StatusCode = s3Response.$metadata.httpStatusCode ?? 200; // assume OK if not set, but it should be
     } catch (e: any) {
       s3StatusCode = e.statusCode;
@@ -67,12 +67,13 @@ export class AwsPlatformClient implements PlatformClient {
       return {
         body: undefined,
         headers: {},
-        statusCode: s3StatusCode
+        statusCode: s3StatusCode,
+        lastModified: undefined
       };
     }
 
     return {
-      body: bodyString,
+      body: bodyBuffer,
       headers: {
         "Cache-Control": s3Response.CacheControl,
         "Content-Disposition": s3Response.ContentDisposition,
@@ -82,9 +83,9 @@ export class AwsPlatformClient implements PlatformClient {
         "Content-Encoding": s3Response.ContentEncoding,
         "Content-Range": s3Response.ContentRange,
         ETag: s3Response.ETag,
-        LastModified: s3Response.LastModified?.getTime().toString(),
         "Accept-Ranges": s3Response.AcceptRanges
       },
+      lastModified: s3Response.LastModified?.getTime().toString(),
       statusCode: s3StatusCode
     };
   }

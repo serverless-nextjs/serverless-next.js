@@ -117,7 +117,7 @@ const staticRequest = async (
   platformClient: PlatformClient
 ) => {
   const basePath = routesManifest.basePath;
-  const pageKey = (path + file).slice(1); // need to remove leading slash from path for page key
+  const fileKey = (path + file).slice(1); // need to remove leading slash from path for page/file key
 
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;
@@ -136,8 +136,8 @@ const staticRequest = async (
     return await responsePromise;
   }
 
-  // Get page response using platform client
-  const pageResponse = await platformClient.getObject(pageKey);
+  // Get file/page response by calling the platform's client
+  const fileResponse = await platformClient.getObject(fileKey);
 
   const normalizedBasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
 
@@ -145,8 +145,8 @@ const staticRequest = async (
   // Thus, we may need to return a fallback in those cases.
   // Normally status code is 200 otherwise.
   // TODO: we may also want to handle other unexpected status codes (5xx etc.) such as by rendering an error page from the handler itself.
-  if (pageResponse.statusCode !== 403 && pageResponse.statusCode !== 404) {
-    let cacheControl = pageResponse.headers.cacheControl;
+  if (fileResponse.statusCode !== 403 && fileResponse.statusCode !== 404) {
+    let cacheControl = fileResponse.headers["Cache-Control"];
 
     // If these are error pages, then just return them
     if (statusCode === 404 || statusCode === 500) {
@@ -157,8 +157,8 @@ const staticRequest = async (
     } else {
       // Otherwise we may need to do static regeneration
       const staticRegenerationResponse = getStaticRegenerationResponse({
-        expiresHeader: pageResponse.headers.expires?.toString() ?? "",
-        lastModifiedHeader: pageResponse.headers.lastModified?.toString() ?? "",
+        expiresHeader: fileResponse.headers.expires?.toString() ?? "",
+        lastModifiedHeader: fileResponse.headers.lastModified?.toString() ?? "",
         initialRevalidateSeconds: staticRoute?.revalidate
       });
 
@@ -175,10 +175,10 @@ const staticRequest = async (
 
           const { throttle } = await platformClient.triggerStaticRegeneration({
             basePath,
-            eTag: pageResponse.headers.eTag,
-            lastModified: pageResponse.headers.lastModified,
+            eTag: fileResponse.headers.eTag,
+            lastModified: fileResponse.headers.lastModified,
             pagePath: staticRoute.page,
-            pageKey,
+            pageKey: fileKey,
             requestUri: req.url
           });
 
@@ -201,13 +201,13 @@ const staticRequest = async (
     }
 
     const headers: OutgoingHttpHeaders = {
-      ...pageResponse.headers,
+      ...fileResponse.headers,
       "Cache-Control": cacheControl,
       ...convertedCustomHeaders
     };
 
     res.writeHead(statusCode, headers);
-    res.end(pageResponse.body);
+    res.end(fileResponse.body);
     return await responsePromise;
   }
 

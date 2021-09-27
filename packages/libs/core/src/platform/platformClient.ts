@@ -1,6 +1,7 @@
 export type ObjectResponse = {
-  body: string | undefined;
+  body: Buffer | undefined;
   headers: { [key: string]: string | undefined };
+  lastModified: string | undefined;
   statusCode: number;
 };
 
