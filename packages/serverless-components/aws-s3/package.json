@@ -31,7 +31,7 @@
     "@types/klaw-sync": "^6.0.0",
     "@types/lodash": "^4.14.174",
     "@types/node": "^16.9.6",
-    "@types/ramda": "^0.27.41",
+    "@types/ramda": "^0.27.45",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.29.0",
     "eslint-config-prettier": "^8.3.0",
