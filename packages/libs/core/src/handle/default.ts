@@ -54,6 +54,7 @@ export const renderRoute = async (
       res.setHeader("Content-Type", "application/json");
       res.end(JSON.stringify(renderOpts.pageData));
     } else if (route.isApi) {
+      // do nothing for API routes as they will be handled later
     } else {
       await Promise.race([page.render(req, res), event.responsePromise]);
     }
