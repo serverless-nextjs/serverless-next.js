@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-common",
-  "version": "3.4.0-alpha.10",
+  "version": "3.4.0-alpha.12",
   "description": "Common AWS code that is used in Lambda, Lambda@Edge and other AWS platforms.",
   "publishConfig": {
     "access": "public"
