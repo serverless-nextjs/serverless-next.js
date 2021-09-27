@@ -1,7 +1,4 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests across different versions of node
-# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
-
-name: CI
+name: check test and install
 
 on:
   push:
@@ -12,7 +9,7 @@ on:
 jobs:
   build:
     runs-on: [ubuntu-latest]
-
+    name: "Build and test"
     strategy:
       matrix:
         node-version: [12.x]
