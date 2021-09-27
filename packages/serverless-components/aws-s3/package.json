@@ -29,7 +29,7 @@
     "@types/archiver": "^5.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/klaw-sync": "^6.0.0",
-    "@types/lodash": "^4.14.173",
+    "@types/lodash": "^4.14.174",
     "@types/node": "^16.9.6",
     "@types/ramda": "^0.27.41",
     "babel-eslint": "^10.1.0",
