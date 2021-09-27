@@ -40,4 +40,4 @@ jobs:
         run: yarn install
 
       - name: Release
-        run: GH_TOKEN=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 yarn graduate
+        run: GH_TOKEN=${{secrets.GH_TOKEN}} yarn graduate
