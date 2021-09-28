@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.12...v3.4.0-alpha.13) (2021-09-28)
+
+### Bug Fixes
+
+- **nextjs-cdk-construct:** disable public read access of s3 bucket and allow all methods in default behavior ([#1758](https://github.com/serverless-nextjs/serverless-next.js/issues/1758)) ([770641c](https://github.com/serverless-nextjs/serverless-next.js/commit/770641cefabcfbc088f59979342f55d366991777))
+
 # [3.4.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.11...v3.4.0-alpha.12) (2021-09-27)
 
 ### Features
