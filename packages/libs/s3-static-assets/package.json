@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "^2.995.0",
+    "aws-sdk": "^2.996.0",
     "fast-glob": "^3.2.5",
     "fs-extra": "^9.1.0",
     "mime-types": "^2.1.27",
