@@ -1846,39 +1846,39 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "3.4.0-alpha.10"
+  version "3.4.0-alpha.12"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.995.0"
+    aws-sdk "^2.996.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-common@link:../../libs/aws-common":
-  version "3.4.0-alpha.10"
+  version "3.4.0-alpha.12"
   dependencies:
     "@aws-sdk/client-s3" "^3.34.0"
     "@aws-sdk/client-sqs" "^3.34.0"
     "@sls-next/core" "link:../../libs/core"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "3.4.0-alpha.10"
+  version "3.4.0-alpha.12"
   dependencies:
     "@serverless/aws-iam-role" "^1.0.0"
     "@serverless/aws-lambda-layer" "^1.0.0"
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.995.0"
+    aws-sdk "^2.996.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
     ramda "^0.27.0"
 
 "@sls-next/aws-s3@link:../aws-s3":
-  version "3.4.0-alpha.10"
+  version "3.4.0-alpha.12"
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.995.0"
+    aws-sdk "^2.996.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1893,12 +1893,12 @@
     lodash "^4.17.21"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "3.4.0-alpha.10"
+  version "3.4.0-alpha.12"
   dependencies:
-    aws-sdk "^2.995.0"
+    aws-sdk "^2.996.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "3.4.0-alpha.11"
+  version "3.4.0-alpha.12"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -1912,7 +1912,7 @@
   version "3.2.0"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "3.4.0-alpha.11"
+  version "3.4.0-alpha.12"
   dependencies:
     "@aws-sdk/client-s3" "^3.33.0"
     "@aws-sdk/client-sqs" "^3.33.0"
@@ -1935,9 +1935,9 @@
   version "3.4.0-alpha.9"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "3.4.0-alpha.10"
+  version "3.4.0-alpha.12"
   dependencies:
-    aws-sdk "^2.995.0"
+    aws-sdk "^2.996.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.27"
@@ -2416,10 +2416,10 @@ available-typed-arrays@^1.0.4:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.995.0:
-  version "2.995.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.995.0.tgz#f95f6cac217c4468ab24a297032915dca299360d"
-  integrity sha512-2tZv0GLI7SAhV6hGIhZArCvF2OcQNPrGNmtPtOhBWmovYJ5qIaibtFFtSee3O8jWX87KGDkBA5fgBMXrcG7i/w==
+aws-sdk@^2.387.0, aws-sdk@^2.488.0, aws-sdk@^2.996.0:
+  version "2.996.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.996.0.tgz#0cee788fba00df15685f0dc27989824f06b97abc"
+  integrity sha512-LZcus/r/36lwmGhRcwwllzQUucZ6sozDt3r78lXqdaQzZNbv44K44nXsqCPH2UpTcznrVUSJOW+o5s8yEbKFzg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
