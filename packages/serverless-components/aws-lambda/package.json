@@ -27,7 +27,7 @@
     "@types/archiver": "^5.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash": "^4.14.175",
-    "@types/node": "^16.10.1",
+    "@types/node": "^16.10.2",
     "@types/ramda": "^0.27.45",
     "jest": "^27.2.3",
     "rimraf": "^3.0.2",
