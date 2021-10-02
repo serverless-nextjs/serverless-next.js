@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-s3",
-  "version": "3.4.0-alpha.14",
+  "version": "3.4.0",
   "main": "./serverless.js",
   "publishConfig": {
     "access": "public"

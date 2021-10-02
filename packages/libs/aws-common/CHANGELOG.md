@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.14...v3.4.0) (2021-10-02)
+
+**Note:** Version bump only for package @sls-next/aws-common
+
 # [3.4.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.11...v3.4.0-alpha.12) (2021-09-27)
 
 ### Features
