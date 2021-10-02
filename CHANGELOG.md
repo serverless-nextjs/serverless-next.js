@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.4.0-alpha.14](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.13...v3.4.0-alpha.14) (2021-10-02)
+
+**Note:** Version bump only for package serverless-nextjs-monorepo
+
 # [3.4.0-alpha.13](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.12...v3.4.0-alpha.13) (2021-09-28)
 
 ### Bug Fixes
