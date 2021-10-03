@@ -3988,10 +3988,10 @@
     node-fetch "^2.6.0"
     shortid "^2.2.14"
 
-"@serverless/components@^3.17.0":
-  version "3.17.0"
-  resolved "https://registry.npmjs.org/@serverless/components/-/components-3.17.0.tgz#7c583489253edf0c29b8d73ecbc1343a9e3a6675"
-  integrity sha512-F0ReVFmwnbSDyH9PaifjrxvR0HvnKS37VyoEOCagj/31vGrksyrvuwI8BxC0YwPReRDb4n99+CtGkDsdGb9AQg==
+"@serverless/components@^3.17.1":
+  version "3.17.1"
+  resolved "https://registry.npmjs.org/@serverless/components/-/components-3.17.1.tgz#824ae5c7f5b7a6d089ca407a8e6361416af8ff88"
+  integrity sha512-Ra0VVpivEWB816ZAca4UCNzOxQqxveEp4h+RzUX5vaAsZrxpotPUFZi96w9yZGQk3OTxxscRqrsBLxGDtOu8SA==
   dependencies:
     "@serverless/platform-client" "^4.2.2"
     "@serverless/platform-client-china" "^2.2.0"
@@ -4034,14 +4034,14 @@
     ramda "^0.26.1"
     semver "^6.1.1"
 
-"@serverless/dashboard-plugin@^5.4.4":
-  version "5.4.4"
-  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.4.4.tgz#787d0214175f520776c46ae0ca38bf7a981f8d54"
-  integrity sha512-1lLChYK/zwrF5SEAubVr9Oz/xGnq1Yjbw36X1iz0j/+jwbtpt1AeumksArA3UVAgDSecVOfaksxUta2cc10pRA==
+"@serverless/dashboard-plugin@^5.4.5":
+  version "5.4.5"
+  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.4.5.tgz#9377d03003c330e51db2b5fa53dfea514646889d"
+  integrity sha512-/GC25lNFBcUQ/jK4ArDkx7yJk8a+QVXPHa7jakb8zXYDUy1s9XbXW5R8Lj0X1s1e8NG52+rCh6y1gy53hGqvbQ==
   dependencies:
     "@serverless/event-mocks" "^1.1.1"
     "@serverless/platform-client" "^4.3.0"
-    "@serverless/utils" "^5.7.0"
+    "@serverless/utils" "^5.17.0"
     chalk "^4.1.2"
     child-process-ext "^2.1.1"
     chokidar "^3.5.2"
@@ -4054,10 +4054,10 @@
     memoizee "^0.4.15"
     ncjsm "^4.2.0"
     node-dir "^0.1.17"
-    node-fetch "^2.6.1"
+    node-fetch "^2.6.5"
     open "^7.4.2"
     semver "^7.3.5"
-    simple-git "^2.44.0"
+    simple-git "^2.46.0"
     uuid "^8.3.2"
     yamljs "^0.3.0"
 
@@ -4168,10 +4168,10 @@
     uuid "^8.3.2"
     write-file-atomic "^3.0.3"
 
-"@serverless/utils@^5.16.0", "@serverless/utils@^5.7.0":
-  version "5.16.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.16.0.tgz#aecd12ca1c25c3f638bd5f08019a1447f2e1e8c8"
-  integrity sha512-oxxfpJ7BowcJZ9cQxf02bPbCViEaU78iT6fN15/6DGD1KAm+b6h0o/962DNg5g1+QSVLsM1iP2upypf5iTjEzA==
+"@serverless/utils@^5.17.0":
+  version "5.17.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.17.0.tgz#b53261aa6c6d4ecee6e99b49c68a1988851a2386"
+  integrity sha512-Xnkg1xPjXFCiXXvsIi+inl9lgWSyEyG6tUpGzaKbpPcPo16xruBUX+aRKtMd53QXe3WJVe7+1+MOzjiXbRzE1A==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
@@ -4181,6 +4181,7 @@
     d "^1.0.1"
     decompress "^4.2.1"
     event-emitter "^0.3.5"
+    ext "^1.6.0"
     ext-name "^5.0.0"
     file-type "^16.5.3"
     filenamify "^4.3.0"
@@ -5188,10 +5189,10 @@ available-typed-arrays@^1.0.2:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.4.tgz#9e0ae84ecff20caae6a94a1c3bc39b955649b7a9"
   integrity sha512-SA5mXJWrId1TaQjfxUYghbqQ/hYioKmLJvPJyDuYRtXXenFNMjj4hSSt1Cf1xsuXSXrtxrVC5Ot4eU6cOtBDdA==
 
-aws-sdk@^2.994.0, aws-sdk@^2.996.0:
-  version "2.996.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.996.0.tgz#0cee788fba00df15685f0dc27989824f06b97abc"
-  integrity sha512-LZcus/r/36lwmGhRcwwllzQUucZ6sozDt3r78lXqdaQzZNbv44K44nXsqCPH2UpTcznrVUSJOW+o5s8yEbKFzg==
+aws-sdk@^2.996.0, aws-sdk@^2.998.0:
+  version "2.999.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.999.0.tgz#2d71882fd9ba31c12a4281ae45ffe2b857f4307e"
+  integrity sha512-OcnD7m+HCZv2qDzmS7TgABGf26mVPfIyah0Dgz7hHAxBtx78qFWi/s9U6BDxVBKWLg7OKWVHf0opiMG4ujteqg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -12342,20 +12343,20 @@ serialize-javascript@^5.0.1:
   dependencies:
     randombytes "^2.1.0"
 
-serverless@^2.60.0:
-  version "2.60.0"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.60.0.tgz#fc4b831edcf5d8e3746fac336a72098fbaca7762"
-  integrity sha512-AlAFCf1jrnDxVsJlYO3YrTFrmbMLP9FqzQQI2yJ4s75td5k6u8reTTNuXwC9Y68yyCX5qv1VsOlYnv7VzQsNlA==
+serverless@^2.60.3:
+  version "2.60.3"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.60.3.tgz#271d2d8d080da23a639e3b16ff72eeedcaaf8034"
+  integrity sha512-YlMVUc0O9ZbOXDSE1zAqudw3ryB3JvSiHpxpiliYin09MrmYa2scLNx+zBPU42zihz+UMdA3Kt1NGaa5yQucJg==
   dependencies:
     "@serverless/cli" "^1.5.2"
-    "@serverless/components" "^3.17.0"
-    "@serverless/dashboard-plugin" "^5.4.4"
+    "@serverless/components" "^3.17.1"
+    "@serverless/dashboard-plugin" "^5.4.5"
     "@serverless/platform-client" "^4.3.0"
-    "@serverless/utils" "^5.16.0"
+    "@serverless/utils" "^5.17.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.994.0"
+    aws-sdk "^2.998.0"
     bluebird "^3.7.2"
     boxen "^5.1.2"
     cachedir "^2.3.0"
@@ -12394,7 +12395,7 @@ serverless@^2.60.0:
     promise-queue "^2.2.5"
     replaceall "^0.1.6"
     semver "^7.3.5"
-    signal-exit "^3.0.4"
+    signal-exit "^3.0.5"
     strip-ansi "^6.0.1"
     tabtab "^3.0.2"
     tar "^6.1.11"
@@ -12493,10 +12494,10 @@ side-channel@^1.0.4:
     get-intrinsic "^1.0.2"
     object-inspect "^1.9.0"
 
-signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3, signal-exit@^3.0.4:
-  version "3.0.4"
-  resolved "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.4.tgz#366a4684d175b9cab2081e3681fda3747b6c51d7"
-  integrity sha512-rqYhcAnZ6d/vTPGghdrw7iumdcbXpsk1b8IG/rz+VWV51DM0p7XCtMoJ3qhPLIbp3tvyt3pKRbaaEMZYpHto8Q==
+signal-exit@^3.0.0, signal-exit@^3.0.2, signal-exit@^3.0.3, signal-exit@^3.0.5:
+  version "3.0.5"
+  resolved "https://registry.npmjs.org/signal-exit/-/signal-exit-3.0.5.tgz#9e3e8cc0c75a99472b44321033a7702e7738252f"
+  integrity sha512-KWcOiKeQj6ZyXx7zq4YxSMgHRlod4czeBQZrPb8OKcohcqAXShm7E20kEMle9WBt26hFcAf0qLOcp5zmY7kOqQ==
 
 simple-concat@^1.0.0:
   version "1.0.1"
@@ -12512,10 +12513,10 @@ simple-get@^2.7.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-simple-git@^2.44.0:
-  version "2.44.0"
-  resolved "https://registry.npmjs.org/simple-git/-/simple-git-2.44.0.tgz#94eca4162b7e21707b5a1a40b22e6f29b007d3a8"
-  integrity sha512-wIjcAmymhzgdaM0Y/a+XxmNGlivvHQTPZDYXVmyHMShVDwdeVqu3+OOyDbYu0DnfVzqLs2EOxRTgMNbC3YquwQ==
+simple-git@^2.46.0:
+  version "2.46.0"
+  resolved "https://registry.npmjs.org/simple-git/-/simple-git-2.46.0.tgz#d564856705cee9d2ef1d1f98c7143e2bc00e7c3e"
+  integrity sha512-6eumII1vfP4NpRqxZcVWCcIT5xHH6dRyvBZSjkH4dJRDRpv+0f75hrN5ysp++y23Mfr3AbRC/dO2NDbfj1lJpQ==
   dependencies:
     "@kwsites/file-exists" "^1.1.1"
     "@kwsites/promise-deferred" "^1.1.1"
