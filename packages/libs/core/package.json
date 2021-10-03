@@ -44,7 +44,7 @@
     "@types/cookie": "^0.4.0",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node-fetch": "3.0.3",
-    "@types/react": "^17.0.24",
+    "@types/react": "^17.0.26",
     "@types/react-dom": "^17.0.9",
     "@types/zen-observable": "^0.8.3",
     "rimraf": "^3.0.2",
