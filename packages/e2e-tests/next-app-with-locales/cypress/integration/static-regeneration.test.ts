@@ -3,7 +3,7 @@ describe("ISR Tests", () => {
     cy.ensureAllRoutesNotErrored();
   });
   describe("SSG Redirect", () => {
-    it(`non existing user redirects to home`, () => {
+    it("non existing user redirects to home", () => {
       const path = "/en/revalidated-ssg-pages/106";
       cy.ensureRouteHasStatusCode(path, 307);
 
