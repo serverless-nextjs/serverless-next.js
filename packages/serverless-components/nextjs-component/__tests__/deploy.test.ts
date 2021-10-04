@@ -274,7 +274,7 @@ describe("deploy tests", () => {
                   queryString: false
                 }
               },
-              "api/*": {
+              "api/preview": {
                 minTTL: 0,
                 defaultTTL: 0,
                 maxTTL: 31536000,
@@ -305,7 +305,7 @@ describe("deploy tests", () => {
     });
 
     it("invalidates distribution cache", () => {
-      expect(mockCreateInvalidation).toBeCalledTimes(0);
+      expect(mockCreateInvalidation).toBeCalledTimes(1);
     });
   });
 
