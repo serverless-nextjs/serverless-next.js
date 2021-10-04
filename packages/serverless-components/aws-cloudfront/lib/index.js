@@ -280,6 +280,7 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   });
 
   if (CacheBehaviors) {
+    // path patterns that is updated in input
     const pathPatterns = CacheBehaviors.Items.map(
       (behavior) => behavior.PathPattern
     );
