@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.2.5-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.4...@getjerry/aws-cloudfront@1.2.5-alpha.0) (2021-10-04)
+
+### Bug Fixes
+
+- duplicate cloudfront behavior path patterns ([2dd7adf](https://github.com/getjerry/serverless-next.js/commit/2dd7adf71c005cf8fd05979ca161952bbf169ab6))
+
 ## [1.2.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.3...@getjerry/aws-cloudfront@1.2.4) (2021-04-13)
 
 ### Bug Fixes
