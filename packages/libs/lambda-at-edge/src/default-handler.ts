@@ -459,6 +459,21 @@ const handleOriginResponse = async ({
 
   // This is a fallback route that should be stored in S3 before returning it
   const { renderOpts, html } = fallbackRoute;
+  // Check if response is a redirect
+  if (
+    typeof renderOpts.pageData !== "undefined" &&
+    typeof renderOpts.pageData.pageProps !== "undefined" &&
+    typeof renderOpts.pageData.pageProps.__N_REDIRECT !== "undefined"
+  ) {
+    const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
+    const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
+    res.writeHead(statusCode, {
+      Location: redirectPath,
+      "Cache-Control": "s-maxage=0"
+    });
+    res.end();
+    return await responsePromise;
+  }
   const { expires } = await s3StorePage({
     html,
     uri: s3Uri,
