@@ -280,10 +280,14 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
   });
 
   if (CacheBehaviors) {
+    const pathPatterns = CacheBehaviors.Items.map(
+      (behavior) => behavior.PathPattern
+    );
+
     const existingCacheBehaviors = params.DistributionConfig.CacheBehaviors
       ? params.DistributionConfig.CacheBehaviors.Items.filter(
           (behavior) => !inputOriginIds.includes(behavior.TargetOriginId)
-        )
+        ).filter((behavior) => !pathPatterns.includes(behavior.PathPattern))
       : [];
     const inputCacheBehaviours = CacheBehaviors.Items.concat(
       existingCacheBehaviors
