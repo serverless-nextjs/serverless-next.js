@@ -20,6 +20,10 @@ import { createHash } from "crypto";
 import { getContentType, getExtension } from "./serveStatic";
 // @ts-ignore no types for is-animated
 import isAnimated from "is-animated";
+<<<<<<< HEAD:packages/libs/core/src/images/imageOptimizer.ts
+=======
+import Stream from "stream";
+>>>>>>> fix merge conflicts:packages/libs/lambda-at-edge/src/images/imageOptimizer.ts
 import { sendEtagResponse } from "./sendEtagResponse";
 import { ImageConfig, ImagesManifest } from "../build/types";
 import { imageConfigDefault } from "./imageConfig";

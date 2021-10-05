@@ -13,9 +13,9 @@ import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   handleAuth,
   handleDomainRedirects,
-  imageOptimizer,
   setCustomHeaders
 } from "@sls-next/core";
+import { imageOptimizer } from "@sls-next/core/dist/module/images";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
