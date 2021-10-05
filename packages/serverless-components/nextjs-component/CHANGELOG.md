@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.43-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.3...@getjerry/serverless-next@1.20.43-alpha.4) (2021-10-05)
+
+**Note:** Version bump only for package @getjerry/serverless-next
+
 ## [1.20.43-alpha.3](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.2...@getjerry/serverless-next@1.20.43-alpha.3) (2021-10-05)
 
 **Note:** Version bump only for package @getjerry/serverless-next
