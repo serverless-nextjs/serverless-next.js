@@ -288,7 +288,9 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     const existingCacheBehaviors = params.DistributionConfig.CacheBehaviors
       ? params.DistributionConfig.CacheBehaviors.Items.filter(
           (behavior) => !inputOriginIds.includes(behavior.TargetOriginId)
-        ).filter((behavior) => !pathPatterns.includes(behavior.PathPattern))
+        )
+          // Cloudfront is not allow duplicate path patterns now
+          .filter((behavior) => !pathPatterns.includes(behavior.PathPattern))
       : [];
     const inputCacheBehaviours = CacheBehaviors.Items.concat(
       existingCacheBehaviors
