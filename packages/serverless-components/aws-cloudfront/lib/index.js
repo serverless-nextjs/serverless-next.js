@@ -271,7 +271,7 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
     const originIndex = existingOriginIds.indexOf(inputOrigin.Id);
 
     if (originIndex > -1) {
-      // replace origin with new input configuration
+      // replace origin with new input configuration.
       origins.Items.splice(originIndex, 1, inputOrigin);
     } else {
       origins.Items.push(inputOrigin);
