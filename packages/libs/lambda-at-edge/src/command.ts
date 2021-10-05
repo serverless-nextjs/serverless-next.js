@@ -3,7 +3,7 @@ import { join } from "path";
 
 async function main(args: string[]) {
   if (args.length > 1) {
-    console.error("Usage: build-lambda-at-edge [ NEXT_APP_DIR ].");
+    console.error("Usage: build-lambda-at-edge [ NEXT_APP_DIR ]");
     process.exit(1);
   }
 
