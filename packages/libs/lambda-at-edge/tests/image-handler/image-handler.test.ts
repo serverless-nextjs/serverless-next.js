@@ -5,19 +5,22 @@ import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import sharp from "sharp";
 import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
 
-const MockGetObjectCommand = jest.fn();
-
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
-jest.mock("@aws-sdk/client-s3/S3Client", () =>
+jest.mock("@sls-next/core/node_modules/@aws-sdk/client-s3/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
-  return {
-    GetObjectCommand: MockGetObjectCommand
-  };
-});
+jest.mock(
+  "@sls-next/core/node_modules/@aws-sdk/client-s3/commands/GetObjectCommand",
+  () => {
+    return {
+      GetObjectCommand: jest.fn()
+    };
+  }
+);
+
+const MockGetObjectCommand = require("@sls-next/core/node_modules/@aws-sdk/client-s3/commands/GetObjectCommand");
 
 jest.mock(
   "../../src/manifest.json",

@@ -21,8 +21,8 @@ import { getContentType, getExtension } from "./serveStatic";
 // @ts-ignore no types for is-animated
 import isAnimated from "is-animated";
 import Stream from "stream";
-import { sendEtagResponse } from "../lib/sendEtagResponse";
-import { ImageConfig, ImagesManifest } from "../types";
+import { sendEtagResponse } from "./sendEtagResponse";
+import { ImageConfig, ImagesManifest } from "../build/types";
 import { imageConfigDefault } from "./imageConfig";
 import * as fs from "fs";
 import fetch from "node-fetch";
