@@ -43,6 +43,8 @@ import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 import { s3StorePage } from "./s3/s3StorePage";
+import { createRedirectResponse } from "@sls-next/core/dist/route/redirect";
+import { redirect } from "@sls-next/core/dist/handle/redirect";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -467,11 +469,15 @@ const handleOriginResponse = async ({
   ) {
     const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
     const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
-    res.writeHead(statusCode, {
-      Location: redirectPath,
-      "Cache-Control": "s-maxage=0"
-    });
-    res.end();
+
+    const redirectResponse = createRedirectResponse(
+      redirectPath,
+      request.querystring,
+      statusCode
+    );
+
+    redirect({ req, res, responsePromise }, redirectResponse);
+
     return await responsePromise;
   }
   const { expires } = await s3StorePage({

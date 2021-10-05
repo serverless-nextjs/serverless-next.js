@@ -18,6 +18,8 @@ import { PageManifest } from "./types";
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
 import { performance } from "perf_hooks";
 import { PlatformClient } from "./platform";
+import { createRedirectResponse } from "./route/redirect";
+import { redirect } from "./handle/redirect";
 
 const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -263,11 +265,13 @@ const staticRequest = async (
   ) {
     const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
     const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
-    res.writeHead(statusCode, {
-      Location: redirectPath,
-      "Cache-Control": "s-maxage=0"
-    });
-    res.end();
+    const redirectResponse = createRedirectResponse(
+      redirectPath,
+      route.querystring,
+      statusCode
+    );
+
+    redirect({ req, res, responsePromise }, redirectResponse);
     return await responsePromise;
   }
   const { expires } = await platformClient.storePage({
