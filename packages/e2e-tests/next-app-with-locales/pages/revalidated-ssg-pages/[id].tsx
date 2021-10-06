@@ -52,6 +52,17 @@ export function getStaticProps(
   const user = users.find(
     ({ id }) => context.params?.id.toString() === id.toString()
   );
+
+  // Redirect to Home for a not found user
+  if (typeof user === "undefined") {
+    return {
+      redirect: {
+        statusCode: 307,
+        destination: "/"
+      }
+    };
+  }
+
   return {
     revalidate: 10,
     props: {

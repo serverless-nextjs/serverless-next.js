@@ -18,6 +18,8 @@ import { PageManifest } from "./types";
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
 import { performance } from "perf_hooks";
 import { PlatformClient } from "./platform";
+import { createRedirectResponse } from "./route/redirect";
+import { redirect } from "./handle/redirect";
 
 const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -138,7 +140,6 @@ const staticRequest = async (
 
   // Get file/page response by calling the platform's client
   const fileResponse = await platformClient.getObject(fileKey);
-
   // These 403/404 statuses are returned when the object store does not have access to the page or page is not found in the store.
   // Thus, we may need to return a fallback in those cases.
   // Normally status code is 200 otherwise.
@@ -221,8 +222,6 @@ const staticRequest = async (
     getPage
   );
 
-  console.log(JSON.stringify(fallbackRoute));
-
   // Already handled dynamic error path
   if (!fallbackRoute) {
     return await responsePromise;
@@ -258,6 +257,23 @@ const staticRequest = async (
 
   // This is a fallback route that should be stored in object store before returning it
   const { renderOpts, html } = fallbackRoute;
+  // Check if response is a redirect
+  if (
+    typeof renderOpts.pageData !== "undefined" &&
+    typeof renderOpts.pageData.pageProps !== "undefined" &&
+    typeof renderOpts.pageData.pageProps.__N_REDIRECT !== "undefined"
+  ) {
+    const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
+    const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
+    const redirectResponse = createRedirectResponse(
+      redirectPath,
+      route.querystring,
+      statusCode
+    );
+
+    redirect({ req, res, responsePromise }, redirectResponse);
+    return await responsePromise;
+  }
   const { expires } = await platformClient.storePage({
     html,
     uri: file,
