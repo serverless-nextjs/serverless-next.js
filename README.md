@@ -399,7 +399,7 @@ The exhaustive list of AWS actions required for a deployment:
   "s3:ListBucket",
   "s3:PutAccelerateConfiguration",
   "s3:PutBucketPolicy",
-  "s3:PutObject"
+  "s3:PutObject",
   "s3:PutBucketTagging",              // for tagging buckets
   "s3:GetBucketTagging",              // for tagging buckets
   "lambda:ListEventSourceMappings",

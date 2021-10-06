@@ -2157,14 +2157,14 @@
     picomatch "^2.2.2"
 
 "@sls-next/aws-common@link:../aws-common":
-  version "3.4.0-alpha.12"
+  version "3.4.0"
   dependencies:
     "@aws-sdk/client-s3" "^3.34.0"
     "@aws-sdk/client-sqs" "^3.34.0"
     "@sls-next/core" "link:../core"
 
 "@sls-next/core@link:../core":
-  version "3.4.0-alpha.12"
+  version "3.4.0"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -2276,10 +2276,10 @@
   dependencies:
     "@types/react" "*"
 
-"@types/react@*", "@types/react@17.0.26":
-  version "17.0.26"
-  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.26.tgz#960ea4b3518cc154ed7df3b35656c508df653331"
-  integrity sha512-MXxuXrH2xOcv5cp/su4oz69dNQnSA90JjFw5HBd5wifw6Ihi94j7dRJm7qNsB30tnruXSCPc9qmlhGop4nh9Hw==
+"@types/react@*", "@types/react@17.0.27":
+  version "17.0.27"
+  resolved "https://registry.npmjs.org/@types/react/-/react-17.0.27.tgz#6498ed9b3ad117e818deb5525fa1946c09f2e0e6"
+  integrity sha512-zgiJwtsggVGtr53MndV7jfiUESTqrbxOcBvwfe6KS/9bzaVPCTDieTWnFNecVNx6EAaapg5xsLLWFfHHR437AA==
   dependencies:
     "@types/prop-types" "*"
     "@types/scheduler" "*"
@@ -4981,10 +4981,10 @@ rollup-pluginutils@^2.8.2:
   dependencies:
     estree-walker "^0.6.1"
 
-rollup@^2.57.0:
-  version "2.57.0"
-  resolved "https://registry.npmjs.org/rollup/-/rollup-2.57.0.tgz#c1694475eb22e1022477c0f4635fd0ac80713173"
-  integrity sha512-bKQIh1rWKofRee6mv8SrF2HdP6pea5QkwBZSMImJysFj39gQuiV8MEPBjXOCpzk3wSYp63M2v2wkWBmFC8O/rg==
+rollup@^2.58.0:
+  version "2.58.0"
+  resolved "https://registry.npmjs.org/rollup/-/rollup-2.58.0.tgz#a643983365e7bf7f5b7c62a8331b983b7c4c67fb"
+  integrity sha512-NOXpusKnaRpbS7ZVSzcEXqxcLDOagN6iFS8p45RkoiMqPHDLwJm758UF05KlMoCRbLBTZsPOIa887gZJ1AiXvw==
   optionalDependencies:
     fsevents "~2.3.2"
 
