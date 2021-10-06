@@ -20,12 +20,12 @@ import { createHash } from "crypto";
 import { getContentType, getExtension } from "./serveStatic";
 // @ts-ignore no types for is-animated
 import isAnimated from "is-animated";
-import Stream from "stream";
 import { sendEtagResponse } from "./sendEtagResponse";
 import { ImageConfig, ImagesManifest } from "../build/types";
 import { imageConfigDefault } from "./imageConfig";
 import * as fs from "fs";
 import fetch from "node-fetch";
+import { PlatformClient } from "../platform";
 
 let sharp: typeof import("sharp");
 //const AVIF = 'image/avif'
@@ -44,15 +44,12 @@ type ImageOptimizerResponse = {
 };
 
 export async function imageOptimizer(
-  {
-    basePath,
-    bucketName,
-    region
-  }: { basePath: string; bucketName: string; region: string },
+  basePath: string,
   imagesManifest: ImagesManifest | undefined,
   req: IncomingMessage,
   res: ServerResponse,
-  parsedUrl: UrlWithParsedQuery
+  parsedUrl: UrlWithParsedQuery,
+  platformClient: PlatformClient
 ): Promise<ImageOptimizerResponse> {
   const imageConfig: ImageConfig = imagesManifest?.images ?? imageConfigDefault;
   const {
@@ -187,8 +184,8 @@ export async function imageOptimizer(
     }
   }
 
-  let upstreamBuffer: Buffer;
-  let upstreamType: string | null;
+  let upstreamBuffer: Buffer | undefined;
+  let upstreamType: string | undefined;
   let maxAge: number;
 
   if (isAbsolute) {
@@ -202,62 +199,42 @@ export async function imageOptimizer(
 
     res.statusCode = upstreamRes.status;
     upstreamBuffer = Buffer.from(await upstreamRes.arrayBuffer());
-    upstreamType = upstreamRes.headers.get("Content-Type");
-    maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control"));
+    upstreamType = upstreamRes.headers.get("Content-Type") ?? undefined;
+    maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control") ?? undefined);
   } else {
-    let s3Key;
+    let objectKey;
     try {
       if (
         href.startsWith(`${basePath}/static`) ||
         href.startsWith(`${basePath}/_next/static`)
       ) {
-        s3Key = href; // static files' URL map to the S3 key directly e.g /static/ -> static
+        objectKey = href; // static files' URL map to the key directly e.g /static/ -> static
       } else {
-        s3Key = `${basePath}/public` + href; // public file URLs map from /public.png -> public/public.png
+        objectKey = `${basePath}/public` + href; // public file URLs map from /public.png -> public/public.png
       }
 
-      // Remove leading slash from S3 key
-      if (s3Key.startsWith("/")) {
-        s3Key = s3Key.slice(1);
+      // Remove leading slash from object key
+      if (objectKey.startsWith("/")) {
+        objectKey = objectKey.slice(1);
       }
 
-      const s3Params = {
-        Bucket: bucketName,
-        Key: s3Key
-      };
+      const response = await platformClient.getObject(objectKey);
 
-      const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
-      const s3 = new S3Client({
-        region: region,
-        maxAttempts: 3
-      });
+      res.statusCode = response.statusCode;
 
-      const { GetObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/GetObjectCommand"
-      );
+      upstreamBuffer = response.body ?? Buffer.of();
+      upstreamType = response.contentType ?? undefined;
+      maxAge = getMaxAge(response.cacheControl);
 
-      const { Body, CacheControl, ContentType } = await s3.send(
-        new GetObjectCommand(s3Params)
-      );
-      const s3chunks = [];
-      for await (const s3Chunk of Body as Stream.Readable) {
-        s3chunks.push(s3Chunk);
-      }
-      res.statusCode = 200;
-
-      upstreamBuffer = Buffer.concat(s3chunks);
-      upstreamType = ContentType ?? null;
-      maxAge = getMaxAge(CacheControl ?? null);
-
-      // If S3 image provides cache control header, use that
-      if (CacheControl) {
-        res.setHeader("Cache-Control", CacheControl);
+      // If object response provides cache control header, use that
+      if (response.cacheControl) {
+        res.setHeader("Cache-Control", response.cacheControl);
       }
     } catch (err: any) {
       res.statusCode = 500;
       res.end('"url" parameter is valid but upstream response is invalid');
       console.error(
-        `Error processing upstream response due to S3 error for s3Key: ${s3Key}, bucket: ${bucketName} and region: ${region}. Stack trace: ` +
+        `Error processing upstream response due to error for key: ${objectKey}. Stack trace: ` +
           err.stack
       );
       return { finished: true };
@@ -341,7 +318,7 @@ export async function imageOptimizer(
 function sendResponse(
   req: IncomingMessage,
   res: ServerResponse,
-  contentType: string | null,
+  contentType: string | undefined,
   buffer: Buffer
 ) {
   const etag = getHash([buffer]);
@@ -374,7 +351,7 @@ function getHash(items: (string | number | Buffer)[]) {
   return hash.digest("base64").replace(/\//g, "-");
 }
 
-function parseCacheControl(str: string | null): Map<string, string> {
+function parseCacheControl(str: string | undefined): Map<string, string> {
   const map = new Map<string, string>();
   if (!str) {
     return map;
@@ -390,7 +367,7 @@ function parseCacheControl(str: string | null): Map<string, string> {
   return map;
 }
 
-export function getMaxAge(str: string | null): number {
+export function getMaxAge(str: string | undefined): number {
   const minimum = 60;
   const map = parseCacheControl(str);
   if (map) {

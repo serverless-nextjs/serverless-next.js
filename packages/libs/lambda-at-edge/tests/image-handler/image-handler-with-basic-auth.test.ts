@@ -1,27 +1,6 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
 
-const mockSend = jest.fn(() => {
-  // do nothing
-});
-
-const MockS3Client = jest.fn(() => ({
-  constructor: () => {
-    // do nothing
-  },
-  send: mockSend
-}));
-
-jest.mock("@aws-sdk/client-s3/S3Client", () => {
-  return {
-    S3Client: MockS3Client
-  };
-});
-
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
-  require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
-);
-
 jest.mock(
   "../../src/manifest.json",
   () => require("./image-build-manifest-with-basic-auth.json"),
@@ -47,13 +26,6 @@ jest.mock(
 );
 
 describe("Image lambda handler", () => {
-  if (process.version.startsWith("v10")) {
-    it("skipping tests for Node.js that is on v10", () => {
-      // do nothing
-    });
-    return;
-  }
-
   describe("Basic Authentication", () => {
     it.each`
       usernamePassword | expectedAuthenticateSuccess
@@ -87,7 +59,8 @@ describe("Image lambda handler", () => {
             body: "Unauthorized",
             headers: {
               "www-authenticate": [{ key: "WWW-Authenticate", value: "Basic" }]
-            }
+            },
+            isUnauthorized: true
           });
         }
       }

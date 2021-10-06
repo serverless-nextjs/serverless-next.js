@@ -9,17 +9,18 @@ import {
   RoutesManifest
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
-import { setCustomHeaders } from "@sls-next/core";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import {
   handleAuth,
   handleDomainRedirects,
-  imageOptimizer
+  imageOptimizer,
+  setCustomHeaders
 } from "@sls-next/core";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
+import { AwsPlatformClient } from "@sls-next/aws-common";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -44,14 +45,14 @@ export const handler = async (
   // Handle basic auth
   const authRoute = handleAuth(request, buildManifest);
   if (authRoute) {
-    const { isUnauthorized, status, ...response } = authRoute;
+    const { status, ...response } = authRoute;
     return { ...response, status: status.toString() };
   }
 
   // Handle domain redirects e.g www to non-www domain
   const redirectRoute = handleDomainRedirects(request, manifest);
   if (redirectRoute) {
-    const { isRedirect, status, ...response } = redirectRoute;
+    const { status, ...response } = redirectRoute;
     return { ...response, status: status.toString() };
   }
 
@@ -86,18 +87,26 @@ export const handler = async (
       true
     );
 
-    const { region } = request.origin!.s3!;
-    const bucketName = s3BucketNameFromEventRequest(request);
+    const { region: bucketRegion } = request.origin!.s3!;
+    const bucketName = s3BucketNameFromEventRequest(request) ?? "";
 
-    setCustomHeaders({ res, req, responsePromise }, routesManifest);
+    const awsPlatformClient = new AwsPlatformClient(
+      bucketName,
+      bucketRegion,
+      undefined,
+      undefined
+    );
 
     await imageOptimizer(
-      { basePath: basePath, bucketName: bucketName || "", region: region },
+      basePath,
       imagesManifest,
       req,
       res,
-      urlWithParsedQuery
+      urlWithParsedQuery,
+      awsPlatformClient
     );
+
+    setCustomHeaders({ res, req, responsePromise }, routesManifest);
 
     const response = await responsePromise;
 

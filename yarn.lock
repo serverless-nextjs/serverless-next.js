@@ -4226,47 +4226,10 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/aws-common@link:packages/libs/aws-common":
-  version "3.4.0"
-  dependencies:
-    "@aws-sdk/client-s3" "^3.34.0"
-    "@aws-sdk/client-sqs" "^3.34.0"
-    "@sls-next/core" "link:packages/libs/core"
+  version "0.0.0"
+  uid ""
 
 "@sls-next/core@link:packages/libs/core":
-<<<<<<< HEAD
-  version "3.4.0"
-  dependencies:
-    "@hapi/accept" "^5.0.1"
-    cookie "^0.4.1"
-    jsonwebtoken "^8.5.1"
-    next "^11.1.2"
-    node-fetch "2.6.5"
-    path-to-regexp "^6.1.0"
-    regex-parser "^2.2.10"
-
-"@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "3.4.0"
-  dependencies:
-    "@aws-sdk/client-s3" "^3.33.0"
-    "@aws-sdk/client-sqs" "^3.33.0"
-    "@hapi/accept" "^5.0.2"
-    "@sls-next/aws-common" "link:packages/libs/aws-common"
-    "@sls-next/core" "link:packages/libs/core"
-    "@vercel/nft" "^0.15.0"
-    execa "^5.0.1"
-    fast-glob "^3.2.7"
-    fresh "^0.5.2"
-    fs-extra "^9.1.0"
-    get-stream "^6.0.0"
-    is-animated "^2.0.1"
-    node-fetch "^2.6.1"
-    normalize-path "^3.0.0"
-    path-to-regexp "^6.1.0"
-    send "^0.17.1"
-
-"@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "3.4.0"
-=======
   version "0.0.0"
   uid ""
 
@@ -4277,7 +4240,6 @@
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
   version "0.0.0"
   uid ""
->>>>>>> WIP move image optimizer
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -6122,12 +6084,6 @@ color@3.0.x:
     color-convert "^1.9.1"
     color-string "^1.5.2"
 
-<<<<<<< HEAD
-colorette@^1.2.2, colorette@^1.4.0:
-  version "1.4.0"
-  resolved "https://registry.npmjs.org/colorette/-/colorette-1.4.0.tgz#5190fbb87276259a86ad700bff2c6d6faa3fca40"
-  integrity sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==
-=======
 color@^4.0.1:
   version "4.0.1"
   resolved "https://registry.npmjs.org/color/-/color-4.0.1.tgz#21df44cd10245a91b1ccf5ba031609b0e10e7d67"
@@ -6140,7 +6096,11 @@ colorette@^1.2.2:
   version "1.2.2"
   resolved "https://registry.npmjs.org/colorette/-/colorette-1.2.2.tgz#cbcc79d5e99caea2dbf10eb3a26fd8b3e6acfa94"
   integrity sha512-MKGMzyfeuutC/ZJ1cba9NqcNpfeqMUcYmyF1ZFY6/Cn7CNSAKx6a+s48sqLqyAiZuaP2TcqMhoo+dlwFnVxT9w==
->>>>>>> WIP move image optimizer
+
+colorette@^1.4.0:
+  version "1.4.0"
+  resolved "https://registry.npmjs.org/colorette/-/colorette-1.4.0.tgz#5190fbb87276259a86ad700bff2c6d6faa3fca40"
+  integrity sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==
 
 colornames@^1.1.1:
   version "1.1.1"
@@ -10630,13 +10590,6 @@ node-fetch@2.6.5, node-fetch@^2.6.0, node-fetch@^2.6.1, node-fetch@^2.6.5:
   dependencies:
     whatwg-url "^5.0.0"
 
-node-fetch@^2.6.4:
-  version "2.6.4"
-  resolved "https://registry.npmjs.org/node-fetch/-/node-fetch-2.6.4.tgz#7f1d13b8f9ff0c1a994dc6f73c69f7d652c7ace2"
-  integrity sha512-aD1fO+xtLiSCc9vuD+sYMxpIuQyhHscGSkBEo2o5LTV/3bTEAYvdUii29n8LlO5uLCmWdGP7uVUVXFo5SRdkLA==
-  dependencies:
-    whatwg-url "^5.0.0"
-
 node-gyp-build@^4.2.2:
   version "4.2.3"
   resolved "https://registry.npmjs.org/node-gyp-build/-/node-gyp-build-4.2.3.tgz#ce6277f853835f718829efb47db20f3e4d9c4739"
@@ -12638,12 +12591,6 @@ simple-get@^2.7.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-<<<<<<< HEAD
-simple-git@^2.46.0:
-  version "2.46.0"
-  resolved "https://registry.npmjs.org/simple-git/-/simple-git-2.46.0.tgz#d564856705cee9d2ef1d1f98c7143e2bc00e7c3e"
-  integrity sha512-6eumII1vfP4NpRqxZcVWCcIT5xHH6dRyvBZSjkH4dJRDRpv+0f75hrN5ysp++y23Mfr3AbRC/dO2NDbfj1lJpQ==
-=======
 simple-get@^3.0.3, simple-get@^3.1.0:
   version "3.1.0"
   resolved "https://registry.npmjs.org/simple-get/-/simple-get-3.1.0.tgz#b45be062435e50d159540b576202ceec40b9c6b3"
@@ -12653,11 +12600,10 @@ simple-get@^3.0.3, simple-get@^3.1.0:
     once "^1.3.1"
     simple-concat "^1.0.0"
 
-simple-git@^2.44.0:
-  version "2.44.0"
-  resolved "https://registry.npmjs.org/simple-git/-/simple-git-2.44.0.tgz#94eca4162b7e21707b5a1a40b22e6f29b007d3a8"
-  integrity sha512-wIjcAmymhzgdaM0Y/a+XxmNGlivvHQTPZDYXVmyHMShVDwdeVqu3+OOyDbYu0DnfVzqLs2EOxRTgMNbC3YquwQ==
->>>>>>> WIP move image optimizer
+simple-git@^2.46.0:
+  version "2.46.0"
+  resolved "https://registry.npmjs.org/simple-git/-/simple-git-2.46.0.tgz#d564856705cee9d2ef1d1f98c7143e2bc00e7c3e"
+  integrity sha512-6eumII1vfP4NpRqxZcVWCcIT5xHH6dRyvBZSjkH4dJRDRpv+0f75hrN5ysp++y23Mfr3AbRC/dO2NDbfj1lJpQ==
   dependencies:
     "@kwsites/file-exists" "^1.1.1"
     "@kwsites/promise-deferred" "^1.1.1"
