@@ -30,7 +30,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/klaw-sync": "^6.0.0",
     "@types/lodash": "^4.14.175",
-    "@types/node": "^16.10.2",
+    "@types/node": "^16.10.3",
     "@types/ramda": "^0.27.45",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.29.0",

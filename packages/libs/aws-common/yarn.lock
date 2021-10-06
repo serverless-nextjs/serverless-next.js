@@ -963,7 +963,7 @@
     "@napi-rs/triples" "^1.0.3"
 
 "@sls-next/core@link:../core":
-  version "3.4.0-alpha.12"
+  version "3.4.0"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -973,10 +973,10 @@
     path-to-regexp "^6.1.0"
     regex-parser "^2.2.10"
 
-"@types/node@*", "@types/node@^16.10.2":
-  version "16.10.2"
-  resolved "https://registry.npmjs.org/@types/node/-/node-16.10.2.tgz#5764ca9aa94470adb4e1185fe2e9f19458992b2e"
-  integrity sha512-zCclL4/rx+W5SQTzFs9wyvvyCwoK9QtBpratqz2IYJ3O8Umrn0m3nsTv0wQBk9sRGpvUe9CwPDrQFB10f1FIjQ==
+"@types/node@*", "@types/node@^16.10.3":
+  version "16.10.3"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.10.3.tgz#7a8f2838603ea314d1d22bb3171d899e15c57bd5"
+  integrity sha512-ho3Ruq+fFnBrZhUYI46n/bV2GjwzSkwuT4dTf0GkuNFmnb8nq4ny2z9JEVemFi6bdEJanHLlYfy9c6FN9B9McQ==
 
 anser@1.4.9:
   version "1.4.9"
