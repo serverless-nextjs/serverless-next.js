@@ -9,11 +9,11 @@ const MockGetObjectCommand = jest.fn();
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
-jest.mock("@aws-sdk/client-s3/S3Client", () =>
+jest.mock("@aws-sdk/client-s3/src/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
+jest.mock("@aws-sdk/client-s3/src/commands/GetObjectCommand", () => {
   return {
     GetObjectCommand: MockGetObjectCommand
   };
@@ -82,7 +82,7 @@ describe("Image lambda handler", () => {
           ],
           "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
-        status: 200,
+        status: "200",
         statusDescription: "OK",
         body: expect.any(String),
         bodyEncoding: "base64"
@@ -136,7 +136,7 @@ describe("Image lambda handler", () => {
         }
       });
 
-      const response1 = (await handler(event1)) as CloudFrontResponseResult;
+      const response1 = await handler(event1);
 
       const event2 = createCloudFrontEvent({
         uri: `/_next/image?url=${encodeURI(imagePath)}&q=100&w=128`,
@@ -151,7 +151,7 @@ describe("Image lambda handler", () => {
           "if-none-match": [
             {
               key: "if-none-match",
-              value: response1.headers.etag[0].value
+              value: response1?.headers?.etag[0].value ?? ""
             }
           ]
         }
@@ -170,11 +170,11 @@ describe("Image lambda handler", () => {
           etag: [
             {
               key: "ETag",
-              value: response1.headers.etag[0].value
+              value: response1?.headers?.etag[0].value ?? ""
             }
           ]
         },
-        status: 304,
+        status: "304",
         statusDescription: "Not Modified"
       });
     });
@@ -231,7 +231,7 @@ describe("Image lambda handler", () => {
           ],
           "content-type": [{ key: "Content-Type", value: "image/png" }]
         },
-        status: 200,
+        status: "200",
         statusDescription: "OK",
         body: expect.any(String),
         bodyEncoding: "base64"
@@ -246,9 +246,9 @@ describe("Image lambda handler", () => {
         host: "mydistribution.cloudfront.net"
       });
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      expect(response.status).toEqual(500);
+      expect(response.status).toEqual("500");
     });
 
     it.each`
@@ -270,9 +270,9 @@ describe("Image lambda handler", () => {
         host: "mydistribution.cloudfront.net"
       });
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      expect(response.status).toEqual(400);
+      expect(response.status).toEqual("400");
     });
 
     it("returns 404 for non-image routes", async () => {
@@ -281,7 +281,7 @@ describe("Image lambda handler", () => {
         host: "mydistribution.cloudfront.net"
       });
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
       expect(response.status).toEqual("404");
     });

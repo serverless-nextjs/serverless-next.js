@@ -3,13 +3,13 @@ import { s3StorePage } from "../../src/s3/s3StorePage";
 const mockSend = jest.fn();
 const mockPutObjectCommand = jest.fn();
 
-jest.mock("@aws-sdk/client-s3/S3Client", () => ({
+jest.mock("@aws-sdk/client-s3/src/S3Client", () => ({
   S3Client: jest.fn(() => ({
     send: mockSend
   }))
 }));
 
-jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () => ({
+jest.mock("@aws-sdk/client-s3/src/commands/PutObjectCommand", () => ({
   PutObjectCommand: mockPutObjectCommand
 }));
 

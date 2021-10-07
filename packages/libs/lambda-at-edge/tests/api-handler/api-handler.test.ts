@@ -1,7 +1,5 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/api-handler";
-import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
-import { CloudFrontResultResponse } from "aws-lambda";
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
@@ -50,12 +48,14 @@ describe("API lambda handler", () => {
 
       mockPageRequire("pages/api/getCustomers.js");
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      const decodedBody = Buffer.from(response.body, "base64").toString("utf8");
+      const decodedBody = Buffer.from(response.body ?? "", "base64").toString(
+        "utf8"
+      );
 
       expect(decodedBody).toEqual("pages/api/getCustomers");
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual("200");
     });
 
     it("serves dynamic api request", async () => {
@@ -71,12 +71,14 @@ describe("API lambda handler", () => {
 
       mockPageRequire("pages/api/users/[id].js");
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      const decodedBody = Buffer.from(response.body, "base64").toString("utf8");
+      const decodedBody = Buffer.from(response.body ?? "", "base64").toString(
+        "utf8"
+      );
 
       expect(decodedBody).toEqual("pages/api/[id]");
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual("200");
     });
 
     it("returns 404 for not-found api routes", async () => {
@@ -92,9 +94,9 @@ describe("API lambda handler", () => {
 
       mockPageRequire("pages/api/getCustomers.js");
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual("404");
     });
   });
 
@@ -120,7 +122,7 @@ describe("API lambda handler", () => {
           host: "mydistribution.cloudfront.net"
         });
 
-        const response: CloudFrontResultResponse = await handler(event);
+        const response = await handler(event);
 
         expect(response).toEqual({
           body: "ZXh0ZXJuYWw=",
@@ -133,7 +135,7 @@ describe("API lambda handler", () => {
               }
             ]
           },
-          status: 200,
+          status: "200",
           statusDescription: "OK"
         });
 
