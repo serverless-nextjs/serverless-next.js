@@ -43,6 +43,8 @@ import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 import { s3StorePage } from "./s3/s3StorePage";
+import { createRedirectResponse } from "@sls-next/core/dist/route/redirect";
+import { redirect } from "@sls-next/core/dist/handle/redirect";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -459,6 +461,25 @@ const handleOriginResponse = async ({
 
   // This is a fallback route that should be stored in S3 before returning it
   const { renderOpts, html } = fallbackRoute;
+  // Check if response is a redirect
+  if (
+    typeof renderOpts.pageData !== "undefined" &&
+    typeof renderOpts.pageData.pageProps !== "undefined" &&
+    typeof renderOpts.pageData.pageProps.__N_REDIRECT !== "undefined"
+  ) {
+    const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
+    const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
+
+    const redirectResponse = createRedirectResponse(
+      redirectPath,
+      request.querystring,
+      statusCode
+    );
+
+    redirect({ req, res, responsePromise }, redirectResponse);
+
+    return await responsePromise;
+  }
   const { expires } = await s3StorePage({
     html,
     uri: s3Uri,

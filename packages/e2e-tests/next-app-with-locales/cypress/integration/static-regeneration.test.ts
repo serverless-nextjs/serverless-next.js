@@ -2,7 +2,17 @@ describe("ISR Tests", () => {
   before(() => {
     cy.ensureAllRoutesNotErrored();
   });
+  describe("SSG Redirect", () => {
+    it("non existing user redirects to home", () => {
+      const path = "/en/revalidated-ssg-pages/106";
+      cy.ensureRouteHasStatusCode(path, 307);
 
+      const redirectedPath = "/";
+
+      // Verify redirect response
+      cy.verifyRedirect(path, redirectedPath, 307);
+    });
+  });
   describe("SSG page", () => {
     [
       { path: "/revalidated-ssg-page", initialWaitSeconds: 0 },

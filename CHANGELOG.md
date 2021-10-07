@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0...v3.5.0-alpha.0) (2021-10-06)
+
+### Features
+
+- **core, lambda-at-edge:** handle Redirects in uncached SSG Requests ([#1786](https://github.com/serverless-nextjs/serverless-next.js/issues/1786)) ([2a7cf73](https://github.com/serverless-nextjs/serverless-next.js/commit/2a7cf738d1fab0e73b5a39c2702e721af4884e29))
+
 # [3.4.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.14...v3.4.0) (2021-10-02)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
