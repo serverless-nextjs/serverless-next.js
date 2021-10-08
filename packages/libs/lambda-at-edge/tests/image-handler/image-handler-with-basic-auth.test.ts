@@ -12,13 +12,13 @@ const MockS3Client = jest.fn(() => ({
   send: mockSend
 }));
 
-jest.mock("@aws-sdk/client-s3/S3Client", () => {
+jest.mock("@aws-sdk/client-s3/src/S3Client", () => {
   return {
     S3Client: MockS3Client
   };
 });
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
+jest.mock("@aws-sdk/client-s3/src/commands/GetObjectCommand", () =>
   require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
 );
 

@@ -19,7 +19,7 @@ interface S3StorePageOptions {
 export const s3StorePage = async (
   options: S3StorePageOptions
 ): Promise<{ cacheControl: string | undefined; expires: Date | undefined }> => {
-  const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+  const { S3Client } = await import("@aws-sdk/client-s3/src/S3Client");
 
   const s3 = new S3Client({
     region: options.region,
@@ -62,7 +62,7 @@ export const s3StorePage = async (
   };
 
   const { PutObjectCommand } = await import(
-    "@aws-sdk/client-s3/commands/PutObjectCommand"
+    "@aws-sdk/client-s3/src/commands/PutObjectCommand"
   );
   await Promise.all([
     s3.send(new PutObjectCommand(s3JsonParams)),

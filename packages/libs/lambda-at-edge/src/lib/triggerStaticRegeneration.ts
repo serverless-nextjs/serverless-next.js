@@ -28,9 +28,9 @@ export const triggerStaticRegeneration = async (
   }
 
   // Dynamic imports don't get treeshook so we need to import as deep as possible for only the code we need.
-  const { SQSClient } = await import("@aws-sdk/client-sqs/SQSClient");
+  const { SQSClient } = await import("@aws-sdk/client-sqs/src/SQSClient");
   const { SendMessageCommand } = await import(
-    "@aws-sdk/client-sqs/commands/SendMessageCommand"
+    "@aws-sdk/client-sqs/src/commands/SendMessageCommand"
   );
 
   const sqs = new SQSClient({

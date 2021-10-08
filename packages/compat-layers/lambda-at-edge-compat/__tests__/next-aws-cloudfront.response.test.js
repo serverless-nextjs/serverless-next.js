@@ -16,7 +16,7 @@ describe("Response Tests", () => {
     res.end();
 
     return responsePromise.then((response) => {
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual("404");
     });
   });
 
@@ -34,7 +34,7 @@ describe("Response Tests", () => {
     res.end();
 
     return responsePromise.then((response) => {
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual("200");
       expect(response.statusDescription).toEqual("OK");
     });
   });
@@ -52,7 +52,7 @@ describe("Response Tests", () => {
     res.end();
 
     return responsePromise.then((response) => {
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual("200");
     });
   });
 
@@ -481,7 +481,7 @@ describe("Response Tests", () => {
     return responsePromise.then((response) => {
       expect(response.body).not.toBeDefined();
       expect(response.bodyEncoding).not.toBeDefined();
-      expect(response.status).toEqual(204);
+      expect(response.status).toEqual("204");
       expect(response.statusDescription).toEqual("No Content");
     });
   });

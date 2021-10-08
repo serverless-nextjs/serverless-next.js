@@ -1,16 +1,16 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
-import { CloudFrontResponseResult } from "next-aws-cloudfront/node_modules/@types/aws-lambda";
+import { CloudFrontResponseResult } from "aws-lambda";
 import { runRedirectTestWithHandler } from "../utils/runRedirectTest";
 import { mockSend } from "../mocks/s3/aws-sdk-s3-client.image.mock";
 
 const MockGetObjectCommand = jest.fn();
 
-jest.mock("@aws-sdk/client-s3/S3Client", () =>
+jest.mock("@aws-sdk/client-s3/src/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.image.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () => {
+jest.mock("@aws-sdk/client-s3/src/commands/GetObjectCommand", () => {
   return {
     GetObjectCommand: MockGetObjectCommand
   };
@@ -86,7 +86,7 @@ describe("Image lambda handler", () => {
           ],
           "content-type": [{ key: "Content-Type", value: "image/webp" }]
         },
-        status: 200,
+        status: "200",
         statusDescription: "OK",
         body: expect.any(String),
         bodyEncoding: "base64"
@@ -106,9 +106,9 @@ describe("Image lambda handler", () => {
         host: "mydistribution.cloudfront.net"
       });
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      expect(response.status).toEqual(500);
+      expect(response.status).toEqual("500");
     });
 
     it.each`
@@ -124,9 +124,9 @@ describe("Image lambda handler", () => {
         host: "mydistribution.cloudfront.net"
       });
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
-      expect(response.status).toEqual(400);
+      expect(response.status).toEqual("400");
     });
 
     it("returns 404 for non-image routes", async () => {
@@ -135,7 +135,7 @@ describe("Image lambda handler", () => {
         host: "mydistribution.cloudfront.net"
       });
 
-      const response = (await handler(event)) as CloudFrontResponseResult;
+      const response = await handler(event);
 
       expect(response.status).toEqual("404");
     });

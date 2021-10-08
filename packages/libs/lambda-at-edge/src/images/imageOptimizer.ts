@@ -226,14 +226,14 @@ export async function imageOptimizer(
         Key: s3Key
       };
 
-      const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
+      const { S3Client } = await import("@aws-sdk/client-s3/src/S3Client");
       const s3 = new S3Client({
         region: region,
         maxAttempts: 3
       });
 
       const { GetObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/GetObjectCommand"
+        "@aws-sdk/client-s3/src/commands/GetObjectCommand"
       );
 
       const { Body, CacheControl, ContentType } = await s3.send(
