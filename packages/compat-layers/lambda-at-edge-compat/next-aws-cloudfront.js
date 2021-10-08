@@ -209,7 +209,7 @@ const handler = (
       return response.status;
     },
     set(statusCode) {
-      response.status = statusCode;
+      response.status = statusCode.toString();
       response.statusDescription = HttpStatusCodes[statusCode];
     }
   });
@@ -217,7 +217,7 @@ const handler = (
   res.headers = {};
   const headerNames = {};
   res.writeHead = (status, headers) => {
-    response.status = status;
+    response.status = status.toString();
     response.statusDescription = HttpStatusCodes[status];
 
     if (headers) {

@@ -6,11 +6,11 @@ describe("triggerStaticRegeneration()", () => {
   const mockSendMessageCommand = jest.fn();
   beforeEach(() => {
     mockSQSClient.mockReset();
-    jest.mock("@aws-sdk/client-sqs/SQSClient", () => ({
+    jest.mock("@aws-sdk/client-sqs/src/SQSClient", () => ({
       __esModule: true,
       SQSClient: mockSQSClient
     }));
-    jest.mock("@aws-sdk/client-sqs/commands/SendMessageCommand", () => ({
+    jest.mock("@aws-sdk/client-sqs/src/commands/SendMessageCommand", () => ({
       _esModule: true,
       SendMessageCommand: mockSendMessageCommand
     }));

@@ -5,17 +5,17 @@ import {
   CloudFrontHeaders,
   CloudFrontResponse
 } from "aws-lambda";
-import { S3Client } from "@aws-sdk/client-s3/S3Client";
+import { S3Client } from "@aws-sdk/client-s3/src/S3Client";
 
-jest.mock("@aws-sdk/client-s3/S3Client", () =>
+jest.mock("@aws-sdk/client-s3/src/S3Client", () =>
   require("../mocks/s3/aws-sdk-s3-client.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/GetObjectCommand", () =>
+jest.mock("@aws-sdk/client-s3/src/commands/GetObjectCommand", () =>
   require("../mocks/s3/aws-sdk-s3-client-get-object-command.mock")
 );
 
-jest.mock("@aws-sdk/client-s3/commands/PutObjectCommand", () =>
+jest.mock("@aws-sdk/client-s3/src/commands/PutObjectCommand", () =>
   require("../mocks/s3/aws-sdk-s3-client-put-object-command.mock")
 );
 
@@ -89,7 +89,7 @@ describe("Lambda@Edge origin response", () => {
       });
 
       expect(response).toEqual({
-        status: 200,
+        status: "200",
         statusDescription: "OK",
         headers: {
           "cache-control": [
@@ -131,7 +131,7 @@ describe("Lambda@Edge origin response", () => {
       });
 
       expect(response).toEqual({
-        status: 404,
+        status: "404",
         statusDescription: "Not Found",
         headers: {
           "cache-control": [
@@ -177,7 +177,7 @@ describe("Lambda@Edge origin response", () => {
       const headers = response.headers as CloudFrontHeaders;
       expect(headers["content-type"][0].value).toEqual("text/html");
       expect(decodedBody).toEqual("<div>Rendered Page</div>");
-      expect(cfResponse.status).toEqual(200);
+      expect(cfResponse.status).toEqual("200");
 
       expect(page.renderReqToHTML.mock.calls[0][0]).toMatchObject({
         url: "/basepath/fallback-blocking/not-yet-built"
@@ -230,7 +230,7 @@ describe("Lambda@Edge origin response", () => {
       expect(JSON.parse(decodedBody)).toEqual({
         page: "pages/fallback/[slug].js"
       });
-      expect(cfResponse.status).toEqual(200);
+      expect(cfResponse.status).toEqual("200");
 
       expect(page.renderReqToHTML.mock.calls[0][0]).toMatchObject({
         url: "/basepath/_next/data/build-id/fallback/not-yet-built.json"
@@ -302,7 +302,7 @@ describe("Lambda@Edge origin response", () => {
       expect(JSON.parse(decodedBody)).toEqual({
         page: "pages/customers/[customer].js"
       });
-      expect(cfResponse.status).toEqual(200);
+      expect(cfResponse.status).toEqual("200");
       expect(s3Client.send).not.toHaveBeenCalled();
     });
   });

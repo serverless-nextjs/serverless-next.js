@@ -207,7 +207,7 @@ describe("Lambda@Edge", () => {
         ).toString("utf8");
 
         expect(decodedBody).toEqual(expectedPage);
-        expect(cfResponse.status).toEqual(200);
+        expect(cfResponse.status).toEqual("200");
 
         // Verify no blacklisted headers are present
         for (const header in response.headers) {
@@ -244,7 +244,7 @@ describe("Lambda@Edge", () => {
         ).toString("utf8");
 
         expect(decodedBody).toEqual(JSON.stringify({ page: expectedPage }));
-        expect(cfResponse.status).toEqual(200);
+        expect(cfResponse.status).toEqual("200");
       }
     );
 
@@ -581,7 +581,7 @@ describe("Lambda@Edge", () => {
       const decodedBody = Buffer.from(body, "base64").toString("utf8");
 
       expect(decodedBody).toEqual("pages/_error.js - 500");
-      expect(response.status).toEqual(500);
+      expect(response.status).toEqual("500");
     });
 
     it("path ending 500 should return 200 status after successful S3 Origin response", async () => {
@@ -653,7 +653,7 @@ describe("Lambda@Edge", () => {
               }
             ]
           },
-          status: 200,
+          status: "200",
           statusDescription: "OK"
         });
 
