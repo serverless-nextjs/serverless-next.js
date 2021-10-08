@@ -157,10 +157,10 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.17.0":
-  version "5.17.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.17.0.tgz#b53261aa6c6d4ecee6e99b49c68a1988851a2386"
-  integrity sha512-Xnkg1xPjXFCiXXvsIi+inl9lgWSyEyG6tUpGzaKbpPcPo16xruBUX+aRKtMd53QXe3WJVe7+1+MOzjiXbRzE1A==
+"@serverless/utils@^5.17.1":
+  version "5.17.1"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.17.1.tgz#f7340fc562b06eebf9263de41658b602a75a5c17"
+  integrity sha512-1FUsIzGRF6kV7M4R2UGw/32XMzPSBI1J/A/FomeRN4EaXEXaPDq+IJaGhrDDsex45iHq3fRp9UH5ee07sA89OA==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
@@ -180,7 +180,7 @@
     js-yaml "^4.1.0"
     jwt-decode "^3.1.2"
     lodash "^4.17.21"
-    log "^6.2.0"
+    log "^6.3.0"
     log-node "^8.0.1"
     make-dir "^3.1.0"
     memoizee "^0.4.15"
@@ -1953,10 +1953,10 @@ log-node@^8.0.1:
     supports-color "^8.1.1"
     type "^2.5.0"
 
-log@^6.2.0:
-  version "6.2.0"
-  resolved "https://registry.npmjs.org/log/-/log-6.2.0.tgz#7a7766c00a93e7a2c28ac8d44afd0bf6383b4ead"
-  integrity sha512-W1sDY5FqR6wlpygW8ZFSxCfBhKx/RzCHK5S+Br8zA14bAnwSgCm5hToIWzi0Yhy6x9Ppw7pyIV06r8F5cSRHUw==
+log@^6.3.0:
+  version "6.3.0"
+  resolved "https://registry.npmjs.org/log/-/log-6.3.0.tgz#1fd3ab568e18bfdb29eda2df80d99b67b2da18f8"
+  integrity sha512-ZdlxGTKnTTH9yUMvYd7Xgz/OCFNlqcof+4SL0M2d3vdiZm2d+gm3YdR7ZfY6dN0Mlj4y/GU2Rk9Dwy5gVaAH4w==
   dependencies:
     d "^1.0.1"
     duration "^0.2.2"
@@ -1964,6 +1964,7 @@ log@^6.2.0:
     event-emitter "^0.3.5"
     sprintf-kit "^2.0.1"
     type "^2.5.0"
+    uni-global "^1.0.0"
 
 lowercase-keys@^1.0.0, lowercase-keys@^1.0.1:
   version "1.0.1"
@@ -2981,6 +2982,13 @@ unbzip2-stream@^1.0.9:
   dependencies:
     buffer "^5.2.1"
     through "^2.3.8"
+
+uni-global@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.npmjs.org/uni-global/-/uni-global-1.0.0.tgz#3583c449e87a2d9dc270ea221410a649bcdad040"
+  integrity sha512-WWM3HP+siTxzIWPNUg7hZ4XO8clKi6NoCAJJWnuRL+BAqyFXF8gC03WNyTefGoUXYc47uYgXxpKLIEvo65PEHw==
+  dependencies:
+    type "^2.5.0"
 
 universalify@^0.1.0:
   version "0.1.2"
