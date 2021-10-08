@@ -1078,48 +1078,103 @@
   integrity sha512-9NET910DNaIPngYnLLPeg+Ogzqsi9uM4mSboU5y6p8S5DzMTVEsJZrawi+BoDNUVBa2DhJqQYUFvMDfgU062LQ==
 
 "@sls-next/aws-cloudfront@link:../aws-cloudfront":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    "@serverless/core" "^1.1.2"
+    aws-sdk "^2.1002.0"
+    ramda "^0.27.1"
 
 "@sls-next/aws-common@link:../../libs/aws-common":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    "@aws-sdk/client-s3" "^3.34.0"
+    "@aws-sdk/client-sqs" "^3.34.0"
+    "@sls-next/core" "link:../../libs/core"
 
 "@sls-next/aws-lambda@link:../aws-lambda":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    "@serverless/aws-iam-role" "^1.0.0"
+    "@serverless/aws-lambda-layer" "^1.0.0"
+    "@serverless/aws-s3" "^4.2.0"
+    "@serverless/core" "^1.1.2"
+    archiver "^5.3.0"
+    aws-sdk "^2.1002.0"
+    fs-extra "^9.1.0"
+    globby "^11.0.4"
+    lodash "^4.17.21"
+    ramda "^0.27.0"
 
 "@sls-next/aws-s3@link:../aws-s3":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    "@serverless/core" "^1.1.2"
+    archiver "^5.3.0"
+    aws-sdk "^2.1002.0"
+    fs-extra "^9.1.0"
+    klaw-sync "^6.0.0"
+    lodash "^4.17.21"
+    mime-types "^2.1.33"
+    ramda "^0.26.1"
+    s3-stream-upload "^2.0.2"
 
 "@sls-next/aws-sqs@link:../aws-sqs":
-  version "0.0.0"
-  uid ""
+  version "3.3.0"
+  dependencies:
+    "@serverless/core" "^1.1.2"
+    lodash "^4.17.21"
 
 "@sls-next/cloudfront@link:../../libs/cloudfront":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    aws-sdk "^2.1002.0"
 
 "@sls-next/core@link:../../libs/core":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    jsonwebtoken "^8.5.1"
+    next "^11.1.2"
+    node-fetch "2.6.5"
+    path-to-regexp "^6.1.0"
+    regex-parser "^2.2.10"
 
 "@sls-next/domain@link:../domain":
-  version "0.0.0"
-  uid ""
+  version "3.2.0"
 
 "@sls-next/lambda-at-edge@link:../../libs/lambda-at-edge":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    "@aws-sdk/client-s3" "^3.33.0"
+    "@aws-sdk/client-sqs" "^3.33.0"
+    "@hapi/accept" "^5.0.2"
+    "@sls-next/aws-common" "link:../../libs/aws-common"
+    "@sls-next/core" "link:../../libs/core"
+    "@vercel/nft" "^0.15.0"
+    execa "^5.0.1"
+    fast-glob "^3.2.7"
+    fresh "^0.5.2"
+    fs-extra "^9.1.0"
+    get-stream "^6.0.0"
+    is-animated "^2.0.1"
+    node-fetch "^2.6.1"
+    normalize-path "^3.0.0"
+    path-to-regexp "^6.1.0"
+    send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:../../compat-layers/lambda-at-edge-compat":
-  version "0.0.0"
-  uid ""
+  version "3.4.0"
 
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.0"
+  dependencies:
+    aws-sdk "^2.1002.0"
+    fast-glob "^3.2.5"
+    fs-extra "^9.1.0"
+    mime-types "^2.1.33"
+    normalize-path "^3.0.0"
+    regex-parser "^2.2.10"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -5415,10 +5470,10 @@ webpack-sources@^3.2.0:
   resolved "https://registry.npmjs.org/webpack-sources/-/webpack-sources-3.2.1.tgz#251a7d9720d75ada1469ca07dbb62f3641a05b6d"
   integrity sha512-t6BMVLQ0AkjBOoRTZgqrWm7xbXMBzD+XDq2EZ96+vMfn3qKgsvdXZhbPZ4ElUOpdv4u+iiGe+w3+J75iy/bYGA==
 
-webpack@^5.57.1:
-  version "5.57.1"
-  resolved "https://registry.npmjs.org/webpack/-/webpack-5.57.1.tgz#ead5ace2c17ecef2ae8126f143bfeaa7f55eab44"
-  integrity sha512-kHszukYjTPVfCOEyrUthA3jqJwduY/P3eO8I0gMNOZGIQWKAwZftxmp5hq6paophvwo9NoUrcZOecs9ulOyyTg==
+webpack@^5.58.0:
+  version "5.58.0"
+  resolved "https://registry.npmjs.org/webpack/-/webpack-5.58.0.tgz#9ec621cf8534f23c25e779e7c35dfde1211d5ccb"
+  integrity sha512-xc2k5MLbR1iah24Z5xUm1nBh1PZXEdUnrX6YkTSOScq/VWbl5JCLREXJzGYqEAUbIO8tZI+Dzv82lGtnuUnVCQ==
   dependencies:
     "@types/eslint-scope" "^3.7.0"
     "@types/estree" "^0.0.50"
