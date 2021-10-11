@@ -71,7 +71,8 @@ export class AwsPlatformClient implements PlatformClient {
         expires: undefined,
         lastModified: undefined,
         eTag: undefined,
-        cacheControl: undefined
+        cacheControl: undefined,
+        contentType: undefined
       };
     }
 
@@ -92,7 +93,8 @@ export class AwsPlatformClient implements PlatformClient {
       expires: s3Response.Expires?.toString(),
       eTag: s3Response.ETag,
       cacheControl: s3Response.CacheControl,
-      statusCode: s3StatusCode
+      statusCode: s3StatusCode,
+      contentType: s3Response.ContentType
     };
   }
 

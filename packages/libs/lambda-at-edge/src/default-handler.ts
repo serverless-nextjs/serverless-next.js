@@ -8,18 +8,24 @@ import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
 import { renderStaticPage } from "./render/renderStaticPage";
 import {
-  ExternalRoute,
   getCustomHeaders,
-  getStaticRegenerationResponse,
-  getThrottledStaticRegenerationCachePolicy,
   handleDefault,
-  handleFallback,
+  handleFallback
+} from "@sls-next/core/dist/module/handle";
+import {
   handlePublicFiles,
+  routeDefault
+} from "@sls-next/core/dist/module/route";
+import {
+  getStaticRegenerationResponse,
+  getThrottledStaticRegenerationCachePolicy
+} from "@sls-next/core/dist/module/revalidate";
+import {
+  ExternalRoute,
   PublicFileRoute,
   Route,
-  routeDefault,
   StaticRoute
-} from "@sls-next/core";
+} from "@sls-next/core/dist/module/types";
 
 import {
   CloudFrontRequest,
@@ -35,7 +41,7 @@ import {
 import {
   PreRenderedManifest as PrerenderManifestType,
   PerfLogger
-} from "@sls-next/core";
+} from "@sls-next/core/dist/module/types";
 import { performance } from "perf_hooks";
 import type { Readable } from "stream";
 import { externalRewrite } from "./routing/rewriter";
@@ -43,8 +49,8 @@ import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 import { s3StorePage } from "./s3/s3StorePage";
-import { createRedirectResponse } from "@sls-next/core/dist/route/redirect";
-import { redirect } from "@sls-next/core/dist/handle/redirect";
+import { createRedirectResponse } from "@sls-next/core/dist/module/route/redirect";
+import { redirect } from "@sls-next/core/dist/module/handle/redirect";
 
 const basePath = RoutesManifestJson.basePath;
 

@@ -8,6 +8,7 @@ export type ObjectResponse = {
   eTag: string | undefined;
   statusCode: number;
   cacheControl: string | undefined;
+  contentType: string | undefined;
 };
 
 export type StorePageOptions = {
