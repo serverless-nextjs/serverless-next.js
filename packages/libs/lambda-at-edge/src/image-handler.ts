@@ -14,7 +14,7 @@ import {
   handleAuth,
   handleDomainRedirects,
   setCustomHeaders
-} from "@sls-next/core";
+} from "@sls-next/core/dist/module";
 import { imageOptimizer } from "@sls-next/core/dist/module/images";
 import { UrlWithParsedQuery } from "url";
 import url from "url";

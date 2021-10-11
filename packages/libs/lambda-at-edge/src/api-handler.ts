@@ -10,7 +10,7 @@ import {
 } from "./types";
 import { CloudFrontResultResponse } from "aws-lambda";
 import { createExternalRewriteResponse } from "./routing/rewriter";
-import { handleApi } from "@sls-next/core";
+import { handleApi } from "@sls-next/core/dist/module/handle/api";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 export const handler = async (
