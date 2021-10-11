@@ -1,5 +1,8 @@
 import { createCloudFrontEvent } from "../test-utils";
 import { handler } from "../../src/image-handler";
+import { ImagesManifest, PlatformClient } from "@sls-next/core/dist";
+import { IncomingMessage, ServerResponse } from "http";
+import { UrlWithParsedQuery } from "url";
 
 jest.mock(
   "../../src/manifest.json",
@@ -24,6 +27,30 @@ jest.mock(
     virtual: true
   }
 );
+
+jest.mock("@sls-next/core/dist/module", () => {
+  return {
+    imageOptimizer: jest.fn(
+      (
+        basePath: string,
+        imagesManifest: ImagesManifest | undefined,
+        req: IncomingMessage,
+        res: ServerResponse,
+        parsedUrl: UrlWithParsedQuery,
+        platformClient: PlatformClient
+      ) => {
+        // Simulate successful response
+        res.statusCode = 200;
+        res.end("success");
+      }
+    ),
+    handleAuth: jest.requireActual("@sls-next/core/dist/module").handleAuth,
+    handleDomainRedirects: jest.requireActual("@sls-next/core/dist/module")
+      .handleDomainRedirects,
+    setCustomHeaders: jest.requireActual("@sls-next/core/dist/module")
+      .setCustomHeaders
+  };
+});
 
 describe("Image lambda handler", () => {
   describe("Basic Authentication", () => {

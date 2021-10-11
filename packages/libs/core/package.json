@@ -39,7 +39,8 @@
     "jsonwebtoken": "^8.5.1",
     "next": "^11.1.2",
     "node-fetch": "2.6.5",
-    "path-to-regexp": "^6.1.0"
+    "path-to-regexp": "^6.1.0",
+    "sharp": "^0.29.1"
   },
   "devDependencies": {
     "@types/cookie": "^0.4.0",
