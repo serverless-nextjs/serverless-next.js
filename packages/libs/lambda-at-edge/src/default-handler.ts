@@ -193,8 +193,11 @@ const reconstructOriginalRequestUri = (
     manifest.trailingSlash ? "/" : ""
   )}`;
 
-  // For index.html page, it will become "/index", which is not a route so normalize it to "/"
-  originalUri = originalUri.replace(/\/index$/, "/");
+  // For index.html page, it will become "/index" or "/index/", which is not a route so normalize it to "/"
+  originalUri = originalUri.replace(
+    manifest.trailingSlash ? /\/index\/$/ : /\/index$/,
+    "/"
+  );
 
   return originalUri;
 };
