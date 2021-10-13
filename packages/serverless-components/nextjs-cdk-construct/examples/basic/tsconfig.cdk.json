@@ -28,7 +28,7 @@
   },
   "include": [
     "next-env.d.ts",
-    "cdk",
+    "cdk"
   ],
   "exclude": [
     "pages",
