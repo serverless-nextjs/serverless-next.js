@@ -1848,7 +1848,7 @@
   version "3.5.0-alpha.0"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.1005.0"
+    aws-sdk "^2.1006.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-common@link:../../libs/aws-common":
@@ -1866,7 +1866,7 @@
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.1005.0"
+    aws-sdk "^2.1006.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
@@ -1877,7 +1877,7 @@
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.1005.0"
+    aws-sdk "^2.1006.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1894,7 +1894,7 @@
 "@sls-next/cloudfront@link:../../libs/cloudfront":
   version "3.5.0-alpha.0"
   dependencies:
-    aws-sdk "^2.1005.0"
+    aws-sdk "^2.1006.0"
 
 "@sls-next/core@link:../../libs/core":
   version "3.5.0-alpha.0"
@@ -1919,7 +1919,7 @@
     "@aws-sdk/client-sqs" "3.35.0"
     "@sls-next/aws-common" "link:../../libs/aws-common"
     "@sls-next/core" "link:../../libs/core"
-    "@vercel/nft" "^0.15.0"
+    "@vercel/nft" "^0.16.0"
     execa "^5.0.1"
     fast-glob "^3.2.7"
     fresh "^0.5.2"
@@ -1937,7 +1937,7 @@
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
   version "3.5.0-alpha.0"
   dependencies:
-    aws-sdk "^2.1005.0"
+    aws-sdk "^2.1006.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.33"
@@ -2002,10 +2002,10 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-16.10.3.tgz#7a8f2838603ea314d1d22bb3171d899e15c57bd5"
   integrity sha512-ho3Ruq+fFnBrZhUYI46n/bV2GjwzSkwuT4dTf0GkuNFmnb8nq4ny2z9JEVemFi6bdEJanHLlYfy9c6FN9B9McQ==
 
-"@vercel/nft@^0.15.0":
-  version "0.15.1"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.15.1.tgz#c059e921f3d0f1cdbdc700c0ba060dee6851dcba"
-  integrity sha512-ehD1bgCG9sZliAHku2fc1L+jKLad4wS+9HHWiIs4HT4SysA/JFSXRrfWuA+INumzuaFqrOKs3vQeLVhZ4o8lTw==
+"@vercel/nft@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.16.0.tgz#5d9bd7bca046f2c71c8a0595cf3b9d0d98a20ff8"
+  integrity sha512-iRmcZIP/3FmKHE8t4pqFU7f+dFmqBtEKvPYkrvO9Yb7F0O2Iw3iCf+sNsNQEyrpSTGkFjG6t6sH2oU04MQ9R2A==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
@@ -2416,10 +2416,10 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-sdk@^2.1005.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0:
-  version "2.1005.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1005.0.tgz#963e9b5ddda982d7f2f1e59baf88a442dd5da9f8"
-  integrity sha512-S9IZLTEOTiV/juMOHvZdd6cpxRzmUYhFhJMLUGXIrAku9uZHsdVa3dDdgcbBsDmRZ4WAvlZlD+NvtTNwFCLraw==
+aws-sdk@^2.1006.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0:
+  version "2.1006.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1006.0.tgz#fc2f7e267d19a6297f732e19449461bb944682af"
+  integrity sha512-lwXAy706+1HVQqMnHaahdeBZZbdu6TWrtTY0ydeG0qanwldTFNMLczwnETTZWYsqNAU+wjl1VzmFdMO4gePLNQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"

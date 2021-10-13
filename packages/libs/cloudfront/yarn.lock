@@ -7,10 +7,10 @@
   resolved "https://registry.npmjs.org/@types/node/-/node-16.10.4.tgz#592f12b0b5f357533ddc3310b0176d42ea3e45d1"
   integrity sha512-EITwVTX5B4nDjXjGeQAfXOrm+Jn+qNjDmyDRtWoD+wZsl/RDPRTFRKivs4Mt74iOFlLOrE5+Kf+p5yjyhm3+cA==
 
-aws-sdk@^2.1005.0:
-  version "2.1005.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1005.0.tgz#963e9b5ddda982d7f2f1e59baf88a442dd5da9f8"
-  integrity sha512-S9IZLTEOTiV/juMOHvZdd6cpxRzmUYhFhJMLUGXIrAku9uZHsdVa3dDdgcbBsDmRZ4WAvlZlD+NvtTNwFCLraw==
+aws-sdk@^2.1006.0:
+  version "2.1006.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1006.0.tgz#fc2f7e267d19a6297f732e19449461bb944682af"
+  integrity sha512-lwXAy706+1HVQqMnHaahdeBZZbdu6TWrtTY0ydeG0qanwldTFNMLczwnETTZWYsqNAU+wjl1VzmFdMO4gePLNQ==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
