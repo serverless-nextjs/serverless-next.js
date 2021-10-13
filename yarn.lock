@@ -3343,7 +3343,7 @@
     "@aws-sdk/client-sqs" "3.35.0"
     "@sls-next/aws-common" "link:packages/libs/aws-common"
     "@sls-next/core" "link:packages/libs/core"
-    "@vercel/nft" "^0.15.0"
+    "@vercel/nft" "^0.16.0"
     execa "^5.0.1"
     fast-glob "^3.2.7"
     fresh "^0.5.2"
@@ -3567,10 +3567,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@>=13.7.0", "@types/node@^16.10.3":
-  version "16.10.3"
-  resolved "https://registry.npmjs.org/@types/node/-/node-16.10.3.tgz#7a8f2838603ea314d1d22bb3171d899e15c57bd5"
-  integrity sha512-ho3Ruq+fFnBrZhUYI46n/bV2GjwzSkwuT4dTf0GkuNFmnb8nq4ny2z9JEVemFi6bdEJanHLlYfy9c6FN9B9McQ==
+"@types/node@*", "@types/node@>=13.7.0", "@types/node@^16.10.4":
+  version "16.10.4"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.10.4.tgz#592f12b0b5f357533ddc3310b0176d42ea3e45d1"
+  integrity sha512-EITwVTX5B4nDjXjGeQAfXOrm+Jn+qNjDmyDRtWoD+wZsl/RDPRTFRKivs4Mt74iOFlLOrE5+Kf+p5yjyhm3+cA==
 
 "@types/normalize-package-data@^2.4.0":
   version "2.4.1"
@@ -3712,10 +3712,10 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vercel/nft@^0.15.0":
-  version "0.15.1"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.15.1.tgz#c059e921f3d0f1cdbdc700c0ba060dee6851dcba"
-  integrity sha512-ehD1bgCG9sZliAHku2fc1L+jKLad4wS+9HHWiIs4HT4SysA/JFSXRrfWuA+INumzuaFqrOKs3vQeLVhZ4o8lTw==
+"@vercel/nft@^0.16.0":
+  version "0.16.0"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.16.0.tgz#5d9bd7bca046f2c71c8a0595cf3b9d0d98a20ff8"
+  integrity sha512-iRmcZIP/3FmKHE8t4pqFU7f+dFmqBtEKvPYkrvO9Yb7F0O2Iw3iCf+sNsNQEyrpSTGkFjG6t6sH2oU04MQ9R2A==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
