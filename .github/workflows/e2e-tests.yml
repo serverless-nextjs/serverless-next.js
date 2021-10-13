@@ -61,44 +61,44 @@ jobs:
           sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
           target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-      - name: Use Node.js 14.x
-        uses: actions/setup-node@v2
-        with:
-          node-version: "14.x"
-          cache: "yarn"
+      #      - name: Use Node.js 14.x
+      #        uses: actions/setup-node@v2
+      #        with:
+      #          node-version: "14.x"
+      #          cache: "yarn"
 
-      - name: Build
-        env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn --frozen-lockfile
+      #      - name: Build
+      #        env:
+      #          NODE_OPTIONS: "--max-old-space-size=4096"
+      #        run: yarn --frozen-lockfile
 
-      - name: Mark end-to-end tests as failed
-        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
-        if: ${{ failure() && github.event.inputs.pull_request_id == '' }}
-        uses: Sibz/github-status-action@v1
-        with:
-          authToken: ${{ secrets.GITHUB_TOKEN }}
-          context: "End-to-end Tests"
-          description: "End-to-end tests have failed"
-          state: "failure"
-          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
-          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+      #      - name: Mark end-to-end tests as failed
+      #        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+      #        if: ${{ failure() && github.event.inputs.pull_request_id == '' }}
+      #        uses: Sibz/github-status-action@v1
+      #        with:
+      #          authToken: ${{ secrets.GITHUB_TOKEN }}
+      #          context: "End-to-end Tests"
+      #          description: "End-to-end tests have failed"
+      #          state: "failure"
+      #          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
+      #          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-      - name: Install test utils
-        working-directory: packages/e2e-tests/test-utils
-        env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn --frozen-lockfile
+      #      - name: Install test utils
+      #        working-directory: packages/e2e-tests/test-utils
+      #        env:
+      #          NODE_OPTIONS: "--max-old-space-size=4096"
+      #        run: yarn --frozen-lockfile
 
-      - name: "Compress build"
-        run: tar -caf build-${{ matrix.os }}.tar.gz ./packages ./node_modules
-
-      - name: "Upload build"
-        uses: actions/upload-artifact@v2
-        with:
-          name: build-${{ matrix.os }}.tar.gz
-          path: build-${{ matrix.os }}.tar.gz
-          retention-days: 1
+      #      - name: "Compress build"
+      #        run: tar -caf build-${{ matrix.os }}.tar.gz ./packages ./node_modules
+      #
+      #      - name: "Upload build"
+      #        uses: actions/upload-artifact@v2
+      #        with:
+      #          name: build-${{ matrix.os }}.tar.gz
+      #          path: build-${{ matrix.os }}.tar.gz
+      #          retention-days: 1
 
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
@@ -161,18 +161,37 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
 
-      - name: "Download build"
-        uses: actions/download-artifact@v2
-        with:
-          name: build-${{ matrix.os }}.tar.gz
+      #      - name: "Download build"
+      #        uses: actions/download-artifact@v2
+      #        with:
+      #          name: build-${{ matrix.os }}.tar.gz
+      #
+      #      - name: "Uncompress build"
+      #        run: tar -xf build-${{ matrix.os }}.tar.gz
 
-      - name: "Uncompress build"
-        run: tar -xf build-${{ matrix.os }}.tar.gz
+      - name: Build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn --frozen-lockfile
+
+      - name: Install test utils
+        working-directory: packages/e2e-tests/test-utils
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn --frozen-lockfile
 
       - name: Choose latest next.js version
         if: ${{ !startsWith(matrix.app, 'prev') }}
         working-directory: packages/e2e-tests/${{ matrix.app }}
         run: yarn add next@latest
+
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 30
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Run e2e tests
         working-directory: packages/e2e-tests/${{ matrix.app }}
