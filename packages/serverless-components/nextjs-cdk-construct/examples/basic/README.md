@@ -42,9 +42,22 @@ $ yarn cdk deploy
 
 ### Commands
 
-- `npm run build`: compile typescript to js
-- `npm run cdk:watch`: watch for changes and compile
-- `npm run cdk:test`: perform the jest unit tests
-- `cdk deploy`: deploy this stack to your default AWS account/region
-- `cdk diff`: compare deployed stack with current state
-- `cdk synth`: emits the synthesized CloudFormation template
+```bash
+# compile typescript to js
+$ npm run build
+
+# watch for changes and compile
+$ npm run cdk:watch
+
+# perform the jest unit tests
+$ npm run cdk:test
+
+# deploy this stack to your default AWS account/region
+$ cdk deploy
+
+# compare deployed stack with current state
+$ cdk diff
+
+# emits the synthesized CloudFormation template
+$ cdk synth
+```
