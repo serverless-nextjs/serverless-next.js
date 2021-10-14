@@ -2117,14 +2117,14 @@
     picomatch "^2.2.2"
 
 "@sls-next/aws-common@link:../aws-common":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@aws-sdk/client-s3" "^3.35.0"
     "@aws-sdk/client-sqs" "^3.35.0"
     "@sls-next/core" "link:../core"
 
 "@sls-next/core@link:../core":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -2274,10 +2274,10 @@
   dependencies:
     "@types/node" "*"
 
-"@vercel/nft@^0.16.0":
-  version "0.16.0"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.16.0.tgz#5d9bd7bca046f2c71c8a0595cf3b9d0d98a20ff8"
-  integrity sha512-iRmcZIP/3FmKHE8t4pqFU7f+dFmqBtEKvPYkrvO9Yb7F0O2Iw3iCf+sNsNQEyrpSTGkFjG6t6sH2oU04MQ9R2A==
+"@vercel/nft@^0.16.1":
+  version "0.16.1"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.16.1.tgz#a636e3fc55f5502a3c652f8c1e01ca2bfac6cf68"
+  integrity sha512-OiPCdRDo9qA8QRQkgdyPInjF6TkvtWv79/WVpweufeOxjwUYju0jIUuFLS2PeB4wAIoKc/1CiizjhmJRqXNwAA==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
