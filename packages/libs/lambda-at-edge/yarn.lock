@@ -2117,14 +2117,14 @@
     picomatch "^2.2.2"
 
 "@sls-next/aws-common@link:../aws-common":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@aws-sdk/client-s3" "^3.35.0"
     "@aws-sdk/client-sqs" "^3.35.0"
     "@sls-next/core" "link:../core"
 
 "@sls-next/core@link:../core":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -2216,10 +2216,10 @@
     "@types/node" "*"
     form-data "^3.0.0"
 
-"@types/node@*", "@types/node@^16.10.4":
-  version "16.10.4"
-  resolved "https://registry.npmjs.org/@types/node/-/node-16.10.4.tgz#592f12b0b5f357533ddc3310b0176d42ea3e45d1"
-  integrity sha512-EITwVTX5B4nDjXjGeQAfXOrm+Jn+qNjDmyDRtWoD+wZsl/RDPRTFRKivs4Mt74iOFlLOrE5+Kf+p5yjyhm3+cA==
+"@types/node@*", "@types/node@^16.11.0":
+  version "16.11.0"
+  resolved "https://registry.npmjs.org/@types/node/-/node-16.11.0.tgz#4b95f2327bacd1ef8f08d8ceda193039c5d7f52e"
+  integrity sha512-8MLkBIYQMuhRBQzGN9875bYsOhPnf/0rgXGo66S2FemHkhbn9qtsz9ywV1iCG+vbjigE4WUNVvw37Dx+L0qsPg==
 
 "@types/normalize-path@^3.0.0":
   version "3.0.0"
