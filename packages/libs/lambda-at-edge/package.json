@@ -50,7 +50,7 @@
     "@types/node": "^16.11.0",
     "@types/node-fetch": "^2.5.7",
     "@types/normalize-path": "^3.0.0",
-    "@types/react": "17.0.29",
+    "@types/react": "17.0.30",
     "@types/react-dom": "^17.0.9",
     "@types/send": "^0.17.0",
     "@types/sharp": "^0.29.2",
