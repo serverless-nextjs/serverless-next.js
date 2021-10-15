@@ -157,10 +157,10 @@
     ramda "^0.26.1"
     traverse "^0.6.6"
 
-"@serverless/utils@^5.17.1":
-  version "5.17.1"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.17.1.tgz#f7340fc562b06eebf9263de41658b602a75a5c17"
-  integrity sha512-1FUsIzGRF6kV7M4R2UGw/32XMzPSBI1J/A/FomeRN4EaXEXaPDq+IJaGhrDDsex45iHq3fRp9UH5ee07sA89OA==
+"@serverless/utils@^5.18.0":
+  version "5.18.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.18.0.tgz#6f44eb09a706a40c95a0ac45020238548ea0c97b"
+  integrity sha512-vq6tzG3RilZVugbJBvBOU5XBVRTzGce1XH6zvivMM8c+a6wmMUcRRfTD0SPTCWxD2hSdv4WrH3Yz27Ez55vrSA==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
@@ -180,7 +180,7 @@
     js-yaml "^4.1.0"
     jwt-decode "^3.1.2"
     lodash "^4.17.21"
-    log "^6.3.0"
+    log "^6.3.1"
     log-node "^8.0.1"
     make-dir "^3.1.0"
     memoizee "^0.4.15"
@@ -188,6 +188,7 @@
     p-event "^4.2.0"
     supports-color "^8.1.1"
     type "^2.5.0"
+    uni-global "^1.0.0"
     uuid "^8.3.2"
     write-file-atomic "^3.0.3"
 
@@ -1918,10 +1919,10 @@ log-node@^8.0.1:
     supports-color "^8.1.1"
     type "^2.5.0"
 
-log@^6.3.0:
-  version "6.3.0"
-  resolved "https://registry.npmjs.org/log/-/log-6.3.0.tgz#1fd3ab568e18bfdb29eda2df80d99b67b2da18f8"
-  integrity sha512-ZdlxGTKnTTH9yUMvYd7Xgz/OCFNlqcof+4SL0M2d3vdiZm2d+gm3YdR7ZfY6dN0Mlj4y/GU2Rk9Dwy5gVaAH4w==
+log@^6.3.1:
+  version "6.3.1"
+  resolved "https://registry.npmjs.org/log/-/log-6.3.1.tgz#fcf9bd71fe2274a51ad608dc95c549dd7512146b"
+  integrity sha512-McG47rJEWOkXTDioZzQNydAVvZNeEkSyLJ1VWkFwfW+o1knW+QSi8D1KjPn/TnctV+q99lkvJNe1f0E1IjfY2A==
   dependencies:
     d "^1.0.1"
     duration "^0.2.2"
