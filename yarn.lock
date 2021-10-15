@@ -3317,14 +3317,14 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/aws-common@link:packages/libs/aws-common":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@aws-sdk/client-s3" "^3.35.0"
     "@aws-sdk/client-sqs" "^3.35.0"
     "@sls-next/core" "link:packages/libs/core"
 
 "@sls-next/core@link:packages/libs/core":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
@@ -3337,7 +3337,7 @@
     sharp "^0.29.1"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "3.5.0-alpha.0"
+  version "3.5.0-alpha.1"
   dependencies:
     "@aws-sdk/client-s3" "3.35.0"
     "@aws-sdk/client-sqs" "3.35.0"
@@ -3356,7 +3356,7 @@
     send "^0.17.1"
 
 "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat":
-  version "3.4.0"
+  version "3.5.0-alpha.1"
 
 "@szmarczak/http-timer@^1.1.2":
   version "1.1.2"
@@ -4262,10 +4262,10 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-sdk@^2.1003.0, aws-sdk@^2.1006.0:
-  version "2.1006.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1006.0.tgz#fc2f7e267d19a6297f732e19449461bb944682af"
-  integrity sha512-lwXAy706+1HVQqMnHaahdeBZZbdu6TWrtTY0ydeG0qanwldTFNMLczwnETTZWYsqNAU+wjl1VzmFdMO4gePLNQ==
+aws-sdk@^2.1003.0, aws-sdk@^2.1008.0:
+  version "2.1008.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1008.0.tgz#0f6b58ef6093afec2027a49c0696bec52bb79ef6"
+  integrity sha512-wBEon+ARCuMcwEPpOFZqRT3elBLfLtPqv8jMql3Hsr7Ua5toPlgKMmjf368iTzBNaY7TOZsjLAT9nAhvtSZ++g==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
