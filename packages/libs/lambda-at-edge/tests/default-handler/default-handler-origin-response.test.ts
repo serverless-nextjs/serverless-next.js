@@ -6,6 +6,7 @@ import {
   CloudFrontResponse
 } from "aws-lambda";
 import { S3Client } from "@aws-sdk/client-s3";
+import { jest } from "@jest/globals";
 
 jest.mock("@aws-sdk/client-s3", () =>
   require("../mocks/s3/aws-sdk-s3-client.mock")

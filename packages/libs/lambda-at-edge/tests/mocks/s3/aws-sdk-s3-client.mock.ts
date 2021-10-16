@@ -1,6 +1,7 @@
 import { Readable } from "stream";
+import { jest } from "@jest/globals";
 
-export const mockSend = jest.fn((input) => {
+export const mockSend = jest.fn((input: any) => {
   if (input.Command === "GetObjectCommand") {
     // Simulate fallback page cache control headers
     const isFallback = /\[.*]/.test(input.Key as string);
