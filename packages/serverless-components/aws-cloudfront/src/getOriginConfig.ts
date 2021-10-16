@@ -1,3 +1,5 @@
+import { getBucketNameFromUrl } from "./getBucketNameFromUrl";
+
 export type OriginConfig = {
   Id: string;
   DomainName: string;
@@ -47,7 +49,7 @@ export const getOriginConfig = (
   };
 
   if (originUrl.includes("s3")) {
-    const bucketName = hostname.split(".")[0];
+    const bucketName = getBucketNameFromUrl(hostname);
     originConfig.Id = bucketName;
     originConfig.DomainName = hostname;
     originConfig.S3OriginConfig = {
