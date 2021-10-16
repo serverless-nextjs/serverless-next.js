@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-lambda",
-  "version": "3.5.0-alpha.1",
+  "version": "3.5.0-alpha.2",
   "main": "serverless.js",
   "publishConfig": {
     "access": "public"
@@ -27,7 +27,7 @@
     "@types/archiver": "^5.1.0",
     "@types/fs-extra": "^9.0.13",
     "@types/lodash": "^4.14.175",
-    "@types/node": "^16.10.4",
+    "@types/node": "^16.11.0",
     "@types/ramda": "^0.27.45",
     "jest": "^27.2.4",
     "rimraf": "^3.0.2",
@@ -39,7 +39,7 @@
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
     "archiver": "^5.3.0",
-    "aws-sdk": "^2.1006.0",
+    "aws-sdk": "^2.1008.0",
     "fs-extra": "^9.1.0",
     "globby": "^11.0.4",
     "lodash": "^4.17.21",
@@ -47,6 +47,6 @@
   },
   "peerDependencies": {
     "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1006.0"
+    "aws-sdk": "^2.1008.0"
   }
 }

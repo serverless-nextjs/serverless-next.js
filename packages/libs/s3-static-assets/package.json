@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/s3-static-assets",
-  "version": "3.5.0-alpha.1",
+  "version": "3.5.0-alpha.2",
   "description": "Handles upload to S3 of next.js static assets",
   "publishConfig": {
     "access": "public"
@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "^2.1006.0",
+    "aws-sdk": "^2.1008.0",
     "fast-glob": "^3.2.5",
     "fs-extra": "^9.1.0",
     "mime-types": "^2.1.33",

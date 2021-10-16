@@ -300,4 +300,114 @@ describe("S3 origins", () => {
       expect(mockUpdateDistribution.mock.calls[0][0]).toMatchSnapshot();
     });
   });
+
+  describe("when origin is outside of us-east-1 and contains dots", () => {
+    it("should use the origin's host at the DomainName", async () => {
+      await component.default({
+        origins: ["https://mybucket.with.dots.s3.eu-west-1.amazonaws.com"]
+      });
+
+      assertCDWTHasOrigin(mockCreateDistributionWithTags, {
+        Id: "mybucket.with.dots",
+        DomainName: "mybucket.with.dots.s3.eu-west-1.amazonaws.com",
+        S3OriginConfig: {
+          OriginAccessIdentity: ""
+        },
+        CustomHeaders: {
+          Quantity: 0,
+          Items: []
+        },
+        OriginPath: ""
+      });
+
+      expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
+    });
+
+    it("updates distribution", async () => {
+      mockGetDistributionConfigPromise.mockResolvedValueOnce({
+        ETag: "etag",
+        DistributionConfig: {
+          Origins: {
+            Quantity: 0,
+            Items: []
+          }
+        }
+      });
+      mockUpdateDistributionPromise.mockResolvedValueOnce({
+        Distribution: {
+          Id: "distributionwithS3originupdated"
+        }
+      });
+
+      await component.default({
+        origins: ["https://mybucket.with.dots.s3.eu-west-1.amazonaws.com"]
+      });
+
+      await component.default({
+        origins: ["https://anotherbucket.s3.eu-west-1.amazonaws.com"]
+      });
+
+      assertHasOrigin(mockUpdateDistribution, {
+        Id: "anotherbucket",
+        DomainName: "anotherbucket.s3.eu-west-1.amazonaws.com"
+      });
+
+      expect(mockUpdateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    });
+  });
+
+  describe("when origin is outside of us-east-1 and contains s3 and dots", () => {
+    it("should use the origin's host at the DomainName", async () => {
+      await component.default({
+        origins: ["https://mybucket.s3.s3.s3.eu-west-1.amazonaws.com"]
+      });
+
+      assertCDWTHasOrigin(mockCreateDistributionWithTags, {
+        Id: "mybucket.s3.s3",
+        DomainName: "mybucket.s3.s3.s3.eu-west-1.amazonaws.com",
+        S3OriginConfig: {
+          OriginAccessIdentity: ""
+        },
+        CustomHeaders: {
+          Quantity: 0,
+          Items: []
+        },
+        OriginPath: ""
+      });
+
+      expect(mockCreateDistributionWithTags.mock.calls[0][0]).toMatchSnapshot();
+    });
+
+    it("updates distribution", async () => {
+      mockGetDistributionConfigPromise.mockResolvedValueOnce({
+        ETag: "etag",
+        DistributionConfig: {
+          Origins: {
+            Quantity: 0,
+            Items: []
+          }
+        }
+      });
+      mockUpdateDistributionPromise.mockResolvedValueOnce({
+        Distribution: {
+          Id: "distributionwithS3originupdated"
+        }
+      });
+
+      await component.default({
+        origins: ["https://mybucket.s3.s3.s3.eu-west-1.amazonaws.com"]
+      });
+
+      await component.default({
+        origins: ["https://anotherbucket.s3.eu-west-1.amazonaws.com"]
+      });
+
+      assertHasOrigin(mockUpdateDistribution, {
+        Id: "anotherbucket",
+        DomainName: "anotherbucket.s3.eu-west-1.amazonaws.com"
+      });
+
+      expect(mockUpdateDistribution.mock.calls[0][0]).toMatchSnapshot();
+    });
+  });
 });

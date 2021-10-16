@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-s3",
-  "version": "3.5.0-alpha.1",
+  "version": "3.5.0-alpha.2",
   "main": "./serverless.js",
   "publishConfig": {
     "access": "public"
@@ -17,7 +17,7 @@
   "dependencies": {
     "@serverless/core": "^1.1.2",
     "archiver": "^5.3.0",
-    "aws-sdk": "^2.1006.0",
+    "aws-sdk": "^2.1008.0",
     "fs-extra": "^9.1.0",
     "klaw-sync": "^6.0.0",
     "lodash": "^4.17.21",
@@ -30,7 +30,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/klaw-sync": "^6.0.0",
     "@types/lodash": "^4.14.175",
-    "@types/node": "^16.10.4",
+    "@types/node": "^16.11.0",
     "@types/ramda": "^0.27.45",
     "babel-eslint": "^10.1.0",
     "eslint": "^7.29.0",

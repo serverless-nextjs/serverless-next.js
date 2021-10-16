@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-cloudfront",
-  "version": "3.5.0-alpha.1",
+  "version": "3.5.0-alpha.2",
   "main": "./serverless.js",
   "types": "dist/component.d.ts",
   "publishConfig": {
@@ -17,18 +17,18 @@
   "license": "MIT",
   "dependencies": {
     "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1006.0",
+    "aws-sdk": "^2.1008.0",
     "ramda": "^0.27.1"
   },
   "peerDependencies": {
     "@babel/core": "7.14.6",
     "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1006.0"
+    "aws-sdk": "^2.1008.0"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.15.0",
     "@types/fs-extra": "^9.0.13",
-    "@types/node": "^16.10.4",
+    "@types/node": "^16.11.0",
     "@types/ramda": "^0.27.45",
     "babel-eslint": "10.1.0",
     "eslint": "7.32.0",
