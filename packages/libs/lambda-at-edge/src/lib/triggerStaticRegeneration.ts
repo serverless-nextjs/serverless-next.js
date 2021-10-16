@@ -1,6 +1,7 @@
 import { s3BucketNameFromEventRequest } from "../s3/s3BucketNameFromEventRequest";
 import { RegenerationEvent } from "../types";
 import * as crypto from "crypto";
+import { SendMessageCommand, SQSClient } from "@aws-sdk/client-sqs";
 
 interface TriggerStaticRegenerationOptions {
   request: AWSLambda.CloudFrontRequest;
@@ -26,12 +27,6 @@ export const triggerStaticRegeneration = async (
   if (!region) {
     throw new Error("Expected region to be defined");
   }
-
-  // Dynamic imports don't get treeshook so we need to import as deep as possible for only the code we need.
-  const { SQSClient } = await import("@aws-sdk/client-sqs/src/SQSClient");
-  const { SendMessageCommand } = await import(
-    "@aws-sdk/client-sqs/src/commands/SendMessageCommand"
-  );
 
   const sqs = new SQSClient({
     region,

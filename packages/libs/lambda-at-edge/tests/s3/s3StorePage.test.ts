@@ -1,17 +1,14 @@
 import { s3StorePage } from "../../src/s3/s3StorePage";
+import { jest } from "@jest/globals";
 
-const mockSend = jest.fn();
-const mockPutObjectCommand = jest.fn();
+import {
+  mockSend,
+  mockPutObjectCommand
+} from "../mocks/s3/aws-sdk-s3-client.mock2";
 
-jest.mock("@aws-sdk/client-s3/src/S3Client", () => ({
-  S3Client: jest.fn(() => ({
-    send: mockSend
-  }))
-}));
-
-jest.mock("@aws-sdk/client-s3/src/commands/PutObjectCommand", () => ({
-  PutObjectCommand: mockPutObjectCommand
-}));
+jest.mock("@aws-sdk/client-s3", () =>
+  require("../mocks/s3/aws-sdk-s3-client.mock2")
+);
 
 describe("S3StorePage Tests", () => {
   it.each`

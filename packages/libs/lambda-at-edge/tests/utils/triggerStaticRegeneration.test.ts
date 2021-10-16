@@ -1,19 +1,17 @@
 import { triggerStaticRegeneration } from "../../src/lib/triggerStaticRegeneration";
+import {
+  mockSQSClient,
+  mockSendMessageCommand
+} from "../mocks/sqs/aws-sdk-sqs-client.mock";
 import { jest } from "@jest/globals";
 
+jest.mock("@aws-sdk/client-sqs", () =>
+  require("../mocks/sqs/aws-sdk-sqs-client.mock")
+);
+
 describe("triggerStaticRegeneration()", () => {
-  const mockSQSClient = jest.fn();
-  const mockSendMessageCommand = jest.fn();
   beforeEach(() => {
     mockSQSClient.mockReset();
-    jest.mock("@aws-sdk/client-sqs/src/SQSClient", () => ({
-      __esModule: true,
-      SQSClient: mockSQSClient
-    }));
-    jest.mock("@aws-sdk/client-sqs/src/commands/SendMessageCommand", () => ({
-      _esModule: true,
-      SendMessageCommand: mockSendMessageCommand
-    }));
   });
 
   const options = {

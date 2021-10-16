@@ -1,6 +1,7 @@
 import { Readable } from "stream";
+import { jest } from "@jest/globals";
 
-export const mockSend = jest.fn((input) => {
+export const mockSend = jest.fn((input: any) => {
   if (input.Command === "GetObjectCommand") {
     // Simulate fallback page cache control headers
     const isFallback = /\[.*]/.test(input.Key as string);
@@ -18,8 +19,35 @@ export const mockSend = jest.fn((input) => {
 });
 
 const MockS3Client = jest.fn(() => ({
-  constructor: () => {},
+  constructor: () => {
+    // intentionally empty
+  },
   send: mockSend
 }));
 
-export { MockS3Client as S3Client };
+// This mock makes it easier to unit test by returning params with the command name
+const MockGetObjectCommand = jest.fn((params: Record<string, string>) => {
+  return {
+    ...{
+      Command: "GetObjectCommand"
+    },
+    ...params
+  };
+});
+
+// This mock makes it easier to unit test by returning params with the command name
+const MockPutObjectCommand = jest.fn((params: any) => {
+  return {
+    ...{
+      Command: "PutObjectCommand"
+    },
+    ...params
+  };
+});
+
+export {
+  MockS3Client as S3Client,
+  MockGetObjectCommand as GetObjectCommand,
+  MockGetObjectCommand,
+  MockPutObjectCommand as PutObjectCommand
+};

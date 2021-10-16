@@ -13,6 +13,7 @@ import { Readable } from "stream";
 import { triggerStaticRegeneration } from "../lib/triggerStaticRegeneration";
 import { s3StorePage } from "../s3/s3StorePage";
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
+import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
 
 /**
  * This function is experimental to allow rendering static pages fully from the handler.
@@ -63,16 +64,11 @@ export const renderStaticPage = async ({
   }
 
   // Render response from S3
-  // Lazily import only S3Client to reduce init times until actually needed
-  const { S3Client } = await import("@aws-sdk/client-s3/src/S3Client");
   const s3 = new S3Client({
     region: request.origin?.s3?.region,
     maxAttempts: 3
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-  const { GetObjectCommand } = await import(
-    "@aws-sdk/client-s3/src/commands/GetObjectCommand"
-  );
   // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
   const getStream = await import("get-stream");
   const s3Params = {
