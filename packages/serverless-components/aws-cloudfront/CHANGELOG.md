@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.1...v3.5.0-alpha.2) (2021-10-16)
+
+### Bug Fixes
+
+- **aws-cloudfront:** handle bucket names with dots correctly ([#1844](https://github.com/serverless-nextjs/serverless-next.js/issues/1844)) ([918a19e](https://github.com/serverless-nextjs/serverless-next.js/commit/918a19e7834c49794706d9901a21605141ead99a))
+
 # [3.5.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.0...v3.5.0-alpha.1) (2021-10-13)
 
 **Note:** Version bump only for package @sls-next/aws-cloudfront
