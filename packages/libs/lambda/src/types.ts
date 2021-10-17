@@ -1,7 +1,3 @@
-import {
-  APIGatewayProxyEventV2,
-  APIGatewayProxyStructuredResultV2
-} from "aws-lambda";
 import { ApiManifest, PageManifest } from "@sls-next/core";
 export { ImageConfig, ImagesManifest, RoutesManifest } from "@sls-next/core";
 

@@ -9,14 +9,14 @@ export abstract class ThirdPartyIntegrationBase {
   nextConfigDir: string;
   outputHandlerDir: string;
 
-  constructor(nextConfigDir: string, outputHandlerDir: string) {
+  public constructor(nextConfigDir: string, outputHandlerDir: string) {
     this.nextConfigDir = nextConfigDir;
     this.outputHandlerDir = outputHandlerDir;
   }
 
-  abstract execute(): void;
+  public abstract execute(): void;
 
-  async isPackagePresent(name: string): Promise<boolean> {
+  public async isPackagePresent(name: string): Promise<boolean> {
     const packageJsonPath = join(this.nextConfigDir, "package.json");
 
     if (await fse.pathExists(packageJsonPath)) {

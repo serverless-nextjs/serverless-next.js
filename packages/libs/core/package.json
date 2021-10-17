@@ -39,6 +39,7 @@
     "jsonwebtoken": "^8.5.1",
     "next": "^11.1.2",
     "node-fetch": "2.6.5",
+    "normalize-path": "^3.0.0",
     "path-to-regexp": "^6.1.0",
     "sharp": "^0.29.1"
   },
@@ -47,6 +48,7 @@
     "@types/fresh": "^0.5.0",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node-fetch": "3.0.3",
+    "@types/normalize-path": "^3.0.0",
     "@types/react": "^17.0.30",
     "@types/react-dom": "^17.0.9",
     "@types/send": "^0.17.1",
