@@ -1,6 +1,4 @@
 // @ts-ignore
-import PrerenderManifest from "./prerender-manifest.json";
-// @ts-ignore
 import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
