@@ -18,6 +18,8 @@
   "scripts": {
     "prepare": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json",
+    "esbuild": "node esbuild.js",
+    "rollup": "rollup --config",
     "clean": "yarn rimraf dist"
   },
   "keywords": [
@@ -34,9 +36,17 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "esbuild": "^0.13.7",
+    "@rollup/plugin-commonjs": "^18.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
     "@sls-next/aws-common": "link:../aws-common",
-    "@sls-next/core": "link:../core"
+    "@sls-next/core": "link:../core",
+    "esbuild": "^0.13.7",
+    "rollup": "^2.58.0",
+    "rollup-plugin-delete": "^2.0.0",
+    "rollup-plugin-node-externals": "^2.2.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.30.0"
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.84",

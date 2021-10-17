@@ -1,0 +1,23 @@
+{
+  "compilerOptions": {
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "module": "ESNext",
+    "lib": [
+      "DOM",
+      "ES2020"
+    ],
+    "target": "ES2019",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "sourceMap": false,
+    "strict": true,
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "baseUrl": "./src"
+  },
+  "include": [
+    "./src/handlers/default-handler.ts",
+    "./src/handlers/image-handler.ts"
+  ]
+}
