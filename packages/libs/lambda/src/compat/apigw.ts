@@ -90,7 +90,9 @@ export const httpCompat = (
   const onResEnd =
     (resolve: (value: APIGatewayProxyStructuredResultV2) => void) =>
     (text: Buffer | string) => {
-      if (text) res.write(text);
+      if (text) {
+        res.write(text);
+      }
       if (!res.statusCode) {
         res.statusCode = 200;
       }
