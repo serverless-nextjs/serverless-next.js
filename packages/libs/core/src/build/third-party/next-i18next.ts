@@ -1,8 +1,8 @@
 import fse from "fs-extra";
 import { join } from "path";
-import { ThirdPartyIntegrationBase } from "./integration-base";
+import ThirdPartyIntegrationBase from "./integration-base";
 
-export class NextI18nextIntegration extends ThirdPartyIntegrationBase {
+export default class NextI18nextIntegration extends ThirdPartyIntegrationBase {
   /**
    * This will copy all next-i18next files as needed to a lambda directory.
    */

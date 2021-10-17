@@ -5,7 +5,7 @@ import fse from "fs-extra";
  * This class allows one to integrate third party libraries by copying them to a specific Lambda directory.
  * Extend from this, implement the execute() method, and keep it generic enough so it can be reused across platforms.
  */
-export abstract class ThirdPartyIntegrationBase {
+export default abstract class ThirdPartyIntegrationBase {
   nextConfigDir: string;
   outputHandlerDir: string;
 
