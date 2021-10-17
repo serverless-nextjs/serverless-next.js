@@ -29,7 +29,7 @@ const isImageOptimizerRequest = (uri: string): boolean =>
   uri.startsWith("/_next/image");
 
 /**
- * Entry point for Lambda handling - either a request event or SQS event (for regeneration).
+ * Entry point for Lambda image handling.
  * @param event
  */
 export const handler = async (
@@ -41,6 +41,7 @@ export const handler = async (
   const uri = normaliseUri(req.url ?? "");
 
   // Handle image optimizer requests
+  // TODO: probably can move these to core package
   const isImageRequest = isImageOptimizerRequest(uri);
   if (isImageRequest) {
     let imagesManifest: ImagesManifest | undefined;
@@ -81,6 +82,7 @@ export const handler = async (
 
     setCustomHeaders({ res, req, responsePromise }, routesManifest);
   } else {
+    // TODO: probably move this into the platform-agnostic handler
     res.writeHead(404);
     res.end();
   }
