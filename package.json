@@ -104,7 +104,7 @@
       "<rootDir>/packages/libs/core/src/regenerationHandler.ts",
       "<rootDir>/packages/libs/core/src/platform/platformClient.ts",
       "<rootDir>/packages/libs/aws-common/src/awsPlatformClient.ts",
-      "<rootDir>/packages/libs/lambda"
+      "<rootDir>/packages/libs/lambda/"
     ],
     "watchPathIgnorePatterns": [
       "/fixture/",
