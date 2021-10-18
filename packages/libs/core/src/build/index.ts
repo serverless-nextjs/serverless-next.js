@@ -271,4 +271,3 @@ export const prepareBuildManifests = async (
 };
 
 export * from "./types";
-export * from "./third-party";

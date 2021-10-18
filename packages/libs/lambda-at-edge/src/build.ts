@@ -9,16 +9,16 @@ import {
   RoutesManifest,
   OriginRequestImageHandlerManifest
 } from "./types";
-import pathToPosix from "@sls-next/core/dist/build/lib/pathToPosix";
-import normalizeNodeModules from "@sls-next/core/dist/build/lib/normalizeNodeModules";
-import createServerlessConfig from "@sls-next/core/dist/build/lib/createServerlessConfig";
+import pathToPosix from "@sls-next/core/dist/module/build/lib/pathToPosix";
+import normalizeNodeModules from "@sls-next/core/dist/module/build/lib/normalizeNodeModules";
+import createServerlessConfig from "@sls-next/core/dist/module/build/lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
-import readDirectoryFiles from "@sls-next/core/dist/build/lib/readDirectoryFiles";
-import filterOutDirectories from "@sls-next/core/dist/build/lib/filterOutDirectories";
+import readDirectoryFiles from "@sls-next/core/dist/module/build/lib/readDirectoryFiles";
+import filterOutDirectories from "@sls-next/core/dist/module/build/lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core";
-import { NextI18nextIntegration } from "@sls-next/core";
+import { NextI18nextIntegration } from "@sls-next/core/dist/module/build/third-party/next-i18next";
 import normalizePath from "normalize-path";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";

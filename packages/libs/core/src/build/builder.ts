@@ -11,7 +11,7 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "./index";
 import { NextConfig } from "./types";
-import { NextI18nextIntegration } from "build/third-party";
+import { NextI18nextIntegration } from "build/third-party/next-i18next";
 import normalizePath from "normalize-path";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
