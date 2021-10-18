@@ -18,7 +18,7 @@ export const handleApiReq = (
   isRewrite?: boolean
 ): ExternalRoute | ApiRoute | undefined => {
   const { apis } = manifest;
-  const normalisedUri = normalise(uri, routesManifest);
+  const { normalisedUri } = normalise(uri, routesManifest);
 
   const nonDynamic = apis.nonDynamic[normalisedUri];
   if (nonDynamic) {

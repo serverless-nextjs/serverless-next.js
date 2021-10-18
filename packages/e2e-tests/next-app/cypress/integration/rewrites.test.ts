@@ -151,25 +151,19 @@ describe("Rewrites Tests", () => {
         expectedStatus: 200
       }
     ].forEach(({ path, expectedRewrite, method, body, expectedStatus }) => {
-      const headers = Cypress.env("GITHUB_TOKEN")
-        ? { Authorization: `Bearer ${Cypress.env("GITHUB_TOKEN")}` }
-        : undefined;
-
       it(`externally rewrites path ${path} to ${expectedRewrite} for method ${method}`, () => {
         cy.request({
           url: path,
           method: method,
           body: body,
-          failOnStatusCode: false,
-          headers: headers
+          failOnStatusCode: false
         }).then((response) => {
           expect(response.status).to.equal(expectedStatus);
           cy.request({
             url: expectedRewrite,
             method: method,
             body: body,
-            failOnStatusCode: false,
-            headers: headers
+            failOnStatusCode: false
           }).then((rewriteResponse) => {
             // Check that the body of each page is the same, i.e it is actually rewritten
             expect(response.body).to.deep.equal(rewriteResponse.body);
