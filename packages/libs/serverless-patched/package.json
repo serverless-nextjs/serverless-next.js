@@ -37,7 +37,7 @@
     "find-up": "^5.0.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "^2.1.0",
-    "serverless": "^2.61.0"
+    "serverless": "^2.63.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.0",
