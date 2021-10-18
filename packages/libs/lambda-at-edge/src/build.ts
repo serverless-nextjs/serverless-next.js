@@ -12,7 +12,7 @@ import {
 import pathToPosix from "@sls-next/core/dist/module/build/lib/pathToPosix";
 import normalizeNodeModules from "@sls-next/core/dist/module/build/lib/normalizeNodeModules";
 import createServerlessConfig from "@sls-next/core/dist/module/build/lib/createServerlessConfig";
-import { isTrailingSlashRedirect } from "./routing/redirector";
+import { isTrailingSlashRedirect } from "@sls-next/core/dist/module/build/lib/redirector";
 import readDirectoryFiles from "@sls-next/core/dist/module/build/lib/readDirectoryFiles";
 import filterOutDirectories from "@sls-next/core/dist/module/build/lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
