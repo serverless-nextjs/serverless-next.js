@@ -19,7 +19,7 @@ jobs:
     strategy:
       fail-fast: true
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
 
     outputs:
       pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
@@ -103,7 +103,7 @@ jobs:
       - name: Wait for existing workflow to complete before e2e tests
         uses: softprops/turnstyle@v1
         with:
-          poll-interval-seconds: 15
+          poll-interval-seconds: 30
           same-branch-only: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
