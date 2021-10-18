@@ -1,30 +1,21 @@
-import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
 import path from "path";
-import {
-  OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest,
-  RoutesManifest,
-  OriginRequestImageHandlerManifest
-} from "./types";
-import pathToPosix from "@sls-next/core/dist/build/lib/pathToPosix";
-import normalizeNodeModules from "@sls-next/core/dist/build/lib/normalizeNodeModules";
-import createServerlessConfig from "@sls-next/core/dist/build/lib/createServerlessConfig";
-import { isTrailingSlashRedirect } from "@sls-next/core/dist/build/lib/redirector";
-import readDirectoryFiles from "@sls-next/core/dist/build/lib/readDirectoryFiles";
-import filterOutDirectories from "@sls-next/core/dist/build/lib/filterOutDirectories";
+import { ImageBuildManifest, PageManifest, RoutesManifest } from "types";
+import pathToPosix from "./lib/pathToPosix";
+import createServerlessConfig from "./lib/createServerlessConfig";
+import { isTrailingSlashRedirect } from "./lib/redirector";
+import readDirectoryFiles from "./lib/readDirectoryFiles";
+import filterOutDirectories from "./lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
-import { prepareBuildManifests } from "@sls-next/core";
-import { NextConfig } from "@sls-next/core";
-import { NextI18nextIntegration } from "@sls-next/core/dist/build/third-party/next-i18next";
+import { prepareBuildManifests } from "./index";
+import { NextConfig } from "./types";
+import { NextI18nextIntegration } from "build/third-party/next-i18next";
 import normalizePath from "normalize-path";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
-export const API_LAMBDA_CODE_DIR = "api-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
-export const REGENERATION_LAMBDA_CODE_DIR = "regeneration-lambda";
 export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
@@ -32,7 +23,6 @@ type BuildOptions = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   cmd?: string;
-  useServerlessTraceTarget?: boolean;
   logLambdaExecutionTimes?: boolean;
   domainRedirects?: { [key: string]: string };
   minifyHandlers?: boolean;
@@ -49,9 +39,6 @@ type BuildOptions = {
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
   regenerationQueueName?: string;
-  separateApiLambda?: boolean;
-  disableOriginResponseHandler?: boolean;
-  useV2Handler?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -59,7 +46,6 @@ const defaultBuildOptions = {
   cwd: process.cwd(),
   env: {},
   cmd: "./node_modules/.bin/next",
-  useServerlessTraceTarget: false,
   logLambdaExecutionTimes: false,
   domainRedirects: {},
   minifyHandlers: false,
@@ -69,12 +55,10 @@ const defaultBuildOptions = {
   baseDir: process.cwd(),
   cleanupDotNext: true,
   assetIgnorePatterns: [],
-  regenerationQueueName: undefined,
-  separateApiLambda: true,
-  useV2Handler: false
+  regenerationQueueName: undefined
 };
 
-class Builder {
+class CoreBuilder {
   nextConfigDir: string;
   nextStaticDir: string;
   dotNextDir: string;
@@ -128,63 +112,20 @@ class Builder {
     return await fse.readJSON(path);
   }
 
-  copyLambdaHandlerDependencies(
-    fileList: string[],
-    reasons: NodeFileTraceReasons,
-    handlerDirectory: string,
-    base: string
-  ): Promise<void>[] {
-    return fileList
-      .filter((file) => {
-        // exclude "initial" files from lambda artefact. These are just the pages themselves
-        // which are copied over separately
-
-        // For TypeScript apps, somehow nodeFileTrace will generate filelist with TS or TSX files, we need to exclude these files to be copied
-        // as it ends up copying from same source to destination.
-        if (file.endsWith(".ts") || file.endsWith(".tsx")) {
-          return false;
-        }
-
-        return (
-          (!reasons[file] || reasons[file].type !== "initial") &&
-          file !== "package.json"
-        );
-      })
-      .map((filePath: string) => {
-        const resolvedFilePath = path.resolve(join(base, filePath));
-        const dst = normalizeNodeModules(
-          path.relative(this.serverlessDir, resolvedFilePath)
-        );
-
-        if (resolvedFilePath !== join(this.outputDir, handlerDirectory, dst)) {
-          // Only copy when source and destination are different
-          return fse.copy(
-            resolvedFilePath,
-            join(this.outputDir, handlerDirectory, dst)
-          );
-        } else {
-          return Promise.resolve();
-        }
-      });
-  }
-
   /**
    * Check whether this .next/serverless/pages file is a JS file used for runtime rendering.
-   * @param buildManifest
+   * @param pageManifest
    * @param relativePageFile
    */
-  isSSRJSFile(
-    buildManifest: OriginRequestDefaultHandlerManifest,
-    relativePageFile: string
-  ): boolean {
+  isSSRJSFile(pageManifest: PageManifest, relativePageFile: string): boolean {
     if (path.extname(relativePageFile) === ".js") {
       const page = relativePageFile.startsWith("/")
         ? `pages${relativePageFile}`
         : `pages/${relativePageFile}`;
       if (
         page === "pages/_error.js" ||
-        Object.values(buildManifest.pages.ssr.nonDynamic).includes(page) ||
-        Object.values(buildManifest.pages.ssr.dynamic).includes(page)
+        Object.values(pageManifest.pages.ssr.nonDynamic).includes(page) ||
+        Object.values(pageManifest.pages.ssr.dynamic).includes(page)
       ) {
         return true;
       }
@@ -220,19 +161,13 @@ class Builder {
    * @param shouldMinify
    */
   async processAndCopyHandler(
-    handlerType:
-      | "api-handler"
-      | "default-handler"
-      | "image-handler"
-      | "regeneration-handler"
-      | "default-handler-v2"
-      | "regeneration-handler-v2",
+    handlerType: "default-handler" | "image-handler",
     destination: string,
     shouldMinify: boolean
   ): Promise<void> {
     const source = path.dirname(
       require.resolve(
-        `@sls-next/lambda-at-edge/dist/${handlerType}/${
+        `@sls-next/lambda/dist/${handlerType}/${
           shouldMinify ? "minified" : "standard"
         }`
       )
@@ -241,58 +176,14 @@ class Builder {
     await fse.copy(source, destination);
   }
 
-  async copyTraces(
-    buildManifest: OriginRequestDefaultHandlerManifest,
-    destination: string
-  ): Promise<void> {
-    let copyTraces: Promise<void>[] = [];
-
-    if (this.buildOptions.useServerlessTraceTarget) {
-      const ignoreAppAndDocumentPages = (page: string): boolean => {
-        const basename = path.basename(page);
-        return basename !== "_app.js" && basename !== "_document.js";
-      };
-
-      const allSsrPages = [
-        ...Object.values(buildManifest.pages.ssr.nonDynamic),
-        ...Object.values(buildManifest.pages.ssr.dynamic)
-      ].filter(ignoreAppAndDocumentPages);
-
-      const ssrPages = Object.values(allSsrPages).map((pageFile) =>
-        path.join(this.serverlessDir, pageFile)
-      );
-
-      const base = this.buildOptions.baseDir || process.cwd();
-      const { fileList, reasons } = await nodeFileTrace(ssrPages, {
-        base,
-        resolve: this.buildOptions.resolve
-      });
-
-      copyTraces = this.copyLambdaHandlerDependencies(
-        fileList,
-        reasons,
-        destination,
-        base
-      );
-    }
-
-    await Promise.all(copyTraces);
-  }
-
-  async buildDefaultLambda(
-    buildManifest: OriginRequestDefaultHandlerManifest,
-    apiBuildManifest: OriginRequestApiHandlerManifest,
-    separateApiLambda: boolean,
-    useV2Handler: boolean
-  ): Promise<void[]> {
+  async buildDefaultLambda(pageManifest: PageManifest): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
     );
 
     return Promise.all([
-      this.copyTraces(buildManifest, DEFAULT_LAMBDA_CODE_DIR),
       this.processAndCopyHandler(
-        useV2Handler ? "default-handler-v2" : "default-handler",
+        "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
@@ -308,7 +199,7 @@ class Builder {
         : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
-        buildManifest
+        pageManifest
       ),
       fse.copy(
         join(this.serverlessDir, "pages"),
@@ -317,10 +208,6 @@ class Builder {
           filter: (file: string) => {
             const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
-            const isNotApiPage =
-              separateApiLambda && !useV2Handler
-                ? pathToPosix(file).indexOf("pages/api") === -1
-                : true;
 
             // If there are API routes, include all JS files.
             // If there are no API routes, include only JS files that used for SSR (including fallback).
@@ -331,14 +218,13 @@ class Builder {
               hasAPIRoutes ||
               path.extname(file) !== ".js" ||
               this.isSSRJSFile(
-                buildManifest,
+                pageManifest,
                 pathToPosix(
                   path.relative(path.join(this.serverlessDir, "pages"), file)
                 ) // important: make sure to use posix path to generate forward-slash path across both posix/windows
               );
 
             return (
-              isNotApiPage &&
               isNotPrerenderedHTMLPage &&
               isNotStaticPropsJSONFile &&
               isNotExcludedJSFile
@@ -354,106 +240,6 @@ class Builder {
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
-      ),
-      this.runThirdPartyIntegrations(
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
-        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR)
-      )
-    ]);
-  }
-
-  async buildApiLambda(
-    apiBuildManifest: OriginRequestApiHandlerManifest
-  ): Promise<void[]> {
-    let copyTraces: Promise<void>[] = [];
-
-    if (this.buildOptions.useServerlessTraceTarget) {
-      const allApiPages = [
-        ...Object.values(apiBuildManifest.apis.nonDynamic),
-        ...Object.values(apiBuildManifest.apis.dynamic).map(
-          (entry) => entry.file
-        )
-      ];
-
-      const apiPages = Object.values(allApiPages).map((pageFile) =>
-        path.join(this.serverlessDir, pageFile)
-      );
-
-      const base = this.buildOptions.baseDir || process.cwd();
-      const { fileList, reasons } = await nodeFileTrace(apiPages, {
-        base,
-        resolve: this.buildOptions.resolve
-      });
-
-      copyTraces = this.copyLambdaHandlerDependencies(
-        fileList,
-        reasons,
-        API_LAMBDA_CODE_DIR,
-        base
-      );
-    }
-
-    return Promise.all([
-      ...copyTraces,
-      this.processAndCopyHandler(
-        "api-handler",
-        join(this.outputDir, API_LAMBDA_CODE_DIR),
-        !!this.buildOptions.minifyHandlers
-      ),
-      this.buildOptions?.handler
-        ? fse.copy(
-            join(this.nextConfigDir, this.buildOptions.handler),
-            join(this.outputDir, API_LAMBDA_CODE_DIR, this.buildOptions.handler)
-          )
-        : Promise.resolve(),
-      fse.copy(
-        join(this.serverlessDir, "pages/api"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
-      ),
-      this.copyChunks(API_LAMBDA_CODE_DIR),
-      fse.writeJson(
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
-        apiBuildManifest
-      ),
-      this.processAndCopyRoutesManifest(
-        join(this.dotNextDir, "routes-manifest.json"),
-        join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
-      )
-    ]);
-  }
-
-  async buildRegenerationHandler(
-    buildManifest: OriginRequestDefaultHandlerManifest,
-    useV2Handler: boolean
-  ): Promise<void> {
-    await Promise.all([
-      this.copyTraces(buildManifest, REGENERATION_LAMBDA_CODE_DIR),
-      fse.writeJson(
-        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "manifest.json"),
-        buildManifest
-      ),
-      this.processAndCopyHandler(
-        useV2Handler ? "regeneration-handler-v2" : "regeneration-handler",
-        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
-        !!this.buildOptions.minifyHandlers
-      ),
-      this.copyChunks(REGENERATION_LAMBDA_CODE_DIR),
-      fse.copy(
-        join(this.serverlessDir, "pages"),
-        join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "pages"),
-        {
-          filter: (file: string) => {
-            const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
-            const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
-            const isNotApiPage = pathToPosix(file).indexOf("pages/api") === -1;
-
-            return (
-              isNotPrerenderedHTMLPage &&
-              isNotStaticPropsJSONFile &&
-              isNotApiPage
-            );
-          }
-        }
       )
     ]);
   }
@@ -462,8 +248,7 @@ class Builder {
    * copy chunks if present and not using serverless trace
    */
   copyChunks(buildDir: string): Promise<void> {
-    return !this.buildOptions.useServerlessTraceTarget &&
-      fse.existsSync(join(this.serverlessDir, "chunks"))
+    return fse.existsSync(join(this.serverlessDir, "chunks"))
       ? fse.copy(
           join(this.serverlessDir, "chunks"),
           join(this.outputDir, buildDir, "chunks")
@@ -473,10 +258,10 @@ class Builder {
 
   /**
    * Build image optimization lambda (supported by Next.js 10)
-   * @param buildManifest
+   * @param imageBuildManifest
    */
   async buildImageLambda(
-    buildManifest: OriginRequestImageHandlerManifest
+    imageBuildManifest: ImageBuildManifest
   ): Promise<void> {
     await Promise.all([
       this.processAndCopyHandler(
@@ -496,7 +281,7 @@ class Builder {
         : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "manifest.json"),
-        buildManifest
+        imageBuildManifest
       ),
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
@@ -541,11 +326,11 @@ class Builder {
    * Note that the upload to S3 is done in a separate deploy step.
    */
   async buildStaticAssets(
-    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    pageManifest: PageManifest,
     routesManifest: RoutesManifest,
     ignorePatterns: string[]
   ) {
-    const buildId = defaultBuildManifest.buildId;
+    const buildId = pageManifest.buildId;
     const basePath = routesManifest.basePath;
     const nextConfigDir = this.nextConfigDir;
     const nextStaticDir = this.nextStaticDir;
@@ -580,7 +365,7 @@ class Builder {
 
     const staticFileAssets = buildStaticFiles
       .filter(filterOutDirectories)
-      .map((fileItem) => {
+      .map((fileItem: any) => {
         const source = fileItem.path;
         const destination = path.join(
           assetOutputDirectory,
@@ -595,13 +380,13 @@ class Builder {
       });
 
     const htmlPaths = [
-      ...Object.keys(defaultBuildManifest.pages.html.dynamic),
-      ...Object.keys(defaultBuildManifest.pages.html.nonDynamic)
+      ...Object.keys(pageManifest.pages.html.dynamic),
+      ...Object.keys(pageManifest.pages.html.nonDynamic)
     ];
 
-    const ssgPaths = Object.keys(defaultBuildManifest.pages.ssg.nonDynamic);
+    const ssgPaths = Object.keys(pageManifest.pages.ssg.nonDynamic);
 
-    const fallbackFiles = Object.values(defaultBuildManifest.pages.ssg.dynamic)
+    const fallbackFiles = Object.values(pageManifest.pages.ssg.dynamic)
       .map(({ fallback }) => fallback)
       .filter((fallback) => fallback);
 
@@ -650,7 +435,7 @@ class Builder {
 
       const files = await readDirectoryFiles(directoryPath, ignorePatterns);
 
-      return files.filter(filterOutDirectories).map((fileItem) => {
+      return files.filter(filterOutDirectories).map((fileItem: any) => {
         const source = fileItem.path;
         const destination = path.join(
           assetOutputDirectory,
@@ -699,31 +484,20 @@ class Builder {
   }
 
   async build(debugMode?: boolean): Promise<void> {
-    const {
-      cmd,
-      args,
-      cwd,
-      env,
-      useServerlessTraceTarget,
-      cleanupDotNext,
-      assetIgnorePatterns,
-      separateApiLambda,
-      useV2Handler
-    } = Object.assign(defaultBuildOptions, this.buildOptions);
+    const { cmd, args, cwd, env, cleanupDotNext, assetIgnorePatterns } =
+      Object.assign(defaultBuildOptions, this.buildOptions);
 
     await Promise.all([
       this.cleanupDotNext(cleanupDotNext),
       fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR)),
-      fse.emptyDir(join(this.outputDir, API_LAMBDA_CODE_DIR)),
       fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR)),
-      fse.emptyDir(join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR)),
       fse.emptyDir(join(this.outputDir, ASSETS_DIR))
     ]);
 
     const { restoreUserConfig } = await createServerlessConfig(
       cwd,
       path.join(this.nextConfigDir),
-      useServerlessTraceTarget
+      false
     );
 
     try {
@@ -776,43 +550,22 @@ class Builder {
     const {
       enableHTTPCompression,
       logLambdaExecutionTimes,
-      regenerationQueueName,
-      disableOriginResponseHandler
+      regenerationQueueName
     } = this.buildOptions;
 
-    const apiBuildManifest = {
-      ...apiManifest,
-      enableHTTPCompression
-    };
     const defaultBuildManifest = {
+      ...apiManifest,
       ...pageManifest,
       enableHTTPCompression,
       logLambdaExecutionTimes,
-      regenerationQueueName,
-      disableOriginResponseHandler
+      regenerationQueueName
     };
     const imageBuildManifest = {
       ...imageManifest,
       enableHTTPCompression
     };
 
-    await this.buildDefaultLambda(
-      defaultBuildManifest,
-      apiBuildManifest,
-      separateApiLambda,
-      useV2Handler
-    );
-    await this.buildRegenerationHandler(defaultBuildManifest, useV2Handler);
-
-    const hasAPIPages =
-      Object.keys(apiBuildManifest.apis.nonDynamic).length > 0 ||
-      Object.keys(apiBuildManifest.apis.dynamic).length > 0;
-
-    // Only build API lambda if we have API pages and using a separate API lambda
-    if (hasAPIPages && separateApiLambda && !useV2Handler) {
-      await this.buildApiLambda(apiBuildManifest);
-    }
-
+    await this.buildDefaultLambda(defaultBuildManifest);
     // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
     const hasImagesManifest = fse.existsSync(
       join(this.dotNextDir, "images-manifest.json")
@@ -869,4 +622,4 @@ class Builder {
   }
 }
 
-export default Builder;
+export default CoreBuilder;
