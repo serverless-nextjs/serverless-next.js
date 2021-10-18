@@ -18,14 +18,19 @@ export const handleApiReq = (
   isRewrite?: boolean
 ): ExternalRoute | ApiRoute | undefined => {
   const { apis } = manifest;
-  const normalisedUri = normalise(uri, routesManifest);
+  const { normalisedUri, missingExpectedBasePath } = normalise(
+    uri,
+    routesManifest
+  );
 
-  const nonDynamic = apis.nonDynamic[normalisedUri];
-  if (nonDynamic) {
-    return {
-      isApi: true,
-      page: nonDynamic
-    };
+  if (!missingExpectedBasePath) {
+    const nonDynamic = apis.nonDynamic[normalisedUri];
+    if (nonDynamic) {
+      return {
+        isApi: true,
+        page: nonDynamic
+      };
+    }
   }
 
   const rewrite = !isRewrite && getRewritePath(req, uri, routesManifest);
@@ -50,11 +55,13 @@ export const handleApiReq = (
     return route;
   }
 
-  const dynamic = matchDynamic(normalisedUri, apis.dynamic);
-  if (dynamic) {
-    return {
-      isApi: true,
-      page: dynamic
-    };
+  if (!missingExpectedBasePath) {
+    const dynamic = matchDynamic(normalisedUri, apis.dynamic);
+    if (dynamic) {
+      return {
+        isApi: true,
+        page: dynamic
+      };
+    }
   }
 };

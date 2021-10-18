@@ -3,18 +3,15 @@ import { RoutesManifest } from "../types";
 export const normalise = (
   uri: string,
   routesManifest: RoutesManifest
-): string => {
-  const { basePath, i18n } = routesManifest;
+): { normalisedUri: string; missingExpectedBasePath: boolean } => {
+  const { basePath } = routesManifest;
   if (basePath) {
     if (uri.startsWith(basePath)) {
       uri = uri.slice(basePath.length);
     } else {
-      // basePath set but URI does not start with basePath, return 404
-      if (i18n?.defaultLocale) {
-        return `/${i18n.defaultLocale}/404`;
-      } else {
-        return "/404";
-      }
+      // basePath set but URI does not start with basePath, return original path with special flag indicating missing expected base path
+      // but basePath is expected
+      return { normalisedUri: uri, missingExpectedBasePath: true };
     }
   }
 
@@ -24,5 +21,8 @@ export const normalise = (
   }
 
   // Empty path should be normalised to "/" as there is no Next.js route for ""
-  return uri === "" ? "/" : uri;
+  return {
+    normalisedUri: uri === "" ? "/" : uri,
+    missingExpectedBasePath: false
+  };
 };
