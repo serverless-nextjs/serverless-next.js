@@ -79,7 +79,7 @@
     ],
     "moduleNameMapper": {
       "fs-extra": "<rootDir>/node_modules/fs-extra",
-      "@sls-next/core": "<rootDir>/packages/libs/core/src/index.ts"
+      "@sls-next/core(.*)": "<rootDir>/packages/libs/core$1"
     },
     "coverageDirectory": "<rootDir>/coverage/",
     "coveragePathIgnorePatterns": [
@@ -103,6 +103,7 @@
       "<rootDir>/packages/libs/core/src/defaultHandler.ts",
       "<rootDir>/packages/libs/core/src/regenerationHandler.ts",
       "<rootDir>/packages/libs/core/src/platform/platformClient.ts",
+      "<rootDir>/packages/libs/core/src/build/builder.ts",
       "<rootDir>/packages/libs/aws-common/src/awsPlatformClient.ts",
       "<rootDir>/packages/libs/lambda/"
     ],

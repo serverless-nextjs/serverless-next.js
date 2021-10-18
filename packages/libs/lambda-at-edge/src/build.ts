@@ -9,12 +9,12 @@ import {
   RoutesManifest,
   OriginRequestImageHandlerManifest
 } from "./types";
-import pathToPosix from "./lib/pathToPosix";
-import normalizeNodeModules from "./lib/normalizeNodeModules";
-import createServerlessConfig from "./lib/createServerlessConfig";
+import pathToPosix from "@sls-next/core/dist/build/lib/pathToPosix";
+import normalizeNodeModules from "@sls-next/core/dist/build/lib/normalizeNodeModules";
+import createServerlessConfig from "@sls-next/core/dist/build/lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "./routing/redirector";
-import readDirectoryFiles from "./lib/readDirectoryFiles";
-import filterOutDirectories from "./lib/filterOutDirectories";
+import readDirectoryFiles from "@sls-next/core/dist/build/lib/readDirectoryFiles";
+import filterOutDirectories from "@sls-next/core/dist/build/lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core";
