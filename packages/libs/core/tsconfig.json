@@ -12,7 +12,8 @@
     "sourceMap": true,
     "strict": true,
     "allowJs": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": "./src"
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts"]

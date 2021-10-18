@@ -6,17 +6,17 @@ import fse from "fs-extra";
  * Extend from this, implement the execute() method, and keep it generic enough so it can be reused across platforms.
  */
 export abstract class ThirdPartyIntegrationBase {
-  nextConfigDir: string;
-  outputHandlerDir: string;
+  protected nextConfigDir: string;
+  protected outputHandlerDir: string;
 
-  constructor(nextConfigDir: string, outputHandlerDir: string) {
+  public constructor(nextConfigDir: string, outputHandlerDir: string) {
     this.nextConfigDir = nextConfigDir;
     this.outputHandlerDir = outputHandlerDir;
   }
 
-  abstract execute(): void;
+  public abstract execute(): void;
 
-  async isPackagePresent(name: string): Promise<boolean> {
+  public async isPackagePresent(name: string): Promise<boolean> {
     const packageJsonPath = join(this.nextConfigDir, "package.json");
 
     if (await fse.pathExists(packageJsonPath)) {
