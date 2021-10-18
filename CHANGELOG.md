@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.3...v3.5.0-alpha.4) (2021-10-18)
+
+### Bug Fixes
+
+- **core:** fix 'basePath: false' external rewrites ([#1859](https://github.com/serverless-nextjs/serverless-next.js/issues/1859)) ([f60ff4a](https://github.com/serverless-nextjs/serverless-next.js/commit/f60ff4ab33d6b710a53291803b19244e1cef5adc))
+
 # [3.5.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.2...v3.5.0-alpha.3) (2021-10-16)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
