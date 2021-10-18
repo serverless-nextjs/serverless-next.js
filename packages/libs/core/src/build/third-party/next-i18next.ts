@@ -6,7 +6,7 @@ export class NextI18nextIntegration extends ThirdPartyIntegrationBase {
   /**
    * This will copy all next-i18next files as needed to a lambda directory.
    */
-  async execute(): Promise<void> {
+  public async execute(): Promise<void> {
     if (await this.isPackagePresent("next-i18next")) {
       const localeSrc = join(this.nextConfigDir, "public", "locales");
       const localeDest = join(this.outputHandlerDir, "public", "locales");

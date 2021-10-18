@@ -263,3 +263,9 @@ export type RegenerationEvent = {
   storeName: string;
   storeRegion: string;
 };
+
+export type ImageBuildManifest = {
+  domainRedirects?: {
+    [key: string]: string;
+  };
+};

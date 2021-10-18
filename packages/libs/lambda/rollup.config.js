@@ -24,7 +24,7 @@ const generateConfig = (input) => ({
   },
   plugins: [
     del({
-      targets: `./dist/${input.handler}/${
+      targets: `./dist/bundles/${input.handler}/${
         input.minify ? "minified" : "standard"
       }`
     }),
