@@ -72,7 +72,7 @@
     "@aws-sdk/client-sqs": "^3.37.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "@vercel/nft": "^0.16.1",
+    "@vercel/nft": "^0.17.0",
     "execa": "^5.0.1",
     "fast-glob": "^3.2.7",
     "fresh": "^0.5.2",

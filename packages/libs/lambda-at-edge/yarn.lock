@@ -1362,12 +1362,24 @@
     picomatch "^2.2.2"
 
 "@sls-next/aws-common@link:../aws-common":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.3"
+  dependencies:
+    "@aws-sdk/client-s3" "^3.37.0"
+    "@aws-sdk/client-sqs" "^3.37.0"
+    "@sls-next/core" "link:../core"
 
 "@sls-next/core@link:../core":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.2"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    fresh "^0.5.2"
+    is-animated "^2.0.1"
+    jsonwebtoken "^8.5.1"
+    next "^11.1.2"
+    node-fetch "2.6.5"
+    path-to-regexp "^6.1.0"
+    sharp "^0.29.1"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
@@ -1507,10 +1519,10 @@
   dependencies:
     "@types/node" "*"
 
-"@vercel/nft@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.16.1.tgz#a636e3fc55f5502a3c652f8c1e01ca2bfac6cf68"
-  integrity sha512-OiPCdRDo9qA8QRQkgdyPInjF6TkvtWv79/WVpweufeOxjwUYju0jIUuFLS2PeB4wAIoKc/1CiizjhmJRqXNwAA==
+"@vercel/nft@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.17.0.tgz#28851fefe42fae7a116dc5e23a0a9da29929a18b"
+  integrity sha512-dXz4RAODHpEPl1Yfzk1UfVpZfqhY9O80FdI9sF/Hw2bXWj5022U9Z46VpdNYe8pDluSuQv/JUo/ZP4/OcsfDRw==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
