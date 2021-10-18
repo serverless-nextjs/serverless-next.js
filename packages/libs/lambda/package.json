@@ -41,7 +41,7 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "esbuild": "^0.13.7",
+    "esbuild": "^0.13.8",
     "rollup": "^2.58.0",
     "rollup-plugin-delete": "^2.0.0",
     "rollup-plugin-node-externals": "^2.2.0",
