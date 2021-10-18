@@ -150,20 +150,27 @@ export const routeDefault = async (
     return domainRedirect;
   }
 
-  const uri = normalise(req.uri, routesManifest);
+  const { normalisedUri: uri, missingExpectedBasePath } = normalise(
+    req.uri,
+    routesManifest
+  );
   const is404 = uri.endsWith("/404");
   const isDataReq = uri.startsWith("/_next/data");
   const publicFile = handlePublicFiles(uri, manifest);
   const isPublicFile = !!publicFile;
 
-  const trailingSlash =
-    !is404 && handleTrailingSlash(req, manifest, isDataReq || isPublicFile);
-  if (trailingSlash) {
-    return trailingSlash;
-  }
+  // Only try to handle trailing slash redirects or public files if the URI isn't missing a base path.
+  // This allows us to handle redirects without base paths.
+  if (!missingExpectedBasePath) {
+    const trailingSlash =
+      !is404 && handleTrailingSlash(req, manifest, isDataReq || isPublicFile);
+    if (trailingSlash) {
+      return trailingSlash;
+    }
 
-  if (publicFile) {
-    return publicFile;
+    if (publicFile) {
+      return publicFile;
+    }
   }
 
   const otherRedirect =

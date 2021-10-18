@@ -70,6 +70,15 @@ module.exports = {
   async rewrites() {
     return [
       {
+        source: "/external-rewrite",
+        destination: "https://jsonplaceholder.typicode.com/users"
+      },
+      {
+        source: "/external-rewrite-without-basepath",
+        destination: "https://jsonplaceholder.typicode.com/users",
+        basePath: false
+      },
+      {
         source: "/rewrite",
         destination: "/ssr-page"
       },
