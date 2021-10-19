@@ -145,9 +145,10 @@ class Builder {
           return false;
         }
 
+        const reason = reasons.get(file);
+
         return (
-          (!reasons[file] || reasons[file].type !== "initial") &&
-          file !== "package.json"
+          (!reason || reason.type !== "initial") && file !== "package.json"
         );
       })
       .map((filePath: string) => {
@@ -269,7 +270,7 @@ class Builder {
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
-        fileList,
+        Array.from(fileList),
         reasons,
         destination,
         base
@@ -386,7 +387,7 @@ class Builder {
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
-        fileList,
+        Array.from(fileList),
         reasons,
         API_LAMBDA_CODE_DIR,
         base
