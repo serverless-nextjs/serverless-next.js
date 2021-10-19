@@ -4,7 +4,6 @@ import { nodeResolve } from "@rollup/plugin-node-resolve";
 import externals from "rollup-plugin-node-externals";
 import json from "@rollup/plugin-json";
 import { terser } from "rollup-plugin-terser";
-import del from "rollup-plugin-delete";
 
 const LOCAL_EXTERNALS = [
   "./manifest.json",
@@ -18,16 +17,13 @@ const NPM_EXTERNALS = ["aws-lambda"];
 const generateConfig = (input) => ({
   input: `./src/handlers/${input.handler}.ts`,
   output: {
-    dir: `./dist/${input.handler}/${input.minify ? "minified" : "standard"}`,
+    dir: `./dist/bundles/${input.handler}/${
+      input.minify ? "minified" : "standard"
+    }`,
     entryFileNames: "index.js",
     format: "cjs"
   },
   plugins: [
-    del({
-      targets: `./dist/bundles/${input.handler}/${
-        input.minify ? "minified" : "standard"
-      }`
-    }),
     json(),
     nodeResolve({
       preferBuiltins: true

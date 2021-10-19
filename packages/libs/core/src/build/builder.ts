@@ -1,21 +1,18 @@
-import execa from "execa";
 import fse from "fs-extra";
 import { join } from "path";
 import path from "path";
-import { ImageBuildManifest, PageManifest, RoutesManifest } from "types";
-import pathToPosix from "./lib/pathToPosix";
-import createServerlessConfig from "./lib/createServerlessConfig";
+import { Manifest, PageManifest, RoutesManifest } from "types";
 import { isTrailingSlashRedirect } from "./lib/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
-import { prepareBuildManifests } from "./index";
 import { NextConfig } from "./types";
-import { NextI18nextIntegration } from "build/third-party/next-i18next";
 import normalizePath from "normalize-path";
+import createServerlessConfig from "./lib/createServerlessConfig";
+import execa from "execa";
+import { prepareBuildManifests } from "./";
+import pathToPosix from "./lib/pathToPosix";
 
-export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
-export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
 export const ASSETS_DIR = "assets";
 
 type BuildOptions = {
@@ -23,10 +20,8 @@ type BuildOptions = {
   cwd?: string;
   env?: NodeJS.ProcessEnv;
   cmd?: string;
-  logLambdaExecutionTimes?: boolean;
   domainRedirects?: { [key: string]: string };
   minifyHandlers?: boolean;
-  enableHTTPCompression?: boolean;
   handler?: string;
   authentication?: { username: string; password: string } | undefined;
   resolve?: (
@@ -46,10 +41,8 @@ const defaultBuildOptions = {
   cwd: process.cwd(),
   env: {},
   cmd: "./node_modules/.bin/next",
-  logLambdaExecutionTimes: false,
   domainRedirects: {},
   minifyHandlers: false,
-  enableHTTPCompression: true,
   authentication: undefined,
   resolve: undefined,
   baseDir: process.cwd(),
@@ -58,15 +51,18 @@ const defaultBuildOptions = {
   regenerationQueueName: undefined
 };
 
-class CoreBuilder {
-  nextConfigDir: string;
-  nextStaticDir: string;
-  dotNextDir: string;
-  serverlessDir: string;
-  outputDir: string;
-  buildOptions: BuildOptions = defaultBuildOptions;
+/**
+ * Core builder class that has common build functions for all platforms.
+ */
+abstract class CoreBuilder {
+  protected nextConfigDir: string;
+  protected nextStaticDir: string;
+  protected dotNextDir: string;
+  protected serverlessDir: string;
+  protected outputDir: string;
+  protected buildOptions: BuildOptions = defaultBuildOptions;
 
-  constructor(
+  protected constructor(
     nextConfigDir: string,
     outputDir: string,
     buildOptions?: BuildOptions,
@@ -82,7 +78,134 @@ class CoreBuilder {
     }
   }
 
-  async readPublicFiles(assetIgnorePatterns: string[]): Promise<string[]> {
+  public async build(debugMode?: boolean): Promise<void> {
+    await this.preBuild();
+    const { defaultBuildManifest, imageManifest, pageManifest } =
+      await this.buildCore(debugMode);
+    await this.buildPlatform(
+      { defaultBuildManifest, imageManifest, pageManifest },
+      debugMode
+    );
+  }
+
+  /**
+   * Run prebuild steps which include cleaning up .next and emptying output directories.
+   */
+  public async preBuild(): Promise<void> {
+    const { cleanupDotNext } = Object.assign(
+      defaultBuildOptions,
+      this.buildOptions
+    );
+
+    await Promise.all([
+      this.cleanupDotNext(cleanupDotNext),
+      fse.emptyDir(join(this.outputDir))
+    ]);
+  }
+
+  /**
+   * Platform-specific build steps which include the handlers that are to be deployed.
+   * @param manifests
+   * @param debugMode
+   */
+  public abstract buildPlatform(
+    manifests: {
+      defaultBuildManifest: any;
+      imageManifest: Manifest;
+      pageManifest: Manifest;
+    },
+    debugMode?: boolean
+  ): Promise<void>;
+
+  /**
+   * Core build steps. Currently this runs the .next build and packages the assets since they are the same for all platforms.
+   * @param debugMode
+   */
+  public async buildCore(debugMode?: boolean): Promise<{
+    defaultBuildManifest: any;
+    imageManifest: Manifest;
+    pageManifest: Manifest;
+  }> {
+    const { cmd, args, cwd, env, assetIgnorePatterns } = Object.assign(
+      defaultBuildOptions,
+      this.buildOptions
+    );
+
+    const { restoreUserConfig } = await createServerlessConfig(
+      cwd,
+      path.join(this.nextConfigDir),
+      false
+    );
+
+    try {
+      const subprocess = execa(cmd, args, {
+        cwd,
+        env
+      });
+
+      if (debugMode) {
+        // @ts-ignore
+        subprocess.stdout.pipe(process.stdout);
+      }
+
+      await subprocess;
+    } finally {
+      await restoreUserConfig();
+    }
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const routesManifest = require(join(
+      this.dotNextDir,
+      "routes-manifest.json"
+    ));
+
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const prerenderManifest = require(join(
+      this.dotNextDir,
+      "prerender-manifest.json"
+    ));
+
+    const options = {
+      buildId: await fse.readFile(
+        path.join(this.dotNextDir, "BUILD_ID"),
+        "utf-8"
+      ),
+      ...this.buildOptions,
+      domainRedirects: this.buildOptions.domainRedirects ?? {}
+    };
+
+    const { apiManifest, imageManifest, pageManifest } =
+      await prepareBuildManifests(
+        options,
+        await this.readNextConfig(),
+        routesManifest,
+        await this.readPagesManifest(),
+        prerenderManifest,
+        await this.readPublicFiles(assetIgnorePatterns)
+      );
+
+    const { regenerationQueueName } = this.buildOptions;
+
+    const defaultBuildManifest = {
+      ...apiManifest,
+      ...pageManifest,
+      regenerationQueueName
+    };
+
+    // Copy any static assets to .serverless_nextjs/assets directory
+    // This step is common to all platforms so it's in the core build step.
+    await this.buildStaticAssets(
+      defaultBuildManifest,
+      routesManifest,
+      assetIgnorePatterns
+    );
+
+    return { defaultBuildManifest, imageManifest, pageManifest };
+  }
+
+  protected async readPublicFiles(
+    assetIgnorePatterns: string[]
+  ): Promise<string[]> {
     const dirExists = await fse.pathExists(join(this.nextConfigDir, "public"));
     if (dirExists) {
       const files = await readDirectoryFiles(
@@ -99,7 +222,7 @@ class CoreBuilder {
     }
   }
 
-  async readPagesManifest(): Promise<{ [key: string]: string }> {
+  protected async readPagesManifest(): Promise<{ [key: string]: string }> {
     const path = join(this.serverlessDir, "pages-manifest.json");
     const hasServerlessPageManifest = await fse.pathExists(path);
 
@@ -117,7 +240,10 @@ class CoreBuilder {
    * @param pageManifest
    * @param relativePageFile
    */
-  isSSRJSFile(pageManifest: PageManifest, relativePageFile: string): boolean {
+  protected isSSRJSFile(
+    pageManifest: PageManifest,
+    relativePageFile: string
+  ): boolean {
     if (path.extname(relativePageFile) === ".js") {
       const page = relativePageFile.startsWith("/")
         ? `pages${relativePageFile}`
@@ -139,7 +265,7 @@ class CoreBuilder {
    * @param source
    * @param destination
    */
-  async processAndCopyRoutesManifest(
+  protected async processAndCopyRoutesManifest(
     source: string,
     destination: string
   ): Promise<void> {
@@ -155,100 +281,44 @@ class CoreBuilder {
   }
 
   /**
-   * Process and copy handler code. This allows minifying it before copying to Lambda package.
-   * @param handlerType
-   * @param destination
-   * @param shouldMinify
+   * Get filter function for files to be included in the default handler.
    */
-  async processAndCopyHandler(
-    handlerType: "default-handler" | "image-handler",
-    destination: string,
-    shouldMinify: boolean
-  ): Promise<void> {
-    const source = path.dirname(
-      require.resolve(
-        `@sls-next/lambda/dist/${handlerType}/${
-          shouldMinify ? "minified" : "standard"
-        }`
-      )
-    );
+  protected getDefaultHandlerFileFilter(
+    hasAPIRoutes: boolean,
+    pageManifest: PageManifest
+  ): (file: string) => boolean {
+    return (file: string) => {
+      const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
+      const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
 
-    await fse.copy(source, destination);
-  }
+      // If there are API routes, include all JS files.
+      // If there are no API routes, include only JS files that used for SSR (including fallback).
+      // We do this because if there are API routes, preview mode is possible which may use these JS files.
+      // This is what Vercel does: https://github.com/vercel/next.js/discussions/15631#discussioncomment-44289
+      // TODO: possibly optimize bundle further for those apps using API routes.
+      const isNotExcludedJSFile =
+        hasAPIRoutes ||
+        path.extname(file) !== ".js" ||
+        this.isSSRJSFile(
+          pageManifest,
+          pathToPosix(
+            path.relative(path.join(this.serverlessDir, "pages"), file)
+          ) // important: make sure to use posix path to generate forward-slash path across both posix/windows
+        );
 
-  async buildDefaultLambda(pageManifest: PageManifest): Promise<void[]> {
-    const hasAPIRoutes = await fse.pathExists(
-      join(this.serverlessDir, "pages/api")
-    );
-
-    return Promise.all([
-      this.processAndCopyHandler(
-        "default-handler",
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
-        !!this.buildOptions.minifyHandlers
-      ),
-      this.buildOptions?.handler
-        ? fse.copy(
-            join(this.nextConfigDir, this.buildOptions.handler),
-            join(
-              this.outputDir,
-              DEFAULT_LAMBDA_CODE_DIR,
-              this.buildOptions.handler
-            )
-          )
-        : Promise.resolve(),
-      fse.writeJson(
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
-        pageManifest
-      ),
-      fse.copy(
-        join(this.serverlessDir, "pages"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
-        {
-          filter: (file: string) => {
-            const isNotPrerenderedHTMLPage = path.extname(file) !== ".html";
-            const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
-
-            // If there are API routes, include all JS files.
-            // If there are no API routes, include only JS files that used for SSR (including fallback).
-            // We do this because if there are API routes, preview mode is possible which may use these JS files.
-            // This is what Vercel does: https://github.com/vercel/next.js/discussions/15631#discussioncomment-44289
-            // TODO: possibly optimize bundle further for those apps using API routes.
-            const isNotExcludedJSFile =
-              hasAPIRoutes ||
-              path.extname(file) !== ".js" ||
-              this.isSSRJSFile(
-                pageManifest,
-                pathToPosix(
-                  path.relative(path.join(this.serverlessDir, "pages"), file)
-                ) // important: make sure to use posix path to generate forward-slash path across both posix/windows
-              );
-
-            return (
-              isNotPrerenderedHTMLPage &&
-              isNotStaticPropsJSONFile &&
-              isNotExcludedJSFile
-            );
-          }
-        }
-      ),
-      this.copyChunks(DEFAULT_LAMBDA_CODE_DIR),
-      fse.copy(
-        join(this.dotNextDir, "prerender-manifest.json"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
-      ),
-      this.processAndCopyRoutesManifest(
-        join(this.dotNextDir, "routes-manifest.json"),
-        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
-      )
-    ]);
+      return (
+        isNotPrerenderedHTMLPage &&
+        isNotStaticPropsJSONFile &&
+        isNotExcludedJSFile
+      );
+    };
   }
 
   /**
-   * copy chunks if present and not using serverless trace
+   * Copy code chunks generated by Next.js.
    */
-  copyChunks(buildDir: string): Promise<void> {
-    return fse.existsSync(join(this.serverlessDir, "chunks"))
+  protected async copyChunks(buildDir: string): Promise<void> {
+    return (await fse.pathExists(join(this.serverlessDir, "chunks")))
       ? fse.copy(
           join(this.serverlessDir, "chunks"),
           join(this.outputDir, buildDir, "chunks")
@@ -256,55 +326,7 @@ class CoreBuilder {
       : Promise.resolve();
   }
 
-  /**
-   * Build image optimization lambda (supported by Next.js 10)
-   * @param imageBuildManifest
-   */
-  async buildImageLambda(
-    imageBuildManifest: ImageBuildManifest
-  ): Promise<void> {
-    await Promise.all([
-      this.processAndCopyHandler(
-        "image-handler",
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR),
-        !!this.buildOptions.minifyHandlers
-      ),
-      this.buildOptions?.handler
-        ? fse.copy(
-            join(this.nextConfigDir, this.buildOptions.handler),
-            join(
-              this.outputDir,
-              IMAGE_LAMBDA_CODE_DIR,
-              this.buildOptions.handler
-            )
-          )
-        : Promise.resolve(),
-      fse.writeJson(
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "manifest.json"),
-        imageBuildManifest
-      ),
-      this.processAndCopyRoutesManifest(
-        join(this.dotNextDir, "routes-manifest.json"),
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "routes-manifest.json")
-      ),
-      fse.copy(
-        join(
-          path.dirname(
-            require.resolve("@sls-next/lambda-at-edge/package.json")
-          ),
-          "dist",
-          "sharp_node_modules"
-        ),
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "node_modules")
-      ),
-      fse.copy(
-        join(this.dotNextDir, "images-manifest.json"),
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "images-manifest.json")
-      )
-    ]);
-  }
-
-  async readNextConfig(): Promise<NextConfig | undefined> {
+  protected async readNextConfig(): Promise<NextConfig | undefined> {
     const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
 
     if (await fse.pathExists(nextConfigPath)) {
@@ -325,7 +347,7 @@ class CoreBuilder {
    * Build static assets such as client-side JS, public files, static pages, etc.
    * Note that the upload to S3 is done in a separate deploy step.
    */
-  async buildStaticAssets(
+  protected async buildStaticAssets(
     pageManifest: PageManifest,
     routesManifest: RoutesManifest,
     ignorePatterns: string[]
@@ -418,13 +440,6 @@ class CoreBuilder {
       return copyIfExists(source, destination);
     });
 
-    // Check if public/static exists and fail build since this conflicts with static/* behavior.
-    if (await fse.pathExists(path.join(nextStaticDir, "public", "static"))) {
-      throw new Error(
-        "You cannot have assets in the directory [public/static] as they conflict with the static/* CloudFront cache behavior. Please move these assets into another directory."
-      );
-    }
-
     const buildPublicOrStaticDirectory = async (
       directory: "public" | "static"
     ) => {
@@ -463,7 +478,7 @@ class CoreBuilder {
     ]);
   }
 
-  async cleanupDotNext(shouldClean: boolean): Promise<void> {
+  protected async cleanupDotNext(shouldClean: boolean): Promise<void> {
     if (!shouldClean) {
       return;
     }
@@ -481,144 +496,6 @@ class CoreBuilder {
           .map((fileItem) => fse.remove(join(this.dotNextDir, fileItem)))
       );
     }
-  }
-
-  async build(debugMode?: boolean): Promise<void> {
-    const { cmd, args, cwd, env, cleanupDotNext, assetIgnorePatterns } =
-      Object.assign(defaultBuildOptions, this.buildOptions);
-
-    await Promise.all([
-      this.cleanupDotNext(cleanupDotNext),
-      fse.emptyDir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR)),
-      fse.emptyDir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR)),
-      fse.emptyDir(join(this.outputDir, ASSETS_DIR))
-    ]);
-
-    const { restoreUserConfig } = await createServerlessConfig(
-      cwd,
-      path.join(this.nextConfigDir),
-      false
-    );
-
-    try {
-      const subprocess = execa(cmd, args, {
-        cwd,
-        env
-      });
-
-      if (debugMode) {
-        // @ts-ignore
-        subprocess.stdout.pipe(process.stdout);
-      }
-
-      await subprocess;
-    } finally {
-      await restoreUserConfig();
-    }
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const routesManifest = require(join(
-      this.dotNextDir,
-      "routes-manifest.json"
-    ));
-
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const prerenderManifest = require(join(
-      this.dotNextDir,
-      "prerender-manifest.json"
-    ));
-
-    const options = {
-      buildId: await fse.readFile(
-        path.join(this.dotNextDir, "BUILD_ID"),
-        "utf-8"
-      ),
-      ...this.buildOptions,
-      domainRedirects: this.buildOptions.domainRedirects ?? {}
-    };
-
-    const { apiManifest, imageManifest, pageManifest } =
-      await prepareBuildManifests(
-        options,
-        await this.readNextConfig(),
-        routesManifest,
-        await this.readPagesManifest(),
-        prerenderManifest,
-        await this.readPublicFiles(assetIgnorePatterns)
-      );
-
-    const {
-      enableHTTPCompression,
-      logLambdaExecutionTimes,
-      regenerationQueueName
-    } = this.buildOptions;
-
-    const defaultBuildManifest = {
-      ...apiManifest,
-      ...pageManifest,
-      enableHTTPCompression,
-      logLambdaExecutionTimes,
-      regenerationQueueName
-    };
-    const imageBuildManifest = {
-      ...imageManifest,
-      enableHTTPCompression
-    };
-
-    await this.buildDefaultLambda(defaultBuildManifest);
-    // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
-    const hasImagesManifest = fse.existsSync(
-      join(this.dotNextDir, "images-manifest.json")
-    );
-
-    // However if using a non-default loader, the lambda is not needed
-    const imagesManifest = hasImagesManifest
-      ? await fse.readJSON(join(this.dotNextDir, "images-manifest.json"))
-      : null;
-    const imageLoader = imagesManifest?.images?.loader;
-    const isDefaultLoader = !imageLoader || imageLoader === "default";
-    const hasImageOptimizer = hasImagesManifest && isDefaultLoader;
-
-    // ...nor if the image component is not used
-    const exportMarker = fse.existsSync(
-      join(this.dotNextDir, "export-marker.json")
-    )
-      ? await fse.readJSON(path.join(this.dotNextDir, "export-marker.json"))
-      : {};
-    const isNextImageImported = exportMarker.isNextImageImported !== false;
-
-    if (hasImageOptimizer && isNextImageImported) {
-      await this.buildImageLambda(imageBuildManifest);
-    }
-
-    // Copy static assets to .serverless_nextjs directory
-    await this.buildStaticAssets(
-      defaultBuildManifest,
-      routesManifest,
-      assetIgnorePatterns
-    );
-  }
-
-  /**
-   * Run additional integrations for third-party libraries such as next-i18next.
-   * These are usually needed to add additional files into the lambda, etc.
-   * @param defaultLambdaDir
-   * @param regenerationLambdaDir
-   */
-  async runThirdPartyIntegrations(
-    defaultLambdaDir: string,
-    regenerationLambdaDir: string
-  ): Promise<void> {
-    await Promise.all([
-      new NextI18nextIntegration(
-        this.nextConfigDir,
-        defaultLambdaDir
-      ).execute(),
-      new NextI18nextIntegration(
-        this.nextConfigDir,
-        regenerationLambdaDir
-      ).execute()
-    ]);
   }
 }
 
