@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/core",
-  "version": "3.5.0-alpha.2",
+  "version": "3.5.0-alpha.5",
   "description": "Handles Next.js routing independent of provider",
   "publishConfig": {
     "access": "public"
@@ -34,7 +34,9 @@
   "dependencies": {
     "@hapi/accept": "^5.0.1",
     "cookie": "^0.4.1",
+    "fast-glob": "^3.2.7",
     "fresh": "^0.5.2",
+    "fs-extra": "^9.1.0",
     "is-animated": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "next": "^11.1.2",
@@ -46,6 +48,7 @@
   "devDependencies": {
     "@types/cookie": "^0.4.0",
     "@types/fresh": "^0.5.0",
+    "@types/fs-extra": "^9.0.13",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "^3.0.0",

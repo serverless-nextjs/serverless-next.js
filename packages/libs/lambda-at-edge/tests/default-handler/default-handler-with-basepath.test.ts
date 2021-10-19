@@ -341,7 +341,7 @@ describe("Lambda@Edge", () => {
       ${"/manifest.json/"}
     `(
       "serves 404 page from S3 for path without basepath prefix: $path",
-      async ({ path, expectedPage }) => {
+      async ({ path }) => {
         const event = createCloudFrontEvent({
           uri: path,
           host: "mydistribution.cloudfront.net"

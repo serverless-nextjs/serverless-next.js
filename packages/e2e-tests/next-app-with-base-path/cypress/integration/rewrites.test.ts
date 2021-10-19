@@ -80,5 +80,42 @@ describe("Rewrites Tests", () => {
         }
       });
     });
+
+    [
+      {
+        path: "/basepath/external-rewrite",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/users",
+        method: "GET",
+        expectedStatus: 200,
+        body: undefined
+      },
+      {
+        path: "/external-rewrite-without-basepath",
+        expectedRewrite: "https://jsonplaceholder.typicode.com/users",
+        method: "GET",
+        expectedStatus: 200,
+        body: undefined
+      }
+    ].forEach(({ path, expectedRewrite, method, body, expectedStatus }) => {
+      it(`externally rewrites path ${path} to ${expectedRewrite} for method ${method}`, () => {
+        cy.request({
+          url: path,
+          method,
+          body,
+          failOnStatusCode: false
+        }).then((response) => {
+          expect(response.status).to.equal(expectedStatus);
+          cy.request({
+            url: expectedRewrite,
+            method,
+            body,
+            failOnStatusCode: false
+          }).then((rewriteResponse) => {
+            // Check that the body of each page is the same, i.e it is actually rewritten
+            expect(response.body).to.deep.equal(rewriteResponse.body);
+          });
+        });
+      });
+    });
   });
 });
