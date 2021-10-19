@@ -5,7 +5,6 @@ import { Manifest, PageManifest, RoutesManifest } from "types";
 import { isTrailingSlashRedirect } from "./lib/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
-import { Job } from "@vercel/nft/out/node-file-trace";
 import { NextConfig } from "./types";
 import normalizePath from "normalize-path";
 import createServerlessConfig from "./lib/createServerlessConfig";
@@ -24,12 +23,6 @@ type BuildOptions = {
   minifyHandlers?: boolean;
   handler?: string;
   authentication?: { username: string; password: string } | undefined;
-  resolve?: (
-    id: string,
-    parent: string,
-    job: Job,
-    cjsResolve: boolean
-  ) => Promise<string | string[]>;
   baseDir?: string;
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
@@ -44,7 +37,6 @@ const defaultBuildOptions = {
   domainRedirects: {},
   minifyHandlers: false,
   authentication: undefined,
-  resolve: undefined,
   baseDir: process.cwd(),
   cleanupDotNext: true,
   assetIgnorePatterns: [],
@@ -54,7 +46,7 @@ const defaultBuildOptions = {
 /**
  * Core builder class that has common build functions for all platforms.
  */
-abstract class CoreBuilder {
+export default abstract class CoreBuilder {
   protected nextConfigDir: string;
   protected nextStaticDir: string;
   protected dotNextDir: string;
@@ -498,5 +490,3 @@ abstract class CoreBuilder {
     }
   }
 }
-
-export default CoreBuilder;
