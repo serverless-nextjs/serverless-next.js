@@ -8,6 +8,7 @@ import {
   ApiRoute,
   Event,
   ExternalRoute,
+  NextStaticFileRoute,
   PageManifest,
   PrerenderManifest,
   PublicFileRoute,
@@ -85,7 +86,9 @@ export const handleDefault = async (
   prerenderManifest: PrerenderManifest,
   routesManifest: RoutesManifest,
   getPage: (page: string) => any
-): Promise<ExternalRoute | PublicFileRoute | StaticRoute | void> => {
+): Promise<
+  ExternalRoute | PublicFileRoute | NextStaticFileRoute | StaticRoute | void
+> => {
   const request = toRequest(event);
   const route = await routeDefault(
     request,

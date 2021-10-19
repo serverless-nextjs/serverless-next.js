@@ -153,6 +153,7 @@ export interface AnyRoute {
   isApi?: boolean;
   isExternal?: boolean;
   isPublicFile?: boolean;
+  isNextStaticFile?: boolean;
   isRedirect?: boolean;
   isRender?: boolean;
   isStatic?: boolean;
@@ -171,6 +172,11 @@ export interface ExternalRoute extends AnyRoute {
 
 export interface PublicFileRoute extends AnyRoute {
   isPublicFile: true;
+  file: string;
+}
+
+export interface NextStaticFileRoute extends AnyRoute {
+  isNextStaticFile: true;
   file: string;
 }
 
@@ -215,6 +221,7 @@ export type PageRoute = (RenderRoute | StaticRoute) & {
 export type Route =
   | ExternalRoute
   | PublicFileRoute
+  | NextStaticFileRoute
   | RedirectRoute
   | RenderRoute
   | StaticRoute

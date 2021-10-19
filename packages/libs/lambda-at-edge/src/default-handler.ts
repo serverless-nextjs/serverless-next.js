@@ -24,7 +24,8 @@ import {
   ExternalRoute,
   PublicFileRoute,
   Route,
-  StaticRoute
+  StaticRoute,
+  NextStaticFileRoute
 } from "@sls-next/core/dist/module/types";
 
 import {
@@ -255,6 +256,17 @@ const handleOriginRequest = async ({
       event,
       file,
       `${routesManifest.basePath}/public`,
+      route,
+      manifest,
+      routesManifest
+    );
+  }
+  if (route.isNextStaticFile) {
+    const { file } = route as NextStaticFileRoute;
+    return await staticRequest(
+      event,
+      file,
+      `${routesManifest.basePath}/_next/static`,
       route,
       manifest,
       routesManifest
