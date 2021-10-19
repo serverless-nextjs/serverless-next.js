@@ -44,7 +44,6 @@
     "@rollup/plugin-json": "^4.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@types/aws-lambda": "^8.10.84",
-    "@types/fresh": "^0.5.0",
     "@types/fs-extra": "^9.0.13",
     "@types/klaw": "^3.0.1",
     "@types/node": "^16.11.1",
@@ -52,7 +51,6 @@
     "@types/normalize-path": "^3.0.0",
     "@types/react": "17.0.30",
     "@types/react-dom": "^17.0.9",
-    "@types/send": "^0.17.0",
     "@types/sharp": "^0.29.2",
     "fetch-mock-jest": "^1.5.1",
     "klaw": "^3.0.0",
@@ -74,15 +72,10 @@
     "@sls-next/core": "link:../core",
     "@vercel/nft": "^0.16.1",
     "execa": "^5.0.1",
-    "fast-glob": "^3.2.7",
-    "fresh": "^0.5.2",
     "fs-extra": "^9.1.0",
     "get-stream": "^6.0.0",
-    "is-animated": "^2.0.1",
     "node-fetch": "^2.6.1",
-    "normalize-path": "^3.0.0",
-    "path-to-regexp": "^6.1.0",
-    "send": "^0.17.1"
+    "normalize-path": "^3.0.0"
   },
   "peerDependencies": {
     "builtin-modules": "^3.2.0"
