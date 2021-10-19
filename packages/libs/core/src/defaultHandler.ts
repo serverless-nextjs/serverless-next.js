@@ -1,4 +1,5 @@
 import {
+  NextStaticFileRoute,
   PerfLogger,
   PreRenderedManifest as PrerenderManifestType
 } from "./types";
@@ -374,6 +375,20 @@ export const defaultHandler = async ({
       responsePromise,
       file,
       `${routesManifest.basePath}/public`,
+      route,
+      manifest,
+      routesManifest,
+      platformClient
+    );
+  }
+  if (route.isNextStaticFile) {
+    const { file } = route as NextStaticFileRoute;
+    return await staticRequest(
+      req,
+      res,
+      responsePromise,
+      file,
+      `${routesManifest.basePath}/_next/static`,
       route,
       manifest,
       routesManifest,
