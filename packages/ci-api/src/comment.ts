@@ -12,8 +12,8 @@ export const postCommentToPullRequest = async (
   // Here is how we lock down the API.
   // Basically anyone could potentially call this (but it is acceptable) so we need to make it a bit safer
 
-  // Ensure comment size is reasonable. Right now the report size is around 1000 characters.
-  if (comment.length > 1500) {
+  // Ensure comment size is reasonable.
+  if (comment.length > 3000) {
     throw Error("Comment length is too long.");
   }
 
