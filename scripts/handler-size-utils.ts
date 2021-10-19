@@ -7,6 +7,19 @@ type HandlerConfiguration = {
 };
 
 export const PLATFORM_CONFIGS: Record<string, HandlerConfiguration> = {
+  Lambda: {
+    path: "packages/libs/lambda",
+    handlers: {
+      "Default Lambda": {
+        Standard: "dist/bundles/default-handler/standard",
+        Minified: "dist/bundles/default-handler/minified"
+      },
+      "Image Lambda": {
+        Standard: "dist/bundles/image-handler/standard",
+        Minified: "dist/bundles/image-handler/minified"
+      }
+    }
+  },
   "Lambda@Edge": {
     path: "packages/libs/lambda-at-edge",
     handlers: {
