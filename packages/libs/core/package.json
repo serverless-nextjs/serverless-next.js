@@ -43,6 +43,7 @@
     "node-fetch": "2.6.5",
     "normalize-path": "^3.0.0",
     "path-to-regexp": "^6.1.0",
+    "send": "^0.17.1",
     "sharp": "^0.29.1"
   },
   "devDependencies": {
