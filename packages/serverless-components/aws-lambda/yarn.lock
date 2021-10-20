@@ -930,10 +930,10 @@ atob@^2.1.2:
   resolved "https://registry.npmjs.org/atob/-/atob-2.1.2.tgz#6d9517eb9e030d2436666651e86bd9f6f13533c9"
   integrity sha512-Wm6ukoaOGJi/73p/cl2GvLjTI5JM1k/O14isD73YML8StrH/7/lRFgmg8nICZgD3bZZvjwCGxtMOD3wWNAu8cg==
 
-aws-sdk@^2.1010.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0:
-  version "2.1010.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1010.0.tgz#a0ff308149e2e358522b991f3b21d2f06c856f0c"
-  integrity sha512-ZiFMY0wJfgBSybAPKl4hEYi4zjs6c6A+kPmifF36C1bFja83Q4iNRUr2P13R41wJn/fdxMyWDgmx6r/5NNLUqg==
+aws-sdk@^2.1011.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0:
+  version "2.1011.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1011.0.tgz#8de560a1203fbbb1908dc9f34814613874a248c2"
+  integrity sha512-U5CDmLUHYAur89+Rx1r3X5gRzc8ib90G9aaKnyGqLsIail24r6UINejJB8pyOzFQ+u22/kFKKclfXcTj/Hflbg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"

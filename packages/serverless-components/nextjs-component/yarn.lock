@@ -1093,7 +1093,7 @@
   version "3.5.0-alpha.7"
   dependencies:
     "@serverless/core" "^1.1.2"
-    aws-sdk "^2.1010.0"
+    aws-sdk "^2.1011.0"
     ramda "^0.27.1"
 
 "@sls-next/aws-common@link:../../libs/aws-common":
@@ -1111,7 +1111,7 @@
     "@serverless/aws-s3" "^4.2.0"
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.1010.0"
+    aws-sdk "^2.1011.0"
     fs-extra "^9.1.0"
     globby "^11.0.4"
     lodash "^4.17.21"
@@ -1122,7 +1122,7 @@
   dependencies:
     "@serverless/core" "^1.1.2"
     archiver "^5.3.0"
-    aws-sdk "^2.1010.0"
+    aws-sdk "^2.1011.0"
     fs-extra "^9.1.0"
     klaw-sync "^6.0.0"
     lodash "^4.17.21"
@@ -1139,7 +1139,7 @@
 "@sls-next/cloudfront@link:../../libs/cloudfront":
   version "3.5.0-alpha.7"
   dependencies:
-    aws-sdk "^2.1010.0"
+    aws-sdk "^2.1011.0"
 
 "@sls-next/core@link:../../libs/core":
   version "3.5.0-alpha.7"
@@ -1182,7 +1182,7 @@
 "@sls-next/s3-static-assets@link:../../libs/s3-static-assets":
   version "3.5.0-alpha.7"
   dependencies:
-    aws-sdk "^2.1010.0"
+    aws-sdk "^2.1011.0"
     fast-glob "^3.2.5"
     fs-extra "^9.1.0"
     mime-types "^2.1.33"
@@ -1661,10 +1661,10 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-sdk@^2.1010.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0:
-  version "2.1010.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1010.0.tgz#a0ff308149e2e358522b991f3b21d2f06c856f0c"
-  integrity sha512-ZiFMY0wJfgBSybAPKl4hEYi4zjs6c6A+kPmifF36C1bFja83Q4iNRUr2P13R41wJn/fdxMyWDgmx6r/5NNLUqg==
+aws-sdk@^2.1011.0, aws-sdk@^2.387.0, aws-sdk@^2.488.0:
+  version "2.1011.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1011.0.tgz#8de560a1203fbbb1908dc9f34814613874a248c2"
+  integrity sha512-U5CDmLUHYAur89+Rx1r3X5gRzc8ib90G9aaKnyGqLsIail24r6UINejJB8pyOzFQ+u22/kFKKclfXcTj/Hflbg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
