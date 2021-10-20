@@ -3,5 +3,5 @@ exclude_paths:
   - "CHANGELOG.md"
   - "**/CHANGELOG.md"
   - "packages/deprecated/**"
-  - "packages/libs/lambda-at-edge/sharp_node_modules/**"
+  - "packages/libs/core/sharp_node_modules/**"
   - "packages/serverless-components/nextjs-component/examples/**"
