@@ -14,8 +14,7 @@
     "prepare": "yarn clean && yarn build",
     "clean": "yarn rimraf dist",
     "build-test-manifests": "ts-node scripts/build-test-manifests.ts",
-    "copy-sharp-modules": "ts-node scripts/copy-sharp-modules.ts",
-    "build": "tsc -p tsconfig.build.json && rollup --config && yarn copy-sharp-modules"
+    "build": "tsc -p tsconfig.build.json && rollup --config"
   },
   "files": [
     "dist"
