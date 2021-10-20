@@ -3317,17 +3317,18 @@
     "@sinonjs/commons" "^1.7.0"
 
 "@sls-next/aws-common@link:packages/libs/aws-common":
-  version "3.5.0-alpha.6"
+  version "3.5.0-alpha.7"
   dependencies:
     "@aws-sdk/client-s3" "^3.37.0"
     "@aws-sdk/client-sqs" "^3.37.0"
     "@sls-next/core" "link:packages/libs/core"
 
 "@sls-next/core@link:packages/libs/core":
-  version "3.5.0-alpha.6"
+  version "3.5.0-alpha.7"
   dependencies:
     "@hapi/accept" "^5.0.1"
     cookie "^0.4.1"
+    execa "^5.1.1"
     fast-glob "^3.2.7"
     fresh "^0.5.2"
     fs-extra "^9.1.0"
@@ -3341,13 +3342,13 @@
     sharp "^0.29.1"
 
 "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge":
-  version "3.5.0-alpha.6"
+  version "3.5.0-alpha.7"
   dependencies:
     "@aws-sdk/client-s3" "^3.37.0"
     "@aws-sdk/client-sqs" "^3.37.0"
     "@sls-next/aws-common" "link:packages/libs/aws-common"
     "@sls-next/core" "link:packages/libs/core"
-    "@vercel/nft" "^0.16.1"
+    "@vercel/nft" "^0.17.0"
     execa "^5.0.1"
     fs-extra "^9.1.0"
     get-stream "^6.0.0"
@@ -3711,10 +3712,10 @@
     "@typescript-eslint/types" "4.33.0"
     eslint-visitor-keys "^2.0.0"
 
-"@vercel/nft@^0.16.1":
-  version "0.16.1"
-  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.16.1.tgz#a636e3fc55f5502a3c652f8c1e01ca2bfac6cf68"
-  integrity sha512-OiPCdRDo9qA8QRQkgdyPInjF6TkvtWv79/WVpweufeOxjwUYju0jIUuFLS2PeB4wAIoKc/1CiizjhmJRqXNwAA==
+"@vercel/nft@^0.17.0":
+  version "0.17.0"
+  resolved "https://registry.npmjs.org/@vercel/nft/-/nft-0.17.0.tgz#28851fefe42fae7a116dc5e23a0a9da29929a18b"
+  integrity sha512-dXz4RAODHpEPl1Yfzk1UfVpZfqhY9O80FdI9sF/Hw2bXWj5022U9Z46VpdNYe8pDluSuQv/JUo/ZP4/OcsfDRw==
   dependencies:
     "@mapbox/node-pre-gyp" "^1.0.5"
     acorn "^8.3.0"
@@ -4261,10 +4262,10 @@ available-typed-arrays@^1.0.5:
   resolved "https://registry.npmjs.org/available-typed-arrays/-/available-typed-arrays-1.0.5.tgz#92f95616501069d07d10edb2fc37d3e1c65123b7"
   integrity sha512-DMD0KiN46eipeziST1LPP/STfDU0sufISXmjSgvVsoU2tqxctQeASejWcfNtxYKqETM1UxQ8sp2OrSBWpHY6sw==
 
-aws-sdk@^2.1008.0, aws-sdk@^2.1010.0:
-  version "2.1010.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1010.0.tgz#a0ff308149e2e358522b991f3b21d2f06c856f0c"
-  integrity sha512-ZiFMY0wJfgBSybAPKl4hEYi4zjs6c6A+kPmifF36C1bFja83Q4iNRUr2P13R41wJn/fdxMyWDgmx6r/5NNLUqg==
+aws-sdk@^2.1008.0, aws-sdk@^2.1011.0:
+  version "2.1011.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1011.0.tgz#8de560a1203fbbb1908dc9f34814613874a248c2"
+  integrity sha512-U5CDmLUHYAur89+Rx1r3X5gRzc8ib90G9aaKnyGqLsIail24r6UINejJB8pyOzFQ+u22/kFKKclfXcTj/Hflbg==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
