@@ -62,7 +62,7 @@ export class LambdaBuilder extends CoreBuilder {
   ): Promise<void> {
     const source = path.dirname(
       require.resolve(
-        `/Users/danielphang/IdeaProjects/serverless-next.js/packages/libs/lambda/dist/bundles/${handlerType}/${
+        `@sls-next/lambda/dist/bundles/${handlerType}/${
           shouldMinify ? "minified" : "standard"
         }`
       )
@@ -154,7 +154,7 @@ export class LambdaBuilder extends CoreBuilder {
       ),
       fse.copy(
         join(
-          path.dirname(require.resolve("@sls-next/lambda/package.json")),
+          path.dirname(require.resolve("@sls-next/core/package.json")),
           "dist",
           "sharp_node_modules"
         ),

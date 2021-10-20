@@ -505,9 +505,7 @@ class Builder {
       ),
       fse.copy(
         join(
-          path.dirname(
-            require.resolve("@sls-next/lambda-at-edge/package.json")
-          ),
+          path.dirname(require.resolve("@sls-next/core/package.json")),
           "dist",
           "sharp_node_modules"
         ),
