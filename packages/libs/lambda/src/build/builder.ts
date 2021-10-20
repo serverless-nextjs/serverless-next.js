@@ -9,7 +9,7 @@ export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
 
 export class LambdaBuilder extends CoreBuilder {
-  public async buildPlatform(
+  protected async buildPlatform(
     manifests: {
       defaultBuildManifest: any;
       imageManifest: Manifest;
@@ -23,7 +23,7 @@ export class LambdaBuilder extends CoreBuilder {
     };
 
     await this.buildDefaultLambda(defaultBuildManifest);
-    // If using Next.j 10, then images-manifest.json is present and image optimizer can be used
+    // If using Next.js 10 and images-manifest.json is present then image optimizer can be used
     const hasImagesManifest = await fse.pathExists(
       join(this.dotNextDir, "images-manifest.json")
     );
@@ -55,14 +55,14 @@ export class LambdaBuilder extends CoreBuilder {
    * @param destination
    * @param shouldMinify
    */
-  async processAndCopyHandler(
+  private async processAndCopyHandler(
     handlerType: "default-handler" | "image-handler",
     destination: string,
     shouldMinify: boolean
   ): Promise<void> {
     const source = path.dirname(
       require.resolve(
-        `@sls-next/lambda/dist/${handlerType}/${
+        `@sls-next/lambda/dist/bundles/${handlerType}/${
           shouldMinify ? "minified" : "standard"
         }`
       )
@@ -77,6 +77,8 @@ export class LambdaBuilder extends CoreBuilder {
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
     );
+
+    await fse.mkdir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
 
     return Promise.all([
       this.processAndCopyHandler(
@@ -124,6 +126,8 @@ export class LambdaBuilder extends CoreBuilder {
   private async buildImageLambda(
     imageBuildManifest: ImageBuildManifest
   ): Promise<void> {
+    await fse.mkdir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
+
     await Promise.all([
       this.processAndCopyHandler(
         "image-handler",
@@ -150,9 +154,7 @@ export class LambdaBuilder extends CoreBuilder {
       ),
       fse.copy(
         join(
-          path.dirname(
-            require.resolve("@sls-next/lambda-at-edge/package.json")
-          ),
+          path.dirname(require.resolve("@sls-next/core/package.json")),
           "dist",
           "sharp_node_modules"
         ),
