@@ -30,7 +30,7 @@ type BuildOptions = {
 };
 
 const defaultBuildOptions = {
-  args: [],
+  args: ["build"],
   cwd: process.cwd(),
   env: {},
   cmd: "./node_modules/.bin/next",
@@ -54,7 +54,7 @@ export default abstract class CoreBuilder {
   protected outputDir: string;
   protected buildOptions: BuildOptions = defaultBuildOptions;
 
-  protected constructor(
+  public constructor(
     nextConfigDir: string,
     outputDir: string,
     buildOptions?: BuildOptions,
@@ -83,7 +83,7 @@ export default abstract class CoreBuilder {
   /**
    * Run prebuild steps which include cleaning up .next and emptying output directories.
    */
-  public async preBuild(): Promise<void> {
+  protected async preBuild(): Promise<void> {
     const { cleanupDotNext } = Object.assign(
       defaultBuildOptions,
       this.buildOptions
@@ -100,7 +100,7 @@ export default abstract class CoreBuilder {
    * @param manifests
    * @param debugMode
    */
-  public abstract buildPlatform(
+  protected abstract buildPlatform(
     manifests: {
       defaultBuildManifest: any;
       imageManifest: Manifest;
