@@ -24,7 +24,6 @@ import { sendEtagResponse } from "./sendEtagResponse";
 import { ImageConfig, ImagesManifest } from "../build/types";
 import { imageConfigDefault } from "./imageConfig";
 import * as fs from "fs";
-import fetch from "node-fetch";
 import { PlatformClient } from "../platform";
 
 let sharp: typeof import("sharp");
@@ -221,6 +220,7 @@ export async function imageOptimizer(
   let maxAge: number;
 
   if (isAbsolute) {
+    const { default: fetch } = await import("node-fetch");
     const upstreamRes = await fetch(href);
 
     if (!upstreamRes.ok) {
