@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "^2.1011.0"
+    "aws-sdk": "^2.1012.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.1",
