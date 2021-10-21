@@ -39,7 +39,7 @@
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
     "archiver": "^5.3.0",
-    "aws-sdk": "^2.1011.0",
+    "aws-sdk": "^2.1012.0",
     "fs-extra": "^9.1.0",
     "globby": "^11.0.4",
     "lodash": "^4.17.21",
@@ -47,6 +47,6 @@
   },
   "peerDependencies": {
     "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1011.0"
+    "aws-sdk": "^2.1012.0"
   }
 }
