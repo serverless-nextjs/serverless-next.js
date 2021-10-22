@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 const promisifyMock = (mockFn) => {
   const promise = jest.fn();
   mockFn.mockImplementation(() => ({

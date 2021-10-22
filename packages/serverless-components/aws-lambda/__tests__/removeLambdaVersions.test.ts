@@ -7,6 +7,7 @@ import {
   mockDeleteFunctionPromise
 } from "../__mocks__/aws-sdk.mock";
 import { removeLambdaVersions } from "../src/removeLambdaVersions";
+import { jest } from "@jest/globals";
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
