@@ -167,10 +167,10 @@
     ramda "^0.26.1"
     semver "^6.1.1"
 
-"@serverless/dashboard-plugin@^5.4.8":
-  version "5.4.8"
-  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.4.8.tgz#07e9f6c1428a195ed852e8733184d16cef97ce39"
-  integrity sha512-vAXlfM33fRsYDeHTjFLlgA6VCxeXEkB8rx/mqQv5kv48KO4gwRsmgV4/xzEnk2fSQVPlyHL66DG0IvgFyEeC3Q==
+"@serverless/dashboard-plugin@^5.5.0":
+  version "5.5.0"
+  resolved "https://registry.npmjs.org/@serverless/dashboard-plugin/-/dashboard-plugin-5.5.0.tgz#d8b0407e277f22111a88cf0d6062d0e17de5b9ca"
+  integrity sha512-a3vWcAacJrUeUFcGXhm/tDxvZjqQI1KjRjFGrqbxoN0N5fCdkLtOn6578Iq4hdP8BF2XanS1xGGdhPjcYBdsUA==
   dependencies:
     "@serverless/event-mocks" "^1.1.1"
     "@serverless/platform-client" "^4.3.0"
@@ -178,7 +178,7 @@
     chalk "^4.1.2"
     child-process-ext "^2.1.1"
     chokidar "^3.5.2"
-    cli-color "^2.0.0"
+    cli-color "^2.0.1"
     flat "^5.0.2"
     fs-extra "^9.1.0"
     js-yaml "^4.1.0"
@@ -301,10 +301,10 @@
     uuid "^8.3.2"
     write-file-atomic "^3.0.3"
 
-"@serverless/utils@^5.18.0":
-  version "5.18.0"
-  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.18.0.tgz#6f44eb09a706a40c95a0ac45020238548ea0c97b"
-  integrity sha512-vq6tzG3RilZVugbJBvBOU5XBVRTzGce1XH6zvivMM8c+a6wmMUcRRfTD0SPTCWxD2hSdv4WrH3Yz27Ez55vrSA==
+"@serverless/utils@^5.18.0", "@serverless/utils@^5.19.0":
+  version "5.19.0"
+  resolved "https://registry.npmjs.org/@serverless/utils/-/utils-5.19.0.tgz#3cbf280e299dd4747bbdd24b5afc3c79d3c3867f"
+  integrity sha512-bgQawVfBgxcZoS1wxukJfRYKkMOZncZfOSTCRUnYzwH78fAAE79vfu49LGx2EGEJa8BThmtzjinZ9SK9yS0kIw==
   dependencies:
     archive-type "^4.0.0"
     chalk "^4.1.2"
@@ -649,10 +649,10 @@ at-least-node@^1.0.0:
   resolved "https://registry.npmjs.org/at-least-node/-/at-least-node-1.0.0.tgz#602cd4b46e844ad4effc92a8011a3c46e0238dc2"
   integrity sha512-+q/t7Ekv1EDY2l6Gda6LLiX14rU9TV20Wa3ofeQmwPFZbOMo9DXrLbOjFaaclkXKWidIaopwAObQDqwWtGUjqg==
 
-aws-sdk@^2.1008.0:
-  version "2.1009.0"
-  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1009.0.tgz#d96217a19f259c2448f91cf24973d390de16f8e0"
-  integrity sha512-qKbmt+vzQ7ZSnfEvA+u6d7CkV09AcAGnxZAiNgOAEn8GFFEtERy6C39VoAuWfON/B2avJDYvtRocjVmAxWpgjQ==
+aws-sdk@^2.1011.0:
+  version "2.1012.0"
+  resolved "https://registry.npmjs.org/aws-sdk/-/aws-sdk-2.1012.0.tgz#93618320cf1ff274389d8fcc563d62974545e1f9"
+  integrity sha512-5F/tC+mOJSTq4BTWqg6DepDIC7h+OeUycCYsFU6fMblQCUEBuI11o8z/+2DxGt4c40f52OstalYNiSlP2RuZvw==
   dependencies:
     buffer "4.9.2"
     events "1.1.1"
@@ -1005,6 +1005,17 @@ cli-color@^2.0.0:
     es5-ext "^0.10.51"
     es6-iterator "^2.0.3"
     memoizee "^0.4.14"
+    timers-ext "^0.1.7"
+
+cli-color@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.npmjs.org/cli-color/-/cli-color-2.0.1.tgz#93e3491308691f1e46beb78b63d0fb2585e42ba6"
+  integrity sha512-eBbxZF6fqPUNnf7CLAFOersUnyYzv83tHFLSlts+OAHsNendaqv2tHCq+/MO+b3Y+9JeoUlIvobyxG/Z8GNeOg==
+  dependencies:
+    d "^1.0.1"
+    es5-ext "^0.10.53"
+    es6-iterator "^2.0.3"
+    memoizee "^0.4.15"
     timers-ext "^0.1.7"
 
 cli-cursor@^2.1.0:
@@ -3582,20 +3593,20 @@ semver@^7.3.4, semver@^7.3.5:
   dependencies:
     lru-cache "^6.0.0"
 
-serverless@^2.63.0:
-  version "2.63.0"
-  resolved "https://registry.npmjs.org/serverless/-/serverless-2.63.0.tgz#b1cf91253572640e8409ae6f816d0a330f08816a"
-  integrity sha512-8R3WceUjjFBZRcL0YXT6+3hEWIxlzyCIWiIVy9x2Rf2TDBBJTTv82T1JHvLr9dRVBSOcQBu6cHlzSqwk1ozbLA==
+serverless@^2.64.1:
+  version "2.64.1"
+  resolved "https://registry.npmjs.org/serverless/-/serverless-2.64.1.tgz#708f7000577437f5fec27efd996967d67dc66fb3"
+  integrity sha512-9DErsV4ACg/2UkRoX2EYRkcDyRi3NBld/gexCeVnkmUunadSwnmtSBeVU8spvg+zc61b1vbusTHE4woqcd2gvw==
   dependencies:
     "@serverless/cli" "^1.5.2"
     "@serverless/components" "^3.17.1"
-    "@serverless/dashboard-plugin" "^5.4.8"
+    "@serverless/dashboard-plugin" "^5.5.0"
     "@serverless/platform-client" "^4.3.0"
-    "@serverless/utils" "^5.18.0"
+    "@serverless/utils" "^5.19.0"
     ajv "^6.12.6"
     ajv-keywords "^3.5.2"
     archiver "^5.3.0"
-    aws-sdk "^2.1008.0"
+    aws-sdk "^2.1011.0"
     bluebird "^3.7.2"
     boxen "^5.1.2"
     cachedir "^2.3.0"
