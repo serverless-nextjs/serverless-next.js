@@ -61,7 +61,7 @@
     "rollup-plugin-typescript2": "^0.30.0",
     "sharp": "^0.28.3",
     "ts-loader": "^9.2.6",
-    "ts-node": "^10.3.0",
+    "ts-node": "^10.3.1",
     "typescript": "^4.4.4"
   },
   "dependencies": {
