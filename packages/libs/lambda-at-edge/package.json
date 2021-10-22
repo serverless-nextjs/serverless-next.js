@@ -48,7 +48,7 @@
     "@types/node": "^16.11.1",
     "@types/node-fetch": "^2.5.7",
     "@types/normalize-path": "^3.0.0",
-    "@types/react": "17.0.30",
+    "@types/react": "17.0.31",
     "@types/react-dom": "^17.0.10",
     "@types/sharp": "^0.29.2",
     "fetch-mock-jest": "^1.5.1",
