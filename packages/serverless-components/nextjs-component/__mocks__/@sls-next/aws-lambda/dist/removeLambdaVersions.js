@@ -1,3 +1,8 @@
+import { jest } from "@jest/globals";
+
+const mockRemoveLambdaVersions = jest.fn();
+
 module.exports = {
-  mockRemoveLambdaVersions: jest.fn()
+  mockRemoveLambdaVersions,
+  removeLambdaVersions: mockRemoveLambdaVersions
 };
