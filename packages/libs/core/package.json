@@ -55,7 +55,7 @@
     "@types/fresh": "^0.5.0",
     "@types/fs-extra": "^9.0.13",
     "@types/jsonwebtoken": "^8.5.5",
-    "@types/node": "^16.11.1",
+    "@types/node": "^16.11.2",
     "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "^3.0.0",
     "@types/react": "^17.0.31",
