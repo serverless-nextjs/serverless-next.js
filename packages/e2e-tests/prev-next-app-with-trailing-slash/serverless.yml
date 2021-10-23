@@ -1,2 +1,4 @@
 prev-next-app-with-trailing-slash:
   component: "../../serverless-components/nextjs-component"
+  inputs:
+    removeOldLambdaVersions: true

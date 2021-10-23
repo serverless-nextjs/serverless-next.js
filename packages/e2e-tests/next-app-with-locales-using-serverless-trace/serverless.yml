@@ -1,6 +1,7 @@
 next-app-with-locales-using-serverless-trace:
   component: "../../serverless-components/nextjs-component"
   inputs:
+    removeOldLambdaVersions: true
     useServerlessTraceTarget: true
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
