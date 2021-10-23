@@ -24,7 +24,7 @@
     "graduate": "yarn check-gh-token && lerna version --conventional-commits --conventional-graduate --exact --create-release github && lerna publish from-git",
     "lint": "eslint .",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "build": "yarn install --immutable --inline-builds && yarn packages-install && yarn packages-prepack && opencollective-postinstall",
+    "build": "yarn packages-install && yarn packages-prepack && opencollective-postinstall",
     "docs": "cd documentation && yarn && yarn build",
     "handlers:upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts",
     "handlers:comment-handler-sizes": "ts-node scripts/comment-handler-sizes.ts"

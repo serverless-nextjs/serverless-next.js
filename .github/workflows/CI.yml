@@ -31,7 +31,7 @@ jobs:
           cache: "yarn"
 
       - name: Setup yarn
-        run: yarn && yarn install
+        run: yarn install --immutable --inline-builds
 
       - name: Run yarn build
         env:
