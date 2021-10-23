@@ -172,6 +172,9 @@ jobs:
       #      - name: "Uncompress build"
       #        run: tar -xf build-${{ matrix.os }}.tar.gz
 
+      - name: Setup yarn
+        run: yarn && yarn install
+
       - name: Run yarn build
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
