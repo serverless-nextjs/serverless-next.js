@@ -1362,12 +1362,31 @@
     picomatch "^2.2.2"
 
 "@sls-next/aws-common@link:../aws-common":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.8"
+  dependencies:
+    "@aws-sdk/client-s3" "^3.37.0"
+    "@aws-sdk/client-sqs" "^3.37.0"
+    "@sls-next/core" "link:../core"
 
 "@sls-next/core@link:../core":
-  version "0.0.0"
-  uid ""
+  version "3.5.0-alpha.8"
+  dependencies:
+    "@hapi/accept" "^5.0.1"
+    cookie "^0.4.1"
+    execa "^5.1.1"
+    fast-glob "^3.2.7"
+    fresh "^0.5.2"
+    fs-extra "^9.1.0"
+    is-animated "^2.0.1"
+    jsonwebtoken "^8.5.1"
+    next "^11.1.2"
+    node-fetch "2.6.5"
+    normalize-path "^3.0.0"
+    path-to-regexp "^6.1.0"
+    react "^17.0.2"
+    react-dom "^17.0.2"
+    send "^0.17.1"
+    sharp "^0.29.1"
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
@@ -4749,10 +4768,10 @@ ts-loader@^9.2.6:
     micromatch "^4.0.0"
     semver "^7.3.4"
 
-ts-node@^10.3.0:
-  version "10.3.0"
-  resolved "https://registry.npmjs.org/ts-node/-/ts-node-10.3.0.tgz#a797f2ed3ff50c9a5d814ce400437cb0c1c048b4"
-  integrity sha512-RYIy3i8IgpFH45AX4fQHExrT8BxDeKTdC83QFJkNzkvt8uFB6QJ8XMyhynYiKMLxt9a7yuXaDBZNOYS3XjDcYw==
+ts-node@^10.4.0:
+  version "10.4.0"
+  resolved "https://registry.npmjs.org/ts-node/-/ts-node-10.4.0.tgz#680f88945885f4e6cf450e7f0d6223dd404895f7"
+  integrity sha512-g0FlPvvCXSIO1JDF6S232P5jPYqBkRL9qly81ZgAOSU7rwI0stphCgd2kLiCrU9DjQCrJMWEqcNSjQL02s6d8A==
   dependencies:
     "@cspotcode/source-map-support" "0.7.0"
     "@tsconfig/node10" "^1.0.7"
