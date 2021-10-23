@@ -1,6 +1,7 @@
 prev-next-app:
   component: "../../serverless-components/nextjs-component"
   inputs:
+    removeOldLambdaVersions: true
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
     cloudfront:
