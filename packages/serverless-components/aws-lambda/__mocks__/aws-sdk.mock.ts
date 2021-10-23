@@ -1,3 +1,5 @@
+import { jest } from "@jest/globals";
+
 const promisifyMock = (mockFn) => {
   const promise = jest.fn();
   mockFn.mockImplementation(() => ({
@@ -60,6 +62,12 @@ export const mockTagResource = jest.fn();
 export const mockTagResourcePromise = promisifyMock(mockTagResource);
 export const mockUntagResource = jest.fn();
 export const mockUntagResourcePromise = promisifyMock(mockUntagResource);
+export const mockListVersionsByFunction = jest.fn();
+export const mockListVersionsByFunctionPromise = promisifyMock(
+  mockListVersionsByFunction
+);
+export const mockDeleteFunction = jest.fn();
+export const mockDeleteFunctionPromise = promisifyMock(mockDeleteFunction);
 
 export default {
   SQS: jest.fn(() => ({
@@ -77,6 +85,8 @@ export default {
     updateFunctionConfiguration: mockUpdateFunctionConfiguration,
     listTags: mockListTags,
     tagResource: mockTagResource,
-    untagResource: mockUntagResource
+    untagResource: mockUntagResource,
+    listVersionsByFunction: mockListVersionsByFunction,
+    deleteFunction: mockDeleteFunction
   }))
 };

@@ -131,7 +131,8 @@
     ],
     "modulePathIgnorePatterns": [
       "/sharp_node_modules/"
-    ]
+    ],
+    "testSequencer": "<rootDir>/jest-sequencer.js"
   },
   "dependencies": {
     "opencollective-postinstall": "^2.0.3",
