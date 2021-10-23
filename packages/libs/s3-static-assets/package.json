@@ -16,7 +16,7 @@
     "directory": "packages/libs/s3-static-assets"
   },
   "scripts": {
-    "prepare": "yarn clean && yarn build",
+    "prepack": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json",
     "clean": "yarn rimraf dist"
   },

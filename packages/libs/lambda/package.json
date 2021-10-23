@@ -16,7 +16,7 @@
     "directory": "packages/libs/lambda"
   },
   "scripts": {
-    "prepare": "yarn clean && yarn build",
+    "prepack": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json && yarn rollup",
     "esbuild": "node esbuild.js",
     "rollup": "rollup --config",

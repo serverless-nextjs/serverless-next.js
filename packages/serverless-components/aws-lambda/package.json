@@ -21,7 +21,7 @@
     "test": "jest",
     "clean": "yarn rimraf dist",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "yarn clean && yarn build"
+    "prepack": "yarn clean && yarn build"
   },
   "devDependencies": {
     "@types/archiver": "^5.1.0",

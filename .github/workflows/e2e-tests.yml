@@ -169,16 +169,19 @@ jobs:
       #      - name: "Uncompress build"
       #        run: tar -xf build-${{ matrix.os }}.tar.gz
 
-      - name: Build
+      - name: Use yarn v3
+        run: yarn set version berry
+
+      - name: Run yarn build
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn --frozen-lockfile
+        run: yarn build
 
       - name: Install test utils
         working-directory: packages/e2e-tests/test-utils
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn --frozen-lockfile
+        run: yarn install --immutable
 
       - name: Choose latest next.js version
         if: ${{ !startsWith(matrix.app, 'prev') }}
@@ -203,7 +206,7 @@ jobs:
           CYPRESS_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for testing external rewrites to GitHub API without getting throttled
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: |
-          yarn --frozen-lockfile
+          yarn install --immutable
           yarn e2e:ci
         timeout-minutes: 30 # In case something goes wrong
 

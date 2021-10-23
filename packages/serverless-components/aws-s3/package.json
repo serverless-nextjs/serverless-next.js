@@ -10,7 +10,7 @@
     "lint": "eslint . --fix --cache",
     "clean": "yarn rimraf dist",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "yarn clean && yarn build"
+    "prepack": "yarn clean && yarn build"
   },
   "author": "Serverless, Inc and Daniel Phang",
   "license": "Apache-2.0",
@@ -38,6 +38,7 @@
     "eslint-plugin-import": "^2.25.2",
     "eslint-plugin-prettier": "^4.0.0",
     "prettier": "^2.4.1",
+    "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   }
 }

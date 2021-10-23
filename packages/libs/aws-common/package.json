@@ -16,7 +16,7 @@
     "directory": "packages/libs/aws-common"
   },
   "scripts": {
-    "prepare": "yarn clean && yarn build",
+    "prepack": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.module.json",
     "clean": "yarn rimraf dist"
   },
