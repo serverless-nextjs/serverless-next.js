@@ -3,6 +3,7 @@ import fse from "fs-extra";
 import { mockS3 } from "@sls-next/aws-s3";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
+import { mockRemoveLambdaVersions } from "@sls-next/aws-lambda/dist/removeLambdaVersions";
 import {
   mockCreateInvalidation,
   mockCheckCloudFrontDistributionReady
@@ -446,6 +447,10 @@ describe.each`
         },
         distributionId: "cloudfrontdistrib"
       });
+    });
+
+    it("does not remove old versions of lambda functions by default", () => {
+      expect(mockRemoveLambdaVersions).toBeCalledTimes(0);
     });
   });
 

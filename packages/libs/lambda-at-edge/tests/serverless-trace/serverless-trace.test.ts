@@ -5,6 +5,8 @@ import Builder, {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR
 } from "../../src/build";
+import { jest } from "@jest/globals";
+import { v4 as uuidv4 } from "uuid";
 
 describe("Serverless Trace", () => {
   const fixturePath = path.join(__dirname, "./fixture");
@@ -12,7 +14,7 @@ describe("Serverless Trace", () => {
   let fseRemoveSpy: jest.SpyInstance;
 
   beforeEach(async () => {
-    outputDir = path.join(os.tmpdir(), `${Date.now()}`);
+    outputDir = path.join(os.tmpdir(), `${uuidv4()}`);
 
     fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;

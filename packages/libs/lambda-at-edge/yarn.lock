@@ -1362,31 +1362,12 @@
     picomatch "^2.2.2"
 
 "@sls-next/aws-common@link:../aws-common":
-  version "3.5.0-alpha.7"
-  dependencies:
-    "@aws-sdk/client-s3" "^3.37.0"
-    "@aws-sdk/client-sqs" "^3.37.0"
-    "@sls-next/core" "link:../core"
+  version "0.0.0"
+  uid ""
 
 "@sls-next/core@link:../core":
-  version "3.5.0-alpha.7"
-  dependencies:
-    "@hapi/accept" "^5.0.1"
-    cookie "^0.4.1"
-    execa "^5.1.1"
-    fast-glob "^3.2.7"
-    fresh "^0.5.2"
-    fs-extra "^9.1.0"
-    is-animated "^2.0.1"
-    jsonwebtoken "^8.5.1"
-    next "^11.1.2"
-    node-fetch "2.6.5"
-    normalize-path "^3.0.0"
-    path-to-regexp "^6.1.0"
-    react "^17.0.2"
-    react-dom "^17.0.2"
-    send "^0.17.1"
-    sharp "^0.29.1"
+  version "0.0.0"
+  uid ""
 
 "@tsconfig/node10@^1.0.7":
   version "1.0.8"
@@ -1507,6 +1488,11 @@
   integrity sha512-tIbMvtPa8kMyFMKNhpsPT1HO3CgXLuiCAA8bxHAGAZLyALpYvYc4hUu3pu0+3oExQA5LwvHrWp+OilgXCYVQgg==
   dependencies:
     "@types/node" "*"
+
+"@types/uuid@^8.3.1":
+  version "8.3.1"
+  resolved "https://registry.npmjs.org/@types/uuid/-/uuid-8.3.1.tgz#1a32969cf8f0364b3d8c8af9cc3555b7805df14f"
+  integrity sha512-Y2mHTRAbqfFkpjldbkHGY8JIzRN6XqYRliG8/24FcHm2D2PwW24fl5xMRTVGdrb7iMrwCaIEbLWerGIkXuFWVg==
 
 "@vercel/nft@^0.17.0":
   version "0.17.0"

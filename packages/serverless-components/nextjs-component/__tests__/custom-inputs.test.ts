@@ -13,10 +13,10 @@ import obtainDomains from "../src/lib/obtainDomains";
 import {
   DEFAULT_LAMBDA_CODE_DIR,
   API_LAMBDA_CODE_DIR,
-  IMAGE_LAMBDA_CODE_DIR,
-  REGENERATION_LAMBDA_CODE_DIR
+  IMAGE_LAMBDA_CODE_DIR
 } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
+import { mockRemoveLambdaVersions } from "@sls-next/aws-lambda/dist/removeLambdaVersions";
 
 // unfortunately can't use __mocks__ because aws-sdk is being mocked in other
 // packages in the monorepo
@@ -471,6 +471,28 @@ describe("Custom inputs", () => {
           tags: tags.imageLambda
         })
       );
+    });
+  });
+
+  describe("Old lambda function version removal", () => {
+    let tmpCwd: string;
+    const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
+
+    beforeEach(async () => {
+      tmpCwd = process.cwd();
+      process.chdir(fixturePath);
+
+      mockServerlessComponentDependencies({ expectedDomain: undefined });
+
+      const component = createNextComponent();
+
+      componentOutputs = await component.default({
+        removeOldLambdaVersions: true
+      });
+    });
+
+    it("removes old versions of lambda functions", () => {
+      expect(mockRemoveLambdaVersions).toBeCalledTimes(3); // 4 if there is regeneration lambda
     });
   });
 

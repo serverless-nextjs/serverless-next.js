@@ -1,6 +1,7 @@
 next-app:
   component: "../../serverless-components/nextjs-component"
   inputs:
+    removeOldLambdaVersions: true
     sqs:
       tags:
         foo: bar
