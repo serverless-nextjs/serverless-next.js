@@ -21,14 +21,14 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
+      - name: Use yarn v3
+        run: yarn set version berry
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
           cache: "yarn"
-
-      - name: Use yarn v3
-        run: yarn set version berry
 
       - name: Run yarn build
         env:

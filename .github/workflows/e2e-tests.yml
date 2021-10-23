@@ -155,6 +155,9 @@ jobs:
         with:
           pr: ${{ github.event.inputs.pull_request_id }}
 
+      - name: Use yarn v3
+        run: yarn set version berry
+
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -168,9 +171,6 @@ jobs:
       #
       #      - name: "Uncompress build"
       #        run: tar -xf build-${{ matrix.os }}.tar.gz
-
-      - name: Use yarn v3
-        run: yarn set version berry
 
       - name: Run yarn build
         env:
