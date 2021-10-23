@@ -32,6 +32,7 @@ import type {
 } from "../types";
 import { execSync } from "child_process";
 import AWS from "aws-sdk";
+import { removeLambdaVersions } from "@sls-next/aws-lambda/dist/removeLambdaVersions";
 
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -547,6 +548,7 @@ class NextjsComponent extends Component {
       }
     }
 
+    let regenerationLambdaResult = undefined;
     if (hasISRPages || hasDynamicISRPages) {
       const regenerationLambdaInput: LambdaInput = {
         region: bucketRegion, // make sure SQS region and regeneration lambda region are the same
@@ -611,13 +613,16 @@ class NextjsComponent extends Component {
         ) as Record<string, string>
       };
 
-      const regenerationLambdaResult = await regenerationLambda(
+      regenerationLambdaResult = await regenerationLambda(
         regenerationLambdaInput
       );
+
       await regenerationLambda.publishVersion();
 
       await sqs.addEventSource(regenerationLambdaResult.name);
     }
+
+    let apiEdgeLambdaOutputs = undefined;
 
     // Only upload separate API lambda + set cache behavior if api-lambda directory is populated
     if (hasSeparateAPIPages) {
@@ -655,7 +660,7 @@ class NextjsComponent extends Component {
         >
       };
 
-      const apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
+      apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
 
       const apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
 
@@ -687,6 +692,8 @@ class NextjsComponent extends Component {
         }
       };
     }
+
+    let imageEdgeLambdaOutputs = undefined;
 
     if (imageBuildManifest) {
       const imageEdgeLambdaInput: LambdaInput = {
@@ -723,9 +730,7 @@ class NextjsComponent extends Component {
         >
       };
 
-      const imageEdgeLambdaOutputs = await imageEdgeLambda(
-        imageEdgeLambdaInput
-      );
+      imageEdgeLambdaOutputs = await imageEdgeLambda(imageEdgeLambdaInput);
 
       const imageEdgeLambdaPublishOutputs =
         await imageEdgeLambda.publishVersion();
@@ -1009,6 +1014,39 @@ class NextjsComponent extends Component {
         certificateArn: inputs.certificateArn
       });
       appUrl = domainOutputs.domains[0];
+    }
+
+    // Remove old lambda function versions if specified to save on code space
+    if (inputs.removeOldLambdaVersions) {
+      this.context.debug("Removing old lambda versions...");
+      await Promise.all([
+        await removeLambdaVersions(
+          this.context,
+          defaultEdgeLambdaOutputs.arn,
+          defaultEdgeLambdaOutputs.region
+        ),
+        apiEdgeLambdaOutputs
+          ? await removeLambdaVersions(
+              this.context,
+              apiEdgeLambdaOutputs.arn,
+              apiEdgeLambdaOutputs.region
+            )
+          : Promise.resolve(),
+        imageEdgeLambdaOutputs
+          ? await removeLambdaVersions(
+              this.context,
+              imageEdgeLambdaOutputs.arn,
+              imageEdgeLambdaOutputs.region
+            )
+          : Promise.resolve(),
+        regenerationLambdaResult
+          ? await removeLambdaVersions(
+              this.context,
+              regenerationLambdaResult.arn,
+              regenerationLambdaResult.region
+            )
+          : Promise.resolve()
+      ]);
     }
 
     return {

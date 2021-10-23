@@ -548,6 +548,7 @@ The fourth cache behaviour handles next API requests `api/*`.
 | authentication |`object` |`undefined` | Authentication object for use with basic authentication (available from 1.19.0-alpha.3). It only supports a single username/password combination for now and is inlined in plaintext in the Lambda handler. You must also forward the`Authorization`header for CloudFront behaviors, e.g`defaults`, `api/*`, and `\_next/data/\_`. **Note: this is meant as a simple means of protecting an environment such as a development/test site, it is not recommended for production use.** | 
 | authentication.username | `string` |`undefined` | Username for basic authentication. | | authentication.password |`string` |`undefined` | Password for basic authentication. **Note: it is highly recommended not to reuse a password here as it gets inlined in plaintext in the Lambda handler.** | 
 | enableS3Acceleration |`boolean` |`true` | Whether to enable S3 transfer acceleration. This may be useful to disable as some AWS regions do not support it. See [reference](https://docs.amazonaws.cn/en_us/aws/latest/userguide/s3.html). |
+| removeOldLambdaVersions | `boolean` | `false` | Basic support for removing old Lambda versions after deploying to ensure. If set to true, every time you deploy it will automatically removes up to ~50 old versions (starting from oldest) of all Lambdas that are not deployed/replicated. If you require more complex strategies, it is recommended to write your own script to remove old versions. |
 
 Custom inputs can be configured like this:
 

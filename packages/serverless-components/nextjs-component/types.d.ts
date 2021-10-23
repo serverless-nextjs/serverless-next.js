@@ -74,6 +74,7 @@ export type ServerlessComponentInputs = {
   certificateArn?: string;
   enableS3Acceleration?: boolean;
   sqs?: { name: string; tags: { [key: string]: string } };
+  removeOldLambdaVersions?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

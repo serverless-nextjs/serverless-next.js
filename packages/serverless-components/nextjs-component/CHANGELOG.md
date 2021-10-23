@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.7...v3.5.0-alpha.8) (2021-10-23)
+
+### Features
+
+- **nextjs-component, aws-lambda:** allow removing old lambda versions ([#1884](https://github.com/serverless-nextjs/serverless-next.js/issues/1884)) ([0110f0a](https://github.com/serverless-nextjs/serverless-next.js/commit/0110f0ade8c98b28fb0017255a3f56db80882c8e))
+
 # [3.5.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.6...v3.5.0-alpha.7) (2021-10-19)
 
 **Note:** Version bump only for package @sls-next/serverless-component
