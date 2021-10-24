@@ -1122,7 +1122,7 @@ __metadata:
     rimraf: ^3.0.2
     typescript: ^4.4.4
   peerDependencies:
-    "@babel/core": 7.14.6
+    "@babel/core": ^7.15.8
     "@serverless/core": ^1.1.2
     aws-sdk: ^2.1012.0
   languageName: unknown
