@@ -179,6 +179,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@serverless/cli@npm:^1.5.3":
+  version: 1.5.3
+  resolution: "@serverless/cli@npm:1.5.3"
+  dependencies:
+    "@serverless/core": ^1.1.2
+    "@serverless/template": ^1.1.3
+    "@serverless/utils": ^1.2.0
+    ansi-escapes: ^4.3.1
+    chalk: ^2.4.2
+    chokidar: ^3.4.1
+    dotenv: ^8.2.0
+    figures: ^3.2.0
+    minimist: ^1.2.5
+    prettyoutput: ^1.2.0
+    strip-ansi: ^6.0.1
+  bin:
+    components: bin/bin
+  checksum: 6894cda470e17925dee6ceb1d55450071a1dba052ce2e666f9943d5effb1e23d3d854a8547d401ab4e7aa6cee0b0bcc51a4c701b36bb7bb37c364f7c1bd3a7ed
+  languageName: node
+  linkType: hard
+
 "@serverless/component-metrics@npm:^1.0.8":
   version: 1.0.8
   resolution: "@serverless/component-metrics@npm:1.0.8"
@@ -483,7 +504,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/serverless-patched@workspace:."
   dependencies:
-    "@serverless/cli": ^1.5.2
+    "@serverless/cli": ^1.5.3
     "@types/node": ^16.11.2
     find-up: ^5.0.0
     patch-package: ^6.4.7
