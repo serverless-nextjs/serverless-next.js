@@ -3428,7 +3428,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node-fetch@npm:^2.5.10":
+"@types/node-fetch@npm:^2.5.12":
   version: 2.5.12
   resolution: "@types/node-fetch@npm:2.5.12"
   dependencies:
@@ -13242,7 +13242,7 @@ __metadata:
     "@types/jest": ^27.0.2
     "@types/lodash": ^4.14.176
     "@types/node": ^16.11.2
-    "@types/node-fetch": ^2.5.10
+    "@types/node-fetch": ^2.5.12
     "@types/webpack": ^5.28.0
     "@typescript-eslint/eslint-plugin": ^4.33.0
     "@typescript-eslint/parser": ^4.33.0
