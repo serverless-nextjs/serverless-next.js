@@ -9,6 +9,6 @@ __metadata:
   resolution: "@sls-next/domain@workspace:."
   peerDependencies:
     "@serverless/core": ^1.1.2
-    aws-sdk: ^2.702.0
+    aws-sdk: ^2.1013.0
   languageName: unknown
   linkType: soft

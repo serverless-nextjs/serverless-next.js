@@ -34,7 +34,7 @@ __metadata:
     lodash: ^4.17.21
   peerDependencies:
     "@serverless/core": ^1.1.2
-    aws-sdk: ^2.920.0
+    aws-sdk: ^2.1013.0
   languageName: unknown
   linkType: soft
 
