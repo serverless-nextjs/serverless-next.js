@@ -1,14 +1,12 @@
 {
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "automerge": true,
-  "automergeType": "branch",
+  "automergeType": "pr",
   "ignorePaths": [
     "packages/e2e-tests/**",
     "packages/deprecated/**",
     "packages/serverless-components/nextjs-component/examples/**",
-    "packages/serverless-components/nextjs-component/**",
-    "package.json",
-    "lerna.json"
+    "packages/serverless-components/nextjs-component/**"
   ],
   "prHourlyLimit": 5
 }
