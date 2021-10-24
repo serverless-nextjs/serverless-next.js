@@ -8,7 +8,7 @@
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "set \"SSG_PAGE_PATH=/ssg-page\" && set \"SSR_PAGE_PATH=/ssr-page\" && set \"APP_NAME=next-app-windows\" && ts-node --project tsconfig.scripts.json \"..\\test-utils\\scripts\\run-e2e-ci.ts\""
+    "e2e:ci": "set \"SSG_PAGE_PATH=/ssg-page\" && set \"SSR_PAGE_PATH=/ssr-page\" && set \"APP_NAME=next-app-windows\" && ts-node --project tsconfig.scripts.json \"..\\\\test-utils\\\\scripts\\\\run-e2e-ci.ts\""
   },
   "repository": {
     "type": "git",
