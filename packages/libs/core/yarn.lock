@@ -1748,7 +1748,7 @@ __metadata:
     "@babel/preset-typescript": ^7.15.0
     "@hapi/accept": ^5.0.2
     "@jest/globals": ^27.3.1
-    "@types/cookie": ^0.4.0
+    "@types/cookie": ^0.4.1
     "@types/fresh": ^0.5.0
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^27.0.2
@@ -1859,7 +1859,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cookie@npm:^0.4.0":
+"@types/cookie@npm:^0.4.1":
   version: 0.4.1
   resolution: "@types/cookie@npm:0.4.1"
   checksum: 3275534ed69a76c68eb1a77d547d75f99fedc80befb75a3d1d03662fb08d697e6f8b1274e12af1a74c6896071b11510631ba891f64d30c78528d0ec45a9c1a18
