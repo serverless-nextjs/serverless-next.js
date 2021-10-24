@@ -1087,7 +1087,7 @@ __metadata:
     "@babel/preset-typescript": ^7.15.0
     "@serverless/core": ^1.1.2
     "@types/fs-extra": ^9.0.13
-    "@types/node": ^16.11.2
+    "@types/node": ^16.11.4
     "@types/ramda": ^0.27.45
     aws-sdk: ^2.1013.0
     babel-eslint: 10.1.0
@@ -1224,10 +1224,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.2":
+"@types/node@npm:*":
   version: 16.11.2
   resolution: "@types/node@npm:16.11.2"
   checksum: 1617b61160943121165ff89d72d3f7b4d55265a0129fd2ab6eb0ce81a3340ce9b3bd2ce8ec2d9f0f8b3702b434870596cd327ba472ba6e7d1faa5eedb8208e3a
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^16.11.4":
+  version: 16.11.4
+  resolution: "@types/node@npm:16.11.4"
+  checksum: 96e08c0f8bb17601c18640a8eac61e2f236fe0c8a6b01a9221c10749157358fb29fdef4b5e264f72559e72f9830e6093f3ab5fef2df90afdad562ffa45ac534c
   languageName: node
   linkType: hard
 
