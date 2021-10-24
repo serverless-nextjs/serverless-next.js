@@ -1,6 +1,7 @@
 name: Deploy docs
 on:
   push:
+    branches: [master]
     paths:
       - "documentation/**"
 
