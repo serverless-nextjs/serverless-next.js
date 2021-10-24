@@ -45,7 +45,7 @@ __metadata:
     fs-extra: ^9.1.0
     mime-types: ^2.1.33
     normalize-path: ^3.0.0
-    regex-parser: ^2.2.10
+    regex-parser: ^2.2.11
     rimraf: ^3.0.2
     typescript: ^4.4.4
   languageName: unknown
@@ -417,7 +417,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"regex-parser@npm:^2.2.10":
+"regex-parser@npm:^2.2.11":
   version: 2.2.11
   resolution: "regex-parser@npm:2.2.11"
   checksum: 78200331ec0cc372302d287a4946c38681eb5fe435453fca572cb53cac0ba579e5eb3b9e25eac24c0c80a555fb3ea7a637814a35da1e9bc88e8819110ae5de24

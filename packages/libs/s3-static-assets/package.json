@@ -38,7 +38,7 @@
     "fs-extra": "^9.1.0",
     "mime-types": "^2.1.33",
     "normalize-path": "^3.0.0",
-    "regex-parser": "^2.2.10"
+    "regex-parser": "^2.2.11"
   },
   "devDependencies": {
     "@types/fs-extra": "^9.0.13",
