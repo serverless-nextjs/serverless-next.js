@@ -6924,7 +6924,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.3.1":
+"eslint@npm:^7.32.0":
   version: 7.32.0
   resolution: "eslint@npm:7.32.0"
   dependencies:
@@ -13247,7 +13247,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^4.33.0
     "@typescript-eslint/parser": ^4.33.0
     aws-sdk: ^2.1012.0
-    eslint: ^7.3.1
+    eslint: ^7.32.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-promise: 5.1.0

@@ -206,7 +206,7 @@ __metadata:
     archiver: ^5.3.0
     aws-sdk: ^2.1012.0
     babel-eslint: ^10.1.0
-    eslint: ^7.29.0
+    eslint: ^7.32.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-import: ^2.25.2
     eslint-plugin-prettier: ^4.0.0
@@ -1015,7 +1015,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"eslint@npm:^7.29.0":
+"eslint@npm:^7.32.0":
   version: 7.32.0
   resolution: "eslint@npm:7.32.0"
   dependencies:
