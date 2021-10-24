@@ -7,6 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 import { execSync } from "child_process";
 import * as AWS from "aws-sdk";
 import * as fs from "fs";
+import * as path from "path";
 
 // Next.js build ID follows a certain pattern
 const buildIdRegex = /"buildId":"([a-zA-Z0-9_-]+)"/;
@@ -294,10 +295,15 @@ async function runEndToEndTest(): Promise<boolean> {
     console.info("Deploying serverless-next.js app.");
     // execSync("npx @sls-next/serverless-patched --debug", { stdio: "inherit" });
     // The below will always use the latest version in this monorepo, above will use latest published version
-    execSync(
-      "node ../../libs/serverless-patched/dist/serverless-patched.js --debug",
-      { stdio: "inherit" }
+    const serverlessPatchedPath = path.join(
+      "..",
+      "..",
+      "libs",
+      "serverless-patched",
+      "dist",
+      "serverless-patched.js"
     );
+    execSync(`node ${serverlessPatchedPath} --debug`, { stdio: "inherit" });
 
     // Get Next.js build ID and URL
     console.info("Getting Next.js build ID");
