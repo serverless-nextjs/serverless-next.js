@@ -14,6 +14,7 @@ import { triggerStaticRegeneration } from "../lib/triggerStaticRegeneration";
 import { s3StorePage } from "../s3/s3StorePage";
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
 import { GetObjectCommand, S3Client } from "@aws-sdk/client-s3";
+import getStream from "get-stream";
 
 /**
  * This function is experimental to allow rendering static pages fully from the handler.
@@ -69,8 +70,6 @@ export const renderStaticPage = async ({
     maxAttempts: 3
   });
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
-  // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
-  const getStream = await import("get-stream");
   const s3Params = {
     Bucket: bucketName,
     Key: s3Key
@@ -82,7 +81,8 @@ export const renderStaticPage = async ({
 
   try {
     s3Response = await s3.send(new GetObjectCommand(s3Params));
-    bodyString = await getStream.default(s3Response.Body as Readable);
+    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+    bodyString = await getStream(s3Response.Body as Readable);
     s3StatusCode = s3Response.$metadata.httpStatusCode;
   } catch (e: any) {
     s3StatusCode = e.$metadata.httpStatusCode;
@@ -196,7 +196,7 @@ export const renderStaticPage = async ({
     };
 
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
-    const bodyString = await getStream.default(s3Response.Body as Readable);
+    const bodyString = await getStream(s3Response.Body as Readable);
 
     const statusCode = fallbackRoute.statusCode || 200;
     const is500 = statusCode === 500;

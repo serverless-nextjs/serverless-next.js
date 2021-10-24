@@ -53,6 +53,7 @@ import { s3StorePage } from "./s3/s3StorePage";
 import { createRedirectResponse } from "@sls-next/core/dist/module/route/redirect";
 import { redirect } from "@sls-next/core/dist/module/handle/redirect";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import getStream from "get-stream";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -446,8 +447,6 @@ const handleOriginResponse = async ({
   if (fallbackRoute.isStatic) {
     const file = fallbackRoute.file.slice("pages".length);
     const s3Key = `${s3BasePath}static-pages/${manifest.buildId}${file}`;
-    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
-    const getStream = await import("get-stream");
 
     const s3Params = {
       Bucket: bucketName,
@@ -455,6 +454,7 @@ const handleOriginResponse = async ({
     };
 
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
+    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
     const bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
 
     const statusCode = fallbackRoute.statusCode || 200;

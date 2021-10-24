@@ -820,6 +820,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/aws-lambda@workspace:."
   dependencies:
+    "@jest/globals": ^27.3.1
     "@serverless/aws-iam-role": ^1.0.0
     "@serverless/aws-lambda-layer": ^1.0.0
     "@serverless/aws-s3": ^4.2.0

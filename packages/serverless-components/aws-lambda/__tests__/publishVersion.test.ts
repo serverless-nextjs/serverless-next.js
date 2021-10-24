@@ -31,6 +31,8 @@ jest.mock("@serverless/aws-iam-role", () =>
   })
 );
 
+require("@serverless/aws-iam-role");
+
 describe("publishVersion", () => {
   let component;
 
