@@ -199,7 +199,7 @@ __metadata:
     "@serverless/core": ^1.1.2
     "@types/archiver": ^5.1.1
     "@types/fs-extra": ^9.0.13
-    "@types/klaw-sync": ^6.0.0
+    "@types/klaw-sync": ^6.0.1
     "@types/lodash": ^4.14.176
     "@types/node": ^16.11.2
     "@types/ramda": ^0.27.45
@@ -275,7 +275,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/klaw-sync@npm:^6.0.0":
+"@types/klaw-sync@npm:^6.0.1":
   version: 6.0.1
   resolution: "@types/klaw-sync@npm:6.0.1"
   dependencies:
