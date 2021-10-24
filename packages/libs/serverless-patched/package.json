@@ -33,7 +33,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@serverless/cli": "^1.5.2",
+    "@serverless/cli": "^1.5.3",
     "find-up": "^5.0.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097",
