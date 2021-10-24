@@ -151,6 +151,7 @@ myNextApplication:
   component: "@sls-next/serverless-component@{version_here}"
   inputs:
     domain: "example.com" # sub-domain defaults to www
+    domainMinimumProtocolVersion: "TLSv1.2_2018" # can be omitted, defaults to "TLSv1.2_2018"
 ```
 
 You can also configure a `subdomain`:
@@ -540,7 +541,8 @@ The fourth cache behaviour handles next API requests `api/*`.
 | build.useV2Handler | `boolean` | `false` | **Experimental** Set this to true to use V2 handlers which starts to use genericized handlers. Note: this has the functionality of `separateApiLambda` and `disableOriginResponseHandler` so it should not be used together. Also, it is not completely optimized yet in terms of code size, but should still be performant. In the future, we will likely use this mode by default.
 | cloudfront | `object` | `{}` | Inputs to be passed to [aws-cloudfront](https://github.com/serverless-components/aws-cloudfront) |
 | certificateArn | `string` | `` | Specific certificate ARN to use for CloudFront distribution. Helpful if you have a wildcard SSL cert you wish to use. This currently works only in tandem with the`domain`input. Please check [custom CloudFront configuration](https://github.com/serverless-nextjs/serverless-next.js#custom-cloudfront-configuration) for how to specify`certificate`without needing to use the`domain`input (note that doing so will override any certificate due to the domain input). | 
-| domainType |`string` |`"both"` | Can be one of:`"apex"`- apex domain only, don't create a www subdomain.`"www"` - www domain only, don't create an apex subdomain.`"both"`- create both www and apex domains when either one is provided. | 
+| domainType |`string` |`"both"` | Can be one of:`"apex"`- apex domain only, don't create a www subdomain.`"www"` - www domain only, don't create an apex subdomain.`"both"`- create both www and apex domains when either one is provided. |
+| domainMinimumProtocolVersion |`string` |`"TLSv1.2_2018"` | Can be one of: `"SSLv3", "TLSv1", "TLSv1.1_2016", "TLSv1.2_2018", "TLSv1.2_2019", "TLSv1.2_2021" or "TLSv1_2016"`. See [reference](https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-viewercertificate.html). |
 | publicDirectoryCache |`boolean\|object`|`true` | Customize the`public`/`static`folder asset caching policy. Assigning an object with`value`and/or`test`lets you customize the caching policy and the types of files being cached. Assigning false disables caching | 
 | useServerlessTraceTarget |`boolean` |`false` | Use the experimental-serverless-trace target to build your next app. This is the same build target that Vercel Now uses. See this [RFC](https://github.com/vercel/next.js/pull/8246) for details. Note: while using this, you may need to set`NODE*ENV`variable to`production`. | | logLambdaExecutionTimes | `boolean` |`false` | Logs to CloudWatch the default handler performance metrics. | 
 | minifyHandlers |`boolean` |`false` | Use pre-built minified handlers to reduce code size. Does not minify custom handlers. | | deploy |`boolean` |`true` | Whether to deploy resources to AWS (available in the latest alpha). Useful if you just need the build outputs (Lambdas and assets) but want to deploy them yourself. Build outputs will be created in the`.serverless_nextjs`directory. You are then responsible to configure AWS yourself: setting CloudFront behaviors with Lambda function associations, uploading assets to S3 with the proper`Cache-Control`headers, etc. | 

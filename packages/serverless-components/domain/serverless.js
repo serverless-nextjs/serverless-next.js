@@ -10,7 +10,8 @@ const {
   configureDnsForCloudFrontDistribution,
   removeCloudFrontDomainDnsRecords,
   addDomainToCloudfrontDistribution,
-  removeDomainFromCloudFrontDistribution
+  removeDomainFromCloudFrontDistribution,
+  isMinimumProtocolVersionValid
 } = require("./utils");
 
 class Domain extends Component {
@@ -26,9 +27,14 @@ class Domain extends Component {
     inputs.domainType = inputs.domainType || "both";
     inputs.defaultCloudfrontInputs = inputs.defaultCloudfrontInputs || {};
     inputs.certificateArn = inputs.certificateArn || "";
+    inputs.domainMinimumProtocolVersion = inputs.domainMinimumProtocolVersion || 'TLSv1.2_2018'
 
     if (!inputs.domain) {
       throw Error(`"domain" is a required input.`);
+    }
+
+    if (!isMinimumProtocolVersionValid(inputs.domainMinimumProtocolVersion)) {
+      throw Error(`"minimumProtocolVersion" has in invalid value.`);
     }
 
     // TODO: Check if domain has changed.
@@ -45,6 +51,7 @@ class Domain extends Component {
     this.state.privateZone = JSON.parse(inputs.privateZone);
     this.state.domain = inputs.domain;
     this.state.subdomains = subdomains;
+    this.state.domainMinimumProtocolVersion = inputs.domainMinimumProtocolVersion
 
     await this.save();
 
@@ -126,12 +133,13 @@ class Domain extends Component {
         throw new Error(`Unsupported subdomain type ${awsS3Website}`);
       } else if (subdomain.type === "awsCloudFront") {
         this.context.debug(
-          `Adding ${subdomain.domain} domain to CloudFront distribution with URL "${subdomain.url}"`
+          `Adding ${subdomain.domain} domain to CloudFront distribution with URL "${subdomain.url}.\nTLS minimum protocol version: ${inputs.domainMinimumProtocolVersion}`
         );
         await addDomainToCloudfrontDistribution(
           clients.cf,
           subdomain,
           certificate.CertificateArn,
+          inputs.domainMinimumProtocolVersion,
           inputs.domainType,
           inputs.defaultCloudfrontInputs,
           this.context
@@ -209,6 +217,7 @@ class Domain extends Component {
         await removeDomainFromCloudFrontDistribution(
           clients.cf,
           domainState,
+          this.state.domainMinimumProtocolVersion,
           this.context
         );
 
