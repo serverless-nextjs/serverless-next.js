@@ -1333,7 +1333,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@hapi/accept@npm:5.0.2, @hapi/accept@npm:^5.0.1":
+"@hapi/accept@npm:5.0.2, @hapi/accept@npm:^5.0.2":
   version: 5.0.2
   resolution: "@hapi/accept@npm:5.0.2"
   dependencies:
@@ -1746,7 +1746,7 @@ __metadata:
     "@babel/plugin-proposal-class-properties": ^7.14.5
     "@babel/preset-env": ^7.15.8
     "@babel/preset-typescript": ^7.15.0
-    "@hapi/accept": ^5.0.1
+    "@hapi/accept": ^5.0.2
     "@jest/globals": ^27.3.1
     "@types/cookie": ^0.4.0
     "@types/fresh": ^0.5.0
