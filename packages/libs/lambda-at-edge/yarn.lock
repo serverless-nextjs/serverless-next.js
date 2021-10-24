@@ -2984,7 +2984,7 @@ __metadata:
     "@vercel/nft": ^0.17.0
     builtin-modules: ^3.2.0
     eslint: ^8.1.0
-    execa: ^5.0.1
+    execa: ^5.1.1
     fetch-mock-jest: ^1.5.1
     fs-extra: ^9.1.0
     get-stream: ^6.0.0
@@ -5421,7 +5421,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"execa@npm:^5.0.0, execa@npm:^5.0.1":
+"execa@npm:^5.0.0, execa@npm:^5.1.1":
   version: 5.1.1
   resolution: "execa@npm:5.1.1"
   dependencies:
