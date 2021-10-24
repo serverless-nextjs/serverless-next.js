@@ -6,7 +6,17 @@
     "packages/e2e-tests/**",
     "packages/deprecated/**",
     "packages/serverless-components/nextjs-component/examples/**",
+    "packages/serverless-components/nextjs-component/**",
+    "packages/serverless-components/nextjs-cdk-construct/examples/**",
     "packages/serverless-components/nextjs-component/**"
+  ],
+  "ignoreDeps": [
+    "@rollup/plugin-commonjs",
+    "@rollup/plugin-node-resolve",
+    "fs-extra",
+    "sharp",
+    "globby",
+    "node-fetch"
   ],
   "prHourlyLimit": 5
 }
