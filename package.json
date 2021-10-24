@@ -94,5 +94,29 @@
     "which": "^2.0.1",
     "lodash": "^4.17.21"
   },
-  "packageManager": "yarn@3.0.2"
+  "packageManager": "yarn@3.0.2",
+  "lerna": {
+    "version": "3.5.0-alpha.8",
+    "npmClient": "yarn",
+    "command": {
+      "publish": {
+        "ignoreChanges": [
+          "*.md"
+        ],
+        "message": "chore(release): publish"
+      },
+      "bootstrap": {
+        "ignore": "component-*",
+        "npmClientArgs": [
+          "--no-package-lock"
+        ]
+      }
+    },
+    "packages": [
+      "packages/compat-layers/*",
+      "packages/serverless-components/*",
+      "packages/libs/*",
+      "packages/deprecated/*"
+    ]
+  }
 }
