@@ -6,7 +6,7 @@ name: CI
 
 on:
   push:
-    branches: [master, renovate/**]
+    branches: [master]
   pull_request:
     branches: [master]
 
