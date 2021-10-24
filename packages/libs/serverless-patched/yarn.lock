@@ -487,7 +487,7 @@ __metadata:
     "@types/node": ^16.11.2
     find-up: ^5.0.0
     patch-package: ^6.4.7
-    postinstall-postinstall: ^2.1.0
+    postinstall-postinstall: "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097"
     rimraf: ^3.0.2
     serverless: ^2.64.1
     typescript: ^4.4.4
@@ -4507,10 +4507,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"postinstall-postinstall@npm:^2.1.0":
-  version: 2.1.0
-  resolution: "postinstall-postinstall@npm:2.1.0"
-  checksum: e1d34252cf8d2c5641c7d2db7426ec96e3d7a975f01c174c68f09ef5b8327bc8d5a9aa2001a45e693db2cdbf69577094d3fe6597b564ad2d2202b65fba76134b
+"postinstall-postinstall@simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097":
+  version: 2.0.0
+  resolution: "postinstall-postinstall@https://github.com/simply-vat/postinstall-postinstall.git#commit=59b0064272e72ab62eab205d6c63e7e60495b097"
+  checksum: 778e2152ef317b41dd2389752063ef63449a315d71276f391b4ec046092027e89abef3ab73aa1b1db270a506d623c5cfedbfbf282d34a101e7692fee41296702
   languageName: node
   linkType: hard
 
