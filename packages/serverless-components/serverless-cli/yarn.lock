@@ -303,7 +303,7 @@ __metadata:
     ansi-escapes: ^5.0.0
     babel-eslint: 10.1.0
     chalk: ^4.1.2
-    chokidar: ^3.4.1
+    chokidar: ^3.5.2
     dotenv: ^10.0.0
     eslint: 7.32.0
     eslint-config-prettier: ^8.3.0
@@ -883,7 +883,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chokidar@npm:^3.4.1":
+"chokidar@npm:^3.5.2":
   version: 3.5.2
   resolution: "chokidar@npm:3.5.2"
   dependencies:
