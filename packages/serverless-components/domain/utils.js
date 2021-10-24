@@ -1,7 +1,6 @@
 const aws = require("aws-sdk");
 const { utils } = require("@serverless/core");
 
-const DEFAULT_MINIMUM_PROTOCOL_VERSION = "TLSv1.2_2018";
 const HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"; // this is a constant that you can get from here https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 
 /**
@@ -393,6 +392,7 @@ const addDomainToCloudfrontDistribution = async (
   cf,
   subdomain,
   certificateArn,
+  domainMinimumProtocolVersion,
   domainType,
   defaultCloudfrontInputs,
   context
@@ -438,7 +438,7 @@ const addDomainToCloudfrontDistribution = async (
   params.DistributionConfig.ViewerCertificate = {
     ACMCertificateArn: certificateArn,
     SSLSupportMethod: "sni-only",
-    MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION,
+    MinimumProtocolVersion: domainMinimumProtocolVersion,
     Certificate: certificateArn,
     CertificateSource: "acm",
     ...defaultCloudfrontInputs.viewerCertificate
@@ -462,6 +462,7 @@ const addDomainToCloudfrontDistribution = async (
 const removeDomainFromCloudFrontDistribution = async (
   cf,
   subdomain,
+  domainMinimumProtocolVersion,
   context
 ) => {
   const params = await cf
@@ -481,7 +482,7 @@ const removeDomainFromCloudFrontDistribution = async (
 
   params.DistributionConfig.ViewerCertificate = {
     SSLSupportMethod: "sni-only",
-    MinimumProtocolVersion: DEFAULT_MINIMUM_PROTOCOL_VERSION
+    MinimumProtocolVersion: domainMinimumProtocolVersion
   };
 
   context.debug(
@@ -498,6 +499,13 @@ const removeDomainFromCloudFrontDistribution = async (
   };
 };
 
+const isMinimumProtocolVersionValid = (minimumProtocolVersion) => {
+  // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-viewercertificate.html
+  const validMinimumProtocolVersions = /(^SSLv3$|^TLSv1$|^TLSv1.1_2016$|^TLSv1.2_2018$|^TLSv1.2_2019$|^TLSv1.2_2021$|^TLSv1_2016$)/g;
+  const isVersionValid = minimumProtocolVersion.match(validMinimumProtocolVersions)?.length === 1
+  return isVersionValid
+}
+
 module.exports = {
   getClients,
   prepareSubdomains,
@@ -510,5 +518,6 @@ module.exports = {
   configureDnsForCloudFrontDistribution,
   removeCloudFrontDomainDnsRecords,
   addDomainToCloudfrontDistribution,
-  removeDomainFromCloudFrontDistribution
+  removeDomainFromCloudFrontDistribution,
+  isMinimumProtocolVersionValid
 };

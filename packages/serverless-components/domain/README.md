@@ -17,6 +17,7 @@ domain:
       www: ${websiteComponentInstance}
       api: ${backendComponentInstance}
       admin: ${anotherWebsiteComponentInstance}
+    domainMinimumProtocolVersion: "TLSv1.2_2018"
 ```
 
 ### Set-Up
