@@ -837,7 +837,7 @@ __metadata:
     globby: ^11.0.4
     jest: ^27.3.1
     lodash: ^4.17.21
-    ramda: ^0.27.0
+    ramda: ^0.27.1
     rimraf: ^3.0.2
     typescript: ^4.4.4
   peerDependencies:
@@ -4866,7 +4866,7 @@ fsevents@^2.3.2:
   languageName: node
   linkType: hard
 
-"ramda@npm:^0.27.0":
+"ramda@npm:^0.27.1":
   version: 0.27.1
   resolution: "ramda@npm:0.27.1"
   checksum: 31a0c0ef739b2525d7615f84cbb5d3cb89ee0c795469b711f729ea1d8df0dccc3cd75d3717a1e9742d42315ce86435680b7c87743eb7618111c60c144a5b8059
