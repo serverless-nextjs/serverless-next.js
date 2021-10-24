@@ -3468,7 +3468,7 @@ __metadata:
     execa: ^5.1.1
     fetch-mock-jest: ^1.5.1
     fs-extra: ^9.1.0
-    get-stream: ^6.0.0
+    get-stream: ^6.0.1
     jest: ^27.3.1
     klaw: ^3.0.0
     next: ^11.1.2
@@ -6281,7 +6281,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"get-stream@npm:^6.0.0":
+"get-stream@npm:^6.0.0, get-stream@npm:^6.0.1":
   version: 6.0.1
   resolution: "get-stream@npm:6.0.1"
   checksum: e04ecece32c92eebf5b8c940f51468cd53554dcbb0ea725b2748be583c9523d00128137966afce410b9b051eb2ef16d657cd2b120ca8edafcf5a65e81af63cad
