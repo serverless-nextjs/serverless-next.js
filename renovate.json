@@ -26,5 +26,6 @@
     "node-fetch"
   ],
   "prHourlyLimit": 5,
-  "rangeStrategy": "bump"
+  "rangeStrategy": "bump",
+  "rebaseWhen": "conflicted"
 }
