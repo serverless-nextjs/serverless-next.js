@@ -1,3 +1,10 @@
 .serverless_nextjs
 !__tests__/fixtures/**
 __tests__/fixtures/**/.serverless_nextjs
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

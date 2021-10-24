@@ -16,7 +16,7 @@ dist
 .package-lock.json
 yarn-error.log
 instructions.txt
-.pnp.*
+/.pnp.*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins

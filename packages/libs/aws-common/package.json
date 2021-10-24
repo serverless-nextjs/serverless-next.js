@@ -35,10 +35,14 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.37.0",
     "@aws-sdk/client-sqs": "^3.37.0",
-    "@sls-next/core": "link:../core"
+    "@sls-next/core": "link:../core",
+    "get-stream": "^6.0.1"
   },
   "devDependencies": {
+    "@jest/globals": "^27.3.1",
+    "@types/jest": "^27.0.2",
     "@types/node": "^16.11.2",
+    "jest": "^27.3.1",
     "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   }

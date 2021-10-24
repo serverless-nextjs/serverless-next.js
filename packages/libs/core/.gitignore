@@ -1,5 +1,3 @@
-!tests/**
-dist/
 .pnp.*
 .yarn/*
 !.yarn/patches
