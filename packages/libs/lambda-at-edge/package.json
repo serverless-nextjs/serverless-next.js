@@ -80,7 +80,7 @@
     "webpack": "^5.59.1"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.37.0",
+    "@aws-sdk/client-s3": "^3.38.0",
     "@aws-sdk/client-sqs": "^3.37.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
