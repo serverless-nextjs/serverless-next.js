@@ -849,10 +849,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:>=13.7.0, @types/node@npm:^15.12.5":
+"@types/node@npm:*, @types/node@npm:>=13.7.0":
   version: 15.12.5
   resolution: "@types/node@npm:15.12.5"
   checksum: 4550941a5db67f21bf1c54b2f76ef6fb56ced08583b6049fceef5972ef73791225c41b9a30ce36f496fded284dd736973b5e2107f4bd036d41f35550e3af3450
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:^16.11.4":
+  version: 16.11.4
+  resolution: "@types/node@npm:16.11.4"
+  checksum: 96e08c0f8bb17601c18640a8eac61e2f236fe0c8a6b01a9221c10749157358fb29fdef4b5e264f72559e72f9830e6093f3ab5fef2df90afdad562ffa45ac534c
   languageName: node
   linkType: hard
 
@@ -1686,7 +1693,7 @@ __metadata:
     "@octokit/rest": ^18.6.4
     "@rollup/plugin-commonjs": ^18.1.0
     "@rollup/plugin-node-resolve": ^10.0.0
-    "@types/node": ^15.12.5
+    "@types/node": ^16.11.4
     rollup: ^2.52.4
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: ^0.30.0
