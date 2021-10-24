@@ -21,11 +21,13 @@
     "test": "jest",
     "clean": "yarn rimraf dist",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "yarn clean && yarn build"
+    "prepack": "yarn clean && yarn build"
   },
   "devDependencies": {
+    "@jest/globals": "^27.3.1",
     "@types/archiver": "^5.1.0",
     "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.176",
     "@types/node": "^16.11.2",
     "@types/ramda": "^0.27.45",

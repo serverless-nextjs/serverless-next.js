@@ -4,10 +4,6 @@ import { createCloudFrontEvent } from "../test-utils";
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
-jest.mock("jsonwebtoken", () => ({
-  verify: jest.fn()
-}));
-
 jest.mock(
   "../../src/prerender-manifest.json",
   () => require("./prerender-manifest.json"),

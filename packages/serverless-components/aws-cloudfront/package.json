@@ -11,7 +11,7 @@
     "lint": "eslint . --fix --cache",
     "clean": "yarn rimraf dist",
     "build": "tsc -p tsconfig.build.json",
-    "prepare": "yarn clean && yarn build"
+    "prepack": "yarn clean && yarn build"
   },
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "MIT",

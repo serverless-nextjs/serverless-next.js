@@ -21,6 +21,7 @@ import { performance } from "perf_hooks";
 import { PlatformClient } from "./platform";
 import { createRedirectResponse } from "./route/redirect";
 import { redirect } from "./handle/redirect";
+import fetch from "node-fetch";
 
 const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
@@ -49,8 +50,6 @@ const createExternalRewriteResponse = async (
   platformClient: PlatformClient,
   body?: string
 ): Promise<void> => {
-  const { default: fetch } = await import("node-fetch");
-
   // Set request headers
   const reqHeaders: any = {};
   Object.assign(reqHeaders, req.headers);

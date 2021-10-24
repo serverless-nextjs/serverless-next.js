@@ -17,10 +17,11 @@
     "directory": "packages/libs/core"
   },
   "scripts": {
-    "prepare": "yarn clean && yarn build",
+    "prepack": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.module.json && yarn copy-sharp-modules",
     "clean": "yarn rimraf dist",
-    "copy-sharp-modules": "ts-node --project tsconfig.scripts.json scripts/copy-sharp-modules.ts"
+    "copy-sharp-modules": "ts-node --project tsconfig.scripts.json scripts/copy-sharp-modules.ts",
+    "test": "jest"
   },
   "keywords": [
     "Next.js",
@@ -42,7 +43,7 @@
     "is-animated": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "next": "^11.1.2",
-    "node-fetch": "2.6.5",
+    "node-fetch": "^2.6.5",
     "normalize-path": "^3.0.0",
     "path-to-regexp": "^6.1.0",
     "react": "^17.0.2",
@@ -51,21 +52,33 @@
     "sharp": "^0.29.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.15.8",
+    "@babel/plugin-proposal-class-properties": "^7.14.5",
+    "@babel/preset-env": "^7.15.8",
+    "@babel/preset-typescript": "^7.15.0",
+    "@jest/globals": "^27.3.1",
     "@types/cookie": "^0.4.0",
     "@types/fresh": "^0.5.0",
     "@types/fs-extra": "^9.0.13",
+    "@types/jest": "^27.0.2",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/node": "^16.11.2",
-    "@types/node-fetch": "3.0.3",
     "@types/normalize-path": "^3.0.0",
     "@types/react": "^17.0.31",
     "@types/react-dom": "^17.0.10",
     "@types/send": "^0.17.1",
     "@types/sharp": "^0.29.2",
     "@types/zen-observable": "^0.8.3",
+    "cookie": "^0.4.1",
     "fetch-mock-jest": "^1.5.1",
+    "jest": "^27.3.1",
     "rimraf": "^3.0.2",
     "ts-node": "^10.3.0",
     "typescript": "^4.4.4"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "/sharp_node_modules/"
+    ]
   }
 }

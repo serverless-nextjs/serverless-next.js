@@ -15,7 +15,7 @@
     "directory": "packages/libs/serverless-patched"
   },
   "scripts": {
-    "prepare": "yarn clean && yarn build",
+    "prepack": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json",
     "clean": "yarn rimraf dist",
     "postinstall": "patch-package"
@@ -36,7 +36,7 @@
     "@serverless/cli": "^1.5.2",
     "find-up": "^5.0.0",
     "patch-package": "^6.4.7",
-    "postinstall-postinstall": "^2.1.0",
+    "postinstall-postinstall": "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097",
     "serverless": "^2.64.1"
   },
   "devDependencies": {
@@ -44,7 +44,5 @@
     "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
   },
-  "bin": {
-    "serverless-patched": "./dist/serverless-patched.js"
-  }
+  "bin": "./dist/serverless-patched.js"
 }

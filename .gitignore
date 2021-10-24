@@ -16,3 +16,10 @@ dist
 .package-lock.json
 yarn-error.log
 instructions.txt
+.pnp.*
+.yarn/*
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions

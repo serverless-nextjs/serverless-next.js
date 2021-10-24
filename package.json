@@ -14,17 +14,17 @@
     "api gateway"
   ],
   "scripts": {
-    "prepare": "husky install",
+    "prepack": "husky install",
     "test": "jest --runInBand --coverage",
-    "packages-install": "lerna exec -- yarn install --frozen-lockfile",
-    "packages-build": "lerna run build",
+    "packages-install": "lerna exec -- yarn install --immutable --inline-builds",
+    "packages-prepack": "lerna run prepack",
     "test:watch": "yarn test --watch --collect-coverage=false",
     "check-gh-token": ": \"${GH_TOKEN:?Please set GH_TOKEN to a GitHub personal token that can create releases.}\"",
     "prerelease": "yarn check-gh-token && lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
     "graduate": "yarn check-gh-token && lerna version --conventional-commits --conventional-graduate --exact --create-release github && lerna publish from-git",
     "lint": "eslint .",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
-    "postinstall": "yarn packages-install && opencollective-postinstall",
+    "build": "yarn packages-install && yarn packages-prepack && opencollective-postinstall",
     "docs": "cd documentation && yarn && yarn build",
     "handlers:upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts",
     "handlers:comment-handler-sizes": "ts-node scripts/comment-handler-sizes.ts"
@@ -44,6 +44,7 @@
     "@babel/plugin-proposal-class-properties": "^7.13.0",
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "^7.15.0",
+    "@jest/test-sequencer": "^27.3.1",
     "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
     "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.13",
@@ -61,6 +62,7 @@
     "eslint-plugin-promise": "5.1.0",
     "husky": "^7.0.2",
     "jest": "^27.3.1",
+    "jest-pnp-resolver": "^1.2.2",
     "lerna": "^4.0.0",
     "lint-staged": "^11.2.0",
     "next": "^11.1.2",
@@ -71,73 +73,10 @@
     "ts-node": "^10.3.0",
     "typescript": "^4.4.4"
   },
-  "jest": {
-    "clearMocks": true,
-    "collectCoverage": true,
-    "collectCoverageFrom": [
-      "<rootDir>/packages/**/*.{js,ts}"
-    ],
-    "moduleNameMapper": {
-      "fs-extra": "<rootDir>/node_modules/fs-extra",
-      "@sls-next/core/package.json": "<rootDir>/packages/libs/core/package.json",
-      "@sls-next/core/dist/module(.*)": "<rootDir>/packages/libs/core/src$1",
-      "@sls-next/core/dist(.*)": "<rootDir>/packages/libs/core/src$1",
-      "@sls-next/core(.*)": "<rootDir>/packages/libs/core/src$1"
-    },
-    "coverageDirectory": "<rootDir>/coverage/",
-    "coveragePathIgnorePatterns": [
-      "<rootDir>/packages/deprecated/serverless-plugin/utils/yml/cfSchema.js",
-      "<rootDir>/packages/deprecated/serverless-plugin/utils/test",
-      "/.serverless_nextjs/",
-      "/fixtures/",
-      "/fixture/",
-      "/examples/",
-      "/dist/",
-      "/e2e-tests/",
-      "/tests/",
-      "/scripts/",
-      "babel.config.js",
-      "jest.config.js",
-      "<rootDir>/packages/serverless-components/aws-s3",
-      "<rootDir>/packages/libs/serverless-patched",
-      "<rootDir>/packages/libs/lambda-at-edge/src/render/renderStaticPage.ts",
-      "<rootDir>/packages/libs/lambda-at-edge/src/default-handler-v2.ts",
-      "<rootDir>/packages/libs/lambda-at-edge/src/regeneration-handler-v2.ts",
-      "<rootDir>/packages/libs/core/src/defaultHandler.ts",
-      "<rootDir>/packages/libs/core/src/regenerationHandler.ts",
-      "<rootDir>/packages/libs/core/src/platform/platformClient.ts",
-      "<rootDir>/packages/libs/core/src/build/builder.ts",
-      "<rootDir>/packages/libs/aws-common/src/awsPlatformClient.ts",
-      "<rootDir>/packages/libs/lambda/"
-    ],
-    "watchPathIgnorePatterns": [
-      "/fixture/",
-      "/fixtures/"
-    ],
-    "testPathIgnorePatterns": [
-      "<rootDir>/packages/deprecated/serverless-plugin/*",
-      "/.next/",
-      "/node_modules/",
-      "/fixtures/",
-      "/fixture/",
-      "/examples/",
-      "/integration/",
-      "/cypress/",
-      "/sharp_node_modules/",
-      "aws-sdk.mock.ts"
-    ],
-    "setupFiles": [
-      "<rootDir>/jest.setup.js"
-    ],
-    "modulePathIgnorePatterns": [
-      "/sharp_node_modules/"
-    ],
-    "testSequencer": "<rootDir>/jest-sequencer.js"
-  },
   "dependencies": {
-    "opencollective-postinstall": "^2.0.3",
     "lodash": "^4.17.21",
-    "node-fetch": "^2.6.1"
+    "node-fetch": "^2.6.1",
+    "opencollective-postinstall": "^2.0.3"
   },
   "collective": {
     "type": "opencollective",
@@ -154,5 +93,6 @@
   "resolutions": {
     "which": "^2.0.1",
     "lodash": "^4.17.21"
-  }
+  },
+  "packageManager": "yarn@3.0.2"
 }
