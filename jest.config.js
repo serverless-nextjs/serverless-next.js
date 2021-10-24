@@ -3,6 +3,7 @@ module.exports = {
   collectCoverage: true,
   collectCoverageFrom: ["<rootDir>/packages/**/*.{js,ts}"],
   moduleNameMapper: {
+    "fs-extra": "<rootDir>/node_modules/fs-extra",
     "@sls-next/core/package.json": "<rootDir>/packages/libs/core/package.json",
     "@sls-next/core/dist/module(.*)": "<rootDir>/packages/libs/core/src$1",
     "@sls-next/core/dist(.*)": "<rootDir>/packages/libs/core/src$1",
