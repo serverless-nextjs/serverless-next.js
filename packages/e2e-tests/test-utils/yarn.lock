@@ -693,6 +693,7 @@ __metadata:
     "@types/uuid": 8.3.0
     aws-sdk: 2.758.0
     cypress: 7.2.0
+    node-fetch: ^2.6.5
     ts-node: 9.0.0
     typescript: 4.0.2
     uuid: 8.3.0
@@ -1459,6 +1460,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:^2.6.5":
+  version: 2.6.5
+  resolution: "node-fetch@npm:2.6.5"
+  dependencies:
+    whatwg-url: ^5.0.0
+  checksum: 4e83db450718e70762882f00d96f647a7f2f3170035225934ddd5450cb1d91ef339ceb180d3687bcb0a6ed78c3fa5636ce8d3e44ec81ab59e0224ebf8965f65f
+  languageName: node
+  linkType: hard
+
 "npm-run-path@npm:^4.0.0":
   version: 4.0.1
   resolution: "npm-run-path@npm:4.0.1"
@@ -1954,6 +1964,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"tr46@npm:~0.0.3":
+  version: 0.0.3
+  resolution: "tr46@npm:0.0.3"
+  checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
+  languageName: node
+  linkType: hard
+
 "ts-node@npm:9.0.0":
   version: 9.0.0
   resolution: "ts-node@npm:9.0.0"
@@ -2109,6 +2126,23 @@ typescript@4.0.2:
     core-util-is: 1.0.2
     extsprintf: ^1.2.0
   checksum: c431df0bedf2088b227a4e051e0ff4ca54df2c114096b0c01e1cbaadb021c30a04d7dd5b41ab277bcd51246ca135bf931d4c4c796ecae7a4fef6d744ecef36ea
+  languageName: node
+  linkType: hard
+
+"webidl-conversions@npm:^3.0.0":
+  version: 3.0.1
+  resolution: "webidl-conversions@npm:3.0.1"
+  checksum: c92a0a6ab95314bde9c32e1d0a6dfac83b578f8fa5f21e675bc2706ed6981bc26b7eb7e6a1fab158e5ce4adf9caa4a0aee49a52505d4d13c7be545f15021b17c
+  languageName: node
+  linkType: hard
+
+"whatwg-url@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "whatwg-url@npm:5.0.0"
+  dependencies:
+    tr46: ~0.0.3
+    webidl-conversions: ^3.0.0
+  checksum: b8daed4ad3356cc4899048a15b2c143a9aed0dfae1f611ebd55073310c7b910f522ad75d727346ad64203d7e6c79ef25eafd465f4d12775ca44b90fa82ed9e2c
   languageName: node
   linkType: hard
 

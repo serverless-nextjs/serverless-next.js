@@ -2,6 +2,7 @@
 
 // Script to run e2e tests in a CI environment
 
+// @ts-ignore
 import fetch from "node-fetch";
 import { v4 as uuidv4 } from "uuid";
 import { execSync } from "child_process";
