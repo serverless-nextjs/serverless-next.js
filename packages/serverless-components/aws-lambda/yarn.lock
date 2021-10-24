@@ -825,7 +825,7 @@ __metadata:
     "@serverless/aws-lambda-layer": ^1.0.0
     "@serverless/aws-s3": ^4.2.0
     "@serverless/core": ^1.1.2
-    "@types/archiver": ^5.1.0
+    "@types/archiver": ^5.1.1
     "@types/fs-extra": ^9.0.13
     "@types/jest": ^27.0.2
     "@types/lodash": ^4.14.176
@@ -862,7 +862,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/archiver@npm:^5.1.0":
+"@types/archiver@npm:^5.1.1":
   version: 5.3.0
   resolution: "@types/archiver@npm:5.3.0"
   dependencies:

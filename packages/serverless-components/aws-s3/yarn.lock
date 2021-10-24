@@ -197,7 +197,7 @@ __metadata:
   resolution: "@sls-next/aws-s3@workspace:."
   dependencies:
     "@serverless/core": ^1.1.2
-    "@types/archiver": ^5.1.0
+    "@types/archiver": ^5.1.1
     "@types/fs-extra": ^9.0.13
     "@types/klaw-sync": ^6.0.0
     "@types/lodash": ^4.14.176
@@ -231,12 +231,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/archiver@npm:^5.1.0":
-  version: 5.1.1
-  resolution: "@types/archiver@npm:5.1.1"
+"@types/archiver@npm:^5.1.1":
+  version: 5.3.0
+  resolution: "@types/archiver@npm:5.3.0"
   dependencies:
     "@types/glob": "*"
-  checksum: e3f1cb17ebcc5ff6be0c711305d3ed5e5248d514cc85e8440c3ae4bde04f761dcb772f549e2299c8ae325d88045e62ae34c0b3dd850eec6b39864c055d7aa634
+  checksum: 00b8b1d4aeac8b3ac5c72b09d4c01334851a02b4bc27610cca20a8c2385af06f92d0e3d17d3e95a3c50e8c8d789a947e072ab50beef872a1b64d91895750d0cf
   languageName: node
   linkType: hard
 
