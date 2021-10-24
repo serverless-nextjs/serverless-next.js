@@ -21,7 +21,7 @@
     "ramda": "^0.27.1"
   },
   "peerDependencies": {
-    "@babel/core": "7.14.6",
+    "@babel/core": "7.15.8",
     "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.1012.0"
   },
