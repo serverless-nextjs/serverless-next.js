@@ -40,7 +40,7 @@ __metadata:
     "@types/mime-types": ^2.1.1
     "@types/node": ^16.11.4
     "@types/normalize-path": ^3.0.0
-    aws-sdk: ^2.1012.0
+    aws-sdk: ^2.1013.0
     fast-glob: ^3.2.7
     fs-extra: ^9.1.0
     mime-types: ^2.1.33
@@ -88,9 +88,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1012.0":
-  version: 2.1012.0
-  resolution: "aws-sdk@npm:2.1012.0"
+"aws-sdk@npm:^2.1013.0":
+  version: 2.1013.0
+  resolution: "aws-sdk@npm:2.1013.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -101,7 +101,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: d234ced3083832b34c3a6e08b82def23354d46a250859b3d681990172e5ab23b2a6a3c0c1efd381165595a0508d2817695e6ea8bdbe54a1cb330ffe658be7a33
+  checksum: b4728bad6cffe0fe0691155d344c1235c1f0e7d62a2798f2ae0c094c4f7bbbbcb1173bea4170929fdc3899092feeaef5fea31582454de987c69c19ea1138ce17
   languageName: node
   linkType: hard
 

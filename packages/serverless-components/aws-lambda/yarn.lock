@@ -832,7 +832,7 @@ __metadata:
     "@types/node": ^16.11.2
     "@types/ramda": ^0.27.45
     archiver: ^5.3.0
-    aws-sdk: ^2.1012.0
+    aws-sdk: ^2.1013.0
     fs-extra: ^9.1.0
     globby: ^11.0.4
     jest: ^27.3.1
@@ -842,7 +842,7 @@ __metadata:
     typescript: ^4.4.4
   peerDependencies:
     "@serverless/core": ^1.1.2
-    aws-sdk: ^2.1012.0
+    aws-sdk: ^2.1013.0
   languageName: unknown
   linkType: soft
 
@@ -1361,7 +1361,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1012.0, aws-sdk@npm:^2.387.0, aws-sdk@npm:^2.488.0":
+"aws-sdk@npm:^2.1013.0":
+  version: 2.1013.0
+  resolution: "aws-sdk@npm:2.1013.0"
+  dependencies:
+    buffer: 4.9.2
+    events: 1.1.1
+    ieee754: 1.1.13
+    jmespath: 0.15.0
+    querystring: 0.2.0
+    sax: 1.2.1
+    url: 0.10.3
+    uuid: 3.3.2
+    xml2js: 0.4.19
+  checksum: b4728bad6cffe0fe0691155d344c1235c1f0e7d62a2798f2ae0c094c4f7bbbbcb1173bea4170929fdc3899092feeaef5fea31582454de987c69c19ea1138ce17
+  languageName: node
+  linkType: hard
+
+"aws-sdk@npm:^2.387.0, aws-sdk@npm:^2.488.0":
   version: 2.1012.0
   resolution: "aws-sdk@npm:2.1012.0"
   dependencies:
