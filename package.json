@@ -91,7 +91,7 @@
     ]
   },
   "resolutions": {
-    "which": "^2.0.1",
+    "which": "^2.0.2",
     "lodash": "^4.17.21"
   },
   "packageManager": "yarn@3.0.2",
