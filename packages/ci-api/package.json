@@ -22,7 +22,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
-    "serverless": "^2.49.0",
+    "serverless": "^2.64.1",
     "@types/node": "^16.11.4",
     "rollup": "^2.52.4",
     "rollup-plugin-terser": "^7.0.2",
