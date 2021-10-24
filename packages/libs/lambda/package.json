@@ -41,6 +41,7 @@
     "@rollup/plugin-node-resolve": "^10.0.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
+    "@types/fs-extra": "^9.0.13",
     "esbuild": "^0.13.8",
     "fs-extra": "^9.1.0",
     "rollup": "^2.58.0",

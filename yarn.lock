@@ -3153,18 +3153,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge::locator=serverless-nextjs-monorepo%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sls-next/lambda-at-edge@link:./packages/libs/lambda-at-edge::locator=serverless-nextjs-monorepo%40workspace%3A."
-  languageName: node
-  linkType: soft
-
-"@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat::locator=serverless-nextjs-monorepo%40workspace%3A.":
-  version: 0.0.0-use.local
-  resolution: "@sls-next/next-aws-cloudfront@link:./packages/compat-layers/lambda-at-edge-compat::locator=serverless-nextjs-monorepo%40workspace%3A."
-  languageName: node
-  linkType: soft
-
 "@szmarczak/http-timer@npm:^1.1.2":
   version: 1.1.2
   resolution: "@szmarczak/http-timer@npm:1.1.2"
@@ -3324,15 +3312,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/fs-extra@npm:^9.0.13":
-  version: 9.0.13
-  resolution: "@types/fs-extra@npm:9.0.13"
-  dependencies:
-    "@types/node": "*"
-  checksum: add79e212acd5ac76b97b9045834e03a7996aef60a814185e0459088fd290519a3c1620865d588fa36c4498bf614210d2a703af5cf80aa1dbc125db78f6edac3
-  languageName: node
-  linkType: hard
-
 "@types/graceful-fs@npm:^4.1.2":
   version: 4.1.5
   resolution: "@types/graceful-fs@npm:4.1.5"
@@ -3400,7 +3379,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:^4.14.123, @types/lodash@npm:^4.14.176":
+"@types/lodash@npm:^4.14.123":
   version: 4.14.176
   resolution: "@types/lodash@npm:4.14.176"
   checksum: 9e949704dfffab60365b5cdca0477926af6eabe82c64b7be8f74b3a117bb373d58371be962c2b159dd0cf8fad49a7dcacc748564aea4ce6b6883c197a6f0bfa8
@@ -3425,16 +3404,6 @@ __metadata:
   version: 1.2.2
   resolution: "@types/minimist@npm:1.2.2"
   checksum: b8da83c66eb4aac0440e64674b19564d9d86c80ae273144db9681e5eeff66f238ade9515f5006ffbfa955ceff8b89ad2bd8ec577d7caee74ba101431fb07045d
-  languageName: node
-  linkType: hard
-
-"@types/node-fetch@npm:^2.5.10":
-  version: 2.5.12
-  resolution: "@types/node-fetch@npm:2.5.12"
-  dependencies:
-    "@types/node": "*"
-    form-data: ^3.0.0
-  checksum: ad63c85ba6a9477b8e057ec8682257738130d98e8ece4e31141789bd99df9d9147985cc8bc0cb5c8983ed5aa6bb95d46df23d1e055f4ad5cf8b82fc69cf626c7
   languageName: node
   linkType: hard
 
@@ -4313,7 +4282,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1011.0, aws-sdk@npm:^2.1012.0":
+"aws-sdk@npm:^2.1011.0":
   version: 2.1012.0
   resolution: "aws-sdk@npm:2.1012.0"
   dependencies:
@@ -13236,17 +13205,11 @@ __metadata:
     "@babel/preset-env": ^7.15.8
     "@babel/preset-typescript": ^7.15.0
     "@jest/test-sequencer": ^27.3.1
-    "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge"
-    "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat"
-    "@types/fs-extra": ^9.0.13
     "@types/jest": ^27.0.2
-    "@types/lodash": ^4.14.176
     "@types/node": ^16.11.2
-    "@types/node-fetch": ^2.5.10
     "@types/webpack": ^5.28.0
     "@typescript-eslint/eslint-plugin": ^4.33.0
     "@typescript-eslint/parser": ^4.33.0
-    aws-sdk: ^2.1012.0
     eslint: ^7.3.1
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
@@ -13256,9 +13219,7 @@ __metadata:
     jest-pnp-resolver: ^1.2.2
     lerna: ^4.0.0
     lint-staged: ^11.2.0
-    lodash: ^4.17.21
     next: ^11.1.2
-    node-fetch: ^2.6.1
     opencollective-postinstall: ^2.0.3
     prettier: ^2.4.1
     react: ^17.0.2
