@@ -827,6 +827,7 @@ __metadata:
     "@serverless/core": ^1.1.2
     "@types/archiver": ^5.1.0
     "@types/fs-extra": ^9.0.13
+    "@types/jest": ^27.0.2
     "@types/lodash": ^4.14.176
     "@types/node": ^16.11.2
     "@types/ramda": ^0.27.45
@@ -961,6 +962,16 @@ __metadata:
   dependencies:
     "@types/istanbul-lib-report": "*"
   checksum: f1ad54bc68f37f60b30c7915886b92f86b847033e597f9b34f2415acdbe5ed742fa559a0a40050d74cdba3b6a63c342cac1f3a64dba5b68b66a6941f4abd7903
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:^27.0.2":
+  version: 27.0.2
+  resolution: "@types/jest@npm:27.0.2"
+  dependencies:
+    jest-diff: ^27.0.0
+    pretty-format: ^27.0.0
+  checksum: 814ad5f5d2f277849f47e52906da4b745758e555630fc8cb46a071bde648eefeffb1b35710c530a8cea7fc4ea7c1d813812c120484bf7902ab6c5e473cdd49c9
   languageName: node
   linkType: hard
 
@@ -3399,7 +3410,7 @@ fsevents@^2.3.2:
   languageName: node
   linkType: hard
 
-"jest-diff@npm:^27.3.1":
+"jest-diff@npm:^27.0.0, jest-diff@npm:^27.3.1":
   version: 27.3.1
   resolution: "jest-diff@npm:27.3.1"
   dependencies:
@@ -4731,7 +4742,7 @@ fsevents@^2.3.2:
   languageName: node
   linkType: hard
 
-"pretty-format@npm:^27.3.1":
+"pretty-format@npm:^27.0.0, pretty-format@npm:^27.3.1":
   version: 27.3.1
   resolution: "pretty-format@npm:27.3.1"
   dependencies:
