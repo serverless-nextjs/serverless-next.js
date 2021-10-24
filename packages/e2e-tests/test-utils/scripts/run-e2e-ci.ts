@@ -2,11 +2,14 @@
 
 // Script to run e2e tests in a CI environment
 
+// FIXME: not sure why TS types cannot be found
 // @ts-ignore
 import fetch from "node-fetch";
+// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { execSync } from "child_process";
+// @ts-ignore
 import * as AWS from "aws-sdk";
+import { execSync } from "child_process";
 import * as fs from "fs";
 import * as path from "path";
 

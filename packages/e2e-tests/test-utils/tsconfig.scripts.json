@@ -14,5 +14,5 @@
     "module": "commonjs",
     "rootDir": "./"
   },
-  "include": ["**/*.ts"]
+  "include": ["scripts"]
 }
