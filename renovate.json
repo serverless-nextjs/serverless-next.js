@@ -35,7 +35,8 @@
     "fs-extra",
     "sharp",
     "globby",
-    "node-fetch"
+    "node-fetch",
+    "@types/node-fetch"
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
