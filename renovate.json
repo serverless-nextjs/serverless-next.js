@@ -15,6 +15,18 @@
     {
       "packagePatterns": ["@aws-cdk"],
       "groupName": "aws-cdk"
+    },
+    {
+      "packagePatterns": ["eslint"],
+      "groupName": "eslint"
+    },
+    {
+      "packagePatterns": ["react"],
+      "groupName": "react"
+    },
+    {
+      "packagePatterns": ["@aws-sdk"],
+      "groupName": "aws-sdk"
     }
   ],
   "ignoreDeps": [
@@ -26,6 +38,7 @@
     "node-fetch"
   ],
   "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
   "rangeStrategy": "bump",
   "rebaseWhen": "conflicted"
 }
