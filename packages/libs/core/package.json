@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@hapi/accept": "^5.0.1",
+    "@hapi/accept": "^5.0.2",
     "cookie": "^0.4.1",
     "execa": "^5.1.1",
     "fast-glob": "^3.2.7",
