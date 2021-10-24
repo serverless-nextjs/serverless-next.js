@@ -45,7 +45,7 @@
     "@aws-cdk/aws-s3": "^1.117.0",
     "@aws-cdk/aws-s3-deployment": "^1.117.0",
     "@aws-cdk/aws-sqs": "^1.117.0",
-    "@aws-cdk/core": "1.117.0",
+    "@aws-cdk/core": "1.129.0",
     "@sls-next/cdk-construct": "^3.2.0",
     "next": "11.0.1",
     "react": "17.0.2",
