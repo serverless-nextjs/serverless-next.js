@@ -20,7 +20,7 @@
     "@serverless/template": "^1.1.4",
     "@serverless/utils": "^5.19.0",
     "ansi-escapes": "^5.0.0",
-    "chalk": "^4.1.1",
+    "chalk": "^4.1.2",
     "chokidar": "^3.4.1",
     "dotenv": "^10.0.0",
     "figures": "^4.0.0",
