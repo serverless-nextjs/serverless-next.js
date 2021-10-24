@@ -53,7 +53,6 @@
     "@types/jest": "^27.0.2",
     "@types/klaw": "^3.0.3",
     "@types/node": "^16.11.2",
-    "@types/node-fetch": "^2.5.7",
     "@types/normalize-path": "^3.0.0",
     "@types/react": "17.0.31",
     "@types/react-dom": "^17.0.10",
@@ -89,7 +88,7 @@
     "execa": "^5.0.1",
     "fs-extra": "^9.1.0",
     "get-stream": "^6.0.0",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.5",
     "normalize-path": "^3.0.0"
   },
   "peerDependencies": {
