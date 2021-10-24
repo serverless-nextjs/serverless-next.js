@@ -11,6 +11,12 @@
     "packages/serverless-components/nextjs-component/**",
     "packages/libs/core/sharp_node_modules/**"
   ],
+  "packageRules": [
+    {
+      "packagePatterns": ["@aws-cdk"],
+      "groupName": "aws-cdk"
+    }
+  ],
   "ignoreDeps": [
     "@rollup/plugin-commonjs",
     "@rollup/plugin-node-resolve",
