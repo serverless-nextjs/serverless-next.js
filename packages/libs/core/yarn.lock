@@ -1772,7 +1772,7 @@ __metadata:
     next: ^11.1.2
     node-fetch: ^2.6.5
     normalize-path: ^3.0.0
-    path-to-regexp: ^6.1.0
+    path-to-regexp: ^6.2.0
     react: ^17.0.2
     react-dom: ^17.0.2
     rimraf: ^3.0.2
@@ -6228,7 +6228,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"path-to-regexp@npm:^6.1.0":
+"path-to-regexp@npm:^6.2.0":
   version: 6.2.0
   resolution: "path-to-regexp@npm:6.2.0"
   checksum: a6aca74d2d6e2e7594d812f653cf85e9cb5054d3a8d80f099722a44ef6ad22639b02078e5ea83d11db16321c3e4359e3f1ab0274fa78dad0754a6e53f630b0fc
