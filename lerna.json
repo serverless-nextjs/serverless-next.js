@@ -1,0 +1,25 @@
+{
+  "version": "3.5.0-alpha.8",
+  "npmClient": "yarn",
+  "useWorkspaces": true,
+  "command": {
+    "publish": {
+      "ignoreChanges": [
+        "*.md"
+      ],
+      "message": "chore(release): publish %s"
+    },
+    "bootstrap": {
+      "ignore": "component-*",
+      "npmClientArgs": [
+        "--no-package-lock"
+      ]
+    }
+  },
+  "packages": [
+    "packages/compat-layers/*",
+    "packages/serverless-components/*",
+    "packages/libs/*",
+    "packages/deprecated/*"
+  ]
+}
