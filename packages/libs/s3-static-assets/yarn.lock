@@ -41,7 +41,7 @@ __metadata:
     "@types/node": ^16.11.4
     "@types/normalize-path": ^3.0.0
     aws-sdk: ^2.1012.0
-    fast-glob: ^3.2.5
+    fast-glob: ^3.2.7
     fs-extra: ^9.1.0
     mime-types: ^2.1.33
     normalize-path: ^3.0.0
@@ -163,7 +163,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fast-glob@npm:^3.2.5":
+"fast-glob@npm:^3.2.7":
   version: 3.2.7
   resolution: "fast-glob@npm:3.2.7"
   dependencies:
