@@ -28,7 +28,7 @@
   "devDependencies": {
     "@bahmutov/print-env": "2.1.2",
     "@cypress/code-coverage": "3.9.11",
-    "@cypress/skip-test": "2.5.0",
+    "@cypress/skip-test": "2.6.1",
     "@types/mocha": "8.2.3",
     "@types/node": "14.6.2",
     "@types/node-fetch": "2.5.7",
@@ -37,7 +37,7 @@
     "aws-sdk": "2.758.0",
     "babel-plugin-istanbul": "6.0.0",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "cypress": "7.2.0",
+    "cypress": "7.7.0",
     "istanbul-lib-coverage": "3.0.0",
     "nyc": "15.1.0",
     "ts-node": "9.0.0",
