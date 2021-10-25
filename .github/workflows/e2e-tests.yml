@@ -180,6 +180,12 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: yarn build
 
+      - name: Build serverless-patched
+        working-directory: packages/serverless-patched
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn install --immutable && yarn build
+
       - name: Install test utils
         working-directory: packages/e2e-tests/test-utils
         env:
