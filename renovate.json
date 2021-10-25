@@ -3,13 +3,13 @@
   "automerge": true,
   "automergeType": "pr",
   "ignorePaths": [
-    "packages/e2e-tests/**",
     "packages/deprecated/**",
     "packages/serverless-components/nextjs-component/examples/**",
     "packages/serverless-components/nextjs-component/**",
     "packages/serverless-components/nextjs-cdk-construct/examples/**",
     "packages/serverless-components/nextjs-component/**",
-    "packages/libs/core/sharp_node_modules/**"
+    "packages/libs/core/sharp_node_modules/**",
+    "**/tests/**"
   ],
   "packageRules": [
     {

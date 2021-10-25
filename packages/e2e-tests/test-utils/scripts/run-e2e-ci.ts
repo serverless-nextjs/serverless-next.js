@@ -80,7 +80,7 @@ async function checkWebAppBuildId(
         `URL ${url} is not yet ready. Retrying in ${pollInterval} seconds.`
       );
       await new Promise((r) => setTimeout(r, pollInterval * 1000));
-    } catch (error) {
+    } catch (error: any) {
       // URL may not return anything, so retry after some time
       if (error.toString().includes("ENOTFOUND")) {
         console.info(
@@ -101,7 +101,7 @@ function getNextBuildId(): string | null {
   let data;
   try {
     data = fs.readFileSync(`.next/BUILD_ID`);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "ENOENT") {
       console.error("Next BUILD_ID file could not be found.");
       return null;
@@ -126,7 +126,7 @@ function getAppBucketName(appName: string): string | null {
   let data;
   try {
     data = fs.readFileSync(`.serverless/Template.${appName}.AwsS3.json`);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "ENOENT") {
       console.error("S3 JSON file could not be found.");
       return null;
@@ -155,7 +155,7 @@ function getCloudFrontDetails(appName: string): {
   let data;
   try {
     data = fs.readFileSync(`.serverless/Template.${appName}.CloudFront.json`);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "ENOENT") {
       console.error("CloudFront JSON file could not be found.");
       return { cloudFrontUrl: null, distributionId: null };
@@ -302,7 +302,6 @@ async function runEndToEndTest(): Promise<boolean> {
     const serverlessPatchedPath = path.join(
       "..",
       "..",
-      "libs",
       "serverless-patched",
       "dist",
       "serverless-patched.js"

@@ -158,28 +158,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serverless/cli@npm:^1.5.2":
-  version: 1.5.2
-  resolution: "@serverless/cli@npm:1.5.2"
-  dependencies:
-    "@serverless/core": ^1.1.2
-    "@serverless/template": ^1.1.3
-    "@serverless/utils": ^1.2.0
-    ansi-escapes: ^4.3.1
-    chalk: ^2.4.2
-    chokidar: ^3.4.1
-    dotenv: ^8.2.0
-    figures: ^3.2.0
-    minimist: ^1.2.5
-    prettyoutput: ^1.2.0
-    strip-ansi: ^5.2.0
-  bin:
-    components: bin/bin
-  checksum: a5e1dd12dfb303a65f4f2b952bf7057db6f41b4f92219ba06e144660870ecc0419a66fbd3bb5b85b240b7e30cd24f8fc2e231dcd2174258550011387e1e2e28c
-  languageName: node
-  linkType: hard
-
-"@serverless/cli@npm:^1.5.3":
+"@serverless/cli@npm:^1.5.2, @serverless/cli@npm:^1.5.3":
   version: 1.5.3
   resolution: "@serverless/cli@npm:1.5.3"
   dependencies:
@@ -5554,7 +5533,7 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"strip-ansi@npm:^5.1.0, strip-ansi@npm:^5.2.0":
+"strip-ansi@npm:^5.1.0":
   version: 5.2.0
   resolution: "strip-ansi@npm:5.2.0"
   dependencies:
