@@ -74,7 +74,7 @@ jobs:
 
   start-e2e-tests:
     # Note: we only run e2e tests automatically if this is a push on master or if PR is not from a fork or renovate, as forks won't have access to secrets
-    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && startsWith(github.event.pull_request.base.ref, 'renovate/') == false && github.event.pull_request.head.repo.full_name == github.repository) }}
+    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && startsWith(github.event.pull_request.base.ref, 'refs/heads/renovate/') == false && github.event.pull_request.head.repo.full_name == github.repository) }}
     runs-on: ubuntu-latest
 
     steps:
