@@ -302,12 +302,11 @@ async function runEndToEndTest(): Promise<boolean> {
     const serverlessPatchedPath = path.join(
       "..",
       "..",
-      "libs",
       "serverless-patched",
-      "dist",
-      "serverless-patched.js"
+      "bin",
+      "serverless-patched.ts"
     );
-    execSync(`node ${serverlessPatchedPath} --debug`, { stdio: "inherit" });
+    execSync(`ts-node ${serverlessPatchedPath} --debug`, { stdio: "inherit" });
 
     // Get Next.js build ID and URL
     console.info("Getting Next.js build ID");
