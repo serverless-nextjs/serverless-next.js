@@ -36,22 +36,23 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@rollup/plugin-commonjs": "^18.1.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
     "esbuild": "^0.13.9",
-    "fs-extra": "^9.1.0",
+    "fs-extra": "^9.1.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.1.0",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
+    "@types/aws-lambda": "^8.10.84",
+    "@types/fs-extra": "^9.0.13",
+    "@types/node": "^16.11.4",
+    "rimraf": "^3.0.2",
     "rollup": "^2.58.1",
     "rollup-plugin-node-externals": "^2.2.0",
     "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.30.0"
-  },
-  "devDependencies": {
-    "@types/aws-lambda": "^8.10.84",
-    "@types/node": "^16.11.4",
-    "rimraf": "^3.0.2",
+    "rollup-plugin-typescript2": "^0.30.0",
     "typescript": "^4.4.4"
   }
 }
