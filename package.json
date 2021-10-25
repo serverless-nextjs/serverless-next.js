@@ -45,8 +45,6 @@
     "@babel/preset-env": "^7.15.8",
     "@babel/preset-typescript": "^7.15.0",
     "@jest/test-sequencer": "^27.3.1",
-    "@sls-next/lambda-at-edge": "link:./packages/libs/lambda-at-edge",
-    "@sls-next/next-aws-cloudfront": "link:./packages/compat-layers/lambda-at-edge-compat",
     "@types/fs-extra": "^9.0.13",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4.14.176",
@@ -91,6 +89,7 @@
     ]
   },
   "resolutions": {
+    "@serverless/cli": "^1.5.3",
     "which": "^2.0.2",
     "lodash": "^4.17.21"
   },

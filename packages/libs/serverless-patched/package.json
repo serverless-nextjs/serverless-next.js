@@ -36,7 +36,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@serverless/cli": "patch:@serverless/cli@1.5.3#./patches/@serverless+cli+1.5.3.patch",
+    "@serverless/cli": "^1.5.3",
     "find-up": "^6.2.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097",
@@ -46,9 +46,6 @@
     "@types/node": "^16.11.4",
     "rimraf": "^3.0.2",
     "typescript": "^4.4.4"
-  },
-  "resolutions": {
-    "@serverless/cli": "^1.5.3"
   },
   "bin": "./dist/serverless-patched.js",
   "type": "module"

@@ -158,7 +158,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@serverless/cli@npm:^1.5.3":
+"@serverless/cli@npm:^1.5.2, @serverless/cli@npm:^1.5.3":
   version: 1.5.3
   resolution: "@serverless/cli@npm:1.5.3"
   dependencies:
@@ -483,7 +483,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/serverless-patched@workspace:."
   dependencies:
-    "@serverless/cli": "patch:@serverless/cli@1.5.3#./patches/@serverless+cli+1.5.3.patch"
+    "@serverless/cli": ^1.5.3
     "@types/node": ^16.11.4
     find-up: ^6.2.0
     patch-package: ^6.4.7
