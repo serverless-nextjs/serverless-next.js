@@ -28,7 +28,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
+
+      - name: Cache Yarn
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/.yarn
+          key: ci-v1-${{ matrix.node-version }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            ci-v1-${{ matrix.node-version }}-
 
       - name: Setup yarn
         run: yarn install --immutable --inline-builds
