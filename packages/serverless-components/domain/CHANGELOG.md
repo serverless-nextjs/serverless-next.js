@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.8...v3.5.0-alpha.9) (2021-10-25)
+
+### Bug Fixes
+
+- **domain:** add domain input domainMinimumProtocolVersion ([#1916](https://github.com/serverless-nextjs/serverless-next.js/issues/1916)) ([b49d2fe](https://github.com/serverless-nextjs/serverless-next.js/commit/b49d2fe734690f88b29ed8ebab5befa49c529ea5))
+
 # [3.2.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.29...v3.2.0) (2021-08-03)
 
 **Note:** Version bump only for package @sls-next/domain
