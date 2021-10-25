@@ -1116,9 +1116,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/browserify-preprocessor@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@cypress/browserify-preprocessor@npm:3.0.0"
+"@cypress/browserify-preprocessor@npm:3.0.1":
+  version: 3.0.1
+  resolution: "@cypress/browserify-preprocessor@npm:3.0.1"
   dependencies:
     "@babel/core": 7.4.5
     "@babel/plugin-proposal-class-properties": 7.3.0
@@ -1138,24 +1138,26 @@ __metadata:
     lodash.clonedeep: 4.5.0
     through2: ^2.0.0
     watchify: 3.11.1
-  checksum: e6d62713cc546f994e4b5dae2fbc07563882e37e21ef7b69e199a3e7fb74db8c2553a7022ad35fba442a4e404ed7bfa72e3239f2061a8bca3b1d8054727a288a
+  checksum: 5ee98fe1a6fec5f3aeb5fe02e3b21082c5b49ca59ec37d46a1fa6688077c22e089539c12c17d70a157da01fddb0d74113978b1b63bd0295edd5f11691c186b9e
   languageName: node
   linkType: hard
 
-"@cypress/code-coverage@npm:3.8.1":
-  version: 3.8.1
-  resolution: "@cypress/code-coverage@npm:3.8.1"
+"@cypress/code-coverage@npm:3.9.11":
+  version: 3.9.11
+  resolution: "@cypress/code-coverage@npm:3.9.11"
   dependencies:
-    "@cypress/browserify-preprocessor": 3.0.0
-    debug: 4.1.1
-    execa: 4.0.2
-    globby: 11.0.0
+    "@cypress/browserify-preprocessor": 3.0.1
+    chalk: 4.1.2
+    dayjs: 1.10.7
+    debug: 4.3.2
+    execa: 4.1.0
+    globby: 11.0.4
     istanbul-lib-coverage: 3.0.0
-    js-yaml: 3.14.0
+    js-yaml: 3.14.1
     nyc: 15.1.0
   peerDependencies:
     cypress: "*"
-  checksum: 4835fd8e6682e2b46f4f55a03613ac48125d0adbd63ad8f7a5d207fe830ace0b7622d634cd4d9da62ac30f9581f93078d87c37180886ab0e1649f3a0770fdbe2
+  checksum: 37c0b67f3d339573ee64931acfe669354c6e0a5750106b26bc5e6b509226c8abc6aa0ab0af38913f0d56e3f9a953f294588298c3b3cbc2a492eb0e1dd130834f
   languageName: node
   linkType: hard
 
@@ -2729,6 +2731,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"chalk@npm:4.1.2":
+  version: 4.1.2
+  resolution: "chalk@npm:4.1.2"
+  dependencies:
+    ansi-styles: ^4.1.0
+    supports-color: ^7.1.0
+  checksum: fe75c9d5c76a7a98d45495b91b2172fa3b7a09e0cc9370e5c8feb1c567b85c4288e2b3fded7cfdd7359ac28d6b3844feb8b82b8686842e93d23c827c417e83fc
+  languageName: node
+  linkType: hard
+
 "chalk@npm:^1.0.0, chalk@npm:^1.1.3":
   version: 1.1.3
   resolution: "chalk@npm:1.1.3"
@@ -3328,6 +3340,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dayjs@npm:1.10.7":
+  version: 1.10.7
+  resolution: "dayjs@npm:1.10.7"
+  checksum: a0a4ca95abaa03d0702161dc2c35d16121188e342f5052b9c61cdf784dab68af766f477c04f87f71c6af666fd4d13db9b9853b87265850d6093b7b04e1bb1cd7
+  languageName: node
+  linkType: hard
+
 "dayjs@npm:^1.10.4":
   version: 1.10.4
   resolution: "dayjs@npm:1.10.4"
@@ -3776,23 +3795,6 @@ __metadata:
     node-gyp: latest
     safe-buffer: ^5.1.1
   checksum: ad4e1577f1a6b721c7800dcc7c733fe01f6c310732bb5bf2240245c2a5b45a38518b91d8be2c610611623160b9d1c0e91f1ce96d639f8b53e8894625cf20fa45
-  languageName: node
-  linkType: hard
-
-"execa@npm:4.0.2":
-  version: 4.0.2
-  resolution: "execa@npm:4.0.2"
-  dependencies:
-    cross-spawn: ^7.0.0
-    get-stream: ^5.0.0
-    human-signals: ^1.1.1
-    is-stream: ^2.0.0
-    merge-stream: ^2.0.0
-    npm-run-path: ^4.0.0
-    onetime: ^5.1.0
-    signal-exit: ^3.0.2
-    strip-final-newline: ^2.0.0
-  checksum: b4748f7f39f4fecab9975740bfa8773852c462e4dbdc2b08c5c52c0db8e87ed77a9524c5be1691cebd7d9264ef892081104c8fe96007d53163b8d854e79f766b
   languageName: node
   linkType: hard
 
@@ -4350,9 +4352,9 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"globby@npm:11.0.0":
-  version: 11.0.0
-  resolution: "globby@npm:11.0.0"
+"globby@npm:11.0.4":
+  version: 11.0.4
+  resolution: "globby@npm:11.0.4"
   dependencies:
     array-union: ^2.1.0
     dir-glob: ^3.0.1
@@ -4360,7 +4362,7 @@ fsevents@~2.3.1:
     ignore: ^5.1.4
     merge2: ^1.3.0
     slash: ^3.0.0
-  checksum: 3b62a10ea26c266134dd115bdfe74c8448ab546a207ce4002e687daaf9cbd28f2cbe34fba185ea159d55d6b2fa1e4f3876c3cffb0730e3fb8a9b5272984c6cac
+  checksum: d3e02d5e459e02ffa578b45f040381c33e3c0538ed99b958f0809230c423337999867d7b0dbf752ce93c46157d3bbf154d3fff988a93ccaeb627df8e1841775b
   languageName: node
   linkType: hard
 
@@ -5368,19 +5370,7 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"js-yaml@npm:3.14.0":
-  version: 3.14.0
-  resolution: "js-yaml@npm:3.14.0"
-  dependencies:
-    argparse: ^1.0.7
-    esprima: ^4.0.0
-  bin:
-    js-yaml: bin/js-yaml.js
-  checksum: a1a47c912ba20956f96cb0998dea2e74c7f7129d831fe33d3c5a16f3f83712ce405172a8dd1c26bf2b3ad74b54016d432ff727928670ae5a50a57a677c387949
-  languageName: node
-  linkType: hard
-
-"js-yaml@npm:^3.13.1":
+"js-yaml@npm:3.14.1, js-yaml@npm:^3.13.1":
   version: 3.14.1
   resolution: "js-yaml@npm:3.14.1"
   dependencies:
@@ -6118,7 +6108,7 @@ fsevents@~2.3.1:
   resolution: "next-app-with-locales@workspace:."
   dependencies:
     "@bahmutov/print-env": 2.1.2
-    "@cypress/code-coverage": 3.8.1
+    "@cypress/code-coverage": 3.9.11
     "@cypress/skip-test": 2.5.0
     "@types/mocha": 8.0.3
     "@types/node": 14.6.2
