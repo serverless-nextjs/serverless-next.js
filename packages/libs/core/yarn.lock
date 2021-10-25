@@ -1754,6 +1754,7 @@ __metadata:
     "@types/jest": ^27.0.2
     "@types/jsonwebtoken": ^8.5.5
     "@types/node": ^16.11.4
+    "@types/node-fetch": ^2.5.12
     "@types/normalize-path": ^3.0.0
     "@types/react": ^17.0.32
     "@types/react-dom": ^17.0.10
@@ -1939,6 +1940,16 @@ __metadata:
   version: 1.3.2
   resolution: "@types/mime@npm:1.3.2"
   checksum: 0493368244cced1a69cb791b485a260a422e6fcc857782e1178d1e6f219f1b161793e9f87f5fae1b219af0f50bee24fcbe733a18b4be8fdd07a38a8fb91146fd
+  languageName: node
+  linkType: hard
+
+"@types/node-fetch@npm:^2.5.12":
+  version: 2.5.12
+  resolution: "@types/node-fetch@npm:2.5.12"
+  dependencies:
+    "@types/node": "*"
+    form-data: ^3.0.0
+  checksum: ad63c85ba6a9477b8e057ec8682257738130d98e8ece4e31141789bd99df9d9147985cc8bc0cb5c8983ed5aa6bb95d46df23d1e055f4ad5cf8b82fc69cf626c7
   languageName: node
   linkType: hard
 

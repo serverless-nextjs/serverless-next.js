@@ -2976,6 +2976,7 @@ __metadata:
     "@types/jest": ^27.0.2
     "@types/klaw": ^3.0.3
     "@types/node": ^16.11.4
+    "@types/node-fetch": ^2.5.12
     "@types/normalize-path": ^3.0.0
     "@types/react": 17.0.32
     "@types/react-dom": ^17.0.10
@@ -3220,6 +3221,16 @@ __metadata:
   version: 3.0.5
   resolution: "@types/minimatch@npm:3.0.5"
   checksum: c41d136f67231c3131cf1d4ca0b06687f4a322918a3a5adddc87ce90ed9dbd175a3610adee36b106ae68c0b92c637c35e02b58c8a56c424f71d30993ea220b92
+  languageName: node
+  linkType: hard
+
+"@types/node-fetch@npm:^2.5.12":
+  version: 2.5.12
+  resolution: "@types/node-fetch@npm:2.5.12"
+  dependencies:
+    "@types/node": "*"
+    form-data: ^3.0.0
+  checksum: ad63c85ba6a9477b8e057ec8682257738130d98e8ece4e31141789bd99df9d9147985cc8bc0cb5c8983ed5aa6bb95d46df23d1e055f4ad5cf8b82fc69cf626c7
   languageName: node
   linkType: hard
 

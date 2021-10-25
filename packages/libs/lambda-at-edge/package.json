@@ -53,6 +53,7 @@
     "@types/jest": "^27.0.2",
     "@types/klaw": "^3.0.3",
     "@types/node": "^16.11.4",
+    "@types/node-fetch": "^2.5.12",
     "@types/normalize-path": "^3.0.0",
     "@types/react": "17.0.32",
     "@types/react-dom": "^17.0.10",
