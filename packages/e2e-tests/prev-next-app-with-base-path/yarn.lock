@@ -1175,10 +1175,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/skip-test@npm:2.5.0":
-  version: 2.5.0
-  resolution: "@cypress/skip-test@npm:2.5.0"
-  checksum: ba65fe7677e92a192de6e2336ba0654c192c83a8330a21d30865d3fd80acd1cdeed52582b67c8deace6c0e2daea75f48cdc9ba86a4fd39db5d736ba4a0e79bc4
+"@cypress/skip-test@npm:2.6.1":
+  version: 2.6.1
+  resolution: "@cypress/skip-test@npm:2.6.1"
+  checksum: 48ec912f162563ca8657b6f023b701f66ddc29083ed36ae96cd861087c828046c2abb36c6fa0b316bb74941a17b046ac3b143532218e4cdc6d78d7838a64a141
   languageName: node
   linkType: hard
 
@@ -6615,7 +6615,7 @@ fsevents@~2.3.1:
   dependencies:
     "@bahmutov/print-env": 2.1.2
     "@cypress/code-coverage": 3.9.11
-    "@cypress/skip-test": 2.5.0
+    "@cypress/skip-test": 2.6.1
     "@types/mocha": 8.2.3
     "@types/node": 14.6.2
     "@types/node-fetch": 2.5.7
