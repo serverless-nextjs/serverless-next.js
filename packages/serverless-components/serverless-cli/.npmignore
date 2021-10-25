@@ -7,3 +7,4 @@ coverage
 env.js
 tmp
 test
+.yarn

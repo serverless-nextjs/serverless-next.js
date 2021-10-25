@@ -162,7 +162,14 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: ${{ matrix.node-version }}
-          cache: "yarn"
+
+      - name: Cache Yarn
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/.yarn
+          key: e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-${{ hashFiles('yarn.lock') }}
+          restore-keys: |
+            e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-
 
       #      - name: "Download build"
       #        uses: actions/download-artifact@v2

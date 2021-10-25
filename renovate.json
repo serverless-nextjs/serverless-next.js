@@ -27,6 +27,10 @@
     {
       "packagePatterns": ["@aws-sdk"],
       "groupName": "aws-sdk"
+    },
+    {
+      "packagePatterns": ["@cypress", "cypress"],
+      "groupName": "cypress"
     }
   ],
   "ignoreDeps": [
@@ -36,7 +40,8 @@
     "sharp",
     "globby",
     "node-fetch",
-    "@types/node-fetch"
+    "@types/node-fetch",
+    "next"
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
