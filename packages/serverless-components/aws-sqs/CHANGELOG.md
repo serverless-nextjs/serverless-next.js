@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.9...v3.5.0-alpha.10) (2021-10-25)
+
+**Note:** Version bump only for package @sls-next/aws-sqs
+
 # [3.5.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.8...v3.5.0-alpha.9) (2021-10-25)
 
 **Note:** Version bump only for package @sls-next/aws-sqs
