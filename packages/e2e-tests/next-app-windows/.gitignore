@@ -2,6 +2,8 @@ cypress/videos
 cypress/screenshots
 
 # Yarn
+yarn-debug.log*
+yarn-error.log*
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
