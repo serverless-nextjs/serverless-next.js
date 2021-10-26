@@ -329,7 +329,7 @@ async function runEndToEndTest(): Promise<boolean> {
     );
     const [cloudFrontReady, ssrReady, ssgReady, isrReady, dynamicIsrReady] =
       await Promise.all([
-        checkInvalidationsCompleted(distributionId, waitTimeout, 10),
+        checkInvalidationsCompleted(distributionId, 120, 10), // wait max 2 minutes for invalidations as some regions may take longer
         checkWebAppBuildId(
           cloudFrontUrl + ssrPagePath,
           buildId,
