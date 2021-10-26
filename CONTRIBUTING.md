@@ -2,8 +2,11 @@
 
 ### Getting started
 
+Note that we are using Yarn v3 as our package manager and Lerna for monorepo support.
+
 1. First, [fork](https://help.github.com/en/articles/fork-a-repo) the repo to your own github account and clone it.
-2. Install dependencies: `yarn`
+2. Install dependencies: `yarn install`
+3. Build all packages: `yarn build`
 
 ### Running the tests
 
