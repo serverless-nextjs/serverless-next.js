@@ -121,7 +121,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Cache Yarn
+      - name: Cache yarn
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/.yarn
@@ -129,15 +129,7 @@ jobs:
           restore-keys: |
             e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-
 
-      #      - name: "Download build"
-      #        uses: actions/download-artifact@v2
-      #        with:
-      #          name: build-${{ matrix.os }}.tar.gz
-      #
-      #      - name: "Uncompress build"
-      #        run: tar -xf build-${{ matrix.os }}.tar.gz
-
-      - name: Setup yarn
+      - name: Run yarn install
         run: yarn install --immutable --inline-builds
 
       - name: Run yarn build
@@ -150,12 +142,6 @@ jobs:
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: yarn install --immutable && yarn build
-
-      - name: Install test utils
-        working-directory: packages/e2e-tests/test-utils
-        env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn install --immutable
 
       - name: Choose latest next.js version
         if: ${{ !startsWith(matrix.app, 'prev') }}

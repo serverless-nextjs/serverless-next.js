@@ -26,7 +26,7 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Cache Yarn
+      - name: Cache yarn
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/.yarn
@@ -34,7 +34,7 @@ jobs:
           restore-keys: |
             ci-v1-${{ matrix.node-version }}-
 
-      - name: Setup yarn
+      - name: Run yarn install
         run: yarn install --immutable --inline-builds
 
       - name: Run yarn build

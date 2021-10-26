@@ -4,11 +4,10 @@
   "description": "Basic test Next.js app for running serverless-next.js end-to-end tests",
   "scripts": {
     "dev": "next",
-    "build": "next build",
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "SSG_PAGE_PATH=/basepath/ssg-page SSR_PAGE_PATH=/basepath/ssr-page APP_NAME=prev-next-app-with-base-path ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
+    "e2e:ci": "SSG_PAGE_PATH=/basepath/ssg-page SSR_PAGE_PATH=/basepath/ssr-page APP_NAME=prev-next-app-with-base-path node ../test-utils/dist/run-e2e-ci.js"
   },
   "repository": {
     "type": "git",

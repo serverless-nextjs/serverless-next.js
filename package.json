@@ -86,6 +86,7 @@
   "workspaces": [
     "packages/compat-layers/*",
     "packages/serverless-components/*",
-    "packages/libs/*"
+    "packages/libs/*",
+    "packages/e2e-tests/*"
   ]
 }
