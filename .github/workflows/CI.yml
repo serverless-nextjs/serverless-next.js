@@ -21,9 +21,6 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Use yarn v3
-        run: yarn set version berry
-
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -38,7 +35,7 @@ jobs:
             ci-v1-${{ matrix.node-version }}-
 
       - name: Setup yarn
-        run: yarn install --no-immutable --inline-builds # Somehow the lockfile could be modified on CI which is Ubuntu vs. local dev machine e.g Mac
+        run: yarn install --immutable --inline-builds
 
       - name: Run yarn build
         env:
