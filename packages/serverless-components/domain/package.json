@@ -19,6 +19,6 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "peerDependencies": {
     "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1013.0"
+    "aws-sdk": "^2.1014.0"
   }
 }
