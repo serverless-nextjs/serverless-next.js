@@ -38,7 +38,7 @@ jobs:
             ci-v1-${{ matrix.node-version }}-
 
       - name: Setup yarn
-        run: yarn install --immutable --inline-builds
+        run: yarn install --no-immutable --inline-builds # Somehow the lockfile could be modified on CI which is Ubuntu vs. local dev machine e.g Mac
 
       - name: Run yarn build
         env:

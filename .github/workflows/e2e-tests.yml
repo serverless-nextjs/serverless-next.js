@@ -180,7 +180,7 @@ jobs:
       #        run: tar -xf build-${{ matrix.os }}.tar.gz
 
       - name: Setup yarn
-        run: yarn install --immutable --inline-builds
+        run: yarn install --no-immutable --inline-builds # Somehow the lockfile could be modified on CI which is Ubuntu vs. local dev machine e.g Mac
 
       - name: Run yarn build
         env:
@@ -191,7 +191,7 @@ jobs:
         working-directory: packages/serverless-patched
         env:
           NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn install --immutable && yarn build
+        run: yarn install --no-immutable && yarn build
 
       - name: Install test utils
         working-directory: packages/e2e-tests/test-utils
