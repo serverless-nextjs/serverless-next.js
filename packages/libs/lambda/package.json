@@ -49,7 +49,7 @@
     "@types/fs-extra": "^9.0.13",
     "@types/node": "^16.11.4",
     "rimraf": "^3.0.2",
-    "rollup": "^2.58.1",
+    "rollup": "^2.58.3",
     "rollup-plugin-node-externals": "^2.2.0",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.30.0",
