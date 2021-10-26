@@ -6021,7 +6021,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/eslint-plugin@npm:^5.1.0":
+"@typescript-eslint/eslint-plugin@npm:^5.2.0":
   version: 5.2.0
   resolution: "@typescript-eslint/eslint-plugin@npm:5.2.0"
   dependencies:
@@ -6059,7 +6059,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@typescript-eslint/parser@npm:^5.1.0":
+"@typescript-eslint/parser@npm:^5.2.0":
   version: 5.2.0
   resolution: "@typescript-eslint/parser@npm:5.2.0"
   dependencies:
@@ -15757,8 +15757,8 @@ __metadata:
     "@types/jest": ^27.0.2
     "@types/node": ^16.11.4
     "@types/webpack": ^5.28.0
-    "@typescript-eslint/eslint-plugin": ^5.1.0
-    "@typescript-eslint/parser": ^5.1.0
+    "@typescript-eslint/eslint-plugin": ^5.2.0
+    "@typescript-eslint/parser": ^5.2.0
     eslint: ^8.1.0
     eslint-config-prettier: ^8.3.0
     eslint-plugin-prettier: ^4.0.0
