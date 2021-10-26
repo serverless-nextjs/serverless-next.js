@@ -125,7 +125,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: ${{ github.workspace }}/.yarn
-          key: e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-${{ hashFiles('yarn.lock') }}
+          key: e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-${{ hashFiles('yarn.lock', 'packages/serverless-patched/yarn.lock', 'packages/e2e-tests/test-utils/yarn.lock') }}
           restore-keys: |
             e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-
 
