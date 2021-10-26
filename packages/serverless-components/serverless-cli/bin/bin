@@ -1,8 +1,0 @@
-#!/usr/bin/env node
-
-const { runComponents } = require('../src')
-
-// Run
-;(async () => {
-  return runComponents()
-})().catch((e) => console.log(e.stack)) // eslint-disable-line
