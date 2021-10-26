@@ -5,7 +5,7 @@ __metadata:
   version: 4
   cacheKey: 8
 
-"@aws-cdk/assert@npm:^1.75.0":
+"@aws-cdk/assert@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/assert@npm:1.129.0"
   dependencies:
@@ -105,7 +105,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-certificatemanager@npm:1.129.0, @aws-cdk/aws-certificatemanager@npm:^1.75.0":
+"@aws-cdk/aws-certificatemanager@npm:1.129.0, @aws-cdk/aws-certificatemanager@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-certificatemanager@npm:1.129.0"
   dependencies:
@@ -149,7 +149,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-cloudfront-origins@npm:^1.75.0":
+"@aws-cdk/aws-cloudfront-origins@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-cloudfront-origins@npm:1.129.0"
   dependencies:
@@ -170,7 +170,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-cloudfront@npm:1.129.0, @aws-cdk/aws-cloudfront@npm:^1.75.0":
+"@aws-cdk/aws-cloudfront@npm:1.129.0, @aws-cdk/aws-cloudfront@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-cloudfront@npm:1.129.0"
   dependencies:
@@ -468,7 +468,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-iam@npm:1.129.0, @aws-cdk/aws-iam@npm:^1.75.0":
+"@aws-cdk/aws-iam@npm:1.129.0, @aws-cdk/aws-iam@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-iam@npm:1.129.0"
   dependencies:
@@ -523,7 +523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-lambda-event-sources@npm:^1.75.0":
+"@aws-cdk/aws-lambda-event-sources@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-lambda-event-sources@npm:1.129.0"
   dependencies:
@@ -562,7 +562,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-lambda@npm:1.129.0, @aws-cdk/aws-lambda@npm:^1.75.0":
+"@aws-cdk/aws-lambda@npm:1.129.0, @aws-cdk/aws-lambda@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-lambda@npm:1.129.0"
   dependencies:
@@ -609,7 +609,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-logs@npm:1.129.0, @aws-cdk/aws-logs@npm:^1.75.0":
+"@aws-cdk/aws-logs@npm:1.129.0, @aws-cdk/aws-logs@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-logs@npm:1.129.0"
   dependencies:
@@ -630,7 +630,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-route53-targets@npm:^1.75.0":
+"@aws-cdk/aws-route53-targets@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-route53-targets@npm:1.129.0"
   dependencies:
@@ -665,7 +665,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-route53@npm:1.129.0, @aws-cdk/aws-route53@npm:^1.75.0":
+"@aws-cdk/aws-route53@npm:1.129.0, @aws-cdk/aws-route53@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-route53@npm:1.129.0"
   dependencies:
@@ -711,7 +711,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-s3-deployment@npm:^1.75.0":
+"@aws-cdk/aws-s3-deployment@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-s3-deployment@npm:1.129.0"
   dependencies:
@@ -764,7 +764,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-s3@npm:1.129.0, @aws-cdk/aws-s3@npm:^1.75.0":
+"@aws-cdk/aws-s3@npm:1.129.0, @aws-cdk/aws-s3@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-s3@npm:1.129.0"
   dependencies:
@@ -884,7 +884,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/aws-sqs@npm:1.129.0, @aws-cdk/aws-sqs@npm:^1.75.0":
+"@aws-cdk/aws-sqs@npm:1.129.0, @aws-cdk/aws-sqs@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/aws-sqs@npm:1.129.0"
   dependencies:
@@ -957,7 +957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/core@npm:1.129.0, @aws-cdk/core@npm:^1.75.0":
+"@aws-cdk/core@npm:1.129.0, @aws-cdk/core@npm:^1.129.0":
   version: 1.129.0
   resolution: "@aws-cdk/core@npm:1.129.0"
   dependencies:
@@ -5209,20 +5209,20 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/cdk-construct@workspace:packages/serverless-components/nextjs-cdk-construct"
   dependencies:
-    "@aws-cdk/assert": ^1.75.0
-    "@aws-cdk/aws-certificatemanager": ^1.75.0
-    "@aws-cdk/aws-cloudfront": ^1.75.0
-    "@aws-cdk/aws-cloudfront-origins": ^1.75.0
-    "@aws-cdk/aws-iam": ^1.75.0
-    "@aws-cdk/aws-lambda": ^1.75.0
-    "@aws-cdk/aws-lambda-event-sources": ^1.75.0
-    "@aws-cdk/aws-logs": ^1.75.0
-    "@aws-cdk/aws-route53": ^1.75.0
-    "@aws-cdk/aws-route53-targets": ^1.75.0
-    "@aws-cdk/aws-s3": ^1.75.0
-    "@aws-cdk/aws-s3-deployment": ^1.75.0
-    "@aws-cdk/aws-sqs": ^1.75.0
-    "@aws-cdk/core": ^1.75.0
+    "@aws-cdk/assert": ^1.129.0
+    "@aws-cdk/aws-certificatemanager": ^1.129.0
+    "@aws-cdk/aws-cloudfront": ^1.129.0
+    "@aws-cdk/aws-cloudfront-origins": ^1.129.0
+    "@aws-cdk/aws-iam": ^1.129.0
+    "@aws-cdk/aws-lambda": ^1.129.0
+    "@aws-cdk/aws-lambda-event-sources": ^1.129.0
+    "@aws-cdk/aws-logs": ^1.129.0
+    "@aws-cdk/aws-route53": ^1.129.0
+    "@aws-cdk/aws-route53-targets": ^1.129.0
+    "@aws-cdk/aws-s3": ^1.129.0
+    "@aws-cdk/aws-s3-deployment": ^1.129.0
+    "@aws-cdk/aws-sqs": ^1.129.0
+    "@aws-cdk/core": ^1.129.0
     "@sls-next/core": "link:../../libs/core"
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge"
     "@types/fs-extra": ^9.0.13
@@ -5232,19 +5232,19 @@ __metadata:
     rimraf: ^3.0.2
     typescript: ^4.4.4
   peerDependencies:
-    "@aws-cdk/aws-certificatemanager": ^1.75.0
-    "@aws-cdk/aws-cloudfront": ^1.75.0
-    "@aws-cdk/aws-cloudfront-origins": ^1.75.0
-    "@aws-cdk/aws-iam": ^1.75.0
-    "@aws-cdk/aws-lambda": ^1.75.0
-    "@aws-cdk/aws-lambda-event-sources": ^1.75.0
-    "@aws-cdk/aws-logs": ^1.75.0
-    "@aws-cdk/aws-route53": ^1.75.0
-    "@aws-cdk/aws-route53-targets": ^1.75.0
-    "@aws-cdk/aws-s3": ^1.75.0
-    "@aws-cdk/aws-s3-deployment": ^1.75.0
-    "@aws-cdk/aws-sqs": ^1.75.0
-    "@aws-cdk/core": ^1.75.0
+    "@aws-cdk/aws-certificatemanager": ^1.129.0
+    "@aws-cdk/aws-cloudfront": ^1.129.0
+    "@aws-cdk/aws-cloudfront-origins": ^1.129.0
+    "@aws-cdk/aws-iam": ^1.129.0
+    "@aws-cdk/aws-lambda": ^1.129.0
+    "@aws-cdk/aws-lambda-event-sources": ^1.129.0
+    "@aws-cdk/aws-logs": ^1.129.0
+    "@aws-cdk/aws-route53": ^1.129.0
+    "@aws-cdk/aws-route53-targets": ^1.129.0
+    "@aws-cdk/aws-s3": ^1.129.0
+    "@aws-cdk/aws-s3-deployment": ^1.129.0
+    "@aws-cdk/aws-sqs": ^1.129.0
+    "@aws-cdk/core": ^1.129.0
   languageName: unknown
   linkType: soft
 
