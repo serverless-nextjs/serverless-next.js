@@ -22,8 +22,8 @@
     "isomorphic-fetch": "2.2.1",
     "next": "11.1.2",
     "next-i18next": "^8.5.5",
-    "react": "17.0.1",
-    "react-dom": "17.0.1"
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@bahmutov/print-env": "2.1.2",
@@ -32,7 +32,7 @@
     "@types/mocha": "8.2.3",
     "@types/node": "14.6.2",
     "@types/node-fetch": "2.5.7",
-    "@types/react": "^17.0.27",
+    "@types/react": "^17.0.33",
     "@types/uuid": "8.3.1",
     "aws-sdk": "2.1014.0",
     "babel-plugin-istanbul": "6.0.0",
