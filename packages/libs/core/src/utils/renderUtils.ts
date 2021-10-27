@@ -1,4 +1,4 @@
-import { resultsToString } from "next-11.1.2/dist/server/utils";
+import { resultsToString } from "next/dist/server/utils";
 import { IncomingMessage, ServerResponse } from "http";
 
 /**
