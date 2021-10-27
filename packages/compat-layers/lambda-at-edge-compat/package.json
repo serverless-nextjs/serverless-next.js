@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/next-aws-cloudfront",
-  "version": "3.5.0-alpha.9",
+  "version": "3.5.0-alpha.11",
   "publishConfig": {
     "access": "public"
   },

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.10...v3.5.0-alpha.11) (2021-10-27)
+
+### Bug Fixes
+
+- **core:** fix renderReqToHtml function for next.js 12 ([#1971](https://github.com/serverless-nextjs/serverless-next.js/issues/1971)) ([c9980d8](https://github.com/serverless-nextjs/serverless-next.js/commit/c9980d82cb06bb3dcc4aaef0ecc164c3819c6b23))
+
 # [3.5.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.9...v3.5.0-alpha.10) (2021-10-25)
 
 **Note:** Version bump only for package @sls-next/core

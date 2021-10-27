@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.10...v3.5.0-alpha.11) (2021-10-27)
+
+### Features
+
+- **lambda-at-edge:** copy additional JS files to handlers ([#1970](https://github.com/serverless-nextjs/serverless-next.js/issues/1970)) ([e7c81ef](https://github.com/serverless-nextjs/serverless-next.js/commit/e7c81efde360bf7921c5aef088479154fa94280d))
+
 # [3.5.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.9...v3.5.0-alpha.10) (2021-10-25)
 
 **Note:** Version bump only for package @sls-next/lambda-at-edge

@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-cloudfront",
-  "version": "3.5.0-alpha.10",
+  "version": "3.5.0-alpha.11",
   "main": "./serverless.js",
   "types": "dist/component.d.ts",
   "publishConfig": {
