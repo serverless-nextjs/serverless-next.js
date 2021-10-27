@@ -517,7 +517,9 @@ describe("Builder Tests", () => {
           "pages",
           "prerender-manifest.json",
           "routes-manifest.json",
-          "testFile.js"
+          "testFile.js",
+          "webpack-api-runtime.js",
+          "webpack-runtime.js"
         ])
       );
 
@@ -532,7 +534,9 @@ describe("Builder Tests", () => {
           "chunks",
           "pages",
           "routes-manifest.json",
-          "testFile.js"
+          "testFile.js",
+          "webpack-api-runtime.js",
+          "webpack-runtime.js"
         ])
       );
     });
