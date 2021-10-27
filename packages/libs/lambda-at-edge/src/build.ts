@@ -347,6 +347,7 @@ class Builder {
           }
         }
       ),
+      this.copyJSFiles(DEFAULT_LAMBDA_CODE_DIR),
       this.copyChunks(DEFAULT_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
@@ -411,6 +412,7 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
+      this.copyJSFiles(API_LAMBDA_CODE_DIR),
       this.copyChunks(API_LAMBDA_CODE_DIR),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
@@ -438,6 +440,7 @@ class Builder {
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR),
         !!this.buildOptions.minifyHandlers
       ),
+      this.copyJSFiles(REGENERATION_LAMBDA_CODE_DIR),
       this.copyChunks(REGENERATION_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.serverlessDir, "pages"),
@@ -462,14 +465,34 @@ class Builder {
   /**
    * copy chunks if present and not using serverless trace
    */
-  copyChunks(buildDir: string): Promise<void> {
+  copyChunks(handlerDir: string): Promise<void> {
     return !this.buildOptions.useServerlessTraceTarget &&
       fse.existsSync(join(this.serverlessDir, "chunks"))
       ? fse.copy(
           join(this.serverlessDir, "chunks"),
-          join(this.outputDir, buildDir, "chunks")
+          join(this.outputDir, handlerDir, "chunks")
         )
       : Promise.resolve();
+  }
+
+  /**
+   * Copy additional JS files needed such as webpack-runtime.js (new in Next.js 12)
+   */
+  async copyJSFiles(handlerDir: string): Promise<void> {
+    await Promise.all([
+      (await fse.pathExists(join(this.serverlessDir, "webpack-api-runtime.js")))
+        ? fse.copy(
+            join(this.serverlessDir, "webpack-api-runtime.js"),
+            join(this.outputDir, handlerDir, "webpack-api-runtime.js")
+          )
+        : Promise.resolve(),
+      (await fse.pathExists(join(this.serverlessDir, "webpack-runtime.js")))
+        ? fse.copy(
+            join(this.serverlessDir, "webpack-runtime.js"),
+            join(this.outputDir, handlerDir, "webpack-runtime.js")
+          )
+        : Promise.resolve()
+    ]);
   }
 
   /**
