@@ -29,6 +29,7 @@ const defaultBuildOptions = {
   cmd: "./node_modules/.bin/next",
   domainRedirects: {},
   minifyHandlers: false,
+  handler: undefined,
   authentication: undefined,
   baseDir: process.cwd(),
   cleanupDotNext: true,
