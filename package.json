@@ -20,6 +20,7 @@
     "check-gh-token": ": \"${GH_TOKEN:?Please set GH_TOKEN to a GitHub personal token that can create releases.}\"",
     "prerelease": "lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
     "graduate": "lerna publish --conventional-commits --conventional-graduate --exact --create-release github",
+    "publish-from-git": "lerna publish --exact from-git",
     "lint": "eslint .",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "build": "lerna run build && opencollective-postinstall",
