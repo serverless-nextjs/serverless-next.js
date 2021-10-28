@@ -66,7 +66,7 @@ const createExternalRewriteResponse = async (
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
       method: req.method,
-      body: decodedBody, // Must pass body as a string,
+      body: decodedBody, // Must pass body as a string
       compress: false,
       redirect: "manual"
     });
