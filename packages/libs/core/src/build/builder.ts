@@ -1,7 +1,12 @@
 import fse from "fs-extra";
 import { join } from "path";
 import path from "path";
-import { Manifest, PageManifest, RoutesManifest } from "types";
+import {
+  CoreBuildOptions,
+  Manifest,
+  PageManifest,
+  RoutesManifest
+} from "types";
 import { isTrailingSlashRedirect } from "./lib/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
@@ -13,23 +18,6 @@ import { prepareBuildManifests } from "./";
 import pathToPosix from "./lib/pathToPosix";
 
 export const ASSETS_DIR = "assets";
-
-type CoreBuildOptions = {
-  nextConfigDir?: string;
-  nextStaticDir?: string;
-  outputDir: string;
-  args?: string[];
-  cwd?: string;
-  env?: NodeJS.ProcessEnv;
-  cmd?: string;
-  domainRedirects?: { [key: string]: string };
-  minifyHandlers?: boolean;
-  handler?: string;
-  authentication?: { username: string; password: string } | undefined;
-  baseDir?: string;
-  cleanupDotNext?: boolean;
-  assetIgnorePatterns?: string[];
-};
 
 const defaultBuildOptions = {
   nextConfigDir: "./",
