@@ -91,8 +91,6 @@ export const handleRegeneration = async (event: SQSEvent): Promise<void> => {
         http.ServerResponse.prototype
       );
 
-      // TODO: In the future we may want to have bucket details in a manifest instead of the regen event.
-      //  Though it will have to be updated at deploy time since we do not know randomly generated names until deployed unless user set a custom one.
       const awsPlatformClient = new AwsPlatformClient(
         manifest.bucketName,
         manifest.bucketRegion,

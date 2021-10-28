@@ -276,3 +276,20 @@ export type ImageBuildManifest = {
     [key: string]: string;
   };
 };
+
+export type CoreBuildOptions = {
+  nextConfigDir?: string;
+  nextStaticDir?: string;
+  outputDir: string;
+  args?: string[];
+  cwd?: string;
+  env?: NodeJS.ProcessEnv;
+  cmd?: string;
+  domainRedirects?: { [key: string]: string };
+  minifyHandlers?: boolean;
+  handler?: string;
+  authentication?: { username: string; password: string } | undefined;
+  baseDir?: string;
+  cleanupDotNext?: boolean;
+  assetIgnorePatterns?: string[];
+};

@@ -1,15 +1,16 @@
 import { ApiManifest, PageManifest } from "@sls-next/core";
 export { ImageConfig, ImagesManifest, RoutesManifest } from "@sls-next/core";
 
-export type BuildManifest = ApiManifest &
-  PageManifest & {
-    bucketName: string;
-    enableHTTPCompression?: boolean;
-    logLambdaExecutionTimes?: boolean;
-    bucketRegion: string;
-    queueName?: string;
-    queueRegion?: string;
-  };
+export type LambdaManifest = {
+  bucketName: string;
+  bucketRegion: string;
+  queueName?: string;
+  queueRegion?: string;
+  enableHTTPCompression?: boolean;
+  logLambdaExecutionTimes?: boolean;
+};
+
+export type BuildManifest = ApiManifest & PageManifest & LambdaManifest;
 
 export type PreRenderedManifest = {
   version: 3;

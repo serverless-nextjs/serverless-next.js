@@ -108,6 +108,7 @@ export class LambdaBuilder extends CoreBuilder {
         }
       ),
       this.copyChunks(DEFAULT_LAMBDA_CODE_DIR),
+      this.copyJSFiles(DEFAULT_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
