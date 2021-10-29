@@ -3,42 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.2.5-alpha.5](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.5-alpha.4...@getjerry/aws-cloudfront@1.2.5-alpha.5) (2021-10-05)
-
-### Bug Fixes
-
-- comment ([2a9ccf5](https://github.com/getjerry/serverless-next.js/commit/2a9ccf5d1c5151aff7f902016fa1011ac267c72e))
-
-## [1.2.5-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.5-alpha.3...@getjerry/aws-cloudfront@1.2.5-alpha.4) (2021-10-05)
-
-### Bug Fixes
-
-- comment ([6a23190](https://github.com/getjerry/serverless-next.js/commit/6a23190a9ceb8a122d28155fdfc5a11821d4cd9c))
-
-## [1.2.5-alpha.3](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.5-alpha.2...@getjerry/aws-cloudfront@1.2.5-alpha.3) (2021-10-05)
-
-### Bug Fixes
-
-- comment ([d6a56ec](https://github.com/getjerry/serverless-next.js/commit/d6a56ec7c0e7f9f8850c2a0729afd9aa5cc0831e))
-
-## [1.2.5-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.5-alpha.1...@getjerry/aws-cloudfront@1.2.5-alpha.2) (2021-10-05)
-
-### Bug Fixes
-
-- comment ([53e6f5f](https://github.com/getjerry/serverless-next.js/commit/53e6f5fe82ee27d64e6c64325553754fca96a4a0))
-
-## [1.2.5-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.5-alpha.0...@getjerry/aws-cloudfront@1.2.5-alpha.1) (2021-10-04)
-
-### Bug Fixes
-
-- comment ([0da2110](https://github.com/getjerry/serverless-next.js/commit/0da21108fc131495b69e1acce042c25f6560e01e))
-
-## [1.2.5-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.4...@getjerry/aws-cloudfront@1.2.5-alpha.0) (2021-10-04)
-
-### Bug Fixes
-
-- duplicate cloudfront behavior path patterns ([2dd7adf](https://github.com/getjerry/serverless-next.js/commit/2dd7adf71c005cf8fd05979ca161952bbf169ab6))
-
 ## [1.2.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-cloudfront@1.2.3...@getjerry/aws-cloudfront@1.2.4) (2021-04-13)
 
 ### Bug Fixes
