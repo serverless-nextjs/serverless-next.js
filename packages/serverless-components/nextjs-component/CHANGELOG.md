@@ -3,38 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.20.43-alpha.7](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.6...@getjerry/serverless-next@1.20.43-alpha.7) (2021-10-05)
-
-### Bug Fixes
-
-- change to trigger publish ([b8c5824](https://github.com/getjerry/serverless-next.js/commit/b8c58240d071bc102d1fd150c307cd88966cf1eb))
-
-## [1.20.43-alpha.6](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.5...@getjerry/serverless-next@1.20.43-alpha.6) (2021-10-05)
-
-**Note:** Version bump only for package @getjerry/serverless-next
-
-## [1.20.43-alpha.5](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.4...@getjerry/serverless-next@1.20.43-alpha.5) (2021-10-05)
-
-**Note:** Version bump only for package @getjerry/serverless-next
-
-## [1.20.43-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.3...@getjerry/serverless-next@1.20.43-alpha.4) (2021-10-05)
-
-**Note:** Version bump only for package @getjerry/serverless-next
-
-## [1.20.43-alpha.3](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.2...@getjerry/serverless-next@1.20.43-alpha.3) (2021-10-05)
-
-**Note:** Version bump only for package @getjerry/serverless-next
-
-## [1.20.43-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.1...@getjerry/serverless-next@1.20.43-alpha.2) (2021-10-05)
-
-**Note:** Version bump only for package @getjerry/serverless-next
-
-## [1.20.43-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43-alpha.0...@getjerry/serverless-next@1.20.43-alpha.1) (2021-10-04)
-
-**Note:** Version bump only for package @getjerry/serverless-next
-
-## [1.20.43-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.42...@getjerry/serverless-next@1.20.43-alpha.0) (2021-10-04)
-
 **Note:** Version bump only for package @getjerry/serverless-next
 
 ## [1.20.42](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.41...@getjerry/serverless-next@1.20.42) (2021-09-24)
