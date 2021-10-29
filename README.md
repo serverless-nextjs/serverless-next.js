@@ -92,7 +92,7 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 
 ### Getting started
 
-Add your next application to the serverless.yml:
+First, ensure you have Node.js 12+ installed on the deploying machine as all code is now transpiled to ES2019. Add your next application to the serverless.yml:
 
 ```yml
 # serverless.yml
@@ -103,7 +103,7 @@ myNextApplication:
 
 :no_entry_sign: **If you specify `@sls-next/serverless-component` in your `serverless.yml` file, do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used, which Serverless pulls from npm by itself. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
 
-In uncommon scenarios, you can also point it to a local installation.
+You can also point it to a local installation, for example if you want to version using `package.json`.
 
 In this case, configure the following:
 
