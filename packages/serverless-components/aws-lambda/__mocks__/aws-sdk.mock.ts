@@ -15,6 +15,9 @@ export const mockCreateFunctionPromise = promisifyMock(mockCreateFunction);
 export const mockPublishVersion = jest.fn();
 export const mockPublishVersionPromise = promisifyMock(mockPublishVersion);
 
+export const mockGetFunction = jest.fn();
+export const mockGetFunctionPromise = promisifyMock(mockGetFunction);
+
 export const mockGetFunctionConfiguration = jest.fn();
 export const mockGetFunctionConfigurationPromise = promisifyMock(
   mockGetFunctionConfiguration
@@ -87,6 +90,7 @@ export default {
     tagResource: mockTagResource,
     untagResource: mockUntagResource,
     listVersionsByFunction: mockListVersionsByFunction,
-    deleteFunction: mockDeleteFunction
+    deleteFunction: mockDeleteFunction,
+    getFunction: mockGetFunction
   }))
 };
