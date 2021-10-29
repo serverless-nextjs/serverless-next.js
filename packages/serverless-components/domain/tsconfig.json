@@ -4,14 +4,14 @@
     "esModuleInterop": true,
     "declaration": true,
     "target": "ES2019",
-    "module": "ES2020",
+    "module": "CommonJS",
     "moduleResolution": "node",
-    "noImplicitAny": true,
+    "noImplicitAny": false,
     "outDir": "dist",
     "sourceMap": true,
-    "strict": true,
+    "strict": false,
     "allowJs": true
   },
   "exclude": ["node_modules"],
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts", ".d.ts"]
 }

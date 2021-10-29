@@ -1,5 +1,5 @@
-const aws = require("aws-sdk");
-const { utils } = require("@serverless/core");
+import AWS from "aws-sdk";
+import { utils } from "@serverless/core";
 
 const HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"; // this is a constant that you can get from here https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-route53-aliastarget.html
 
@@ -8,24 +8,24 @@ const HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"; // this is a constant that you can get 
  * - Gets AWS SDK clients to use within this Component
  */
 const getClients = (credentials, region = "us-east-1") => {
-  if (aws && aws.config) {
-    aws.config.update({
+  if (AWS && AWS.config) {
+    AWS.config.update({
       maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES || "10"),
       retryDelayOptions: { base: 200 }
     });
   }
 
-  const route53 = new aws.Route53({
+  const route53 = new AWS.Route53({
     credentials,
     region
   });
 
-  const acm = new aws.ACM({
+  const acm = new AWS.ACM({
     credentials,
     region: "us-east-1" // ACM must be in us-east-1
   });
 
-  const cf = new aws.CloudFront({
+  const cf = new AWS.CloudFront({
     credentials,
     region
   });
@@ -45,7 +45,7 @@ const prepareSubdomains = (inputs) => {
   const subdomains = [];
 
   for (const subdomain in inputs.subdomains || {}) {
-    const domainObj = {};
+    const domainObj: any = {};
 
     domainObj.domain = `${subdomain}.${inputs.domain}`;
 
@@ -73,7 +73,7 @@ const getOutdatedDomains = (inputs, state) => {
 
   for (const domain of state.subdomains) {
     if (!inputs.subdomains[domain.domain]) {
-      outdatedDomains.push(domain);
+      outdatedDomains.subdomains.push(domain);
     }
   }
 
@@ -288,7 +288,7 @@ const validateCertificate = async (
 /**
  * Configure DNS records for a distribution domain
  */
-const configureDnsForCloudFrontDistribution = async (
+const configureDnsForCloudFrontDistribution = (
   route53,
   subdomain,
   domainHostedZoneId,
@@ -501,12 +501,14 @@ const removeDomainFromCloudFrontDistribution = async (
 
 const isMinimumProtocolVersionValid = (minimumProtocolVersion) => {
   // https://docs.aws.amazon.com/AWSCloudFormation/latest/UserGuide/aws-properties-cloudfront-distribution-viewercertificate.html
-  const validMinimumProtocolVersions = /(^SSLv3$|^TLSv1$|^TLSv1.1_2016$|^TLSv1.2_2018$|^TLSv1.2_2019$|^TLSv1.2_2021$|^TLSv1_2016$)/g;
-  const isVersionValid = minimumProtocolVersion.match(validMinimumProtocolVersions)?.length === 1
-  return isVersionValid
-}
+  const validMinimumProtocolVersions =
+    /(^SSLv3$|^TLSv1$|^TLSv1.1_2016$|^TLSv1.2_2018$|^TLSv1.2_2019$|^TLSv1.2_2021$|^TLSv1_2016$)/g;
+  return (
+    minimumProtocolVersion.match(validMinimumProtocolVersions)?.length === 1
+  );
+};
 
-module.exports = {
+export {
   getClients,
   prepareSubdomains,
   getOutdatedDomains,
