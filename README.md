@@ -36,7 +36,7 @@ Since Nextjs 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-ne
 
 There is no configuration needed. You can extend defaults based on your application needs.
 
-2. Feature parity with nextjs
+2. Feature parity with next js
 
 Users of this component should be able to use nextjs development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
 
