@@ -14,6 +14,7 @@
 ![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-10.2.3%20|%2011.x-blue)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![Platforms](https://img.shields.io/badge/platforms-aws-blue)
+![Tested Node.js versions](https://img.shields.io/badge/node.js-12.x%20%7C%2014.x-brightgreen)
 
 A zero configuration Next.js 10/11 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
