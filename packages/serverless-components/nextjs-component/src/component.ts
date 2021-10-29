@@ -1011,7 +1011,8 @@ class NextjsComponent extends Component {
         },
         domainType: inputs.domainType || "both",
         defaultCloudfrontInputs: cloudFrontDefaults,
-        certificateArn: inputs.certificateArn
+        certificateArn: inputs.certificateArn,
+        domainMinimumProtocolVersion: inputs.domainMinimumProtocolVersion
       });
       appUrl = domainOutputs.domains[0];
     }
