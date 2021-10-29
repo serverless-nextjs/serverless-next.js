@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.45](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.43...@getjerry/serverless-next@1.20.45) (2021-10-29)
+
+### Reverts
+
+- Revert "chore(release): publish" ([443e164](https://github.com/getjerry/serverless-next.js/commit/443e1640ab188eb8150535f40e9a7d78bc1df1d3))
+
 ## [1.20.42](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.41...@getjerry/serverless-next@1.20.42) (2021-09-24)
 
 **Note:** Version bump only for package @getjerry/serverless-next
