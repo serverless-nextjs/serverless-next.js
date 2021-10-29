@@ -3,6 +3,8 @@ import { createComponent, createTmpDir } from "../test-utils";
 import {
   mockCreateFunction,
   mockCreateFunctionPromise,
+  mockGetFunction,
+  mockGetFunctionPromise,
   mockPublishVersion,
   mockPublishVersionPromise,
   mockGetFunctionConfigurationPromise,
@@ -43,6 +45,12 @@ describe("publishVersion", () => {
     mockCreateFunctionPromise.mockResolvedValueOnce({
       FunctionArn: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
       CodeSha256: "LQT0VA="
+    });
+    mockGetFunctionPromise.mockResolvedValue({
+      Configuration: {
+        State: "Active",
+        LastUpdateStatus: "Successful"
+      }
     });
 
     component = await createComponent();
