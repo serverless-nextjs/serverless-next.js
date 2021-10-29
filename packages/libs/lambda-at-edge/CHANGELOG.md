@@ -3,23 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.8.45-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.45-alpha.1...@getjerry/lambda-at-edge@1.8.45-alpha.2) (2021-10-05)
-
-### Bug Fixes
-
-- change to trigger publish ([70b2ac9](https://github.com/getjerry/serverless-next.js/commit/70b2ac9eddda37ffda4b1ffc9819d0e0440e0c09))
-- change to trigger publish ([b8c5824](https://github.com/getjerry/serverless-next.js/commit/b8c58240d071bc102d1fd150c307cd88966cf1eb))
-
-## [1.8.45-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.45-alpha.0...@getjerry/lambda-at-edge@1.8.45-alpha.1) (2021-10-05)
-
-### Bug Fixes
-
-- change to trigger publish ([8da6b5f](https://github.com/getjerry/serverless-next.js/commit/8da6b5f25f65f53a7c65709f9a92f812bc5e9377))
-
-## [1.8.45-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.44...@getjerry/lambda-at-edge@1.8.45-alpha.0) (2021-10-04)
-
-**Note:** Version bump only for package @getjerry/lambda-at-edge
-
 ## [1.8.44](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.43...@getjerry/lambda-at-edge@1.8.44) (2021-09-24)
 
 ### Reverts
