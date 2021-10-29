@@ -16,29 +16,29 @@
   "author": "Daniel Conde <danielconde9@gmail.com>",
   "license": "MIT",
   "dependencies": {
-    "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1014.0",
-    "ramda": "^0.27.1"
+    "@serverless/core": "1.1.2",
+    "aws-sdk": "2.1014.0",
+    "ramda": "0.27.1"
   },
   "peerDependencies": {
-    "@babel/core": "^7.15.8",
-    "@serverless/core": "^1.1.2",
-    "aws-sdk": "^2.1014.0"
+    "@babel/core": "7.15.8",
+    "@serverless/core": "1.1.2",
+    "aws-sdk": "2.1014.0"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.15.0",
-    "@types/fs-extra": "^9.0.13",
-    "@types/node": "^16.11.4",
-    "@types/ramda": "^0.27.46",
+    "@babel/preset-typescript": "7.15.0",
+    "@types/fs-extra": "9.0.13",
+    "@types/node": "16.11.4",
+    "@types/ramda": "0.27.46",
     "babel-eslint": "10.1.0",
     "eslint": "8.1.0",
-    "eslint-config-prettier": "^8.3.0",
-    "eslint-plugin-import": "^2.25.2",
-    "eslint-plugin-prettier": "^4.0.0",
-    "fs-extra": "^9.1.0",
-    "jest": "^27.3.1",
-    "prettier": "^2.4.1",
-    "rimraf": "^3.0.2",
-    "typescript": "^4.4.4"
+    "eslint-config-prettier": "8.3.0",
+    "eslint-plugin-import": "2.25.2",
+    "eslint-plugin-prettier": "4.0.0",
+    "fs-extra": "9.1.0",
+    "jest": "27.3.1",
+    "prettier": "2.4.1",
+    "rimraf": "3.0.2",
+    "typescript": "4.4.4"
   }
 }
