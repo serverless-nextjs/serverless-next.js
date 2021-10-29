@@ -18,9 +18,9 @@ export default class Domain extends Component {
   async default(inputs: any = {}) {
     this.context.status("Deploying");
 
-    this.context.debug(`Starting Domain component deployment.`);
+    this.context.debug("Starting Domain component deployment.");
 
-    this.context.debug(`Validating inputs.`);
+    this.context.debug("Validating inputs.");
 
     inputs.region = inputs.region || "us-east-1";
     inputs.privateZone = inputs.privateZone || false;
@@ -31,11 +31,11 @@ export default class Domain extends Component {
       inputs.domainMinimumProtocolVersion || "TLSv1.2_2018";
 
     if (!inputs.domain) {
-      throw Error(`"domain" is a required input.`);
+      throw Error('"domain" is a required input.');
     }
 
     if (!isMinimumProtocolVersionValid(inputs.domainMinimumProtocolVersion)) {
-      throw Error(`"minimumProtocolVersion" has in invalid value.`);
+      throw Error('"minimumProtocolVersion" has in invalid value.');
     }
 
     // TODO: Check if domain has changed.
@@ -45,7 +45,7 @@ export default class Domain extends Component {
     const clients = getClients(this.context.credentials.aws, inputs.region);
 
     this.context.debug(
-      `Formatting domains and identifying cloud services being used.`
+      "Formatting domains and identifying cloud services being used."
     );
     const subdomains = prepareSubdomains(inputs);
     this.state.region = inputs.region;
@@ -100,10 +100,10 @@ export default class Domain extends Component {
 
     if (certificate.Status === "PENDING_VALIDATION") {
       this.context.debug(
-        `AWS ACM Certificate Validation Status is "PENDING_VALIDATION".`
+        'AWS ACM Certificate Validation Status is "PENDING_VALIDATION".'
       );
       this.context.debug(
-        `Validating AWS ACM Certificate via Route53 "DNS" method.`
+        'Validating AWS ACM Certificate via Route53 "DNS" method.'
       );
       await validateCertificate(
         clients.acm,
@@ -130,9 +130,9 @@ export default class Domain extends Component {
     // Setting up domains for different services
     for (const subdomain of subdomains) {
       if (subdomain.type === "awsS3Website") {
-        throw new Error(`Unsupported subdomain type awsS3Website`);
+        throw new Error("Unsupported subdomain type awsS3Website");
       } else if (subdomain.type === "awsApiGateway") {
-        throw new Error(`Unsupported subdomain type awsApiGateway`);
+        throw new Error("Unsupported subdomain type awsApiGateway");
       } else if (subdomain.type === "awsCloudFront") {
         this.context.debug(
           `Adding ${subdomain.domain} domain to CloudFront distribution with URL "${subdomain.url}.\nTLS minimum protocol version: ${inputs.domainMinimumProtocolVersion}`
@@ -165,7 +165,7 @@ export default class Domain extends Component {
           );
         }
       } else if (subdomain.type === "awsAppSync") {
-        throw new Error(`Unsupported subdomain type awsAppSync`);
+        throw new Error("Unsupported subdomain type awsAppSync");
       }
     }
 
@@ -192,7 +192,7 @@ export default class Domain extends Component {
       return;
     }
 
-    this.context.debug(`Starting Domain component removal.`);
+    this.context.debug("Starting Domain component removal.");
 
     // Get AWS SDK Clients
     const clients = getClients(this.context.credentials.aws, this.state.region);
@@ -209,9 +209,9 @@ export default class Domain extends Component {
     for (const subdomain in this.state.subdomains) {
       const domainState = this.state.subdomains[subdomain];
       if (domainState.type === "awsS3Website") {
-        this.context.debug(`Unsupported subdomain type awsS3Website`);
+        this.context.debug("Unsupported subdomain type awsS3Website");
       } else if (domainState.type === "awsApiGateway") {
-        this.context.debug(`Unsupported subdomain type awsApiGateway`);
+        this.context.debug("Unsupported subdomain type awsApiGateway");
       } else if (domainState.type === "awsCloudFront") {
         this.context.debug(
           `Removing domain ${domainState.domain} from CloudFront.`
@@ -240,7 +240,7 @@ export default class Domain extends Component {
           );
         }
       } else if (domainState.type === "awsAppSync") {
-        this.context.debug(`Unsupported subdomain type awsAppSync`);
+        this.context.debug("Unsupported subdomain type awsAppSync");
       }
     }
     this.state = {};
