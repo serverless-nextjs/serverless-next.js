@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.1...v3.5.3-alpha.2) (2021-10-29)
+
+### Bug Fixes
+
+- **aws-lambda:** wait for lambda to be ready right after creation/updating of code ([#1985](https://github.com/serverless-nextjs/serverless-next.js/issues/1985)) ([016fee0](https://github.com/serverless-nextjs/serverless-next.js/commit/016fee081f25bf23e0bfc128ceb95f657b85b30f))
+
 ## [3.5.3-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.0...v3.5.3-alpha.1) (2021-10-29)
 
 ### Bug Fixes

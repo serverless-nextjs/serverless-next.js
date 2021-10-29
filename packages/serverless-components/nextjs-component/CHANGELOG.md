@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.1...v3.5.3-alpha.2) (2021-10-29)
+
+### Bug Fixes
+
+- **domain:** add missing pieces to 'domainMinimumProtocolVersion' input use ([#1983](https://github.com/serverless-nextjs/serverless-next.js/issues/1983)) ([dff22ba](https://github.com/serverless-nextjs/serverless-next.js/commit/dff22ba230e8cc3047d67cfbb82bc93a2e4edfe0))
+
 ## [3.5.3-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.0...v3.5.3-alpha.1) (2021-10-29)
 
 ### Bug Fixes
