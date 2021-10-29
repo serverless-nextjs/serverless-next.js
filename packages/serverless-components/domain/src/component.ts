@@ -35,7 +35,7 @@ export default class Domain extends Component {
     }
 
     if (!isMinimumProtocolVersionValid(inputs.domainMinimumProtocolVersion)) {
-      throw Error('"minimumProtocolVersion" has in invalid value.');
+      throw Error('"minimumProtocolVersion" has invalid value.');
     }
 
     // TODO: Check if domain has changed.
