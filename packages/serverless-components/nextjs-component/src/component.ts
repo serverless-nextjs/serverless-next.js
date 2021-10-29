@@ -619,7 +619,7 @@ class NextjsComponent extends Component {
 
       await waitUntilReady(
         this.context,
-        regenerationLambdaResult.arn,
+        regenerationLambdaResult.name,
         regenerationLambdaResult.region
       );
 
@@ -672,7 +672,7 @@ class NextjsComponent extends Component {
 
       await waitUntilReady(
         this.context,
-        apiEdgeLambdaPublishOutputs.arn,
+        apiEdgeLambdaPublishOutputs.name,
         apiEdgeLambdaPublishOutputs.region
       );
 
@@ -746,7 +746,7 @@ class NextjsComponent extends Component {
 
       await waitUntilReady(
         this.context,
-        imageEdgeLambdaOutputs.arn,
+        imageEdgeLambdaOutputs.name,
         imageEdgeLambdaOutputs.region
       );
 
@@ -817,7 +817,7 @@ class NextjsComponent extends Component {
 
     await waitUntilReady(
       this.context,
-      defaultEdgeLambdaOutputs.arn,
+      defaultEdgeLambdaOutputs.name,
       defaultEdgeLambdaOutputs.region
     );
 
