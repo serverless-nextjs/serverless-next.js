@@ -11,6 +11,7 @@ import {
   configChanged,
   pack
 } from "./utils";
+import { waitUntilReady } from "./waitUntilReady";
 
 const outputsList = [
   "name",
@@ -120,6 +121,9 @@ class AwsLambda extends Component {
       this.context.status(`Replacing`);
       await deleteLambda({ lambda, name: this.state.name });
     }
+
+    // Wait for Lambda to be in a ready state
+    await waitUntilReady(this.context, config.name, config.region);
 
     this.context.debug(
       `Successfully deployed lambda ${config.name} in the ${config.region} region.`

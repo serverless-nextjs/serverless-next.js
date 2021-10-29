@@ -33,7 +33,6 @@ import type {
 import { execSync } from "child_process";
 import AWS from "aws-sdk";
 import { removeLambdaVersions } from "@sls-next/aws-lambda/dist/removeLambdaVersions";
-import { waitUntilReady } from "@sls-next/aws-lambda/dist/waitUntilReady";
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
 
@@ -617,12 +616,6 @@ class NextjsComponent extends Component {
         regenerationLambdaInput
       );
 
-      await waitUntilReady(
-        this.context,
-        regenerationLambdaResult.name,
-        regenerationLambdaResult.region
-      );
-
       await regenerationLambda.publishVersion();
 
       await sqs.addEventSource(regenerationLambdaResult.name);
@@ -669,12 +662,6 @@ class NextjsComponent extends Component {
       apiEdgeLambdaOutputs = await apiEdgeLambda(apiEdgeLambdaInput);
 
       const apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
-
-      await waitUntilReady(
-        this.context,
-        apiEdgeLambdaPublishOutputs.name,
-        apiEdgeLambdaPublishOutputs.region
-      );
 
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("api/*", routesManifest)
@@ -744,12 +731,6 @@ class NextjsComponent extends Component {
 
       imageEdgeLambdaOutputs = await imageEdgeLambda(imageEdgeLambdaInput);
 
-      await waitUntilReady(
-        this.context,
-        imageEdgeLambdaOutputs.name,
-        imageEdgeLambdaOutputs.region
-      );
-
       const imageEdgeLambdaPublishOutputs =
         await imageEdgeLambda.publishVersion();
 
@@ -813,12 +794,6 @@ class NextjsComponent extends Component {
 
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda(
       defaultEdgeLambdaInput
-    );
-
-    await waitUntilReady(
-      this.context,
-      defaultEdgeLambdaOutputs.name,
-      defaultEdgeLambdaOutputs.region
     );
 
     const defaultEdgeLambdaPublishOutputs =
