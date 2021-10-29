@@ -5345,6 +5345,12 @@ __metadata:
 "@sls-next/domain@workspace:packages/serverless-components/domain":
   version: 0.0.0-use.local
   resolution: "@sls-next/domain@workspace:packages/serverless-components/domain"
+  dependencies:
+    "@serverless/core": 1.1.2
+    "@types/node": 16.11.6
+    aws-sdk: 2.1017.0
+    rimraf: 3.0.2
+    typescript: 4.4.4
   peerDependencies:
     "@serverless/core": 1.1.2
     aws-sdk: 2.1014.0
@@ -5841,7 +5847,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:*, @types/node@npm:^16.11.4":
+"@types/node@npm:*, @types/node@npm:16.11.6, @types/node@npm:^16.11.4":
   version: 16.11.6
   resolution: "@types/node@npm:16.11.6"
   checksum: 6e19634766ff589d3d2f361c2196b671f8f133cdadc5ad347a621c360d8994b6c4fbccfb2ad9c60c588c593831a96497c9c6b77d2b7e91be723384b94f6368e7
@@ -6937,6 +6943,23 @@ __metadata:
     uuid: 3.3.2
     xml2js: 0.4.19
   checksum: ce59859a3f4e541c1405b33530b0548cd8c7589cf43ccc45de7731ae0f848d105519f6925c5deb82db3170f64a857a45d4961f5cdd18932bb0e81511b2ef5fea
+  languageName: node
+  linkType: hard
+
+"aws-sdk@npm:2.1017.0":
+  version: 2.1017.0
+  resolution: "aws-sdk@npm:2.1017.0"
+  dependencies:
+    buffer: 4.9.2
+    events: 1.1.1
+    ieee754: 1.1.13
+    jmespath: 0.15.0
+    querystring: 0.2.0
+    sax: 1.2.1
+    url: 0.10.3
+    uuid: 3.3.2
+    xml2js: 0.4.19
+  checksum: dda1a7e1a1acdaa14ac7b167fccafa31ed440d391b722b776dd910c87bb3e86942ed59cd9623eb2d41da886718d378a15fb8f210a5173a9e5ed0ee8fdbfb9819
   languageName: node
   linkType: hard
 
