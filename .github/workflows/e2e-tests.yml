@@ -151,12 +151,6 @@ jobs:
           NODE_OPTIONS: "--max-old-space-size=4096"
         run: yarn install --immutable && yarn build
 
-      - name: Install test utils
-        working-directory: packages/e2e-tests/test-utils
-        env:
-          NODE_OPTIONS: "--max-old-space-size=4096"
-        run: yarn install --immutable
-
       - name: Choose latest next.js version
         if: ${{ !startsWith(matrix.app, 'prev') }}
         working-directory: packages/e2e-tests/${{ matrix.app }}
