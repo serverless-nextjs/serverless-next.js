@@ -9,7 +9,7 @@ export type LambdaManifest = {
   logExecutionTimes?: boolean;
 };
 
-export type BuildManifest = ApiManifest & PageManifest & LambdaManifest;
+export type BuildManifest = ApiManifest & PageManifest;
 
 export type PreRenderedManifest = {
   version: 3;
