@@ -73,12 +73,12 @@ For full usage docs, please refer to (TBA).
 ## Architecture
 Once built and packaged, the app consists of the following components:
 
-*`default-lambda` (v2): handles page and API requests.
-*`default-lambda` (v1): handles page requests only.
-*`api-lambda` (legacy v1 handlers only): handles API requests.
-*`regeneration-lambda`: handles regeneration requests used for ISR.
-*`image-lambda`: handles image optimization requests.
-*`assets`: all static assets used by your app.
+* `default-lambda` (v2): handles page and API requests.
+* `default-lambda` (v1): handles page requests only.
+* `api-lambda` (legacy v1 handlers only): handles API requests.
+* `regeneration-lambda`: handles regeneration requests used for ISR.
+* `image-lambda`: handles image optimization requests.
+* `assets`: all static assets used by your app.
 
 ## Infrastructure
 You will need the following infrastructure to deploy your app:
