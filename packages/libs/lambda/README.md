@@ -3,6 +3,8 @@
 
 This library uses the handlers provided by `@sls-next/core` and wraps them with a Lambda/API Gateway-compatible layer so that Next.js apps can be served through API Gateway.
 
+For usage docs, please refer to (TBA).
+
 ## Architecture
 
 Once built and packaged, the app consists of the following components:
@@ -19,6 +21,7 @@ You will need the following infrastructure to deploy your app:
 * AWS API Gateway
 * AWS S3 Bucket
 * AWS SQS Queue (if you are using ISR)
+* additional roles, permissions, etc.
 
 ## Deployment
 
@@ -27,9 +30,9 @@ You will need the following infrastructure to deploy your app:
 ## Limitations
 
 * Lambda limitations apply: https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html.
-* The image handler only serves image optimization requests, it cannot redirect, rewrite or add headers so far.
+* The image handler only serves image optimization requests. It cannot redirect, rewrite or add headers (yet).
 * Because the default and image handlers are separate, you cannot rewrite from default routes -> image routes.
-* 
+
 ## Misc.
 
 Special thanks for Jan Varho for the initial prototype which this code is based on.
