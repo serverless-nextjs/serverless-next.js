@@ -20,6 +20,10 @@ You will need the following infrastructure to deploy your app:
 * AWS S3 Bucket
 * AWS SQS Queue (if you are using ISR)
 
+## Deployment
+
+(WIP) We will provide a simple lightweight CDK deployer which you can extend.
+
 ## Limitations
 
 * Lambda limitations apply: https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html.
