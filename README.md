@@ -806,15 +806,15 @@ Refer to the [README](https://github.com/serverless-nextjs/serverless-next.js/bl
 
 ## Reporting Issues
 
-You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If posting a problem, please follow the [debugging wiki](https://github.com/serverless-nextjs/serverless-next.js/wiki/Debugging-Issues) first for some useful tips.
+You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If posting a problem, please follow the [debugging wiki](https://github.com/serverless-nextjs/serverless-next.js/wiki/Debugging-Issues) first for some useful tips, and try to include as much information to reproduce the issue.
 
 If you are reporting a security vulnerability, please follow the [security policy](https://github.com/serverless-nextjs/serverless-next.js/security/policy) instead.
 
-Please note that there is only one active maintainer, and a handful of community contributors, who both contribute to this library in their free time. So we hope you understand that our response is best-effort and may take several days, or more. In case an issue hasn't been looked at for a long time (> a few weeks) and there is no acceptable workaround or it seems like a major issue, feel free to mention a maintainer and we will try to prioritize it.
+Please note that there is only one core maintainer right now (@dphang), and a handful of community contributors, who all contribute to this library in their free time. So we hope you understand that our response is best-effort and may take several days, or more. So we hope you could at least help debug the issue or provide as much context. In case an issue hasn't been looked at for a long time (> a few weeks) or it seems like a major issue, feel free to mention a maintainer and we will try to prioritize it.
 
 ## Contributing
 
-Please see the [contributing](./CONTRIBUTING.md) guide.
+We would love if you can help contribute, whether it's coding, triaging or debugging issues, helping with documentation, or financial support! Please see the [contributing](./CONTRIBUTING.md) guide.
 
 ## Contributors
 
