@@ -280,7 +280,7 @@ export type ImageBuildManifest = {
 export type CoreBuildOptions = {
   nextConfigDir?: string;
   nextStaticDir?: string;
-  outputDir: string;
+  outputDir?: string;
   args?: string[];
   cwd?: string;
   env?: NodeJS.ProcessEnv;

@@ -18,7 +18,8 @@
   "scripts": {
     "prepack": "yarn clean && yarn build",
     "build": "tsc -p tsconfig.build.json",
-    "clean": "yarn rimraf dist"
+    "clean": "yarn rimraf dist",
+    "test": "jest"
   },
   "keywords": [
     "AWS",

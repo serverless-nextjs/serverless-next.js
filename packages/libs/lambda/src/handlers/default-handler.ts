@@ -4,6 +4,8 @@ import PrerenderManifest from "./prerender-manifest.json";
 import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
+// @ts-ignore
+import LambdaManifestJson from "./lambda-manifest.json";
 import {
   defaultHandler,
   PreRenderedManifest as PrerenderManifestType,
@@ -13,8 +15,8 @@ import {
   RoutesManifest
 } from "@sls-next/core";
 import { AwsPlatformClient } from "@sls-next/aws-common";
-import { BuildManifest } from "types";
-import { httpCompat } from "compat/apigw";
+import { BuildManifest, LambdaManifest } from "src/types";
+import { httpCompat } from "src/compat/apigw";
 import {
   APIGatewayProxyEventV2,
   SQSEvent,
@@ -33,15 +35,16 @@ export const handleRequest = async (
   const manifest: BuildManifest = Manifest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const routesManifest: RoutesManifest = RoutesManifestJson;
+  const lambdaManifest: LambdaManifest = LambdaManifestJson;
 
   // Compatibility layer required to convert from Node.js req/res <-> API Gateway
   const { req, res, responsePromise } = httpCompat(event);
 
   // Initialize AWS platform specific client
-  const bucketName = manifest.bucketName;
-  const bucketRegion = manifest.bucketRegion;
-  const regenerationQueueRegion = manifest.queueRegion;
-  const regenerationQueueName = manifest.queueName;
+  const bucketName = lambdaManifest.bucketName;
+  const bucketRegion = lambdaManifest.bucketRegion;
+  const regenerationQueueRegion = lambdaManifest.queueRegion;
+  const regenerationQueueName = lambdaManifest.queueName;
   const awsPlatformClient = new AwsPlatformClient(
     bucketName,
     bucketRegion,
@@ -58,7 +61,7 @@ export const handleRequest = async (
     prerenderManifest,
     routesManifest,
     options: {
-      logExecutionTimes: manifest.logLambdaExecutionTimes ?? false
+      logExecutionTimes: lambdaManifest.logExecutionTimes ?? false
     },
     platformClient: awsPlatformClient
   });
@@ -76,6 +79,7 @@ export const handleRegeneration = async (event: SQSEvent): Promise<void> => {
     event.Records.map(async (record) => {
       const regenerationEvent: RegenerationEvent = JSON.parse(record.body);
       const manifest: BuildManifest = Manifest;
+      const lambdaManifest: LambdaManifest = LambdaManifestJson;
 
       // This is needed to build the original req/res Node.js objects to be passed into pages.
       const originalRequest: RegenerationEventRequest =
@@ -92,10 +96,10 @@ export const handleRegeneration = async (event: SQSEvent): Promise<void> => {
       );
 
       const awsPlatformClient = new AwsPlatformClient(
-        manifest.bucketName,
-        manifest.bucketRegion,
-        manifest.queueName, // we don't need to call the SQS queue as of now, but passing this for future uses
-        manifest.queueRegion
+        lambdaManifest.bucketName,
+        lambdaManifest.bucketRegion,
+        lambdaManifest.queueName, // we don't need to call the SQS queue as of now, but passing this for future uses
+        lambdaManifest.queueRegion
       );
 
       await regenerationHandler({

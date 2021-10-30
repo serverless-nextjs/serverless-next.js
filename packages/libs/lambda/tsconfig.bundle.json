@@ -14,7 +14,7 @@
     "strict": true,
     "allowJs": true,
     "resolveJsonModule": true,
-    "baseUrl": "./src"
+    "baseUrl": "./"
   },
   "include": [
     "./src/handlers/default-handler.ts",

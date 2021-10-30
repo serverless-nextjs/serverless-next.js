@@ -3,12 +3,23 @@ import { join } from "path";
 import path from "path";
 import { ImageBuildManifest, PageManifest } from "@sls-next/core";
 import CoreBuilder from "@sls-next/core/dist/build/builder";
-import { Manifest } from "@sls-next/core";
+import { Manifest, CoreBuildOptions } from "@sls-next/core";
+import { LambdaBuildOptions, LambdaManifest } from "src/types";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
 
 export class LambdaBuilder extends CoreBuilder {
+  private lambdaBuildOptions: LambdaBuildOptions;
+
+  public constructor(
+    lambdaBuildOptions: LambdaBuildOptions,
+    coreBuildOptions?: CoreBuildOptions
+  ) {
+    super(coreBuildOptions);
+    this.lambdaBuildOptions = lambdaBuildOptions;
+  }
+
   protected async buildPlatform(
     manifests: {
       defaultBuildManifest: any;
@@ -22,7 +33,15 @@ export class LambdaBuilder extends CoreBuilder {
       ...imageManifest
     };
 
-    await this.buildDefaultLambda(defaultBuildManifest);
+    // Build Lambda-specific manifest which will be included in the default and image handlers
+    const lambdaManifest: LambdaManifest = {
+      bucketName: this.lambdaBuildOptions.bucketName,
+      bucketRegion: this.lambdaBuildOptions.bucketRegion,
+      queueName: this.lambdaBuildOptions.queueName,
+      queueRegion: this.lambdaBuildOptions.queueName
+    };
+
+    await this.buildDefaultLambda(defaultBuildManifest, lambdaManifest);
     // If using Next.js 10 and images-manifest.json is present then image optimizer can be used
     const hasImagesManifest = await fse.pathExists(
       join(this.dotNextDir, "images-manifest.json")
@@ -45,7 +64,7 @@ export class LambdaBuilder extends CoreBuilder {
     const isNextImageImported = exportMarker.isNextImageImported !== false;
 
     if (hasImageOptimizer && isNextImageImported) {
-      await this.buildImageLambda(imageBuildManifest);
+      await this.buildImageLambda(imageBuildManifest, lambdaManifest);
     }
   }
 
@@ -71,8 +90,15 @@ export class LambdaBuilder extends CoreBuilder {
     await fse.copy(source, destination);
   }
 
+  /**
+   * Build default lambda which handles all requests as well as regeneration requests.
+   * @param pageManifest
+   * @param lambdaManifest
+   * @private
+   */
   private async buildDefaultLambda(
-    pageManifest: PageManifest
+    pageManifest: PageManifest,
+    lambdaManifest: LambdaManifest
   ): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
@@ -84,7 +110,7 @@ export class LambdaBuilder extends CoreBuilder {
       this.processAndCopyHandler(
         "default-handler",
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR),
-        !!this.buildOptions.minifyHandlers
+        this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
         ? fse.copy(
@@ -98,7 +124,13 @@ export class LambdaBuilder extends CoreBuilder {
         : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
-        pageManifest
+        pageManifest,
+        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
+      ),
+      fse.writeJson(
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "lambda-manifest.json"),
+        lambdaManifest,
+        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
       ),
       fse.copy(
         join(this.serverlessDir, "pages"),
@@ -121,11 +153,13 @@ export class LambdaBuilder extends CoreBuilder {
   }
 
   /**
-   * Build image optimization lambda (supported by Next.js 10)
+   * Build image optimization lambda (supported by Next.js 10+)
    * @param imageBuildManifest
+   * @param lambdaManifest
    */
   private async buildImageLambda(
-    imageBuildManifest: ImageBuildManifest
+    imageBuildManifest: ImageBuildManifest,
+    lambdaManifest: LambdaManifest
   ): Promise<void> {
     await fse.mkdir(join(this.outputDir, IMAGE_LAMBDA_CODE_DIR));
 
@@ -133,7 +167,7 @@ export class LambdaBuilder extends CoreBuilder {
       this.processAndCopyHandler(
         "image-handler",
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR),
-        !!this.buildOptions.minifyHandlers
+        this.buildOptions.minifyHandlers
       ),
       this.buildOptions?.handler
         ? fse.copy(
@@ -147,7 +181,13 @@ export class LambdaBuilder extends CoreBuilder {
         : Promise.resolve(),
       fse.writeJson(
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "manifest.json"),
-        imageBuildManifest
+        imageBuildManifest,
+        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
+      ),
+      fse.writeJson(
+        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "lambda-manifest.json"),
+        lambdaManifest,
+        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
       ),
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),

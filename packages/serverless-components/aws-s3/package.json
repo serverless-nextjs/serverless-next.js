@@ -6,7 +6,6 @@
     "access": "public"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint . --fix --cache",
     "clean": "yarn rimraf dist",
     "build": "tsc -p tsconfig.build.json",
