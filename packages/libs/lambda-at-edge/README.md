@@ -1,10 +1,11 @@
-### AWS Lambda@Edge library to help you deploy serverless next.js applications to CloudFront
+# @sls-next/lambda-at-edge
+> Library to build and deploy Next.js apps for AWS Lambda@Edge
 
-This library was created to decouple the core logic of deploying serverless rendered next.js applications on the Cloud agnostic of a specific provider. In other words, this library could be used to deploy via serverles components, AWS CDK, or any other providers you'd like.
+This library uses the handlers provided by `@sls-next/core` and wraps them with a Lambda@Edge/CloudFront-compatible layer.
 
 ## Usage
 
-```
+```ts
 const path = require('path');
 const { Builder } = require("@sls-next/lambda-at-edge");
 
@@ -67,7 +68,42 @@ The handlers need to be attached to the `origin-request` trigger of CloudFront.
 The `api-lambda` edge function should be attached to a CloudFront behaviour that only triggers in the event of `/api/*` requests.
 The `image-lambda` edge function should be attached to a CloudFront behaviour that only triggers in the event of `_next/image*` requests.
 
-### TODO:
+For full usage docs, please refer to (TBA).
 
-- Provisioning and configuration of the CloudFront distribution
-- Create a separate utility to clean up unused Lambda@Edge functions that were previously attached to a CloudFront distribution
+## Architecture
+Once built and packaged, the app consists of the following components:
+
+`default-lambda` (v2): handles page and API requests.
+`default-lambda` (v1): handles page requests only.
+`api-lambda` (legacy v1 handlers only): handles API requests.
+`regeneration-lambda`: handles regeneration requests used for ISR.
+`image-lambda`: handles image optimization requests.
+`assets`: all static assets used by your app.
+
+## Infrastructure
+You will need the following infrastructure to deploy your app:
+
+AWS Lambda@Edge
+AWS CloudFront
+AWS API Gateway
+AWS S3 Bucket
+AWS SQS Queue (if you are using ISR)
+additional roles, permissions, etc.
+
+## Deployment
+
+Currently, you will need to deploy via the Serverless Components deployer, `@sls-next/serverless-component`. We also provide a CDK construct at `@sls-next/nextjs-cdk-construct`.
+
+If you'd like to write your own custom deployment logic, please see the CDK construct or legacy Serverless Components deployer to see an example of all the infrastructure you need to setup.
+
+## Limitations
+
+* Lambda@Edge limitations apply: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/edge-functions-restrictions.html. Most notably, there is a 1 MB response size limit, which could especially affect static files.
+* CloudFront limitations apply: https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/cloudfront-limits.html
+* The image handler only serves image optimization requests. It cannot redirect, rewrite or add headers (yet).
+* In v1 handlers (legacy), the default, API and image handlers are separate, so you cannot rewrite from default routes -> image routes nor rewrite between default routes and API routes.
+* In v2 handlers, the default and image handlers are separate, so you cannot rewrite from default routes -> image routes.
+
+## Acknowledgements
+
+Special thanks for Daniel Conde Marin for the initial implementation.
