@@ -320,7 +320,7 @@ class Builder {
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage =
               separateApiLambda && !useV2Handler
-                ? pathToPosix(file).indexOf("pages/api") === -1
+                ? pathToPosix(file).indexOf("pages/api/") === -1
                 : true;
 
             // If there are API routes, include all JS files.
