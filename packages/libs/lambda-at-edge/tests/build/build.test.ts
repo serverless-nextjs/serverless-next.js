@@ -261,6 +261,7 @@ describe("Builder Tests", () => {
         // Note: JS files used only for prerendering at build time (contact.js, index.js) are included since there are API routes
         expect(pages).toEqual([
           "_error.js",
+          "api-starting-page.js",
           "blog.js",
           "contact.js",
           "customers",
