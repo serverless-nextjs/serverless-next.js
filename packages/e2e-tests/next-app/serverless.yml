@@ -5,7 +5,6 @@ next-app:
     sqs:
       tags:
         foo: bar
-    deploy: false
     build:
       postBuildCommands: ["node scripts/post-build-test.js"]
       assetIgnorePatterns:
