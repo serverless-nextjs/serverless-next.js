@@ -6,8 +6,6 @@ export type LambdaManifest = {
   bucketRegion: string;
   queueName?: string;
   queueRegion?: string;
-  enableHTTPCompression?: boolean;
-  logLambdaExecutionTimes?: boolean;
 };
 
 export type BuildManifest = ApiManifest & PageManifest & LambdaManifest;
@@ -39,4 +37,14 @@ export type PreRenderedManifest = {
 export type PerfLogger = {
   now: () => number | undefined;
   log: (metricDescription: string, t1?: number, t2?: number) => void;
+};
+
+/**
+ * Build Options specific to Lambda
+ */
+export type LambdaBuildOptions = {
+  bucketName: string;
+  bucketRegion: string;
+  queueName?: string;
+  queueRegion?: string;
 };

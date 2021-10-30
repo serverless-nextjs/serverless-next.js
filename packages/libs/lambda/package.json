@@ -20,7 +20,8 @@
     "build": "tsc -p tsconfig.build.json && yarn rollup",
     "esbuild": "node esbuild.js",
     "rollup": "rollup --config",
-    "clean": "yarn rimraf dist"
+    "clean": "yarn rimraf dist",
+    "test": "jest"
   },
   "keywords": [
     "AWS",
@@ -42,12 +43,15 @@
     "fs-extra": "9.1.0"
   },
   "devDependencies": {
+    "@babel/preset-typescript": "^7.16.0",
     "@rollup/plugin-commonjs": "18.1.0",
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-node-resolve": "10.0.0",
     "@types/aws-lambda": "8.10.84",
     "@types/fs-extra": "9.0.13",
+    "@types/jest": "^27.0.2",
     "@types/node": "16.11.4",
+    "jest": "^27.3.1",
     "rimraf": "3.0.2",
     "rollup": "2.58.3",
     "rollup-plugin-node-externals": "2.2.0",
