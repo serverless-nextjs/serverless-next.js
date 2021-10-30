@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.3...v3.5.3-alpha.4) (2021-10-30)
+
+### Bug Fixes
+
+- **lambda-at-edge:** properly include pages that start with pages/api (but are not api pages) ([#1994](https://github.com/serverless-nextjs/serverless-next.js/issues/1994)) ([26a756c](https://github.com/serverless-nextjs/serverless-next.js/commit/26a756cb413771bca7e649a1210b7a983ec569d0))
+
 ## [3.5.3-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.2...v3.5.3-alpha.3) (2021-10-30)
 
 ### Bug Fixes
