@@ -9,9 +9,9 @@ For usage docs, please refer to (TBA).
 
 Once built and packaged, the app consists of the following components:
 
-* Default handler: handles all requests, including pages, APIs, and regeneration requests.
-* Image handler: handles images regeneration requests.
-* Static assets: all static assets used by your app.
+* `default-lambda`: handles all requests, including pages, APIs, and regeneration requests.
+* `image-lambda`: handles image optimization requests.
+* `assets`: all static assets used by your app.
 
 ## Infrastructure
 
@@ -32,7 +32,7 @@ You will need the following infrastructure to deploy your app:
 * Lambda limitations apply: https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html.
 * API Gateway limitations apply: https://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html.
 * The image handler only serves image optimization requests. It cannot redirect, rewrite or add headers (yet).
-* Because the default and image handlers are separate, you cannot rewrite from default routes -> image routes.
+* The default and image handlers are separate, so you cannot rewrite from default routes -> image routes.
 
 ## Misc.
 
