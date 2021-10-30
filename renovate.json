@@ -35,6 +35,10 @@
     {
       "packagePatterns": ["@cypress", "cypress"],
       "groupName": "cypress"
+    },
+    {
+      "packagePatterns": ["@babel"],
+      "groupName": "babel"
     }
   ],
   "ignoreDeps": [
