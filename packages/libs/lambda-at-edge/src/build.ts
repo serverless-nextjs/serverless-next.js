@@ -320,7 +320,8 @@ class Builder {
             const isNotStaticPropsJSONFile = path.extname(file) !== ".json";
             const isNotApiPage =
               separateApiLambda && !useV2Handler
-                ? pathToPosix(file).indexOf("pages/api") === -1
+                ? pathToPosix(file).indexOf("pages/api/") === -1 &&
+                  !pathToPosix(file).endsWith("pages/api") // don't copy api directory nor files in it, but copy pages that happen to start with pages/api
                 : true;
 
             // If there are API routes, include all JS files.
