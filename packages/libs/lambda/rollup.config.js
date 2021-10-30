@@ -10,7 +10,8 @@ const LOCAL_EXTERNALS = [
   "./api-manifest.json",
   "./routes-manifest.json",
   "./prerender-manifest.json",
-  "./images-manifest.json"
+  "./images-manifest.json",
+  "./lambda-manifest.json"
 ];
 const NPM_EXTERNALS = ["aws-lambda"];
 
