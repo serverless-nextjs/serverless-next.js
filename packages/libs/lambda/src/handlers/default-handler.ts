@@ -13,8 +13,8 @@ import {
   RoutesManifest
 } from "@sls-next/core";
 import { AwsPlatformClient } from "@sls-next/aws-common";
-import { BuildManifest } from "types";
-import { httpCompat } from "compat/apigw";
+import { BuildManifest } from "src/types";
+import { httpCompat } from "src/compat/apigw";
 import {
   APIGatewayProxyEventV2,
   SQSEvent,
@@ -58,7 +58,7 @@ export const handleRequest = async (
     prerenderManifest,
     routesManifest,
     options: {
-      logExecutionTimes: manifest.logLambdaExecutionTimes ?? false
+      logExecutionTimes: manifest.logExecutionTimes ?? false
     },
     platformClient: awsPlatformClient
   });

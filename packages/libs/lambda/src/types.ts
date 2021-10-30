@@ -6,6 +6,7 @@ export type LambdaManifest = {
   bucketRegion: string;
   queueName?: string;
   queueRegion?: string;
+  logExecutionTimes?: boolean;
 };
 
 export type BuildManifest = ApiManifest & PageManifest & LambdaManifest;
