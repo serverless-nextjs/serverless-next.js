@@ -2,6 +2,7 @@ next-app-experimental:
   component: "../../serverless-components/nextjs-component"
   inputs:
     removeOldLambdaVersions: true
+    description: "aws:states:opt-in"
     sqs:
       tags:
         foo: bar

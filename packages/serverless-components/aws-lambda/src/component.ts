@@ -119,6 +119,9 @@ class AwsLambda extends Component {
 
         const updateResult = await updateLambdaConfig({ lambda, ...config });
         config.hash = updateResult.hash;
+
+        // Wait for Lambda to be ready after updating config and before doing anything else
+        await waitUntilReady(this.context, config.name, config.region);
       }
     }
 
