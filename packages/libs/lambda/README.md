@@ -30,6 +30,7 @@ You will need the following infrastructure to deploy your app:
 ## Limitations
 
 * Lambda limitations apply: https://docs.aws.amazon.com/lambda/latest/dg/gettingstarted-limits.html.
+* API Gateway limitations apply: https://docs.aws.amazon.com/apigateway/latest/developerguide/limits.html.
 * The image handler only serves image optimization requests. It cannot redirect, rewrite or add headers (yet).
 * Because the default and image handlers are separate, you cannot rewrite from default routes -> image routes.
 
