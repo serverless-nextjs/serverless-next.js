@@ -39,7 +39,7 @@
   "dependencies": {
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "esbuild": "0.13.10",
+    "esbuild": "0.13.12",
     "fs-extra": "9.1.0"
   },
   "devDependencies": {
