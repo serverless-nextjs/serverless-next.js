@@ -6451,7 +6451,7 @@ __metadata:
     "@sls-next/aws-common": "link:../aws-common"
     "@sls-next/core": "link:../core"
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat"
-    "@types/aws-lambda": 8.10.84
+    "@types/aws-lambda": 8.10.85
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.0.2
     "@types/klaw": 3.0.3
@@ -6505,7 +6505,7 @@ __metadata:
     "@rollup/plugin-node-resolve": 10.0.0
     "@sls-next/aws-common": "link:../aws-common"
     "@sls-next/core": "link:../core"
-    "@types/aws-lambda": 8.10.84
+    "@types/aws-lambda": 8.10.85
     "@types/fs-extra": 9.0.13
     "@types/jest": ^27.0.2
     "@types/node": 16.11.4
@@ -6537,7 +6537,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/next-aws-cloudfront@workspace:packages/compat-layers/lambda-at-edge-compat"
   dependencies:
-    "@types/aws-lambda": ^8.10.84
+    "@types/aws-lambda": ^8.10.85
   languageName: unknown
   linkType: soft
 
@@ -6659,10 +6659,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/aws-lambda@npm:8.10.84, @types/aws-lambda@npm:^8.10.84":
-  version: 8.10.84
-  resolution: "@types/aws-lambda@npm:8.10.84"
-  checksum: c4013fd6f1a10f3856dbdde839009dbfba93d2157f61ea38eccfa74dac0ea96f16da8044c473a0cb442d5dce148a22f3219d993bf41be26c470d398440ca9151
+"@types/aws-lambda@npm:8.10.85, @types/aws-lambda@npm:^8.10.85":
+  version: 8.10.85
+  resolution: "@types/aws-lambda@npm:8.10.85"
+  checksum: c7817c84f4e1a17c000dc54b57686ebafa2429701919a095d5fb266a067edf7c14009460e9d1653a2703dadedca0e5849ce108c35e7c82560f023fdaf39abc36
   languageName: node
   linkType: hard
 
