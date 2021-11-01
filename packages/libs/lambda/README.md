@@ -26,7 +26,11 @@ You will need the following infrastructure to deploy your app:
 
 ## Deployment
 
-(WIP) We will provide a simple lightweight CDK deployer which you can extend, or you can use this as a standalone builder/packager and bring your own deployment logic.
+We want to empower you to own your own infrastructure code so as to give you the most flexibility for your requirements, so we provide a reference zero-config deployer, which you can easily override resource configurations:
+
+* (WIP) CDK for Terraform deployer. We have created a reference deployer that allows you to deploy with minimal configuration, and allows you to easily override any resource configuration (e.g S3 bucket names, Lambda memory/timeouts, etc.). Deployments are managed by Terraform, and you can manage deployment state locally or via a number of backends (Terraform, AWS S3, etc.)
+
+Alternatively, you can use this as a standalone builder and bring your own deployment logic.
 
 ## Limitations
 
