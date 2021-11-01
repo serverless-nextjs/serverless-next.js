@@ -21,13 +21,16 @@ export const httpCompat = (
   const req = Object.assign(newStream, IncomingMessage.prototype) as any;
 
   const { queryStringParameters, rawPath } = event;
+  const stage = event.requestContext.stage;
+  // Need to remove the API Gateway stage in the normalized raw path
+  let normalizedRawPath = rawPath.replace(`/${stage}`, "");
+  normalizedRawPath = normalizedRawPath === "" ? "/" : normalizedRawPath;
   const qs = queryStringParameters
     ? Query.stringify(queryStringParameters)
     : "";
 
   const hasQueryString = qs.length > 0;
-
-  req.url = hasQueryString ? `${rawPath}?${qs}` : rawPath;
+  req.url = hasQueryString ? `${normalizedRawPath}?${qs}` : normalizedRawPath;
 
   req.method = event.requestContext.http.method;
   req.rawHeaders = [];
