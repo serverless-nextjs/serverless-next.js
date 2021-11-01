@@ -1,15 +1,32 @@
 import { Manifest, Request, RoutesManifest } from "../types";
 import { parse } from "cookie";
 
+function resolveHost(req: Request) {
+  function resolveHostForHeader(req: Request, headerName: string) {
+    const hostHeaders = req.headers[headerName];
+    if (hostHeaders && hostHeaders.length > 0) {
+      return hostHeaders[0].value.split(":")[0];
+    }
+    return undefined;
+  }
+
+  // When running behind a reverse-proxy the x-forwarded-host is added
+  const host = resolveHostForHeader(req, 'x-forwarded-host');
+  if (host) {
+    return host;
+  }
+
+  return resolveHostForHeader(req, 'host');
+}
+
 export const findDomainLocale = (
   req: Request,
   manifest: RoutesManifest
 ): string | null => {
   const domains = manifest.i18n?.domains;
   if (domains) {
-    const hostHeaders = req.headers.host;
-    if (hostHeaders && hostHeaders.length > 0) {
-      const host = hostHeaders[0].value.split(":")[0];
+    const host = resolveHost(req);
+    if (host) {
       const matchedDomain = domains.find((d) => d.domain === host);
 
       if (matchedDomain) {
@@ -147,9 +164,9 @@ export async function getLocaleDomainRedirect(
 ): Promise<string | undefined> {
   // Redirect to correct domain based on user's language
   const domains = routesManifest.i18n?.domains;
-  const hostHeaders = req.headers.host;
-  if (domains && hostHeaders && hostHeaders.length > 0) {
-    const host = hostHeaders[0].value.split(":")[0];
+
+  const host = resolveHost(req);
+  if (domains && host) {
     const languageHeader = req.headers["accept-language"];
     const acceptLanguage = languageHeader && languageHeader[0]?.value;
 
