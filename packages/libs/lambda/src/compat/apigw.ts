@@ -6,6 +6,10 @@ import {
   APIGatewayProxyStructuredResultV2
 } from "aws-lambda";
 
+/**
+ * This is a compatibility later to replace req/res methods in order to bridge to APIGateway events.
+ * @param event
+ */
 export const httpCompat = (
   event: APIGatewayProxyEventV2
 ): {
@@ -16,6 +20,7 @@ export const httpCompat = (
   const response: APIGatewayProxyStructuredResultV2 = {
     headers: {}
   };
+  let tempResponseBody: Buffer;
 
   const newStream = new Stream.Readable();
   const req = Object.assign(newStream, IncomingMessage.prototype) as any;
@@ -68,10 +73,16 @@ export const httpCompat = (
     res.headers = { ...res.headers, ...headers };
   };
   res.write = (chunk: Buffer | string) => {
-    if (!response.body) {
-      response.body = "";
+    // Use tempResponseBody to buffers until needed to convert to base64-encoded string for APIGateway response
+    // Otherwise binary data (such as images) can get corrupted
+    if (!tempResponseBody) {
+      tempResponseBody = Buffer.from("");
     }
-    response.body = response.body + chunk.toString("utf8");
+
+    tempResponseBody = Buffer.concat([
+      tempResponseBody,
+      Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk)
+    ]);
   };
   res.setHeader = (name: string, value: string) => {
     headerNames[name.toLowerCase()] = name;
@@ -100,8 +111,8 @@ export const httpCompat = (
         res.statusCode = 200;
       }
 
-      if (response.body) {
-        response.body = Buffer.from(response.body).toString("base64");
+      if (tempResponseBody) {
+        response.body = Buffer.from(tempResponseBody).toString("base64");
         response.isBase64Encoded = true;
       }
       res.writeHead(response.statusCode);
