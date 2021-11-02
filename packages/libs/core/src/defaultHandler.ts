@@ -382,11 +382,12 @@ export const defaultHandler = async ({
   }
   if (route.isNextStaticFile) {
     const { file } = route as NextStaticFileRoute;
+    const relativeFile = file.slice("/_next/static".length);
     return await staticRequest(
       req,
       res,
       responsePromise,
-      file,
+      relativeFile,
       `${routesManifest.basePath}/_next/static`,
       route,
       manifest,
