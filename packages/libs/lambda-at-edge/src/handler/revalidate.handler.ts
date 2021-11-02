@@ -7,8 +7,7 @@ import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
 import { debug, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
-// @ts-ignore
-import * as _ from "../lib/lodash";
+import _ from "lodash";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
