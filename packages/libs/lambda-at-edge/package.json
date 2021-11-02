@@ -74,6 +74,7 @@
     "is-animated": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "klaw": "^3.0.0",
+    "lodash": "^4.17.21",
     "node-fetch": "^2.6.1",
     "path-to-regexp": "^6.1.0",
     "send": "^0.17.1"
