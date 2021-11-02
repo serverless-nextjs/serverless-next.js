@@ -10,7 +10,8 @@ import {
   OriginRequestApiHandlerManifest,
   RoutesManifest,
   OriginRequestImageHandlerManifest,
-  UrlRewriteList
+  UrlRewriteList,
+  InvalidationUrlGroups
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -27,6 +28,8 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
+import isEmpty from "lodash/isEmpty";
+import { map } from "lodash";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -56,6 +59,7 @@ type BuildOptions = {
   distributionId: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
+  invalidationUrlGroups?: InvalidationUrlGroups;
 };
 
 const defaultBuildOptions = {
@@ -73,7 +77,17 @@ const defaultBuildOptions = {
   baseDir: process.cwd(),
   distributionId: "",
   urlRewrites: [],
-  enableDebugMode: false
+  enableDebugMode: false,
+  invalidationUrlGroups: []
+};
+
+const copyIfExists = async (
+  source: string,
+  destination: string
+): Promise<void> => {
+  if (await fse.pathExists(source)) {
+    await fse.copy(source, destination);
+  }
 };
 
 class Builder {
@@ -513,7 +527,8 @@ class Builder {
       distributionId: this.buildOptions.distributionId,
       enableHTTPCompression,
       urlRewrites: this.buildOptions.urlRewrites,
-      enableDebugMode: this.buildOptions.enableDebugMode
+      enableDebugMode: this.buildOptions.enableDebugMode,
+      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
@@ -660,15 +675,6 @@ class Builder {
     const normalizedBasePath = basePath ? basePath.slice(1) : "";
     const withBasePath = (key: string): string =>
       path.join(normalizedBasePath, key);
-
-    const copyIfExists = async (
-      source: string,
-      destination: string
-    ): Promise<void> => {
-      if (await fse.pathExists(source)) {
-        await fse.copy(source, destination);
-      }
-    };
 
     // Copy BUILD_ID file
     const copyBuildId = copyIfExists(
@@ -918,6 +924,15 @@ class Builder {
       "routes-manifest.json"
     ));
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
+
+    // Now, we only use invalidation urls as DynamicData
+    const hasDynamicDataAssets = !isEmpty(
+      defaultBuildManifest.invalidationUrlGroups
+    );
+
+    if (hasDynamicDataAssets) {
+      await this.buildDynamicDataAssets(defaultBuildManifest, routesManifest);
+    }
   }
 
   /**
@@ -958,6 +973,42 @@ class Builder {
 
       domainRedirects[key] = normalizedDomain;
     }
+  }
+
+  /**
+   * Build dynamic data assets, now we only have invalidation url counters.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildDynamicDataAssets(
+    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    routesManifest: RoutesManifest
+  ) {
+    // add here
+
+    const buildId = defaultBuildManifest.buildId;
+    const basePath = routesManifest.basePath;
+    const nextConfigDir = this.nextConfigDir;
+    const nextStaticDir = this.nextStaticDir;
+    const directoryPath = path.join(nextStaticDir, "dynamic-data");
+
+    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
+
+    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
+
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+    const withBasePath = (key: string): string =>
+      path.join(normalizedBasePath, key);
+
+    console.log("nextStaticDir", nextStaticDir);
+    console.log("nextConfigDir", nextConfigDir);
+
+    map(defaultBuildManifest.invalidationUrlGroups || [], (group, index) => {
+      console.log("group", index, group);
+
+      fse.writeJson(join(directoryPath, `${index}`), group);
+    });
+
+    return Promise.all([]);
   }
 }
 

@@ -75,6 +75,7 @@ export type OriginRequestDefaultHandlerManifest = {
   canonicalHostname?: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
+  invalidationUrlGroups?: InvalidationUrlGroups;
 };
 
 export type OriginRequestImageHandlerManifest = {
@@ -172,3 +173,8 @@ export type PerfLogger = {
 };
 
 export type UrlRewriteList = { originUrl: string; rewriteUrl: string }[];
+export type InvalidationUrlGroups = {
+  regex: string;
+  invalidationPath: string;
+  maxAccessNumber: number;
+}[];
