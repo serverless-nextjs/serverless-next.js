@@ -4,9 +4,8 @@ import {
   dropLocaleFromPath,
   getAcceptLanguageLocale,
   findDomainLocale,
-  getLocaleDomainRedirect,
+  getLocaleDomainRedirect
 } from "../../src/route/locale";
-import { IncomingMessage } from "http";
 
 describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
