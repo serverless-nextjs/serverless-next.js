@@ -1,22 +1,34 @@
 import { Manifest, Request, RoutesManifest } from "../types";
 import { parse } from "cookie";
 
+const resolveHostForHeader = (req: Request, headerName: string) => {
+  const hostHeaders = req.headers[headerName];
+  /**
+   * if hostHeaders is a string means it is resolved as "x-forwarded-host"
+   *  "x-forwarded-host": "next-serverless.com"
+   *
+   * else it is resolved as host
+   * [ { key: 'Host', value: 'next-serverless.com' } ]
+   **/
+
+  if (typeof hostHeaders === "string" || hostHeaders instanceof String) {
+    return hostHeaders;
+  }
+
+  if (hostHeaders && hostHeaders.length > 0) {
+    return hostHeaders[0].value.split(":")[0];
+  }
+  return undefined;
+};
+
 function resolveHost(req: Request) {
-  function resolveHostForHeader(req: Request, headerName: string) {
-    const hostHeaders = req.headers[headerName];
-    if (hostHeaders && hostHeaders.length > 0) {
-      return hostHeaders[0].value.split(":")[0];
-    }
-    return undefined;
-  }
-
   // When running behind a reverse-proxy the x-forwarded-host is added
-  const host = resolveHostForHeader(req, 'x-forwarded-host');
-  if (host) {
-    return host;
+  const xForwardedHost = resolveHostForHeader(req, "x-forwarded-host");
+  if (xForwardedHost) {
+    return xForwardedHost;
   }
 
-  return resolveHostForHeader(req, 'host');
+  return resolveHostForHeader(req, "host");
 }
 
 export const findDomainLocale = (

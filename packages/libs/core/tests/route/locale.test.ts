@@ -4,7 +4,7 @@ import {
   dropLocaleFromPath,
   getAcceptLanguageLocale,
   findDomainLocale,
-  getLocaleDomainRedirect
+  getLocaleDomainRedirect,
 } from "../../src/route/locale";
 import { IncomingMessage } from "http";
 
@@ -44,6 +44,53 @@ describe("Locale Utils Tests", () => {
         );
 
         expect(newPath).toBe(expectedPath);
+      }
+    );
+  });
+
+  describe("resolveHost()", () => {
+    let routesManifest: RoutesManifest;
+
+    beforeAll(() => {
+      routesManifest = {
+        basePath: "",
+        headers: [],
+        redirects: [],
+        rewrites: [],
+        i18n: {
+          locales: ["en", "fr", "nl"],
+          defaultLocale: "en",
+          domains: [
+            {
+              domain: "next-serverless.fr",
+              defaultLocale: "fr"
+            },
+            {
+              domain: "next-serverless.com",
+              defaultLocale: "en"
+            }
+          ]
+        }
+      };
+    });
+
+    it.each`
+      xForwardedHost           | expectedResult
+      ${"google.com"}          | ${null}
+      ${"next-serverless.fr"}  | ${"fr"}
+      ${"next-serverless.com"} | ${"en"}
+    `(
+      "$x-forwarded-host is resolved to $expectedResult",
+      ({ xForwardedHost, expectedResult }) => {
+        const req = {
+          headers: {
+            "x-forwarded-host": xForwardedHost
+          },
+          uri: "/test"
+        };
+        const newPath = findDomainLocale(req, routesManifest);
+
+        expect(newPath).toBe(expectedResult);
       }
     );
   });
