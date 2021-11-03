@@ -38,7 +38,7 @@ export class LambdaBuilder extends CoreBuilder {
       bucketName: this.lambdaBuildOptions.bucketName,
       bucketRegion: this.lambdaBuildOptions.bucketRegion,
       queueName: this.lambdaBuildOptions.queueName,
-      queueRegion: this.lambdaBuildOptions.queueName
+      queueRegion: this.lambdaBuildOptions.queueRegion
     };
 
     await this.buildDefaultLambda(defaultBuildManifest, lambdaManifest);
@@ -125,12 +125,12 @@ export class LambdaBuilder extends CoreBuilder {
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "manifest.json"),
         pageManifest,
-        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
+        this.buildOptions.minifyHandlers ? undefined : { spaces: 2 }
       ),
       fse.writeJson(
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "lambda-manifest.json"),
         lambdaManifest,
-        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
+        this.buildOptions.minifyHandlers ? undefined : { spaces: 2 }
       ),
       fse.copy(
         join(this.serverlessDir, "pages"),
@@ -182,12 +182,12 @@ export class LambdaBuilder extends CoreBuilder {
       fse.writeJson(
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "manifest.json"),
         imageBuildManifest,
-        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
+        this.buildOptions.minifyHandlers ? undefined : { spaces: 2 }
       ),
       fse.writeJson(
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "lambda-manifest.json"),
         lambdaManifest,
-        this.buildOptions.minifyHandlers ? { spaces: 2 } : undefined
+        this.buildOptions.minifyHandlers ? undefined : { spaces: 2 }
       ),
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
