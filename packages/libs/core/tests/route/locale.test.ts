@@ -48,7 +48,7 @@ describe("Locale Utils Tests", () => {
     );
   });
 
-  describe("resolveHost()", () => {
+  describe("findDomainLocale()", () => {
     let routesManifest: RoutesManifest;
 
     beforeAll(() => {
@@ -80,7 +80,7 @@ describe("Locale Utils Tests", () => {
       ${"next-serverless.fr"}  | ${"fr"}
       ${"next-serverless.com"} | ${"en"}
     `(
-      "$x-forwarded-host is resolved to $expectedResult",
+      "$xForwardedHost is resolved to $expectedResult",
       ({ xForwardedHost, expectedResult }) => {
         const req = {
           headers: {
@@ -93,33 +93,6 @@ describe("Locale Utils Tests", () => {
         expect(newPath).toBe(expectedResult);
       }
     );
-  });
-
-  describe("findDomainLocale()", () => {
-    let routesManifest: RoutesManifest;
-
-    beforeAll(() => {
-      routesManifest = {
-        basePath: "",
-        headers: [],
-        redirects: [],
-        rewrites: [],
-        i18n: {
-          locales: ["en", "fr", "nl"],
-          defaultLocale: "en",
-          domains: [
-            {
-              domain: "next-serverless.fr",
-              defaultLocale: "fr"
-            },
-            {
-              domain: "next-serverless.com",
-              defaultLocale: "en"
-            }
-          ]
-        }
-      };
-    });
 
     it.each`
       host                     | expectedResult
