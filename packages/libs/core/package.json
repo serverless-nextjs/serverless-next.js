@@ -68,7 +68,7 @@
     "@types/react": "17.0.33",
     "@types/react-dom": "17.0.10",
     "@types/send": "0.17.1",
-    "@types/sharp": "0.29.2",
+    "@types/sharp": "0.29.3",
     "@types/zen-observable": "0.8.3",
     "cookie": "0.4.1",
     "fetch-mock-jest": "1.5.1",
