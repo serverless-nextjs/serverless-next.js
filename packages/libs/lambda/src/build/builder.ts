@@ -22,13 +22,12 @@ export class LambdaBuilder extends CoreBuilder {
 
   protected async buildPlatform(
     manifests: {
-      defaultBuildManifest: any;
       imageManifest: Manifest;
-      pageManifest: Manifest;
+      pageManifest: PageManifest;
     },
     debugMode?: boolean
   ): Promise<void> {
-    const { defaultBuildManifest, imageManifest } = manifests;
+    const { pageManifest, imageManifest } = manifests;
     const imageBuildManifest = {
       ...imageManifest
     };
@@ -41,7 +40,7 @@ export class LambdaBuilder extends CoreBuilder {
       queueRegion: this.lambdaBuildOptions.queueRegion
     };
 
-    await this.buildDefaultLambda(defaultBuildManifest, lambdaManifest);
+    await this.buildDefaultLambda(pageManifest, lambdaManifest);
     // If using Next.js 10 and images-manifest.json is present then image optimizer can be used
     const hasImagesManifest = await fse.pathExists(
       join(this.dotNextDir, "images-manifest.json")
@@ -97,7 +96,7 @@ export class LambdaBuilder extends CoreBuilder {
    * @private
    */
   private async buildDefaultLambda(
-    pageManifest: PageManifest,
+    pageManifest: Manifest,
     lambdaManifest: LambdaManifest
   ): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
