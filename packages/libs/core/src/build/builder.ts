@@ -63,12 +63,8 @@ export default abstract class CoreBuilder {
 
   public async build(debugMode?: boolean): Promise<void> {
     await this.preBuild();
-    const { defaultBuildManifest, imageManifest, pageManifest } =
-      await this.buildCore(debugMode);
-    await this.buildPlatform(
-      { defaultBuildManifest, imageManifest, pageManifest },
-      debugMode
-    );
+    const { imageManifest, pageManifest } = await this.buildCore(debugMode);
+    await this.buildPlatform({ imageManifest, pageManifest }, debugMode);
   }
 
   /**
@@ -88,7 +84,6 @@ export default abstract class CoreBuilder {
    */
   protected abstract buildPlatform(
     manifests: {
-      defaultBuildManifest: any;
       imageManifest: Manifest;
       pageManifest: Manifest;
     },
@@ -100,9 +95,8 @@ export default abstract class CoreBuilder {
    * @param debugMode
    */
   public async buildCore(debugMode?: boolean): Promise<{
-    defaultBuildManifest: any;
     imageManifest: Manifest;
-    pageManifest: Manifest;
+    pageManifest: PageManifest;
   }> {
     const { cmd, args, cwd, env, assetIgnorePatterns } = Object.assign(
       defaultBuildOptions,
@@ -148,34 +142,29 @@ export default abstract class CoreBuilder {
         path.join(this.dotNextDir, "BUILD_ID"),
         "utf-8"
       ),
+      useV2Handler: true, // FIXME: temporary to combine API and regular pages until this is deprecated and removed
       ...this.buildOptions,
       domainRedirects: this.buildOptions.domainRedirects ?? {}
     };
 
-    const { apiManifest, imageManifest, pageManifest } =
-      await prepareBuildManifests(
-        options,
-        await this.readNextConfig(),
-        routesManifest,
-        await this.readPagesManifest(),
-        prerenderManifest,
-        await this.readPublicFiles(assetIgnorePatterns)
-      );
-
-    const defaultBuildManifest = {
-      ...apiManifest,
-      ...pageManifest
-    };
+    const { imageManifest, pageManifest } = await prepareBuildManifests(
+      options,
+      await this.readNextConfig(),
+      routesManifest,
+      await this.readPagesManifest(),
+      prerenderManifest,
+      await this.readPublicFiles(assetIgnorePatterns)
+    );
 
     // Copy any static assets to .serverless_nextjs/assets directory
     // This step is common to all platforms so it's in the core build step.
     await this.buildStaticAssets(
-      defaultBuildManifest,
+      pageManifest,
       routesManifest,
       assetIgnorePatterns
     );
 
-    return { defaultBuildManifest, imageManifest, pageManifest };
+    return { imageManifest, pageManifest };
   }
 
   protected async readPublicFiles(
