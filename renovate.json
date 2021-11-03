@@ -39,6 +39,10 @@
     {
       "packagePatterns": ["@babel"],
       "groupName": "babel"
+    },
+    {
+      "packagePatterns": ["@docusaurus"],
+      "groupName": "docusaurus"
     }
   ],
   "ignoreDeps": [
