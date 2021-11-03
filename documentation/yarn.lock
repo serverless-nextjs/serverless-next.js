@@ -1827,7 +1827,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@docusaurus/core@npm:2.0.0-beta.ff31de0ff, @docusaurus/core@npm:^2.0.0-beta.8":
+"@docusaurus/core@npm:2.0.0-beta.ff31de0ff, @docusaurus/core@npm:^2.0.0-beta.9":
   version: 2.0.0-beta.ff31de0ff
   resolution: "@docusaurus/core@npm:2.0.0-beta.ff31de0ff"
   dependencies:
@@ -11721,7 +11721,7 @@ resolve@^1.14.2:
   version: 0.0.0-use.local
   resolution: "test-doc@workspace:."
   dependencies:
-    "@docusaurus/core": ^2.0.0-beta.8
+    "@docusaurus/core": ^2.0.0-beta.9
     "@docusaurus/preset-classic": ^2.0.0-beta.9
     clsx: ^1.1.1
     react: ^17.0.2
