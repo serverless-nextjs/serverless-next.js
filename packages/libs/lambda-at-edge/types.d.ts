@@ -3,6 +3,10 @@ import {
   CloudFrontEvent,
   CloudFrontResponse
 } from "aws-lambda";
+import {
+  BasicInvalidationUrlGroup,
+  InvalidationUrlGroup
+} from "./src/lib/invalidation/invalidationUrlGroup";
 
 export type DynamicPageKeyValue = {
   [key: string]: {
@@ -75,7 +79,7 @@ export type OriginRequestDefaultHandlerManifest = {
   canonicalHostname?: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
-  invalidationUrlGroups?: InvalidationUrlGroups;
+  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
 };
 
 export type OriginRequestImageHandlerManifest = {
@@ -173,8 +177,3 @@ export type PerfLogger = {
 };
 
 export type UrlRewriteList = { originUrl: string; rewriteUrl: string }[];
-export type InvalidationUrlGroups = {
-  regex: string;
-  invalidationPath: string;
-  maxAccessNumber: number;
-}[];

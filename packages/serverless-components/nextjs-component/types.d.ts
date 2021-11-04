@@ -54,7 +54,11 @@ export type ServerlessComponentInputs = {
   certificateArn?: string;
   urlRewrites?: UrlRewriteOptions;
   enableDebugMode?: boolean;
-  invalidationUrlGroups?: InvalidationUrlGroups;
+  invalidationUrlGroups?: {
+    regex: string;
+    invalidationPath: string;
+    maxAccessNumber: number;
+  }[];
 };
 
 type CloudfrontOptions = Record<string, any>;
@@ -88,9 +92,3 @@ export type LambdaInput = {
 };
 
 type UrlRewriteOptions = { originUrl: string; rewriteUrl: string }[];
-
-type InvalidationUrlGroups = {
-  regex: string;
-  invalidationPath: string;
-  maxAccessNumber: number;
-}[];

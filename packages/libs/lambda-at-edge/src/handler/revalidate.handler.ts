@@ -1,6 +1,9 @@
 import { Context } from "aws-lambda";
 
-import { RevalidationEvent } from "../../types";
+import {
+  OriginRequestDefaultHandlerManifest,
+  RevalidationEvent
+} from "../../types";
 import { CloudFrontService } from "../services/cloudfront.service";
 import { Page, RenderService, S3JsonFile } from "../services/render.service";
 import { ResourceService } from "../services/resource.service";
@@ -8,6 +11,12 @@ import { S3Service } from "../services/s3.service";
 import { debug, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
 import _ from "lodash";
+import {
+  basicGroupToJSON,
+  findInvalidationGroup,
+  getGroupS3Key,
+  InvalidationUrlGroup
+} from "../lib/invalidation/invalidationUrlGroup";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
@@ -20,7 +29,11 @@ export class RevalidateHandler {
     private cloudfrontService: CloudFrontService
   ) {}
 
-  public async run(event: RevalidationEvent, context: Context): Promise<void> {
+  public async run(
+    event: RevalidationEvent,
+    context: Context,
+    manifest: OriginRequestDefaultHandlerManifest
+  ): Promise<void> {
     const resource = this.resourceService.get(event);
     debug(JSON.stringify(resource));
     debug(JSON.stringify(event));
@@ -55,10 +68,43 @@ export class RevalidateHandler {
 
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
-    if (await this.isContentChanged(candidatePage, resource)) {
+    if (!(await this.isContentChanged(candidatePage, resource))) {
       debug(
         `[handler] Resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
+
+      console.log(typeof manifest.invalidationUrlGroups);
+
+      console.log(JSON.stringify(manifest.invalidationUrlGroups));
+      // this html is kind of list page
+      const basicGroup = findInvalidationGroup(
+        resource.getHtmlKey(),
+        manifest.invalidationUrlGroups
+      );
+      //
+      if (!_.isEmpty(basicGroup)) {
+        // find group
+        // todo change key and body
+        const group: InvalidationUrlGroup = JSON.parse(
+          await this.s3Service.getOrCreateObject(
+            getGroupS3Key(basicGroup!),
+            basicGroupToJSON(basicGroup!),
+            "application/json"
+          )
+        );
+        console.log("group", group);
+        //
+        //   // if result , current number < max number
+        //   //
+        //
+        //   if (true) {
+        //     // put object set ++
+        //     return;
+        //   } else {
+        //     // put object set 0
+        //     // continue
+        //   }
+      }
 
       await Promise.all([
         this.s3Service.putObject(

@@ -11,7 +11,7 @@ import {
   RoutesManifest,
   OriginRequestImageHandlerManifest,
   UrlRewriteList,
-  InvalidationUrlGroups
+  InvalidationUrlGroupParams
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -30,6 +30,10 @@ import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import isEmpty from "lodash/isEmpty";
 import { map } from "lodash";
+import {
+  BasicInvalidationUrlGroup,
+  InvalidationUrlGroup
+} from "./lib/invalidation/invalidationUrlGroup";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -59,7 +63,7 @@ type BuildOptions = {
   distributionId: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
-  invalidationUrlGroups?: InvalidationUrlGroups;
+  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
 };
 
 const defaultBuildOptions = {
@@ -924,15 +928,6 @@ class Builder {
       "routes-manifest.json"
     ));
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
-
-    // Now, we only use invalidation urls as DynamicData
-    const hasDynamicDataAssets = !isEmpty(
-      defaultBuildManifest.invalidationUrlGroups
-    );
-
-    if (hasDynamicDataAssets) {
-      await this.buildDynamicDataAssets(defaultBuildManifest, routesManifest);
-    }
   }
 
   /**
@@ -973,42 +968,6 @@ class Builder {
 
       domainRedirects[key] = normalizedDomain;
     }
-  }
-
-  /**
-   * Build dynamic data assets, now we only have invalidation url counters.
-   * Note that the upload to S3 is done in a separate deploy step.
-   */
-  async buildDynamicDataAssets(
-    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
-    routesManifest: RoutesManifest
-  ) {
-    // add here
-
-    const buildId = defaultBuildManifest.buildId;
-    const basePath = routesManifest.basePath;
-    const nextConfigDir = this.nextConfigDir;
-    const nextStaticDir = this.nextStaticDir;
-    const directoryPath = path.join(nextStaticDir, "dynamic-data");
-
-    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
-
-    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
-
-    const normalizedBasePath = basePath ? basePath.slice(1) : "";
-    const withBasePath = (key: string): string =>
-      path.join(normalizedBasePath, key);
-
-    console.log("nextStaticDir", nextStaticDir);
-    console.log("nextConfigDir", nextConfigDir);
-
-    map(defaultBuildManifest.invalidationUrlGroups || [], (group, index) => {
-      console.log("group", index, group);
-
-      fse.writeJson(join(directoryPath, `${index}`), group);
-    });
-
-    return Promise.all([]);
   }
 }
 
