@@ -85,15 +85,6 @@ const defaultBuildOptions = {
   invalidationUrlGroups: []
 };
 
-const copyIfExists = async (
-  source: string,
-  destination: string
-): Promise<void> => {
-  if (await fse.pathExists(source)) {
-    await fse.copy(source, destination);
-  }
-};
-
 class Builder {
   nextConfigDir: string;
   nextStaticDir: string;
@@ -679,6 +670,15 @@ class Builder {
     const normalizedBasePath = basePath ? basePath.slice(1) : "";
     const withBasePath = (key: string): string =>
       path.join(normalizedBasePath, key);
+
+    const copyIfExists = async (
+      source: string,
+      destination: string
+    ): Promise<void> => {
+      if (await fse.pathExists(source)) {
+        await fse.copy(source, destination);
+      }
+    };
 
     // Copy BUILD_ID file
     const copyBuildId = copyIfExists(
