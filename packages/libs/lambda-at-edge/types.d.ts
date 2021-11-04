@@ -1,12 +1,9 @@
 import {
-  CloudFrontRequest,
   CloudFrontEvent,
+  CloudFrontRequest,
   CloudFrontResponse
 } from "aws-lambda";
-import {
-  BasicInvalidationUrlGroup,
-  InvalidationUrlGroup
-} from "./src/lib/invalidation/invalidationUrlGroup";
+import { BasicInvalidationUrlGroup } from "./src/lib/invalidation/invalidationUrlGroup";
 
 export type DynamicPageKeyValue = {
   [key: string]: {
