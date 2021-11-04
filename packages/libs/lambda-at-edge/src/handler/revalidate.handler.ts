@@ -47,7 +47,7 @@ export class RevalidateHandler {
       this.renderService.getPage(resource.getPagePath(), resource.getJsonUri())
     ]);
 
-    if (this.shouldSkipRevalidate(htmlHeader.header.LastModified)) {
+    if (false) {
       debug(
         `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
       );
