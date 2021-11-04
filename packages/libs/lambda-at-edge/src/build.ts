@@ -1,17 +1,15 @@
 import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
-import { join } from "path";
+import path, { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
-import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
-  OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
-  RoutesManifest,
+  OriginRequestDefaultHandlerManifest,
   OriginRequestImageHandlerManifest,
-  UrlRewriteList,
-  InvalidationUrlGroupParams
+  RoutesManifest,
+  UrlRewriteList
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
 import pathToPosix from "./lib/pathToPosix";
@@ -28,12 +26,7 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
-import isEmpty from "lodash/isEmpty";
-import { map } from "lodash";
-import {
-  BasicInvalidationUrlGroup,
-  InvalidationUrlGroup
-} from "./lib/invalidation/invalidationUrlGroup";
+import { BasicInvalidationUrlGroup } from "./lib/invalidation/invalidationUrlGroup";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";

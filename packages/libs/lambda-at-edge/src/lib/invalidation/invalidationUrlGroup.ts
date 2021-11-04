@@ -17,6 +17,7 @@ export const getGroupS3Key = (basicGroup: BasicInvalidationUrlGroup) => {
 };
 
 export const basicGroupToJSON = (basicGroup: BasicInvalidationUrlGroup) => {
+  console.log("basicGroupToJSON", JSON.stringify(basicGroup));
   return JSON.stringify({ ...basicGroup, currentNumber: DEFAULT_INIT_NUMBER });
 };
 
@@ -24,11 +25,15 @@ export function findInvalidationGroup(
   url: string,
   basicGroups: BasicInvalidationUrlGroup[] | undefined
 ): BasicInvalidationUrlGroup | null {
+  console.log("findInvalidationGroup", url);
+
   if (isEmpty(basicGroups)) {
     return null;
   }
 
   basicGroups?.forEach((group) => {
+    console.log("findInvalidationGroup", JSON.stringify(group));
+
     if (new RegExp(group.regex).test(url)) {
       return group;
     }
