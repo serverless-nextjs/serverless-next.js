@@ -10,13 +10,15 @@ import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
 import { debug, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
-import _ from "lodash";
+
 import {
   basicGroupToJSON,
   findInvalidationGroup,
   getGroupS3Key,
   InvalidationUrlGroup
 } from "../lib/invalidation/invalidationUrlGroup";
+// @ts-ignore
+import * as _ from "../lib/lodash";
 
 // ISR needs to maintain a time gap of at least tens of seconds.
 const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
