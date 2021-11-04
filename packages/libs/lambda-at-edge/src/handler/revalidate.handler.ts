@@ -84,6 +84,7 @@ export class RevalidateHandler {
         manifest.invalidationUrlGroups
       );
       //
+      console.log("basicGroup", basicGroup);
       if (!_.isEmpty(basicGroup)) {
         // find group
         // todo change key and body
