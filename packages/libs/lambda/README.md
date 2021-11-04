@@ -1,6 +1,8 @@
 # @sls-next/lambda
 > Library to build and deploy Next.js apps for AWS Lambda + API Gateway
 
+> ⚠️ This library is currently in developer preview, and may have limited functionality, bugs, and is not fully tested. The interface may also change in the near future. Use at your own risk.
+
 This library uses the platform-agnostic handlers provided by `@sls-next/core` and wraps them with a Lambda/API Gateway-compatible layer so that Next.js apps can be served through API Gateway via a HTTP API.
 
 For usage docs, please refer to (TBA).
