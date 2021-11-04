@@ -1,4 +1,5 @@
-import isEmpty from "lodash/isEmpty";
+// @ts-ignore
+import * as _ from "../lodash";
 
 const DEFAULT_INIT_NUMBER = 0;
 
@@ -27,7 +28,7 @@ export function findInvalidationGroup(
 ): BasicInvalidationUrlGroup | null {
   console.log("findInvalidationGroup", url);
 
-  if (isEmpty(basicGroups)) {
+  if (_.isEmpty(basicGroups)) {
     return null;
   }
 
