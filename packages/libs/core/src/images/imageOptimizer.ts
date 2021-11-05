@@ -99,7 +99,8 @@ export async function imageOptimizer(
   }
 
   const { headers } = req;
-  const { url, w, q } = parsedUrl.query;
+  const { w, q } = parsedUrl.query;
+  let url = parsedUrl.query.url;
   const mimeType = getSupportedMimeType(MODERN_TYPES, headers.accept);
   let href: string;
 
@@ -115,6 +116,9 @@ export async function imageOptimizer(
 
   let isAbsolute: boolean;
 
+  if (url.startsWith(basePath)) {
+    url = url.slice(basePath.length);
+  }
   if (url.startsWith("/")) {
     href = url;
     isAbsolute = false;
