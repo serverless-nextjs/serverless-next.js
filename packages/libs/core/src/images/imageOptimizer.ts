@@ -130,6 +130,7 @@ export async function imageOptimizer(
   if (url.startsWith(basePath)) {
     url = url.slice(basePath.length);
   }
+  
   if (url.startsWith("/")) {
     href = url;
     isAbsolute = false;
