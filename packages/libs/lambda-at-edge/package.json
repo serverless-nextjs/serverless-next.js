@@ -81,8 +81,8 @@
     "webpack": "5.60.0"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "3.39.0",
-    "@aws-sdk/client-sqs": "3.39.0",
+    "@aws-sdk/client-s3": "3.40.0",
+    "@aws-sdk/client-sqs": "3.40.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
     "@vercel/nft": "0.17.0",
