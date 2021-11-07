@@ -10,7 +10,7 @@ export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
 
 export class LambdaBuilder extends CoreBuilder {
-  private lambdaBuildOptions: LambdaBuildOptions;
+  protected lambdaBuildOptions: LambdaBuildOptions;
 
   public constructor(
     lambdaBuildOptions: LambdaBuildOptions,
@@ -73,7 +73,7 @@ export class LambdaBuilder extends CoreBuilder {
    * @param destination
    * @param shouldMinify
    */
-  private async processAndCopyHandler(
+  protected async processAndCopyHandler(
     handlerType: "default-handler" | "image-handler",
     destination: string,
     shouldMinify: boolean
@@ -95,7 +95,7 @@ export class LambdaBuilder extends CoreBuilder {
    * @param lambdaManifest
    * @private
    */
-  private async buildDefaultLambda(
+  protected async buildDefaultLambda(
     pageManifest: Manifest,
     lambdaManifest: LambdaManifest
   ): Promise<void[]> {
@@ -156,7 +156,7 @@ export class LambdaBuilder extends CoreBuilder {
    * @param imageBuildManifest
    * @param lambdaManifest
    */
-  private async buildImageLambda(
+  protected async buildImageLambda(
     imageBuildManifest: ImageBuildManifest,
     lambdaManifest: LambdaManifest
   ): Promise<void> {
