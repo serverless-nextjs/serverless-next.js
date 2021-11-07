@@ -10,7 +10,8 @@
     "outDir": "dist",
     "sourceMap": true,
     "strict": false,
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts", ".d.ts"]

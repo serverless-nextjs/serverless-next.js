@@ -6389,8 +6389,8 @@ __metadata:
     "@types/node": 16.11.4
     "@types/node-fetch": 2.5.12
     "@types/normalize-path": 3.0.0
-    "@types/react": 17.0.33
-    "@types/react-dom": 17.0.10
+    "@types/react": 17.0.34
+    "@types/react-dom": 17.0.11
     "@types/send": 0.17.1
     "@types/sharp": 0.29.3
     "@types/zen-observable": 0.8.3
@@ -6476,8 +6476,8 @@ __metadata:
     "@types/node": 16.11.4
     "@types/node-fetch": 2.5.12
     "@types/normalize-path": 3.0.0
-    "@types/react": 17.0.33
-    "@types/react-dom": 17.0.10
+    "@types/react": 17.0.34
+    "@types/react-dom": 17.0.11
     "@types/sharp": 0.29.3
     "@types/uuid": 8.3.1
     "@vercel/nft": 0.17.0
@@ -6996,16 +6996,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-dom@npm:17.0.10":
-  version: 17.0.10
-  resolution: "@types/react-dom@npm:17.0.10"
+"@types/react-dom@npm:17.0.11":
+  version: 17.0.11
+  resolution: "@types/react-dom@npm:17.0.11"
   dependencies:
     "@types/react": "*"
-  checksum: cc7d8d5b77ee2f3b989c107abd8ec0f2460ba1b1ee6e6d637124e1939594b5619fa4166ef0ea7632a69b68358e0b71aa618de446ccc416dcc0017175549da601
+  checksum: 4d5730dffbef86c887cecad7e3cecda424ce6a64d0b5441c63b5b015d48219868660a2bb1aa15e897e565ad8867fa6b885d4358b04e1c4e589ba4c07c3fda55c
   languageName: node
   linkType: hard
 
-"@types/react@npm:*, @types/react@npm:17.0.33":
+"@types/react@npm:*":
   version: 17.0.33
   resolution: "@types/react@npm:17.0.33"
   dependencies:
@@ -7013,6 +7013,17 @@ __metadata:
     "@types/scheduler": "*"
     csstype: ^3.0.2
   checksum: 5f53f3dae034229ff1eccb5de1c16d046696e883f8eae81b86e95c532798e655015e4edff8a6c9ec8f1c0ef12bb60dec43622d06256ba33ba6069e67a74b8d4e
+  languageName: node
+  linkType: hard
+
+"@types/react@npm:17.0.34":
+  version: 17.0.34
+  resolution: "@types/react@npm:17.0.34"
+  dependencies:
+    "@types/prop-types": "*"
+    "@types/scheduler": "*"
+    csstype: ^3.0.2
+  checksum: 16729ad7d50922ccbf8eb93874d7781dc2f1c64edc78134b5edc7154839d41e9fe320eb1c11ad2d1c9bf28b99cb1febda344509c1fda025955a5c2b43c688c8f
   languageName: node
   linkType: hard
 
