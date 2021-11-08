@@ -2,6 +2,7 @@
 import * as _ from "../lodash";
 
 const DEFAULT_INIT_NUMBER = 0;
+const INVALIDATION_DATA_DIR = "invalidation-group-data";
 
 export type BasicInvalidationUrlGroup = {
   regex: string;
@@ -13,8 +14,17 @@ export type InvalidationUrlGroup = BasicInvalidationUrlGroup & {
   currentNumber: number;
 };
 
-export const getGroupS3Key = (basicGroup: BasicInvalidationUrlGroup) => {
-  return "counter";
+export const getGroupS3Key = (
+  basicGroup: BasicInvalidationUrlGroup,
+  originalKey: string
+) => {
+  const filename = `${originalKey
+    .match(basicGroup.regex)![0]
+    .replace(/[^a-zA-Z ]/g, "")}.json`;
+  return originalKey.replace(
+    basicGroup.regex,
+    `/${INVALIDATION_DATA_DIR}${filename}`
+  );
 };
 
 export const basicGroupToJSON = (basicGroup: BasicInvalidationUrlGroup) => {
@@ -32,6 +42,7 @@ export function findInvalidationGroup(
     return null;
   }
 
+  let result = null;
   basicGroups?.forEach((group) => {
     console.log("findInvalidationGroup", JSON.stringify(group));
     console.log(
@@ -39,9 +50,9 @@ export function findInvalidationGroup(
       JSON.stringify(url.match(group.regex))
     );
     if (!_.isEmpty(url.match(group.regex))) {
-      return group;
+      result = group;
     }
   });
 
-  return null;
+  return result;
 }
