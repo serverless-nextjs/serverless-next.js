@@ -116,21 +116,24 @@ export async function imageOptimizer(
 
   let isAbsolute: boolean;
 
+  // Ensure if Basepath is in the URL, otherwise, a 400 is triggered (same behaviour as Nextjs)
+  if (basePath !== "/" && !url.startsWith(basePath)) {
+    res.statusCode = 400;
+    res.end('"basepath" set but not added to the URL');
+    return { finished: true };
+  }
+
   /**
-   * Basepath, needs to be removed from the query
-   * 
+   * If Basepath set, it needs to be removed from the query
+   *
    * Not normalised -> error 403
    * /<base-path>/_next/image?url=%2F<base-path>%2Fassets%2Fimages%2Flogo.svg&w=256&q=75
-   * 
+   *
    * Normalised -> 200
    * /<base-path>/_next/image?url=%2Fassets%2Fimages%2Flogo.svg&w=256&q=75
-   * 
-   * 
    */
-  if (url.startsWith(basePath)) {
-    url = url.slice(basePath.length);
-  }
-  
+  url = url.slice(basePath.length);
+
   if (url.startsWith("/")) {
     href = url;
     isAbsolute = false;
