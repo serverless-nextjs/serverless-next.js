@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.4...v3.5.3-alpha.5) (2021-11-08)
+
+### Bug Fixes
+
+- **core:** fix lookup for \_next/static files (used in lambda only right now) ([#2001](https://github.com/serverless-nextjs/serverless-next.js/issues/2001)) ([09ea1c0](https://github.com/serverless-nextjs/serverless-next.js/commit/09ea1c02f6ef7846a68e85893f9d707312aacdc6))
+- **lambda, core:** build lambda properly with api/page routes in one single manifest ([#2010](https://github.com/serverless-nextjs/serverless-next.js/issues/2010)) ([bc3668d](https://github.com/serverless-nextjs/serverless-next.js/commit/bc3668d0013881276415a5dc09817c80cd4f32b8))
+
 ## [3.5.3-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.2...v3.5.3-alpha.0) (2021-10-29)
 
 **Note:** Version bump only for package @sls-next/core

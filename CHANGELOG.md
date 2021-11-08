@@ -3,6 +3,15 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.4...v3.5.3-alpha.5) (2021-11-08)
+
+### Bug Fixes
+
+- **core:** fix lookup for \_next/static files (used in lambda only right now) ([#2001](https://github.com/serverless-nextjs/serverless-next.js/issues/2001)) ([09ea1c0](https://github.com/serverless-nextjs/serverless-next.js/commit/09ea1c02f6ef7846a68e85893f9d707312aacdc6))
+- **lambda, core:** build lambda properly with api/page routes in one single manifest ([#2010](https://github.com/serverless-nextjs/serverless-next.js/issues/2010)) ([bc3668d](https://github.com/serverless-nextjs/serverless-next.js/commit/bc3668d0013881276415a5dc09817c80cd4f32b8))
+- **lambda:** fix apigw compat layer to properly handle binary data ([#2002](https://github.com/serverless-nextjs/serverless-next.js/issues/2002)) ([e65c023](https://github.com/serverless-nextjs/serverless-next.js/commit/e65c0234289cf0909fe4107e63aaccbf7e44354b))
+- **lambda:** fix typo in lambda builder manifest for queueRegion ([#2008](https://github.com/serverless-nextjs/serverless-next.js/issues/2008)) ([fdfa467](https://github.com/serverless-nextjs/serverless-next.js/commit/fdfa467330bd27a1b537128b1533ec934f044777))
+
 ## [3.5.3-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.3...v3.5.3-alpha.4) (2021-10-30)
 
 ### Bug Fixes
