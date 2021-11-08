@@ -1226,9 +1226,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.40.0":
-  version: 3.40.0
-  resolution: "@aws-sdk/client-s3@npm:3.40.0"
+"@aws-sdk/client-s3@npm:3.40.1":
+  version: 3.40.1
+  resolution: "@aws-sdk/client-s3@npm:3.40.1"
   dependencies:
     "@aws-crypto/sha256-browser": 2.0.0
     "@aws-crypto/sha256-js": 2.0.0
@@ -1245,7 +1245,7 @@ __metadata:
     "@aws-sdk/invalid-dependency": 3.40.0
     "@aws-sdk/md5-js": 3.40.0
     "@aws-sdk/middleware-apply-body-checksum": 3.40.0
-    "@aws-sdk/middleware-bucket-endpoint": 3.40.0
+    "@aws-sdk/middleware-bucket-endpoint": 3.40.1
     "@aws-sdk/middleware-content-length": 3.40.0
     "@aws-sdk/middleware-expect-continue": 3.40.0
     "@aws-sdk/middleware-host-header": 3.40.0
@@ -1277,7 +1277,7 @@ __metadata:
     entities: 2.2.0
     fast-xml-parser: 3.19.0
     tslib: ^2.3.0
-  checksum: 0d38c7bd09a1894b9022419cac17bb4cc8600fe955ac27a0ec50f7e953dd91b0e72bcfbb6c34ea6d69e7397063d1992a27cd611f9a8bca78e329c33a765cf6f7
+  checksum: facc61c2885e8619c5dd665f8cccd2d1985ad0d3d8affe71df08f6319e643ea0092265b4536b85534c33a14107b39c871047d77a7d02be13e2e44df12a4833a6
   languageName: node
   linkType: hard
 
@@ -1657,16 +1657,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/middleware-bucket-endpoint@npm:3.40.0":
-  version: 3.40.0
-  resolution: "@aws-sdk/middleware-bucket-endpoint@npm:3.40.0"
+"@aws-sdk/middleware-bucket-endpoint@npm:3.40.1":
+  version: 3.40.1
+  resolution: "@aws-sdk/middleware-bucket-endpoint@npm:3.40.1"
   dependencies:
     "@aws-sdk/protocol-http": 3.40.0
     "@aws-sdk/types": 3.40.0
     "@aws-sdk/util-arn-parser": 3.37.0
     "@aws-sdk/util-config-provider": 3.40.0
     tslib: ^2.3.0
-  checksum: bff111d47b63855ba7b7b4da322c642a73e0353dc67ff24e6965feb56dcf8811c01efcfe4567074968148679185db9114d9bd132ae3204cfbabd88ce41f76be1
+  checksum: b0417835e25919f843e56974f0bb49ba164eb33da69ce887ca6da92dda942e5e696fff7a0c4c1c7a074f7214ff2870a26abf5c9517793d9d233de7ed17053029
   languageName: node
   linkType: hard
 
@@ -6623,7 +6623,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/aws-common@workspace:packages/libs/aws-common"
   dependencies:
-    "@aws-sdk/client-s3": 3.40.0
+    "@aws-sdk/client-s3": 3.40.1
     "@aws-sdk/client-sqs": 3.40.0
     "@sls-next/core": "link:../core"
     "@types/node": 16.11.4
@@ -6892,7 +6892,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/lambda-at-edge@workspace:packages/libs/lambda-at-edge"
   dependencies:
-    "@aws-sdk/client-s3": 3.40.0
+    "@aws-sdk/client-s3": 3.40.1
     "@aws-sdk/client-sqs": 3.40.0
     "@babel/core": 7.16.0
     "@babel/eslint-parser": 7.16.0
