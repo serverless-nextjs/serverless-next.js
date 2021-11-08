@@ -50,14 +50,13 @@ describe("Static Files Tests", () => {
       });
 
       ["DELETE", "POST", "OPTIONS", "PUT", "PATCH"].forEach((method) => {
-        it(`disallows HTTP method for path ${path} with 4xx error: ${method}`, () => {
+        it(`allows HTTP method for path ${path} with 2xx status: ${method}`, () => {
           cy.request({
             url: path,
-            method: method,
-            failOnStatusCode: false
+            method: method
           }).then((response) => {
-            expect(response.status).to.be.at.least(400);
-            expect(response.status).to.be.lessThan(500);
+            expect(response.status).to.be.at.least(200);
+            expect(response.status).to.be.lessThan(300);
           });
         });
       });
