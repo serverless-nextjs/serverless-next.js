@@ -2,7 +2,7 @@
 import * as _ from "../lodash";
 
 const DEFAULT_INIT_NUMBER = 0;
-const INVALIDATION_DATA_DIR = "invalidation-group-data";
+const INVALIDATION_DATA_DIR = "/invalidation-group-data/";
 
 export type BasicInvalidationUrlGroup = {
   regex: string;
@@ -23,7 +23,7 @@ export const getGroupS3Key = (
     .replace(/[^a-zA-Z ]/g, "")}.json`;
   return originalKey.replace(
     basicGroup.regex,
-    `/${INVALIDATION_DATA_DIR}${filename}`
+    `${INVALIDATION_DATA_DIR}${filename}`
   );
 };
 
