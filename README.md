@@ -39,6 +39,8 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 
 > :warning: This README reflects the latest changes on the `master` branch. It may or may not yet be published to the `latest` (stable) or `alpha` release in npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information. If a feature is listed in this README but not working, please first try upgrading to the most recent `alpha` release in npm.
 
+> ⚠ this is currently using Serverless Components Beta (not GA version) as the project was started before GA. We are currently reworking how deployments will work in the future and exploring better IaC solutions such as CDK, CDK for Terraform, etc. and will make an announcement before end of the year on any updates.
+
 ### Motivation
 
 Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. However, Next.js doesn't provide the full serverless routing logic, hence why this project is needed to fill the gap. The long-term vision is to allow you to self-host with various clouds, starting with AWS.
