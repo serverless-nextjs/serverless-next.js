@@ -132,8 +132,9 @@ export async function imageOptimizer(
    * Normalised -> 200
    * /<base-path>/_next/image?url=%2Fassets%2Fimages%2Flogo.svg&w=256&q=75
    */
-  url = url.slice(basePath.length);
-
+  if (url.startsWith(basePath)) {
+    url = url.slice(basePath.length);
+  }
   if (url.startsWith("/")) {
     href = url;
     isAbsolute = false;
