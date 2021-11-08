@@ -15,7 +15,10 @@ import {
   handleDomainRedirects,
   setCustomHeaders
 } from "@sls-next/core/dist/module";
-import { imageOptimizer } from "@sls-next/core/dist/module/images";
+import {
+  imageOptimizer,
+  normaliseUri
+} from "@sls-next/core/dist/module/images";
 import { UrlWithParsedQuery } from "url";
 import url from "url";
 import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
@@ -23,15 +26,6 @@ import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest"
 import { AwsPlatformClient } from "@sls-next/aws-common";
 
 const basePath = RoutesManifestJson.basePath;
-
-const normaliseUri = (uri: string): string => {
-  if (uri.startsWith(basePath)) {
-    uri = uri.slice(basePath.length);
-  }
-
-  return uri;
-};
-
 const isImageOptimizerRequest = (uri: string): boolean =>
   uri.startsWith("/_next/image");
 
@@ -59,7 +53,7 @@ export const handler = async (
   // No other redirects or rewrites supported for now as it's assumed one is accessing this directly.
   // But it can be added later.
 
-  const uri = normaliseUri(request.uri);
+  const uri = normaliseUri(request.uri, basePath);
 
   // Handle image optimizer requests
   const isImageRequest = isImageOptimizerRequest(uri);
