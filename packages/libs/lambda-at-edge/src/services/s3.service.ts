@@ -112,6 +112,9 @@ export class S3Service {
     body: string,
     contentType: string
   ): Promise<any> {
+    console.log("getOrCreateObject", key);
+    console.log("getOrCreateObject", JSON.stringify(body));
+
     try {
       await this.getHeader(key);
       console.log("File Found in S3");
