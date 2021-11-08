@@ -88,6 +88,10 @@ export class Resource {
   public getBasePath(): string {
     return this.basePath;
   }
+
+  public getBuildId(): string {
+    return this.buildId;
+  }
 }
 
 /**

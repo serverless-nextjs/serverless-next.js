@@ -80,7 +80,7 @@ export class RevalidateHandler {
       console.log(JSON.stringify(manifest.invalidationUrlGroups));
       // this html is kind of list page
       const basicGroup = findInvalidationGroup(
-        resource.getHtmlKey(),
+        resource.getJsonKey(),
         manifest.invalidationUrlGroups
       );
       //
@@ -91,7 +91,7 @@ export class RevalidateHandler {
         // todo change key and body
         const group: InvalidationUrlGroup = JSON.parse(
           await this.s3Service.getOrCreateObject(
-            getGroupS3Key(basicGroup!, resource.getHtmlKey()),
+            getGroupS3Key(basicGroup!, resource),
             basicGroupToJSON(basicGroup!),
             "application/json"
           )

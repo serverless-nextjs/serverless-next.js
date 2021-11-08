@@ -1,5 +1,6 @@
 // @ts-ignore
 import * as _ from "../lodash";
+import { Resource } from "../../services/resource";
 
 const DEFAULT_INIT_NUMBER = 0;
 const INVALIDATION_DATA_DIR = "/invalidation-group-data/";
@@ -16,15 +17,18 @@ export type InvalidationUrlGroup = BasicInvalidationUrlGroup & {
 
 export const getGroupS3Key = (
   basicGroup: BasicInvalidationUrlGroup,
-  originalKey: string
+  resource: Resource
 ) => {
-  const filename = `${originalKey
+  const filename = `${resource
+    .getJsonKey()
     .match(basicGroup.regex)![0]
-    .replace(/[^a-zA-Z ]/g, "")}.json`;
-  return originalKey.replace(
-    basicGroup.regex,
-    `${INVALIDATION_DATA_DIR}${filename}`
-  );
+    .replace(/[^a-z1-9A-Z ]/g, "")}`;
+
+  console.log("getGroupS3Key filename", filename);
+
+  return `${(resource.getBasePath() || "").replace(/^\//, "")}${
+    !resource.getBasePath() ? "" : "/"
+  }_next/data/${resource.getBuildId()}${INVALIDATION_DATA_DIR}${filename}.json`;
 };
 
 export const basicGroupToJSON = (basicGroup: BasicInvalidationUrlGroup) => {
