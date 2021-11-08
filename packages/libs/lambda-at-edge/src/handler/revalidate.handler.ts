@@ -85,12 +85,13 @@ export class RevalidateHandler {
       );
       //
       console.log("basicGroup", basicGroup);
+      // if this is a group url, use this
       if (!_.isEmpty(basicGroup)) {
         // find group
         // todo change key and body
         const group: InvalidationUrlGroup = JSON.parse(
           await this.s3Service.getOrCreateObject(
-            getGroupS3Key(basicGroup!),
+            getGroupS3Key(basicGroup!, resource.getHtmlKey()),
             basicGroupToJSON(basicGroup!),
             "application/json"
           )
@@ -109,6 +110,7 @@ export class RevalidateHandler {
         //   }
       }
 
+      // else
       await Promise.all([
         this.s3Service.putObject(
           resource.getHtmlKey(),
