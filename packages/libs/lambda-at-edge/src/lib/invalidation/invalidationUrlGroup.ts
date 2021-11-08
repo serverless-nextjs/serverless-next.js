@@ -34,8 +34,11 @@ export function findInvalidationGroup(
 
   basicGroups?.forEach((group) => {
     console.log("findInvalidationGroup", JSON.stringify(group));
-
-    if (url.match(group.regex)) {
+    console.log(
+      "url.match(group.regex)",
+      JSON.stringify(url.match(group.regex))
+    );
+    if (!_.isEmpty(url.match(group.regex))) {
       return group;
     }
   });
