@@ -13,7 +13,7 @@
     "strict": true,
     "allowJs": true,
     "skipLibCheck": true,
-    "baseUrl": "./src"
+    "baseUrl": "./"
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts"]

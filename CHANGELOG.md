@@ -3,6 +3,70 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.4...v3.5.3-alpha.5) (2021-11-08)
+
+### Bug Fixes
+
+- **core:** fix lookup for \_next/static files (used in lambda only right now) ([#2001](https://github.com/serverless-nextjs/serverless-next.js/issues/2001)) ([09ea1c0](https://github.com/serverless-nextjs/serverless-next.js/commit/09ea1c02f6ef7846a68e85893f9d707312aacdc6))
+- **lambda, core:** build lambda properly with api/page routes in one single manifest ([#2010](https://github.com/serverless-nextjs/serverless-next.js/issues/2010)) ([bc3668d](https://github.com/serverless-nextjs/serverless-next.js/commit/bc3668d0013881276415a5dc09817c80cd4f32b8))
+- **lambda:** fix apigw compat layer to properly handle binary data ([#2002](https://github.com/serverless-nextjs/serverless-next.js/issues/2002)) ([e65c023](https://github.com/serverless-nextjs/serverless-next.js/commit/e65c0234289cf0909fe4107e63aaccbf7e44354b))
+- **lambda:** fix typo in lambda builder manifest for queueRegion ([#2008](https://github.com/serverless-nextjs/serverless-next.js/issues/2008)) ([fdfa467](https://github.com/serverless-nextjs/serverless-next.js/commit/fdfa467330bd27a1b537128b1533ec934f044777))
+
+## [3.5.3-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.3...v3.5.3-alpha.4) (2021-10-30)
+
+### Bug Fixes
+
+- **lambda-at-edge:** properly include pages that start with pages/api (but are not api pages) ([#1994](https://github.com/serverless-nextjs/serverless-next.js/issues/1994)) ([26a756c](https://github.com/serverless-nextjs/serverless-next.js/commit/26a756cb413771bca7e649a1210b7a983ec569d0))
+
+## [3.5.3-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.2...v3.5.3-alpha.3) (2021-10-30)
+
+### Bug Fixes
+
+- **aws-lambda:** add another wait after updating lambda config ([#1992](https://github.com/serverless-nextjs/serverless-next.js/issues/1992)) ([67add7e](https://github.com/serverless-nextjs/serverless-next.js/commit/67add7e430b944c2d732134e324663238a52f9d1))
+
+## [3.5.3-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.1...v3.5.3-alpha.2) (2021-10-29)
+
+### Bug Fixes
+
+- **aws-lambda:** wait for lambda to be ready right after creation/updating of code ([#1985](https://github.com/serverless-nextjs/serverless-next.js/issues/1985)) ([016fee0](https://github.com/serverless-nextjs/serverless-next.js/commit/016fee081f25bf23e0bfc128ceb95f657b85b30f))
+- **domain:** add missing pieces to 'domainMinimumProtocolVersion' input use ([#1983](https://github.com/serverless-nextjs/serverless-next.js/issues/1983)) ([dff22ba](https://github.com/serverless-nextjs/serverless-next.js/commit/dff22ba230e8cc3047d67cfbb82bc93a2e4edfe0))
+
+## [3.5.3-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.0...v3.5.3-alpha.1) (2021-10-29)
+
+### Bug Fixes
+
+- **aws-lambda, nextjs-component:** ensure we wait until lambda functions are ready before using them ([#1982](https://github.com/serverless-nextjs/serverless-next.js/issues/1982)) ([a0a22ab](https://github.com/serverless-nextjs/serverless-next.js/commit/a0a22abbafe055e7868d8c621671b314bcb35dde))
+
+## [3.5.3-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.2...v3.5.3-alpha.0) (2021-10-29)
+
+**Note:** Version bump only for package serverless-nextjs-monorepo
+
+## [3.5.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.1...v3.5.2) (2021-10-28)
+
+### Bug Fixes
+
+- **lerna:** fix publish command for stable versions ([ebcabb2](https://github.com/serverless-nextjs/serverless-next.js/commit/ebcabb2a3eec64dfad538a7525de343d0bed230c))
+
+## [3.5.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0...v3.5.1) (2021-10-28)
+
+### Bug Fixes
+
+- **core:** only ignore publishing sharp_node_modules from root ([a33b7d5](https://github.com/serverless-nextjs/serverless-next.js/commit/a33b7d556104e5336c7e3c466254b38f7ef23f06))
+
+# [3.5.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.11...v3.5.0) (2021-10-28)
+
+**Note:** Version bump only for package serverless-nextjs-monorepo
+
+# [3.5.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.10...v3.5.0-alpha.11) (2021-10-27)
+
+### Bug Fixes
+
+- **core:** fix renderReqToHtml function for next.js 12 ([#1971](https://github.com/serverless-nextjs/serverless-next.js/issues/1971)) ([c9980d8](https://github.com/serverless-nextjs/serverless-next.js/commit/c9980d82cb06bb3dcc4aaef0ecc164c3819c6b23))
+
+### Features
+
+- **lambda-at-edge:** copy additional JS files to handlers ([#1970](https://github.com/serverless-nextjs/serverless-next.js/issues/1970)) ([e7c81ef](https://github.com/serverless-nextjs/serverless-next.js/commit/e7c81efde360bf7921c5aef088479154fa94280d))
+
 # [3.5.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.9...v3.5.0-alpha.10) (2021-10-25)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo

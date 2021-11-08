@@ -1,7 +1,9 @@
-### Core library for running serverless Next.js
+# @sls-next/core
+> Core library for running serverless Next.js apps
 
-Decouples the core Next.js handing logic from a particular provider.
+This decouples the core Next.js handler logic from a particular platform.
 The types defined are meant to be abstract to use with any provider.
+It provides platform-agnostic handlers that can be extended for use on specific platforms.
 
 Code coverage relies on jest configuration:
 
@@ -16,13 +18,13 @@ The former is used by the serverless component, while the latter allows rollup t
 
 Contains logic needed for building manifests.
 
-# route/
+## route/
 
 Contains routing logic.
 
 Entry functions take manifests and request details and return Route objects.
 
-# handle/
+## handle/
 
 Contains logic for handling routes.
 

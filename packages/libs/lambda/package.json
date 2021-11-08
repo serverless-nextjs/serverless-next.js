@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/lambda",
-  "version": "3.5.0-alpha.10",
+  "version": "3.5.3-alpha.5",
   "description": "Code to build and deploy for Lambda + API Gateway",
   "publishConfig": {
     "access": "public"
@@ -20,7 +20,8 @@
     "build": "tsc -p tsconfig.build.json && yarn rollup",
     "esbuild": "node esbuild.js",
     "rollup": "rollup --config",
-    "clean": "yarn rimraf dist"
+    "clean": "yarn rimraf dist",
+    "test": "jest"
   },
   "keywords": [
     "AWS",
@@ -36,23 +37,30 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
+    "@cdktf/provider-aws": "2.0.13",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "esbuild": "^0.13.9",
-    "fs-extra": "^9.1.0"
+    "cdktf": "0.7.0",
+    "cdktf-cli": "0.7.0",
+    "constructs": "3.3.161",
+    "esbuild": "0.13.12",
+    "fs-extra": "9.1.0"
   },
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^18.1.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^10.0.0",
-    "@types/aws-lambda": "^8.10.84",
-    "@types/fs-extra": "^9.0.13",
-    "@types/node": "^16.11.4",
-    "rimraf": "^3.0.2",
-    "rollup": "^2.58.3",
-    "rollup-plugin-node-externals": "^2.2.0",
-    "rollup-plugin-terser": "^7.0.2",
-    "rollup-plugin-typescript2": "^0.30.0",
-    "typescript": "^4.4.4"
+    "@babel/preset-typescript": "^7.16.0",
+    "@rollup/plugin-commonjs": "18.1.0",
+    "@rollup/plugin-json": "4.1.0",
+    "@rollup/plugin-node-resolve": "10.0.0",
+    "@types/aws-lambda": "8.10.85",
+    "@types/fs-extra": "9.0.13",
+    "@types/jest": "^27.0.2",
+    "@types/node": "16.11.4",
+    "jest": "^27.3.1",
+    "rimraf": "3.0.2",
+    "rollup": "2.58.3",
+    "rollup-plugin-node-externals": "2.2.0",
+    "rollup-plugin-terser": "7.0.2",
+    "rollup-plugin-typescript2": "0.30.0",
+    "typescript": "4.4.4"
   }
 }

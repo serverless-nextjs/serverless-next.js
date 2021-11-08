@@ -13,6 +13,10 @@
   ],
   "packageRules": [
     {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
       "packagePatterns": ["@aws-cdk"],
       "groupName": "aws-cdk"
     },
@@ -31,6 +35,14 @@
     {
       "packagePatterns": ["@cypress", "cypress"],
       "groupName": "cypress"
+    },
+    {
+      "packagePatterns": ["@babel"],
+      "groupName": "babel"
+    },
+    {
+      "packagePatterns": ["@docusaurus"],
+      "groupName": "docusaurus"
     }
   ],
   "ignoreDeps": [

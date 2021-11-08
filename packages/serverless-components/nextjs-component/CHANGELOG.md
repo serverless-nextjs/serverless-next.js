@@ -3,6 +3,50 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.4...v3.5.3-alpha.5) (2021-11-08)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+## [3.5.3-alpha.4](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.3...v3.5.3-alpha.4) (2021-10-30)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+## [3.5.3-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.2...v3.5.3-alpha.3) (2021-10-30)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+## [3.5.3-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.1...v3.5.3-alpha.2) (2021-10-29)
+
+### Bug Fixes
+
+- **domain:** add missing pieces to 'domainMinimumProtocolVersion' input use ([#1983](https://github.com/serverless-nextjs/serverless-next.js/issues/1983)) ([dff22ba](https://github.com/serverless-nextjs/serverless-next.js/commit/dff22ba230e8cc3047d67cfbb82bc93a2e4edfe0))
+
+## [3.5.3-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.0...v3.5.3-alpha.1) (2021-10-29)
+
+### Bug Fixes
+
+- **aws-lambda, nextjs-component:** ensure we wait until lambda functions are ready before using them ([#1982](https://github.com/serverless-nextjs/serverless-next.js/issues/1982)) ([a0a22ab](https://github.com/serverless-nextjs/serverless-next.js/commit/a0a22abbafe055e7868d8c621671b314bcb35dde))
+
+## [3.5.3-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.2...v3.5.3-alpha.0) (2021-10-29)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+## [3.5.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.1...v3.5.2) (2021-10-28)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+## [3.5.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0...v3.5.1) (2021-10-28)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+# [3.5.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.11...v3.5.0) (2021-10-28)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
+# [3.5.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.10...v3.5.0-alpha.11) (2021-10-27)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
 # [3.5.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.9...v3.5.0-alpha.10) (2021-10-25)
 
 **Note:** Version bump only for package @sls-next/serverless-component

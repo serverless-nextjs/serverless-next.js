@@ -1,7 +1,12 @@
 import fse from "fs-extra";
 import { join } from "path";
 import path from "path";
-import { Manifest, PageManifest, RoutesManifest } from "types";
+import {
+  CoreBuildOptions,
+  Manifest,
+  PageManifest,
+  RoutesManifest
+} from "types";
 import { isTrailingSlashRedirect } from "./lib/redirector";
 import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
@@ -14,33 +19,21 @@ import pathToPosix from "./lib/pathToPosix";
 
 export const ASSETS_DIR = "assets";
 
-type BuildOptions = {
-  args?: string[];
-  cwd?: string;
-  env?: NodeJS.ProcessEnv;
-  cmd?: string;
-  domainRedirects?: { [key: string]: string };
-  minifyHandlers?: boolean;
-  handler?: string;
-  authentication?: { username: string; password: string } | undefined;
-  baseDir?: string;
-  cleanupDotNext?: boolean;
-  assetIgnorePatterns?: string[];
-  regenerationQueueName?: string;
-};
-
 const defaultBuildOptions = {
+  nextConfigDir: "./",
+  nextStaticDir: undefined,
+  outputDir: ".serverless_nextjs",
   args: ["build"],
   cwd: process.cwd(),
   env: {},
   cmd: "./node_modules/.bin/next",
   domainRedirects: {},
   minifyHandlers: false,
+  handler: undefined,
   authentication: undefined,
   baseDir: process.cwd(),
   cleanupDotNext: true,
-  assetIgnorePatterns: [],
-  regenerationQueueName: undefined
+  assetIgnorePatterns: []
 };
 
 /**
@@ -52,45 +45,34 @@ export default abstract class CoreBuilder {
   protected dotNextDir: string;
   protected serverlessDir: string;
   protected outputDir: string;
-  protected buildOptions: BuildOptions = defaultBuildOptions;
+  protected buildOptions = defaultBuildOptions;
 
-  public constructor(
-    nextConfigDir: string,
-    outputDir: string,
-    buildOptions?: BuildOptions,
-    nextStaticDir?: string
-  ) {
-    this.nextConfigDir = path.resolve(nextConfigDir);
-    this.nextStaticDir = path.resolve(nextStaticDir ?? nextConfigDir);
+  public constructor(buildOptions?: CoreBuildOptions) {
+    if (buildOptions) {
+      Object.assign(this.buildOptions, buildOptions);
+    }
+
+    this.nextConfigDir = path.resolve(this.buildOptions.nextConfigDir);
+    this.nextStaticDir = path.resolve(
+      this.buildOptions.nextStaticDir ?? this.buildOptions.nextConfigDir
+    );
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
     this.serverlessDir = path.join(this.dotNextDir, "serverless");
-    this.outputDir = outputDir;
-    if (buildOptions) {
-      this.buildOptions = buildOptions;
-    }
+    this.outputDir = this.buildOptions.outputDir;
   }
 
   public async build(debugMode?: boolean): Promise<void> {
     await this.preBuild();
-    const { defaultBuildManifest, imageManifest, pageManifest } =
-      await this.buildCore(debugMode);
-    await this.buildPlatform(
-      { defaultBuildManifest, imageManifest, pageManifest },
-      debugMode
-    );
+    const { imageManifest, pageManifest } = await this.buildCore(debugMode);
+    await this.buildPlatform({ imageManifest, pageManifest }, debugMode);
   }
 
   /**
    * Run prebuild steps which include cleaning up .next and emptying output directories.
    */
   protected async preBuild(): Promise<void> {
-    const { cleanupDotNext } = Object.assign(
-      defaultBuildOptions,
-      this.buildOptions
-    );
-
     await Promise.all([
-      this.cleanupDotNext(cleanupDotNext),
+      this.cleanupDotNext(this.buildOptions.cleanupDotNext),
       fse.emptyDir(join(this.outputDir))
     ]);
   }
@@ -102,7 +84,6 @@ export default abstract class CoreBuilder {
    */
   protected abstract buildPlatform(
     manifests: {
-      defaultBuildManifest: any;
       imageManifest: Manifest;
       pageManifest: Manifest;
     },
@@ -114,9 +95,8 @@ export default abstract class CoreBuilder {
    * @param debugMode
    */
   public async buildCore(debugMode?: boolean): Promise<{
-    defaultBuildManifest: any;
     imageManifest: Manifest;
-    pageManifest: Manifest;
+    pageManifest: PageManifest;
   }> {
     const { cmd, args, cwd, env, assetIgnorePatterns } = Object.assign(
       defaultBuildOptions,
@@ -162,37 +142,29 @@ export default abstract class CoreBuilder {
         path.join(this.dotNextDir, "BUILD_ID"),
         "utf-8"
       ),
+      useV2Handler: true, // FIXME: temporary to combine API and regular pages until this is deprecated and removed
       ...this.buildOptions,
       domainRedirects: this.buildOptions.domainRedirects ?? {}
     };
 
-    const { apiManifest, imageManifest, pageManifest } =
-      await prepareBuildManifests(
-        options,
-        await this.readNextConfig(),
-        routesManifest,
-        await this.readPagesManifest(),
-        prerenderManifest,
-        await this.readPublicFiles(assetIgnorePatterns)
-      );
-
-    const { regenerationQueueName } = this.buildOptions;
-
-    const defaultBuildManifest = {
-      ...apiManifest,
-      ...pageManifest,
-      regenerationQueueName
-    };
+    const { imageManifest, pageManifest } = await prepareBuildManifests(
+      options,
+      await this.readNextConfig(),
+      routesManifest,
+      await this.readPagesManifest(),
+      prerenderManifest,
+      await this.readPublicFiles(assetIgnorePatterns)
+    );
 
     // Copy any static assets to .serverless_nextjs/assets directory
     // This step is common to all platforms so it's in the core build step.
     await this.buildStaticAssets(
-      defaultBuildManifest,
+      pageManifest,
       routesManifest,
       assetIgnorePatterns
     );
 
-    return { defaultBuildManifest, imageManifest, pageManifest };
+    return { imageManifest, pageManifest };
   }
 
   protected async readPublicFiles(
@@ -309,13 +281,33 @@ export default abstract class CoreBuilder {
   /**
    * Copy code chunks generated by Next.js.
    */
-  protected async copyChunks(buildDir: string): Promise<void> {
+  protected async copyChunks(handlerDir: string): Promise<void> {
     return (await fse.pathExists(join(this.serverlessDir, "chunks")))
       ? fse.copy(
           join(this.serverlessDir, "chunks"),
-          join(this.outputDir, buildDir, "chunks")
+          join(this.outputDir, handlerDir, "chunks")
         )
       : Promise.resolve();
+  }
+
+  /**
+   * Copy additional JS files needed such as webpack-runtime.js (new in Next.js 12)
+   */
+  protected async copyJSFiles(handlerDir: string): Promise<void> {
+    await Promise.all([
+      (await fse.pathExists(join(this.serverlessDir, "webpack-api-runtime.js")))
+        ? fse.copy(
+            join(this.serverlessDir, "webpack-api-runtime.js"),
+            join(this.outputDir, handlerDir, "webpack-api-runtime.js")
+          )
+        : Promise.resolve(),
+      (await fse.pathExists(join(this.serverlessDir, "webpack-runtime.js")))
+        ? fse.copy(
+            join(this.serverlessDir, "webpack-runtime.js"),
+            join(this.outputDir, handlerDir, "webpack-runtime.js")
+          )
+        : Promise.resolve()
+    ]);
   }
 
   protected async readNextConfig(): Promise<NextConfig | undefined> {

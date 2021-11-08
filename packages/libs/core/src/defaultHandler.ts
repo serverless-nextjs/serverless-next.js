@@ -66,7 +66,7 @@ const createExternalRewriteResponse = async (
     fetchResponse = await fetch(customRewrite, {
       headers: reqHeaders,
       method: req.method,
-      body: decodedBody, // Must pass body as a string,
+      body: decodedBody, // Must pass body as a string
       compress: false,
       redirect: "manual"
     });
@@ -382,11 +382,12 @@ export const defaultHandler = async ({
   }
   if (route.isNextStaticFile) {
     const { file } = route as NextStaticFileRoute;
+    const relativeFile = file.slice("/_next/static".length);
     return await staticRequest(
       req,
       res,
       responsePromise,
-      file,
+      relativeFile,
       `${routesManifest.basePath}/_next/static`,
       route,
       manifest,

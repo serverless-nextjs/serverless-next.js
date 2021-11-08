@@ -362,13 +362,13 @@ async function runEndToEndTest(): Promise<boolean> {
         // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
       ]);
 
-    if (
-      !cloudFrontReady ||
-      !ssrReady ||
-      !ssgReady ||
-      !isrReady ||
-      !dynamicIsrReady
-    ) {
+    if (!cloudFrontReady) {
+      console.info(
+        "CloudFront invalidations not ready after 120 seconds, but continuing with test anyway."
+      );
+    }
+
+    if (!ssrReady || !ssgReady || !isrReady || !dynamicIsrReady) {
       throw new Error("Timed out waiting for app to be ready!");
     }
 

@@ -33,7 +33,6 @@ import type {
 import { execSync } from "child_process";
 import AWS from "aws-sdk";
 import { removeLambdaVersions } from "@sls-next/aws-lambda/dist/removeLambdaVersions";
-
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
 
@@ -1011,7 +1010,8 @@ class NextjsComponent extends Component {
         },
         domainType: inputs.domainType || "both",
         defaultCloudfrontInputs: cloudFrontDefaults,
-        certificateArn: inputs.certificateArn
+        certificateArn: inputs.certificateArn,
+        domainMinimumProtocolVersion: inputs.domainMinimumProtocolVersion
       });
       appUrl = domainOutputs.domains[0];
     }

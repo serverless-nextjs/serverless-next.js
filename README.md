@@ -14,6 +14,7 @@
 ![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-10.2.3%20|%2011.x-blue)
 [![Cypress.io](https://img.shields.io/badge/tested%20with-Cypress-04C38E.svg)](https://www.cypress.io/)
 ![Platforms](https://img.shields.io/badge/platforms-aws-blue)
+![Tested Node.js versions](https://img.shields.io/badge/node.js-12.x%20%7C%2014.x-brightgreen)
 
 A zero configuration Next.js 10/11 [serverless component](https://github.com/serverless-components/) for AWS Lambda@Edge aiming for full feature parity.
 
@@ -38,19 +39,23 @@ Please review [features](https://github.com/serverless-nextjs/serverless-next.js
 
 > :warning: This README reflects the latest changes on the `master` branch. It may or may not yet be published to the `latest` (stable) or `alpha` release in npm. Please go to [Releases](https://github.com/serverless-nextjs/serverless-next.js/releases), find the correct `@sls-next/serverless-component` version you are using, and open the README for that release for more accurate information. If a feature is listed in this README but not working, please first try upgrading to the most recent `alpha` release in npm.
 
+> ⚠ this is currently using Serverless Components Beta (not GA version) as the project was started before GA. We are currently reworking how deployments will work in the future and exploring better IaC solutions such as CDK, CDK for Terraform, etc. and will make an announcement before end of the year on any updates.
+
 ### Motivation
 
-Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. This project is a better version of the [serverless plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/serverless-nextjs/serverless-next.js/issues/101), [better development experience](https://github.com/serverless-nextjs/serverless-next.js/issues/59), [the 200 CloudFormation resource limit](https://github.com/serverless-nextjs/serverless-next.js/issues/17) and [performance](https://github.com/serverless-nextjs/serverless-next.js/issues/13).
+Since Next.js 8.0, [serverless mode](https://nextjs.org/blog/next-8#serverless-nextjs) was introduced which provides a new low level API which projects like this can use to deploy onto different cloud providers. However, Next.js doesn't provide the full serverless routing logic, hence why this project is needed to fill the gap. The long-term vision is to allow you to self-host with various clouds, starting with AWS.
+
+This project is a better version of the [serverless plugin](https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/deprecated/serverless-plugin) which focuses on addressing core issues like [next 9 support](https://github.com/serverless-nextjs/serverless-next.js/issues/101), [better development experience](https://github.com/serverless-nextjs/serverless-next.js/issues/59), [the 200 CloudFormation resource limit](https://github.com/serverless-nextjs/serverless-next.js/issues/17) and [performance](https://github.com/serverless-nextjs/serverless-next.js/issues/13).
 
 ### Design principles
 
 1. Zero configuration by default
 
-There is no configuration needed. You can extend defaults based on your application needs.
+There is little to no configuration needed. You can extend defaults based on your application needs.
 
 2. Feature parity with Next.js
 
-Users of this component should be able to use Next.js development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. Below you can find a list of the features that are currently supported.
+Users of this component should be able to use Next.js development tooling, aka `next dev`. It is the component's job to deploy your application ensuring parity with all of next's features we know and love. We try to emulate all or most of the routing and server-side logic from Next.js and optimize it for a serverless environment. Below you can find a list of the features that are currently supported.
 
 3. Fast deployments / no CloudFormation resource limits.
 
@@ -58,7 +63,7 @@ With a simplified architecture and no use of CloudFormation, there are no limits
 
 ### Features
 
-The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or implementation stage. Please refer to an item's description for specific details.
+Since we emulate the Next.js routing logic, unfortunately we aren't always at full parity. The following shows all supported features or planned features. If the checkbox is ticked, it means that the feature is supported. Otherwise, it is likely not supported yet or currently in planning or implementation stage. Please refer to an item's description for specific details.
 
 Note that some features may only be on the latest [alpha version](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions). If a feature is listed as supported but not working on the `latest` tag, it most likely is in the `alpha` tag. If you can, please help us test the latest alpha changes and [submit a bug report](https://github.com/serverless-nextjs/serverless-next.js/issues/new?assignees=&labels=&template=bug_report.md&title=) if you find any issues. Thank you!
 
@@ -83,15 +88,16 @@ Is there a feature that you want but is not yet supported? Please open a [new is
 - [x] [Preview mode](https://nextjs.org/docs/advanced-features/preview-mode)
 - [x] [Optional catch all routes](https://nextjs.org/docs/routing/dynamic-routes#optional-catch-all-routes)
 - [x] [Redirects](https://nextjs.org/docs/api-reference/next.config.js/redirects). Caveat: every route should be able to redirect except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that the new `has` matching format (https://nextjs.org/docs/api-reference/next.config.js/redirects#header-cookie-and-query-matching) is not yet supported.
-- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). Caveat: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that object format is not yet supported.
-- [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that object format is not yet supported.
+- [x] [Rewrites](https://nextjs.org/docs/api-reference/next.config.js/rewrites). Caveat: every route should be able to rewrite except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that the new `has` matching format (https://nextjs.org/docs/api-reference/next.config.js/redirects#header-cookie-and-query-matching) is not yet supported.
+- [x] [Custom Headers](https://nextjs.org/docs/api-reference/next.config.js/headers). Caveats: every route should be able to have custom headers except `_next/static/*` and `static/*`, since those cache behaviors do not have Lambda handlers attached to them. Note that the new `has` matching format (https://nextjs.org/docs/api-reference/next.config.js/redirects#header-cookie-and-query-matching) is not yet supported.
 - [x] [Image Optimization](https://nextjs.org/docs/basic-features/image-optimization)
 - [x] [Next.js 10 Localization](https://nextjs.org/blog/next-10). See: https://github.com/serverless-nextjs/serverless-next.js/issues/721 for more details and tips. We also automatically detect and copy the default configuration files if you are using the `next-i18next` package.
 - [x] [Incremental Static Regeneration](https://nextjs.org/docs/basic-features/data-fetching#incremental-static-regeneration). Requires SQS.SendMessage permissions on your Lambda role and various SQS/Lambda permissions on your deployment user (note, adding ISR to an existing app requires manually updating the Lambda role's permissions for now - see https://github.com/serverless-nextjs/serverless-next.js/issues/1510). See https://github.com/serverless-nextjs/serverless-next.js/pull/1028 for more details, big thanks to @kirkness for this amazing work.
+- [ ] [Next.js 12 features](https://nextjs.org/blog/next-12) Features like middleware, bot-aware ISR fallback, AVIF image support, etc. are not yet supported, though with the latest component version, you should be able to use existing features on Next.js 12.
 
 ### Getting started
 
-Add your next application to the serverless.yml:
+First, ensure you have Node.js 12+ installed on the deploying machine as all code is now transpiled to ES2019. Add your next application to the serverless.yml:
 
 ```yml
 # serverless.yml
@@ -102,7 +108,7 @@ myNextApplication:
 
 :no_entry_sign: **If you specify `@sls-next/serverless-component` in your `serverless.yml` file, do not add `@sls-next/serverless-component` to your package.json file, it is not used and only the version in `serverless.yml` file is used, which Serverless pulls from npm by itself. If you do not specify the version, it will use the `latest` tag, which refers to the latest stable version [here](https://www.npmjs.com/package/@sls-next/serverless-component) (i.e not alpha versions).**
 
-In uncommon scenarios, you can also point it to a local installation.
+You can also point it to a local installation, for example if you want to version using `package.json`.
 
 In this case, configure the following:
 
@@ -805,15 +811,15 @@ Refer to the [README](https://github.com/serverless-nextjs/serverless-next.js/bl
 
 ## Reporting Issues
 
-You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If posting a problem, please follow the [debugging wiki](https://github.com/serverless-nextjs/serverless-next.js/wiki/Debugging-Issues) first for some useful tips.
+You can open a new issue [here](https://github.com/serverless-nextjs/serverless-next.js/issues). If posting a problem, please follow the [debugging wiki](https://github.com/serverless-nextjs/serverless-next.js/wiki/Debugging-Issues) first for some useful tips, and try to include as much information to reproduce the issue.
 
 If you are reporting a security vulnerability, please follow the [security policy](https://github.com/serverless-nextjs/serverless-next.js/security/policy) instead.
 
-Please note that there is only one active maintainer, and a handful of community contributors, who both contribute to this library in their free time. So we hope you understand that our response is best-effort and may take several days, or more. In case an issue hasn't been looked at for a long time (> a few weeks) and there is no acceptable workaround or it seems like a major issue, feel free to mention a maintainer and we will try to prioritize it.
+Please note that there is only one core maintainer right now (@dphang), and a handful of community contributors, who all contribute to this library in their free time. So we hope you understand that our response is best-effort and may take several days, or more. So we hope you could at least help debug the issue or provide as much context. In case an issue hasn't been looked at for a long time (> a few weeks) or it seems like a major issue, feel free to mention a maintainer and we will try to prioritize it.
 
 ## Contributing
 
-Please see the [contributing](./CONTRIBUTING.md) guide.
+We would love if you can help contribute, whether it's coding, triaging or debugging issues, helping with documentation, or financial support! Please see the [contributing](./CONTRIBUTING.md) guide.
 
 ## Contributors
 

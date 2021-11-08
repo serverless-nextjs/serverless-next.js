@@ -17,8 +17,8 @@ export const renderPageToHtml = async (
       res: ServerResponse,
       renderMode?: "export" | "passthrough" | true
     ) =>
-      | PromiseLike<{ renderOpts: Record<string, any>; html: string }>
-      | { renderOpts: Record<string, any>; html: string };
+      | PromiseLike<{ renderOpts: Record<string, any>; html: any }>
+      | { renderOpts: Record<string, any>; html: any };
   },
   req: IncomingMessage,
   res: ServerResponse,
@@ -30,24 +30,24 @@ export const renderPageToHtml = async (
     renderMode
   );
 
-  let html;
-  try {
-    if (typeof htmlResult === "string") {
-      html = htmlResult; // Next.js < 11.1
-    } else {
-      html = htmlResult ? await resultsToString([htmlResult]) : ""; // Next >= 11.1.1
+  let html = undefined;
+  if (typeof htmlResult === "string") {
+    html = htmlResult; // Next.js < 11.1
+  } else {
+    if (htmlResult) {
+      html = await htmlResult.toUnchunkedString?.(); // Next >= 12
+
+      if (!html) {
+        try {
+          html = await resultsToString([htmlResult]); // Next >= 11.1.1
+        } catch (e) {
+          console.log("html could not be rendered using resultsToString().");
+        }
+      }
     }
-  } catch (e) {
-    // Fallback to using renderReqToHtml without renderMode specified,
-    // which will render html based on the page's renderReqToHtml,
-    // which should always work (but adds another *warm* render cost)
-    console.log(
-      "Exception occurred, falling back to using page's rendering function for html"
-    );
-    html = (await page.renderReqToHTML(req, res)) as unknown as string;
   }
 
-  if (!html || html === "") {
+  if (!html) {
     console.log(
       "html is empty, falling back to using page's rendering function for html"
     );

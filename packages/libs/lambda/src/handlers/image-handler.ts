@@ -1,16 +1,16 @@
 // @ts-ignore
-import Manifest from "./manifest.json";
+import LambdaManifestJson from "./lambda-manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
 import { AwsPlatformClient } from "@sls-next/aws-common";
-import { httpCompat } from "compat/apigw";
+import { httpCompat } from "src/compat/apigw";
 import {
   APIGatewayProxyEventV2,
   APIGatewayProxyStructuredResultV2
 } from "aws-lambda";
 import { ImagesManifest, setCustomHeaders } from "@sls-next/core/dist/module";
 import url, { UrlWithParsedQuery } from "url";
-import { BuildManifest, RoutesManifest } from "types";
+import { LambdaManifest, RoutesManifest } from "src/types";
 import { imageOptimizer } from "@sls-next/core/dist/module/images";
 
 const basePath = RoutesManifestJson.basePath;
@@ -58,11 +58,11 @@ export const handler = async (
       true
     );
 
-    const manifest: BuildManifest = Manifest;
+    const lambdaManifest: LambdaManifest = LambdaManifestJson;
 
     const awsPlatformClient = new AwsPlatformClient(
-      manifest.bucketName,
-      manifest.bucketRegion,
+      lambdaManifest.bucketName,
+      lambdaManifest.bucketRegion,
       undefined,
       undefined
     );

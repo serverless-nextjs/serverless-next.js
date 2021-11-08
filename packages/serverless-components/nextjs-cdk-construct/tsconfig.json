@@ -3,7 +3,7 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "declaration": true,
-    "target": "ES2015",
+    "target": "ES2019",
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
