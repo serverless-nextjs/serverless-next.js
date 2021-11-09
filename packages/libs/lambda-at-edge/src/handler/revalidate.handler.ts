@@ -12,7 +12,6 @@ import { debug, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
 
 import {
-  basicGroupToJSON,
   findInvalidationGroup,
   getGroupS3Key,
   InvalidationUrlGroup

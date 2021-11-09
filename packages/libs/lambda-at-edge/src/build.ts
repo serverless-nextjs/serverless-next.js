@@ -987,14 +987,9 @@ class Builder {
     routesManifest: RoutesManifest
   ) {
     const basePath = routesManifest.basePath;
-
     const normalizedBasePath = basePath ? basePath.slice(1) : "";
-
-    const withBasePath = (key: string): string =>
-      path.join(normalizedBasePath, key);
     const buildId = defaultBuildManifest.buildId;
-    const nextConfigDir = this.nextConfigDir;
-    const nextStaticDir = this.nextStaticDir;
+
     // add here
     const directoryPath = path.join(
       this.outputDir,
@@ -1010,21 +1005,13 @@ class Builder {
       fs.mkdirSync(directoryPath, { recursive: true });
     }
 
-    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
-
-    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
-
-    console.log("nextStaticDir", nextStaticDir);
-    console.log("nextConfigDir", nextConfigDir);
-
+    const defaultGroupNumber = 0;
     map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
       await fse.writeFile(
         join(directoryPath, getGroupFilename(group)),
-        JSON.stringify(group)
+        JSON.stringify({ ...group, currentNumber: defaultGroupNumber })
       );
     });
-
-    return Promise.all([]);
   }
 }
 

@@ -2,8 +2,7 @@
 import * as _ from "../lodash";
 import { Resource } from "../../services/resource";
 
-const DEFAULT_INIT_NUMBER = 0;
-export const INVALIDATION_DATA_DIR = "/invalidation-group-data/";
+export const INVALIDATION_DATA_DIR = "/_invalidation-group-data/";
 
 export type BasicInvalidationUrlGroup = {
   regex: string;
@@ -28,14 +27,9 @@ export const getGroupS3Key = (
 
 export const getGroupFilename = (basicGroup: BasicInvalidationUrlGroup) => {
   return `${basicGroup.invalidationPath}${basicGroup.maxAccessNumber}`.replace(
-    /[^a-z1-9A-Z ]/g,
+    /[^a-z0-9A-Z ]/g,
     "_"
   );
-};
-
-export const basicGroupToJSON = (basicGroup: BasicInvalidationUrlGroup) => {
-  console.log("basicGroupToJSON", JSON.stringify(basicGroup));
-  return JSON.stringify({ ...basicGroup, currentNumber: DEFAULT_INIT_NUMBER });
 };
 
 export function findInvalidationGroup(
