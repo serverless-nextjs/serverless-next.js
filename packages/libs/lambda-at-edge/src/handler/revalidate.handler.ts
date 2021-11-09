@@ -90,11 +90,7 @@ export class RevalidateHandler {
         // find group
         // todo change key and body
         const group: InvalidationUrlGroup = JSON.parse(
-          await this.s3Service.getOrCreateObject(
-            getGroupS3Key(basicGroup!, resource),
-            basicGroupToJSON(basicGroup!),
-            "application/json"
-          )
+          await this.s3Service.getObject(getGroupS3Key(basicGroup!, resource))
         );
         console.log("group", group);
         //

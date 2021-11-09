@@ -26,7 +26,13 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
-import { BasicInvalidationUrlGroup } from "./lib/invalidation/invalidationUrlGroup";
+import {
+  BasicInvalidationUrlGroup,
+  getGroupFilename,
+  INVALIDATION_DATA_DIR
+} from "./lib/invalidation/invalidationUrlGroup";
+import fs from "fs";
+import { map, isEmpty } from "lodash";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -921,6 +927,15 @@ class Builder {
       "routes-manifest.json"
     ));
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
+
+    // Now, we only use invalidation urls as DynamicData
+    const hasDynamicDataAssets = !isEmpty(
+      defaultBuildManifest.invalidationUrlGroups
+    );
+
+    if (hasDynamicDataAssets) {
+      await this.buildDynamicDataAssets(defaultBuildManifest, routesManifest);
+    }
   }
 
   /**
@@ -961,6 +976,55 @@ class Builder {
 
       domainRedirects[key] = normalizedDomain;
     }
+  }
+
+  /**
+   * Build dynamic data assets, now we only have invalidation url counters.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildDynamicDataAssets(
+    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    routesManifest: RoutesManifest
+  ) {
+    const basePath = routesManifest.basePath;
+
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+
+    const withBasePath = (key: string): string =>
+      path.join(normalizedBasePath, key);
+    const buildId = defaultBuildManifest.buildId;
+    const nextConfigDir = this.nextConfigDir;
+    const nextStaticDir = this.nextStaticDir;
+    // add here
+    const directoryPath = path.join(
+      this.outputDir,
+      ASSETS_DIR,
+      normalizedBasePath,
+      "_next",
+      "data",
+      buildId,
+      INVALIDATION_DATA_DIR
+    );
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+
+    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
+
+    const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
+
+    console.log("nextStaticDir", nextStaticDir);
+    console.log("nextConfigDir", nextConfigDir);
+
+    map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
+      await fse.writeFile(
+        join(directoryPath, getGroupFilename(group)),
+        JSON.stringify(group)
+      );
+    });
+
+    return Promise.all([]);
   }
 }
 

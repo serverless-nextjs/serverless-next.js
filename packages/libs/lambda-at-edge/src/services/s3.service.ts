@@ -106,25 +106,4 @@ export class S3Service {
     });
     return data;
   }
-
-  public async getOrCreateObject(
-    key: string,
-    body: string,
-    contentType: string
-  ): Promise<any> {
-    console.log("getOrCreateObject", key);
-    console.log("getOrCreateObject", JSON.stringify(body));
-
-    try {
-      await this.getHeader(key);
-      console.log("File Found in S3");
-    } catch (err) {
-      if (err.code === "NotFound") {
-        await this.putObject(key, body, contentType);
-      }
-      throw new Error(`${key} File ERROR : ${err.code}`);
-    }
-
-    return await this.getObject(key);
-  }
 }
