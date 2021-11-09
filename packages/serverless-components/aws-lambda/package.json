@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/aws-lambda",
-  "version": "3.5.3-alpha.6",
+  "version": "3.5.3",
   "main": "serverless.js",
   "publishConfig": {
     "access": "public"
