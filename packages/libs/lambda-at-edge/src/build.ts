@@ -1011,7 +1011,7 @@ class Builder {
       const maxNumber = isDevMode() ? 1 : group.maxAccessNumber;
 
       await fse.writeFile(
-        join(directoryPath, getGroupFilename(group)),
+        join(directoryPath, group.getGroupFilename()),
         JSON.stringify({
           ...group,
           maxAccessNumber: maxNumber,
