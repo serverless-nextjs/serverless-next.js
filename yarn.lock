@@ -2222,9 +2222,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@babel/eslint-parser@npm:7.16.0":
-  version: 7.16.0
-  resolution: "@babel/eslint-parser@npm:7.16.0"
+"@babel/eslint-parser@npm:7.16.3":
+  version: 7.16.3
+  resolution: "@babel/eslint-parser@npm:7.16.3"
   dependencies:
     eslint-scope: ^5.1.1
     eslint-visitor-keys: ^2.1.0
@@ -2232,7 +2232,7 @@ __metadata:
   peerDependencies:
     "@babel/core": ">=7.11.0"
     eslint: ^7.5.0 || ^8.0.0
-  checksum: 5efea0fbd2e3f6f5873b580e707e167c39f89992b0e9e0bd5b93a4253f3586f9f16af35d5516b315c6d4f77cc3e1149a7a6d4433a70870fb21141dedc9f0f508
+  checksum: 3678ea3be1b94dd17516b84b84998f043e8e1a6c5690c572e850011736e224bc62a96d4a96be9e38556e2dfe7914962af5edfd205fdc8b846794a232c81f94a8
   languageName: node
   linkType: hard
 
@@ -6895,7 +6895,7 @@ __metadata:
     "@aws-sdk/client-s3": 3.40.1
     "@aws-sdk/client-sqs": 3.40.0
     "@babel/core": 7.16.0
-    "@babel/eslint-parser": 7.16.0
+    "@babel/eslint-parser": 7.16.3
     "@babel/plugin-proposal-class-properties": 7.16.0
     "@babel/preset-env": 7.16.0
     "@babel/preset-react": 7.16.0
