@@ -22,14 +22,17 @@ export const getGroupS3Key = (
     !resource.getBasePath() ? "" : "/"
   }_next/data/${resource.getBuildId()}${INVALIDATION_DATA_DIR}${getGroupFilename(
     basicGroup
-  )}.json`;
+  )}`;
 };
 
 export const getGroupFilename = (basicGroup: BasicInvalidationUrlGroup) => {
-  return `${basicGroup.invalidationPath}${basicGroup.maxAccessNumber}`.replace(
-    /[^a-z0-9A-Z ]/g,
+  const filename = `${basicGroup.invalidationPath}${basicGroup.maxAccessNumber}`.replace(
+    /[^a-z0-9A-Z]/g,
     "_"
   );
+
+  console.log("getGroupFilename", filename);
+  return `${filename}.json`;
 };
 
 export function findInvalidationGroup(
