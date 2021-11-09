@@ -4,7 +4,7 @@ describe("Image Optimizer Tests", () => {
       ({ contentType }) => {
         it(`serves image app-store-badge.png with content-type: ${contentType}`, () => {
           cy.request({
-            url: "/basepath/_next/image?url=%2Fapp-store-badge.png&w=256&q=100",
+            url: "/basepath/_next/image?url=%2Fbasepath%2Fapp-store-badge.png&w=256&q=100",
             method: "GET",
             headers: { accept: contentType }
           }).then((response) => {
@@ -25,7 +25,7 @@ describe("Image Optimizer Tests", () => {
     ].forEach(({ quality, expectedContentLength }) => {
       it(`serves image app-store-badge.png with quality: ${quality}`, () => {
         cy.request({
-          url: `/basepath/_next/image?url=%2Fapp-store-badge.png&w=256&q=${quality}`,
+          url: `/basepath/_next/image?url=%2Fbasepath%2Fapp-store-badge.png&w=256&q=${quality}`,
           method: "GET",
           headers: { accept: "image/webp" }
         }).then((response) => {
@@ -47,7 +47,7 @@ describe("Image Optimizer Tests", () => {
     ].forEach(({ width, expectedContentLength }) => {
       it(`serves image app-store-badge.png with width: ${width}`, () => {
         cy.request({
-          url: `/basepath/_next/image?url=%2Fapp-store-badge.png&w=${width}&q=100`,
+          url: `/basepath/_next/image?url=%2Fbasepath%2Fapp-store-badge.png&w=${width}&q=100`,
           method: "GET",
           headers: { accept: "image/webp" }
         }).then((response) => {
@@ -75,8 +75,12 @@ describe("Image Optimizer Tests", () => {
     [
       { path: "/basepath/_next/image" },
       { path: "/basepath/_next/image?w=256&q=100" },
-      { path: "/basepath/_next/image?url=%2Fapp-store-badge.png&w=256" },
-      { path: "/basepath/_next/image?url=%2Fapp-store-badge.png&q=100" }
+      {
+        path: "/basepath/_next/image?url=%2Fbasepath%2Fapp-store-badge.png&w=256"
+      },
+      {
+        path: "/basepath/_next/image?url=%2Fbasepath%2Fapp-store-badge.png&q=100"
+      }
     ].forEach(({ path }) => {
       it(`missing query parameter fails with 400 status code: ${path}`, () => {
         cy.request({ url: path, method: "GET", failOnStatusCode: false }).then(
@@ -90,8 +94,7 @@ describe("Image Optimizer Tests", () => {
 
   describe("image component page", () => {
     [{ path: "/basepath/image-component" }].forEach(({ path }) => {
-      // FIXME: enable once basepath url is fixed
-      xit(`serves page with image component and caches the image: ${path}`, () => {
+      it(`serves page with image component and caches the image: ${path}`, () => {
         cy.ensureAllRoutesNotErrored(); // Visit routes only
 
         cy.visit(path);
