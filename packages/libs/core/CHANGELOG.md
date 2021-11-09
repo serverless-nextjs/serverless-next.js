@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.5...v3.5.3-alpha.6) (2021-11-09)
+
+### Bug Fixes
+
+- **core:** add url normalization to image optimizer URL ([#2015](https://github.com/serverless-nextjs/serverless-next.js/issues/2015)) ([5c4f841](https://github.com/serverless-nextjs/serverless-next.js/commit/5c4f8411268e4b874fe296bd2ac5b880bd9addc1))
+- **core:** render static pages for all http methods, for options methods return allowed methods ([#2024](https://github.com/serverless-nextjs/serverless-next.js/issues/2024)) ([9fe3216](https://github.com/serverless-nextjs/serverless-next.js/commit/9fe32167064f5a220ba1d55d8400673286752efc))
+
 ## [3.5.3-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.4...v3.5.3-alpha.5) (2021-11-08)
 
 ### Bug Fixes
