@@ -43,7 +43,7 @@
     "cdktf": "0.7.0",
     "cdktf-cli": "0.7.0",
     "constructs": "3.3.161",
-    "esbuild": "0.13.12",
+    "esbuild": "0.13.13",
     "fs-extra": "9.1.0",
     "yargs": "17.2.1"
   },
