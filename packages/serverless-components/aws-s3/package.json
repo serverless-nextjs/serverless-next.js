@@ -20,7 +20,7 @@
     "fs-extra": "9.1.0",
     "klaw-sync": "6.0.0",
     "lodash": "4.17.21",
-    "mime-types": "2.1.33",
+    "mime-types": "2.1.34",
     "ramda": "0.27.1",
     "s3-stream-upload": "2.0.2"
   },
