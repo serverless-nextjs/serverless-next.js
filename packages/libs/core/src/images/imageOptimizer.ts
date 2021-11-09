@@ -75,6 +75,23 @@ export function getMaxAge(str: string | undefined): number {
   return minimum;
 }
 
+/**
+ * If Basepath set, it needs to be removed from URL
+ *
+ * Not normalised -> error 403
+ * url: '<base-path>/assets/images/logo.svg',
+ *
+ * Normalised -> 200
+ * url: '/assets/images/logo.svg',
+ */
+export function normaliseUri(uri: string, basePath: string): string {
+  if (uri.startsWith(basePath)) {
+    uri = uri.slice(basePath.length);
+  }
+
+  return uri;
+}
+
 export async function imageOptimizer(
   basePath: string,
   imagesManifest: ImagesManifest | undefined,
@@ -116,7 +133,14 @@ export async function imageOptimizer(
   let isAbsolute: boolean;
 
   if (url.startsWith("/")) {
-    href = url;
+    // Ensure that Basepath is in the URL, otherwise, a 400 is triggered (same behaviour as Nextjs)
+    if (basePath !== "/" && !url.startsWith(basePath)) {
+      res.statusCode = 400;
+      res.end('"Basepath" set but not added to the URL');
+      return { finished: true };
+    }
+
+    href = normaliseUri(url, basePath);
     isAbsolute = false;
   } else {
     let hrefParsed: URL;

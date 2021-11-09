@@ -1,1 +1,1 @@
-export { imageOptimizer } from "./imageOptimizer";
+export { imageOptimizer, normaliseUri } from "./imageOptimizer";
