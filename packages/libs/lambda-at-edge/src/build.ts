@@ -28,7 +28,6 @@ import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import {
   BasicInvalidationUrlGroup,
-  getGroupFilename,
   INVALIDATION_DATA_DIR
 } from "./lib/invalidation/invalidationUrlGroup";
 import fs from "fs";
