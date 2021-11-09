@@ -48,18 +48,12 @@ export const renderStaticPage = async ({
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;
 
-  // For PUT, DELETE, PATCH, POST, OPTIONS just return a 405 response as these are unsupported S3 methods
-  // when using CloudFront S3 origin to return the page, so we keep it in parity.
-  // TODO: now that we are directly calling S3 in the origin request handler,
-  //  we could implement OPTIONS method as well.
-  if (
-    request.method === "PUT" ||
-    request.method === "DELETE" ||
-    request.method === "PATCH" ||
-    request.method === "POST" ||
-    request.method === "OPTIONS"
-  ) {
-    res.writeHead(405);
+  // For PUT, DELETE, PATCH, POST just return the page as this is a static page, so HTTP method doesn't really do anything.
+  // For OPTIONS, we should not return the content but instead return allowed methods.
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, {
+      Allow: "OPTIONS, GET, HEAD, POST, PUT, PATCH, DELETE"
+    });
     res.end();
     return await responsePromise;
   }
