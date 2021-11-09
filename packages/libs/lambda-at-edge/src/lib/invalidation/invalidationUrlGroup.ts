@@ -2,38 +2,69 @@
 import * as _ from "../lodash";
 import { Resource } from "../../services/resource";
 
-export const INVALIDATION_DATA_DIR = "/_invalidation-group-data/";
+export const INVALIDATION_DATA_DIR = "/_invalidation_group_data/";
 
-export type BasicInvalidationUrlGroup = {
-  regex: string;
-  invalidationPath: string;
-  maxAccessNumber: number;
-};
+export class BasicInvalidationUrlGroup {
+  readonly regex: string;
 
-export type InvalidationUrlGroup = BasicInvalidationUrlGroup & {
+  readonly invalidationPath: string;
+
+  readonly maxAccessNumber: number;
+
+  constructor(
+    regex: string,
+    invalidationPath: string,
+    maxAccessNumber: number
+  ) {
+    this.maxAccessNumber = maxAccessNumber;
+    this.invalidationPath = invalidationPath;
+    this.regex = regex;
+  }
+
+  public getGroupS3Key(resource: Resource): string {
+    return `${(resource.getBasePath() || "").replace(/^\//, "")}${
+      !resource.getBasePath() ? "" : "/"
+    }_next/data/${resource.getBuildId()}${INVALIDATION_DATA_DIR}${this.getGroupFilename()}`;
+  }
+
+  public getGroupFilename(): string {
+    const filename = `${this.invalidationPath}${this.maxAccessNumber}`.replace(
+      /[^a-z0-9A-Z]/g,
+      "_"
+    );
+    return `${filename}.json`;
+  }
+
+  public replaceUrlByGroupRegex(url: string): string {
+    return url.replace(this.regex, this.invalidationPath);
+  }
+}
+
+export class InvalidationUrlGroup extends BasicInvalidationUrlGroup {
   currentNumber: number;
-};
 
-export const getGroupS3Key = (
-  basicGroup: BasicInvalidationUrlGroup,
-  resource: Resource
-) => {
-  return `${(resource.getBasePath() || "").replace(/^\//, "")}${
-    !resource.getBasePath() ? "" : "/"
-  }_next/data/${resource.getBuildId()}${INVALIDATION_DATA_DIR}${getGroupFilename(
-    basicGroup
-  )}`;
-};
+  constructor(
+    regex: string,
+    invalidationPath: string,
+    maxAccessNumber: number,
+    currentNumber: number
+  ) {
+    super(regex, invalidationPath, maxAccessNumber);
+    this.currentNumber = currentNumber;
+  }
 
-export const getGroupFilename = (basicGroup: BasicInvalidationUrlGroup) => {
-  const filename = `${basicGroup.invalidationPath}${basicGroup.maxAccessNumber}`.replace(
-    /[^a-z0-9A-Z]/g,
-    "_"
-  );
+  public needInvalidationGroup = () => {
+    return this.currentNumber >= this.maxAccessNumber;
+  };
 
-  console.log("getGroupFilename", filename);
-  return `${filename}.json`;
-};
+  public inc(): void {
+    this.currentNumber++;
+  }
+
+  public reset(): void {
+    this.currentNumber = 0;
+  }
+}
 
 export function findInvalidationGroup(
   url: string,
@@ -56,6 +87,5 @@ export function findInvalidationGroup(
       result = group;
     }
   });
-
   return result;
 }

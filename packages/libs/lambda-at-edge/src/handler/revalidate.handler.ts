@@ -13,7 +13,6 @@ import { Resource, ResourceForIndexPage } from "../services/resource";
 
 import {
   findInvalidationGroup,
-  getGroupS3Key,
   InvalidationUrlGroup
 } from "../lib/invalidation/invalidationUrlGroup";
 // @ts-ignore
@@ -74,38 +73,6 @@ export class RevalidateHandler {
         `[handler] Resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
 
-      console.log(typeof manifest.invalidationUrlGroups);
-
-      console.log(JSON.stringify(manifest.invalidationUrlGroups));
-      // this html is kind of list page
-      const basicGroup = findInvalidationGroup(
-        resource.getJsonKey(),
-        manifest.invalidationUrlGroups
-      );
-      //
-      console.log("basicGroup", basicGroup);
-      // if this is a group url, use this
-      if (!_.isEmpty(basicGroup)) {
-        // find group
-        // todo change key and body
-        const group: InvalidationUrlGroup = JSON.parse(
-          await this.s3Service.getObject(getGroupS3Key(basicGroup!, resource))
-        );
-        console.log("group", group);
-        //
-        //   // if result , current number < max number
-        //   //
-        //
-        //   if (true) {
-        //     // put object set ++
-        //     return;
-        //   } else {
-        //     // put object set 0
-        //     // continue
-        //   }
-      }
-
-      // else
       await Promise.all([
         this.s3Service.putObject(
           resource.getHtmlKey(),
@@ -119,10 +86,7 @@ export class RevalidateHandler {
         )
       ]);
 
-      await this.cloudfrontService.createInvalidation([
-        resource.getHtmlUri(),
-        resource.getJsonUri()
-      ]);
+      await this.createInvalidation(resource, manifest);
       return;
     }
     debug(`[handler] Resource is not changed.}`);
@@ -196,5 +160,49 @@ export class RevalidateHandler {
     );
 
     return isContentFulDataChanged || isApolloStateDataChanged;
+  }
+
+  private async createInvalidation(
+    resource: Resource | ResourceForIndexPage,
+    manifest: OriginRequestDefaultHandlerManifest
+  ): Promise<void> {
+    debug(`[createInvalidation] resource json key: ${resource.getJsonKey()}`);
+
+    const basicGroup = findInvalidationGroup(
+      resource.getJsonKey(),
+      manifest.invalidationUrlGroups
+    );
+    //
+    console.log("basicGroup", basicGroup);
+    // if this is a group url, use this
+    if (!_.isEmpty(basicGroup)) {
+      // find group
+      const groupKey = basicGroup!.getGroupS3Key(resource);
+      const group: InvalidationUrlGroup = JSON.parse(
+        await this.s3Service.getObject(groupKey)
+      );
+
+      if (!group.needInvalidationGroup()) {
+        group.inc();
+      } else {
+        group.reset();
+        await this.cloudfrontService.createInvalidation([
+          group.replaceUrlByGroupRegex(resource.getHtmlUri()),
+          group.replaceUrlByGroupRegex(resource.getJsonUri())
+        ]);
+      }
+
+      await this.s3Service.putObject(
+        groupKey,
+        JSON.stringify(group),
+        "application/json"
+      );
+    } else {
+      // normal url use this.
+      await this.cloudfrontService.createInvalidation([
+        resource.getHtmlUri(),
+        resource.getJsonUri()
+      ]);
+    }
   }
 }

@@ -33,6 +33,7 @@ import {
 } from "./lib/invalidation/invalidationUrlGroup";
 import fs from "fs";
 import { map, isEmpty } from "lodash";
+import { isDevMode } from "./lib/console";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -1006,10 +1007,17 @@ class Builder {
     }
 
     const defaultGroupNumber = 0;
+
     map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
+      const maxNumber = isDevMode() ? 1 : group.maxAccessNumber;
+
       await fse.writeFile(
         join(directoryPath, getGroupFilename(group)),
-        JSON.stringify({ ...group, currentNumber: defaultGroupNumber })
+        JSON.stringify({
+          ...group,
+          maxAccessNumber: maxNumber,
+          currentNumber: defaultGroupNumber
+        })
       );
     });
   }
