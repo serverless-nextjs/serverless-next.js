@@ -44,7 +44,8 @@
     "cdktf-cli": "0.7.0",
     "constructs": "3.3.161",
     "esbuild": "0.13.12",
-    "fs-extra": "9.1.0"
+    "fs-extra": "9.1.0",
+    "yargs": "17.2.1"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.0",
@@ -55,6 +56,7 @@
     "@types/fs-extra": "9.0.13",
     "@types/jest": "^27.0.2",
     "@types/node": "16.11.4",
+    "@types/yargs": "17.0.5",
     "jest": "^27.3.1",
     "rimraf": "3.0.2",
     "rollup": "2.58.3",

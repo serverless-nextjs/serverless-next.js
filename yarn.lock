@@ -6966,6 +6966,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/jest": ^27.0.2
     "@types/node": 16.11.4
+    "@types/yargs": 17.0.5
     cdktf: 0.7.0
     cdktf-cli: 0.7.0
     constructs: 3.3.161
@@ -6978,6 +6979,7 @@ __metadata:
     rollup-plugin-terser: 7.0.2
     rollup-plugin-typescript2: 0.30.0
     typescript: 4.4.4
+    yargs: 17.2.1
   languageName: unknown
   linkType: soft
 
@@ -7638,6 +7640,15 @@ __metadata:
   version: 20.2.1
   resolution: "@types/yargs-parser@npm:20.2.1"
   checksum: 1d039e64494a7a61ddd278349a3dc60b19f99ff0517425696e796f794e4252452b9d62178e69755ad03f439f9dc0c8c3d7b3a1201b3a24e134bac1a09fa11eaa
+  languageName: node
+  linkType: hard
+
+"@types/yargs@npm:17.0.5":
+  version: 17.0.5
+  resolution: "@types/yargs@npm:17.0.5"
+  dependencies:
+    "@types/yargs-parser": "*"
+  checksum: 2be02640c84471c66aec58cfd415432fab0973283909765aa3becbdb76b5874d4770fe7f376e77b98833d5cc9d9bc258a905adce68a0baec13d430c866fce3b5
   languageName: node
   linkType: hard
 
@@ -21490,6 +21501,21 @@ typescript@~3.9.10:
   languageName: node
   linkType: hard
 
+"yargs@npm:17.2.1, yargs@npm:^17.0":
+  version: 17.2.1
+  resolution: "yargs@npm:17.2.1"
+  dependencies:
+    cliui: ^7.0.2
+    escalade: ^3.1.1
+    get-caller-file: ^2.0.5
+    require-directory: ^2.1.1
+    string-width: ^4.2.0
+    y18n: ^5.0.5
+    yargs-parser: ^20.2.2
+  checksum: 451aac46f82da776f436018feed0244bc0e7b4355f7e397bcb53d34c691b177c0d71db3dda9653760e1bc240254d8b763a252ff918ef9e235a8d202e2909c4eb
+  languageName: node
+  linkType: hard
+
 "yargs@npm:^15.4.1":
   version: 15.4.1
   resolution: "yargs@npm:15.4.1"
@@ -21521,21 +21547,6 @@ typescript@~3.9.10:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
-  languageName: node
-  linkType: hard
-
-"yargs@npm:^17.0":
-  version: 17.2.1
-  resolution: "yargs@npm:17.2.1"
-  dependencies:
-    cliui: ^7.0.2
-    escalade: ^3.1.1
-    get-caller-file: ^2.0.5
-    require-directory: ^2.1.1
-    string-width: ^4.2.0
-    y18n: ^5.0.5
-    yargs-parser: ^20.2.2
-  checksum: 451aac46f82da776f436018feed0244bc0e7b4355f7e397bcb53d34c691b177c0d71db3dda9653760e1bc240254d8b763a252ff918ef9e235a8d202e2909c4eb
   languageName: node
   linkType: hard
 
