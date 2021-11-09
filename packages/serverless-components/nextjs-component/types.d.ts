@@ -1,5 +1,4 @@
 import { PublicDirectoryCache } from "@getjerry/s3-static-assets/src/lib/getPublicAssetCacheControl";
-import { BasicInvalidationUrlGroup } from "@getjerry/lambda-at-edge/src/lib/invalidation/invalidationUrlGroup";
 
 export interface LambdaNames<T> {
   defaultLambda?: T;
@@ -55,7 +54,11 @@ export type ServerlessComponentInputs = {
   certificateArn?: string;
   urlRewrites?: UrlRewriteOptions;
   enableDebugMode?: boolean;
-  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
+  invalidationUrlGroups?: {
+    regex: string;
+    invalidationPath: string;
+    maxAccessNumber: number;
+  }[];
 };
 
 type CloudfrontOptions = Record<string, any>;
