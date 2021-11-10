@@ -64,6 +64,21 @@ export class InvalidationUrlGroup extends BasicInvalidationUrlGroup {
   public reset(): void {
     this.currentNumber = 0;
   }
+
+  static parse(json: string) {
+    const data: {
+      regex: string;
+      invalidationPath: string;
+      maxAccessNumber: number;
+      currentNumber: number;
+    } = JSON.parse(json);
+    return new InvalidationUrlGroup(
+      data.regex,
+      data.invalidationPath,
+      data.maxAccessNumber,
+      data.currentNumber
+    );
+  }
 }
 
 export function findInvalidationGroup(
