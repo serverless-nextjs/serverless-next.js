@@ -14,7 +14,9 @@ import { Resource, ResourceForIndexPage } from "../services/resource";
 import {
   BasicInvalidationUrlGroup,
   findInvalidationGroup,
-  InvalidationUrlGroup
+  getGroupS3Key,
+  InvalidationUrlGroup,
+  replaceUrlByGroupRegex
 } from "../lib/invalidation/invalidationUrlGroup";
 // @ts-ignore
 import * as _ from "../lib/lodash";
@@ -180,19 +182,19 @@ export class RevalidateHandler {
     if (basicGroup !== null) {
       // find group
       console.log("typeof n", typeof n);
-      const groupKey = basicGroup.getGroupS3Key(resource);
-      const group = InvalidationUrlGroup.parse(
+      const groupKey = getGroupS3Key(basicGroup, resource);
+      const group: InvalidationUrlGroup = JSON.parse(
         await this.s3Service.getObject(groupKey)
       );
       console.log("typeof group", typeof group);
 
-      if (!group.needInvalidationGroup()) {
-        group.inc();
+      if (group.currentNumber < group.maxAccessNumber) {
+        group.currentNumber++;
       } else {
-        group.reset();
+        group.currentNumber = 0;
         await this.cloudfrontService.createInvalidation([
-          group.replaceUrlByGroupRegex(resource.getHtmlUri()),
-          group.replaceUrlByGroupRegex(resource.getJsonUri())
+          replaceUrlByGroupRegex(group, resource.getHtmlUri()),
+          replaceUrlByGroupRegex(group, resource.getJsonUri())
         ]);
       }
 

@@ -28,6 +28,7 @@ import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
 import {
   BasicInvalidationUrlGroup,
+  getGroupFilename,
   INVALIDATION_DATA_DIR
 } from "./lib/invalidation/invalidationUrlGroup";
 import fs from "fs";
@@ -526,14 +527,7 @@ class Builder {
       enableHTTPCompression,
       urlRewrites: this.buildOptions.urlRewrites,
       enableDebugMode: this.buildOptions.enableDebugMode,
-      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups?.map(
-        (group) =>
-          new BasicInvalidationUrlGroup(
-            group.regex,
-            group.invalidationPath,
-            this.buildOptions.enableDebugMode ? 1 : group.maxAccessNumber
-          )
-      )
+      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
@@ -1020,7 +1014,7 @@ class Builder {
 
     map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
       await fse.writeFile(
-        join(directoryPath, group.getGroupFilename()),
+        join(directoryPath, getGroupFilename(group)),
         JSON.stringify({
           ...group,
           currentNumber: defaultGroupNumber
