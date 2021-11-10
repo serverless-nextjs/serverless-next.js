@@ -181,7 +181,6 @@ export class RevalidateHandler {
     // if this is a group url, use this
     if (basicGroup !== null) {
       // find group
-      console.log("typeof n", typeof n);
       const groupKey = getGroupS3Key(basicGroup, resource);
       const group: InvalidationUrlGroup = JSON.parse(
         await this.s3Service.getObject(groupKey)
