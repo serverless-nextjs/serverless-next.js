@@ -99,7 +99,11 @@ export function findInvalidationGroup(
       JSON.stringify(url.match(group.regex))
     );
     if (!_.isEmpty(url.match(group.regex))) {
-      result = group;
+      result = new BasicInvalidationUrlGroup(
+        group.regex,
+        group.invalidationPath,
+        group.maxAccessNumber
+      );
     }
   });
   return result;
