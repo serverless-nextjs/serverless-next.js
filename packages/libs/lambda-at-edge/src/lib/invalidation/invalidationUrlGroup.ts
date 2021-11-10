@@ -39,7 +39,7 @@ export function replaceUrlByGroupRegex(
   group: InvalidationUrlGroup,
   url: string
 ): string {
-  return url.replace(group.regex, group.invalidationPath);
+  return url.replace(new RegExp(group.regex), group.invalidationPath);
 }
 
 export function findInvalidationGroup(
@@ -57,7 +57,7 @@ export function findInvalidationGroup(
     console.log("findInvalidationGroup", JSON.stringify(group));
     console.log(
       "url.match(group.regex)",
-      JSON.stringify(url.match(group.regex))
+      JSON.stringify(url.match(new RegExp(group.regex)))
     );
     if (!_.isEmpty(url.match(group.regex))) {
       result = group;
