@@ -73,6 +73,16 @@ describe("Image Optimizer Tests", () => {
     });
 
     [
+      {
+        path: "/basepath/_next/image?url=%2Fbasepath%2Fstatic%2Fapp-store-badge.png&q=100&w=128"
+      }
+    ].forEach(({ path }) => {
+      it(`serves image in static folder: ${path}`, () => {
+        cy.request({ url: path, method: "GET" });
+      });
+    });
+
+    [
       { path: "/basepath/_next/image" },
       { path: "/basepath/_next/image?w=256&q=100" },
       {
