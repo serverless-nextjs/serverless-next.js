@@ -531,7 +531,7 @@ class Builder {
           new BasicInvalidationUrlGroup(
             group.regex,
             group.invalidationPath,
-            group.maxAccessNumber
+            this.buildOptions.enableDebugMode ? 1 : group.maxAccessNumber
           )
       )
     };
@@ -1019,15 +1019,10 @@ class Builder {
     const defaultGroupNumber = 0;
 
     map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
-      const maxNumber = defaultBuildManifest.enableDebugMode
-        ? 1
-        : group.maxAccessNumber;
-
       await fse.writeFile(
         join(directoryPath, group.getGroupFilename()),
         JSON.stringify({
           ...group,
-          maxAccessNumber: maxNumber,
           currentNumber: defaultGroupNumber
         })
       );

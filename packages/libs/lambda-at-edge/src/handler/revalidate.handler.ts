@@ -12,6 +12,7 @@ import { debug, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
 
 import {
+  BasicInvalidationUrlGroup,
   findInvalidationGroup,
   InvalidationUrlGroup
 } from "../lib/invalidation/invalidationUrlGroup";
@@ -168,12 +169,13 @@ export class RevalidateHandler {
   ): Promise<void> {
     debug(`[createInvalidation] resource json key: ${resource.getJsonKey()}`);
 
-    const basicGroup = findInvalidationGroup(
+    const basicGroup: BasicInvalidationUrlGroup | null = findInvalidationGroup(
       resource.getJsonKey(),
       manifest.invalidationUrlGroups
     );
     //
     console.log("basicGroup", basicGroup);
+    console.log("typeof basicGroup", typeof basicGroup);
     // if this is a group url, use this
     if (basicGroup !== null) {
       // find group
