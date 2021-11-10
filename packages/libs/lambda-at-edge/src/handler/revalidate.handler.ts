@@ -187,7 +187,7 @@ export class RevalidateHandler {
       console.log("typeof n", typeof n);
       const groupKey = n.getGroupS3Key(resource);
       const group = Object.setPrototypeOf(
-        await this.s3Service.getObject(groupKey),
+        JSON.parse(await this.s3Service.getObject(groupKey)),
         InvalidationUrlGroup.prototype
       );
       console.log("typeof group", typeof group);
