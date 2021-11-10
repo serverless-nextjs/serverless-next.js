@@ -31,7 +31,7 @@ import {
   INVALIDATION_DATA_DIR
 } from "./lib/invalidation/invalidationUrlGroup";
 import fs from "fs";
-import { map, isEmpty } from "lodash";
+import { isEmpty, map } from "lodash";
 import { isDevMode } from "./lib/console";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
@@ -62,7 +62,11 @@ type BuildOptions = {
   distributionId: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
-  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
+  invalidationUrlGroups?: {
+    regex: string;
+    invalidationPath: string;
+    maxAccessNumber: number;
+  }[];
 };
 
 const defaultBuildOptions = {
@@ -522,7 +526,14 @@ class Builder {
       enableHTTPCompression,
       urlRewrites: this.buildOptions.urlRewrites,
       enableDebugMode: this.buildOptions.enableDebugMode,
-      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups
+      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups?.map(
+        (group) =>
+          new BasicInvalidationUrlGroup(
+            group.regex,
+            group.invalidationPath,
+            group.maxAccessNumber
+          )
+      )
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
