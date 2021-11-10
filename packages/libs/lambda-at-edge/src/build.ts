@@ -1019,7 +1019,9 @@ class Builder {
     const defaultGroupNumber = 0;
 
     map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
-      const maxNumber = isDevMode() ? 1 : group.maxAccessNumber;
+      const maxNumber = defaultBuildManifest.enableDebugMode
+        ? 1
+        : group.maxAccessNumber;
 
       await fse.writeFile(
         join(directoryPath, group.getGroupFilename()),
