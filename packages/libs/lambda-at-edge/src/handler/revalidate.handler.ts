@@ -196,7 +196,7 @@ export class RevalidateHandler {
           replaceUrlByGroupRegex(group, resource.getJsonUri())
         ]);
       }
-      console.log("update to group", typeof group);
+      console.log("update to group", JSON.stringify(group));
 
       await this.s3Service.putObject(
         groupKey,
