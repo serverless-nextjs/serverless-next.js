@@ -690,11 +690,28 @@ See `examples/dynamodb-crud` for an example Todo application that interacts with
 
 #### [CI/CD] Multi-stage deployments / A new CloudFront distribution is created on every CI build. I wasn't expecting that
 
+Unfortunately, because of the way Serverless Components works (at least the beta version), the deployment state needs to be synced outside of the main `serverless` command. So you can try the following solutions:
+
 1. You need to commit your application state in source control. That is the files under the `.serverless` directory. Although this is not recommended as it doesn't work well for multiple stages.
 2. Alternatively you could use S3 to store the `.serverless` files, see an example [here](https://gist.github.com/hadynz/b4e190e0ce10e5811cb462920a9c678f), [here](https://gist.github.com/dphang/7395ee09f6182f6b34f224660bed8e8c) (uses multiple `serverless.yml` files), or [here](https://github.com/serverless-nextjs/serverless-next.js/issues/328#issuecomment-655466654) (GitHub Actions-based, uses multiple `serverless.yml` files).
 3. You can also use the `distributionId` CloudFront input to specify an existing CloudFront distribution to deploy to.
 
 In the future, we will look to improve this by integrating proper stage management into the component itself.
+
+#### Why is this still using Serverless Components Beta? Is there a plan to upgrade to GA?
+
+This project was started by the original author when Serverless Components was in beta, and unfortunately GA components was released shortly afterwards. But this grew larger and larger, with several sub-components imported into this monorepo as they weren't maintained by Serverless. And then it became difficult to upgrade.
+
+There was a plan to upgrade to GA components, but it was put on hold for a few reasons:
+
+* Since there is only one active maintainer, and it's been hard enough keeping up with Next.js parity and fixing bugs
+* Upon analysis of Serverless Components GA, it seems like there may be more drawbacks than benefits: now your code/temporary credentials might have to now be published to Serverless infra and it risks vendor lock-in (whereas beta components doesn't - it simply reusable components). In addition, it's not as configurable as proper infrastructure-as-code (IaC) solutions, and a lot of components (especially non-AWS resources) are not well maintained. The current deployment logic is also quite fragile and custom-written and requires lots of maintenance to keep up with new cloud provider features.
+
+We are currently looking into proper IaC solutions (such as CDK for Terraform, CDK, Pulumi, etc.) to address this and to ease the burden of maintaining complex deployment logic, so that we can focus on the developer experience and feature parity with Next.js.
+
+#### Are there plans to expand to other platforms?
+
+Yes! The main blocker was that the Next.js routing logic used to be highly coupled with Lambda@Edge/CloudFront logic. However, we have genericized most of the core logic so that it can be reused in other platforms, simply by creating a wrapping handler, implementing some platform-specific client (e.g to retrieve pages, trigger static regeneration, etc.), and creating a deployer. If you were observant, you'll have noticed a new package currently in the works for Lambda deployments via API Gateway: https://github.com/serverless-nextjs/serverless-next.js/tree/master/packages/libs/lambda. Other platforms like Azure and Google Cloud should hopefully follow soon.
 
 #### My lambda is deployed to `us-east-1`. How can I deploy it to another region?
 
