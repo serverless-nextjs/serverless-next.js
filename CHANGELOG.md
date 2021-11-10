@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.4-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3...v3.5.4-alpha.0) (2021-11-10)
+
+### Bug Fixes
+
+- **core:** fix image optimizer for images with basepath in /\_next/static or /static/ ([#2033](https://github.com/serverless-nextjs/serverless-next.js/issues/2033)) ([163c95a](https://github.com/serverless-nextjs/serverless-next.js/commit/163c95a6556b7bf0a58eca419b292fc1a612510c))
+
 ## [3.5.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.6...v3.5.3) (2021-11-09)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
