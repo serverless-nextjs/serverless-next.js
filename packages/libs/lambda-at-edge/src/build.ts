@@ -63,11 +63,7 @@ type BuildOptions = {
   distributionId: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
-  invalidationUrlGroups?: {
-    regex: string;
-    invalidationPath: string;
-    maxAccessNumber: number;
-  }[];
+  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
 };
 
 const defaultBuildOptions = {
@@ -505,6 +501,8 @@ class Builder {
 
     this.normalizeDomainRedirects(domainRedirects);
 
+    const stageInvalidationGroupNumber = 1;
+
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
       logLambdaExecutionTimes,
@@ -527,7 +525,16 @@ class Builder {
       enableHTTPCompression,
       urlRewrites: this.buildOptions.urlRewrites,
       enableDebugMode: this.buildOptions.enableDebugMode,
-      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups
+      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups?.map(
+        (group) => {
+          return {
+            ...group,
+            maxAccessNumber: this.buildOptions.enableDebugMode
+              ? stageInvalidationGroupNumber
+              : group.maxAccessNumber
+          };
+        }
+      )
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {

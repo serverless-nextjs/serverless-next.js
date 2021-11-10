@@ -176,8 +176,6 @@ export class RevalidateHandler {
       manifest.invalidationUrlGroups
     );
     //
-    console.log("basicGroup", basicGroup);
-    console.log("typeof basicGroup", typeof basicGroup);
     // if this is a group url, use this
     if (basicGroup !== null) {
       // find group
@@ -185,17 +183,20 @@ export class RevalidateHandler {
       const group: InvalidationUrlGroup = JSON.parse(
         await this.s3Service.getObject(groupKey)
       );
-      console.log("typeof group", typeof group);
 
       if (group.currentNumber < group.maxAccessNumber) {
         group.currentNumber++;
+        console.log("++", group.currentNumber);
       } else {
         group.currentNumber = 0;
+        console.log("reset", group.currentNumber);
+
         await this.cloudfrontService.createInvalidation([
           replaceUrlByGroupRegex(group, resource.getHtmlUri()),
           replaceUrlByGroupRegex(group, resource.getJsonUri())
         ]);
       }
+      console.log("update to group", typeof group);
 
       await this.s3Service.putObject(
         groupKey,
