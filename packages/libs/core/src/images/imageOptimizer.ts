@@ -260,11 +260,9 @@ export async function imageOptimizer(
   } else {
     let objectKey;
     try {
-      if (
-        href.startsWith(`${basePath}/static`) ||
-        href.startsWith(`${basePath}/_next/static`)
-      ) {
-        objectKey = href; // static files' URL map to the key directly e.g /static/ -> static
+      // note: basepath is already removed by URI normalization above
+      if (href.startsWith(`/static`) || href.startsWith(`/_next/static`)) {
+        objectKey = `${basePath}${href}`; // static files' URL map to the key prefixed with basepath e.g /static/ -> static
       } else {
         objectKey = `${basePath}/public` + href; // public file URLs map from /public.png -> public/public.png
       }
