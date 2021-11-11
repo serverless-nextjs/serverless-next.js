@@ -33,7 +33,6 @@ import {
 } from "./lib/invalidation/invalidationUrlGroup";
 import fs from "fs";
 import { isEmpty, map } from "lodash";
-import { isDevMode } from "./lib/console";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
