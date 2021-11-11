@@ -501,8 +501,8 @@ class Builder {
 
     this.normalizeDomainRedirects(domainRedirects);
 
-    const stageInvalidationGroupNumber = 1;
-
+    // in dev mode, the max access number will always be 1
+    const defaultInvalidationGroupNumber = 1;
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
       logLambdaExecutionTimes,
@@ -530,7 +530,7 @@ class Builder {
           return {
             ...group,
             maxAccessNumber: this.buildOptions.enableDebugMode
-              ? stageInvalidationGroupNumber
+              ? defaultInvalidationGroupNumber
               : group.maxAccessNumber
           };
         }
@@ -940,7 +940,7 @@ class Builder {
     ));
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
 
-    // Now, we only use invalidation urls as DynamicData
+    // check if we need to create DynamicData in deploy phrase. Now, we only use invalidation urls as DynamicData
     const hasDynamicDataAssets = !isEmpty(
       defaultBuildManifest.invalidationUrlGroups
     );
@@ -1002,7 +1002,7 @@ class Builder {
     const normalizedBasePath = basePath ? basePath.slice(1) : "";
     const buildId = defaultBuildManifest.buildId;
 
-    // add here
+    //create invalidation url groups dir.
     const directoryPath = path.join(
       this.outputDir,
       ASSETS_DIR,
@@ -1017,14 +1017,13 @@ class Builder {
       fs.mkdirSync(directoryPath, { recursive: true });
     }
 
-    const defaultGroupNumber = 0;
-
+    const initAccessNumber = 0;
     map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
       await fse.writeFile(
         join(directoryPath, getGroupFilename(group)),
         JSON.stringify({
           ...group,
-          currentNumber: defaultGroupNumber
+          currentNumber: initAccessNumber
         })
       );
     });

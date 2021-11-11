@@ -1,19 +1,32 @@
 // @ts-ignore
 import * as _ from "../lodash";
 import { Resource } from "../../services/resource";
+import { debug } from "../console";
 
 export const INVALIDATION_DATA_DIR = "/_invalidation_group_data/";
 
+// for serverless input
 export type BasicInvalidationUrlGroup = {
   regex: string;
   invalidationPath: string;
   maxAccessNumber: number;
 };
 
+/**
+ * currentNumber will change when use access group url.
+ * But this method is not very accurate, and can only be used to
+ * calculate big number (100-1000). If you need to ensure the calculation accuracy，
+ * you need to use redis.
+ */
 export type InvalidationUrlGroup = BasicInvalidationUrlGroup & {
   currentNumber: number;
 };
 
+/**
+ * get s3 data key from group
+ * @param basicGroup
+ * @param resource
+ */
 export function getGroupS3Key(
   basicGroup: BasicInvalidationUrlGroup,
   resource: Resource
@@ -46,19 +59,16 @@ export function findInvalidationGroup(
   url: string,
   basicGroups: BasicInvalidationUrlGroup[] | undefined
 ): BasicInvalidationUrlGroup | null {
-  console.log("findInvalidationGroup", url);
+  debug(`[findInvalidationGroup] url: ${url}`);
 
   if (_.isEmpty(basicGroups)) {
+    debug(`[findInvalidationGroup] no group url`);
     return null;
   }
 
   let result = null;
   basicGroups?.forEach((group) => {
-    console.log("findInvalidationGroup", JSON.stringify(group));
-    console.log(
-      "url.match(group.regex)",
-      JSON.stringify(url.match(new RegExp(group.regex)))
-    );
+    debug(`[findInvalidationGroup] url match check: ${url.match(group.regex)}`);
     if (!_.isEmpty(url.match(group.regex))) {
       result = group;
     }

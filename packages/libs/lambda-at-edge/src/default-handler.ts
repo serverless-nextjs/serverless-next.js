@@ -364,11 +364,6 @@ export const handler = async (
   context: Context
 ): Promise<CloudFrontResultResponse | CloudFrontRequest | void> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
-
-  console.log(typeof manifest.invalidationUrlGroups);
-
-  console.log(JSON.stringify(manifest.invalidationUrlGroups));
-
   let response: CloudFrontResultResponse | CloudFrontRequest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const routesManifest: RoutesManifest = RoutesManifestJson;

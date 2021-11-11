@@ -48,7 +48,7 @@ export class RevalidateHandler {
       this.renderService.getPage(resource.getPagePath(), resource.getJsonUri())
     ]);
 
-    if (false) {
+    if (this.shouldSkipRevalidate(htmlHeader.header.LastModified)) {
       debug(
         `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
       );
@@ -71,7 +71,7 @@ export class RevalidateHandler {
 
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
-    if (true) {
+    if (await this.isContentChanged(candidatePage, resource)) {
       debug(
         `[handler] Resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
@@ -165,12 +165,16 @@ export class RevalidateHandler {
     return isContentFulDataChanged || isApolloStateDataChanged;
   }
 
+  /**
+   * handler the invalidation logic.
+   * @param resource
+   * @param manifest
+   * @private
+   */
   private async createInvalidation(
     resource: Resource | ResourceForIndexPage,
     manifest: OriginRequestDefaultHandlerManifest
   ): Promise<void> {
-    debug(`[createInvalidation] resource json key: ${resource.getJsonKey()}`);
-
     const basicGroup: BasicInvalidationUrlGroup | null = findInvalidationGroup(
       resource.getJsonKey(),
       manifest.invalidationUrlGroups
@@ -178,7 +182,12 @@ export class RevalidateHandler {
     //
     // if this is a group url, use this
     if (basicGroup !== null) {
-      // find group
+      debug(
+        `[createInvalidation] ${JSON.stringify(
+          resource
+        )} find url group: ${JSON.stringify(basicGroup)}`
+      );
+
       const groupKey = getGroupS3Key(basicGroup, resource);
       const group: InvalidationUrlGroup = JSON.parse(
         await this.s3Service.getObject(groupKey)
@@ -186,17 +195,21 @@ export class RevalidateHandler {
 
       if (group.currentNumber < group.maxAccessNumber) {
         group.currentNumber++;
-        console.log("++", group.currentNumber);
+        debug(
+          `[createInvalidation] need add currentNumber to ${group.currentNumber}`
+        );
       } else {
         group.currentNumber = 0;
-        console.log("reset", group.currentNumber);
+        debug(`[createInvalidation] need reset currentNumber`);
 
         await this.cloudfrontService.createInvalidation([
           replaceUrlByGroupRegex(group, resource.getHtmlUri()),
           replaceUrlByGroupRegex(group, resource.getJsonUri())
         ]);
       }
-      console.log("update to group", JSON.stringify(group));
+      debug(
+        `[createInvalidation] need update to group ${JSON.stringify(group)}`
+      );
 
       await this.s3Service.putObject(
         groupKey,
@@ -204,7 +217,7 @@ export class RevalidateHandler {
         "application/json"
       );
     } else {
-      // normal url use this.
+      debug(`[createInvalidation] not group url, just createInvalidation}`);
       await this.cloudfrontService.createInvalidation([
         resource.getHtmlUri(),
         resource.getJsonUri()
