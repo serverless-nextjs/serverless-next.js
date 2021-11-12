@@ -11,17 +11,12 @@ import {
 import { ImagesManifest, setCustomHeaders } from "@sls-next/core/dist/module";
 import url, { UrlWithParsedQuery } from "url";
 import { LambdaManifest, RoutesManifest } from "src/types";
-import { imageOptimizer } from "@sls-next/core/dist/module/images";
+import {
+  imageOptimizer,
+  normaliseUri
+} from "@sls-next/core/dist/module/images";
 
 const basePath = RoutesManifestJson.basePath;
-
-const normaliseUri = (uri: string): string => {
-  if (uri.startsWith(basePath)) {
-    uri = uri.slice(basePath.length);
-  }
-
-  return uri;
-};
 
 const isImageOptimizerRequest = (uri: string): boolean =>
   uri.startsWith("/_next/image");
@@ -36,7 +31,7 @@ export const handler = async (
   // Compatibility layer required to convert from Node.js req/res <-> API Gateway
   const { req, res, responsePromise } = httpCompat(event);
 
-  const uri = normaliseUri(req.url ?? "");
+  const uri = normaliseUri(req.url ?? "", basePath);
 
   // Handle image optimizer requests
   // TODO: probably can move these to core package

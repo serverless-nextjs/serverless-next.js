@@ -124,16 +124,12 @@ const staticRequest = async (
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;
 
-  // For PUT, DELETE, PATCH, POST, OPTIONS just return a 405 response as these should not be supported for a page fetch.
-  // TODO: OPTIONS should be able to be supported now.
-  if (
-    req.method === "PUT" ||
-    req.method === "DELETE" ||
-    req.method === "PATCH" ||
-    req.method === "POST" ||
-    req.method === "OPTIONS"
-  ) {
-    res.writeHead(405);
+  // For PUT, DELETE, PATCH, POST just return the page as this is a static page, so HTTP method doesn't really do anything.
+  // For OPTIONS, we should not return the content but instead return allowed methods.
+  if (req.method === "OPTIONS") {
+    res.writeHead(204, {
+      Allow: "OPTIONS, GET, HEAD, POST, PUT, PATCH, DELETE"
+    });
     res.end();
     return await responsePromise;
   }
