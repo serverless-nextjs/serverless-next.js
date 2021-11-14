@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.6.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.4-alpha.0...v3.6.0-alpha.0) (2021-11-14)
+
+### Features
+
+- **core:** add `x-forwarded-host` as precedence over `host` header ([#1999](https://github.com/serverless-nextjs/serverless-next.js/issues/1999)) ([8258122](https://github.com/serverless-nextjs/serverless-next.js/commit/825812287fe8f1740cf5368acea2ec35e89dd26c))
+
 ## [3.5.4-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3...v3.5.4-alpha.0) (2021-11-10)
 
 ### Bug Fixes
