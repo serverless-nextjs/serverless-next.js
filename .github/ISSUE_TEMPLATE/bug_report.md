@@ -15,7 +15,7 @@ assignees: ""
 <!-- A clear and concise description of what actually happened. -->
 
 ### Expected behavior
-<!-- A clear and concise description of what you expected to happen. -->
+<!-- A clear and concise description of what you expected to happen. Please compare against the Next.js local server even if it's behavior may not be the most robust or handle the most edge cases, as we would like to keep in parity with it. -->
 
 ### Steps to reproduce
 <!-- Add steps to reproduce the actual behavior. Please try to fill this as specific as possible, it will help us diagnose the issue faster. If you have a GH repo to share a minimal reproduction, that's even better :) -->
