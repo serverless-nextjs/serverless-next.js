@@ -106,20 +106,20 @@ export const handlePageReq = (
         };
       }
     }
-    if ((pages.ssg.notFound ?? {})[decodedLocaleUri] && !isPreview) {
+    if ((pages.ssg.notFound ?? {})[localeUri] && !isPreview) {
       return notFoundPage(uri, manifest, routesManifest);
     }
-    if (pages.ssr.nonDynamic[decodedLocaleUri]) {
+    if (pages.ssr.nonDynamic[localeUri]) {
       if (localeUri.startsWith("/api/")) {
         return {
           isApi: true,
-          page: pages.ssr.nonDynamic[decodedLocaleUri]
+          page: pages.ssr.nonDynamic[localeUri]
         };
       } else {
         return {
           isData: false,
           isRender: true,
-          page: pages.ssr.nonDynamic[decodedLocaleUri]
+          page: pages.ssr.nonDynamic[localeUri]
         };
       }
     }
@@ -152,7 +152,7 @@ export const handlePageReq = (
 
   // We don't want to match URIs with missing basepath against dynamic routes if it wasn't already covered by rewrite.
   if (!missingExpectedBasePath) {
-    const dynamic = matchDynamicRoute(decodedLocaleUri, pages.dynamic);
+    const dynamic = matchDynamicRoute(localeUri, pages.dynamic);
 
     const dynamicSSG = dynamic && pages.ssg.dynamic[dynamic];
     if (dynamicSSG && !isPreview) {
