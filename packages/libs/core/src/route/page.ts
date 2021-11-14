@@ -78,6 +78,34 @@ export const handlePageReq = (
         statusCode
       };
     }
+    // Handle ISR pages with encoded URL
+    // This only applies to ISR, other pages should not be resolved if sent with encoded characters (same as local Next.js server behavior)
+    const decodedLocaleUri = decodeURI(localeUri);
+    if (pages.ssg.nonDynamic[decodedLocaleUri] && !isPreview) {
+      const ssg = pages.ssg.nonDynamic[decodedLocaleUri];
+      if (ssg.initialRevalidateSeconds) {
+        const route = ssg.srcRoute ?? decodedLocaleUri;
+        const nonLocaleUri = dropLocaleFromPath(
+          decodedLocaleUri,
+          routesManifest
+        );
+        const statusCode =
+          nonLocaleUri === "/404"
+            ? 404
+            : nonLocaleUri === "/500"
+            ? 500
+            : undefined;
+        return {
+          isData: false,
+          isStatic: true,
+          file: pageHtml(localeUri), // Use encoded localeUri instead of decodedLocaleUri as this is used by CloudFront request that needs an encoded URL
+          // page JS path is from SSR entries in manifest
+          page: pages.ssr.nonDynamic[route] || pages.ssr.dynamic[route],
+          revalidate: ssg.initialRevalidateSeconds,
+          statusCode
+        };
+      }
+    }
     if ((pages.ssg.notFound ?? {})[localeUri] && !isPreview) {
       return notFoundPage(uri, manifest, routesManifest);
     }

@@ -6,6 +6,8 @@ describe("ISR Tests", () => {
   describe("SSG page", () => {
     [
       { path: "/revalidated-ssg-page", initialWaitSeconds: 0 },
+      // Page with spaces in it (generally not recommended since this is not URL-safe character, but Next.js handles this)
+      { path: "/revalidated-ssg-pages-2/with%20space", initialWaitSeconds: 0 },
       // Pre-rendered ISR page
       { path: "/revalidated-ssg-pages/101", initialWaitSeconds: 0 },
       // Blocking dynamic generated page. As the page will be created and cached
