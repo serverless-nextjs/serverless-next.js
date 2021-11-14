@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.0...v3.6.1-alpha.0) (2021-11-14)
+
+### Bug Fixes
+
+- **core, lambda-at-edge:** properly encoded URIs for ISR ([#2038](https://github.com/serverless-nextjs/serverless-next.js/issues/2038)) ([d345aca](https://github.com/serverless-nextjs/serverless-next.js/commit/d345acaa001a94d75fd02e87b07549f67c0696b6))
+
 # [3.6.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.0-alpha.0...v3.6.0) (2021-11-14)
 
 **Note:** Version bump only for package @sls-next/core
