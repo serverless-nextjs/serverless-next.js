@@ -119,7 +119,9 @@ const staticRequest = async (
   platformClient: PlatformClient
 ) => {
   const basePath = routesManifest.basePath;
-  const fileKey = (path + file).slice(1); // need to remove leading slash from path for page/file key
+  const fileKey = (path + decodeURI(file)).slice(1); // need to remove leading slash from path for page/file key
+  // also decode file parameter as it's encoded
+  // (legacy reasons since previously Cloudfront request is used to request S3, and CF requires an encoded request.uri)
 
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;

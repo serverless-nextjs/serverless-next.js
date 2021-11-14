@@ -29,7 +29,7 @@ export const handler = async (event: AWSLambda.SQSEvent): Promise<void> => {
         "passthrough"
       );
 
-      const normalizedUri = regenerationEvent.pageS3Path
+      const normalizedUri = decodeURI(regenerationEvent.pageS3Path)
         .replace(`static-pages/${manifest.buildId}`, "")
         .replace(".js", "");
 

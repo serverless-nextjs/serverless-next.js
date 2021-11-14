@@ -40,11 +40,12 @@ export const handlePageReq = (
     ),
     routesManifest
   );
+  const decodedLocaleUri = decodeURI(localeUri); // Need to decode URI since manifest is decoded
 
   // This allows matching against rewrites even without basepath
   if (!missingExpectedBasePath) {
-    if (pages.html.nonDynamic[localeUri]) {
-      const nonLocaleUri = dropLocaleFromPath(localeUri, routesManifest);
+    if (pages.html.nonDynamic[decodedLocaleUri]) {
+      const nonLocaleUri = dropLocaleFromPath(decodedLocaleUri, routesManifest);
       const statusCode =
         nonLocaleUri === "/404"
           ? 404
@@ -54,14 +55,14 @@ export const handlePageReq = (
       return {
         isData: false,
         isStatic: true,
-        file: pages.html.nonDynamic[localeUri],
+        file: pages.html.nonDynamic[decodedLocaleUri],
         statusCode
       };
     }
-    if (pages.ssg.nonDynamic[localeUri] && !isPreview) {
-      const ssg = pages.ssg.nonDynamic[localeUri];
-      const route = ssg.srcRoute ?? localeUri;
-      const nonLocaleUri = dropLocaleFromPath(localeUri, routesManifest);
+    if (pages.ssg.nonDynamic[decodedLocaleUri] && !isPreview) {
+      const ssg = pages.ssg.nonDynamic[decodedLocaleUri];
+      const route = ssg.srcRoute ?? decodedLocaleUri;
+      const nonLocaleUri = dropLocaleFromPath(decodedLocaleUri, routesManifest);
       const statusCode =
         nonLocaleUri === "/404"
           ? 404
@@ -78,20 +79,20 @@ export const handlePageReq = (
         statusCode
       };
     }
-    if ((pages.ssg.notFound ?? {})[localeUri] && !isPreview) {
+    if ((pages.ssg.notFound ?? {})[decodedLocaleUri] && !isPreview) {
       return notFoundPage(uri, manifest, routesManifest);
     }
-    if (pages.ssr.nonDynamic[localeUri]) {
+    if (pages.ssr.nonDynamic[decodedLocaleUri]) {
       if (localeUri.startsWith("/api/")) {
         return {
           isApi: true,
-          page: pages.ssr.nonDynamic[localeUri]
+          page: pages.ssr.nonDynamic[decodedLocaleUri]
         };
       } else {
         return {
           isData: false,
           isRender: true,
-          page: pages.ssr.nonDynamic[localeUri]
+          page: pages.ssr.nonDynamic[decodedLocaleUri]
         };
       }
     }
@@ -124,7 +125,7 @@ export const handlePageReq = (
 
   // We don't want to match URIs with missing basepath against dynamic routes if it wasn't already covered by rewrite.
   if (!missingExpectedBasePath) {
-    const dynamic = matchDynamicRoute(localeUri, pages.dynamic);
+    const dynamic = matchDynamicRoute(decodedLocaleUri, pages.dynamic);
 
     const dynamicSSG = dynamic && pages.ssg.dynamic[dynamic];
     if (dynamicSSG && !isPreview) {

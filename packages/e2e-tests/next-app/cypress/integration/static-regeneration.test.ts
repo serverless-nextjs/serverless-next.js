@@ -6,6 +6,7 @@ describe("ISR Tests", () => {
   describe("SSG page", () => {
     [
       { path: "/revalidated-ssg-page", initialWaitSeconds: 0 },
+      { path: "/revalidated-ssg-page%20with-space", initialWaitSeconds: 0 },
       // Pre-rendered ISR page
       { path: "/revalidated-ssg-pages/101", initialWaitSeconds: 0 },
       // Blocking dynamic generated page. As the page will be created and cached
