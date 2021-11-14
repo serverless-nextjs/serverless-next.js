@@ -1,13 +1,11 @@
 import React from "react";
-import { GetStaticPropsResult } from "next";
+import { GetStaticPaths, GetStaticPropsResult } from "next";
 
 type SSGPageProps = {
   date: string;
 };
 
-export default function RevalidatedSSGPageWithSpace(
-  props: SSGPageProps
-): JSX.Element {
+export default function RevalidatedSSGPage(props: SSGPageProps): JSX.Element {
   return (
     <React.Fragment>
       <div>
@@ -15,6 +13,11 @@ export default function RevalidatedSSGPageWithSpace(
       </div>
     </React.Fragment>
   );
+}
+
+export function getStaticPaths() {
+  const paths = [{ params: { title: "with space" } }];
+  return { paths, fallback: true };
 }
 
 export function getStaticProps(): GetStaticPropsResult<SSGPageProps> {
