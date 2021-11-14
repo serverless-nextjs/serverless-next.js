@@ -6,7 +6,6 @@ import {
   findDomainLocale,
   getLocaleDomainRedirect
 } from "../../src/route/locale";
-import { IncomingMessage } from "http";
 
 describe("Locale Utils Tests", () => {
   describe("addDefaultLocaleToPath()", () => {
@@ -73,6 +72,26 @@ describe("Locale Utils Tests", () => {
         }
       };
     });
+
+    it.each`
+      xForwardedHost           | expectedResult
+      ${"google.com"}          | ${null}
+      ${"next-serverless.fr"}  | ${"fr"}
+      ${"next-serverless.com"} | ${"en"}
+    `(
+      "$xForwardedHost is resolved to $expectedResult",
+      ({ xForwardedHost, expectedResult }) => {
+        const req = {
+          headers: {
+            "x-forwarded-host": xForwardedHost
+          },
+          uri: "/test"
+        };
+        const newPath = findDomainLocale(req, routesManifest);
+
+        expect(newPath).toBe(expectedResult);
+      }
+    );
 
     it.each`
       host                     | expectedResult
