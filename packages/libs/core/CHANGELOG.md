@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.0...v3.6.1-alpha.1) (2021-11-14)
+
+### Bug Fixes
+
+- **core:** handle encoded ISR url in data request ([#2039](https://github.com/serverless-nextjs/serverless-next.js/issues/2039)) ([fe236c8](https://github.com/serverless-nextjs/serverless-next.js/commit/fe236c8af464abb508f7bf15aaad3104264d788a))
+
 ## [3.6.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.0...v3.6.1-alpha.0) (2021-11-14)
 
 ### Bug Fixes
