@@ -53,6 +53,21 @@ export const handleDataReq = (
       revalidate: ssg.initialRevalidateSeconds
     };
   }
+  // Handle encoded ISR data request. Although it's not recommended to use non-URL safe chars, Next.js does handle this case
+  const decodedUri = decodeURI(localeUri);
+  if (pages.ssg.nonDynamic[decodedUri] && !isPreview) {
+    const ssg = pages.ssg.nonDynamic[decodedUri];
+    if (ssg.initialRevalidateSeconds) {
+      const route = ssg.srcRoute ?? decodedUri;
+      return {
+        isData: true,
+        isStatic: true,
+        file: fullDataUri(localeUri, buildId), // use encoded URL as this is set to CF request, which needs encoded URI
+        page: pages.ssr.nonDynamic[route], // page JS path is from SSR entries in manifest,
+        revalidate: ssg.initialRevalidateSeconds
+      };
+    }
+  }
   if ((pages.ssg.notFound ?? {})[localeUri] && !isPreview) {
     return notFoundData(uri, manifest, routesManifest);
   }
