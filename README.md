@@ -575,9 +575,17 @@ myNextApp:
 
 ### FAQ
 
+#### How production ready is this?
+
+As we are emulating Next.js routing logic nearly from scratch to optimize it for a serverless environment, there may be some incomplete or missing features (as mentioned earlier). However, we feel that we've covered the majority of features and have added good unit and end-to-end test coverage to ensure stability (e.g across 10+ end-to-end test suites). Several people are using this to power their startup, personal websites, etc.
+
+Cloud provider limitations also apply - for example on AWS Lambda@Edge, there are cold starts, code size limits, 1 MB response size limit, etc to name a few. You are of course also tied to a single platform for now (AWS Lambda@Edge;  more coming soon!).
+
+We are also continuing to improve the deployment process by considering better infrastructure-as-code solutions in the near future (CDK, CDK Terraform, Pulumi, etc.).
+
 #### My component doesn't deploy
 
-Make sure your `serverless.yml` uses the `serverless-components` format. [serverless components](https://serverless.com/blog/what-are-serverless-components-how-use/) differ from the original serverless framework, even though they are both accessible via the same CLI.
+Make sure your `serverless.yml` uses the `serverless-components` (beta) format. [serverless components](https://serverless.com/blog/what-are-serverless-components-how-use/) differ from the original serverless framework, even though they are both accessible via the same CLI.
 
 :white_check_mark: **Do**
 
