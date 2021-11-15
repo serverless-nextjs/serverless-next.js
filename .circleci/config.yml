@@ -11,11 +11,12 @@ executors:
     resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
-  windows: "win/default"
+  windows: win/default
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
   queue: eddiewebb/queue@1.6.3
+  win: circleci/windows@2.3.0
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
