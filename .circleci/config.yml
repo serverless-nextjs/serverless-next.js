@@ -31,7 +31,7 @@ jobs:
 
       - restore_cache:
           name: Restore yarn cache
-          key: v2-node-{{ arch }}-{{ parameters.app }}-{{ checksum "yarn.lock" }}-yarn
+          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
 
       - run:
           name: Setup yarn
@@ -48,7 +48,7 @@ jobs:
 
       - save_cache:
           name: Save yarn cache for future installs
-          key: v2-node-{{ arch }}-{{ parameters.app }}--{{ checksum "yarn.lock" }}-yarn
+          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
           paths:
             - ~/.yarn/cache
 
@@ -60,12 +60,12 @@ jobs:
                 value: << parameters.app >>
           steps:
             - run:
-                working_directory: ~/packages/e2e-tests/${{ parameters.app }}
+                working_directory: ~/packages/e2e-tests/<< parameters.app >>
                 command: yarn add next@latest
 
       - run:
           name: Install and run e2e tests
-          working_directory: ~/packages/e2e-tests/${{ parameters.app }}
+          working_directory: ~/packages/e2e-tests/<< parameters.app >>
           env:
             AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
