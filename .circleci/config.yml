@@ -34,10 +34,16 @@ jobs:
           key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
 
       - run:
-          name: Run yarn build
-          command: yarn build
+          name: Setup yarn
           environment:
             NODE_OPTIONS: "--max-old-space-size=4096"
+          command: yarn install --immutable --inline-builds
+
+      - run:
+          name: Run yarn build
+          environment:
+            NODE_OPTIONS: "--max-old-space-size=4096"
+          command: yarn build
 
       - run:
           name: Build serverless-patched
