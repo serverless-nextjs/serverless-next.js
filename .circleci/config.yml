@@ -116,6 +116,7 @@ workflows:
   e2e-tests:
     jobs:
       - queue/block_workflow:
+          consider-branch: false
           time: "90"
           filters:
             branches:
