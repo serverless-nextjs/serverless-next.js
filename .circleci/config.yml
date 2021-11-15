@@ -16,7 +16,7 @@ executors:
     shell: bash.exe
 
 orbs:
-  aws-cli-linux: circleci/aws-cli@2.0.3
+  aws-cli: circleci/aws-cli@2.0.3
   queue: eddiewebb/queue@1.6.3
   win: circleci/windows@2.3.0
   aws-cli-windows: sensu/awscli-windows@1.0.0
@@ -35,17 +35,7 @@ jobs:
     steps:
       - checkout
 
-      - when:
-          condition:
-            equal: [<< parameters.os >>, "linux"]
-          steps:
-            - aws-cli-linux/install
-
-      - when:
-          condition:
-            equal: [<< parameters.os >>, "windows"]
-          steps:
-            - aws-cli-windows/download-and-install
+      - aws-cli/install
 
       - run:
           name: Print AWS
