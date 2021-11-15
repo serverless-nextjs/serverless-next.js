@@ -55,10 +55,6 @@ jobs:
 
       - run:
           name: Run yarn build
-          command: cd packages/serverless-components/aws-sqs && yarn build
-
-      - run:
-          name: Run yarn build
           command: cd packages/serverless-components/domain && yarn build
 
       - run:
