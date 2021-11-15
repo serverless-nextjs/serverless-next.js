@@ -32,8 +32,6 @@ jobs:
 
       - aws-cli/install
 
-      - aws-cli/setup
-
       - run:
           name: Print AWS
           command: aws configure list
