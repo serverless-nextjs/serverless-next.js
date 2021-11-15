@@ -11,12 +11,10 @@ executors:
     resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
-  windows:
-    name: win/default
-    shell: bash.exe
+  windows: win/default
 
 orbs:
-  aws-cli: circleci/aws-cli@2.0.3
+  aws-cli-linux: circleci/aws-cli@2.0.3
   queue: eddiewebb/queue@1.6.3
   win: circleci/windows@2.3.0
   aws-cli-windows: sensu/awscli-windows@1.0.0
@@ -35,7 +33,19 @@ jobs:
     steps:
       - checkout
 
-      - aws-cli/install
+      - when:
+          condition:
+            equal: [<< parameters.os >>, "linux"]
+          steps:
+            - aws-cli-linux/install
+
+      - when:
+          condition:
+            equal: [<< parameters.os >>, "windows"]
+          steps:
+            - run:
+                name: Install AWS CLI v1
+                command: pip install awscli --upgrade
 
       - run:
           name: Print AWS
