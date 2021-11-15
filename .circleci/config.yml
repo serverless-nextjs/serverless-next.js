@@ -57,7 +57,9 @@ jobs:
 
       - restore_cache:
           name: Restore yarn cache
-          key: v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
+          keys:
+            - v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}
+            - v3-node-{{ arch }}-<< parameters.app >>-
 
       - run:
           name: Setup yarn
@@ -106,7 +108,7 @@ jobs:
 
       - save_cache:
           name: Save yarn cache for future installs
-          key: v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
+          key: v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}
           paths:
             - ~/project/.yarn/cache
 
