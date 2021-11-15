@@ -19,6 +19,11 @@ jobs:
         node-version: [12.x, 14.x]
 
     steps:
+      - name: Cancel Previous Runs
+        uses: styfle/cancel-workflow-action@0.9.1
+        with:
+          access_token: ${{ github.token }}
+
       - uses: actions/checkout@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
@@ -68,7 +73,6 @@ jobs:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PULL_REQUEST_ID: ${{ github.event.number }}
         run: yarn handlers:comment-handler-sizes
-
 #   start-e2e-tests:
 #     # Note: we only run e2e tests automatically if this is a push on master or if PR is not from a fork or renovate, as forks won't have access to secrets
 #     if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'renovate/') == false && github.event.pull_request.head.repo.full_name == github.repository) }}
