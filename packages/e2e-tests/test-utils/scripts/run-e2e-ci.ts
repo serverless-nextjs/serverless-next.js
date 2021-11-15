@@ -284,6 +284,10 @@ async function runEndToEndTest(): Promise<boolean> {
       `Creating deployment bucket if it doesn't exist: ${deploymentBucketName}`
     );
 
+    execSync(`aws configure list`, {
+      stdio: "inherit"
+    });
+
     execSync(`aws s3 mb s3://${deploymentBucketName} || true`, {
       stdio: "inherit"
     });

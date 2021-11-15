@@ -74,6 +74,12 @@ jobs:
                 working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
                 command: yarn add next@latest
 
+      - save_cache:
+          name: Save yarn cache for future installs
+          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
+          paths:
+            - ~/project/.yarn/cache
+
       - run:
           name: Install and run e2e tests
           working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
@@ -88,11 +94,11 @@ jobs:
             yarn e2e:ci
           no_output_timeout: 30m # In case something goes wrong
 
-      - save_cache:
-          name: Save yarn cache for future installs
-          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
-          paths:
-            - ~/project/.yarn/cache
+#      - save_cache:
+#          name: Save yarn cache for future installs
+#          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
+#          paths:
+#            - ~/project/.yarn/cache
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
