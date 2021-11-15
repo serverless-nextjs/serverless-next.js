@@ -15,6 +15,11 @@ executors:
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   run-e2e-tests:
+    parameters:
+      os:
+        type: string
+      app:
+        type: string
     executor: << matrix.parameters.os >>
     environment: *environment
     steps:
