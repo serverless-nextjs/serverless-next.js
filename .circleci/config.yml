@@ -11,13 +11,25 @@ executors:
     resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
+  linux-base:
+    resource_class: small
+    docker:
+      - image: cimg/base:2021.11
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
+  queue: eddiewebb/queue@1.6.3
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  initialize:
+    executor: linux-base
+    environment: *environment
+    steps:
+      - queue/block_workflow:
+          time: "60"
+
   run-e2e-tests:
     parameters:
       os:
@@ -28,6 +40,8 @@ jobs:
     environment: *environment
     steps:
       - checkout
+
+      - aws-cli/setup
 
       - aws-cli/install
 
@@ -94,7 +108,16 @@ jobs:
 workflows:
   e2e-tests:
     jobs:
+      - initialize:
+          filters:
+            branches:
+              ignore: /renovate\/.*/
       - run-e2e-tests:
+          filters:
+            branches:
+              ignore: /renovate\/.*/
+          requires:
+            - initialize
           matrix:
             parameters:
               os:
