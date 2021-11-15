@@ -59,11 +59,11 @@ jobs:
 
       - run:
           name: Run yarn build
-          command: cd packages/libs/aws-common && yarn build
+          command: cd packages/libs/core && yarn build
 
       - run:
           name: Run yarn build
-          command: cd packages/libs/core && yarn build
+          command: cd packages/libs/aws-common && yarn build
 
       - run:
           name: Run yarn build
