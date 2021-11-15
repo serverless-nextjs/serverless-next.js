@@ -9,7 +9,7 @@ aliases:
 executors:
   linux:
     docker:
-      - image: cimg/node:14.18-browsers
+      - image: cimg/node:12.22-browsers
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
