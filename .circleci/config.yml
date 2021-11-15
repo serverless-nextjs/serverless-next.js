@@ -15,7 +15,7 @@ executors:
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
   run-e2e-tests:
-    executor: << parameters.os >>
+    executor: << matrix.parameters.os >>
     environment: *environment
     steps:
       - checkout
@@ -26,7 +26,7 @@ jobs:
 
       - restore_cache:
           name: Restore yarn cache
-          key: v2-node-{{ arch }}-{{ parameters.app }}-{{ checksum "yarn.lock" }}-yarn
+          key: v2-node-{{ arch }}-{{ matrix.parameters.app }}-{{ checksum "yarn.lock" }}-yarn
 
       - run:
           name: Setup yarn
@@ -43,19 +43,19 @@ jobs:
 
       - save_cache:
           name: Save yarn cache for future installs
-          key: v2-node-{{ arch }}-{{ parameters.app }}--{{ checksum "yarn.lock" }}-yarn
+          key: v2-node-{{ arch }}-{{ matrix.parameters.app }}--{{ checksum "yarn.lock" }}-yarn
           paths:
             - ~/.yarn/cache
 
       - run:
           name: Choose latest next.js version
           if: ${{ !startsWith(matrix.app, 'prev') }}
-          working_directory: ~/packages/e2e-tests/${{ matrix.app }}
+          working_directory: ~/packages/e2e-tests/${{ matrix.parameters.app }}
           command: yarn add next@latest
 
       - run:
           name: Install and run e2e tests
-          working_directory: ~/packages/e2e-tests/${{ matrix.app }}
+          working_directory: ~/packages/e2e-tests/${{ matrix.parameters.app }}
           env:
             AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
