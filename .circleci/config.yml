@@ -42,8 +42,56 @@ jobs:
           command: cd packages/libs/cloudfront && yarn build
 
       - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/aws-s3 && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/aws-lambda && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/aws-cloudfront && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/aws-sqs && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/domain && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/libs/aws-common && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/libs/core && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/libs/s3-static-assets && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/libs/lambda-at-edge && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/libs/lambda && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/nextjs-component && yarn build
+
+      - run:
+          name: Run yarn build
+          command: cd packages/serverless-components/nextjs-cdk-construct && yarn build
+
+      - run:
           name: Build serverless-patched
-          working_directory: ~/packages/serverless-patched
+          working_directory: ~/project/packages/serverless-patched
           command: yarn install --immutable && yarn build
 
       - save_cache:
@@ -60,12 +108,12 @@ jobs:
                 value: << parameters.app >>
           steps:
             - run:
-                working_directory: ~/packages/e2e-tests/<< parameters.app >>
+                working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
                 command: yarn add next@latest
 
       - run:
           name: Install and run e2e tests
-          working_directory: ~/packages/e2e-tests/<< parameters.app >>
+          working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
           env:
             AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
