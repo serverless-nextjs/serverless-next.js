@@ -6823,7 +6823,7 @@ __metadata:
     "@types/fresh": 0.5.0
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.0.2
-    "@types/jsonwebtoken": 8.5.5
+    "@types/jsonwebtoken": 8.5.6
     "@types/node": 16.11.4
     "@types/node-fetch": 2.5.12
     "@types/normalize-path": 3.0.0
@@ -7352,12 +7352,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsonwebtoken@npm:8.5.5":
-  version: 8.5.5
-  resolution: "@types/jsonwebtoken@npm:8.5.5"
+"@types/jsonwebtoken@npm:8.5.6":
+  version: 8.5.6
+  resolution: "@types/jsonwebtoken@npm:8.5.6"
   dependencies:
     "@types/node": "*"
-  checksum: 33c30354641bc7849be7507e9f48685b1f487e944321a932650eac6c247c85184667f5e207ccfcab0da8cb24bde93a8372c09cacf1849e976bbf2cb90b26ce90
+  checksum: c1c0e40cb1366d3b5f72c2c283abee8e5aedc5656d8857752ed4cb318eb8e117dad87f35431f73cdc03e7b02d169d19b3a1e58422ef94776c17cfd003ee05a33
   languageName: node
   linkType: hard
 
