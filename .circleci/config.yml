@@ -34,60 +34,16 @@ jobs:
           key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
 
       - run:
-          name: Setup yarn
-          command: yarn install --immutable --inline-builds
-
-      - run:
           name: Run yarn build
-          command: cd packages/libs/cloudfront && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/serverless-components/aws-s3 && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/serverless-components/aws-lambda && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/serverless-components/aws-cloudfront && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/serverless-components/domain && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/libs/core && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/libs/aws-common && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/libs/s3-static-assets && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/libs/lambda-at-edge && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/libs/lambda && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/serverless-components/nextjs-component && yarn build
-
-      - run:
-          name: Run yarn build
-          command: cd packages/serverless-components/nextjs-cdk-construct && yarn build
+          command: yarn build
+          environment:
+            NODE_OPTIONS: "--max-old-space-size=4096"
 
       - run:
           name: Build serverless-patched
           working_directory: ~/project/packages/serverless-patched
+          environment:
+            NODE_OPTIONS: "--max-old-space-size=4096"
           command: yarn install --immutable && yarn build
 
       - save_cache:
@@ -110,11 +66,12 @@ jobs:
       - run:
           name: Install and run e2e tests
           working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
-          env:
+          environment:
             AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
             AWS_DEFAULT_REGION: us-east-1
             WAIT_TIMEOUT: 900
+            NODE_OPTIONS: "--max-old-space-size=4096"
           command: |
             yarn install --immutable
             yarn e2e:ci
