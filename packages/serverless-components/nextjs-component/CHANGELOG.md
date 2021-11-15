@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.6.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.1...v3.6.1-alpha.2) (2021-11-15)
+
+### Bug Fixes
+
+- **aws-cloudfront, nextjs-component:** specify s3 client's region in aws-cloudfront the same as the bucket region ([#2042](https://github.com/serverless-nextjs/serverless-next.js/issues/2042)) ([a676d03](https://github.com/serverless-nextjs/serverless-next.js/commit/a676d0375b3a86150cf2672f82be86a3a94cc5d3))
+
 ## [3.6.1-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.0...v3.6.1-alpha.1) (2021-11-14)
 
 **Note:** Version bump only for package @sls-next/serverless-component
