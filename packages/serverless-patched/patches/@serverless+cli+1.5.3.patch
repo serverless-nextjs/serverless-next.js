@@ -33,7 +33,7 @@ index 4fb9da9..f8919a4 100644
 -    if (this._.status.loadingDotCount > 8) {
 -      this._.status.loadingDotCount = 0
 -    }
-+    if (process.stdout.isTTY) {
++    if (process.stdout.isTTY && process.env.SERVERLESS_CI !== "true") {
 +      // Loading dots
 +      if (this._.status.loadingDotCount === 0) {
 +        this._.status.loadingDots = `.`
