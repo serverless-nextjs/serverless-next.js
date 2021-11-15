@@ -76,7 +76,9 @@ jobs:
           working_directory: ~/project/packages/serverless-patched
           environment:
             NODE_OPTIONS: "--max-old-space-size=6144"
-          command: yarn install --immutable && yarn build
+          command: |
+            yarn install --immutable
+            yarn build
 
       - when:
           condition:
@@ -96,7 +98,7 @@ jobs:
             AWS_DEFAULT_REGION: us-east-1
             WAIT_TIMEOUT: 900
             NODE_OPTIONS: "--max-old-space-size=6144"
-            USE_PUBLISHED_SERVERLESS_PATCHED: true
+            SERVERLESS_CI: true
           command: |
             yarn install --immutable
             yarn e2e:ci
