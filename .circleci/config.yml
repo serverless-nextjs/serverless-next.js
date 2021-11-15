@@ -11,6 +11,8 @@ executors:
     resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
+  windows:
+    windows: {}
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
@@ -81,6 +83,7 @@ jobs:
             AWS_DEFAULT_REGION: us-east-1
             WAIT_TIMEOUT: 900
             NODE_OPTIONS: "--max-old-space-size=6144"
+            USE_PUBLISHED_SERVERLESS_PATCHED: true
           command: |
             yarn install --immutable
             yarn e2e:ci
@@ -115,15 +118,27 @@ workflows:
               app:
                 # Current minor version of Next.js
                 - next-app
-#                - next-app-experimental
-#                - next-app-using-serverless-trace
-#                - next-app-with-trailing-slash
-#                - next-app-with-base-path
-#                - next-app-dynamic-routes
-#                - next-app-with-locales
-#                - next-app-with-locales-using-serverless-trace
-#                # Previous minor version of Next.js
-#                - prev-next-app
-#                - prev-next-app-with-trailing-slash
-#                - prev-next-app-with-base-path
-#                - prev-next-app-dynamic-routes
+                - next-app-experimental
+                - next-app-using-serverless-trace
+                - next-app-with-trailing-slash
+                - next-app-with-base-path
+                - next-app-dynamic-routes
+                - next-app-with-locales
+                - next-app-with-locales-using-serverless-trace
+                # Previous minor version of Next.js
+                - prev-next-app
+                - prev-next-app-with-trailing-slash
+                - prev-next-app-with-base-path
+                - prev-next-app-dynamic-routes
+      - run-e2e-tests:
+          filters:
+            branches:
+              ignore: /renovate\/.*/
+          requires:
+            - queue/block_workflow
+          matrix:
+            parameters:
+              os:
+                - windows
+              app:
+                - next-app-windows

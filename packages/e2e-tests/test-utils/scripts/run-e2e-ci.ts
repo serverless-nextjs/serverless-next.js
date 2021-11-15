@@ -297,16 +297,22 @@ async function runEndToEndTest(): Promise<boolean> {
 
     // Deploy
     console.info("Deploying serverless-next.js app.");
-    // execSync("npx @sls-next/serverless-patched --debug", { stdio: "inherit" });
-    // The below will always use the latest version in this monorepo, above will use latest published version
-    const serverlessPatchedPath = path.join(
-      "..",
-      "..",
-      "serverless-patched",
-      "dist",
-      "serverless-patched.js"
-    );
-    execSync(`node ${serverlessPatchedPath} --debug`, { stdio: "inherit" });
+
+    if (process.env.USE_PUBLISHED_SERVERLESS_PATCHED === "true") {
+      execSync("npx @sls-next/serverless-patched --debug", {
+        stdio: "inherit"
+      });
+    } else {
+      // The below will always use the latest version in this monorepo, above will use latest published version
+      const serverlessPatchedPath = path.join(
+        "..",
+        "..",
+        "serverless-patched",
+        "dist",
+        "serverless-patched.js"
+      );
+      execSync(`node ${serverlessPatchedPath} --debug`, { stdio: "inherit" });
+    }
 
     // Get Next.js build ID and URL
     console.info("Getting Next.js build ID");
