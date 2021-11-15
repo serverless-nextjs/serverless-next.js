@@ -29,6 +29,8 @@ jobs:
     steps:
       - checkout
 
+      - aws-cli/install
+
       - run:
           name: Print Node.js version
           command: node --version
