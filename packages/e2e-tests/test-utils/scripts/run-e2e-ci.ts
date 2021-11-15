@@ -298,8 +298,15 @@ async function runEndToEndTest(): Promise<boolean> {
     // Deploy
     console.info("Deploying serverless-next.js app.");
 
+    // Need to set SERVERLESS_CI = true for patched serverless to ensure logs are output correctly on non-windows
+    // Otherwise there will be tons of "deploying..." logs
+    let serverlessCiEnv = "";
+    if (process.platform !== "win32") {
+      serverlessCiEnv = "SERVERLESS_CI=true ";
+    }
+
     if (process.env.USE_PUBLISHED_SERVERLESS_PATCHED === "true") {
-      execSync("SERVERLESS_CI=true npx @sls-next/serverless-patched --debug", {
+      execSync(`${serverlessCiEnv}npx @sls-next/serverless-patched --debug`, {
         stdio: "inherit"
       });
     } else {
@@ -311,7 +318,7 @@ async function runEndToEndTest(): Promise<boolean> {
         "dist",
         "serverless-patched.js"
       );
-      execSync(`SERVERLESS_CI=true node ${serverlessPatchedPath} --debug`, {
+      execSync(`${serverlessCiEnv}node ${serverlessPatchedPath} --debug`, {
         stdio: "inherit"
       });
     }
