@@ -30,9 +30,13 @@ jobs:
     steps:
       - checkout
 
+      - aws-cli/install
+
       - aws-cli/setup
 
-      - aws-cli/install
+      - run:
+          name: Print AWS
+          command: aws configure list
 
       - run:
           name: Print Node.js version
