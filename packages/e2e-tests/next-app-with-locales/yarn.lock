@@ -1481,14 +1481,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react@npm:^17.0.34":
-  version: 17.0.34
-  resolution: "@types/react@npm:17.0.34"
+"@types/react@npm:^17.0.35":
+  version: 17.0.35
+  resolution: "@types/react@npm:17.0.35"
   dependencies:
     "@types/prop-types": "*"
     "@types/scheduler": "*"
     csstype: ^3.0.2
-  checksum: 16729ad7d50922ccbf8eb93874d7781dc2f1c64edc78134b5edc7154839d41e9fe320eb1c11ad2d1c9bf28b99cb1febda344509c1fda025955a5c2b43c688c8f
+  checksum: 33e2bf8068ccc5330f089f5d4bee54649c2d5b512edee4a9e44c113271a69ea8c71ddbd3103b205eb971fd4c358e9f69d707df08bec90b3c33492db374614eb7
   languageName: node
   linkType: hard
 
@@ -5997,7 +5997,7 @@ fsevents@~2.3.1:
     "@types/mocha": 8.2.3
     "@types/node": 14.6.2
     "@types/node-fetch": 2.5.7
-    "@types/react": ^17.0.34
+    "@types/react": ^17.0.35
     "@types/uuid": 8.3.1
     aws-sdk: 2.1014.0
     babel-plugin-istanbul: 6.0.0
