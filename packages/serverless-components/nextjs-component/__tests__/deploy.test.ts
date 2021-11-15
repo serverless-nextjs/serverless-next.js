@@ -310,6 +310,7 @@ describe.each`
 
     it("creates distribution", () => {
       expect(mockCloudFront).toBeCalledWith({
+        bucketRegion: "us-east-1",
         defaults: {
           allowedHttpMethods: [
             "HEAD",

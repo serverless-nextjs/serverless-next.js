@@ -23,7 +23,8 @@ class CloudFront extends Component {
   async default(inputs: any = {}) {
     this.context.status("Deploying");
 
-    inputs.region = inputs.region || "us-east-1";
+    inputs.region = inputs.region ?? "us-east-1";
+    inputs.bucketRegion = inputs.bucketRegion ?? "us-east-1"; // S3 client needs to be specific to the bucket region
     inputs.enabled = inputs.enabled !== false;
     inputs.comment =
       inputs.comment === null || inputs.comment === undefined
@@ -57,7 +58,7 @@ class CloudFront extends Component {
 
     const s3 = new AWS.S3({
       credentials: this.context.credentials.aws,
-      region: inputs.region
+      region: inputs.bucketRegion
     });
 
     this.state.id = inputs.distributionId || this.state.id;
