@@ -9,7 +9,7 @@ aliases:
 executors:
   linux:
     docker:
-      - image: cimg/node:12.22-browsers
+      - image: cimg/node:14.18-browsers
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -39,7 +39,7 @@ jobs:
 
       - run:
           name: Run yarn build
-          command: yarn build
+          command: cd packages/libs/cloudfront && yarn build
 
       - run:
           name: Build serverless-patched
@@ -89,15 +89,15 @@ workflows:
               app:
                 # Current minor version of Next.js
                 - next-app
-                - next-app-experimental
-                - next-app-using-serverless-trace
-                - next-app-with-trailing-slash
-                - next-app-with-base-path
-                - next-app-dynamic-routes
-                - next-app-with-locales
-                - next-app-with-locales-using-serverless-trace
-                # Previous minor version of Next.js
-                - prev-next-app
-                - prev-next-app-with-trailing-slash
-                - prev-next-app-with-base-path
-                - prev-next-app-dynamic-routes
+#                - next-app-experimental
+#                - next-app-using-serverless-trace
+#                - next-app-with-trailing-slash
+#                - next-app-with-base-path
+#                - next-app-dynamic-routes
+#                - next-app-with-locales
+#                - next-app-with-locales-using-serverless-trace
+#                # Previous minor version of Next.js
+#                - prev-next-app
+#                - prev-next-app-with-trailing-slash
+#                - prev-next-app-with-base-path
+#                - prev-next-app-dynamic-routes
