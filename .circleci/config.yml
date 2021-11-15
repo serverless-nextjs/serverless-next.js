@@ -8,9 +8,12 @@ aliases:
 
 executors:
   linux:
-    resource_class: large
+    resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
+
+orbs:
+  aws-cli: circleci/aws-cli@2.0.3
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
@@ -37,26 +40,20 @@ jobs:
       - run:
           name: Setup yarn
           environment:
-            NODE_OPTIONS: "--max-old-space-size=6000"
+            NODE_OPTIONS: "--max-old-space-size=6144"
           command: yarn install --immutable --inline-builds
-
-      - save_cache:
-          name: Save yarn cache for future installs
-          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
-          paths:
-            - ~/.yarn/cache
 
       - run:
           name: Run yarn build
           environment:
-            NODE_OPTIONS: "--max-old-space-size=6000"
+            NODE_OPTIONS: "--max-old-space-size=6144"
           command: yarn build
 
       - run:
           name: Build serverless-patched
           working_directory: ~/project/packages/serverless-patched
           environment:
-            NODE_OPTIONS: "--max-old-space-size=6000"
+            NODE_OPTIONS: "--max-old-space-size=6144"
           command: yarn install --immutable && yarn build
 
       - when:
@@ -78,11 +75,17 @@ jobs:
             AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
             AWS_DEFAULT_REGION: us-east-1
             WAIT_TIMEOUT: 900
-            NODE_OPTIONS: "--max-old-space-size=4096"
+            NODE_OPTIONS: "--max-old-space-size=6144"
           command: |
             yarn install --immutable
             yarn e2e:ci
           no_output_timeout: 30m # In case something goes wrong
+
+      - save_cache:
+          name: Save yarn cache for future installs
+          key: v2-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}-yarn
+          paths:
+            - ~/project/.yarn/cache
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
