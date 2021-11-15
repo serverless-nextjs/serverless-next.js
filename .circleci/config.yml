@@ -11,8 +11,7 @@ executors:
     resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
-  windows:
-    windows: {}
+  windows: "win/default"
 
 orbs:
   aws-cli: circleci/aws-cli@2.0.3
