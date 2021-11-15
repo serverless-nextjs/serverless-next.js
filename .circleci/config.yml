@@ -107,7 +107,7 @@ workflows:
             branches:
               ignore: /renovate\/.*/
           requires:
-            - initialize
+            - queue/block_workflow
           matrix:
             parameters:
               os:
