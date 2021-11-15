@@ -299,7 +299,7 @@ async function runEndToEndTest(): Promise<boolean> {
     console.info("Deploying serverless-next.js app.");
 
     if (process.env.USE_PUBLISHED_SERVERLESS_PATCHED === "true") {
-      execSync("npx @sls-next/serverless-patched --debug", {
+      execSync("SERVERLESS_CI=true npx @sls-next/serverless-patched --debug", {
         stdio: "inherit"
       });
     } else {
@@ -311,7 +311,9 @@ async function runEndToEndTest(): Promise<boolean> {
         "dist",
         "serverless-patched.js"
       );
-      execSync(`node ${serverlessPatchedPath} --debug`, { stdio: "inherit" });
+      execSync(`SERVERLESS_CI=true node ${serverlessPatchedPath} --debug`, {
+        stdio: "inherit"
+      });
     }
 
     // Get Next.js build ID and URL
