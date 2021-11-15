@@ -28,7 +28,7 @@ jobs:
     environment: *environment
     steps:
       - queue/block_workflow:
-          time: "60"
+          time: "90"
 
   run-e2e-tests:
     parameters:
