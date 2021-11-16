@@ -68,8 +68,12 @@ export function findInvalidationGroup(
 
   let result = null;
   basicGroups?.forEach((group) => {
-    debug(`[findInvalidationGroup] url match check: ${url.match(group.regex)}`);
-    if (!_.isEmpty(url.match(group.regex))) {
+    debug(
+      `[findInvalidationGroup] url match check: ${new RegExp(group.regex).test(
+        url
+      )}`
+    );
+    if (new RegExp(group.regex).test(url)) {
       result = group;
     }
   });

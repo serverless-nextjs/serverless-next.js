@@ -179,7 +179,7 @@ export class RevalidateHandler {
       resource.getJsonKey(),
       manifest.invalidationUrlGroups
     );
-    //
+
     // if this is a group url, use this
     if (basicGroup !== null) {
       debug(
