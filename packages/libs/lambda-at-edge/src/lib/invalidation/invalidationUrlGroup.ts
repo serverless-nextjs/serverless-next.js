@@ -6,11 +6,11 @@ import { debug } from "../console";
 export const INVALIDATION_DATA_DIR = "/_invalidation_group_data/";
 
 // for serverless input
-export type BasicInvalidationUrlGroup = {
+export interface BasicInvalidationUrlGroup {
   regex: string;
   invalidationPath: string;
   maxAccessNumber: number;
-};
+}
 
 /**
  * currentNumber will change when use access group url.
@@ -18,9 +18,9 @@ export type BasicInvalidationUrlGroup = {
  * calculate big number (100-1000). If you need to ensure the calculation accuracy，
  * you need to use redis.
  */
-export type InvalidationUrlGroup = BasicInvalidationUrlGroup & {
+export interface InvalidationUrlGroup extends BasicInvalidationUrlGroup {
   currentNumber: number;
-};
+}
 
 /**
  * get s3 data key from group
