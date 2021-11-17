@@ -1,8 +1,9 @@
 import {
-  CloudFrontRequest,
   CloudFrontEvent,
+  CloudFrontRequest,
   CloudFrontResponse
 } from "aws-lambda";
+import { BasicInvalidationUrlGroup } from "./src/lib/invalidation/invalidationUrlGroup";
 
 export type DynamicPageKeyValue = {
   [key: string]: {
@@ -75,6 +76,7 @@ export type OriginRequestDefaultHandlerManifest = {
   canonicalHostname?: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
+  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
 };
 
 export type OriginRequestImageHandlerManifest = {

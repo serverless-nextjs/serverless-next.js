@@ -245,7 +245,8 @@ class NextjsComponent extends Component {
             : undefined,
           authentication: inputs.authentication ?? undefined,
           urlRewrites: inputs.urlRewrites ?? undefined,
-          enableDebugMode: inputs.enableDebugMode ?? false
+          enableDebugMode: inputs.enableDebugMode ?? false,
+          invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined
         },
         nextStaticPath
       );

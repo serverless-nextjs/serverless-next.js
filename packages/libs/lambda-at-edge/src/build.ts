@@ -1,15 +1,14 @@
 import { nodeFileTrace, NodeFileTraceReasons } from "@vercel/nft";
 import execa from "execa";
 import fse from "fs-extra";
-import { join } from "path";
+import path, { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
-import path from "path";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
-  OriginRequestDefaultHandlerManifest,
   OriginRequestApiHandlerManifest,
-  RoutesManifest,
+  OriginRequestDefaultHandlerManifest,
   OriginRequestImageHandlerManifest,
+  RoutesManifest,
   UrlRewriteList
 } from "../types";
 import { isDynamicRoute, isOptionalCatchAllRoute } from "./lib/isDynamicRoute";
@@ -27,6 +26,13 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import { PrerenderManifest } from "next/dist/build";
 import { Item } from "klaw";
 import { Job } from "@vercel/nft/out/node-file-trace";
+import {
+  BasicInvalidationUrlGroup,
+  getGroupFilename,
+  INVALIDATION_DATA_DIR
+} from "./lib/invalidation/invalidationUrlGroup";
+import fs from "fs";
+import { isEmpty, map } from "lodash";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -56,6 +62,7 @@ type BuildOptions = {
   distributionId: string;
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
+  invalidationUrlGroups?: BasicInvalidationUrlGroup[];
 };
 
 const defaultBuildOptions = {
@@ -73,7 +80,8 @@ const defaultBuildOptions = {
   baseDir: process.cwd(),
   distributionId: "",
   urlRewrites: [],
-  enableDebugMode: false
+  enableDebugMode: false,
+  invalidationUrlGroups: []
 };
 
 class Builder {
@@ -492,6 +500,8 @@ class Builder {
 
     this.normalizeDomainRedirects(domainRedirects);
 
+    // in dev mode, the max access number will always be 1
+    const defaultInvalidationGroupNumber = 1;
     const defaultBuildManifest: OriginRequestDefaultHandlerManifest = {
       buildId,
       logLambdaExecutionTimes,
@@ -513,7 +523,17 @@ class Builder {
       distributionId: this.buildOptions.distributionId,
       enableHTTPCompression,
       urlRewrites: this.buildOptions.urlRewrites,
-      enableDebugMode: this.buildOptions.enableDebugMode
+      enableDebugMode: this.buildOptions.enableDebugMode,
+      invalidationUrlGroups: this.buildOptions.invalidationUrlGroups?.map(
+        (group) => {
+          return {
+            ...group,
+            maxAccessNumber: this.buildOptions.enableDebugMode
+              ? defaultInvalidationGroupNumber
+              : group.maxAccessNumber
+          };
+        }
+      )
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
@@ -918,6 +938,15 @@ class Builder {
       "routes-manifest.json"
     ));
     await this.buildStaticAssets(defaultBuildManifest, routesManifest);
+
+    // check if we need to create DynamicData in deploy phrase. Now, we only use invalidation urls as DynamicData
+    const hasDynamicDataAssets = !isEmpty(
+      defaultBuildManifest.invalidationUrlGroups
+    );
+
+    if (hasDynamicDataAssets) {
+      await this.buildDynamicDataAssets(defaultBuildManifest, routesManifest);
+    }
   }
 
   /**
@@ -958,6 +987,45 @@ class Builder {
 
       domainRedirects[key] = normalizedDomain;
     }
+  }
+
+  /**
+   * Build dynamic data assets, now we only have invalidation url counters.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildDynamicDataAssets(
+    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    routesManifest: RoutesManifest
+  ) {
+    const basePath = routesManifest.basePath;
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+    const buildId = defaultBuildManifest.buildId;
+
+    //create invalidation url groups dir.
+    const directoryPath = path.join(
+      this.outputDir,
+      ASSETS_DIR,
+      normalizedBasePath,
+      "_next",
+      "data",
+      buildId,
+      INVALIDATION_DATA_DIR
+    );
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+
+    const initAccessNumber = 0;
+    map(defaultBuildManifest.invalidationUrlGroups || [], async (group) => {
+      await fse.writeFile(
+        join(directoryPath, getGroupFilename(group)),
+        JSON.stringify({
+          ...group,
+          currentNumber: initAccessNumber
+        })
+      );
+    });
   }
 }
 

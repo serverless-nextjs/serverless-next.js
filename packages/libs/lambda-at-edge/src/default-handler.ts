@@ -395,7 +395,7 @@ export const handler = async (
       s3Service,
       cloudfrontService
     );
-    await handler.run(event, context);
+    await handler.run(event, context, manifest);
     return;
   }
 
