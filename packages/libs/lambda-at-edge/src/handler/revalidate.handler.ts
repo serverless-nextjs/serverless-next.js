@@ -45,11 +45,16 @@ export class RevalidateHandler {
       this.renderService.getPage(resource.getPagePath(), resource.getJsonUri())
     ]);
 
-    if (this.shouldSkipRevalidate(htmlHeader.header.LastModified)) {
-      // ISR needs to maintain a time gap of at least tens of seconds.
-      const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
+    // ISR needs to maintain a time gap of at least tens of seconds.
+    const revalidateTriggerGapSecond = isDevMode() ? 1 : 300;
+    if (
+      this.shouldSkipRevalidate(
+        htmlHeader.header.LastModified,
+        revalidateTriggerGapSecond
+      )
+    ) {
       debug(
-        `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
+        `The last ISR was triggered ${revalidateTriggerGapSecond} seconds ago, so skip this one.`
       );
       return;
     }
@@ -70,9 +75,9 @@ export class RevalidateHandler {
 
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
-    if (await this.isContentChanged(candidatePage, resource)) {
+    if (isDevMode() || (await this.isContentChanged(candidatePage, resource))) {
       debug(
-        `[handler] Resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
+        `[handler] isDevMode():${isDevMode()} or resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
 
       await Promise.all([
@@ -96,16 +101,13 @@ export class RevalidateHandler {
   }
 
   //check lastModified to control revalidate
-  private shouldSkipRevalidate(lastModified: Date | undefined) {
+  private shouldSkipRevalidate(lastModified: Date | undefined, gap: number) {
     if (lastModified === undefined) return false;
     debug(
       `[checkRevalidateTimeGap] lastModified at ${lastModified}, current: ${new Date()}`
     );
 
-    return (
-      new Date() <
-      new Date(lastModified!.getTime() + REVALIDATE_TRIGGER_GAP_SECONDS * 1000)
-    );
+    return new Date() < new Date(lastModified!.getTime() + gap * 1000);
   }
 
   /**
