@@ -7,7 +7,12 @@ import { Duration, StackProps } from "@aws-cdk/core";
 
 export type LambdaOption<T> =
   | T
-  | { defaultLambda?: T; apiLambda?: T; imageLambda?: T };
+  | {
+      defaultLambda?: T;
+      apiLambda?: T;
+      imageLambda?: T;
+      regenerationLambda?: T;
+    };
 
 export interface Props extends StackProps {
   /**
