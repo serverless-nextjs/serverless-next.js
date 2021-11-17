@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.8.45](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.45-alpha.2...@getjerry/lambda-at-edge@1.8.45) (2021-11-17)
+
+### Reverts
+
+- Revert "add lodash" ([08d9280](https://github.com/getjerry/serverless-next.js/commit/08d9280281d94dbf6dcdaf9cbe53519cb85cf80c))
+- Revert "Fix lodash import" ([2d5a73d](https://github.com/getjerry/serverless-next.js/commit/2d5a73d4856136857b6ac6dc90db7ec87de2e859))
+
 ## [1.8.44](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.43...@getjerry/lambda-at-edge@1.8.44) (2021-09-24)
 
 ### Reverts

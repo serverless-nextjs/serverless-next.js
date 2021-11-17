@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.82](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.81...@getjerry/serverless-next@1.20.82) (2021-11-17)
+
+### Reverts
+
+- Revert "Update types.d.ts" ([fd815fe](https://github.com/getjerry/serverless-next.js/commit/fd815fece10d4cba40e27fff6d76ffdc8860c062))
+
 ## [1.20.81](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.61...@getjerry/serverless-next@1.20.81) (2021-10-29)
 
 **Note:** Version bump only for package @getjerry/serverless-next
