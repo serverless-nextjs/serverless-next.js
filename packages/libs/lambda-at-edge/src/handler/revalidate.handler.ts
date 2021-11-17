@@ -21,9 +21,6 @@ import {
 // @ts-ignore
 import * as _ from "../lib/lodash";
 
-// ISR needs to maintain a time gap of at least tens of seconds.
-const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
-
 export class RevalidateHandler {
   constructor(
     private resourceService: ResourceService,
@@ -49,6 +46,8 @@ export class RevalidateHandler {
     ]);
 
     if (this.shouldSkipRevalidate(htmlHeader.header.LastModified)) {
+      // ISR needs to maintain a time gap of at least tens of seconds.
+      const REVALIDATE_TRIGGER_GAP_SECONDS = isDevMode() ? 1 : 300;
       debug(
         `The last ISR was triggered ${REVALIDATE_TRIGGER_GAP_SECONDS} seconds ago, so skip this one.`
       );
