@@ -136,7 +136,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
           role: this.edgeLambdaRole,
           runtime:
             toLambdaOption("regenerationLambda", props.runtime) ??
-            lambda.Runtime.NODEJS_12_X,
+            lambda.Runtime.NODEJS_14_X,
           memorySize: toLambdaOption("regenerationLambda", props.memory) ?? 512,
           timeout:
             toLambdaOption("regenerationLambda", props.timeout) ?? Duration.seconds(30)
