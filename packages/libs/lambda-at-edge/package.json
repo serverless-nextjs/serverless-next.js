@@ -50,7 +50,7 @@
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
     "@types/aws-lambda": "8.10.85",
     "@types/fs-extra": "9.0.13",
-    "@types/jest": "27.0.2",
+    "@types/jest": "27.0.3",
     "@types/klaw": "3.0.3",
     "@types/node": "16.11.4",
     "@types/node-fetch": "2.5.12",

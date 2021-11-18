@@ -60,7 +60,7 @@
     "@types/cookie": "0.4.1",
     "@types/fresh": "0.5.0",
     "@types/fs-extra": "9.0.13",
-    "@types/jest": "27.0.2",
+    "@types/jest": "27.0.3",
     "@types/jsonwebtoken": "8.5.6",
     "@types/node": "16.11.4",
     "@types/node-fetch": "2.5.12",
