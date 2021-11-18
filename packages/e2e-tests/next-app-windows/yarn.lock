@@ -1429,10 +1429,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/uuid@npm:8.3.1":
-  version: 8.3.1
-  resolution: "@types/uuid@npm:8.3.1"
-  checksum: b41bdc5e86c6f0f1899306be10455636da0f2168c9489b869edd6837ddeb7c0e501b1ff7d857402462986bada2a379125743dd895fa801d03437cd632116a373
+"@types/uuid@npm:8.3.3":
+  version: 8.3.3
+  resolution: "@types/uuid@npm:8.3.3"
+  checksum: 3f340155bb1161f9ffa7163926d6222fea8f3505c23619b72bcc230883354926672c08a06510c7a543f73553c792a84444cc1744cff631b4ba988763e4bd7a8f
   languageName: node
   linkType: hard
 
@@ -5869,7 +5869,7 @@ fsevents@~2.3.1:
     "@types/node": 14.6.2
     "@types/node-fetch": 2.5.7
     "@types/react": 16.14.21
-    "@types/uuid": 8.3.1
+    "@types/uuid": 8.3.3
     aws-sdk: 2.1014.0
     babel-plugin-istanbul: 6.0.0
     babel-plugin-transform-class-properties: 6.24.1
