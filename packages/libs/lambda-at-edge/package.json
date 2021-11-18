@@ -57,7 +57,7 @@
     "@types/normalize-path": "3.0.0",
     "@types/react": "17.0.35",
     "@types/react-dom": "17.0.11",
-    "@types/sharp": "0.29.3",
+    "@types/sharp": "0.29.4",
     "@types/uuid": "8.3.3",
     "builtin-modules": "3.2.0",
     "eslint": "8.1.0",
