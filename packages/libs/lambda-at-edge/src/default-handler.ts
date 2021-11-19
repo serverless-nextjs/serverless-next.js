@@ -372,6 +372,13 @@ export const handler = async (
 
   const tHandlerBegin = now();
 
+  if (process.env.NODE_ENV !== "development") {
+    // https://github.com/serverless-nextjs/serverless-next.js/issues/484#issuecomment-673152792
+    // eslint-disable-next-line no-eval
+    eval('process.env.NODE_ENV="production"');
+  }
+  debug(`[handler] node_env: ${process.env.NODE_ENV}`);
+
   if (event.revalidate) {
     const { domainName, region } = event.Records[0].cf.request.origin!.s3!;
     const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
