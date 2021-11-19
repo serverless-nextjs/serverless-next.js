@@ -6692,7 +6692,7 @@ __metadata:
     "@serverless/core": 1.1.2
     "@types/archiver": 5.1.1
     "@types/fs-extra": 9.0.13
-    "@types/jest": 27.0.2
+    "@types/jest": 27.0.3
     "@types/lodash": 4.14.177
     "@types/node": 16.11.4
     "@types/ramda": 0.27.49
@@ -6865,7 +6865,7 @@ __metadata:
     "@types/cookie": 0.4.1
     "@types/fresh": 0.5.0
     "@types/fs-extra": 9.0.13
-    "@types/jest": 27.0.2
+    "@types/jest": 27.0.3
     "@types/jsonwebtoken": 8.5.6
     "@types/node": 16.11.4
     "@types/node-fetch": 2.5.12
@@ -6952,7 +6952,7 @@ __metadata:
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat"
     "@types/aws-lambda": 8.10.85
     "@types/fs-extra": 9.0.13
-    "@types/jest": 27.0.2
+    "@types/jest": 27.0.3
     "@types/klaw": 3.0.3
     "@types/node": 16.11.4
     "@types/node-fetch": 2.5.12
@@ -7007,7 +7007,7 @@ __metadata:
     "@sls-next/core": "link:../core"
     "@types/aws-lambda": 8.10.85
     "@types/fs-extra": 9.0.13
-    "@types/jest": ^27.0.2
+    "@types/jest": ^27.0.3
     "@types/node": 16.11.4
     "@types/yargs": 17.0.5
     cdktf: 0.7.0
@@ -7371,13 +7371,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jest@npm:27.0.2, @types/jest@npm:^27.0.2":
+"@types/jest@npm:27.0.2":
   version: 27.0.2
   resolution: "@types/jest@npm:27.0.2"
   dependencies:
     jest-diff: ^27.0.0
     pretty-format: ^27.0.0
   checksum: 814ad5f5d2f277849f47e52906da4b745758e555630fc8cb46a071bde648eefeffb1b35710c530a8cea7fc4ea7c1d813812c120484bf7902ab6c5e473cdd49c9
+  languageName: node
+  linkType: hard
+
+"@types/jest@npm:27.0.3, @types/jest@npm:^27.0.3":
+  version: 27.0.3
+  resolution: "@types/jest@npm:27.0.3"
+  dependencies:
+    jest-diff: ^27.0.0
+    pretty-format: ^27.0.0
+  checksum: 3683a9945821966f6dccddf337219a5d682633687c9d30df859223db553589f63e9b2c34e69f0cc845c86ffcf115742f25c12ea03c8d33d2244890fdc0af61e2
   languageName: node
   linkType: hard
 
@@ -19044,7 +19054,7 @@ __metadata:
     "@babel/preset-env": ^7.16.4
     "@babel/preset-typescript": ^7.16.0
     "@jest/test-sequencer": ^27.3.1
-    "@types/jest": ^27.0.2
+    "@types/jest": ^27.0.3
     "@types/node": ^16.11.4
     "@types/webpack": ^5.28.0
     "@typescript-eslint/eslint-plugin": ^5.2.0
