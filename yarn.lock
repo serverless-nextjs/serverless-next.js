@@ -6873,7 +6873,7 @@ __metadata:
     "@types/react": 17.0.35
     "@types/react-dom": 17.0.11
     "@types/send": 0.17.1
-    "@types/sharp": 0.29.3
+    "@types/sharp": 0.29.4
     "@types/zen-observable": 0.8.3
     cookie: 0.4.1
     execa: 5.1.1
@@ -6959,7 +6959,7 @@ __metadata:
     "@types/normalize-path": 3.0.0
     "@types/react": 17.0.35
     "@types/react-dom": 17.0.11
-    "@types/sharp": 0.29.3
+    "@types/sharp": 0.29.4
     "@types/uuid": 8.3.3
     "@vercel/nft": 0.17.0
     builtin-modules: 3.2.0
@@ -7655,12 +7655,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/sharp@npm:0.29.3":
-  version: 0.29.3
-  resolution: "@types/sharp@npm:0.29.3"
+"@types/sharp@npm:0.29.4":
+  version: 0.29.4
+  resolution: "@types/sharp@npm:0.29.4"
   dependencies:
     "@types/node": "*"
-  checksum: 32e67cd6431b6c99444cefdc23484d24b12695f151b0336e3fc9ed9587b965d9fec1f8516b8168ae472cb22351e3aec0f8bb30481dfb7f366ab4ece0792774c8
+  checksum: 155313a87f720248c0b14a0cd2eab44b3319a160133e308d3ec643a2b0e2a430dd54183eb4f349d7ccd1c10306c40dbd82752260812c87caea36749c3e0b186c
   languageName: node
   linkType: hard
 
