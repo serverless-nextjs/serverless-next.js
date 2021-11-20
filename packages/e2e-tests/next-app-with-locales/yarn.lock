@@ -5181,6 +5181,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"istanbul-lib-coverage@npm:3.2.0":
+  version: 3.2.0
+  resolution: "istanbul-lib-coverage@npm:3.2.0"
+  checksum: a2a545033b9d56da04a8571ed05c8120bf10e9bce01cf8633a3a2b0d1d83dff4ac4fe78d6d5673c27fc29b7f21a41d75f83a36be09f82a61c367b56aa73c1ff9
+  languageName: node
+  linkType: hard
+
 "istanbul-lib-hook@npm:^3.0.0":
   version: 3.0.0
   resolution: "istanbul-lib-hook@npm:3.0.0"
@@ -5986,7 +5993,7 @@ fsevents@~2.3.1:
     babel-plugin-transform-class-properties: 6.24.1
     cypress: 7.7.0
     isomorphic-fetch: 2.2.1
-    istanbul-lib-coverage: 3.0.0
+    istanbul-lib-coverage: 3.2.0
     next: 11.1.2
     next-i18next: ^8.10.0
     nyc: 15.1.0
