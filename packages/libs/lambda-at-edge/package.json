@@ -72,7 +72,7 @@
     "rollup-plugin-delete": "2.0.0",
     "rollup-plugin-node-externals": "2.2.0",
     "rollup-plugin-terser": "7.0.2",
-    "rollup-plugin-typescript2": "0.30.0",
+    "rollup-plugin-typescript2": "0.31.0",
     "sharp": "0.28.3",
     "ts-loader": "9.2.6",
     "ts-node": "10.4.0",
