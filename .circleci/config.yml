@@ -10,7 +10,7 @@ executors:
   linux:
     resource_class: medium+
     docker:
-      - image: cimg/node:14.18-browsers
+      - image: cimg/node:17.1-browsers
   windows: win/default
 
 orbs:
