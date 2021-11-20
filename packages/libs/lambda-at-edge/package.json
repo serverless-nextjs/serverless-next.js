@@ -78,7 +78,7 @@
     "ts-node": "10.4.0",
     "typescript": "4.5.2",
     "uuid": "8.3.2",
-    "webpack": "5.60.0"
+    "webpack": "5.64.2"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "3.42.0",
