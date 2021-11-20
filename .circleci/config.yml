@@ -16,7 +16,7 @@ executors:
 orbs:
   aws-cli-linux: circleci/aws-cli@2.0.6
   queue: eddiewebb/queue@1.6.3
-  win: circleci/windows@2.3.0
+  win: circleci/windows@2.4.1
   aws-cli-windows: sensu/awscli-windows@1.0.0
 
 # Define a job to be invoked later in a workflow.
