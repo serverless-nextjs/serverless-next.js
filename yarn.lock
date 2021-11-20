@@ -1226,13 +1226,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.41.0":
-  version: 3.41.0
-  resolution: "@aws-sdk/client-s3@npm:3.41.0"
+"@aws-sdk/client-s3@npm:3.42.0":
+  version: 3.42.0
+  resolution: "@aws-sdk/client-s3@npm:3.42.0"
   dependencies:
     "@aws-crypto/sha256-browser": 2.0.0
     "@aws-crypto/sha256-js": 2.0.0
-    "@aws-sdk/client-sts": 3.41.0
+    "@aws-sdk/client-sts": 3.42.0
     "@aws-sdk/config-resolver": 3.40.0
     "@aws-sdk/credential-provider-node": 3.41.0
     "@aws-sdk/eventstream-serde-browser": 3.40.0
@@ -1277,17 +1277,17 @@ __metadata:
     entities: 2.2.0
     fast-xml-parser: 3.19.0
     tslib: ^2.3.0
-  checksum: 6a20163832ce14f456778b9e4e61d33e46c9c7503ddebd2a9f52f0aca561fc25f0fba76086394112768f58388d7d9737e023451bc1b638cea08974ea9d6c559c
+  checksum: 3c376c73d1bfd53212855718fccb9711165e03302708fb98f6806ec1de1d566bfc1517aecc87581eb70f7b5bb57a05d2e3fbdeb498e84f6541a1011352ab370c
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-sqs@npm:3.41.0":
-  version: 3.41.0
-  resolution: "@aws-sdk/client-sqs@npm:3.41.0"
+"@aws-sdk/client-sqs@npm:3.42.0":
+  version: 3.42.0
+  resolution: "@aws-sdk/client-sqs@npm:3.42.0"
   dependencies:
     "@aws-crypto/sha256-browser": 2.0.0
     "@aws-crypto/sha256-js": 2.0.0
-    "@aws-sdk/client-sts": 3.41.0
+    "@aws-sdk/client-sts": 3.42.0
     "@aws-sdk/config-resolver": 3.40.0
     "@aws-sdk/credential-provider-node": 3.41.0
     "@aws-sdk/fetch-http-handler": 3.40.0
@@ -1320,7 +1320,7 @@ __metadata:
     entities: 2.2.0
     fast-xml-parser: 3.19.0
     tslib: ^2.3.0
-  checksum: 9699409bf9750f1a3887fccb67b3eb9d0014baa7646ef1f256bdd23525c2f5dca3e0c29c41bd36fd6fc8f0828cca21fd4b1c6946cee4556202380155a634ff8b
+  checksum: 98627b970b95d10ff91b07f401079ce8eacb522f688aaced5b2db99207afb54151f26f6361074ae981343685715723646eaa7489fcb3f7c61818e8885654c4e9
   languageName: node
   linkType: hard
 
@@ -1360,9 +1360,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-sts@npm:3.41.0":
-  version: 3.41.0
-  resolution: "@aws-sdk/client-sts@npm:3.41.0"
+"@aws-sdk/client-sts@npm:3.42.0":
+  version: 3.42.0
+  resolution: "@aws-sdk/client-sts@npm:3.42.0"
   dependencies:
     "@aws-crypto/sha256-browser": 2.0.0
     "@aws-crypto/sha256-js": 2.0.0
@@ -1397,7 +1397,7 @@ __metadata:
     entities: 2.2.0
     fast-xml-parser: 3.19.0
     tslib: ^2.3.0
-  checksum: a89018f9929397f93400d0c3983b2bd7d21d9c9e3fda86206ca1a526caeffb27b5004fb5104515a7ca149956d66bf70a1d3d187c5814014e48b6801bb05b7557
+  checksum: f36e216b2bd5f43fc0fd81c4b2dc4d65fdc227b3a6a5760ac99d9cbb8ffae30097ab2d2c49b760786ca67aaa5229750cb21e56e0265ee459a2cb8d0cd3915bd3
   languageName: node
   linkType: hard
 
@@ -6666,8 +6666,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/aws-common@workspace:packages/libs/aws-common"
   dependencies:
-    "@aws-sdk/client-s3": 3.41.0
-    "@aws-sdk/client-sqs": 3.41.0
+    "@aws-sdk/client-s3": 3.42.0
+    "@aws-sdk/client-sqs": 3.42.0
     "@sls-next/core": "link:../core"
     "@types/node": 16.11.4
     rimraf: 3.0.2
@@ -6935,8 +6935,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/lambda-at-edge@workspace:packages/libs/lambda-at-edge"
   dependencies:
-    "@aws-sdk/client-s3": 3.41.0
-    "@aws-sdk/client-sqs": 3.41.0
+    "@aws-sdk/client-s3": 3.42.0
+    "@aws-sdk/client-sqs": 3.42.0
     "@babel/core": 7.16.0
     "@babel/eslint-parser": 7.16.3
     "@babel/plugin-proposal-class-properties": 7.16.0
