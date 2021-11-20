@@ -34,7 +34,7 @@
     "@types/react": "16.14.21",
     "@types/uuid": "8.3.3",
     "aws-sdk": "2.1033.0",
-    "babel-plugin-istanbul": "6.0.0",
+    "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-transform-class-properties": "6.24.1",
     "cypress": "7.7.0",
     "istanbul-lib-coverage": "3.2.0",
