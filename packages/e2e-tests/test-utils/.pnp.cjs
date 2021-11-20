@@ -38,13 +38,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/node", "npm:14.17.34"],
             ["@types/node-fetch", "npm:2.5.7"],
             ["@types/uuid", "npm:8.3.3"],
-            ["aws-sdk", "npm:2.1014.0"],
+            ["aws-sdk", "npm:2.1033.0"],
             ["cypress", "npm:7.7.0"],
             ["node-fetch", "npm:2.6.5"],
             ["ts-node", "virtual:5853a71b50c026fd0d3f2d6872f4b803c8b80ac5b608dd306ee3ab0acdfe3d2b4be6711d00a4a293ad5bde3e940c42566d7919bffa45d1bb58ce4db1c8282b43#npm:9.0.0"],
-            ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=32657b"],
+            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=32657b"],
             ["uuid", "npm:8.3.2"],
-            ["yargs", "npm:16.0.3"]
+            ["yargs", "npm:16.2.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -296,10 +296,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["aws-sdk", [
-        ["npm:2.1014.0", {
-          "packageLocation": "./.yarn/unplugged/aws-sdk-npm-2.1014.0-bc82b1a2f4/node_modules/aws-sdk/",
+        ["npm:2.1033.0", {
+          "packageLocation": "../../../.yarn/cache/aws-sdk-npm-2.1033.0-a17db7e58d-438b9328b4.zip/node_modules/aws-sdk/",
           "packageDependencies": [
-            ["aws-sdk", "npm:2.1014.0"],
+            ["aws-sdk", "npm:2.1033.0"],
             ["buffer", "npm:4.9.2"],
             ["events", "npm:1.1.1"],
             ["ieee754", "npm:1.1.13"],
@@ -761,13 +761,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/node", "npm:14.17.34"],
             ["@types/node-fetch", "npm:2.5.7"],
             ["@types/uuid", "npm:8.3.3"],
-            ["aws-sdk", "npm:2.1014.0"],
+            ["aws-sdk", "npm:2.1033.0"],
             ["cypress", "npm:7.7.0"],
             ["node-fetch", "npm:2.6.5"],
             ["ts-node", "virtual:5853a71b50c026fd0d3f2d6872f4b803c8b80ac5b608dd306ee3ab0acdfe3d2b4be6711d00a4a293ad5bde3e940c42566d7919bffa45d1bb58ce4db1c8282b43#npm:9.0.0"],
-            ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=32657b"],
+            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=32657b"],
             ["uuid", "npm:8.3.2"],
-            ["yargs", "npm:16.0.3"]
+            ["yargs", "npm:16.2.0"]
           ],
           "linkType": "SOFT",
         }]
@@ -1985,7 +1985,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["diff", "npm:4.0.2"],
             ["make-error", "npm:1.3.6"],
             ["source-map-support", "npm:0.5.19"],
-            ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=32657b"],
+            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=32657b"],
             ["yn", "npm:3.1.1"]
           ],
           "packagePeers": [
@@ -2033,10 +2033,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["typescript", [
-        ["patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=32657b", {
-          "packageLocation": "../../../.yarn/cache/typescript-patch-29eb8bf885-c97c33903f.zip/node_modules/typescript/",
+        ["patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=32657b", {
+          "packageLocation": "../../../.yarn/cache/typescript-patch-4998a27e42-02cf0f190f.zip/node_modules/typescript/",
           "packageDependencies": [
-            ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=32657b"]
+            ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=32657b"]
           ],
           "linkType": "HARD",
         }]
@@ -2215,26 +2215,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["yargs", [
-        ["npm:16.0.3", {
-          "packageLocation": "../../../.yarn/cache/yargs-npm-16.0.3-4ed0f9b6e7-e59676cfc8.zip/node_modules/yargs/",
+        ["npm:16.2.0", {
+          "packageLocation": "../../../.yarn/cache/yargs-npm-16.2.0-547873d425-b14afbb51e.zip/node_modules/yargs/",
           "packageDependencies": [
-            ["yargs", "npm:16.0.3"],
+            ["yargs", "npm:16.2.0"],
             ["cliui", "npm:7.0.4"],
             ["escalade", "npm:3.1.1"],
             ["get-caller-file", "npm:2.0.5"],
             ["require-directory", "npm:2.1.1"],
             ["string-width", "npm:4.2.2"],
             ["y18n", "npm:5.0.8"],
-            ["yargs-parser", "npm:20.2.7"]
+            ["yargs-parser", "npm:20.2.9"]
           ],
           "linkType": "HARD",
         }]
       ]],
       ["yargs-parser", [
-        ["npm:20.2.7", {
-          "packageLocation": "../../../.yarn/cache/yargs-parser-npm-20.2.7-5ab0b83136-ec0ea9e1b5.zip/node_modules/yargs-parser/",
+        ["npm:20.2.9", {
+          "packageLocation": "../../../.yarn/cache/yargs-parser-npm-20.2.9-a1d19e598d-8bb69015f2.zip/node_modules/yargs-parser/",
           "packageDependencies": [
-            ["yargs-parser", "npm:20.2.7"]
+            ["yargs-parser", "npm:20.2.9"]
           ],
           "linkType": "HARD",
         }]
