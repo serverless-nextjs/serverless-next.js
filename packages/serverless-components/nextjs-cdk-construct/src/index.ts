@@ -89,6 +89,20 @@ export class NextJSLambdaEdge extends cdk.Construct {
       ...(props.s3Props || {})
     });
 
+    this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
+      assumedBy: new CompositePrincipal(
+        new ServicePrincipal("lambda.amazonaws.com"),
+        new ServicePrincipal("edgelambda.amazonaws.com")
+      ),
+      managedPolicies: [
+        ManagedPolicy.fromManagedPolicyArn(
+          this,
+          "NextApiLambdaPolicy",
+          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+        )
+      ]
+    });
+
     const hasISRPages = Object.keys(this.prerenderManifest.routes).some(
       (key) =>
         typeof this.prerenderManifest.routes[key].initialRevalidateSeconds ===
@@ -116,11 +130,15 @@ export class NextJSLambdaEdge extends cdk.Construct {
         "RegenerationFunction",
         {
           handler: "index.handler",
-          runtime: lambda.Runtime.NODEJS_14_X,
-          timeout: Duration.seconds(30),
           code: lambda.Code.fromAsset(
             path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
-          )
+          ),
+          runtime:
+            toLambdaOption("regenerationLambda", props.runtime) ??
+            lambda.Runtime.NODEJS_14_X,
+          memorySize: toLambdaOption("regenerationLambda", props.memory) ?? undefined,
+          timeout:
+            toLambdaOption("regenerationLambda", props.timeout) ?? Duration.seconds(30)
         }
       );
 
@@ -128,20 +146,6 @@ export class NextJSLambdaEdge extends cdk.Construct {
         new lambdaEventSources.SqsEventSource(this.regenerationQueue)
       );
     }
-
-    this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
-      assumedBy: new CompositePrincipal(
-        new ServicePrincipal("lambda.amazonaws.com"),
-        new ServicePrincipal("edgelambda.amazonaws.com")
-      ),
-      managedPolicies: [
-        ManagedPolicy.fromManagedPolicyArn(
-          this,
-          "NextApiLambdaPolicy",
-          "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
-        )
-      ]
-    });
 
     this.defaultNextLambda = new lambda.Function(this, "NextLambda", {
       functionName: toLambdaOption("defaultLambda", props.name),

@@ -3,7 +3,7 @@
 import { LambdaOption } from "../props";
 
 export const toLambdaOption = <T extends unknown>(
-  key: "defaultLambda" | "apiLambda" | "imageLambda",
+  key: "defaultLambda" | "apiLambda" | "imageLambda" | "regenerationLambda",
   option?: LambdaOption<T>
 ): T | undefined => {
   if (
@@ -11,7 +11,8 @@ export const toLambdaOption = <T extends unknown>(
     !(
       "defaultLambda" in option ||
       "apiLambda" in option ||
-      "imageLambda" in option
+      "imageLambda" in option ||
+      "regenerationLambda" in option
     )
   ) {
     return option as T | undefined;
