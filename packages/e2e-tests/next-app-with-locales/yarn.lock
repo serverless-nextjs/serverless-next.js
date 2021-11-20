@@ -1416,15 +1416,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/i18next-fs-backend@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "@types/i18next-fs-backend@npm:1.0.1"
-  dependencies:
-    i18next: ^19.7.0
-  checksum: 090076ac4465784050fed199ea82ff4ef497f8b8a4c5f7e18532bb3ce40e4afe122c99e356190e4b3968875e64206609211a5d2f8358c610bb280f4cc9912002
-  languageName: node
-  linkType: hard
-
 "@types/mocha@npm:8.2.3":
   version: 8.2.3
   resolution: "@types/mocha@npm:8.2.3"
@@ -4620,15 +4611,6 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"i18next@npm:^19.7.0":
-  version: 19.9.2
-  resolution: "i18next@npm:19.9.2"
-  dependencies:
-    "@babel/runtime": ^7.12.0
-  checksum: a24207707eacb28488975f8921d843bc35b86f2a48504cb82eaf620e1aacddbda8d53a4dc600543a708ba49bc45e61072a753f250e89fad2c1932259190ef81a
-  languageName: node
-  linkType: hard
-
 "i18next@npm:^20.1.0":
   version: 20.3.5
   resolution: "i18next@npm:20.3.5"
@@ -6006,7 +5988,7 @@ fsevents@~2.3.1:
     isomorphic-fetch: 2.2.1
     istanbul-lib-coverage: 3.0.0
     next: 11.1.2
-    next-i18next: ^8.5.5
+    next-i18next: ^8.10.0
     nyc: 15.1.0
     react: 17.0.2
     react-dom: 17.0.2
@@ -6017,13 +5999,12 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"next-i18next@npm:^8.5.5":
-  version: 8.5.5
-  resolution: "next-i18next@npm:8.5.5"
+"next-i18next@npm:^8.10.0":
+  version: 8.10.0
+  resolution: "next-i18next@npm:8.10.0"
   dependencies:
     "@babel/runtime": ^7.13.17
     "@types/hoist-non-react-statics": ^3.3.1
-    "@types/i18next-fs-backend": ^1.0.0
     core-js: ^3
     hoist-non-react-statics: ^3.2.0
     i18next: ^20.1.0
@@ -6032,7 +6013,7 @@ fsevents@~2.3.1:
   peerDependencies:
     next: ">= 10.0.0"
     react: ">= 16.8.0"
-  checksum: 4b0a220a8579733ed0fd4de0a6bb4a1aff716bae5f75a7195f958862ecd54808e81fa8b504dab939e9b2031f8ae9eb0533e11ae76c8f13dea5336b2e18be530b
+  checksum: 3051a72ae39304e8334469311d8f3d01720f2759c0aee6d0ad50a062e9908afd906dca85a1ae3bb99c6eedc0e766bbb347b36c1dd0cc00bb2d2fd990ef2f821a
   languageName: node
   linkType: hard
 
