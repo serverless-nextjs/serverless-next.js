@@ -1440,10 +1440,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:14.6.2":
-  version: 14.6.2
-  resolution: "@types/node@npm:14.6.2"
-  checksum: faf07f4916daa85adf7888d24de27fc2475c77822c206748878774e7cc073635c09ea8e20c0a31173e71f46b4ad721375e5402778d3e6ae98fa0c8089c77c473
+"@types/node@npm:14.17.34":
+  version: 14.17.34
+  resolution: "@types/node@npm:14.17.34"
+  checksum: 803a7532b6998aca6aa1b3e6239f280e82612d4f641d38fbf08962c905ea9d1b278b2f09d396beac5120a4e68f33d7467298b197f2f00150ec1dcd546de02a89
   languageName: node
   linkType: hard
 
@@ -5984,7 +5984,7 @@ fsevents@~2.3.1:
     "@cypress/code-coverage": 3.9.11
     "@cypress/skip-test": 2.6.1
     "@types/mocha": 8.2.3
-    "@types/node": 14.6.2
+    "@types/node": 14.17.34
     "@types/node-fetch": 2.5.7
     "@types/react": ^17.0.35
     "@types/uuid": 8.3.3
