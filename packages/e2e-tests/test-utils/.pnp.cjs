@@ -35,7 +35,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {
           "packageLocation": "./",
           "packageDependencies": [
-            ["@types/node", "npm:14.17.34"],
+            ["@types/node", "npm:16.11.9"],
             ["@types/node-fetch", "npm:2.5.7"],
             ["@types/uuid", "npm:8.3.3"],
             ["aws-sdk", "npm:2.1033.0"],
@@ -44,7 +44,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-node", "virtual:5853a71b50c026fd0d3f2d6872f4b803c8b80ac5b608dd306ee3ab0acdfe3d2b4be6711d00a4a293ad5bde3e940c42566d7919bffa45d1bb58ce4db1c8282b43#npm:9.1.1"],
             ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=ddd1e8"],
             ["uuid", "npm:8.3.2"],
-            ["yargs", "npm:16.2.0"]
+            ["yargs", "npm:17.2.1"]
           ],
           "linkType": "SOFT",
         }]
@@ -96,17 +96,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["npm:14.17.34", {
-          "packageLocation": "../../../.yarn/cache/@types-node-npm-14.17.34-1d7f20f643-803a7532b6.zip/node_modules/@types/node/",
-          "packageDependencies": [
-            ["@types/node", "npm:14.17.34"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:15.3.1", {
           "packageLocation": "../../../.yarn/cache/@types-node-npm-15.3.1-2d4ca53b7d-b62091a722.zip/node_modules/@types/node/",
           "packageDependencies": [
             ["@types/node", "npm:15.3.1"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:16.11.9", {
+          "packageLocation": "../../../.yarn/cache/@types-node-npm-16.11.9-fd7b539464-baec2e6471.zip/node_modules/@types/node/",
+          "packageDependencies": [
+            ["@types/node", "npm:16.11.9"]
           ],
           "linkType": "HARD",
         }]
@@ -772,7 +772,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",
           "packageDependencies": [
             ["e2e-test-utils", "workspace:."],
-            ["@types/node", "npm:14.17.34"],
+            ["@types/node", "npm:16.11.9"],
             ["@types/node-fetch", "npm:2.5.7"],
             ["@types/uuid", "npm:8.3.3"],
             ["aws-sdk", "npm:2.1033.0"],
@@ -781,7 +781,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-node", "virtual:5853a71b50c026fd0d3f2d6872f4b803c8b80ac5b608dd306ee3ab0acdfe3d2b4be6711d00a4a293ad5bde3e940c42566d7919bffa45d1bb58ce4db1c8282b43#npm:9.1.1"],
             ["typescript", "patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=ddd1e8"],
             ["uuid", "npm:8.3.2"],
-            ["yargs", "npm:16.2.0"]
+            ["yargs", "npm:17.2.1"]
           ],
           "linkType": "SOFT",
         }]
@@ -2214,10 +2214,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["yargs", [
-        ["npm:16.2.0", {
-          "packageLocation": "../../../.yarn/cache/yargs-npm-16.2.0-547873d425-b14afbb51e.zip/node_modules/yargs/",
+        ["npm:17.2.1", {
+          "packageLocation": "../../../.yarn/cache/yargs-npm-17.2.1-592dabfd58-451aac46f8.zip/node_modules/yargs/",
           "packageDependencies": [
-            ["yargs", "npm:16.2.0"],
+            ["yargs", "npm:17.2.1"],
             ["cliui", "npm:7.0.4"],
             ["escalade", "npm:3.1.1"],
             ["get-caller-file", "npm:2.0.5"],

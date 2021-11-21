@@ -56,7 +56,7 @@
     "@types/fs-extra": "9.0.13",
     "@types/jest": "^27.0.3",
     "@types/node": "16.11.9",
-    "@types/yargs": "17.0.5",
+    "@types/yargs": "17.0.7",
     "jest": "^27.3.1",
     "rimraf": "3.0.2",
     "rollup": "2.60.0",
