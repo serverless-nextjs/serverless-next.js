@@ -39,7 +39,7 @@
     "cypress": "9.0.0",
     "istanbul-lib-coverage": "3.2.0",
     "nyc": "15.1.0",
-    "ts-node": "9.1.1",
+    "ts-node": "10.4.0",
     "typescript": "4.5.2",
     "uuid": "8.3.2",
     "yargs": "16.2.0"
