@@ -5,12 +5,21 @@ version: 2.1
 aliases:
   - &environment
     TZ: /usr/share/zoneinfo/America/Los_Angeles
+    NODE_OPTIONS: "--max-old-space-size=6144"
 
 executors:
-  linux:
+  linux-node-14-browsers:
     resource_class: medium+
     docker:
       - image: cimg/node:14.18-browsers
+  linux-node-14:
+    resource_class: large
+    docker:
+      - image: cimg/node:14.18
+  linux-node-12:
+    resource_class: large
+    docker:
+      - image: cimg/node:12.22.7
   windows: win/default
 
 orbs:
@@ -22,26 +31,91 @@ orbs:
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
+  build-and-test:
+    parameters:
+      executor:
+        type: string
+    executor: << parameters.executor >>
+    environment: *environment
+    steps:
+      - checkout
+
+      - restore_cache:
+          name: Restore yarn cache
+          keys:
+            - v3-node-{{ arch }}-<< parameters.executor >>-build-{{ checksum "yarn.lock" }}
+            - v3-node-{{ arch }}-<< parameters.executor >>-build-
+
+      - run:
+          name: Setup yarn
+          command: yarn install --immutable --inline-builds
+
+      - run:
+          name: Run yarn build
+          command: yarn build
+
+      - when:
+          condition:
+            equal: [<< pipeline.git.branch >>, "master"]
+          environment:
+            AWS_DEFAULT_REGION: us-east-1
+            GITHUB_SHA: << pipeline.git.revision >>
+          steps:
+            - run:
+                name: Upload handler sizes to S3
+                command: yarn handlers:upload-handler-sizes
+
+      - run:
+          name: Run unit tests
+          command: yarn test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/unit-tests
+
+      - run:
+          name: Run integration tests
+          command: yarn integration:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/integration-tests
+
+      - run:
+          name: Upload code coverage
+          command: npx codecov
+
+      - store_test_results:
+          path: ./reports/junit/unit-tests
+
+      - store_test_results:
+          path: ./reports/junit/integration-tests
+
+      - store_artifacts:
+          path: ./reports/junit
+
+      - save_cache:
+          name: Save yarn cache
+          key: v3-node-{{ arch }}-<< parameters.executor >>-build-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/project/.yarn/cache
+
   run-e2e-tests:
     parameters:
-      os:
+      executor:
         type: string
       app:
         type: string
-    executor: << parameters.os >>
+    executor: << parameters.executor >>
     environment: *environment
     steps:
       - checkout
 
       - when:
           condition:
-            equal: [<< parameters.os >>, "linux"]
+            equal: [<< parameters.executor >>, "linux-node-14-browsers"]
           steps:
             - aws-cli-linux/install
 
       - when:
           condition:
-            equal: [<< parameters.os >>, "windows"]
+            equal: [<< parameters.executor >>, "windows"]
           steps:
             - run:
                 name: Install AWS CLI v1
@@ -55,21 +129,15 @@ jobs:
 
       - run:
           name: Setup yarn
-          environment:
-            NODE_OPTIONS: "--max-old-space-size=6144"
           command: yarn install --immutable --inline-builds
 
       - run:
           name: Run yarn build
-          environment:
-            NODE_OPTIONS: "--max-old-space-size=6144"
           command: yarn build
 
       - run:
           name: Build serverless-patched
           working_directory: ~/project/packages/serverless-patched
-          environment:
-            NODE_OPTIONS: "--max-old-space-size=6144"
           command: |
             yarn install --immutable
             yarn build
@@ -91,7 +159,6 @@ jobs:
           environment:
             AWS_DEFAULT_REGION: us-east-1
             WAIT_TIMEOUT: 900
-            NODE_OPTIONS: "--max-old-space-size=6144"
             SERVERLESS_CI: true
           command: |
             yarn install --immutable
@@ -99,7 +166,7 @@ jobs:
           no_output_timeout: 30m # In case something goes wrong
 
       - save_cache:
-          name: Save yarn cache for future installs
+          name: Save yarn cache
           key: v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}
           paths:
             - ~/project/.yarn/cache
@@ -107,48 +174,55 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  e2e-tests:
+  build:
     jobs:
-      - queue/block_workflow:
-          consider-branch: false
-          time: "90"
-          filters:
-            branches:
-              ignore: /renovate\/.*/
-      - run-e2e-tests:
-          filters:
-            branches:
-              ignore: /renovate\/.*/
-          requires:
-            - queue/block_workflow
+      - build-and-test:
           matrix:
             parameters:
-              os:
-                - linux
-              app:
-                # Current minor version of Next.js
-                - next-app
-                - next-app-experimental
-                - next-app-using-serverless-trace
-                - next-app-with-trailing-slash
-                - next-app-with-base-path
-                - next-app-dynamic-routes
-                - next-app-with-locales
-                - next-app-with-locales-using-serverless-trace
-                # Previous minor version of Next.js
-                - prev-next-app
-                - prev-next-app-with-trailing-slash
-                - prev-next-app-with-base-path
-                - prev-next-app-dynamic-routes
-      - run-e2e-tests:
-          filters:
-            branches:
-              ignore: /renovate\/.*/
-          requires:
-            - queue/block_workflow
-          matrix:
-            parameters:
-              os:
-                - windows
-              app:
-                - next-app-windows
+              executor:
+                - linux-node-14
+                - linux-node-12
+#  e2e-tests:
+#      - queue/block_workflow:
+#          consider-branch: false
+#          time: "90"
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#      - run-e2e-tests:
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#          requires:
+#            - queue/block_workflow
+#          matrix:
+#            parameters:
+#              executor:
+#                - linux-node-14-browsers
+#              app:
+#                # Current minor version of Next.js
+#                - next-app
+#                - next-app-experimental
+#                - next-app-using-serverless-trace
+#                - next-app-with-trailing-slash
+#                - next-app-with-base-path
+#                - next-app-dynamic-routes
+#                - next-app-with-locales
+#                - next-app-with-locales-using-serverless-trace
+#                # Previous minor version of Next.js
+#                - prev-next-app
+#                - prev-next-app-with-trailing-slash
+#                - prev-next-app-with-base-path
+#                - prev-next-app-dynamic-routes
+#      - run-e2e-tests:
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#          requires:
+#            - queue/block_workflow
+#          matrix:
+#            parameters:
+#              executor:
+#                - windows
+#              app:
+#                - next-app-windows

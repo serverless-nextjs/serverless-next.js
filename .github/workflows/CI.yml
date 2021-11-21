@@ -16,14 +16,9 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [12.x, 14.x]
+        node-version: [14.x]
 
     steps:
-      #      - name: Cancel Previous Runs
-      #        uses: styfle/cancel-workflow-action@0.9.1
-      #        with:
-      #          access_token: ${{ github.token }}
-
       - uses: actions/checkout@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
@@ -55,16 +50,16 @@ jobs:
           AWS_DEFAULT_REGION: us-east-1
           GITHUB_SHA: ${{ github.sha }}
         run: yarn handlers:upload-handler-sizes
-
-      - run: yarn test
-
-      - run: yarn integration
-
-      - name: Upload code coverage
-        if: ${{ matrix.node-version == '14.x' }}
-        env:
-          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
-        run: npx codecov
+      #
+      #      - run: yarn test
+      #
+      #      - run: yarn integration
+      #
+      #      - name: Upload code coverage
+      #        if: ${{ matrix.node-version == '14.x' }}
+      #        env:
+      #          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
+      #        run: npx codecov
 
       - name: Calculate and post handler sizes
         if: (matrix.node-version == '14.x' && github.event_name == 'pull_request')
@@ -73,28 +68,28 @@ jobs:
           GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
           PULL_REQUEST_ID: ${{ github.event.number }}
         run: yarn handlers:comment-handler-sizes
-#   start-e2e-tests:
-#     # Note: we only run e2e tests automatically if this is a push on master or if PR is not from a fork or renovate, as forks won't have access to secrets
-#     if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'renovate/') == false && github.event.pull_request.head.repo.full_name == github.repository) }}
-#     runs-on: ubuntu-latest
+  start-e2e-tests:
+    # Note: we only run e2e tests automatically if this is a push on master or if PR is not from a fork or renovate, as forks won't have access to secrets
+    if: ${{ github.event_name == 'push' || (github.event_name == 'pull_request' && startsWith(github.event.pull_request.head.ref, 'renovate/') == false && github.event.pull_request.head.repo.full_name == github.repository) }}
+    runs-on: ubuntu-latest
 
-#     steps:
-#       - name: Mark end-to-end tests as pending
-#         uses: Sibz/github-status-action@v1
-#         with:
-#           authToken: ${{ secrets.GITHUB_TOKEN }}
-#           context: "End-to-end Tests"
-#           description: "Waiting for end-to-end tests to pass"
-#           state: "pending"
-#           sha: ${{ github.event.pull_request.head.sha || github.sha }}
+    steps:
+      - name: Mark end-to-end tests as pending
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "Waiting for end-to-end tests to pass"
+          state: "pending"
+          sha: ${{ github.event.pull_request.head.sha || github.sha }}
 
-#       - name: Trigger end-to-end tests workflow
-#         uses: benc-uk/workflow-dispatch@v1
-#         with:
-#           workflow: End-to-end Tests
-#           token: ${{ secrets.BOT_GITHUB_TOKEN }}
-#           ref: ${{ github.event.pull_request.head.ref || github.ref }}
-#           # FIXME: Passing sha doesn't seem to work, created GitHub ticket here: https://github.community/t/workflow-dispatch-cant-set-ref-to-commit-sha/138132
-#           # So for now we pass in SHA as an input
-#           # ref: ${{ github.event.pull_request.head.sha || github.sha }}
-#           inputs: '{"sha": "${{ github.event.pull_request.head.sha || github.sha }}"}'
+      - name: Trigger end-to-end tests workflow
+        uses: benc-uk/workflow-dispatch@v1
+        with:
+          workflow: End-to-end Tests
+          token: ${{ secrets.BOT_GITHUB_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref || github.ref }}
+          # FIXME: Passing sha doesn't seem to work, created GitHub ticket here: https://github.community/t/workflow-dispatch-cant-set-ref-to-commit-sha/138132
+          # So for now we pass in SHA as an input
+          # ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          inputs: '{"sha": "${{ github.event.pull_request.head.sha || github.sha }}"}'

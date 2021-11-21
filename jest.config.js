@@ -51,5 +51,6 @@ module.exports = {
   setupFiles: ["<rootDir>/jest.setup.js"],
   modulePathIgnorePatterns: ["/sharp_node_modules/"],
   testSequencer: "<rootDir>/jest-sequencer.js",
-  modulePaths: ["<rootDir>/packages/libs/lambda"] // this allows us to use absolute imports from these packages
+  modulePaths: ["<rootDir>/packages/libs/lambda"], // this allows us to use absolute imports from these packages
+  reporters: ["default", "jest-junit"]
 };
