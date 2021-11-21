@@ -43,8 +43,8 @@ jobs:
       - restore_cache:
           name: Restore yarn cache
           keys:
-            - v3-node-{{ arch }}-build-{{ checksum "yarn.lock" }}
-            - v3-node-{{ arch }}-build-
+            - v3-node-{{ arch }}-<< parameters.executor >>-build-{{ checksum "yarn.lock" }}
+            - v3-node-{{ arch }}-<< parameters.executor >>-build-
 
       - run:
           name: Setup yarn
@@ -67,11 +67,15 @@ jobs:
 
       - run:
           name: Run unit tests
-          command: yarn test
+          command: yarn test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
       - run:
           name: Run integration tests
-          command: yarn integration
+          command: yarn integration:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
 
       - run:
           name: Upload code coverage
@@ -90,9 +94,15 @@ jobs:
                 name: Upload handler sizes to S3
                 command: PULL_REQUEST_ID=${CIRCLE_PULL_REQUEST##*/} yarn handlers:comment-handler-sizes
 
+      - store_test_results:
+          path: ./reports/junit/
+
+      - store_artifacts:
+          path: ./reports/junit
+
       - save_cache:
           name: Save yarn cache
-          key: v3-node-{{ arch }}-build-{{ checksum "yarn.lock" }}
+          key: v3-node-{{ arch }}-<< parameters.executor >>-build-{{ checksum "yarn.lock" }}
           paths:
             - ~/project/.yarn/cache
 
@@ -174,7 +184,7 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  e2e-tests:
+  build:
     jobs:
       - build-and-test:
           matrix:
@@ -182,6 +192,7 @@ workflows:
               executor:
                 - linux-node-14
                 - linux-node-12
+#  e2e-tests:
 #      - queue/block_workflow:
 #          consider-branch: false
 #          time: "90"

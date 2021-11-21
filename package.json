@@ -16,6 +16,7 @@
   "scripts": {
     "prepack": "husky install",
     "test": "jest --runInBand --coverage",
+    "test:ci": "jest --runInBand --coverage --ci --reporters=default --reporters=jest-junit",
     "test:watch": "yarn test --watch --collect-coverage=false",
     "check-gh-token": ": \"${GH_TOKEN:?Please set GH_TOKEN to a GitHub personal token that can create releases.}\"",
     "prerelease": "lerna publish --conventional-commits --conventional-prerelease --exact --create-release github --dist-tag alpha",
@@ -23,6 +24,7 @@
     "publish-from-git": "lerna publish --exact from-git",
     "lint": "eslint .",
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
+    "integration:ci": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js --ci --reporters=default --reporters=jest-junit",
     "build": "lerna run build && opencollective-postinstall",
     "clean": "lerna run clean",
     "docs": "cd documentation && yarn && yarn build",
@@ -56,6 +58,7 @@
     "eslint-plugin-promise": "5.1.1",
     "husky": "^7.0.4",
     "jest": "^27.3.1",
+    "jest-junit": "^13.0.0",
     "jest-pnp-resolver": "^1.2.2",
     "lerna": "^4.0.0",
     "lint-staged": "^12.1.1",
