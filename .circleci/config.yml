@@ -54,17 +54,6 @@ jobs:
           name: Run yarn build
           command: yarn build
 
-      - when:
-          condition:
-            equal: [<< pipeline.git.branch >>, "master"]
-          environment:
-            AWS_DEFAULT_REGION: us-east-1
-            GITHUB_SHA: << pipeline.git.revision >>
-          steps:
-            - run:
-                name: Upload handler sizes to S3
-                command: yarn handlers:upload-handler-sizes
-
       - run:
           name: Run unit tests
           command: yarn test:ci

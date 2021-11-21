@@ -53,7 +53,8 @@
     "globby",
     "node-fetch",
     "@types/node-fetch",
-    "next"
+    "next",
+    "cimg/node"
   ],
   "prHourlyLimit": 5,
   "prConcurrentLimit": 10,
