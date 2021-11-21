@@ -13,11 +13,11 @@ executors:
     docker:
       - image: cimg/node:14.18-browsers
   linux-node-14:
-    resource_class: medium+
+    resource_class: large
     docker:
       - image: cimg/node:14.18
   linux-node-12:
-    resource_class: medium+
+    resource_class: large
     docker:
       - image: cimg/node:12.22.7
   windows: win/default
