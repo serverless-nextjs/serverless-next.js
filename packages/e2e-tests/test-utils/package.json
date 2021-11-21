@@ -15,7 +15,7 @@
   "homepage": "https://github.com/serverless-next.js/serverless-next.js",
   "dependencies": {
     "aws-sdk": "2.1033.0",
-    "cypress": "7.7.0",
+    "cypress": "9.0.0",
     "node-fetch": "2.6.5",
     "ts-node": "9.1.1",
     "uuid": "8.3.2",

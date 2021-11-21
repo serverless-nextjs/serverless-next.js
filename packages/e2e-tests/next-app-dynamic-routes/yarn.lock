@@ -1377,9 +1377,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/request@npm:^2.88.5":
-  version: 2.88.5
-  resolution: "@cypress/request@npm:2.88.5"
+"@cypress/request@npm:^2.88.7":
+  version: 2.88.7
+  resolution: "@cypress/request@npm:2.88.7"
   dependencies:
     aws-sign2: ~0.7.0
     aws4: ^1.8.0
@@ -1394,14 +1394,13 @@ __metadata:
     isstream: ~0.1.2
     json-stringify-safe: ~5.0.1
     mime-types: ~2.1.19
-    oauth-sign: ~0.9.0
     performance-now: ^2.1.0
     qs: ~6.5.2
     safe-buffer: ^5.1.2
     tough-cookie: ~2.5.0
     tunnel-agent: ^0.6.0
-    uuid: ^3.3.2
-  checksum: a605f8a623f4665402768f4d7730315a420967d41c44194eeb2a946ce0b74ce3eb8205a73b0cab879fcf65870dbb1189ac60ea67d163c7acd64228e39e65611a
+    uuid: ^8.3.2
+  checksum: 21544e555afd0841a8a189d4a4af7695c918bc782db3c636f56cadfed9ea1620c2ef43d94a709de984660c4fe9407dd8446f9f65fbe56f4eafa26a0c05792a64
   languageName: node
   linkType: hard
 
@@ -3428,11 +3427,11 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:7.7.0":
-  version: 7.7.0
-  resolution: "cypress@npm:7.7.0"
+"cypress@npm:9.0.0":
+  version: 9.0.0
+  resolution: "cypress@npm:9.0.0"
   dependencies:
-    "@cypress/request": ^2.88.5
+    "@cypress/request": ^2.88.7
     "@cypress/xvfb": ^1.2.4
     "@types/node": ^14.14.31
     "@types/sinonjs__fake-timers": ^6.0.2
@@ -3466,7 +3465,7 @@ __metadata:
     minimist: ^1.2.5
     ospath: ^1.2.2
     pretty-bytes: ^5.6.0
-    ramda: ~0.27.1
+    proxy-from-env: 1.0.0
     request-progress: ^3.0.0
     supports-color: ^8.1.1
     tmp: ~0.2.1
@@ -3475,7 +3474,7 @@ __metadata:
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 8ad8700d448949941801b6ff25549ef93e593b659b1605a936a8021032acb50f1849c9b8f8d1ba7df713de803b8203a1978231ccd0443f2e819bd9cf1b23d562
+  checksum: ae481f26f6a51370bad6571b7edd525559c0b4e36fb9c33ac26c822610bd2f0b419614f12c1d87aff59c46afb3c2f06f7e167f924023da65fe2a3987927255c8
   languageName: node
   linkType: hard
 
@@ -6154,7 +6153,7 @@ fsevents@~2.3.1:
     aws-sdk: 2.1033.0
     babel-plugin-istanbul: 6.1.1
     babel-plugin-transform-class-properties: 6.24.1
-    cypress: 7.7.0
+    cypress: 9.0.0
     isomorphic-fetch: 3.0.0
     istanbul-lib-coverage: 3.2.0
     next: 10.2.2
@@ -6429,13 +6428,6 @@ fsevents@~2.3.1:
   bin:
     nyc: bin/nyc.js
   checksum: 82a7031982df2fd6ab185c9f1b5d032b6221846268007b45b5773c6582e776ab33e96cd22b4231520345942fcef69b4339bd967675b8483f3fa255b56326faef
-  languageName: node
-  linkType: hard
-
-"oauth-sign@npm:~0.9.0":
-  version: 0.9.0
-  resolution: "oauth-sign@npm:0.9.0"
-  checksum: 8f5497a127967866a3c67094c21efd295e46013a94e6e828573c62220e9af568cc1d2d04b16865ba583e430510fa168baf821ea78f355146d8ed7e350fc44c64
   languageName: node
   linkType: hard
 
@@ -6864,6 +6856,13 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
+"proxy-from-env@npm:1.0.0":
+  version: 1.0.0
+  resolution: "proxy-from-env@npm:1.0.0"
+  checksum: 292e28d1de0c315958d71d8315eb546dd3cd8c8cbc2dab7c54eeb9f5c17f421771964ad0b5e1f77011bab2305bdae42e1757ce33bdb1ccc3e87732322a8efcf1
+  languageName: node
+  linkType: hard
+
 "psl@npm:^1.1.28":
   version: 1.8.0
   resolution: "psl@npm:1.8.0"
@@ -6948,13 +6947,6 @@ fsevents@~2.3.1:
   version: 1.2.3
   resolution: "queue-microtask@npm:1.2.3"
   checksum: b676f8c040cdc5b12723ad2f91414d267605b26419d5c821ff03befa817ddd10e238d22b25d604920340fd73efd8ba795465a0377c4adf45a4a41e4234e42dc4
-  languageName: node
-  linkType: hard
-
-"ramda@npm:~0.27.1":
-  version: 0.27.1
-  resolution: "ramda@npm:0.27.1"
-  checksum: 31a0c0ef739b2525d7615f84cbb5d3cb89ee0c795469b711f729ea1d8df0dccc3cd75d3717a1e9742d42315ce86435680b7c87743eb7618111c60c144a5b8059
   languageName: node
   linkType: hard
 
@@ -8618,7 +8610,7 @@ typescript@4.5.2:
   languageName: node
   linkType: hard
 
-"uuid@npm:8.3.2":
+"uuid@npm:8.3.2, uuid@npm:^8.3.2":
   version: 8.3.2
   resolution: "uuid@npm:8.3.2"
   bin:
@@ -8627,7 +8619,7 @@ typescript@4.5.2:
   languageName: node
   linkType: hard
 
-"uuid@npm:^3.3.2, uuid@npm:^3.3.3":
+"uuid@npm:^3.3.3":
   version: 3.4.0
   resolution: "uuid@npm:3.4.0"
   bin:
