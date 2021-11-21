@@ -47,14 +47,6 @@ jobs:
                 name: Install AWS CLI v1
                 command: pip install awscli --upgrade
 
-      - run:
-          name: Print AWS
-          command: aws configure list
-
-      - run:
-          name: Print Node.js version
-          command: node --version
-
       - restore_cache:
           name: Restore yarn cache
           keys:
