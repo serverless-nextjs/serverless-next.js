@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.2...v3.7.0-alpha.0) (2021-11-21)
+
+### Features
+
+- **nextjs-cdk-construct:** add runtime options to regeneration ([#2050](https://github.com/serverless-nextjs/serverless-next.js/issues/2050)) ([dd69323](https://github.com/serverless-nextjs/serverless-next.js/commit/dd693238f6433cf1d12a4778dbdd6f65a1872458))
+
 ## [3.6.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.1...v3.6.1-alpha.2) (2021-11-15)
 
 ### Bug Fixes

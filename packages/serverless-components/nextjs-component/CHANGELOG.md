@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.2...v3.7.0-alpha.0) (2021-11-21)
+
+**Note:** Version bump only for package @sls-next/serverless-component
+
 ## [3.6.1-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.1...v3.6.1-alpha.2) (2021-11-15)
 
 ### Bug Fixes
