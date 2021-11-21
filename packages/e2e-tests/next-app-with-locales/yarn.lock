@@ -4897,12 +4897,12 @@ fsevents@~2.3.1:
   languageName: node
   linkType: hard
 
-"i18next@npm:^20.1.0":
-  version: 20.3.5
-  resolution: "i18next@npm:20.3.5"
+"i18next@npm:^21.4.1":
+  version: 21.5.2
+  resolution: "i18next@npm:21.5.2"
   dependencies:
     "@babel/runtime": ^7.12.0
-  checksum: 19dc3cfc0b2ab665aa41bc334a30aed54e625429ea46eb15aeca07a88d18bbb3b7698f967510b1525868abfe53d0da666d2cf108acdadcb6e8673df3dca6d878
+  checksum: 1968c334acee1167a7efb80304c273d425bdd6d5bb0018949e93f8f2af86d0712362f4486e825fd94ccc5a947a2839d2970ade99c56e772683708486bf1f3a07
   languageName: node
   linkType: hard
 
@@ -6287,7 +6287,7 @@ fsevents@~2.3.1:
     isomorphic-fetch: 3.0.0
     istanbul-lib-coverage: 3.2.0
     next: 11.1.2
-    next-i18next: ^8.10.0
+    next-i18next: ^9.1.0
     nyc: 15.1.0
     react: 17.0.2
     react-dom: 17.0.2
@@ -6298,21 +6298,21 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"next-i18next@npm:^8.10.0":
-  version: 8.10.0
-  resolution: "next-i18next@npm:8.10.0"
+"next-i18next@npm:^9.1.0":
+  version: 9.1.0
+  resolution: "next-i18next@npm:9.1.0"
   dependencies:
     "@babel/runtime": ^7.13.17
     "@types/hoist-non-react-statics": ^3.3.1
     core-js: ^3
     hoist-non-react-statics: ^3.2.0
-    i18next: ^20.1.0
+    i18next: ^21.4.1
     i18next-fs-backend: ^1.0.7
     react-i18next: ^11.8.13
   peerDependencies:
     next: ">= 10.0.0"
     react: ">= 16.8.0"
-  checksum: 3051a72ae39304e8334469311d8f3d01720f2759c0aee6d0ad50a062e9908afd906dca85a1ae3bb99c6eedc0e766bbb347b36c1dd0cc00bb2d2fd990ef2f821a
+  checksum: 0b0b6df539136b1fba3b632ce5acd77f9d96ae6825e1010bf1ab709328d21143080f0f7a74c0b09f8163a6acf575d4045fb68aa9f561125b9a05a801ddc149c8
   languageName: node
   linkType: hard
 
