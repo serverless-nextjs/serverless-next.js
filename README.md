@@ -9,6 +9,7 @@
 [![npm alpha](https://img.shields.io/npm/v/@sls-next/serverless-component/alpha)](https://www.npmjs.com/package/@sls-next/serverless-component?activeTab=versions)
 ![Build Status](https://github.com/serverless-nextjs/serverless-next.js/workflows/CI/badge.svg)
 ![End-to-end Tests](https://github.com/serverless-nextjs/serverless-next.js/workflows/End-to-end%20Tests/badge.svg)
+![CircleCI Build Status](https://img.shields.io/circleci/build/github/serverless-nextjs/serverless-next.js)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/60824e8ec2d04af6817eca817c807f8f)](https://www.codacy.com/gh/serverless-nextjs/serverless-next.js/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=serverless-nextjs/serverless-next.js&amp;utm_campaign=Badge_Grade)
 [![codecov](https://codecov.io/gh/serverless-nextjs/serverless-next.js/branch/master/graph/badge.svg)](https://codecov.io/gh/serverless-nextjs/serverless-next.js)
 ![Tested Next.js versions](https://img.shields.io/badge/tested%20next.js%20versions-10.2.3%20|%2011.x-blue)
