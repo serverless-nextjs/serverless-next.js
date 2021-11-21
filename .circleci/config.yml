@@ -166,12 +166,12 @@ workflows:
   e2e-tests:
     jobs:
       - build-and-test
-      - queue/block_workflow:
-          consider-branch: false
-          time: "90"
-          filters:
-            branches:
-              ignore: /renovate\/.*/
+#      - queue/block_workflow:
+#          consider-branch: false
+#          time: "90"
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
 #      - run-e2e-tests:
 #          filters:
 #            branches:
