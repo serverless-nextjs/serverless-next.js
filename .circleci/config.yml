@@ -55,11 +55,11 @@ jobs:
                 command: yarn handlers:upload-handler-sizes
 
       - run:
-          name: Run yarn unit tests
+          name: Run unit tests
           command: yarn test
 
       - run:
-          name: Run yarn integration tests
+          name: Run integration tests
           command: yarn integration
 
       - run:
@@ -78,6 +78,12 @@ jobs:
             - run:
                 name: Upload handler sizes to S3
                 command: PULL_REQUEST_ID=${CIRCLE_PULL_REQUEST##*/} yarn handlers:comment-handler-sizes
+
+      - save_cache:
+          name: Save yarn cache for future installs
+          key: v3-node-{{ arch }}-build-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/project/.yarn/cache
 
   run-e2e-tests:
     parameters:
@@ -166,40 +172,40 @@ workflows:
           filters:
             branches:
               ignore: /renovate\/.*/
-      - run-e2e-tests:
-          filters:
-            branches:
-              ignore: /renovate\/.*/
-          requires:
-            - queue/block_workflow
-          matrix:
-            parameters:
-              os:
-                - linux
-              app:
-                # Current minor version of Next.js
-                - next-app
-                - next-app-experimental
-                - next-app-using-serverless-trace
-                - next-app-with-trailing-slash
-                - next-app-with-base-path
-                - next-app-dynamic-routes
-                - next-app-with-locales
-                - next-app-with-locales-using-serverless-trace
-                # Previous minor version of Next.js
-                - prev-next-app
-                - prev-next-app-with-trailing-slash
-                - prev-next-app-with-base-path
-                - prev-next-app-dynamic-routes
-      - run-e2e-tests:
-          filters:
-            branches:
-              ignore: /renovate\/.*/
-          requires:
-            - queue/block_workflow
-          matrix:
-            parameters:
-              os:
-                - windows
-              app:
-                - next-app-windows
+#      - run-e2e-tests:
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#          requires:
+#            - queue/block_workflow
+#          matrix:
+#            parameters:
+#              os:
+#                - linux
+#              app:
+#                # Current minor version of Next.js
+#                - next-app
+#                - next-app-experimental
+#                - next-app-using-serverless-trace
+#                - next-app-with-trailing-slash
+#                - next-app-with-base-path
+#                - next-app-dynamic-routes
+#                - next-app-with-locales
+#                - next-app-with-locales-using-serverless-trace
+#                # Previous minor version of Next.js
+#                - prev-next-app
+#                - prev-next-app-with-trailing-slash
+#                - prev-next-app-with-base-path
+#                - prev-next-app-dynamic-routes
+#      - run-e2e-tests:
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#          requires:
+#            - queue/block_workflow
+#          matrix:
+#            parameters:
+#              os:
+#                - windows
+#              app:
+#                - next-app-windows
