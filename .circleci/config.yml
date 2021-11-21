@@ -69,33 +69,23 @@ jobs:
           name: Run unit tests
           command: yarn test:ci
           environment:
-            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/unit-tests
 
       - run:
           name: Run integration tests
           command: yarn integration:ci
           environment:
-            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/integration-tests
 
       - run:
           name: Upload code coverage
           command: npx codecov
 
-      - when:
-          condition:
-            not:
-              equal: [<< pipeline.git.branch >>, "master"]
-          environment:
-            AWS_DEFAULT_REGION: us-east-1
-            GITHUB_NEW_SHA: << pipeline.git.revision >>
-            GITHUB_BASE_SHA: << pipeline.git.base_revision >>
-          steps:
-            - run:
-                name: Upload handler sizes to S3
-                command: PULL_REQUEST_ID=${CIRCLE_PULL_REQUEST##*/} yarn handlers:comment-handler-sizes
+      - store_test_results:
+          path: ./reports/junit/unit-tests
 
       - store_test_results:
-          path: ./reports/junit/
+          path: ./reports/junit/integration-tests
 
       - store_artifacts:
           path: ./reports/junit
