@@ -83,7 +83,7 @@
     "which": "^2.0.2",
     "lodash": "^4.17.21"
   },
-  "packageManager": "yarn@3.0.2",
+  "packageManager": "yarn@3.1.0",
   "workspaces": [
     "packages/compat-layers/*",
     "packages/serverless-components/*",
