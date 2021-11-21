@@ -60,10 +60,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:14.17.34":
-  version: 14.17.34
-  resolution: "@types/node@npm:14.17.34"
-  checksum: 803a7532b6998aca6aa1b3e6239f280e82612d4f641d38fbf08962c905ea9d1b278b2f09d396beac5120a4e68f33d7467298b197f2f00150ec1dcd546de02a89
+"@types/node@npm:16.11.9":
+  version: 16.11.9
+  resolution: "@types/node@npm:16.11.9"
+  checksum: baec2e6471ee58fd1e9874e6f47ab95a918a0f46b42424392e4c13e3e07f078f8b72b6b48073b0b14f710ed66c5f1b2e497df43f28151000f11f5f299382cfe2
   languageName: node
   linkType: hard
 
@@ -599,7 +599,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "e2e-test-utils@workspace:."
   dependencies:
-    "@types/node": 14.17.34
+    "@types/node": 16.11.9
     "@types/node-fetch": 2.5.7
     "@types/uuid": 8.3.3
     aws-sdk: 2.1033.0
