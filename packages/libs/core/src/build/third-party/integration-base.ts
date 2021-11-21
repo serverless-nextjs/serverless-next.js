@@ -21,7 +21,12 @@ export abstract class ThirdPartyIntegrationBase {
 
     if (await fse.pathExists(packageJsonPath)) {
       const packageJson = await fse.readJSON(packageJsonPath);
-      return !!packageJson.dependencies[name];
+      if (packageJson.dependencies && packageJson.dependencies[name]) {
+        return true;
+      }
+      if (packageJson.devDependencies && packageJson.devDependencies[name]) {
+        return true;
+      }
     }
 
     return false;
