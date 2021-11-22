@@ -9,7 +9,8 @@ const {
   getLambda,
   deleteLambda,
   configChanged,
-  pack
+  pack,
+  confirmLastUpdateSuccess
 } = require("./utils");
 
 const outputsList = [
@@ -127,6 +128,8 @@ class AwsLambda extends Component {
       region,
       credentials: this.context.credentials.aws
     });
+
+    await confirmLastUpdateSuccess({ lambda, name });
 
     const { Version } = await lambda
       .publishVersion({

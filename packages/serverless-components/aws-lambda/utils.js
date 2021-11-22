@@ -196,14 +196,14 @@ const confirmLastUpdateSuccess = async (
   for (let second in range(timeout)) {
     const { status } = await getLambda({ lambda, name });
     lastUpdateStatus = status;
-    if (status === "Successful") {
+    if (status === "Successful" || status === "Failed") {
       return;
     }
     // sleep for 1 second.
     await new Promise((resolve) => setTimeout(resolve, 1000));
   }
   throw new Error(
-    `Last update of ${name} not successful. Last update status is ${lastUpdateStatus}`
+    `Last update of ${name} is incomplete. Last update status is ${lastUpdateStatus}`
   );
 };
 
@@ -311,6 +311,7 @@ module.exports = {
   createLambda,
   updateLambdaCode,
   updateLambdaConfig,
+  confirmLastUpdateSuccess,
   getLambda,
   deleteLambda,
   getPolicy,
