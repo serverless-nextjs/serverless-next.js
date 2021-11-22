@@ -15543,9 +15543,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lint-staged@npm:^12.1.1":
-  version: 12.1.1
-  resolution: "lint-staged@npm:12.1.1"
+"lint-staged@npm:^12.1.2":
+  version: 12.1.2
+  resolution: "lint-staged@npm:12.1.2"
   dependencies:
     cli-truncate: ^3.1.0
     colorette: ^2.0.16
@@ -15563,7 +15563,7 @@ __metadata:
     yaml: ^1.10.2
   bin:
     lint-staged: bin/lint-staged.js
-  checksum: 1c4ec4cbccac7040b7d676f0e4f99d9e8d69360ec99d69cbfb12b6c27708ba8a076741712f1b45e67099fc640b1049a27cba8866a85a299a6048ab39d8e4faa7
+  checksum: ec84ce4f74d0d8fe314bd0b62fb5e0be64af692d1876f68c457116faef61b4b3b79d72df7819c248bfbb20c46e88fbe994128e7351e84bec7048263e00199925
   languageName: node
   linkType: hard
 
@@ -19207,7 +19207,7 @@ __metadata:
     jest-junit: ^13.0.0
     jest-pnp-resolver: ^1.2.2
     lerna: ^4.0.0
-    lint-staged: ^12.1.1
+    lint-staged: ^12.1.2
     opencollective-postinstall: ^2.0.3
     prettier: ^2.4.1
     ts-node: ^10.4.0
