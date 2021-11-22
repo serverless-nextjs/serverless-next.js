@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.20.85](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.84...@getjerry/serverless-next@1.20.85) (2021-11-22)
+
+**Note:** Version bump only for package @getjerry/serverless-next
+
 ## [1.20.84](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.83...@getjerry/serverless-next@1.20.84) (2021-11-22)
 
 **Note:** Version bump only for package @getjerry/serverless-next
