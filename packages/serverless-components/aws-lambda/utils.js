@@ -5,6 +5,7 @@ const globby = require("globby");
 const { contains, isNil, last, split, equals, not, pick } = require("ramda");
 const { readFile, createReadStream, createWriteStream } = require("fs-extra");
 const { utils } = require("@serverless/core");
+const range = require("lodash/range");
 
 const VALID_FORMATS = ["zip", "tar"];
 const isValidFormat = (format) => contains(format, VALID_FORMATS);
@@ -150,6 +151,8 @@ const updateLambdaConfig = async ({
     functionConfigParams.Layers = [layer.arn];
   }
 
+  await confirmLastUpdateSuccess({ lambda, name });
+
   const res = await lambda
     .updateFunctionConfiguration(functionConfigParams)
     .promise();
@@ -169,9 +172,39 @@ const updateLambdaCode = async ({ lambda, name, zipPath, bucket }) => {
   } else {
     functionCodeParams.ZipFile = await readFile(zipPath);
   }
+
+  await confirmLastUpdateSuccess({ lambda, name });
+
   const res = await lambda.updateFunctionCode(functionCodeParams).promise();
 
   return res.FunctionArn;
+};
+
+/**
+ * Check if the last update status of a Lambda is Successful.
+ *
+ * @param lambda
+ * @param name
+ * @param timeout
+ * @returns {Promise<void>}
+ */
+const confirmLastUpdateSuccess = async (
+  { lambda, name },
+  timeout = 60 * 10
+) => {
+  let lastUpdateStatus;
+  for (let second in range(timeout)) {
+    const { status } = await getLambda({ lambda, name });
+    lastUpdateStatus = status;
+    if (status === "Successful") {
+      return;
+    }
+    // sleep for 1 second.
+    await new Promise((resolve) => setTimeout(resolve, 1000));
+  }
+  throw new Error(
+    `Last update of ${name} not successful. Last update status is ${lastUpdateStatus}`
+  );
 };
 
 const getLambda = async ({ lambda, name }) => {
@@ -194,7 +227,8 @@ const getLambda = async ({ lambda, name }) => {
       memory: res.MemorySize,
       hash: res.CodeSha256,
       env: res.Environment ? res.Environment.Variables : {},
-      arn: res.FunctionArn
+      arn: res.FunctionArn,
+      status: res.LastUpdateStatus
     };
   } catch (e) {
     if (e.code === "ResourceNotFoundException") {

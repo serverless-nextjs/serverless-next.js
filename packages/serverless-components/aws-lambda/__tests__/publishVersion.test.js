@@ -72,8 +72,9 @@ describe("publishVersion", () => {
     mockGetFunctionConfigurationPromise.mockRejectedValueOnce({
       code: "ResourceNotFoundException"
     });
-    mockGetFunctionConfigurationPromise.mockResolvedValueOnce({
-      FunctionName: "my-func"
+    mockGetFunctionConfigurationPromise.mockResolvedValue({
+      FunctionName: "my-func",
+      LastUpdateStatus: "Successful"
     });
     mockUpdateFunctionCodePromise.mockResolvedValueOnce({
       FunctionName: "my-func"
