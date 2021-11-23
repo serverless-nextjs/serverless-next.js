@@ -6982,7 +6982,7 @@ __metadata:
     rollup-plugin-delete: 2.0.0
     rollup-plugin-node-externals: 2.2.0
     rollup-plugin-terser: 7.0.2
-    rollup-plugin-typescript2: 0.31.0
+    rollup-plugin-typescript2: 0.31.1
     sharp: 0.28.3
     ts-loader: 9.2.6
     ts-node: 10.4.0
@@ -7022,7 +7022,7 @@ __metadata:
     rollup: 2.60.1
     rollup-plugin-node-externals: 2.2.0
     rollup-plugin-terser: 7.0.2
-    rollup-plugin-typescript2: 0.31.0
+    rollup-plugin-typescript2: 0.31.1
     typescript: 4.5.2
     yargs: 17.2.1
   languageName: unknown
@@ -18928,9 +18928,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-typescript2@npm:0.31.0":
-  version: 0.31.0
-  resolution: "rollup-plugin-typescript2@npm:0.31.0"
+"rollup-plugin-typescript2@npm:0.31.1":
+  version: 0.31.1
+  resolution: "rollup-plugin-typescript2@npm:0.31.1"
   dependencies:
     "@rollup/pluginutils": ^4.1.0
     "@yarn-tool/resolve-package": ^1.0.36
@@ -18941,7 +18941,7 @@ __metadata:
   peerDependencies:
     rollup: ">=1.26.3"
     typescript: ">=2.4.0"
-  checksum: ff13ea7bc9f7576cdbb925c6ed9adddcef1a0c3cdb641dfadb8311c4c0e2135c1f7b200e8c559ca67f6f61a20edc5271fc383cb747a841ce93793f821faac8af
+  checksum: 29a809aaf7a8c2f81e033cc3214284c2bbe915c3cbe0e31de5930d51b8b031b7ab46dcef9b3f32fd9e5a82a3ad78c6434f35639fc163c940a6ee71b44548673e
   languageName: node
   linkType: hard
 
