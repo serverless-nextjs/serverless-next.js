@@ -34,7 +34,7 @@
     "@types/node-fetch": "2.5.7",
     "@types/react": "^17.0.36",
     "@types/uuid": "8.3.3",
-    "aws-sdk": "2.1033.0",
+    "aws-sdk": "2.1034.0",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-transform-class-properties": "6.24.1",
     "cypress": "9.0.0",
