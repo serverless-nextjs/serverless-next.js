@@ -29,7 +29,7 @@
     "@cypress/code-coverage": "3.9.11",
     "@cypress/skip-test": "2.6.1",
     "@types/mocha": "9.0.0",
-    "@types/node": "16.11.9",
+    "@types/node": "16.11.10",
     "@types/node-fetch": "2.5.7",
     "@types/react": "17.0.36",
     "@types/uuid": "8.3.3",

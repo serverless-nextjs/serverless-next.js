@@ -55,7 +55,7 @@
     "@types/aws-lambda": "8.10.85",
     "@types/fs-extra": "9.0.13",
     "@types/jest": "^27.0.3",
-    "@types/node": "16.11.9",
+    "@types/node": "16.11.10",
     "@types/yargs": "17.0.7",
     "jest": "^27.3.1",
     "rimraf": "3.0.2",
