@@ -2144,9 +2144,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:2.1035.0":
-  version: 2.1035.0
-  resolution: "aws-sdk@npm:2.1035.0"
+"aws-sdk@npm:2.1036.0":
+  version: 2.1036.0
+  resolution: "aws-sdk@npm:2.1036.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -2157,7 +2157,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: c051ce1242c5ef23d505c0c46d7a3571b412b8033868ac245f56fa844bad210c7274d63436ec2fc2df8d3f23ab70ad16bd8d2b9c3419f07f6e46306b685eacdb
+  checksum: 174e738fba2b8f11f29f226824edb0ea702ccbc8ff6bb2b1915293382c8bfd595dd6baeb47f34c85a6607caac426befdfcfd5eca6f9216a9c89d823310011d41
   languageName: node
   linkType: hard
 
@@ -6210,7 +6210,7 @@ fsevents@~2.3.1:
     "@types/node-fetch": 2.5.7
     "@types/react": 17.0.36
     "@types/uuid": 8.3.3
-    aws-sdk: 2.1035.0
+    aws-sdk: 2.1036.0
     babel-plugin-istanbul: 6.1.1
     babel-plugin-transform-class-properties: 6.24.1
     cypress: 9.1.0
