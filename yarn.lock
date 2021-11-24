@@ -6632,7 +6632,7 @@ __metadata:
     "@serverless/core": 1.1.2
     "@types/fs-extra": 9.0.13
     "@types/node": 16.11.10
-    "@types/ramda": 0.27.50
+    "@types/ramda": 0.27.51
     aws-sdk: 2.1035.0
     babel-eslint: 10.1.0
     eslint: 8.3.0
@@ -6697,7 +6697,7 @@ __metadata:
     "@types/jest": 27.0.3
     "@types/lodash": 4.14.177
     "@types/node": 16.11.10
-    "@types/ramda": 0.27.50
+    "@types/ramda": 0.27.51
     archiver: 5.3.0
     aws-sdk: 2.1035.0
     fs-extra: 9.1.0
@@ -6729,7 +6729,7 @@ __metadata:
     "@types/klaw-sync": 6.0.1
     "@types/lodash": 4.14.177
     "@types/node": 16.11.10
-    "@types/ramda": 0.27.50
+    "@types/ramda": 0.27.51
     archiver: 5.3.0
     aws-sdk: 2.1035.0
     babel-eslint: 10.1.0
@@ -7582,12 +7582,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ramda@npm:0.27.50":
-  version: 0.27.50
-  resolution: "@types/ramda@npm:0.27.50"
+"@types/ramda@npm:0.27.51":
+  version: 0.27.51
+  resolution: "@types/ramda@npm:0.27.51"
   dependencies:
     ts-toolbelt: ^6.15.1
-  checksum: bae394d8bdf4ff8a019b7cdd1b9edc25375dc919a9e4ac2f6d3f7558c37e0101d0aaa149d14d7169c4fa6358772fbabc68201b66fd428a13675b2b5c62456a72
+  checksum: f724576e0d401388fd69a6f479651c0d98a7fc1cb1e10ee9593bce0627e39f77acb0e591161bcea01cb4a0076f2eb6e6853de88e88197becfbc9e580132c8c39
   languageName: node
   linkType: hard
 
