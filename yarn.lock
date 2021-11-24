@@ -6988,7 +6988,7 @@ __metadata:
     ts-node: 10.4.0
     typescript: 4.5.2
     uuid: 8.3.2
-    webpack: 5.64.2
+    webpack: 5.64.3
   peerDependencies:
     builtin-modules: 3.2.0
   bin:
@@ -21406,9 +21406,9 @@ typescript@~3.9.10:
   languageName: node
   linkType: hard
 
-"webpack@npm:5.64.2":
-  version: 5.64.2
-  resolution: "webpack@npm:5.64.2"
+"webpack@npm:5.64.3":
+  version: 5.64.3
+  resolution: "webpack@npm:5.64.3"
   dependencies:
     "@types/eslint-scope": ^3.7.0
     "@types/estree": ^0.0.50
@@ -21439,7 +21439,7 @@ typescript@~3.9.10:
       optional: true
   bin:
     webpack: bin/webpack.js
-  checksum: e02fcd3bfdc7e3322291b476af60f46dc4a31ec4349af4d1d47018b8e449820968d4ab8f1e8b313dd5cfcf1b47c7f976fe39fde73411d03c173a692c3dae428e
+  checksum: dc773c260b5db95d7c0e9aec079e9ed30a154420e3fc7fb46bd4f9b98714f322d8effe6534d5a3a17157f2c514a6edb26494585de4f1c92329980e04de235dd3
   languageName: node
   linkType: hard
 
