@@ -2,6 +2,7 @@ const aws = require("aws-sdk");
 const AwsSdkLambda = aws.Lambda;
 const { mergeDeepRight, pick } = require("ramda");
 const { Component, utils } = require("@serverless/core");
+const { waitUntilReady } = require("./waitUntilReady");
 const {
   createLambda,
   updateLambdaCode,
@@ -80,6 +81,9 @@ class AwsLambda extends Component {
       const createResult = await createLambda({ lambda, ...config });
       config.arn = createResult.arn;
       config.hash = createResult.hash;
+
+      // Wait for Lambda to be in a ready state after creation and before doing anything else
+      await waitUntilReady(this.context, config.name, config.region);
     } else {
       config.arn = prevLambda.arn;
 
@@ -90,11 +94,17 @@ class AwsLambda extends Component {
           await updateLambdaCode({ lambda, ...config });
         }
 
+        // Wait for Lambda to be in a ready state after code updated and before doing anything else
+        await waitUntilReady(this.context, config.name, config.region);
+
         this.context.status(`Updating`);
         this.context.debug(`Updating ${config.name} lambda config.`);
 
         const updateResult = await updateLambdaConfig({ lambda, ...config });
         config.hash = updateResult.hash;
+
+        // Wait for Lambda to be ready after updating config and before doing anything else
+        await waitUntilReady(this.context, config.name, config.region);
       }
     }
 

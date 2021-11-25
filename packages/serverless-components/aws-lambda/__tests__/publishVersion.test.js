@@ -6,7 +6,8 @@ const {
   mockPublishVersionPromise,
   mockGetFunctionConfigurationPromise,
   mockUpdateFunctionCodePromise,
-  mockUpdateFunctionConfigurationPromise
+  mockUpdateFunctionConfigurationPromise,
+  mockGetFunctionPromise
 } = require("aws-sdk");
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
@@ -32,6 +33,13 @@ describe("publishVersion", () => {
     mockCreateFunctionPromise.mockResolvedValueOnce({
       FunctionArn: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
       CodeSha256: "LQT0VA="
+    });
+
+    mockGetFunctionPromise.mockResolvedValue({
+      Configuration: {
+        State: "Active",
+        LastUpdateStatus: "Successful"
+      }
     });
 
     component = await createComponent();
