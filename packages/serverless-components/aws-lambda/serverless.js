@@ -43,6 +43,7 @@ const defaults = {
   region: "us-east-1"
 };
 
+// No-op
 class AwsLambda extends Component {
   async default(inputs = {}) {
     this.context.status(`Deploying`);
