@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.0.4-patch.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-lambda@1.0.3...@sls-next/aws-lambda@1.0.4-patch.0) (2021-11-25)
+
+
+### Bug Fixes
+
+* **aws-lambda:** patch aws-lambda to wait for lambda to be in ready state ([3a7b6ce](https://github.com/serverless-nextjs/serverless-next.js/commit/3a7b6ce0cefadf20c06b9387c4721e2d8eea5d76))
+
+
+
+
+
 ## [1.0.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/aws-lambda@1.0.3-alpha.0...@sls-next/aws-lambda@1.0.3) (2020-11-02)
 
 **Note:** Version bump only for package @sls-next/aws-lambda
