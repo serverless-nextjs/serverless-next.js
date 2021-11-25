@@ -30,7 +30,7 @@
     "@types/klaw-sync": "6.0.1",
     "@types/lodash": "4.14.177",
     "@types/node": "16.11.10",
-    "@types/ramda": "0.27.51",
+    "@types/ramda": "0.27.52",
     "babel-eslint": "10.1.0",
     "eslint": "8.3.0",
     "eslint-config-prettier": "8.3.0",
