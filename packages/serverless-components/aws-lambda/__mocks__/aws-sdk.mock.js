@@ -13,6 +13,9 @@ const mockCreateFunctionPromise = promisifyMock(mockCreateFunction);
 const mockPublishVersion = jest.fn();
 const mockPublishVersionPromise = promisifyMock(mockPublishVersion);
 
+const mockGetFunction = jest.fn();
+const mockGetFunctionPromise = promisifyMock(mockGetFunction);
+
 const mockGetFunctionConfiguration = jest.fn();
 const mockGetFunctionConfigurationPromise = promisifyMock(
   mockGetFunctionConfiguration
@@ -37,12 +40,15 @@ module.exports = {
   mockUpdateFunctionCodePromise,
   mockUpdateFunctionConfiguration,
   mockUpdateFunctionConfigurationPromise,
+  mockGetFunction,
+  mockGetFunctionPromise,
 
   Lambda: jest.fn(() => ({
     createFunction: mockCreateFunction,
     publishVersion: mockPublishVersion,
     getFunctionConfiguration: mockGetFunctionConfiguration,
     updateFunctionCode: mockUpdateFunctionCode,
-    updateFunctionConfiguration: mockUpdateFunctionConfiguration
+    updateFunctionConfiguration: mockUpdateFunctionConfiguration,
+    getFunction: mockGetFunction
   }))
 };
