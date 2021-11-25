@@ -16,3 +16,4 @@ dist
 .package-lock.json
 yarn-error.log
 instructions.txt
+.yarn
