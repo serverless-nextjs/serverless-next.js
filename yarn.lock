@@ -6641,7 +6641,7 @@ __metadata:
     eslint-plugin-prettier: 4.0.0
     fs-extra: 9.1.0
     jest: 27.3.1
-    prettier: 2.4.1
+    prettier: 2.5.0
     ramda: 0.27.1
     rimraf: 3.0.2
     typescript: 4.5.2
@@ -6741,7 +6741,7 @@ __metadata:
     klaw-sync: 6.0.0
     lodash: 4.17.21
     mime-types: 2.1.34
-    prettier: 2.4.1
+    prettier: 2.5.0
     ramda: 0.27.1
     rimraf: 3.0.2
     s3-stream-upload: 2.0.2
@@ -17950,7 +17950,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prettier@npm:2.4.1, prettier@npm:^2.3.1, prettier@npm:^2.4.1":
+"prettier@npm:2.5.0, prettier@npm:^2.5.0":
+  version: 2.5.0
+  resolution: "prettier@npm:2.5.0"
+  bin:
+    prettier: bin-prettier.js
+  checksum: aad1b35b73e7c14596d389d90977a83dad0db689ba5802a0ef319c357b7867f55b885db197972aa6a56c30f53088c9f8e0d7f7930ae074c275a4e9cbe091d21d
+  languageName: node
+  linkType: hard
+
+"prettier@npm:^2.3.1":
   version: 2.4.1
   resolution: "prettier@npm:2.4.1"
   bin:
@@ -19209,7 +19218,7 @@ __metadata:
     lerna: ^4.0.0
     lint-staged: ^12.1.2
     opencollective-postinstall: ^2.0.3
-    prettier: ^2.4.1
+    prettier: ^2.5.0
     ts-node: ^10.4.0
     typescript: ^4.5.2
   languageName: unknown
