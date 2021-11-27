@@ -2226,9 +2226,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:2.1036.0":
-  version: 2.1036.0
-  resolution: "aws-sdk@npm:2.1036.0"
+"aws-sdk@npm:2.1037.0":
+  version: 2.1037.0
+  resolution: "aws-sdk@npm:2.1037.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -2239,7 +2239,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 174e738fba2b8f11f29f226824edb0ea702ccbc8ff6bb2b1915293382c8bfd595dd6baeb47f34c85a6607caac426befdfcfd5eca6f9216a9c89d823310011d41
+  checksum: d23014e3421bd34c98af90387205e01eadd8e065c251a1b4407dbb8354d1112beb11e16b05b6a7deb541805943f796d873931633deff02fdd4fd5466baca3dce
   languageName: node
   linkType: hard
 
@@ -6340,7 +6340,7 @@ fsevents@~2.3.1:
     "@types/node-fetch": 2.5.7
     "@types/react": ^17.0.37
     "@types/uuid": 8.3.3
-    aws-sdk: 2.1036.0
+    aws-sdk: 2.1037.0
     babel-plugin-istanbul: 6.1.1
     babel-plugin-transform-class-properties: 6.24.1
     cypress: 9.1.0
@@ -8597,11 +8597,11 @@ typescript@4.5.2:
 
 "typescript@patch:typescript@4.5.2#~builtin<compat/typescript>":
   version: 4.5.2
-  resolution: "typescript@patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=ddd1e8"
+  resolution: "typescript@patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 24a439e062a05e3285a4f0e8a40644116ecdca89f3e908bed01e5a01b9aee747e3bcf0e85fe9e017e5ebf0c0863437c39479f2616f55a244c2d82d37022cdc4f
+  checksum: 53838d56aba6fcc947d63aa0771e5d966b1b648fddafed6e221d7f38c71219c4e036ece8cfe9e35ed80cf5a35ff4eb958934c993f99c3233773ec4f9ccd53f69
   languageName: node
   linkType: hard
 

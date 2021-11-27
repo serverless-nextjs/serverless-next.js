@@ -22,12 +22,12 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
     "@serverless/core": "1.1.2",
-    "aws-sdk": "2.1036.0",
+    "aws-sdk": "2.1037.0",
     "fs-extra": "9.1.0",
     "lodash": "4.17.21"
   },
   "peerDependencies": {
     "@serverless/core": "1.1.2",
-    "aws-sdk": "2.1036.0"
+    "aws-sdk": "2.1037.0"
   }
 }
