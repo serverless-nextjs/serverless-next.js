@@ -17,13 +17,13 @@
   "license": "MIT",
   "dependencies": {
     "@serverless/core": "1.1.2",
-    "aws-sdk": "2.1036.0",
+    "aws-sdk": "2.1037.0",
     "ramda": "0.27.1"
   },
   "peerDependencies": {
     "@babel/core": "7.16.0",
     "@serverless/core": "1.1.2",
-    "aws-sdk": "2.1036.0"
+    "aws-sdk": "2.1037.0"
   },
   "devDependencies": {
     "@babel/preset-typescript": "7.16.0",
