@@ -46,16 +46,22 @@ export const copyOutputFileTraces = async ({
   await Promise.all(
     Array.from(traces)
       .filter((file) => !file.endsWith("package.json"))
-      .map((file) => {
-        const normalized = normalizeNodeModules(file);
-        const destinationFile = path.join(
+      .map((src) => {
+        const normalized = normalizeNodeModules(src);
+        const dest = path.join(
           destination,
           normalized.startsWith("node_modules/")
             ? normalized
-            : path.relative(serverlessDir, file)
+            : path.relative(serverlessDir, src)
         );
-
-        return fse.copy(file, destinationFile);
+        return [src, dest];
       })
+      /**
+       * When Next.js is used with TypeScript files, the file trace
+       * will include source `.ts`/`.tsx` files. Filter these out
+       * because they're already bundled, and because `src === dest`.
+       */
+      .filter(([src, dest]) => src !== dest)
+      .map(([src, dest]) => fse.copy(src, dest))
   );
 };
