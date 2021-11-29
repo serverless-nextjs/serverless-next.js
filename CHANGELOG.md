@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.0...v3.7.0-alpha.1) (2021-11-21)
+
+### Bug Fixes
+
+- **core:** check for 3rd party packages properly when 'dependencies' is not defined ([5006439](https://github.com/serverless-nextjs/serverless-next.js/commit/50064394106205c45f8e943f05d41d1222cc34f3))
+
 # [3.7.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.6.1-alpha.2...v3.7.0-alpha.0) (2021-11-21)
 
 ### Features
