@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.1...v3.7.0-alpha.2) (2021-11-29)
+
+### Bug Fixes
+
+- **core:** check for 3rd party packages properly when 'dependencies' is not defined ([#2094](https://github.com/serverless-nextjs/serverless-next.js/issues/2094)) ([ce293b7](https://github.com/serverless-nextjs/serverless-next.js/commit/ce293b71344e85e062512afb8af1531e5eb3e06d))
+
+### Features
+
+- **core:** enabling avif support ([#2126](https://github.com/serverless-nextjs/serverless-next.js/issues/2126)) ([9f9ab5b](https://github.com/serverless-nextjs/serverless-next.js/commit/9f9ab5b2c79e9c85c4ab1d2f0c492cba43f90b7d))
+
 # [3.7.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.0...v3.7.0-alpha.1) (2021-11-21)
 
 ### Bug Fixes
