@@ -129,31 +129,37 @@ describe("Image optimizer", () => {
 
   describe("Routes", () => {
     it.each`
-      imagePath                         | expectedObjectKey
-      ${"/test-image.png"}              | ${"public/test-image.png"}
-      ${"/static/test-image.png"}       | ${"static/test-image.png"}
-      ${"/_next/static/test-image.png"} | ${"_next/static/test-image.png"}
-    `("serves image request", async ({ imagePath, expectedObjectKey }) => {
-      const { parsedUrl, req, res } = createEventByImagePath(imagePath);
+      imagePath                         | accept          | expectedObjectKey
+      ${"/test-image.png"}              | ${"image/avif"} | ${"public/test-image.png"}
+      ${"/test-image.png"}              | ${"image/webp"} | ${"public/test-image.png"}
+      ${"/static/test-image.png"}       | ${"image/webp"} | ${"static/test-image.png"}
+      ${"/_next/static/test-image.png"} | ${"image/webp"} | ${"_next/static/test-image.png"}
+    `(
+      "serves image request",
+      async ({ imagePath, accept, expectedObjectKey }) => {
+        const { parsedUrl, req, res } = createEventByImagePath(imagePath, {
+          accept: accept
+        });
 
-      await imageOptimizer(
-        "",
-        imagesManifest as ImagesManifest,
-        req,
-        res,
-        parsedUrl,
-        mockPlatformClient as PlatformClient
-      );
+        await imageOptimizer(
+          "",
+          imagesManifest as ImagesManifest,
+          req,
+          res,
+          parsedUrl,
+          mockPlatformClient as PlatformClient
+        );
 
-      expect(res.getHeaders()).toEqual({
-        "cache-control": "public, max-age=60",
-        etag: expect.any(String),
-        "content-type": "image/webp"
-      });
-      expect(res.statusCode).toEqual(200);
+        expect(res.getHeaders()).toEqual({
+          "cache-control": "public, max-age=60",
+          etag: expect.any(String),
+          "content-type": accept
+        });
+        expect(res.statusCode).toEqual(200);
 
-      expect(mockPlatformClient.getObject).toBeCalledWith(expectedObjectKey);
-    });
+        expect(mockPlatformClient.getObject).toBeCalledWith(expectedObjectKey);
+      }
+    );
 
     it.each`
       imagePath
