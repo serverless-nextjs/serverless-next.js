@@ -33,7 +33,7 @@
     "@types/node-fetch": "2.5.7",
     "@types/react": "17.0.37",
     "@types/uuid": "8.3.3",
-    "aws-sdk": "2.1038.0",
+    "aws-sdk": "2.1039.0",
     "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-transform-class-properties": "6.24.1",
     "cross-env": "^7.0.3",

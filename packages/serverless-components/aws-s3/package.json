@@ -16,7 +16,7 @@
   "dependencies": {
     "@serverless/core": "1.1.2",
     "archiver": "5.3.0",
-    "aws-sdk": "2.1038.0",
+    "aws-sdk": "2.1039.0",
     "fs-extra": "9.1.0",
     "klaw-sync": "6.0.0",
     "lodash": "4.17.21",

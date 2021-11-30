@@ -14,7 +14,7 @@
   "license": "MIT",
   "homepage": "https://github.com/serverless-next.js/serverless-next.js",
   "dependencies": {
-    "aws-sdk": "2.1038.0",
+    "aws-sdk": "2.1039.0",
     "cypress": "9.0.0",
     "node-fetch": "2.6.5",
     "ts-node": "10.4.0",
