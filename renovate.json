@@ -43,6 +43,10 @@
     {
       "packagePatterns": ["@docusaurus"],
       "groupName": "docusaurus"
+    },
+    {
+      "packagePatterns": ["@jest", "jest"],
+      "groupName": "jest"
     }
   ],
   "ignoreDeps": [
