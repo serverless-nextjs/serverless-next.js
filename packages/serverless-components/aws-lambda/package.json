@@ -29,7 +29,7 @@
     "@types/fs-extra": "9.0.13",
     "@types/jest": "27.0.3",
     "@types/lodash": "4.14.177",
-    "@types/node": "16.11.10",
+    "@types/node": "16.11.11",
     "@types/ramda": "0.27.56",
     "jest": "27.4.0",
     "rimraf": "3.0.2",
