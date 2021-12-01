@@ -62,7 +62,7 @@
     "builtin-modules": "3.2.0",
     "eslint": "8.3.0",
     "fetch-mock-jest": "1.5.1",
-    "jest": "27.4.2",
+    "jest": "27.4.3",
     "klaw": "4.0.1",
     "next": "11.1.2",
     "react": "17.0.2",
