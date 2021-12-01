@@ -19,7 +19,7 @@
     "node-fetch": "2.6.5",
     "ts-node": "10.4.0",
     "uuid": "8.3.2",
-    "yargs": "17.2.1"
+    "yargs": "17.3.0"
   },
   "devDependencies": {
     "@types/node": "16.11.11",
