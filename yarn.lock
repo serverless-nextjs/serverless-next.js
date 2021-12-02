@@ -1228,9 +1228,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-sdk/client-s3@npm:3.43.0":
-  version: 3.43.0
-  resolution: "@aws-sdk/client-s3@npm:3.43.0"
+"@aws-sdk/client-s3@npm:3.44.0":
+  version: 3.44.0
+  resolution: "@aws-sdk/client-s3@npm:3.44.0"
   dependencies:
     "@aws-crypto/sha256-browser": 2.0.0
     "@aws-crypto/sha256-js": 2.0.0
@@ -1279,7 +1279,7 @@ __metadata:
     entities: 2.2.0
     fast-xml-parser: 3.19.0
     tslib: ^2.3.0
-  checksum: 0f9f8ad1fb18ac4e7d10f6e25fd98cbac1d44890621507b451286a6bcfe556d92c684c568793ee0614274eda754c8a26a719f3e92ab659ef4d751a11a7d68625
+  checksum: 69e1c12803f2cf3352cf0f06ce1e2c7cdf00e99dbd4062fd7bcd8dc9a3e0b2e25f6ffe1afffc11a862eef6ef599a44ce1e0496de790bbe2d1ea8df6664d12bfd
   languageName: node
   linkType: hard
 
@@ -6869,7 +6869,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/aws-common@workspace:packages/libs/aws-common"
   dependencies:
-    "@aws-sdk/client-s3": 3.43.0
+    "@aws-sdk/client-s3": 3.44.0
     "@aws-sdk/client-sqs": 3.43.0
     "@sls-next/core": "link:../core"
     "@types/node": 16.11.11
@@ -7138,7 +7138,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/lambda-at-edge@workspace:packages/libs/lambda-at-edge"
   dependencies:
-    "@aws-sdk/client-s3": 3.43.0
+    "@aws-sdk/client-s3": 3.44.0
     "@aws-sdk/client-sqs": 3.43.0
     "@babel/core": 7.16.0
     "@babel/eslint-parser": 7.16.3
