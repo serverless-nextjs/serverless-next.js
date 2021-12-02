@@ -4788,9 +4788,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@jest/core@npm:^27.4.2":
-  version: 27.4.2
-  resolution: "@jest/core@npm:27.4.2"
+"@jest/core@npm:^27.4.3":
+  version: 27.4.3
+  resolution: "@jest/core@npm:27.4.3"
   dependencies:
     "@jest/console": ^27.4.2
     "@jest/reporters": ^27.4.2
@@ -4804,13 +4804,13 @@ __metadata:
     exit: ^0.1.2
     graceful-fs: ^4.2.4
     jest-changed-files: ^27.4.2
-    jest-config: ^27.4.2
+    jest-config: ^27.4.3
     jest-haste-map: ^27.4.2
     jest-message-util: ^27.4.2
     jest-regex-util: ^27.4.0
     jest-resolve: ^27.4.2
     jest-resolve-dependencies: ^27.4.2
-    jest-runner: ^27.4.2
+    jest-runner: ^27.4.3
     jest-runtime: ^27.4.2
     jest-snapshot: ^27.4.2
     jest-util: ^27.4.2
@@ -4825,7 +4825,7 @@ __metadata:
   peerDependenciesMeta:
     node-notifier:
       optional: true
-  checksum: 2adc765c6fbcf50de39ffdb6164a1d7c0c85b71f718ce84e28436cc97d89faf32d2df9b99d68b0279156d6d1a39ae4d7370ff52c39ea532a08009f944abe0b7a
+  checksum: fc38fc677e7154a91c689ad41fff3ff246a840282138f094b11b68c42978c8c503cc5235bbe337038a3b2909b56b2bc7ea9b35e370dbcc7a0968f97ca3578531
   languageName: node
   linkType: hard
 
@@ -6510,7 +6510,7 @@ __metadata:
     eslint-plugin-import: 2.25.3
     eslint-plugin-prettier: 4.0.0
     fs-extra: 9.1.0
-    jest: 27.4.2
+    jest: 27.4.3
     prettier: 2.5.0
     ramda: 0.27.1
     rimraf: 3.0.2
@@ -6572,7 +6572,7 @@ __metadata:
     aws-sdk: 2.1041.0
     fs-extra: 9.1.0
     globby: 11.0.4
-    jest: 27.4.2
+    jest: 27.4.3
     lodash: 4.17.21
     ramda: 0.27.1
     rimraf: 3.0.2
@@ -6662,7 +6662,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     fast-glob: 3.2.7
     fs-extra: 9.1.0
-    jest: 27.4.2
+    jest: 27.4.3
     rimraf: 3.0.2
     typescript: 4.5.2
   peerDependencies:
@@ -6754,7 +6754,7 @@ __metadata:
     fresh: 0.5.2
     fs-extra: 9.1.0
     is-animated: 2.0.1
-    jest: 27.4.2
+    jest: 27.4.3
     jsonwebtoken: 8.5.1
     next: 11.1.2
     node-fetch: 2.6.5
@@ -6840,7 +6840,7 @@ __metadata:
     fetch-mock-jest: 1.5.1
     fs-extra: 9.1.0
     get-stream: 6.0.1
-    jest: 27.4.2
+    jest: 27.4.3
     klaw: 4.0.1
     next: 11.1.2
     node-fetch: 2.6.5
@@ -6887,7 +6887,7 @@ __metadata:
     constructs: 3.3.161
     esbuild: 0.14.1
     fs-extra: 9.1.0
-    jest: ^27.4.2
+    jest: ^27.4.3
     rimraf: 3.0.2
     rollup: 2.60.2
     rollup-plugin-node-externals: 2.2.0
@@ -7215,17 +7215,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/jsdom@npm:^16.2.4":
-  version: 16.2.13
-  resolution: "@types/jsdom@npm:16.2.13"
-  dependencies:
-    "@types/node": "*"
-    "@types/parse5": "*"
-    "@types/tough-cookie": "*"
-  checksum: 2575d020e345f556a28208dad4d495e317e7364f1de222322c100841f49a815c73c0aa32d32d7a72a05fd7cd33551f4c0effc108fbaaf194ec42ed0f04d877b9
-  languageName: node
-  linkType: hard
-
 "@types/json-schema@npm:*, @types/json-schema@npm:^7.0.8, @types/json-schema@npm:^7.0.9":
   version: 7.0.9
   resolution: "@types/json-schema@npm:7.0.9"
@@ -7370,13 +7359,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/parse5@npm:*":
-  version: 6.0.2
-  resolution: "@types/parse5@npm:6.0.2"
-  checksum: ab21fa73091ca44fa5a3e3beb6549e07f6a8f08b65f12d10c9c1302927c67424e18e897d641fd59fc1f04d8c2c8382b4b3235e145e4d6958f559a7ef5956c323
-  languageName: node
-  linkType: hard
-
 "@types/prettier@npm:^2.1.5":
   version: 2.4.1
   resolution: "@types/prettier@npm:2.4.1"
@@ -7486,13 +7468,6 @@ __metadata:
   version: 2.0.1
   resolution: "@types/stack-utils@npm:2.0.1"
   checksum: 205fdbe3326b7046d7eaf5e494d8084f2659086a266f3f9cf00bccc549c8e36e407f88168ad4383c8b07099957ad669f75f2532ed4bc70be2b037330f7bae019
-  languageName: node
-  linkType: hard
-
-"@types/tough-cookie@npm:*":
-  version: 4.0.1
-  resolution: "@types/tough-cookie@npm:4.0.1"
-  checksum: 7570c1c2d74201f4ead3512cf8e4c99e97d92ab8a02ae2fb987fd720ced0ca1a2baf250c98a861a170b86762606c9bf6d32207675f13dffc5ab75c08c96578d2
   languageName: node
   linkType: hard
 
@@ -13695,18 +13670,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-cli@npm:^27.4.2":
-  version: 27.4.2
-  resolution: "jest-cli@npm:27.4.2"
+"jest-cli@npm:^27.4.3":
+  version: 27.4.3
+  resolution: "jest-cli@npm:27.4.3"
   dependencies:
-    "@jest/core": ^27.4.2
+    "@jest/core": ^27.4.3
     "@jest/test-result": ^27.4.2
     "@jest/types": ^27.4.2
     chalk: ^4.0.0
     exit: ^0.1.2
     graceful-fs: ^4.2.4
     import-local: ^3.0.2
-    jest-config: ^27.4.2
+    jest-config: ^27.4.3
     jest-util: ^27.4.2
     jest-validate: ^27.4.2
     prompts: ^2.0.1
@@ -13718,7 +13693,7 @@ __metadata:
       optional: true
   bin:
     jest: bin/jest.js
-  checksum: 4f386f57e30f9e1110e87e2aabe14a53021bb4f57baf11876091c331a9a0570e7113e1cbafb876e00661085863434a70ff03ad117fe9a4e6c7f65e9b6fd367bf
+  checksum: 26d550b1e231d6ef11505d8bfa68fa4021bf3685bba49959293bc3993512a99f315630a632f2244607f9aaad0f689d02ded79619c0fb940ef226ab82ecd132b7
   languageName: node
   linkType: hard
 
@@ -13756,9 +13731,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-config@npm:^27.4.2":
-  version: 27.4.2
-  resolution: "jest-config@npm:27.4.2"
+"jest-config@npm:^27.4.3":
+  version: 27.4.3
+  resolution: "jest-config@npm:27.4.3"
   dependencies:
     "@babel/core": ^7.1.0
     "@jest/test-sequencer": ^27.4.2
@@ -13770,13 +13745,13 @@ __metadata:
     glob: ^7.1.1
     graceful-fs: ^4.2.4
     jest-circus: ^27.4.2
-    jest-environment-jsdom: ^27.4.2
+    jest-environment-jsdom: ^27.4.3
     jest-environment-node: ^27.4.2
     jest-get-type: ^27.4.0
     jest-jasmine2: ^27.4.2
     jest-regex-util: ^27.4.0
     jest-resolve: ^27.4.2
-    jest-runner: ^27.4.2
+    jest-runner: ^27.4.3
     jest-util: ^27.4.2
     jest-validate: ^27.4.2
     micromatch: ^4.0.4
@@ -13787,7 +13762,7 @@ __metadata:
   peerDependenciesMeta:
     ts-node:
       optional: true
-  checksum: ddfbb7280a2359d3e92a8cc31bc85f8d019de7616dd79c8ddfa5cc1af65d4e4a1967bbfe194fc903c5e62f5bde6bb1ab370a22fc309be499b92d1e699cbb6491
+  checksum: 74d406232002b0357fd217958d7c4e123008dd6d09bc380f8b595409b60c6a4fe38a729e4f2c417bc3b815a5a321dd19fdbb3918d5318a9254203ba66e82c297
   languageName: node
   linkType: hard
 
@@ -13874,19 +13849,18 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-environment-jsdom@npm:^27.4.2":
-  version: 27.4.2
-  resolution: "jest-environment-jsdom@npm:27.4.2"
+"jest-environment-jsdom@npm:^27.4.3":
+  version: 27.4.3
+  resolution: "jest-environment-jsdom@npm:27.4.3"
   dependencies:
     "@jest/environment": ^27.4.2
     "@jest/fake-timers": ^27.4.2
     "@jest/types": ^27.4.2
-    "@types/jsdom": ^16.2.4
     "@types/node": "*"
     jest-mock: ^27.4.2
     jest-util: ^27.4.2
     jsdom: ^16.6.0
-  checksum: ba7d3664840a46c8e8d15cb8f06b3c09112de1f7d66bc96fd16d14291036277c63b68cf1939d14fe1d8385978ffbaf803c1eee7a8ed7f1004e4bb45190372df9
+  checksum: cea6a05747fe8e4049f87b8b33c54a7417cfb90552eeb7c6d5a3760eed73f2558709e62f7eb91ae40d060581c8f210f954487a73c2f3b2224334af2dda681eff
   languageName: node
   linkType: hard
 
@@ -14256,9 +14230,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest-runner@npm:^27.4.2":
-  version: 27.4.2
-  resolution: "jest-runner@npm:27.4.2"
+"jest-runner@npm:^27.4.3":
+  version: 27.4.3
+  resolution: "jest-runner@npm:27.4.3"
   dependencies:
     "@jest/console": ^27.4.2
     "@jest/environment": ^27.4.2
@@ -14271,7 +14245,7 @@ __metadata:
     exit: ^0.1.2
     graceful-fs: ^4.2.4
     jest-docblock: ^27.4.0
-    jest-environment-jsdom: ^27.4.2
+    jest-environment-jsdom: ^27.4.3
     jest-environment-node: ^27.4.2
     jest-haste-map: ^27.4.2
     jest-leak-detector: ^27.4.2
@@ -14282,7 +14256,7 @@ __metadata:
     jest-worker: ^27.4.2
     source-map-support: ^0.5.6
     throat: ^6.0.1
-  checksum: e1c501e3e7a94cb8eeeee03fe95a128cfec94493c7c5a131fc284e7f8424825cc4d83285c9b31a669d3ba8a7a2c700288ddfc91dbaf57eec5c3481f36075a464
+  checksum: 45369ac8c05ac26d6a3fa9a6736ac35dc8db9af0ce4e4930cbf130f05f86aed2277850329a37d9b308b65aea79ee0efc3c4163e285ff1e2c94516c8708d979b4
   languageName: node
   linkType: hard
 
@@ -14586,13 +14560,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"jest@npm:27.4.2, jest@npm:^27.4.2":
-  version: 27.4.2
-  resolution: "jest@npm:27.4.2"
+"jest@npm:27.4.3, jest@npm:^27.4.3":
+  version: 27.4.3
+  resolution: "jest@npm:27.4.3"
   dependencies:
-    "@jest/core": ^27.4.2
+    "@jest/core": ^27.4.3
     import-local: ^3.0.2
-    jest-cli: ^27.4.2
+    jest-cli: ^27.4.3
   peerDependencies:
     node-notifier: ^8.0.1 || ^9.0.0 || ^10.0.0
   peerDependenciesMeta:
@@ -14600,7 +14574,7 @@ __metadata:
       optional: true
   bin:
     jest: bin/jest.js
-  checksum: 726dbdaaad94eccae084a5bdd85cbe9c308b4a3d331f2315f1cad6447858cc5b1aaa730d6b63dcf29b4f8258a8271086bdc812a4dd04113085c48975782f8bfa
+  checksum: 0c76bbc996e496f11d7daa2e01b5c90ebf9e2587a1d1fa7e0cb8afc7c50abda24874766e107f9080103795af9ac80a06c83d61d9fc50762bd6d915db40a1f1df
   languageName: node
   linkType: hard
 
@@ -18567,7 +18541,7 @@ __metadata:
     eslint-plugin-prettier: ^4.0.0
     eslint-plugin-promise: 5.1.1
     husky: ^7.0.4
-    jest: ^27.4.2
+    jest: ^27.4.3
     jest-junit: ^13.0.0
     jest-pnp-resolver: ^1.2.2
     lerna: ^4.0.0
