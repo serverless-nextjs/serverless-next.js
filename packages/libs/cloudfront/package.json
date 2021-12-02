@@ -34,7 +34,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "2.1040.0"
+    "aws-sdk": "2.1041.0"
   },
   "devDependencies": {
     "@babel/preset-typescript": "^7.16.0",
