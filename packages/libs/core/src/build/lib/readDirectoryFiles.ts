@@ -5,7 +5,8 @@ import normalizePath from "normalize-path";
 
 const readDirectoryFiles = async (
   directory: string,
-  ignorePatterns: string[]
+  ignorePatterns: string[],
+  onlyFiles = true
 ): Promise<Array<Entry>> => {
   const directoryExists = fse.pathExistsSync(directory);
   if (!directoryExists) {
@@ -16,7 +17,7 @@ const readDirectoryFiles = async (
   const normalizedDirectory = normalizePath(directory);
 
   return await glob(path.posix.join(normalizedDirectory, "**", "*"), {
-    onlyFiles: true,
+    onlyFiles,
     stats: true,
     dot: true, // To allow matching dot files or directories
     ignore: ignorePatterns

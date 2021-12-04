@@ -218,6 +218,11 @@ class NextjsComponent extends Component {
         ? nextConfigPath
         : resolve(inputs.build.baseDir);
 
+    const bundledLambdas =
+      typeof inputs.build !== "boolean" &&
+      typeof inputs.build !== "undefined" &&
+      !!inputs.build.bundledLambdas;
+
     const buildConfig: BuildOptions = {
       enabled: inputs.build
         ? // @ts-ignore
@@ -230,7 +235,8 @@ class NextjsComponent extends Component {
       ...(typeof inputs.build === "object" ? inputs.build : {}),
       cwd: buildCwd,
       baseDir: buildBaseDir, // @ts-ignore
-      cleanupDotNext: inputs.build?.cleanupDotNext ?? true
+      cleanupDotNext: inputs.build?.cleanupDotNext ?? true,
+      bundledLambdas
     };
 
     if (buildConfig.enabled) {
@@ -258,7 +264,8 @@ class NextjsComponent extends Component {
           separateApiLambda: buildConfig.separateApiLambda ?? true,
           disableOriginResponseHandler:
             buildConfig.disableOriginResponseHandler ?? false,
-          useV2Handler: buildConfig.useV2Handler ?? false
+          useV2Handler: buildConfig.useV2Handler ?? false,
+          runtime: inputs.runtime ?? undefined
         },
         nextStaticPath
       );

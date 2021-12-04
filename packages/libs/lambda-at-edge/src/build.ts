@@ -18,8 +18,10 @@ import filterOutDirectories from "@sls-next/core/dist/build/lib/filterOutDirecto
 import { Job } from "@vercel/nft/out/node-file-trace";
 import { prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core";
+import type { ServerlessComponentInputs } from "@sls-next/serverless-component/types";
 import { NextI18nextIntegration } from "@sls-next/core/dist/build/third-party/next-i18next";
 import normalizePath from "normalize-path";
+import { bundleLambda } from "./lib/bundleLambda";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -52,6 +54,8 @@ type BuildOptions = {
   separateApiLambda?: boolean;
   disableOriginResponseHandler?: boolean;
   useV2Handler?: boolean;
+  bundledLambdas?: boolean;
+  runtime?: ServerlessComponentInputs["runtime"];
 };
 
 const defaultBuildOptions = {
@@ -71,7 +75,8 @@ const defaultBuildOptions = {
   assetIgnorePatterns: [],
   regenerationQueueName: undefined,
   separateApiLambda: true,
-  useV2Handler: false
+  useV2Handler: false,
+  bundledLambdas: false
 };
 
 class Builder {
@@ -96,6 +101,20 @@ class Builder {
     if (buildOptions) {
       this.buildOptions = buildOptions;
     }
+  }
+
+  getRuntime(handler: string) {
+    const { runtime } = this.buildOptions;
+    if (!runtime) {
+      return null;
+    }
+    if (typeof runtime === "string") {
+      return runtime;
+    }
+    if (handler in runtime) {
+      return runtime[handler as keyof typeof runtime] || null;
+    }
+    return null;
   }
 
   async readPublicFiles(assetIgnorePatterns: string[]): Promise<string[]> {
@@ -285,12 +304,12 @@ class Builder {
     apiBuildManifest: OriginRequestApiHandlerManifest,
     separateApiLambda: boolean,
     useV2Handler: boolean
-  ): Promise<void[]> {
+  ): Promise<void> {
     const hasAPIRoutes = await fse.pathExists(
       join(this.serverlessDir, "pages/api")
     );
 
-    return Promise.all([
+    await Promise.all([
       this.copyTraces(buildManifest, DEFAULT_LAMBDA_CODE_DIR),
       this.processAndCopyHandler(
         useV2Handler ? "default-handler-v2" : "default-handler",
@@ -363,11 +382,19 @@ class Builder {
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR)
       )
     ]);
+
+    if (this.buildOptions.bundledLambdas) {
+      await bundleLambda(
+        this.outputDir,
+        DEFAULT_LAMBDA_CODE_DIR,
+        this.getRuntime("defaultLambda")
+      );
+    }
   }
 
   async buildApiLambda(
     apiBuildManifest: OriginRequestApiHandlerManifest
-  ): Promise<void[]> {
+  ): Promise<void> {
     let copyTraces: Promise<void>[] = [];
 
     if (this.buildOptions.useServerlessTraceTarget) {
@@ -396,7 +423,7 @@ class Builder {
       );
     }
 
-    return Promise.all([
+    await Promise.all([
       ...copyTraces,
       this.processAndCopyHandler(
         "api-handler",
@@ -424,6 +451,14 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
+
+    if (this.buildOptions.bundledLambdas) {
+      await bundleLambda(
+        this.outputDir,
+        API_LAMBDA_CODE_DIR,
+        this.getRuntime("apiLambda")
+      );
+    }
   }
 
   async buildRegenerationHandler(
@@ -461,6 +496,14 @@ class Builder {
         }
       )
     ]);
+
+    if (this.buildOptions.bundledLambdas) {
+      await bundleLambda(
+        this.outputDir,
+        REGENERATION_LAMBDA_CODE_DIR,
+        this.getRuntime("regenerationLambda")
+      );
+    }
   }
 
   /**
@@ -528,18 +571,27 @@ class Builder {
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "routes-manifest.json")
       ),
       fse.copy(
-        join(
-          path.dirname(require.resolve("@sls-next/core/package.json")),
-          "dist",
-          "sharp_node_modules"
-        ),
-        join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "node_modules")
-      ),
-      fse.copy(
         join(this.dotNextDir, "images-manifest.json"),
         join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "images-manifest.json")
       )
     ]);
+
+    if (this.buildOptions.bundledLambdas) {
+      await bundleLambda(
+        this.outputDir,
+        IMAGE_LAMBDA_CODE_DIR,
+        this.getRuntime("imageLambda")
+      );
+    }
+
+    await fse.copy(
+      join(
+        path.dirname(require.resolve("@sls-next/core/package.json")),
+        "dist",
+        "sharp_node_modules"
+      ),
+      join(this.outputDir, IMAGE_LAMBDA_CODE_DIR, "node_modules")
+    );
   }
 
   async readNextConfig(): Promise<NextConfig | undefined> {
