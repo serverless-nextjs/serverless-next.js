@@ -1288,9 +1288,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1036.0":
-  version: 2.1036.0
-  resolution: "aws-sdk@npm:2.1036.0"
+"aws-sdk@npm:^2.1041.0":
+  version: 2.1041.0
+  resolution: "aws-sdk@npm:2.1041.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -1301,7 +1301,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 174e738fba2b8f11f29f226824edb0ea702ccbc8ff6bb2b1915293382c8bfd595dd6baeb47f34c85a6607caac426befdfcfd5eca6f9216a9c89d823310011d41
+  checksum: 297c24ad3571c23ee5f0a353d7d62836d7311ac3d42906783d0b4335285d1dea6f3459e0f1d1cc89e85f6b64632c76e8e531bcf4bde56a468035e422326edb76
   languageName: node
   linkType: hard
 
@@ -1758,7 +1758,7 @@ __metadata:
     rollup: ^2.60.2
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: ^0.31.1
-    serverless: ^2.67.0
+    serverless: ^2.68.0
     ts-node: ^10.4.0
   languageName: unknown
   linkType: soft
@@ -5849,9 +5849,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"serverless@npm:^2.67.0":
-  version: 2.67.0
-  resolution: "serverless@npm:2.67.0"
+"serverless@npm:^2.68.0":
+  version: 2.68.0
+  resolution: "serverless@npm:2.68.0"
   dependencies:
     "@serverless/cli": ^1.5.3
     "@serverless/components": ^3.18.1
@@ -5861,7 +5861,7 @@ fsevents@~2.3.2:
     ajv: ^6.12.6
     ajv-keywords: ^3.5.2
     archiver: ^5.3.0
-    aws-sdk: ^2.1036.0
+    aws-sdk: ^2.1041.0
     bluebird: ^3.7.2
     boxen: ^5.1.2
     cachedir: ^2.3.0
@@ -5912,7 +5912,7 @@ fsevents@~2.3.2:
   bin:
     serverless: bin/serverless.js
     sls: bin/serverless.js
-  checksum: 2511ebe844a17dad0195ff2299f33001a6e7f49b4803cc5770017cc13aa66dd6a847ce4ba6c5d0435d387d52b086235a86bf2d6922814a998d2ca9fc4145779f
+  checksum: 93cc25f616e567c80ae9464bef9a3e8361f28948230ed46aaa559d0d2651d3217cd7add5722b3c0879b6c982ac95da08e34fff1ebca47301c5357321eaa54999
   languageName: node
   linkType: hard
 

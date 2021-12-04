@@ -40,7 +40,7 @@
     "find-up": "^6.2.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097",
-    "serverless": "^2.67.0"
+    "serverless": "^2.68.0"
   },
   "devDependencies": {
     "@types/node": "^16.11.11",
