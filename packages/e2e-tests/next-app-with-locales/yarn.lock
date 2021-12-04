@@ -6347,7 +6347,7 @@ fsevents@~2.3.1:
     isomorphic-fetch: 3.0.0
     istanbul-lib-coverage: 3.2.0
     next: 11.1.2
-    next-i18next: ^9.2.0
+    next-i18next: ^10.0.1
     nyc: 15.1.0
     react: 17.0.2
     react-dom: 17.0.2
@@ -6358,9 +6358,9 @@ fsevents@~2.3.1:
   languageName: unknown
   linkType: soft
 
-"next-i18next@npm:^9.2.0":
-  version: 9.2.0
-  resolution: "next-i18next@npm:9.2.0"
+"next-i18next@npm:^10.0.1":
+  version: 10.0.1
+  resolution: "next-i18next@npm:10.0.1"
   dependencies:
     "@babel/runtime": ^7.13.17
     "@types/hoist-non-react-statics": ^3.3.1
@@ -6372,7 +6372,7 @@ fsevents@~2.3.1:
   peerDependencies:
     next: ">= 10.0.0"
     react: ">= 16.8.0"
-  checksum: 1f8cedf192c3bd3041ba437a28462b9466c50a9dd1fb7e7b0293f79ec41d6c146930e0fc7fa161f0859c6476cef68cafb5a18c9c67d4870564ee919ca60fd577
+  checksum: e808c7998e13acf9d3af7e4ccbac1ce99f2af20cdcecc107d700fb2b7b77bdf17d15f0ad3280685701c1d53bf248f7c57015db1bcf79533136ddad0983d82761
   languageName: node
   linkType: hard
 
