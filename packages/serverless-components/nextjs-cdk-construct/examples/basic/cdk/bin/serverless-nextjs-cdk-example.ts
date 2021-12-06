@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 import 'source-map-support/register';
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib/core';
 import { Builder } from "@sls-next/lambda-at-edge";
 import { ServerlessNextjsCdkExampleStack } from '../serverless-nextjs-cdk-example-stack';
 

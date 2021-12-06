@@ -1,5 +1,5 @@
 import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
-import * as cdk from '@aws-cdk/core';
+import * as cdk from 'aws-cdk-lib/core';
 import * as ServerlessNextjsCdkExample from '../../cdk/serverless-nextjs-cdk-example-stack';
 
 test('Empty Stack', () => {
