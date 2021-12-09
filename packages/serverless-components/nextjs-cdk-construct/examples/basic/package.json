@@ -1,0 +1,55 @@
+{
+  "name": "serverless-nextjs-cdk-example",
+  "version": "0.1.0",
+  "bin": {
+    "serverless-nextjs-cdk-example": "cdk/bin/serverless-nextjs-cdk-example.js"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "npm run cdk:build",
+    "next:build": "next build",
+    "next:build:prod": "NODE_ENV=production next build",
+    "next:start": "next start",
+    "next:lint": "next lint",
+    "cdk:build": "tsc --project tsconfig.cdk.json",
+    "cdk:watch": "tsc -w --project tsconfig.cdk.json",
+    "cdk:test": "jest --config=jest.cdk.config.js",
+    "next": "next",
+    "cdk": "cdk"
+  },
+  "devDependencies": {
+    "@aws-cdk/assert": "1.117.0",
+    "@types/aws-lambda": "^8.10.81",
+    "@types/jest": "^26.0.10",
+    "@types/node": "10.17.27",
+    "@types/react": "17.0.16",
+    "@types/react-dom": "^17.0.9",
+    "aws-cdk": "1.117.0",
+    "eslint": "7.32.0",
+    "eslint-config-next": "11.0.1",
+    "jest": "^26.4.2",
+    "ts-jest": "^26.2.0",
+    "ts-node": "^9.0.0",
+    "typescript": "4.3.5"
+  },
+  "dependencies": {
+    "@aws-cdk/aws-certificatemanager": "^1.117.0",
+    "@aws-cdk/aws-cloudfront": "^1.117.0",
+    "@aws-cdk/aws-cloudfront-origins": "^1.117.0",
+    "@aws-cdk/aws-iam": "^1.117.0",
+    "@aws-cdk/aws-lambda": "^1.117.0",
+    "@aws-cdk/aws-lambda-event-sources": "^1.117.0",
+    "@aws-cdk/aws-logs": "^1.117.0",
+    "@aws-cdk/aws-route53": "^1.117.0",
+    "@aws-cdk/aws-route53-targets": "^1.117.0",
+    "@aws-cdk/aws-s3": "^1.117.0",
+    "@aws-cdk/aws-s3-deployment": "^1.117.0",
+    "@aws-cdk/aws-sqs": "^1.117.0",
+    "@aws-cdk/core": "1.117.0",
+    "@sls-next/cdk-construct": "^3.2.0",
+    "next": "11.0.1",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "source-map-support": "^0.5.16"
+  }
+}

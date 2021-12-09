@@ -2,11 +2,16 @@
 
 // Script to run e2e tests in a CI environment
 
+// FIXME: not sure why TS types cannot be found
+// @ts-ignore
 import fetch from "node-fetch";
+// @ts-ignore
 import { v4 as uuidv4 } from "uuid";
-import { execSync } from "child_process";
+// @ts-ignore
 import * as AWS from "aws-sdk";
+import { execSync } from "child_process";
 import * as fs from "fs";
+import * as path from "path";
 
 // Next.js build ID follows a certain pattern
 const buildIdRegex = /"buildId":"([a-zA-Z0-9_-]+)"/;
@@ -20,6 +25,11 @@ const waitTimeout = parseInt(process.env["WAIT_TIMEOUT"] ?? "600");
 // Constants
 const deploymentBucketName = "serverless-next-js-e2e-test"; // For saving .serverless state
 const appName = process.env["APP_NAME"] || ""; // app name to store in deployment bucket. Choose a unique name per test app.
+
+const ssgPagePath = process.env["SSG_PAGE_PATH"];
+const ssrPagePath = process.env["SSR_PAGE_PATH"];
+const isrPagePath = process.env["ISR_PAGE_PATH"];
+const dynamicIsrPagePath = process.env["DYNAMIC_ISR_PAGE_PATH"];
 
 if (appName === "") {
   throw new Error("Please set the APP_NAME environment variable.");
@@ -48,7 +58,7 @@ async function checkWebAppBuildId(
   while (new Date().getTime() - startTime < waitDurationMillis) {
     // Guarantee that CloudFront cache is missed by appending uuid query parameter.
     const uuid: string = uuidv4().replace("-", "");
-    const suffixedUrl: string = url + `/?uuid=${uuid}`;
+    const suffixedUrl = `${url}${url.endsWith("/") ? "" : "/"}?uuid=${uuid}`;
 
     try {
       const response = await fetch(suffixedUrl);
@@ -70,7 +80,7 @@ async function checkWebAppBuildId(
         `URL ${url} is not yet ready. Retrying in ${pollInterval} seconds.`
       );
       await new Promise((r) => setTimeout(r, pollInterval * 1000));
-    } catch (error) {
+    } catch (error: any) {
       // URL may not return anything, so retry after some time
       if (error.toString().includes("ENOTFOUND")) {
         console.info(
@@ -91,7 +101,7 @@ function getNextBuildId(): string | null {
   let data;
   try {
     data = fs.readFileSync(`.next/BUILD_ID`);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "ENOENT") {
       console.error("Next BUILD_ID file could not be found.");
       return null;
@@ -116,7 +126,7 @@ function getAppBucketName(appName: string): string | null {
   let data;
   try {
     data = fs.readFileSync(`.serverless/Template.${appName}.AwsS3.json`);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "ENOENT") {
       console.error("S3 JSON file could not be found.");
       return null;
@@ -138,13 +148,14 @@ function getAppBucketName(appName: string): string | null {
  * Get the CloudFront URL and distribution ID.
  * @param appName
  */
-function getCloudFrontDetails(
-  appName: string
-): { cloudFrontUrl: string | null; distributionId: string | null } {
+function getCloudFrontDetails(appName: string): {
+  cloudFrontUrl: string | null;
+  distributionId: string | null;
+} {
   let data;
   try {
     data = fs.readFileSync(`.serverless/Template.${appName}.CloudFront.json`);
-  } catch (err) {
+  } catch (err: any) {
     if (err.code === "ENOENT") {
       console.error("CloudFront JSON file could not be found.");
       return { cloudFrontUrl: null, distributionId: null };
@@ -251,6 +262,7 @@ function cleanup(): void {
     );
 
     // Optimistically clean up app's S3 bucket
+    console.info("Optimistically cleaning up app's S3 bucket");
     execSync(
       `aws s3 rm s3://${getAppBucketName(appName)} --recursive || true`,
       {
@@ -285,7 +297,31 @@ async function runEndToEndTest(): Promise<boolean> {
 
     // Deploy
     console.info("Deploying serverless-next.js app.");
-    execSync("npx serverless", { stdio: "inherit" });
+
+    // Need to set SERVERLESS_CI = true for patched serverless to ensure logs are output correctly on non-windows
+    // Otherwise there will be tons of "deploying..." logs
+    let serverlessCiEnv = "";
+    if (process.platform !== "win32") {
+      serverlessCiEnv = "SERVERLESS_CI=true ";
+    }
+
+    if (process.env.USE_PUBLISHED_SERVERLESS_PATCHED === "true") {
+      execSync(`${serverlessCiEnv}npx @sls-next/serverless-patched --debug`, {
+        stdio: "inherit"
+      });
+    } else {
+      // The below will always use the latest version in this monorepo, above will use latest published version
+      const serverlessPatchedPath = path.join(
+        "..",
+        "..",
+        "serverless-patched",
+        "dist",
+        "serverless-patched.js"
+      );
+      execSync(`${serverlessCiEnv}node ${serverlessPatchedPath} --debug`, {
+        stdio: "inherit"
+      });
+    }
 
     // Get Next.js build ID and URL
     console.info("Getting Next.js build ID");
@@ -296,7 +332,7 @@ async function runEndToEndTest(): Promise<boolean> {
     }
 
     console.info("Getting CloudFront URL and distribution ID.");
-    const { cloudFrontUrl, distributionId } = getCloudFrontDetails("next-app");
+    const { cloudFrontUrl, distributionId } = getCloudFrontDetails(appName);
 
     if (!cloudFrontUrl || !distributionId) {
       throw new Error("CloudFront url or distribution id not found.");
@@ -306,15 +342,48 @@ async function runEndToEndTest(): Promise<boolean> {
     console.info(
       "Checking if CloudFront invalidations, SSR and SSG pages are ready."
     );
-    const [cloudFrontReady, ssrReady, ssgReady] = await Promise.all([
-      checkInvalidationsCompleted(distributionId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + "/ssr-page", buildId, waitTimeout, 10),
-      checkWebAppBuildId(cloudFrontUrl + "/ssg-page", buildId, waitTimeout, 10)
-      // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
-      // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
-    ]);
+    const [cloudFrontReady, ssrReady, ssgReady, isrReady, dynamicIsrReady] =
+      await Promise.all([
+        checkInvalidationsCompleted(distributionId, 120, 10), // wait max 2 minutes for invalidations as some regions may take longer
+        checkWebAppBuildId(
+          cloudFrontUrl + ssrPagePath,
+          buildId,
+          waitTimeout,
+          10
+        ),
+        checkWebAppBuildId(
+          cloudFrontUrl + ssgPagePath,
+          buildId,
+          waitTimeout,
+          10
+        ),
+        isrPagePath
+          ? checkWebAppBuildId(
+              cloudFrontUrl + isrPagePath,
+              buildId,
+              waitTimeout,
+              10
+            )
+          : Promise.resolve(true),
+        dynamicIsrPagePath
+          ? checkWebAppBuildId(
+              cloudFrontUrl + dynamicIsrPagePath,
+              buildId,
+              waitTimeout,
+              10
+            )
+          : Promise.resolve(true)
+        // The below is not really needed, as it waits for distribution to be deployed globally, which takes a longer time.
+        // checkCloudFrontDistributionReady(distributionId, waitTimeout, 10),
+      ]);
 
-    if (!cloudFrontReady || !ssrReady || !ssgReady) {
+    if (!cloudFrontReady) {
+      console.info(
+        "CloudFront invalidations not ready after 120 seconds, but continuing with test anyway."
+      );
+    }
+
+    if (!ssrReady || !ssgReady || !isrReady || !dynamicIsrReady) {
       throw new Error("Timed out waiting for app to be ready!");
     }
 

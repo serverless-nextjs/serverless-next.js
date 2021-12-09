@@ -15,6 +15,9 @@ export type CloudFrontClient = {
   createInvalidation: (
     options: CreateInvalidationOptions
   ) => Promise<AWS.CloudFront.CreateInvalidationResult>;
+  getDistribution: (
+    distributionId: string
+  ) => Promise<AWS.CloudFront.GetDistributionResult>;
 };
 
 export type Credentials = {
@@ -26,6 +29,13 @@ export type Credentials = {
 export default ({
   credentials
 }: CloudFrontClientFactoryOptions): CloudFrontClient => {
+  if (AWS?.config) {
+    AWS.config.update({
+      maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "10"),
+      retryDelayOptions: { base: 200 }
+    });
+  }
+
   const cloudFront = new AWS.CloudFront({ credentials });
 
   return {
@@ -49,6 +59,15 @@ export default ({
               Items: paths
             }
           }
+        })
+        .promise();
+    },
+    getDistribution: async (
+      distributionId: string
+    ): Promise<AWS.CloudFront.GetDistributionResult> => {
+      return await cloudFront
+        .getDistribution({
+          Id: distributionId
         })
         .promise();
     }

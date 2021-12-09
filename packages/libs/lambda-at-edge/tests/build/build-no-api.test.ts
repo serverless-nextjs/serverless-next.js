@@ -2,12 +2,13 @@ import { join } from "path";
 import fse from "fs-extra";
 import execa from "execa";
 import Builder from "../../src/build";
-import { DEFAULT_LAMBDA_CODE_DIR, API_LAMBDA_CODE_DIR } from "../../src/build";
-import { cleanupDir, removeNewLineChars } from "../test-utils";
 import {
-  OriginRequestDefaultHandlerManifest,
-  OriginRequestApiHandlerManifest
-} from "../../types";
+  DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
+  IMAGE_LAMBDA_CODE_DIR
+} from "../../src/build";
+import { cleanupDir, removeNewLineChars } from "../test-utils";
+import { OriginRequestDefaultHandlerManifest } from "../../src/types";
 
 jest.mock("execa");
 
@@ -60,6 +61,9 @@ describe("Builder Tests (no API routes)", () => {
       expect(fseEmptyDirSpy).toBeCalledWith(
         expect.stringContaining(join(".test_sls_next_output", "api-lambda"))
       );
+      expect(fseEmptyDirSpy).toBeCalledWith(
+        expect.stringContaining(join(".test_sls_next_output", "assets"))
+      );
     });
   });
 
@@ -68,42 +72,71 @@ describe("Builder Tests (no API routes)", () => {
       const {
         buildId,
         publicFiles,
-        pages: {
-          ssr: { dynamic, nonDynamic },
-          html
-        },
+        pages: { dynamic, ssg, ssr, html },
         trailingSlash
       } = defaultBuildManifest;
 
       expect(removeNewLineChars(buildId)).toEqual("test-build-id");
-      expect(dynamic).toEqual({
-        "/:root": {
-          file: "pages/[root].js",
-          regex: expect.any(String)
+
+      expect(dynamic).toEqual([
+        {
+          route: "/blog/[post]",
+          regex: "^\\/blog(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/customers/:customer": {
-          file: "pages/customers/[customer].js",
-          regex: expect.any(String)
+        {
+          route: "/customers/[customer]",
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/customers/:customer/:post": {
-          file: "pages/customers/[customer]/[post].js",
-          regex: expect.any(String)
+        {
+          route: "/customers/[customer]/profile",
+          regex: "^\\/customers(?:\\/([^\\/#\\?]+?))\\/profile[\\/#\\?]?$"
         },
-        "/customers/:customer/profile": {
-          file: "pages/customers/[customer]/profile.js",
-          regex: expect.any(String)
+        {
+          route: "/customers/[customer]/[post]",
+          regex:
+            "^\\/customers(?:\\/([^\\/#\\?]+?))(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         },
-        "/customers/:catchAll*": {
-          file: "pages/customers/[...catchAll].js",
-          regex: expect.any(String)
+        {
+          route: "/customers/[...catchAll]",
+          regex:
+            "^\\/customers(?:\\/((?:[^\\/#\\?]+?)(?:\\/(?:[^\\/#\\?]+?))*))?[\\/#\\?]?$"
+        },
+        {
+          route: "/[root]",
+          regex: "^(?:\\/([^\\/#\\?]+?))[\\/#\\?]?$"
         }
+      ]);
+
+      expect(ssg).toEqual({
+        nonDynamic: {
+          "/": {
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          },
+          "/contact": {
+            initialRevalidateSeconds: false,
+            srcRoute: null
+          }
+        },
+        dynamic: {},
+        notFound: {}
       });
 
-      expect(nonDynamic).toEqual({
-        "/customers/new": "pages/customers/new.js",
-        "/": "pages/index.js",
-        "/_app": "pages/_app.js",
-        "/_document": "pages/_document.js"
+      expect(ssr).toEqual({
+        nonDynamic: {
+          "/customers/new": "pages/customers/new.js",
+          "/_app": "pages/_app.js",
+          "/_document": "pages/_document.js"
+        },
+        dynamic: {
+          "/[root]": "pages/[root].js",
+          "/customers/[customer]": "pages/customers/[customer].js",
+          "/customers/[customer]/[post]":
+            "pages/customers/[customer]/[post].js",
+          "/customers/[customer]/profile":
+            "pages/customers/[customer]/profile.js",
+          "/customers/[...catchAll]": "pages/customers/[...catchAll].js"
+        }
       });
 
       expect(html).toEqual({
@@ -113,10 +146,7 @@ describe("Builder Tests (no API routes)", () => {
           "/about": "pages/about.html"
         },
         dynamic: {
-          "/blog/:post": {
-            file: "pages/blog/[post].html",
-            regex: expect.any(String)
-          }
+          "/blog/[post]": "pages/blog/[post].html"
         }
       });
 
@@ -142,6 +172,18 @@ describe("Builder Tests (no API routes)", () => {
     });
   });
 
+  describe("Images Handler", () => {
+    it("has empty images handler directory", async () => {
+      expect.assertions(1);
+
+      const imageDir = await fse.readdir(
+        join(outputDir, `${IMAGE_LAMBDA_CODE_DIR}`)
+      );
+
+      expect(imageDir).toEqual([]);
+    });
+  });
+
   describe("Default Handler Artefact Files", () => {
     it("copies build files", async () => {
       expect.assertions(7);
@@ -159,13 +201,15 @@ describe("Builder Tests (no API routes)", () => {
         join(outputDir, `${DEFAULT_LAMBDA_CODE_DIR}/pages/api`)
       );
 
-      expect(files).toEqual([
-        "index.js",
-        "manifest.json",
-        "pages",
-        "prerender-manifest.json",
-        "routes-manifest.json"
-      ]);
+      expect(files).toEqual(
+        expect.arrayContaining([
+          "index.js", // there are more chunks but it should at least contain the entry point
+          "manifest.json",
+          "pages",
+          "prerender-manifest.json",
+          "routes-manifest.json"
+        ])
+      );
 
       // api pages should not be included in the default lambda
       expect(apiDirExists).toEqual(false);
@@ -183,8 +227,8 @@ describe("Builder Tests (no API routes)", () => {
       // JS files used only for prerendering at build time (contact.js, index.js) are not included since there are no API routes
       expect(pages).not.toContain(["contact.js", "index.js"]);
 
-      expect(pages).toEqual(["_error.js", "blog.js", "customers"]);
-      expect(customerPages).toEqual(["[...catchAll].js", "[post].js"]);
+      expect(pages).toEqual(["_error.js", "customers"]);
+      expect(customerPages).toEqual(["[...catchAll].js"]);
     });
   });
 });

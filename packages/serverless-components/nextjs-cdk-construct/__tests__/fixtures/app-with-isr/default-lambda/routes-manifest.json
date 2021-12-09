@@ -1,0 +1,28 @@
+{
+  "version": 3,
+  "pages404": true,
+  "basePath": "",
+  "redirects": [],
+  "rewrites": [],
+  "headers": [],
+  "dynamicRoutes": [
+    {
+      "page": "/users/[id]",
+      "regex": "^/users/([^/]+?)(?:/)?$",
+      "routeKeys": { "id": "id" },
+      "namedRegex": "^/users/(?<id>[^/]+?)(?:/)?$"
+    }
+  ],
+  "dataRoutes": [
+    {
+      "page": "/users",
+      "dataRouteRegex": "^/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users.json$"
+    },
+    {
+      "page": "/users/[id]",
+      "routeKeys": { "id": "id" },
+      "dataRouteRegex": "^/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/([^/]+?)\\.json$",
+      "namedDataRouteRegex": "^/_next/data/IOjzqKr7ylEZVL7Xy7FMd/users/(?<id>[^/]+?)\\.json$"
+    }
+  ]
+}

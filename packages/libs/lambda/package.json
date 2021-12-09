@@ -1,0 +1,68 @@
+{
+  "name": "@sls-next/lambda",
+  "version": "3.7.0-alpha.2",
+  "description": "Code to build and deploy for Lambda + API Gateway",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "module": "dist/module/index.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
+    "directory": "packages/libs/lambda"
+  },
+  "scripts": {
+    "prepack": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json && yarn rollup",
+    "esbuild": "node esbuild.js",
+    "rollup": "rollup --config",
+    "clean": "yarn rimraf dist",
+    "test": "jest"
+  },
+  "keywords": [
+    "AWS",
+    "Lambda",
+    "API Gateway",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Phang <serverlessnextjs@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@cdktf/provider-aws": "2.0.13",
+    "@sls-next/aws-common": "link:../aws-common",
+    "@sls-next/core": "link:../core",
+    "cdktf": "0.8.1",
+    "cdktf-cli": "0.8.1",
+    "constructs": "3.3.161",
+    "esbuild": "0.14.2",
+    "fs-extra": "9.1.0",
+    "yargs": "17.3.0"
+  },
+  "devDependencies": {
+    "@babel/preset-typescript": "^7.16.0",
+    "@rollup/plugin-commonjs": "18.1.0",
+    "@rollup/plugin-json": "4.1.0",
+    "@rollup/plugin-node-resolve": "10.0.0",
+    "@types/aws-lambda": "8.10.85",
+    "@types/fs-extra": "9.0.13",
+    "@types/jest": "^27.0.3",
+    "@types/node": "16.11.11",
+    "@types/yargs": "17.0.7",
+    "jest": "^27.4.3",
+    "rimraf": "3.0.2",
+    "rollup": "2.60.2",
+    "rollup-plugin-node-externals": "2.2.0",
+    "rollup-plugin-terser": "7.0.2",
+    "rollup-plugin-typescript2": "0.31.1",
+    "typescript": "4.5.2"
+  }
+}

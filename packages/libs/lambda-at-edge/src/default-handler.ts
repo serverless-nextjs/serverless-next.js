@@ -4,58 +4,60 @@ import PrerenderManifest from "./prerender-manifest.json";
 import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
+// @ts-ignore
 import lambdaAtEdgeCompat from "@sls-next/next-aws-cloudfront";
-import cookie from "cookie";
+import { renderStaticPage } from "./render/renderStaticPage";
+import {
+  getCustomHeaders,
+  handleDefault,
+  handleFallback
+} from "@sls-next/core/dist/module/handle";
+import {
+  handlePublicFiles,
+  routeDefault
+} from "@sls-next/core/dist/module/route";
+import {
+  getStaticRegenerationResponse,
+  getThrottledStaticRegenerationCachePolicy
+} from "@sls-next/core/dist/module/revalidate";
+import {
+  ExternalRoute,
+  PublicFileRoute,
+  Route,
+  StaticRoute,
+  NextStaticFileRoute
+} from "@sls-next/core/dist/module/types";
+
 import {
   CloudFrontRequest,
-  CloudFrontS3Origin,
-  CloudFrontOrigin,
-  CloudFrontResultResponse
+  CloudFrontResultResponse,
+  CloudFrontS3Origin
 } from "aws-lambda";
 import {
-  OriginRequestEvent,
   OriginRequestDefaultHandlerManifest,
-  PreRenderedManifest as PrerenderManifestType,
+  OriginRequestEvent,
   OriginResponseEvent,
-  PerfLogger,
   RoutesManifest
-} from "../types";
-import { performance } from "perf_hooks";
-import { ServerResponse } from "http";
-import jsonwebtoken from "jsonwebtoken";
-import type { Readable } from "stream";
+} from "./types";
 import {
-  createRedirectResponse,
-  getDomainRedirectPath,
-  getRedirectPath
-} from "./routing/redirector";
-import { getRewritePath } from "./routing/rewriter";
-import { addHeadersToResponse } from "./headers/addHeaders";
+  PreRenderedManifest as PrerenderManifestType,
+  PerfLogger
+} from "@sls-next/core/dist/module/types";
+import { performance } from "perf_hooks";
+import type { Readable } from "stream";
+import { externalRewrite } from "./routing/rewriter";
+import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
+import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest";
+import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
+import { s3StorePage } from "./s3/s3StorePage";
+import { createRedirectResponse } from "@sls-next/core/dist/module/route/redirect";
+import { redirect } from "@sls-next/core/dist/module/handle/redirect";
+import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
+import getStream from "get-stream";
 
 const basePath = RoutesManifestJson.basePath;
-const NEXT_PREVIEW_DATA_COOKIE = "__next_preview_data";
-const NEXT_PRERENDER_BYPASS_COOKIE = "__prerender_bypass";
-const defaultPreviewCookies = {
-  [NEXT_PRERENDER_BYPASS_COOKIE]: "",
-  [NEXT_PREVIEW_DATA_COOKIE]: ""
-};
 
-const getPreviewCookies = (request: CloudFrontRequest) => {
-  const targetCookie = request.headers.cookie || [];
-  return targetCookie.reduce((previewCookies, cookieObj) => {
-    const cookieValue = cookie.parse(cookieObj.value);
-    if (
-      cookieValue[NEXT_PREVIEW_DATA_COOKIE] &&
-      cookieValue[NEXT_PRERENDER_BYPASS_COOKIE]
-    ) {
-      return cookieValue as typeof defaultPreviewCookies;
-    } else {
-      return previewCookies;
-    }
-  }, defaultPreviewCookies);
-};
-
-const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
+const perfLogger = (logLambdaExecutionTimes?: boolean): PerfLogger => {
   if (logLambdaExecutionTimes) {
     return {
       now: () => performance.now(),
@@ -67,6 +69,7 @@ const perfLogger = (logLambdaExecutionTimes: boolean): PerfLogger => {
   }
   return {
     now: () => 0,
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
     log: () => {}
   };
 };
@@ -76,27 +79,6 @@ const addS3HostHeader = (
   s3DomainName: string
 ): void => {
   req.headers["host"] = [{ key: "host", value: s3DomainName }];
-};
-
-const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
-
-const normaliseUri = (uri: string): string => {
-  if (basePath) {
-    if (uri.startsWith(basePath)) {
-      uri = uri.slice(basePath.length);
-    } else {
-      // basePath set but URI does not start with basePath, return 404
-      return "/404";
-    }
-  }
-
-  // Remove trailing slash for all paths
-  if (uri.endsWith("/")) {
-    uri = uri.slice(0, -1);
-  }
-
-  // Empty path should be normalised to "/" as there is no Next.js route for ""
-  return uri === "" ? "/" : uri;
 };
 
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
@@ -115,60 +97,6 @@ const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
   return s3Origin.domainName;
 };
 
-const normaliseDataRequestUri = (
-  uri: string,
-  manifest: OriginRequestDefaultHandlerManifest
-): string => {
-  let normalisedUri = uri
-    .replace(`/_next/data/${manifest.buildId}`, "")
-    .replace(".json", "");
-
-  // Normalise to "/" for index data request
-  normalisedUri = ["/index", ""].includes(normalisedUri) ? "/" : normalisedUri;
-
-  return normalisedUri;
-};
-
-const router = (
-  manifest: OriginRequestDefaultHandlerManifest
-): ((uri: string) => string) => {
-  const {
-    pages: { ssr, html }
-  } = manifest;
-
-  const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
-
-  return (uri: string): string => {
-    let normalisedUri = uri;
-
-    if (isDataRequest(uri)) {
-      normalisedUri = normaliseDataRequestUri(normalisedUri, manifest);
-    }
-
-    if (ssr.nonDynamic[normalisedUri]) {
-      return ssr.nonDynamic[normalisedUri];
-    }
-
-    for (const route in allDynamicRoutes) {
-      const { file, regex } = allDynamicRoutes[route];
-
-      const re = new RegExp(regex, "i");
-      const pathMatchesRoute = re.test(normalisedUri);
-
-      if (pathMatchesRoute) {
-        return file;
-      }
-    }
-
-    // only use the 404 page if the project exports it
-    if (html.nonDynamic["/404"] !== undefined) {
-      return "pages/404.html";
-    }
-
-    return "pages/_error.js";
-  };
-};
-
 export const handler = async (
   event: OriginRequestEvent | OriginResponseEvent
 ): Promise<CloudFrontResultResponse | CloudFrontRequest> => {
@@ -185,7 +113,8 @@ export const handler = async (
     response = await handleOriginResponse({
       event,
       manifest,
-      prerenderManifest
+      prerenderManifest,
+      routesManifest
     });
   } else {
     response = await handleOriginRequest({
@@ -196,16 +125,9 @@ export const handler = async (
     });
   }
 
-  // Add custom headers to responses only.
-  // TODO: for paths that hit S3 origin, it will match on the rewritten URI, i.e it may be rewritten to S3 key.
-  if (response.hasOwnProperty("status")) {
-    const request = event.Records[0].cf.request;
-
-    addHeadersToResponse(
-      request.uri,
-      response as CloudFrontResultResponse,
-      routesManifest
-    );
+  // Remove blacklisted headers
+  if (response.headers) {
+    removeBlacklistedHeaders(response.headers);
   }
 
   const tHandlerEnd = now();
@@ -213,6 +135,74 @@ export const handler = async (
   log("handler execution time", tHandlerBegin, tHandlerEnd);
 
   return response;
+};
+
+const staticRequest = async (
+  event: OriginRequestEvent,
+  file: string,
+  path: string,
+  route: Route,
+  manifest: OriginRequestDefaultHandlerManifest,
+  routesManifest: RoutesManifest
+) => {
+  const request = event.Records[0].cf.request;
+  if (manifest.disableOriginResponseHandler) {
+    const { req, res, responsePromise } = lambdaAtEdgeCompat(
+      event.Records[0].cf,
+      {
+        enableHTTPCompression: manifest.enableHTTPCompression
+      }
+    );
+
+    const bucketName = s3BucketNameFromEventRequest(request) ?? "";
+    const s3Key = (path + file).slice(1); // need to remove leading slash from path for s3 key
+
+    return await renderStaticPage({
+      route: route,
+      request: request,
+      req: req,
+      res: res,
+      responsePromise: responsePromise,
+      manifest: manifest,
+      routesManifest: routesManifest,
+      bucketName: bucketName,
+      s3Key: s3Key,
+      s3Uri: file,
+      basePath: basePath
+    });
+  } else {
+    const s3Origin = request.origin?.s3 as CloudFrontS3Origin;
+    const s3Domain = normaliseS3OriginDomain(s3Origin);
+    s3Origin.domainName = s3Domain;
+    s3Origin.path = path;
+    request.uri = file;
+    addS3HostHeader(request, s3Domain);
+    return request;
+  }
+};
+
+const reconstructOriginalRequestUri = (
+  s3Uri: string,
+  manifest: OriginRequestDefaultHandlerManifest
+) => {
+  // For public files we do not replace .html as it can cause public HTML files to be classified with wrong status code
+  const publicFile = handlePublicFiles(s3Uri, manifest);
+  if (publicFile) {
+    return `${basePath}${s3Uri}`;
+  }
+
+  let originalUri = `${basePath}${s3Uri.replace(
+    /(\.html)?$/,
+    manifest.trailingSlash ? "/" : ""
+  )}`;
+
+  // For index.html page, it will become "/index" or "/index/", which is not a route so normalize it to "/"
+  originalUri = originalUri.replace(
+    manifest.trailingSlash ? /\/index\/$/ : /\/index$/,
+    "/"
+  );
+
+  return originalUri;
 };
 
 const handleOriginRequest = async ({
@@ -227,325 +217,322 @@ const handleOriginRequest = async ({
   routesManifest: RoutesManifest;
 }) => {
   const request = event.Records[0].cf.request;
-
-  // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, manifest);
-  if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
-  }
-
-  const basePath = routesManifest.basePath;
-  let uri = normaliseUri(request.uri);
-  const { pages, publicFiles } = manifest;
-  const isPublicFile = publicFiles[uri];
-  const isDataReq = isDataRequest(uri);
-
-  // Handle redirects
-  // TODO: refactor redirect logic to another file since this is getting quite large
-
-  // Handle any trailing slash redirects
-  let newUri = request.uri;
-  if (isDataReq || isPublicFile) {
-    // Data requests and public files with trailing slash URL always get redirected to non-trailing slash URL
-    if (newUri.endsWith("/")) {
-      newUri = newUri.slice(0, -1);
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression: manifest.enableHTTPCompression
     }
-  } else if (request.uri !== "/" && request.uri !== "" && uri !== "/404") {
-    // HTML/SSR pages get redirected based on trailingSlash in next.config.js
-    // We do not redirect:
-    // 1. Unnormalised URI is "/" or "" as this could cause a redirect loop due to browsers appending trailing slash
-    // 2. "/404" pages due to basePath normalisation
-    const trailingSlash = manifest.trailingSlash;
+  );
 
-    if (!trailingSlash && newUri.endsWith("/")) {
-      newUri = newUri.slice(0, -1);
-    }
-
-    if (trailingSlash && !newUri.endsWith("/")) {
-      newUri += "/";
-    }
-  }
-
-  if (newUri !== request.uri) {
-    return createRedirectResponse(newUri, request.querystring, 308);
-  }
-
-  // Handle other custom redirects on the original URI
-  const customRedirect = getRedirectPath(request.uri, routesManifest);
-  if (customRedirect) {
-    return createRedirectResponse(
-      customRedirect.redirectPath,
-      request.querystring,
-      customRedirect.statusCode
-    );
-  }
-
-  // Handle custom rewrites
-  const customRewrite = getRewritePath(request.uri, routesManifest);
-  if (customRewrite) {
-    request.uri = customRewrite;
-    uri = normaliseUri(request.uri);
-  }
-
-  const isStaticPage = pages.html.nonDynamic[uri];
-  const isPrerenderedPage = prerenderManifest.routes[uri]; // prerendered pages are also static pages like "pages.html" above, but are defined in the prerender-manifest
-  const origin = request.origin as CloudFrontOrigin;
-  const s3Origin = origin.s3 as CloudFrontS3Origin;
-  const isHTMLPage = isStaticPage || isPrerenderedPage;
-  const normalisedS3DomainName = normaliseS3OriginDomain(s3Origin);
-  const hasFallback = hasFallbackForUri(uri, prerenderManifest);
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
-  const previewCookies = getPreviewCookies(request);
-  const isPreviewRequest =
-    previewCookies[NEXT_PREVIEW_DATA_COOKIE] &&
-    previewCookies[NEXT_PRERENDER_BYPASS_COOKIE];
 
-  if (isPreviewRequest) {
-    try {
-      jsonwebtoken.verify(
-        previewCookies[NEXT_PREVIEW_DATA_COOKIE],
-        prerenderManifest.preview.previewModeSigningKey
-      );
-    } catch (e) {
-      console.error("Failed preview mode verification for URI:", request.uri);
-      return {
-        status: "403",
-        statusDescription: "Forbidden"
-      };
-    }
+  let tBeforeSSR = null;
+  const getPage = (pagePath: string) => {
+    const tBeforePageRequire = now();
+    const page = require(`./${pagePath}`); // eslint-disable-line
+    const tAfterPageRequire = (tBeforeSSR = now());
+    log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
+    return page;
+  };
+
+  const route = await handleDefault(
+    { req, res, responsePromise },
+    manifest,
+    prerenderManifest,
+    routesManifest,
+    getPage
+  );
+  if (tBeforeSSR) {
+    const tAfterSSR = now();
+    log("SSR execution time", tBeforeSSR, tAfterSSR);
   }
 
-  s3Origin.domainName = normalisedS3DomainName;
-
-  S3Check: if (
-    isPublicFile ||
-    (isHTMLPage && !isPreviewRequest) ||
-    (hasFallback && !isPreviewRequest) ||
-    (isDataReq && !isPreviewRequest)
-  ) {
-    if (isHTMLPage || hasFallback) {
-      s3Origin.path = `${basePath}/static-pages`;
-      const pageName = uri === "/" ? "/index" : uri;
-      request.uri = `${pageName}.html`;
-    }
-
-    if (isPublicFile) {
-      s3Origin.path = `${basePath}/public`;
-      if (basePath) {
-        request.uri = request.uri.replace(basePath, "");
-      }
-    }
-
-    if (isDataReq) {
-      // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
-      const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
-      const pagePath = router(manifest)(normalisedDataRequestUri);
-
-      if (pagePath === "pages/404.html") {
-        // Request static 404 page from s3
-        s3Origin.path = `${basePath}/static-pages`;
-        request.uri = pagePath.replace("pages", "");
-      } else if (
-        pagePath === "pages/_error.js" ||
-        !prerenderManifest.routes[normalisedDataRequestUri]
-      ) {
-        // Break to continue to SSR render in two cases:
-        // 1. URI routes to _error.js
-        // 2. URI is not unmatched, but it's not in prerendered routes, i.e this is an SSR data request, we need to SSR render the JSON
-        break S3Check;
-      }
-
-      // Otherwise, this is an SSG data request, so continue to get the JSON from S3
-    }
-
-    addS3HostHeader(request, normalisedS3DomainName);
-    return request;
+  if (!route) {
+    return await responsePromise;
   }
 
-  const pagePath = router(manifest)(uri);
-
-  if (pagePath.endsWith(".html") && !isPreviewRequest) {
-    s3Origin.path = `${basePath}/static-pages`;
-    request.uri = pagePath.replace("pages", "");
-    addS3HostHeader(request, normalisedS3DomainName);
-
-    return request;
-  }
-
-  const tBeforePageRequire = now();
-  let page = require(`./${pagePath}`); // eslint-disable-line
-  const tAfterPageRequire = now();
-
-  log("require JS execution time", tBeforePageRequire, tAfterPageRequire);
-
-  const tBeforeSSR = now();
-  const { req, res, responsePromise } = lambdaAtEdgeCompat(event.Records[0].cf);
-  try {
-    // If page is _error.js, set status to 404 so _error.js will render a 404 page
-    if (pagePath === "pages/_error.js") {
-      res.statusCode = 404;
-    }
-
-    // Render page
-    if (isDataReq) {
-      const { renderOpts } = await page.renderReqToHTML(
-        req,
-        res,
-        "passthrough"
-      );
-      res.setHeader("Content-Type", "application/json");
-      res.end(JSON.stringify(renderOpts.pageData));
-    } else {
-      await page.render(req, res);
-    }
-  } catch (error) {
-    // Set status to 500 so _error.js will render a 500 page
-    console.error(
-      `Error rendering page: ${pagePath}. Error:\n${error}\nRendering Next.js error page.`
+  if (route.isPublicFile) {
+    const { file } = route as PublicFileRoute;
+    return await staticRequest(
+      event,
+      file,
+      `${routesManifest.basePath}/public`,
+      route,
+      manifest,
+      routesManifest
     );
-    res.statusCode = 500;
-    page = require("./pages/_error.js"); // eslint-disable-line
-    await page.render(req, res);
   }
-  const response = await responsePromise;
-  const tAfterSSR = now();
+  if (route.isNextStaticFile) {
+    const { file } = route as NextStaticFileRoute;
+    return await staticRequest(
+      event,
+      file,
+      `${routesManifest.basePath}/_next/static`,
+      route,
+      manifest,
+      routesManifest
+    );
+  }
+  if (route.isStatic) {
+    const { file, isData } = route as StaticRoute;
+    const path = isData
+      ? `${routesManifest.basePath}`
+      : `${routesManifest.basePath}/static-pages/${manifest.buildId}`;
 
-  log("SSR execution time", tBeforeSSR, tAfterSSR);
+    const relativeFile = isData ? file : file.slice("pages".length);
+    return await staticRequest(
+      event,
+      relativeFile,
+      path,
+      route,
+      manifest,
+      routesManifest
+    );
+  }
 
-  setCloudFrontResponseStatus(response, res);
-
-  return response;
+  const external: ExternalRoute = route;
+  const { path } = external;
+  return externalRewrite(event, manifest.enableHTTPCompression, path);
 };
 
 const handleOriginResponse = async ({
   event,
   manifest,
-  prerenderManifest
+  prerenderManifest,
+  routesManifest
 }: {
   event: OriginResponseEvent;
   manifest: OriginRequestDefaultHandlerManifest;
   prerenderManifest: PrerenderManifestType;
+  routesManifest: RoutesManifest;
 }) => {
   const response = event.Records[0].cf.response;
   const request = event.Records[0].cf.request;
-  const { status } = response;
-  if (status !== "403") {
-    // Set 404 status code for 404.html page. We do not need normalised URI as it will always be "/404.html"
-    if (request.uri === "/404.html") {
+
+  const bucketName = s3BucketNameFromEventRequest(request);
+
+  // Reconstruct valid request uri for routing
+  const s3Uri = request.uri;
+  request.uri = reconstructOriginalRequestUri(s3Uri, manifest);
+
+  const route = await routeDefault(
+    request,
+    manifest,
+    prerenderManifest,
+    routesManifest
+  );
+  const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
+  const statusCode = route?.statusCode;
+
+  // These statuses are returned when S3 does not have access to the page.
+  // 404 will also be returned if CloudFront has permissions to list objects.
+  if (response.status !== "403" && response.status !== "404") {
+    response.headers = {
+      ...response.headers,
+      ...getCustomHeaders(request.uri, routesManifest)
+    };
+    // Set 404 status code for static 404 page.
+    if (statusCode === 404) {
       response.status = "404";
       response.statusDescription = "Not Found";
+      return response;
     }
+
+    // Set 500 status code for static 500 page.
+    if (statusCode === 500) {
+      response.status = "500";
+      response.statusDescription = "Internal Server Error";
+      response.headers["cache-control"] = [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=0, s-maxage=0, must-revalidate" // server error page should not be cached
+        }
+      ];
+      return response;
+    }
+
+    const staticRegenerationResponse = getStaticRegenerationResponse({
+      expiresHeader: response.headers?.expires?.[0]?.value || "",
+      lastModifiedHeader: response.headers?.["last-modified"]?.[0]?.value || "",
+      initialRevalidateSeconds: staticRoute?.revalidate
+    });
+
+    if (staticRegenerationResponse) {
+      response.headers["cache-control"] = [
+        {
+          key: "Cache-Control",
+          value: staticRegenerationResponse.cacheControl
+        }
+      ];
+
+      // We don't want the `expires` header to be sent to the client we manage
+      // the cache at the edge using the s-maxage directive in the cache-control
+      // header
+      delete response.headers.expires;
+
+      if (
+        staticRoute?.page &&
+        staticRegenerationResponse.secondsRemainingUntilRevalidation === 0
+      ) {
+        const regenerationQueueName =
+          manifest.regenerationQueueName ?? `${bucketName}.fifo`; // if queue name not specified, we used [bucketName].fifo as used in deployment
+
+        if (!regenerationQueueName) {
+          throw new Error("Regeneration queue name is undefined.");
+        }
+
+        const { throttle } = await triggerStaticRegeneration({
+          basePath,
+          request,
+          pageS3Path: s3Uri,
+          eTag: response.headers["etag"]?.[0].value,
+          lastModified: response.headers["etag"]?.[0].value,
+          pagePath: staticRoute.page,
+          queueName: regenerationQueueName
+        });
+
+        // Occasionally we will get rate-limited by the Queue (in the event we
+        // send it too many messages) and so we we use the cache to reduce
+        // requests to the queue for a short period.
+        if (throttle) {
+          response.headers["cache-control"] = [
+            {
+              key: "Cache-Control",
+              value: getThrottledStaticRegenerationCachePolicy(1).cacheControl
+            }
+          ];
+        }
+      }
+    }
+
     return response;
   }
-  const uri = normaliseUri(request.uri);
-  const { domainName, region } = request.origin!.s3!;
-  const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
 
-  // Lazily import only S3Client to reduce init times until actually needed
-  const { S3Client } = await import("@aws-sdk/client-s3/S3Client");
-  const s3 = new S3Client({ region: request.origin?.s3?.region });
-  let pagePath;
-  if (
-    isDataRequest(uri) &&
-    !(pagePath = router(manifest)(uri)).endsWith(".html")
-  ) {
-    // eslint-disable-next-line
-    const page = require(`./${pagePath}`);
-    const { req, res, responsePromise } = lambdaAtEdgeCompat(
-      event.Records[0].cf
-    );
-    const isSSG = !!page.getStaticProps;
-    const { renderOpts, html } = await page.renderReqToHTML(
-      req,
-      res,
-      "passthrough"
-    );
-    if (isSSG) {
-      const s3JsonParams = {
-        Bucket: bucketName,
-        Key: uri.replace(/^\//, ""),
-        Body: JSON.stringify(renderOpts.pageData),
-        ContentType: "application/json"
-      };
-      const s3HtmlParams = {
-        Bucket: bucketName,
-        Key: `static-pages/${request.uri
-          .replace(`/_next/data/${manifest.buildId}/`, "")
-          .replace(".json", ".html")}`,
-        Body: html,
-        ContentType: "text/html",
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
-      };
-      const { PutObjectCommand } = await import(
-        "@aws-sdk/client-s3/commands/PutObjectCommand"
-      );
-      await Promise.all([
-        s3.send(new PutObjectCommand(s3JsonParams)),
-        s3.send(new PutObjectCommand(s3HtmlParams))
-      ]);
+  // For PUT or DELETE just return the response as these should be unsupported S3 methods
+  if (request.method === "PUT" || request.method === "DELETE") {
+    return response;
+  }
+
+  const { req, res, responsePromise } = lambdaAtEdgeCompat(
+    event.Records[0].cf,
+    {
+      enableHTTPCompression: manifest.enableHTTPCompression
     }
-    res.writeHead(200, response.headers as any);
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(renderOpts.pageData));
+  );
+
+  const getPage = (pagePath: string) => {
+    return require(`./${pagePath}`);
+  };
+
+  const fallbackRoute = await handleFallback(
+    { req, res, responsePromise },
+    route,
+    manifest,
+    routesManifest,
+    getPage
+  );
+
+  // Already handled dynamic error path
+  if (!fallbackRoute) {
     return await responsePromise;
-  } else {
-    const hasFallback = hasFallbackForUri(uri, prerenderManifest);
-    if (!hasFallback) return response;
+  }
+
+  const s3 = new S3Client({
+    region: request.origin?.s3?.region,
+    maxAttempts: 3
+  });
+  const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
+
+  // Either a fallback: true page or a static error page
+  if (fallbackRoute.isStatic) {
+    const file = fallbackRoute.file.slice("pages".length);
+    const s3Key = `${s3BasePath}static-pages/${manifest.buildId}${file}`;
+
     const s3Params = {
       Bucket: bucketName,
-      Key: `static-pages${hasFallback.fallback}`
+      Key: s3Key
     };
-    const { GetObjectCommand } = await import(
-      "@aws-sdk/client-s3/commands/GetObjectCommand"
-    );
-    const { Body } = await s3.send(new GetObjectCommand(s3Params));
 
-    // Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
-    const getStream = await import("get-stream");
-    const bodyString = await getStream.default(Body as Readable);
-    return {
-      status: "200",
-      statusDescription: "OK",
-      headers: {
-        ...response.headers,
-        "content-type": [
-          {
-            key: "Content-Type",
-            value: "text/html"
-          }
-        ]
-      },
-      body: bodyString
-    };
+    const s3Response = await s3.send(new GetObjectCommand(s3Params));
+    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+    const bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
+
+    const statusCode = fallbackRoute.statusCode || 200;
+    const is500 = statusCode === 500;
+
+    const cacheControl = is500
+      ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
+      : s3Response.CacheControl ??
+        (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+          ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+          : "public, max-age=0, s-maxage=2678400, must-revalidate");
+
+    res.writeHead(statusCode, {
+      "Cache-Control": cacheControl,
+      "Content-Type": "text/html"
+    });
+    res.end(bodyBuffer);
+    return await responsePromise;
   }
+
+  // This is a fallback route that should be stored in S3 before returning it
+  const { renderOpts, html } = fallbackRoute;
+  // Check if response is a redirect
+  if (
+    typeof renderOpts.pageData !== "undefined" &&
+    typeof renderOpts.pageData.pageProps !== "undefined" &&
+    typeof renderOpts.pageData.pageProps.__N_REDIRECT !== "undefined"
+  ) {
+    const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
+    const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
+
+    const redirectResponse = createRedirectResponse(
+      redirectPath,
+      request.querystring,
+      statusCode
+    );
+
+    redirect({ req, res, responsePromise }, redirectResponse);
+
+    return await responsePromise;
+  }
+  const { expires } = await s3StorePage({
+    html,
+    uri: s3Uri,
+    basePath,
+    bucketName: bucketName || "",
+    buildId: manifest.buildId,
+    pageData: renderOpts.pageData,
+    region: request.origin?.s3?.region || "",
+    revalidate: renderOpts.revalidate
+  });
+
+  const isrResponse = expires
+    ? getStaticRegenerationResponse({
+        expiresHeader: expires.toJSON(),
+        lastModifiedHeader: undefined,
+        initialRevalidateSeconds: staticRoute?.revalidate
+      })
+    : null;
+
+  const cacheControl =
+    (isrResponse && isrResponse.cacheControl) ||
+    "public, max-age=0, s-maxage=2678400, must-revalidate";
+
+  res.setHeader("Cache-Control", cacheControl);
+
+  if (fallbackRoute.route.isData) {
+    res.setHeader("Content-Type", "application/json");
+    res.end(JSON.stringify(renderOpts.pageData));
+  } else {
+    res.setHeader("Content-Type", "text/html");
+    res.end(html);
+  }
+  return await responsePromise;
 };
 
 const isOriginResponse = (
   event: OriginRequestEvent | OriginResponseEvent
 ): event is OriginResponseEvent => {
   return event.Records[0].cf.config.eventType === "origin-response";
-};
-
-const hasFallbackForUri = (
-  uri: string,
-  prerenderManifest: PrerenderManifestType
-) => {
-  return Object.values(prerenderManifest.dynamicRoutes).find((routeConfig) => {
-    const re = new RegExp(routeConfig.routeRegex);
-    return re.test(uri);
-  });
-};
-
-// This sets CloudFront response for 404 or 500 statuses
-const setCloudFrontResponseStatus = (
-  response: CloudFrontResultResponse,
-  res: ServerResponse
-): void => {
-  if (res.statusCode == 404) {
-    response.status = "404";
-    response.statusDescription = "Not Found";
-  } else if (res.statusCode == 500) {
-    response.status = "500";
-    response.statusDescription = "Internal Server Error";
-  }
 };

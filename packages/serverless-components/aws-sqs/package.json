@@ -1,0 +1,33 @@
+{
+  "name": "@sls-next/aws-sqs",
+  "version": "3.7.0-alpha.2",
+  "main": "serverless.js",
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "test": "jest"
+  },
+  "keywords": [
+    "AWS",
+    "SQS",
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Daniel Conde Marin <danielconde9@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@serverless/core": "1.1.2",
+    "aws-sdk": "2.1043.0",
+    "fs-extra": "9.1.0",
+    "lodash": "4.17.21"
+  },
+  "peerDependencies": {
+    "@serverless/core": "1.1.2",
+    "aws-sdk": "2.1043.0"
+  }
+}

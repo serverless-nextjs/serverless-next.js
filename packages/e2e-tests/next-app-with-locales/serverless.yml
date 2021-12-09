@@ -1,0 +1,13 @@
+next-app-with-locales:
+  component: "../../serverless-components/nextjs-component"
+  inputs:
+    removeOldLambdaVersions: true
+    build:
+      postBuildCommands: ["node scripts/post-build-test.js"]
+    cloudfront:
+      defaults:
+        forward:
+          headers: [Authorization, Accept-Language]
+      api/*:
+        forward:
+          headers: [Authorization]

@@ -1,0 +1,18 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "target": "ES2019",
+    "module": "CommonJS",
+    "moduleResolution": "node",
+    "noImplicitAny": false,
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": false,
+    "allowJs": true,
+    "skipLibCheck": true
+  },
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts"]
+}

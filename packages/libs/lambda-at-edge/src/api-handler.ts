@@ -7,49 +7,11 @@ import {
   OriginRequestApiHandlerManifest,
   OriginRequestEvent,
   RoutesManifest
-} from "../types";
-import { CloudFrontResultResponse, CloudFrontRequest } from "aws-lambda";
-import {
-  createRedirectResponse,
-  getDomainRedirectPath,
-  getRedirectPath
-} from "./routing/redirector";
-import { getRewritePath } from "./routing/rewriter";
-import { addHeadersToResponse } from "./headers/addHeaders";
-
-const basePath = RoutesManifestJson.basePath;
-
-const normaliseUri = (uri: string): string => (uri === "/" ? "/index" : uri);
-
-const router = (
-  manifest: OriginRequestApiHandlerManifest
-): ((path: string) => string | null) => {
-  const {
-    apis: { dynamic, nonDynamic }
-  } = manifest;
-
-  return (path: string): string | null => {
-    if (basePath && path.startsWith(basePath))
-      path = path.slice(basePath.length);
-
-    if (nonDynamic[path]) {
-      return nonDynamic[path];
-    }
-
-    for (const route in dynamic) {
-      const { file, regex } = dynamic[route];
-
-      const re = new RegExp(regex, "i");
-      const pathMatchesRoute = re.test(path);
-
-      if (pathMatchesRoute) {
-        return file;
-      }
-    }
-
-    return null;
-  };
-};
+} from "./types";
+import { CloudFrontResultResponse } from "aws-lambda";
+import { createExternalRewriteResponse } from "./routing/rewriter";
+import { handleApi } from "@sls-next/core/dist/module/handle/api";
+import { removeBlacklistedHeaders } from "./headers/removeBlacklistedHeaders";
 
 export const handler = async (
   event: OriginRequestEvent
@@ -57,49 +19,27 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const routesManifest: RoutesManifest = RoutesManifestJson;
   const buildManifest: OriginRequestApiHandlerManifest = manifest;
+  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf, {
+    enableHTTPCompression: buildManifest.enableHTTPCompression
+  });
 
-  // Handle domain redirects e.g www to non-www domain
-  const domainRedirect = getDomainRedirectPath(request, buildManifest);
-  if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+  const external = await handleApi(
+    { req, res, responsePromise },
+    buildManifest,
+    routesManifest,
+    (pagePath: string) => require(`./${pagePath}`)
+  );
+
+  if (external) {
+    const { path } = external;
+    await createExternalRewriteResponse(path, req, res, request.body?.data);
   }
-
-  // Handle custom redirects
-  const customRedirect = getRedirectPath(request.uri, routesManifest);
-  if (customRedirect) {
-    return createRedirectResponse(
-      customRedirect.redirectPath,
-      request.querystring,
-      customRedirect.statusCode
-    );
-  }
-
-  // Handle custom rewrites
-  const customRewrite = getRewritePath(request.uri, routesManifest);
-  if (customRewrite) {
-    request.uri = customRewrite;
-  }
-
-  const uri = normaliseUri(request.uri);
-
-  const pagePath = router(manifest)(uri);
-
-  if (!pagePath) {
-    return {
-      status: "404"
-    };
-  }
-
-  // eslint-disable-next-line
-  const page = require(`./${pagePath}`);
-  const { req, res, responsePromise } = cloudFrontCompat(event.Records[0].cf);
-
-  page.default(req, res);
 
   const response = await responsePromise;
 
-  // Add custom headers before returning response
-  addHeadersToResponse(request.uri, response, routesManifest);
+  if (response.headers) {
+    removeBlacklistedHeaders(response.headers);
+  }
 
   return response;
 };

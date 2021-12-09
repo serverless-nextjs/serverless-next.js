@@ -1,0 +1,67 @@
+{
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "automerge": true,
+  "automergeType": "pr",
+  "ignorePaths": [
+    "packages/deprecated/**",
+    "packages/serverless-components/nextjs-component/examples/**",
+    "packages/serverless-components/nextjs-component/**",
+    "packages/serverless-components/nextjs-cdk-construct/examples/**",
+    "packages/serverless-components/nextjs-component/**",
+    "packages/libs/core/sharp_node_modules/**",
+    "**/tests/**"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": ["minor", "patch", "pin", "digest"],
+      "automerge": true
+    },
+    {
+      "packagePatterns": ["@aws-cdk"],
+      "groupName": "aws-cdk"
+    },
+    {
+      "packagePatterns": ["eslint"],
+      "groupName": "eslint"
+    },
+    {
+      "packagePatterns": ["react"],
+      "groupName": "react"
+    },
+    {
+      "packagePatterns": ["@aws-sdk"],
+      "groupName": "aws-sdk"
+    },
+    {
+      "packagePatterns": ["@cypress", "cypress"],
+      "groupName": "cypress"
+    },
+    {
+      "packagePatterns": ["@babel"],
+      "groupName": "babel"
+    },
+    {
+      "packagePatterns": ["@docusaurus"],
+      "groupName": "docusaurus"
+    },
+    {
+      "packagePatterns": ["@jest", "jest"],
+      "groupName": "jest"
+    }
+  ],
+  "ignoreDeps": [
+    "@rollup/plugin-commonjs",
+    "@rollup/plugin-node-resolve",
+    "fs-extra",
+    "sharp",
+    "globby",
+    "node-fetch",
+    "@types/node-fetch",
+    "next",
+    "cimg/node"
+  ],
+  "prHourlyLimit": 5,
+  "prConcurrentLimit": 10,
+  "rangeStrategy": "bump",
+  "rebaseWhen": "conflicted"
+}

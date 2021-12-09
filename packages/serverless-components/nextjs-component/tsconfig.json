@@ -3,13 +3,14 @@
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "declaration": true,
-    "target": "ES2015",
+    "target": "ES2019",
     "module": "CommonJS",
     "moduleResolution": "node",
     "outDir": "dist",
     "sourceMap": true,
     "strict": true,
-    "allowJs": true
+    "allowJs": true,
+    "skipLibCheck": true
   },
   "exclude": ["node_modules"],
   "include": ["**/*.ts", ".d.ts"]

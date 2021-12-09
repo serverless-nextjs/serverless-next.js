@@ -18,6 +18,9 @@ describe("Pages Tests", () => {
         (method) => {
           it(`allows HTTP method for path ${path}: ${method}`, () => {
             cy.request({ url: path, method: method }).then((response) => {
+              if (method !== "HEAD") {
+                cy.verifyResponseIsCompressed(response);
+              }
               expect(response.status).to.equal(200);
             });
           });
@@ -27,7 +30,7 @@ describe("Pages Tests", () => {
   });
 
   describe("SSR pages (getServerSideProps)", () => {
-    [{ path: "/" }].forEach(({ path }) => {
+    [{ path: "/ssr-page-2" }].forEach(({ path }) => {
       it(`serves but does not cache page ${path}`, () => {
         if (path === "/") {
           // Somehow "/" is matching everything, need to exclude static files
@@ -46,6 +49,9 @@ describe("Pages Tests", () => {
         (method) => {
           it(`allows HTTP method for path ${path}: ${method}`, () => {
             cy.request({ url: path, method: method }).then((response) => {
+              if (method !== "HEAD") {
+                cy.verifyResponseIsCompressed(response);
+              }
               expect(response.status).to.equal(200);
             });
           });
@@ -55,13 +61,29 @@ describe("Pages Tests", () => {
   });
 
   describe("SSG pages", () => {
-    [{ path: "/ssg-page" }].forEach(({ path }) => {
+    [{ path: "/ssg-page" }, { path: "/" }].forEach(({ path }) => {
       it(`serves and caches page ${path}`, () => {
         cy.visit(path);
         cy.location("pathname").should("eq", path);
 
         cy.ensureRouteCached(path);
         cy.visit(path);
+      });
+
+      it(`supports preview mode ${path}`, () => {
+        cy.request("/api/preview/enabled");
+        cy.getCookies().should("have.length", 2); // Preview cookies are now set
+        // FIXME: Not sure why adding cy.ensureRouteNotCached(path) here fails as a preview response should be uncached?
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.get("[data-cy=preview-mode]").contains("true");
+
+        cy.request("/api/preview/disabled");
+        cy.getCookies().should("have.length", 0); // Preview cookies are now removed
+        cy.ensureRouteCached(path);
+        cy.visit(path);
+        cy.location("pathname").should("eq", path);
+        cy.get("[data-cy=preview-mode]").contains("false");
       });
 
       ["HEAD", "GET"].forEach((method) => {
@@ -94,8 +116,8 @@ describe("Pages Tests", () => {
           cy.ensureRouteHasStatusCode(path, 404);
           cy.visit(path, { failOnStatusCode: false });
 
-          // Default Next.js 404 page
-          cy.contains("404");
+          // Render custom Next.js 404 page
+          cy.contains("Custom 404");
         });
       }
     );
@@ -104,12 +126,16 @@ describe("Pages Tests", () => {
   describe("Error pages", () => {
     [{ path: "/errored-page" }, { path: "/errored-page-new-ssr" }].forEach(
       ({ path }) => {
-        it(`serves 500 page ${path}`, () => {
+        it(`serves static 500 page ${path}`, () => {
           cy.ensureRouteHasStatusCode(path, 500);
           cy.visit(path, { failOnStatusCode: false });
 
-          // Default Next.js error page
-          cy.contains("500");
+          // Custom static error page
+          cy.contains("Custom 500");
+
+          // Check that it is not cached
+          cy.ensureRouteNotCached(path, false);
+          cy.visit(path, { failOnStatusCode: false });
         });
       }
     );

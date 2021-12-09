@@ -15,7 +15,7 @@ See the steps below to get started and install the Serverless Nextjs component i
 # serverless.yml
 
 myNextApplication:
-  component: "@sls-next/serverless-component@1.15.2-alpha.1" #specify latest stable version
+  component: "@sls-next/serverless-component@1.19.0" # or specify latest stable or alpha version found in https://www.npmjs.com/package/@sls-next/serverless-component
 ```
 
 5. It is recommended you pin the latest stable version of serverless-next.js component. Check out the versions [here](https://github.com/serverless-nextjs/serverless-next.js/releases)
