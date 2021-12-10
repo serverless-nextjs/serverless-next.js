@@ -1,0 +1,9 @@
+{
+  "domainRedirects": {
+    "example.com": "https://www.example.com"
+  },
+  "authentication": {
+    "username": "test",
+    "password": "123"
+  }
+}

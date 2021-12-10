@@ -26,10 +26,8 @@ class ServerlessNextJsPlugin {
         this,
         this.build
       ),
-      "before:aws:package:finalize:mergeCustomProviderResources": this.hookWrapper.bind(
-        this,
-        this.addCustomStackResources
-      ),
+      "before:aws:package:finalize:mergeCustomProviderResources":
+        this.hookWrapper.bind(this, this.addCustomStackResources),
       "after:package:createDeploymentArtifacts": this.hookWrapper.bind(
         this,
         this.removePluginBuildDir

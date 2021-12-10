@@ -3,6 +3,102 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [3.5.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.6...v3.5.3) (2021-11-09)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [3.5.3-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.4...v3.5.3-alpha.5) (2021-11-08)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.5.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.11...v3.5.0) (2021-10-28)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.5.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.10...v3.5.0-alpha.11) (2021-10-27)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.5.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.8...v3.5.0-alpha.9) (2021-10-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.5.0-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.0...v3.5.0-alpha.1) (2021-10-13)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.4.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.14...v3.4.0) (2021-10-02)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.4.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.4.0-alpha.8...v3.4.0-alpha.9) (2021-09-17)
+
+### Features
+
+- **core, lambda-at-edge, nextjs-component:** experimental - allow serving static pages/data from origin request handler only (and disable origin response handler) ([#1696](https://github.com/serverless-nextjs/serverless-next.js/issues/1696)) ([7fcdc7f](https://github.com/serverless-nextjs/serverless-next.js/commit/7fcdc7fd4970402c7f19e09a7fa90d22a82804e4))
+
+# [3.3.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.6...v3.3.0) (2021-09-01)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.3.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.3.0-alpha.2...v3.3.0-alpha.3) (2021-08-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.3.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.1-alpha.0...v3.3.0-alpha.0) (2021-08-19)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.2.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.29...v3.2.0) (2021-08-03)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.2.0-alpha.21](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.20...v3.2.0-alpha.21) (2021-07-27)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.2.0-alpha.17](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.2.0-alpha.16...v3.2.0-alpha.17) (2021-07-07)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [3.1.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.16...v3.1.0) (2021-06-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [1.6.2-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.2-alpha.2...@sls-next/next-aws-cloudfront@1.6.2-alpha.3) (2021-06-07)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [1.6.2-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.2-alpha.1...@sls-next/next-aws-cloudfront@1.6.2-alpha.2) (2021-05-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [1.6.2-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.2-alpha.0...@sls-next/next-aws-cloudfront@1.6.2-alpha.1) (2021-05-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [1.6.2-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.1...@sls-next/next-aws-cloudfront@1.6.2-alpha.0) (2021-05-20)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [1.6.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.1-alpha.0...@sls-next/next-aws-cloudfront@1.6.1) (2021-05-03)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+## [1.6.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.0...@sls-next/next-aws-cloudfront@1.6.1-alpha.0) (2020-12-05)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [1.6.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.6.0-alpha.0...@sls-next/next-aws-cloudfront@1.6.0) (2020-11-02)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
+# [1.6.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.5.1-alpha.0...@sls-next/next-aws-cloudfront@1.6.0-alpha.0) (2020-10-22)
+
+### Features
+
+- **lambda-at-edge-compat, lambda-at-edge, nextjs-component:** let CloudFront do the Gzipping ([#692](https://github.com/serverless-nextjs/serverless-next.js/issues/692)) ([05fb0eb](https://github.com/serverless-nextjs/serverless-next.js/commit/05fb0ebdf38096fb7e0427956c4747e782c680a8))
+
 ## [1.5.1-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-cloudfront@1.5.0...@sls-next/next-aws-cloudfront@1.5.1-alpha.0) (2020-10-07)
 
 **Note:** Version bump only for package @sls-next/next-aws-cloudfront

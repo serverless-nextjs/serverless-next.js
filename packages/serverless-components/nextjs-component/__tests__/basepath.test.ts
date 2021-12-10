@@ -1,8 +1,9 @@
 import path from "path";
 import fse from "fs-extra";
-import { mockS3 } from "@serverless/aws-s3";
+import { mockS3 } from "@sls-next/aws-s3";
 import { mockCloudFront } from "@sls-next/aws-cloudfront";
 import { mockLambda, mockLambdaPublish } from "@sls-next/aws-lambda";
+import { mockSQS } from "@sls-next/aws-sqs";
 import NextjsComponent from "../src/component";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 
@@ -30,12 +31,16 @@ describe("basepath tests", () => {
       name: "bucket-xyz"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
+    });
+    mockLambda.mockResolvedValueOnce({
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
     });
     mockLambdaPublish.mockResolvedValue({
       version: "v1"
@@ -44,6 +49,9 @@ describe("basepath tests", () => {
       id: "cloudfrontdistrib",
       url: "https://cloudfrontdistrib.amazonaws.com"
     });
+    mockSQS.mockResolvedValue({
+      arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
+    });
 
     const component = new NextjsComponent();
     component.context.credentials = {
@@ -51,6 +59,9 @@ describe("basepath tests", () => {
         accessKeyId: "123",
         secretAccessKey: "456"
       }
+    };
+    component.context.debug = () => {
+      // intentionally empty
     };
 
     await component.build();
@@ -74,6 +85,7 @@ describe("basepath tests", () => {
         "custom_base/_next/static/*",
         "custom_base/static/*",
         "custom_base/api/*",
+        "custom_base/_next/image*",
         "custom_base/_next/data/*"
       ]);
     });

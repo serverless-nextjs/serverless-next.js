@@ -18,13 +18,26 @@ describe("Static Files Tests", () => {
   });
 
   describe("public files", () => {
-    [{ path: "/app-store-badge.png" }].forEach(({ path }) => {
-      it(`serves and caches file ${path}`, () => {
+    [
+      {
+        path: "/app-store-badge.png",
+        contentType: "image/png",
+        cacheable: true
+      },
+      { path: "/example.html", contentType: "text/html", cacheable: false },
+      {
+        path: "/.well-known/test.txt",
+        contentType: "text/plain",
+        cacheable: false
+      }
+    ].forEach(({ path, contentType, cacheable }) => {
+      it(`serves file ${path} for content type ${contentType} and cacheable: ${cacheable}`, () => {
         // Request once to ensure cached
         cy.request(path);
         cy.request(path).then((response) => {
+          expect(response.headers["content-type"]).to.equal(contentType);
           expect(response.status).to.equal(200);
-          cy.verifyResponseCacheStatus(response, true);
+          cy.verifyResponseCacheStatus(response, cacheable);
         });
       });
 
@@ -47,6 +60,20 @@ describe("Static Files Tests", () => {
             expect(response.status).to.be.lessThan(500);
           });
         });
+      });
+    });
+
+    [
+      {
+        path: "/ignored.txt"
+      }
+    ].forEach(({ path }) => {
+      it(`ignored file in serverless.yml returns 404 status code: ${path}`, () => {
+        cy.request({ url: path, method: "GET", failOnStatusCode: false }).then(
+          (response) => {
+            expect(response.status).to.equal(404);
+          }
+        );
       });
     });
   });

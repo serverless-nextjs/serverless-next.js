@@ -16,7 +16,7 @@ describe("Response Tests", () => {
     res.end();
 
     return responsePromise.then((response) => {
-      expect(response.status).toEqual(404);
+      expect(response.status).toEqual("404");
     });
   });
 
@@ -34,7 +34,7 @@ describe("Response Tests", () => {
     res.end();
 
     return responsePromise.then((response) => {
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual("200");
       expect(response.statusDescription).toEqual("OK");
     });
   });
@@ -52,7 +52,7 @@ describe("Response Tests", () => {
     res.end();
 
     return responsePromise.then((response) => {
-      expect(response.status).toEqual(200);
+      expect(response.status).toEqual("200");
     });
   });
 
@@ -119,7 +119,36 @@ describe("Response Tests", () => {
     });
   });
 
-  it("writeHead preserves existing special CloudFront Headers", () => {
+  it("writeHead preserves existing Headers", () => {
+    expect.assertions(1);
+
+    const cloudFrontReadOnlyHeaders = {
+      "Content-Length": "1234",
+      "x-custom-1": "1"
+    };
+
+    const { res, responsePromise } = create({
+      request: {
+        uri: "/",
+        headers: {}
+      },
+      response: {
+        headers: cloudFrontReadOnlyHeaders
+      }
+    });
+
+    res.writeHead(200, {});
+    res.end();
+
+    return responsePromise.then((response) => {
+      expect(response.headers).toEqual({
+        "content-length": "1234",
+        "x-custom-1": "1"
+      });
+    });
+  });
+
+  it("writeHead does not overwrite special CloudFront Headers", () => {
     expect.assertions(1);
 
     const cloudFrontReadOnlyHeaders = {
@@ -371,11 +400,10 @@ describe("Response Tests", () => {
     });
   });
 
-  it(`gzips`, () => {
-    expect.assertions(2);
+  it("does not gzip by default", () => {
+    expect.assertions(3);
 
     const gzipSpy = jest.spyOn(zlib, "gzipSync");
-    gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
 
     const { res, responsePromise } = create({
       request: {
@@ -390,6 +418,40 @@ describe("Response Tests", () => {
         }
       }
     });
+
+    res.end("ok");
+
+    return responsePromise.then((response) => {
+      expect(gzipSpy).not.toBeCalled();
+      expect(response.headers["content-encoding"]).not.toBeDefined();
+      expect(response.body).toEqual("b2s=");
+    });
+  });
+
+  it(`gzips when compression is enabled`, () => {
+    expect.assertions(2);
+
+    const gzipSpy = jest.spyOn(zlib, "gzipSync");
+    gzipSpy.mockReturnValueOnce(Buffer.from("ok-gzipped"));
+
+    const { res, responsePromise } = create(
+      {
+        request: {
+          path: "/",
+          headers: {
+            "accept-encoding": [
+              {
+                key: "Accept-Encoding",
+                value: "gzip"
+              }
+            ]
+          }
+        }
+      },
+      {
+        enableHTTPCompression: true
+      }
+    );
 
     res.end("ok");
 
@@ -419,7 +481,7 @@ describe("Response Tests", () => {
     return responsePromise.then((response) => {
       expect(response.body).not.toBeDefined();
       expect(response.bodyEncoding).not.toBeDefined();
-      expect(response.status).toEqual(204);
+      expect(response.status).toEqual("204");
       expect(response.statusDescription).toEqual("No Content");
     });
   });

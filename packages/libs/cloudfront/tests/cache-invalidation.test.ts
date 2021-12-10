@@ -1,5 +1,5 @@
 import AWS, { mockCreateInvalidation } from "aws-sdk";
-import createInvalidation, { CreateInvalidationOptions } from "../src/index";
+import { createInvalidation, CreateInvalidationOptions } from "../src/index";
 import { ALL_FILES_PATH } from "../src/lib/constants";
 
 jest.mock("aws-sdk", () => require("./aws-sdk.mock"));

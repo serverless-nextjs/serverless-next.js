@@ -1,0 +1,85 @@
+{
+  "name": "@sls-next/core",
+  "version": "3.7.0-alpha.2",
+  "description": "Handles Next.js routing independent of provider",
+  "publishConfig": {
+    "access": "public"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "module": "dist/module/index.js",
+  "directories": {
+    "dist": "dist"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js.git",
+    "directory": "packages/libs/core"
+  },
+  "scripts": {
+    "prepack": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json && tsc -p tsconfig.module.json && yarn copy-sharp-modules",
+    "clean": "yarn rimraf dist",
+    "copy-sharp-modules": "ts-node --project tsconfig.scripts.json scripts/copy-sharp-modules.ts",
+    "test": "jest"
+  },
+  "keywords": [
+    "Next.js",
+    "Serverless"
+  ],
+  "author": "Jan Varho <jan.varho@gmail.com> et al",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/serverless-nextjs/serverless-next.js/issues"
+  },
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
+  "dependencies": {
+    "@hapi/accept": "5.0.2",
+    "cookie": "0.4.1",
+    "execa": "5.1.1",
+    "fast-glob": "3.2.7",
+    "fresh": "0.5.2",
+    "fs-extra": "9.1.0",
+    "is-animated": "2.0.1",
+    "jsonwebtoken": "8.5.1",
+    "next": "11.1.2",
+    "node-fetch": "2.6.5",
+    "normalize-path": "3.0.0",
+    "path-to-regexp": "6.2.0",
+    "react": "17.0.2",
+    "react-dom": "17.0.2",
+    "send": "0.17.1",
+    "sharp": "0.29.1"
+  },
+  "devDependencies": {
+    "@babel/core": "7.16.0",
+    "@babel/plugin-proposal-class-properties": "7.16.0",
+    "@babel/preset-env": "7.16.4",
+    "@babel/preset-typescript": "7.16.0",
+    "@jest/globals": "27.4.2",
+    "@types/cookie": "0.4.1",
+    "@types/fresh": "0.5.0",
+    "@types/fs-extra": "9.0.13",
+    "@types/jest": "27.0.3",
+    "@types/jsonwebtoken": "8.5.6",
+    "@types/node": "16.11.11",
+    "@types/node-fetch": "2.5.12",
+    "@types/normalize-path": "3.0.0",
+    "@types/react": "17.0.37",
+    "@types/react-dom": "17.0.11",
+    "@types/send": "0.17.1",
+    "@types/sharp": "0.29.4",
+    "@types/zen-observable": "0.8.3",
+    "cookie": "0.4.1",
+    "fetch-mock-jest": "1.5.1",
+    "jest": "27.4.3",
+    "rimraf": "3.0.2",
+    "ts-node": "10.4.0",
+    "typescript": "4.5.2"
+  },
+  "jest": {
+    "modulePathIgnorePatterns": [
+      "/sharp_node_modules/"
+    ]
+  }
+}

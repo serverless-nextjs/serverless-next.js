@@ -90,39 +90,39 @@ const HttpStatusCodes = {
   305: "Use Proxy"
 };
 
-const toCloudFrontHeaders = (headers, originalHeaders) => {
+const toCloudFrontHeaders = (headers, headerNames, originalHeaders) => {
   const result = {};
-  const lowerCaseOriginalHeaders = {};
-  Object.entries(originalHeaders).forEach(([header, value]) => {
-    lowerCaseOriginalHeaders[header.toLowerCase()] = value;
+
+  Object.entries(originalHeaders).forEach(([headerName, headerValue]) => {
+    result[headerName.toLowerCase()] = headerValue;
   });
 
-  Object.keys(headers).forEach((headerName) => {
-    const lowerCaseHeaderName = headerName.toLowerCase();
-    const headerValue = headers[headerName];
+  Object.entries(headers).forEach(([headerName, headerValue]) => {
+    const headerKey = headerName.toLowerCase();
+    headerName = headerNames[headerKey] || headerName;
 
-    if (readOnlyCloudFrontHeaders[lowerCaseHeaderName]) {
-      if (lowerCaseOriginalHeaders[lowerCaseHeaderName]) {
-        result[lowerCaseHeaderName] =
-          lowerCaseOriginalHeaders[lowerCaseHeaderName];
-      }
+    if (readOnlyCloudFrontHeaders[headerKey]) {
       return;
     }
 
-    result[lowerCaseHeaderName] = [];
+    result[headerKey] = [];
 
     if (headerValue instanceof Array) {
       headerValue.forEach((val) => {
-        result[lowerCaseHeaderName].push({
-          key: headerName,
-          value: val.toString()
-        });
+        if (val) {
+          result[headerKey].push({
+            key: headerName,
+            value: val.toString()
+          });
+        }
       });
     } else {
-      result[lowerCaseHeaderName].push({
-        key: headerName,
-        value: headerValue.toString()
-      });
+      if (headerValue) {
+        result[headerKey].push({
+          key: headerName,
+          value: headerValue.toString()
+        });
+      }
     }
   });
 
@@ -144,7 +144,14 @@ const isGzipSupported = (headers) => {
   return gz;
 };
 
-const handler = (event) => {
+const defaultOptions = {
+  enableHTTPCompression: false
+};
+
+const handler = (
+  event,
+  { enableHTTPCompression, rewrittenUri } = defaultOptions
+) => {
   const { request: cfRequest, response: cfResponse = { headers: {} } } = event;
 
   const response = {
@@ -154,7 +161,7 @@ const handler = (event) => {
   const newStream = new Stream.Readable();
 
   const req = Object.assign(newStream, http.IncomingMessage.prototype);
-  req.url = cfRequest.uri;
+  req.url = rewrittenUri || cfRequest.uri;
   req.method = cfRequest.method;
   req.rawHeaders = [];
   req.headers = {};
@@ -202,14 +209,16 @@ const handler = (event) => {
       return response.status;
     },
     set(statusCode) {
-      response.status = statusCode;
+      response.status = statusCode.toString();
       response.statusDescription = HttpStatusCodes[statusCode];
     }
   });
 
   res.headers = {};
+  const headerNames = {};
   res.writeHead = (status, headers) => {
-    response.status = status;
+    response.status = status.toString();
+    response.statusDescription = HttpStatusCodes[status];
 
     if (headers) {
       res.headers = Object.assign(res.headers, headers);
@@ -227,7 +236,7 @@ const handler = (event) => {
     ]);
   };
 
-  let gz = isGzipSupported(headers);
+  let shouldGzip = enableHTTPCompression && isGzipSupported(headers);
 
   const responsePromise = new Promise((resolve) => {
     res.end = (text) => {
@@ -245,14 +254,18 @@ const handler = (event) => {
 
       if (response.body) {
         response.bodyEncoding = "base64";
-        response.body = gz
+        response.body = shouldGzip
           ? zlib.gzipSync(response.body).toString("base64")
           : Buffer.from(response.body).toString("base64");
       }
 
-      response.headers = toCloudFrontHeaders(res.headers, cfResponse.headers);
+      response.headers = toCloudFrontHeaders(
+        res.headers,
+        headerNames,
+        cfResponse.headers
+      );
 
-      if (gz) {
+      if (shouldGzip) {
         response.headers["content-encoding"] = [
           { key: "Content-Encoding", value: "gzip" }
         ];
@@ -263,6 +276,7 @@ const handler = (event) => {
 
   res.setHeader = (name, value) => {
     res.headers[name.toLowerCase()] = value;
+    headerNames[name.toLowerCase()] = name;
   };
   res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()];

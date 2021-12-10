@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.5.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.11...v3.5.0) (2021-10-28)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
+# [3.5.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.10...v3.5.0-alpha.11) (2021-10-27)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
+# [3.5.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.0-alpha.8...v3.5.0-alpha.9) (2021-10-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
+# [3.1.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.1.0-alpha.16...v3.1.0) (2021-06-25)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
+## [2.6.4-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-lambda@2.6.3...@sls-next/next-aws-lambda@2.6.4-alpha.0) (2021-05-21)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
+## [2.6.3](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-lambda@2.6.3-alpha.0...@sls-next/next-aws-lambda@2.6.3) (2020-11-02)
+
+**Note:** Version bump only for package @sls-next/next-aws-lambda
+
 ## [2.6.3-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/next-aws-lambda@2.6.2...@sls-next/next-aws-lambda@2.6.3-alpha.0) (2020-10-07)
 
 **Note:** Version bump only for package @sls-next/next-aws-lambda

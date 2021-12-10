@@ -8,7 +8,7 @@
     "start": "next start -p $PORT",
     "serverless": "serverless",
     "e2e": "cypress run",
-    "e2e:ci": "APP_NAME=next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
+    "e2e:ci": "ISR_PAGE_PATH=/revalidated-ssg-page DYNAMIC_ISR_PAGE_PATH=/revalidated-ssg-pages/101 SSG_PAGE_PATH=/ssg-page SSR_PAGE_PATH=/ssr-page APP_NAME=next-app ts-node --project tsconfig.scripts.json ../test-utils/scripts/run-e2e-ci.ts"
   },
   "repository": {
     "type": "git",
@@ -19,30 +19,30 @@
   "license": "MIT",
   "homepage": "https://github.com/serverless-next.js/serverless-next.js",
   "dependencies": {
-    "isomorphic-fetch": "2.2.1",
-    "next": "9.5.5",
-    "react": "16.13.1",
-    "react-dom": "16.13.1"
+    "isomorphic-fetch": "3.0.0",
+    "next": "10.2.2",
+    "react": "17.0.2",
+    "react-dom": "17.0.2"
   },
   "devDependencies": {
     "@bahmutov/print-env": "2.1.2",
-    "@cypress/code-coverage": "3.8.1",
-    "@cypress/skip-test": "2.5.0",
-    "@types/mocha": "8.0.3",
-    "@types/node": "14.6.2",
+    "@cypress/code-coverage": "3.9.11",
+    "@cypress/skip-test": "2.6.1",
+    "@types/mocha": "9.0.0",
+    "@types/node": "16.11.11",
     "@types/node-fetch": "2.5.7",
-    "@types/react": "16.9.48",
-    "@types/uuid": "8.3.0",
-    "aws-sdk": "2.758.0",
-    "babel-plugin-istanbul": "6.0.0",
+    "@types/react": "17.0.37",
+    "@types/uuid": "8.3.3",
+    "aws-sdk": "2.1043.0",
+    "babel-plugin-istanbul": "6.1.1",
     "babel-plugin-transform-class-properties": "6.24.1",
-    "cypress": "5.1.0",
-    "istanbul-lib-coverage": "3.0.0",
+    "cypress": "9.0.0",
+    "istanbul-lib-coverage": "3.2.0",
     "nyc": "15.1.0",
-    "ts-node": "9.0.0",
-    "typescript": "4.0.2",
-    "uuid": "8.3.0",
-    "yargs": "16.0.3"
+    "ts-node": "10.4.0",
+    "typescript": "4.5.2",
+    "uuid": "8.3.2",
+    "yargs": "17.3.0"
   },
   "nyc": {
     "report-dir": "cypress-coverage"

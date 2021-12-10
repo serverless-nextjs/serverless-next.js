@@ -18,7 +18,8 @@ describe("API Routes Tests", () => {
             } else {
               expect(response.body).to.deep.equal({
                 name: "This is a basic API route.",
-                method: method
+                method: method,
+                body: ""
               });
             }
           });

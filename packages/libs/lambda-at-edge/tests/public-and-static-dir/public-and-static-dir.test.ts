@@ -4,7 +4,8 @@ import fse, { readJSON } from "fs-extra";
 import { join } from "path";
 import { DEFAULT_LAMBDA_CODE_DIR } from "../../src/build";
 import { cleanupDir } from "../test-utils";
-import { OriginRequestDefaultHandlerManifest } from "../../types";
+import { OriginRequestDefaultHandlerManifest } from "../../src/types";
+import { jest } from "@jest/globals";
 
 jest.mock("execa");
 
@@ -38,7 +39,7 @@ describe("When public and static directories do not exist", () => {
     return cleanupDir(outputDir);
   });
 
-  it("does not put any public files in the build manifest", async () => {
+  it("does not put any public files in the build manifest", () => {
     expect(defaultBuildManifest.publicFiles).toEqual({});
   });
 });

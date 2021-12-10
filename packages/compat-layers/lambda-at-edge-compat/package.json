@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/next-aws-cloudfront",
-  "version": "1.5.1-alpha.0",
+  "version": "3.5.3",
   "publishConfig": {
     "access": "public"
   },
@@ -25,6 +25,6 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.50"
+    "@types/aws-lambda": "^8.10.85"
   }
 }

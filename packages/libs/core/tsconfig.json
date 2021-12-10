@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "declaration": true,
+    "lib": ["DOM", "DOM.Iterable", "ES2020"],
+    "target": "ES2019",
+    "module": "ES2020",
+    "moduleResolution": "node",
+    "noImplicitAny": true,
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "allowJs": true,
+    "skipLibCheck": true,
+    "baseUrl": "./src"
+  },
+  "exclude": ["node_modules"],
+  "include": ["**/*.ts"]
+}

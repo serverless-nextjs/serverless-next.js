@@ -13,11 +13,15 @@ describe("With Next Build Failure", () => {
 
   beforeAll(async () => {
     mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
-    const builder = new Builder(fixtureDir, os.tmpdir(), {
-      cwd: fixtureDir,
-      cmd: nextBinary,
-      args: ["build"]
-    });
+    const builder = new Builder(
+      fixtureDir,
+      path.join(os.tmpdir(), new Date().getUTCMilliseconds().toString()),
+      {
+        cwd: fixtureDir,
+        cmd: nextBinary,
+        args: ["build"]
+      }
+    );
 
     try {
       await builder.build();

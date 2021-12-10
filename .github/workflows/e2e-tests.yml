@@ -1,0 +1,208 @@
+name: End-to-end Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      pull_request_id:
+        description: "Pull Request ID"
+        required: false
+        default: ""
+      sha:
+        description: "GitHub SHA"
+        required: false
+        default: ""
+
+jobs:
+  initialize:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: true
+      matrix:
+        os: [ubuntu-latest]
+
+    outputs:
+      pr_git_sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha }}
+
+    steps:
+      # For non-fork PRs
+      - uses: actions/checkout@v2
+        if: ${{ github.event.inputs.pull_request_id == '' }}
+        with:
+          ref: ${{ github.event.inputs.sha || github.ref }}
+
+      # For manually run PRs
+      - name: Initialize empty git repository
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        run: git init --initial-branch serverless-next-js-placeholder
+
+      - name: Checkout pull request
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        uses: dawidd6/action-checkout-pr@v1
+        with:
+          pr: ${{ github.event.inputs.pull_request_id }}
+
+      - name: Set pull request's git SHA
+        id: set_pr_git_sha
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        run: |
+          echo "PR_GIT_SHA=$(git rev-parse HEAD)" >> $GITHUB_ENV
+          echo "::set-output name=pr_git_sha::$(git rev-parse HEAD)"
+
+      - name: Mark end-to-end tests as pending with run URL
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ github.event.inputs.pull_request_id == '' }}
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "Waiting for end-to-end tests to pass"
+          state: "pending"
+          sha: ${{ steps.set_pr_git_sha.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 30
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  run-e2e-tests:
+    needs: [initialize]
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        node-version: [14.x]
+        os: [ubuntu-latest]
+        app:
+          # Current minor version of Next.js
+          - next-app
+          - next-app-experimental
+          - next-app-using-serverless-trace
+          - next-app-with-trailing-slash
+          - next-app-with-base-path
+          - next-app-dynamic-routes
+          - next-app-with-locales
+          - next-app-with-locales-using-serverless-trace
+          # Previous minor version of Next.js
+          - prev-next-app
+          - prev-next-app-with-trailing-slash
+          - prev-next-app-with-base-path
+          - prev-next-app-dynamic-routes
+        # Add additional single app for windows e2e testing
+        include:
+          - node-version: 14.x
+            os: windows-latest
+            app: next-app-windows
+    steps:
+      # For non-fork PRs
+      - uses: actions/checkout@v2
+        if: ${{ github.event.inputs.pull_request_id == '' }}
+        with:
+          ref: ${{ github.event.inputs.sha || github.ref }}
+
+      # For manually run PRs
+      - name: Initialize empty git repository
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        run: git init --initial-branch serverless-next-js-placeholder
+
+      - name: Checkout pull request
+        if: ${{ github.event.inputs.pull_request_id != '' }}
+        uses: dawidd6/action-checkout-pr@v1
+        with:
+          pr: ${{ github.event.inputs.pull_request_id }}
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v2
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Cache Yarn
+        uses: actions/cache@v2
+        with:
+          path: ${{ github.workspace }}/.yarn
+          key: e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-${{ hashFiles('yarn.lock', 'packages/serverless-patched/yarn.lock', 'packages/e2e-tests/test-utils/yarn.lock') }}
+          restore-keys: |
+            e2e-tests-v1-${{ matrix.os }}-${{ matrix.node-version }}-${{ matrix.app }}-
+
+      #      - name: "Download build"
+      #        uses: actions/download-artifact@v2
+      #        with:
+      #          name: build-${{ matrix.os }}.tar.gz
+      #
+      #      - name: "Uncompress build"
+      #        run: tar -xf build-${{ matrix.os }}.tar.gz
+
+      - name: Setup yarn
+        run: yarn install --immutable --inline-builds
+
+      - name: Run yarn build
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn build
+
+      - name: Build serverless-patched
+        working-directory: packages/serverless-patched
+        env:
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: yarn install --immutable && yarn build
+
+      - name: Choose latest next.js version
+        if: ${{ !startsWith(matrix.app, 'prev') }}
+        working-directory: packages/e2e-tests/${{ matrix.app }}
+        run: yarn add next@latest
+
+      - name: Wait for existing workflow to complete before e2e tests
+        uses: softprops/turnstyle@v1
+        with:
+          poll-interval-seconds: 30
+          same-branch-only: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Run e2e tests
+        working-directory: packages/e2e-tests/${{ matrix.app }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_AT }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_ST }}
+          AWS_DEFAULT_REGION: us-east-1
+          WAIT_TIMEOUT: 900
+          CYPRESS_GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # Needed for testing external rewrites to GitHub API without getting throttled
+          NODE_OPTIONS: "--max-old-space-size=4096"
+        run: |
+          yarn install --immutable
+          yarn e2e:ci
+        timeout-minutes: 30 # In case something goes wrong
+
+      - name: Mark end-to-end tests as failed
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ failure() && github.event.inputs.pull_request_id == '' }}
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "End-to-end tests have failed"
+          state: "failure"
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+  finalize:
+    needs: [initialize, run-e2e-tests]
+    runs-on: [ubuntu-latest]
+
+    steps:
+      - name: Mark end-to-end tests as succeeded
+        # For manual runs (e.g for fork PRs) don't update commit status as there won't be permissions to do so
+        if: ${{ github.event.inputs.pull_request_id == '' }}
+        uses: Sibz/github-status-action@v1
+        with:
+          authToken: ${{ secrets.GITHUB_TOKEN }}
+          context: "End-to-end Tests"
+          description: "End-to-end tests have passed"
+          state: "success"
+          sha: ${{ needs.initialize.outputs.pr_git_sha || github.event.inputs.sha || github.sha }}
+          target_url: https://github.com/${{ github.repository }}/actions/runs/${{ github.run_id }}

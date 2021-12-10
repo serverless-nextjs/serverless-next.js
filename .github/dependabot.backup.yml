@@ -1,0 +1,33 @@
+# Dependabot is disabled in favor of Renovate.
+# To get started with Dependabot version updates, you'll need to specify which
+# package ecosystems to update and where the package manifests are located.
+# Please see the documentation for all configuration options:
+# https://help.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+
+version: 2
+updates:
+  - package-ecosystem: "npm" # See documentation for possible values
+    directory: "/" # Location of package manifests
+    schedule:
+      interval: "daily"
+    versioning-strategy: increase
+    # No point updating @sls-next/* dependencies as they are linked
+    ignore:
+      - dependency-name: "@sls-next/*"
+        # FIXME: don't update plugin-commonjs, v19.0.0 had breaking change causing some decodeHTML functions not to be bundled
+      - dependency-name: "@rollup/plugin-commonjs"
+        # FIXME: don't update plugin-node-resolve yet, versions >10 seems to be bundling browser version of uuid etc: https://github.com/rollup/plugins/blob/master/packages/node-resolve/CHANGELOG.md#v1100
+      - dependency-name: "@rollup/plugin-node-resolve"
+        # FIXME: CDK dependencies must be updated together but Dependabot cannot group updates
+        # We'll manually update for now and/or use Renovate in the future
+      - dependency-name: "@aws-cdk/*"
+        # FIXME: some issue with fs-extra for some users? https://github.com/serverless-nextjs/serverless-next.js/issues/1240
+      - dependency-name: "fs-extra"
+      - dependency-name: "sharp" # This is manually built for Lambda Node.js 14.x runtime
+      - dependency-name: "globby" # 12.0.0 has breaking changes
+    open-pull-requests-limit: 10
+
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "daily"

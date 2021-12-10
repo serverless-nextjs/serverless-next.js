@@ -1,0 +1,33 @@
+{
+  "name": "ci-api",
+  "version": "1.0.0",
+  "description": "Serverless Next.js CI API",
+  "main": "index.js",
+  "scripts": {
+    "build": "rollup --config",
+    "deploy": "serverless deploy",
+    "remove": "serverless remove"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/serverless-nextjs/serverless-next.js"
+  },
+  "keywords": [],
+  "author": "Daniel Phang",
+  "license": "MIT",
+  "homepage": "https://github.com/serverless-nextjs/serverless-next.js",
+  "dependencies": {
+    "@octokit/rest": "^18.12.0"
+  },
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "^18.1.0",
+    "@rollup/plugin-node-resolve": "^10.0.0",
+    "@types/node": "^16.11.11",
+    "rollup": "^2.60.2",
+    "rollup-plugin-terser": "^7.0.2",
+    "rollup-plugin-typescript2": "^0.31.1",
+    "serverless": "^2.68.0",
+    "ts-node": "^10.4.0"
+  },
+  "private": true
+}

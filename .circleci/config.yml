@@ -1,0 +1,217 @@
+# Use the latest 2.1 version of CircleCI pipeline process engine.
+# See: https://circleci.com/docs/2.0/configuration-reference
+version: 2.1
+
+aliases:
+  - &environment
+    TZ: /usr/share/zoneinfo/America/Los_Angeles
+    NODE_OPTIONS: "--max-old-space-size=6144"
+
+executors:
+  linux-node-14-browsers:
+    resource_class: medium+
+    docker:
+      - image: cimg/node:14.18-browsers
+  linux-node-14:
+    resource_class: large
+    docker:
+      - image: cimg/node:14.18
+  linux-node-12:
+    resource_class: large
+    docker:
+      - image: cimg/node:12.22.7
+  windows: win/default
+
+orbs:
+  aws-cli-linux: circleci/aws-cli@2.0.6
+  queue: eddiewebb/queue@1.6.4
+  win: circleci/windows@2.4.1
+  aws-cli-windows: sensu/awscli-windows@1.0.0
+
+# Define a job to be invoked later in a workflow.
+# See: https://circleci.com/docs/2.0/configuration-reference/#jobs
+jobs:
+  build-and-test:
+    parameters:
+      executor:
+        type: string
+    executor: << parameters.executor >>
+    environment: *environment
+    steps:
+      - checkout
+
+      - restore_cache:
+          name: Restore yarn cache
+          keys:
+            - v3-node-{{ arch }}-<< parameters.executor >>-build-{{ checksum "yarn.lock" }}
+            - v3-node-{{ arch }}-<< parameters.executor >>-build-
+
+      - run:
+          name: Setup yarn
+          command: yarn install --immutable --inline-builds
+
+      - run:
+          name: Run yarn build
+          command: yarn build
+
+      - run:
+          name: Run unit tests
+          command: yarn test:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/unit-tests
+
+      - run:
+          name: Run integration tests
+          command: yarn integration:ci
+          environment:
+            JEST_JUNIT_OUTPUT_DIR: ./reports/junit/integration-tests
+
+      - run:
+          name: Upload code coverage
+          command: npx codecov
+
+      - store_test_results:
+          path: ./reports/junit/unit-tests
+
+      - store_test_results:
+          path: ./reports/junit/integration-tests
+
+      - store_artifacts:
+          path: ./reports/junit
+
+      - save_cache:
+          name: Save yarn cache
+          key: v3-node-{{ arch }}-<< parameters.executor >>-build-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/project/.yarn/cache
+
+  run-e2e-tests:
+    parameters:
+      executor:
+        type: string
+      app:
+        type: string
+    executor: << parameters.executor >>
+    environment: *environment
+    steps:
+      - checkout
+
+      - when:
+          condition:
+            equal: [<< parameters.executor >>, "linux-node-14-browsers"]
+          steps:
+            - aws-cli-linux/install
+
+      - when:
+          condition:
+            equal: [<< parameters.executor >>, "windows"]
+          steps:
+            - run:
+                name: Install AWS CLI v1
+                command: pip install awscli --upgrade
+
+      - restore_cache:
+          name: Restore yarn cache
+          keys:
+            - v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}
+            - v3-node-{{ arch }}-<< parameters.app >>-
+
+      - run:
+          name: Setup yarn
+          command: yarn install --immutable --inline-builds
+
+      - run:
+          name: Run yarn build
+          command: yarn build
+
+      - run:
+          name: Build serverless-patched
+          working_directory: ~/project/packages/serverless-patched
+          command: |
+            yarn install --immutable
+            yarn build
+
+      - when:
+          condition:
+            not:
+              matches:
+                pattern: "^prev-.*$"
+                value: << parameters.app >>
+          steps:
+            - run:
+                working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
+                command: yarn add next@latest
+
+      - run:
+          name: Install and run e2e tests
+          working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
+          environment:
+            AWS_DEFAULT_REGION: us-east-1
+            WAIT_TIMEOUT: 900
+            SERVERLESS_CI: true
+          command: |
+            yarn install --immutable
+            yarn e2e:ci
+          no_output_timeout: 30m # In case something goes wrong
+
+      - save_cache:
+          name: Save yarn cache
+          key: v3-node-{{ arch }}-<< parameters.app >>-{{ checksum "yarn.lock" }}
+          paths:
+            - ~/project/.yarn/cache
+
+# Invoke jobs via workflows
+# See: https://circleci.com/docs/2.0/configuration-reference/#workflows
+workflows:
+  build:
+    jobs:
+      - build-and-test:
+          matrix:
+            parameters:
+              executor:
+                - linux-node-14
+                - linux-node-12
+#  e2e-tests:
+#      - queue/block_workflow:
+#          consider-branch: false
+#          time: "90"
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#      - run-e2e-tests:
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#          requires:
+#            - queue/block_workflow
+#          matrix:
+#            parameters:
+#              executor:
+#                - linux-node-14-browsers
+#              app:
+#                # Current minor version of Next.js
+#                - next-app
+#                - next-app-experimental
+#                - next-app-using-serverless-trace
+#                - next-app-with-trailing-slash
+#                - next-app-with-base-path
+#                - next-app-dynamic-routes
+#                - next-app-with-locales
+#                - next-app-with-locales-using-serverless-trace
+#                # Previous minor version of Next.js
+#                - prev-next-app
+#                - prev-next-app-with-trailing-slash
+#                - prev-next-app-with-base-path
+#                - prev-next-app-dynamic-routes
+#      - run-e2e-tests:
+#          filters:
+#            branches:
+#              ignore: /renovate\/.*/
+#          requires:
+#            - queue/block_workflow
+#          matrix:
+#            parameters:
+#              executor:
+#                - windows
+#              app:
+#                - next-app-windows

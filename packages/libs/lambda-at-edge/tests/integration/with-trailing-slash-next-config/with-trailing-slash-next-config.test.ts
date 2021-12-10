@@ -6,7 +6,7 @@ import fse, { readFile, remove, pathExists } from "fs-extra";
 import {
   OriginRequestDefaultHandlerManifest,
   RoutesManifest
-} from "../../../types";
+} from "../../../src/types";
 
 jest.unmock("execa");
 
@@ -24,7 +24,7 @@ describe("With Trailing Slash Config Build", () => {
     ${"fixture-next-config-as-obj-no-trailing-slash"}          | ${false}              | ${""}            | ${'module.exports = { target: "serverless" };'}
     ${"fixture-next-config-as-func-no-trailing-slash"}         | ${false}              | ${""}            | ${'module.exports = () => ({ target: "serverless" });'}
     ${"fixture-no-next-config"}                                | ${false}              | ${""}            | ${undefined}
-    ${"fixture-next-config-as-obj-basepath"}                   | ${true}               | ${"/basepath"}   | ${'module.exports = { basePath: "/basepath", target: "serverless", trailingSlash: true };'}
+    ${"fixture-next-config-as-obj-basepath"}                   | ${true}               | ${"/basepath"}   | ${'module.exports = {  basePath: "/basepath",  target: "serverless",  trailingSlash: true};'}
     ${"fixture-next-config-as-obj-basepath-no-trailing-slash"} | ${false}              | ${"/basepath"}   | ${'module.exports = { basePath: "/basepath", target: "serverless" };'}
   `(
     "with fixture: $fixture",
@@ -38,7 +38,11 @@ describe("With Trailing Slash Config Build", () => {
 
       beforeAll(async () => {
         mockDateNow = jest.spyOn(Date, "now").mockReturnValue(123);
-        outputDir = path.join(os.tmpdir(), "slsnext-test-build");
+        outputDir = path.join(
+          os.tmpdir(),
+          new Date().getUTCMilliseconds().toString(),
+          "slsnext-test-build"
+        );
         const builder = new Builder(fixtureDir, outputDir, {
           cwd: fixtureDir,
           cmd: nextBinary,

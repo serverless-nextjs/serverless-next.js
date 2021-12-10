@@ -1,6 +1,6 @@
 {
   "name": "@sls-next/cloudfront",
-  "version": "1.0.4-alpha.0",
+  "version": "3.7.0-alpha.2",
   "description": "Handles CloudFront invalidation",
   "publishConfig": {
     "access": "public"
@@ -16,8 +16,10 @@
     "directory": "packages/libs/cloudfront"
   },
   "scripts": {
-    "prepare": "yarn build",
-    "build": "tsc -p tsconfig.build.json"
+    "prepack": "yarn clean && yarn build",
+    "build": "tsc -p tsconfig.build.json",
+    "clean": "yarn rimraf dist",
+    "test": "jest"
   },
   "keywords": [
     "AWS",
@@ -32,10 +34,12 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "2.728.0"
+    "aws-sdk": "2.1043.0"
   },
   "devDependencies": {
-    "@types/node": "^14.0.27",
-    "typescript": "^3.9.7"
+    "@babel/preset-typescript": "^7.16.0",
+    "@types/node": "16.11.11",
+    "rimraf": "3.0.2",
+    "typescript": "4.5.2"
   }
 }
