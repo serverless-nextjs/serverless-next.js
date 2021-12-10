@@ -6884,7 +6884,7 @@ __metadata:
     "@types/yargs": 17.0.7
     cdktf: 0.8.1
     cdktf-cli: 0.8.1
-    constructs: 3.3.161
+    constructs: 3.3.165
     esbuild: 0.14.2
     fs-extra: 9.1.0
     jest: ^27.4.3
@@ -9821,10 +9821,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"constructs@npm:3.3.161, constructs@npm:^3.3.69":
-  version: 3.3.161
-  resolution: "constructs@npm:3.3.161"
-  checksum: 9457dd22b64daccd337c385bee0457d3cd0f9a275f43fae7f4e2785b7231a9dc468ef5fd5d0fed4393e118259c89a4329bc18edf34ede26a60a9d192a9045d47
+"constructs@npm:3.3.165":
+  version: 3.3.165
+  resolution: "constructs@npm:3.3.165"
+  checksum: 850d0d7cde0971bebc2b96958d616476d3d1331fb07adb487557a919ab7f5db56000fc682b4c091b6a8eaefffe93da2d33efa191cb951519a3cde7c81ebe88f9
   languageName: node
   linkType: hard
 
@@ -9832,6 +9832,13 @@ __metadata:
   version: 10.0.9
   resolution: "constructs@npm:10.0.9"
   checksum: 29d80cd3ac7505ef3cc472ce4c76dd8a3a475928bc51566726c39dd6c4d68eb2c5af6f2830c874925832108dc094564360aa83abcf3e66a4164b47cb96a70cd1
+  languageName: node
+  linkType: hard
+
+"constructs@npm:^3.3.69":
+  version: 3.3.161
+  resolution: "constructs@npm:3.3.161"
+  checksum: 9457dd22b64daccd337c385bee0457d3cd0f9a275f43fae7f4e2785b7231a9dc468ef5fd5d0fed4393e118259c89a4329bc18edf34ede26a60a9d192a9045d47
   languageName: node
   linkType: hard
 
