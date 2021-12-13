@@ -48,7 +48,7 @@
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-node-resolve": "10.0.0",
     "@sls-next/next-aws-cloudfront": "link:../../compat-layers/lambda-at-edge-compat",
-    "@types/aws-lambda": "8.10.85",
+    "@types/aws-lambda": "8.10.87",
     "@types/fs-extra": "9.0.13",
     "@types/jest": "27.0.3",
     "@types/klaw": "3.0.3",
