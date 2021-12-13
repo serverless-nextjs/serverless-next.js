@@ -27,7 +27,7 @@
     "aws-sdk": "2.1043.0"
   },
   "devDependencies": {
-    "@types/node": "16.11.11",
+    "@types/node": "16.11.12",
     "rimraf": "3.0.2",
     "typescript": "4.5.2"
   },
