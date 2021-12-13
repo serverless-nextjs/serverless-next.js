@@ -60,7 +60,7 @@
     "@types/sharp": "0.29.4",
     "@types/uuid": "8.3.3",
     "builtin-modules": "3.2.0",
-    "eslint": "8.4.0",
+    "eslint": "8.4.1",
     "fetch-mock-jest": "1.5.1",
     "jest": "27.4.3",
     "klaw": "4.0.1",
