@@ -67,6 +67,6 @@
     "@types/fs-extra": "9.0.13",
     "jest": "27.4.3",
     "rimraf": "3.0.2",
-    "typescript": "4.5.2"
+    "typescript": "4.5.4"
   }
 }

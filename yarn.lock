@@ -6514,7 +6514,7 @@ __metadata:
     prettier: 2.5.1
     ramda: 0.27.1
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   peerDependencies:
     "@babel/core": 7.16.0
     "@serverless/core": 1.1.2
@@ -6543,7 +6543,7 @@ __metadata:
     "@sls-next/core": "link:../core"
     "@types/node": 16.11.12
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   languageName: unknown
   linkType: soft
 
@@ -6576,7 +6576,7 @@ __metadata:
     lodash: 4.17.21
     ramda: 0.27.1
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   peerDependencies:
     "@serverless/core": 1.1.2
     aws-sdk: 2.1043.0
@@ -6615,7 +6615,7 @@ __metadata:
     ramda: 0.27.1
     rimraf: 3.0.2
     s3-stream-upload: 2.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   languageName: unknown
   linkType: soft
 
@@ -6664,7 +6664,7 @@ __metadata:
     fs-extra: 9.1.0
     jest: 27.4.3
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   peerDependencies:
     "@aws-cdk/aws-certificatemanager": 1.134.0
     "@aws-cdk/aws-cloudfront": 1.134.0
@@ -6696,7 +6696,7 @@ __metadata:
     "@types/node": 16.11.12
     aws-sdk: 2.1043.0
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   languageName: unknown
   linkType: soft
 
@@ -6766,7 +6766,7 @@ __metadata:
     send: 0.17.1
     sharp: 0.29.1
     ts-node: 10.4.0
-    typescript: 4.5.2
+    typescript: 4.5.4
   languageName: unknown
   linkType: soft
 
@@ -6784,7 +6784,7 @@ __metadata:
     "@types/node": 16.11.12
     aws-sdk: 2.1043.0
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   peerDependencies:
     "@serverless/core": 1.1.2
     aws-sdk: 2.1043.0
@@ -6856,7 +6856,7 @@ __metadata:
     sharp: 0.28.3
     ts-loader: 9.2.6
     ts-node: 10.4.0
-    typescript: 4.5.2
+    typescript: 4.5.4
     uuid: 8.3.2
     webpack: 5.65.0
   peerDependencies:
@@ -6893,7 +6893,7 @@ __metadata:
     rollup-plugin-node-externals: 2.2.0
     rollup-plugin-terser: 7.0.2
     rollup-plugin-typescript2: 0.31.1
-    typescript: 4.5.2
+    typescript: 4.5.4
     yargs: 17.3.0
   languageName: unknown
   linkType: soft
@@ -6945,7 +6945,7 @@ __metadata:
     normalize-path: 3.0.0
     regex-parser: 2.2.11
     rimraf: 3.0.2
-    typescript: 4.5.2
+    typescript: 4.5.4
   languageName: unknown
   linkType: soft
 
@@ -18534,7 +18534,7 @@ __metadata:
     opencollective-postinstall: ^2.0.3
     prettier: ^2.5.1
     ts-node: ^10.4.0
-    typescript: ^4.5.2
+    typescript: ^4.5.4
   languageName: unknown
   linkType: soft
 
@@ -20062,13 +20062,13 @@ typescript@4.4.4:
   languageName: node
   linkType: hard
 
-"typescript@4.5.2, typescript@^4.5.2":
-  version: 4.5.2
-  resolution: "typescript@npm:4.5.2"
+"typescript@npm:4.5.4, typescript@npm:^4.5.4":
+  version: 4.5.4
+  resolution: "typescript@npm:4.5.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 74f9ce65d532bdf5d0214b3f60cf37992180023388c87a11ee6f838a803067ef0b63c600fa501b0deb07f989257dce1e244c9635ed79feca40bbccf6e0aa1ebc
+  checksum: 59f3243f9cd6fe3161e6150ff6bf795fc843b4234a655dbd938a310515e0d61afd1ac942799e7415e4334255e41c2c49b7dd5d9fd38a17acd25a6779ca7e0961
   languageName: node
   linkType: hard
 
@@ -20082,13 +20082,13 @@ typescript@4.4.4:
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.5.2#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.2#~builtin<compat/typescript>":
-  version: 4.5.2
-  resolution: "typescript@patch:typescript@npm%3A4.5.2#~builtin<compat/typescript>::version=4.5.2&hash=493e53"
+"typescript@patch:typescript@4.5.4#~builtin<compat/typescript>, typescript@patch:typescript@^4.5.4#~builtin<compat/typescript>":
+  version: 4.5.4
+  resolution: "typescript@patch:typescript@npm%3A4.5.4#~builtin<compat/typescript>::version=4.5.4&hash=493e53"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 53838d56aba6fcc947d63aa0771e5d966b1b648fddafed6e221d7f38c71219c4e036ece8cfe9e35ed80cf5a35ff4eb958934c993f99c3233773ec4f9ccd53f69
+  checksum: 2e488dde7d2c4a2fa2e79cf2470600f8ce81bc0563c276b72df8ff412d74456ae532ba824650ae936ce207440c79720ddcfaa25e3cb4477572b8534fa4e34d49
   languageName: node
   linkType: hard
 
