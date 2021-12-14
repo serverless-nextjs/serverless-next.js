@@ -452,7 +452,7 @@ __metadata:
     patch-package: ^6.4.7
     postinstall-postinstall: "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097"
     rimraf: ^3.0.2
-    serverless: ^2.68.0
+    serverless: ^2.69.0
     typescript: ^4.5.4
   bin:
     serverless-patched: ./dist/serverless-patched.js
@@ -898,9 +898,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1041.0":
-  version: 2.1041.0
-  resolution: "aws-sdk@npm:2.1041.0"
+"aws-sdk@npm:^2.1046.0":
+  version: 2.1046.0
+  resolution: "aws-sdk@npm:2.1046.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -911,7 +911,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 297c24ad3571c23ee5f0a353d7d62836d7311ac3d42906783d0b4335285d1dea6f3459e0f1d1cc89e85f6b64632c76e8e531bcf4bde56a468035e422326edb76
+  checksum: 35a79e4a77c06ff8f7725a7a1874766935a238eb7519374c4fb84ec52182e6bc842575a36fe1d5daf78241b378c9ef31ff5ac7c39edeaef298f3aa1bc9610373
   languageName: node
   linkType: hard
 
@@ -1441,9 +1441,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-progress-footer@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "cli-progress-footer@npm:2.2.0"
+"cli-progress-footer@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "cli-progress-footer@npm:2.3.0"
   dependencies:
     cli-color: ^2.0.1
     d: ^1.0.1
@@ -1452,7 +1452,7 @@ __metadata:
     process-utils: ^4.0.0
     timers-ext: ^0.1.7
     type: ^2.5.0
-  checksum: 8bb9543d48f53e16464f6333ede7efe1e60aae1094c2cabfc0f20fd42c2a4cfa49417f114b47b9765aa3776ced8f9e9ff74195db1cbd48973b425268c3654974
+  checksum: ffc246c3b7bbb399ecdcc17d650695733182847e7a3ad8c49925f054a8217731a71744cb0449885e4e88d2eb80dfe816c26b09db3e6c75dd21dff524581f18c9
   languageName: node
   linkType: hard
 
@@ -5128,9 +5128,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"serverless@npm:^2.68.0":
-  version: 2.68.0
-  resolution: "serverless@npm:2.68.0"
+"serverless@npm:^2.69.0":
+  version: 2.69.0
+  resolution: "serverless@npm:2.69.0"
   dependencies:
     "@serverless/cli": ^1.5.3
     "@serverless/components": ^3.18.1
@@ -5140,14 +5140,14 @@ fsevents@~2.3.2:
     ajv: ^6.12.6
     ajv-keywords: ^3.5.2
     archiver: ^5.3.0
-    aws-sdk: ^2.1041.0
+    aws-sdk: ^2.1046.0
     bluebird: ^3.7.2
     boxen: ^5.1.2
     cachedir: ^2.3.0
     chalk: ^4.1.2
     child-process-ext: ^2.1.1
     ci-info: ^3.3.0
-    cli-progress-footer: ^2.2.0
+    cli-progress-footer: ^2.3.0
     d: ^1.0.1
     dayjs: ^1.10.7
     decompress: ^4.2.1
@@ -5191,7 +5191,7 @@ fsevents@~2.3.2:
   bin:
     serverless: bin/serverless.js
     sls: bin/serverless.js
-  checksum: 93cc25f616e567c80ae9464bef9a3e8361f28948230ed46aaa559d0d2651d3217cd7add5722b3c0879b6c982ac95da08e34fff1ebca47301c5357321eaa54999
+  checksum: 5828d3521f542e815a35e1545c1df59b1870eee590e43e14371a19fd84c3dc89a4555b6303e705f8e625ff4b084c9efc30f5a8316418d2c545761e7be6c9b4ed
   languageName: node
   linkType: hard
 
