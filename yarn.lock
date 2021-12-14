@@ -6565,7 +6565,7 @@ __metadata:
     "@types/archiver": 5.1.1
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.0.3
-    "@types/lodash": 4.14.177
+    "@types/lodash": 4.14.178
     "@types/node": 16.11.12
     "@types/ramda": 0.27.58
     archiver: 5.3.0
@@ -6597,7 +6597,7 @@ __metadata:
     "@types/archiver": 5.1.1
     "@types/fs-extra": 9.0.13
     "@types/klaw-sync": 6.0.1
-    "@types/lodash": 4.14.177
+    "@types/lodash": 4.14.178
     "@types/node": 16.11.12
     "@types/ramda": 0.27.58
     archiver: 5.3.0
@@ -7265,10 +7265,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/lodash@npm:4.14.177":
-  version: 4.14.177
-  resolution: "@types/lodash@npm:4.14.177"
-  checksum: 00f9eb300ed5219cfbabb3448d4a71744895edad60dcfda9f028c0808a50eb6ad1ca9f673b56a85f85668a4ea54b9870643625468a747039c435643e52253a75
+"@types/lodash@npm:4.14.178":
+  version: 4.14.178
+  resolution: "@types/lodash@npm:4.14.178"
+  checksum: a69a04a60bfc5257c3130a554b4efa0c383f0141b7b3db8ab7cf07ad2a46ea085fce66d0242da41da7e5647b133d5dfb2c15add9cbed8d7fef955e4a1e5b3128
   languageName: node
   linkType: hard
 
