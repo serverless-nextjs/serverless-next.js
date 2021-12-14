@@ -33,7 +33,7 @@
     "@types/ramda": "0.27.58",
     "jest": "27.4.3",
     "rimraf": "3.0.2",
-    "typescript": "4.5.2"
+    "typescript": "4.5.4"
   },
   "dependencies": {
     "@serverless/aws-iam-role": "1.0.0",
