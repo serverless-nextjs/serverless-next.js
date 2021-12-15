@@ -1755,7 +1755,7 @@ __metadata:
     "@rollup/plugin-commonjs": ^18.1.0
     "@rollup/plugin-node-resolve": ^10.0.0
     "@types/node": ^16.11.12
-    rollup: ^2.60.2
+    rollup: ^2.61.1
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: ^0.31.1
     serverless: ^2.68.0
@@ -5709,9 +5709,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.60.2":
-  version: 2.60.2
-  resolution: "rollup@npm:2.60.2"
+"rollup@npm:^2.61.1":
+  version: 2.61.1
+  resolution: "rollup@npm:2.61.1"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -5719,7 +5719,7 @@ fsevents@~2.3.2:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: bcd41dfe8afb7e0d97ce2237752165bdda689bcce6321d96821d565de3e0c865a49b544923f315985be2bfde086f72b54aae4ae7c87f798b3cb9558a5bec4e65
+  checksum: a41bd821c1d9f296e71e867828150080fb05d08cbdff9b6b5c0e3642da4d0723f7a847189f197c2a695a8a353d968ad89ebd54a4228dc3e92765c00e6bbadf87
   languageName: node
   linkType: hard
 
