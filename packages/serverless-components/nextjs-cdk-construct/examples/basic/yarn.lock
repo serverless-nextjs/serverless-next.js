@@ -2600,10 +2600,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"constructs@npm:10.0.0":
-  version: 10.0.0
-  resolution: "constructs@npm:10.0.0"
-  checksum: f1891ac12f4e7dbfcaae370e6d2c8de3ec41845164706ec140c5c29e67c490f2f8490716ad3cc215cb4871929d18b8a7b476e49e20ccc00a9b6a23d968a38ec9
+"constructs@npm:~10.0":
+  version: 10.0.12
+  resolution: "constructs@npm:10.0.12"
+  checksum: 005645549999fac58c71279e2e489a266fb15f2a932236d4b7b3971b1d4a7cce1bb2496c10c2e3b030d9b67419816325efaf724681b04bc097289569813b6208
   languageName: node
   linkType: hard
 
@@ -7787,7 +7787,7 @@ __metadata:
     "@types/react-dom": ^17.0.9
     aws-cdk: 2.0.0
     aws-cdk-lib: 2.0.0
-    constructs: 10.0.0
+    constructs: ~10.0
     eslint: 7.32.0
     eslint-config-next: 11.0.1
     jest: ^26.4.2
