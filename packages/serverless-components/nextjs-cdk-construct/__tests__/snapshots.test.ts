@@ -1,5 +1,5 @@
 import { SynthUtils } from "@aws-cdk/assert";
-import { Stack } from "aws-cdk-lib/core";
+import { Stack } from "aws-cdk-lib";
 import path from "path";
 import { NextJSLambdaEdge } from "../src";
 

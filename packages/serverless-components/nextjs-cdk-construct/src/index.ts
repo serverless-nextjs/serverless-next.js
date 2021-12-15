@@ -23,7 +23,7 @@ import {
   ServicePrincipal,
   CompositePrincipal
 } from "aws-cdk-lib/aws-iam";
-import { Duration, RemovalPolicy } from "aws-cdk-lib/core";
+import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { OriginRequestQueryStringBehavior } from "aws-cdk-lib/aws-cloudfront";
 import { Props } from "./props";

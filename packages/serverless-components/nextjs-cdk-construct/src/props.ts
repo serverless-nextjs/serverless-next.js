@@ -3,7 +3,7 @@ import { BehaviorOptions, DistributionProps } from "aws-cdk-lib/aws-cloudfront";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { BucketProps } from "aws-cdk-lib/aws-s3";
-import { Duration, StackProps } from "aws-cdk-lib/core";
+import { Duration, StackProps } from "aws-cdk-lib";
 
 export type LambdaOption<T> =
   | T
