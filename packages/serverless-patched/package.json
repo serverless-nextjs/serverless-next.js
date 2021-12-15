@@ -40,12 +40,12 @@
     "find-up": "^6.2.0",
     "patch-package": "^6.4.7",
     "postinstall-postinstall": "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097",
-    "serverless": "^2.68.0"
+    "serverless": "^2.69.0"
   },
   "devDependencies": {
-    "@types/node": "^16.11.11",
+    "@types/node": "^16.11.12",
     "rimraf": "^3.0.2",
-    "typescript": "^4.5.2"
+    "typescript": "^4.5.4"
   },
   "bin": "./dist/serverless-patched.js",
   "type": "module"

@@ -874,10 +874,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:^16.11.11":
-  version: 16.11.11
-  resolution: "@types/node@npm:16.11.11"
-  checksum: 1c472bd63f23ca0e4effc96e6e0c693b83b027f613a1f41b6d1bd7791f65ce171a351e0a5c92575cb59e84ad0a930875397bfbbb91a7c925ddbbb558f7461af8
+"@types/node@npm:^16.11.12":
+  version: 16.11.12
+  resolution: "@types/node@npm:16.11.12"
+  checksum: a3feb346d61a56f5a137c29bb8c63cfa3cc02e184b9dffdc18ef1528dcce55596e570575215a2e39e6ce69343eeb2a5ba71c271938f1dc8db4cc393902855412
   languageName: node
   linkType: hard
 
@@ -1288,9 +1288,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1041.0":
-  version: 2.1041.0
-  resolution: "aws-sdk@npm:2.1041.0"
+"aws-sdk@npm:^2.1046.0":
+  version: 2.1046.0
+  resolution: "aws-sdk@npm:2.1046.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -1301,7 +1301,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 297c24ad3571c23ee5f0a353d7d62836d7311ac3d42906783d0b4335285d1dea6f3459e0f1d1cc89e85f6b64632c76e8e531bcf4bde56a468035e422326edb76
+  checksum: 35a79e4a77c06ff8f7725a7a1874766935a238eb7519374c4fb84ec52182e6bc842575a36fe1d5daf78241b378c9ef31ff5ac7c39edeaef298f3aa1bc9610373
   languageName: node
   linkType: hard
 
@@ -1754,11 +1754,11 @@ __metadata:
     "@octokit/rest": ^18.12.0
     "@rollup/plugin-commonjs": ^18.1.0
     "@rollup/plugin-node-resolve": ^10.0.0
-    "@types/node": ^16.11.11
-    rollup: ^2.60.2
+    "@types/node": ^16.11.12
+    rollup: ^2.61.1
     rollup-plugin-terser: ^7.0.2
     rollup-plugin-typescript2: ^0.31.1
-    serverless: ^2.68.0
+    serverless: ^2.69.0
     ts-node: ^10.4.0
   languageName: unknown
   linkType: soft
@@ -1864,9 +1864,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cli-progress-footer@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "cli-progress-footer@npm:2.2.0"
+"cli-progress-footer@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "cli-progress-footer@npm:2.3.0"
   dependencies:
     cli-color: ^2.0.1
     d: ^1.0.1
@@ -1875,7 +1875,7 @@ __metadata:
     process-utils: ^4.0.0
     timers-ext: ^0.1.7
     type: ^2.5.0
-  checksum: 8bb9543d48f53e16464f6333ede7efe1e60aae1094c2cabfc0f20fd42c2a4cfa49417f114b47b9765aa3776ced8f9e9ff74195db1cbd48973b425268c3654974
+  checksum: ffc246c3b7bbb399ecdcc17d650695733182847e7a3ad8c49925f054a8217731a71744cb0449885e4e88d2eb80dfe816c26b09db3e6c75dd21dff524581f18c9
   languageName: node
   linkType: hard
 
@@ -5709,9 +5709,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"rollup@npm:^2.60.2":
-  version: 2.60.2
-  resolution: "rollup@npm:2.60.2"
+"rollup@npm:^2.61.1":
+  version: 2.61.1
+  resolution: "rollup@npm:2.61.1"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -5719,7 +5719,7 @@ fsevents@~2.3.2:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: bcd41dfe8afb7e0d97ce2237752165bdda689bcce6321d96821d565de3e0c865a49b544923f315985be2bfde086f72b54aae4ae7c87f798b3cb9558a5bec4e65
+  checksum: a41bd821c1d9f296e71e867828150080fb05d08cbdff9b6b5c0e3642da4d0723f7a847189f197c2a695a8a353d968ad89ebd54a4228dc3e92765c00e6bbadf87
   languageName: node
   linkType: hard
 
@@ -5849,9 +5849,9 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"serverless@npm:^2.68.0":
-  version: 2.68.0
-  resolution: "serverless@npm:2.68.0"
+"serverless@npm:^2.69.0":
+  version: 2.69.0
+  resolution: "serverless@npm:2.69.0"
   dependencies:
     "@serverless/cli": ^1.5.3
     "@serverless/components": ^3.18.1
@@ -5861,14 +5861,14 @@ fsevents@~2.3.2:
     ajv: ^6.12.6
     ajv-keywords: ^3.5.2
     archiver: ^5.3.0
-    aws-sdk: ^2.1041.0
+    aws-sdk: ^2.1046.0
     bluebird: ^3.7.2
     boxen: ^5.1.2
     cachedir: ^2.3.0
     chalk: ^4.1.2
     child-process-ext: ^2.1.1
     ci-info: ^3.3.0
-    cli-progress-footer: ^2.2.0
+    cli-progress-footer: ^2.3.0
     d: ^1.0.1
     dayjs: ^1.10.7
     decompress: ^4.2.1
@@ -5912,7 +5912,7 @@ fsevents@~2.3.2:
   bin:
     serverless: bin/serverless.js
     sls: bin/serverless.js
-  checksum: 93cc25f616e567c80ae9464bef9a3e8361f28948230ed46aaa559d0d2651d3217cd7add5722b3c0879b6c982ac95da08e34fff1ebca47301c5357321eaa54999
+  checksum: 5828d3521f542e815a35e1545c1df59b1870eee590e43e14371a19fd84c3dc89a4555b6303e705f8e625ff4b084c9efc30f5a8316418d2c545761e7be6c9b4ed
   languageName: node
   linkType: hard
 

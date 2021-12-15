@@ -42,8 +42,8 @@
     "@sls-next/core": "link:../core",
     "cdktf": "0.8.1",
     "cdktf-cli": "0.8.1",
-    "constructs": "3.3.161",
-    "esbuild": "0.14.2",
+    "constructs": "3.3.165",
+    "esbuild": "0.14.3",
     "fs-extra": "9.1.0",
     "yargs": "17.3.0"
   },
@@ -52,17 +52,17 @@
     "@rollup/plugin-commonjs": "18.1.0",
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-node-resolve": "10.0.0",
-    "@types/aws-lambda": "8.10.85",
+    "@types/aws-lambda": "8.10.88",
     "@types/fs-extra": "9.0.13",
     "@types/jest": "^27.0.3",
-    "@types/node": "16.11.11",
+    "@types/node": "16.11.12",
     "@types/yargs": "17.0.7",
-    "jest": "^27.4.3",
+    "jest": "^27.4.5",
     "rimraf": "3.0.2",
-    "rollup": "2.60.2",
+    "rollup": "2.61.1",
     "rollup-plugin-node-externals": "2.2.0",
     "rollup-plugin-terser": "7.0.2",
     "rollup-plugin-typescript2": "0.31.1",
-    "typescript": "4.5.2"
+    "typescript": "4.5.4"
   }
 }
