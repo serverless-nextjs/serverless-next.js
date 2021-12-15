@@ -16,13 +16,13 @@
     "cdk": "cdk"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "2.0.0",
+    "@aws-cdk/assert": "^2.2.0",
     "@types/aws-lambda": "^8.10.81",
     "@types/jest": "^26.0.10",
     "@types/node": "10.17.27",
     "@types/react": "17.0.16",
     "@types/react-dom": "^17.0.9",
-    "aws-cdk": "2.0.0",
+    "aws-cdk": "^2.2.0",
     "eslint": "7.32.0",
     "eslint-config-next": "11.0.1",
     "jest": "^26.4.2",
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "@sls-next/cdk-construct": "link:../../",
-    "aws-cdk-lib": "2.0.0",
-    "constructs": "~10.0",
+    "aws-cdk-lib": "^2.2.0",
+    "constructs": "^10.0.12",
     "next": "11.0.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
