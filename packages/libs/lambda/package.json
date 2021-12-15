@@ -57,7 +57,7 @@
     "@types/jest": "^27.0.3",
     "@types/node": "16.11.12",
     "@types/yargs": "17.0.7",
-    "jest": "^27.4.3",
+    "jest": "^27.4.5",
     "rimraf": "3.0.2",
     "rollup": "2.61.1",
     "rollup-plugin-node-externals": "2.2.0",
