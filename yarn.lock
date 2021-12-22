@@ -3643,15 +3643,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cdktf/hcl2cdk@npm:0.8.1":
-  version: 0.8.1
-  resolution: "@cdktf/hcl2cdk@npm:0.8.1"
+"@cdktf/hcl2cdk@npm:0.8.3":
+  version: 0.8.3
+  resolution: "@cdktf/hcl2cdk@npm:0.8.3"
   dependencies:
     "@babel/generator": ^7.14.5
     "@babel/template": ^7.14.5
     "@babel/types": ^7.14.5
-    "@cdktf/hcl2json": 0.8.1
-    "@cdktf/provider-generator": 0.8.1
+    "@cdktf/hcl2json": 0.8.3
+    "@cdktf/provider-generator": 0.8.3
     camelcase: ^6.2.0
     glob: 7.1.7
     graphology: ^0.20.0
@@ -3660,17 +3660,17 @@ __metadata:
     prettier: ^2.3.1
     reserved-words: ^0.1.2
     zod: ^1.11.7
-  checksum: 8525f52f5275bc3c258e4deacb0c6bc22e9cc70636ec056e6315da2afcec95706f30655fcdf30d4693c0dcee437e1a3e16a9acda7690b84c230212f66db09bd8
+  checksum: e94b4bb1c6f6a9f330148340d3c3f85b0e14754556e3a60ab4d28f6cd395a737d11eda86be3815b505044137785531174dcda0089a311ec1ec5d5808c5ac93ea
   languageName: node
   linkType: hard
 
-"@cdktf/hcl2json@npm:0.8.1":
-  version: 0.8.1
-  resolution: "@cdktf/hcl2json@npm:0.8.1"
+"@cdktf/hcl2json@npm:0.8.3":
+  version: 0.8.3
+  resolution: "@cdktf/hcl2json@npm:0.8.3"
   dependencies:
     "@types/node-fetch": ^2.5.8
     node-fetch: ^2.6.1
-  checksum: df1b64daf68a3bb2d28938ae60bc13825d5e54ed5f9aca0585e32cc6f9358e3618210a3036c66f26a92cae1b8fea936c122e9584e18ffcbde37c014570949f79
+  checksum: 850d16f8f838ed675150f62426b5580ac5e53448b998b1e3e5b29d21f0b6a4b6c4d62ab992eb8c9c863dbb415d47d8596828861d523ba85b1d0b5c197260439c
   languageName: node
   linkType: hard
 
@@ -3684,16 +3684,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cdktf/provider-generator@npm:0.8.1":
-  version: 0.8.1
-  resolution: "@cdktf/provider-generator@npm:0.8.1"
+"@cdktf/provider-generator@npm:0.8.3":
+  version: 0.8.3
+  resolution: "@cdktf/provider-generator@npm:0.8.3"
   dependencies:
-    "@cdktf/hcl2json": 0.8.1
+    "@cdktf/hcl2json": 0.8.3
     codemaker: ^0.22.0
     fs-extra: ^8.1.0
     is-valid-domain: ^0.1.2
     jsii-srcmak: ^0.1.406
-  checksum: 5ae374d2b4dd824d3e7b88f5c4a2493be1d929e4f79254bf9e01bc1a752894a4345f687d58c780f4f1480a8debdd053bd01070b3bc65d51c4c2ae74399b033e7
+  checksum: 3c5c3ef20d4f5937bc5c2f4c82a26abc3750fcfd7c93acf8d6b623171f4f44221e0ad92a169416feee631b1b1f577d0552f10deb0c471189f0de8d7c2ad14a97
   languageName: node
   linkType: hard
 
@@ -5961,7 +5961,7 @@ __metadata:
     "@types/node": 16.11.15
     "@types/yargs": 17.0.7
     cdktf: 0.8.3
-    cdktf-cli: 0.8.1
+    cdktf-cli: 0.8.3
     constructs: 3.3.168
     esbuild: 0.14.7
     fs-extra: 9.1.0
@@ -8443,31 +8443,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cdktf-cli@npm:0.8.1":
-  version: 0.8.1
-  resolution: "cdktf-cli@npm:0.8.1"
+"cdktf-cli@npm:0.8.3":
+  version: 0.8.3
+  resolution: "cdktf-cli@npm:0.8.3"
   dependencies:
-    "@cdktf/hcl2cdk": 0.8.1
-    "@cdktf/hcl2json": 0.8.1
-    cdktf: 0.8.1
-    constructs: ^10.0.0
+    "@cdktf/hcl2cdk": 0.8.3
+    "@cdktf/hcl2json": 0.8.3
+    cdktf: 0.8.3
+    constructs: ^10.0.12
     jsii: ^1.46.0
     jsii-pacmak: ^1.46.0
     yargs: ^17.0
   bin:
     cdktf: bundle/bin/cdktf
-  checksum: 07ba8b522e8462d1468829749e1548267e0cc9a45e1714807720ec39e79798b2994a6db4e2890c05ea4b5f14c121f106824245306fa7fa088f27b01b83e3060a
-  languageName: node
-  linkType: hard
-
-"cdktf@npm:0.8.1":
-  version: 0.8.1
-  resolution: "cdktf@npm:0.8.1"
-  dependencies:
-    archiver: 5.3.0
-  peerDependencies:
-    constructs: ^10.0.0
-  checksum: ce4c0e44793e2c9f971be863906902c1a4c1129c03c5d381e452202e84dcee1fe6ba5f6ccb5fa74d18df7cef9228c232a9f9cbd7a0e7e688a9fb7a54f72f0b69
+  checksum: 23336d655f8eb7eeebd22168c122ccae6465bdf2355637743129cfc4dc518302e99ce1a2d9ae03101d65024cc5431d60fcd09472fac3c27ecaff5d5709577283
   languageName: node
   linkType: hard
 
@@ -9054,13 +9043,6 @@ __metadata:
   version: 3.3.168
   resolution: "constructs@npm:3.3.168"
   checksum: 17738394e9e9f03cbad844216c646723bb74a87d6e1588d574e00137d0e1c6b0cbca4e75567b77626144182ed2aa9cc247f2f4fc8697687f25a62b6f04bb4c63
-  languageName: node
-  linkType: hard
-
-"constructs@npm:^10.0.0":
-  version: 10.0.9
-  resolution: "constructs@npm:10.0.9"
-  checksum: 29d80cd3ac7505ef3cc472ce4c76dd8a3a475928bc51566726c39dd6c4d68eb2c5af6f2830c874925832108dc094564360aa83abcf3e66a4164b47cb96a70cd1
   languageName: node
   linkType: hard
 

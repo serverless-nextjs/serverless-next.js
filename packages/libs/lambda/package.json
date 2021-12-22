@@ -41,7 +41,7 @@
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
     "cdktf": "0.8.3",
-    "cdktf-cli": "0.8.1",
+    "cdktf-cli": "0.8.3",
     "constructs": "3.3.168",
     "esbuild": "0.14.7",
     "fs-extra": "9.1.0",
