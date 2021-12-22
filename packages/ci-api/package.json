@@ -26,7 +26,7 @@
     "rollup": "^2.61.1",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.1",
-    "serverless": "^2.69.0",
+    "serverless": "^2.69.1",
     "ts-node": "^10.4.0"
   },
   "private": true
