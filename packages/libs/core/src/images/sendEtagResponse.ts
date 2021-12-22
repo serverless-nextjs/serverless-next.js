@@ -13,10 +13,10 @@ export function sendEtagResponse(
      * response to the same request: Cache-Control, Content-Location, Date,
      * ETag, Expires, and Vary. https://tools.ietf.org/html/rfc7232#section-4.1
      */
-    res.setHeader("ETag", etag);
+    res.setHeader("ETag", `"${etag}"`);
   }
 
-  if (fresh(req.headers, { etag })) {
+  if (fresh(req.headers, { etag: `"${etag}"` })) {
     res.statusCode = 304;
     res.end();
     return true;

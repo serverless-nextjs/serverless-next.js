@@ -288,7 +288,7 @@ describe("Image optimizer", () => {
 
       expect(res.getHeaders()).toEqual({
         "cache-control": "public, max-age=60",
-        etag: "-MEos7nPVi9RjCQMnHdAmrGDydYWJ1GJUF1IEQkQ1Sw=",
+        etag: '"-MEos7nPVi9RjCQMnHdAmrGDydYWJ1GJUF1IEQkQ1Sw="',
         "content-type": "image/webp"
       });
 
