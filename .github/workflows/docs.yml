@@ -19,7 +19,7 @@ jobs:
           yarn docs
 
       - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.7
+        uses: JamesIves/github-pages-deploy-action@4.1.8
         with:
           GITHUB_TOKEN: ${{ secrets.GHTOKEN }}
           BRANCH: gh-pages # The branch the action should deploy to.
