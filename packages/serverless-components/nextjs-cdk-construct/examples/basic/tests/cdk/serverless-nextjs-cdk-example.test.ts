@@ -1,9 +1,9 @@
 import { expect as expectCDK, matchTemplate, MatchStyle } from '@aws-cdk/assert';
-import * as cdk from '@aws-cdk/core';
+import { App } from 'aws-cdk-lib';
 import * as ServerlessNextjsCdkExample from '../../cdk/serverless-nextjs-cdk-example-stack';
 
 test('Empty Stack', () => {
-    const app = new cdk.App();
+    const app = new App();
     // WHEN
     const stack = new ServerlessNextjsCdkExample.ServerlessNextjsCdkExampleStack(app, 'MyTestStack');
     // THEN

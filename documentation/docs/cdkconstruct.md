@@ -16,11 +16,12 @@ deploy your Next app using a Cloudfront domain:
 
 ```ts
 // stack.ts
+import { Stack, StackProps } from "aws-cdk-lib";
+import { Construct } from "constructs";
 import { NextJSLambdaEdge } from "@sls-next/cdk-construct";
-import * as cdk from "@aws-cdk/core";
 
-export class MyStack extends cdk.Stack {
-  constructor(scope: cdk.Construct, id: string, props: cdk.StackProps) {
+export class MyStack extends Stack {
+  constructor(scope: Construct, id: string, props: StackProps) {
     super(scope, id, props);
     new NextJSLambdaEdge(this, "NextJsApp", {
       serverlessBuildOutDir: "./build"
@@ -29,7 +30,7 @@ export class MyStack extends cdk.Stack {
 }
 
 // bin.ts
-import * as cdk from "@aws-cdk/core";
+import { App } from "aws-cdk-lib";
 import { Builder } from "@sls-next/lambda-at-edge";
 import { MyStack } from "./stack";
 
@@ -39,7 +40,7 @@ const builder = new Builder(".", "./build", { args: ["build"] });
 builder
   .build()
   .then(() => {
-    const app = new cdk.App();
+    const app = new App();
     new MyStack(app, `MyStack`);
   })
   .catch((e) => {

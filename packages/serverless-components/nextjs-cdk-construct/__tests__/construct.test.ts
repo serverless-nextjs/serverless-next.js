@@ -1,12 +1,12 @@
 import "@aws-cdk/assert/jest";
 import { SynthUtils } from "@aws-cdk/assert";
-import { Stack } from "@aws-cdk/core";
+import { Stack } from "aws-cdk-lib";
 import path from "path";
 import { NextJSLambdaEdge } from "../src";
-import { Runtime, Function, Code } from "@aws-cdk/aws-lambda";
-import { Certificate } from "@aws-cdk/aws-certificatemanager";
-import { HostedZone } from "@aws-cdk/aws-route53";
-import { LambdaEdgeEventType } from "@aws-cdk/aws-cloudfront";
+import { Runtime, Function, Code } from "aws-cdk-lib/aws-lambda";
+import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
+import { HostedZone } from "aws-cdk-lib/aws-route53";
+import { LambdaEdgeEventType } from "aws-cdk-lib/aws-cloudfront";
 
 describe("CDK Construct", () => {
   it("passes correct lambda options to underlying lambdas when single value passed", () => {

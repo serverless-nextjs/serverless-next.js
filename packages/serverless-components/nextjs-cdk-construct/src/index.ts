@@ -1,13 +1,13 @@
-import * as cdk from "@aws-cdk/core";
-import * as lambda from "@aws-cdk/aws-lambda";
-import * as s3 from "@aws-cdk/aws-s3";
-import * as logs from "@aws-cdk/aws-logs";
-import * as s3Deploy from "@aws-cdk/aws-s3-deployment";
-import * as cloudfront from "@aws-cdk/aws-cloudfront";
-import * as origins from "@aws-cdk/aws-cloudfront-origins";
-import { ARecord, RecordTarget } from "@aws-cdk/aws-route53";
-import * as sqs from "@aws-cdk/aws-sqs";
-import * as lambdaEventSources from "@aws-cdk/aws-lambda-event-sources";
+import * as cdk from "aws-cdk-lib";
+import * as lambda from "aws-cdk-lib/aws-lambda";
+import * as s3 from "aws-cdk-lib/aws-s3";
+import * as logs from "aws-cdk-lib/aws-logs";
+import * as s3Deploy from "aws-cdk-lib/aws-s3-deployment";
+import * as cloudfront from "aws-cdk-lib/aws-cloudfront";
+import * as origins from "aws-cdk-lib/aws-cloudfront-origins";
+import { ARecord, RecordTarget } from "aws-cdk-lib/aws-route53";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import * as lambdaEventSources from "aws-cdk-lib/aws-lambda-event-sources";
 import {
   OriginRequestImageHandlerManifest,
   OriginRequestApiHandlerManifest,
@@ -22,20 +22,21 @@ import {
   ManagedPolicy,
   ServicePrincipal,
   CompositePrincipal
-} from "@aws-cdk/aws-iam";
-import { Duration, RemovalPolicy } from "@aws-cdk/core";
-import { CloudFrontTarget } from "@aws-cdk/aws-route53-targets";
-import { OriginRequestQueryStringBehavior } from "@aws-cdk/aws-cloudfront";
+} from "aws-cdk-lib/aws-iam";
+import { Duration, RemovalPolicy } from "aws-cdk-lib";
+import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
+import { OriginRequestQueryStringBehavior } from "aws-cdk-lib/aws-cloudfront";
 import { Props } from "./props";
 import { toLambdaOption } from "./utils/toLambdaOption";
 import { readAssetsDirectory } from "./utils/readAssetsDirectory";
 import { readInvalidationPathsFromManifest } from "./utils/readInvalidationPathsFromManifest";
 import { reduceInvalidationPaths } from "./utils/reduceInvalidationPaths";
 import pathToPosix from "./utils/pathToPosix";
+import { Construct } from "constructs";
 
 export * from "./props";
 
-export class NextJSLambdaEdge extends cdk.Construct {
+export class NextJSLambdaEdge extends Construct {
   private routesManifest: RoutesManifest | null;
 
   private apiBuildManifest: OriginRequestApiHandlerManifest | null;
@@ -70,7 +71,7 @@ export class NextJSLambdaEdge extends cdk.Construct {
 
   public regenerationFunction?: lambda.Function;
 
-  constructor(scope: cdk.Construct, id: string, private props: Props) {
+  constructor(scope: Construct, id: string, private props: Props) {
     super(scope, id);
     this.apiBuildManifest = this.readApiBuildManifest();
     this.routesManifest = this.readRoutesManifest();
