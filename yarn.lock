@@ -5891,7 +5891,7 @@ __metadata:
     "@types/yargs": 17.0.7
     cdktf: 0.8.3
     cdktf-cli: 0.8.1
-    constructs: 3.3.165
+    constructs: 3.3.168
     esbuild: 0.14.3
     fs-extra: 9.1.0
     jest: ^27.4.5
@@ -8979,10 +8979,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"constructs@npm:3.3.165":
-  version: 3.3.165
-  resolution: "constructs@npm:3.3.165"
-  checksum: 850d0d7cde0971bebc2b96958d616476d3d1331fb07adb487557a919ab7f5db56000fc682b4c091b6a8eaefffe93da2d33efa191cb951519a3cde7c81ebe88f9
+"constructs@npm:3.3.168":
+  version: 3.3.168
+  resolution: "constructs@npm:3.3.168"
+  checksum: 17738394e9e9f03cbad844216c646723bb74a87d6e1588d574e00137d0e1c6b0cbca4e75567b77626144182ed2aa9cc247f2f4fc8697687f25a62b6f04bb4c63
   languageName: node
   linkType: hard
 
