@@ -22,7 +22,7 @@
   "devDependencies": {
     "@rollup/plugin-commonjs": "^18.1.0",
     "@rollup/plugin-node-resolve": "^10.0.0",
-    "@types/node": "^16.11.12",
+    "@types/node": "^16.11.15",
     "rollup": "^2.61.1",
     "rollup-plugin-terser": "^7.0.2",
     "rollup-plugin-typescript2": "^0.31.1",
