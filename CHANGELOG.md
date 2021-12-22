@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.2...v3.7.0-alpha.3) (2021-12-22)
+
+### Bug Fixes
+
+- **core:** resolve invalid syntax on etag ([#2218](https://github.com/serverless-nextjs/serverless-next.js/issues/2218)) ([a1c1877](https://github.com/serverless-nextjs/serverless-next.js/commit/a1c18777655063fca837a42ae3a1649cccd4877f))
+
+### Features
+
+- **nextjs-cdk-construct:** support AWS CDK V2 ([#2187](https://github.com/serverless-nextjs/serverless-next.js/issues/2187)) ([b329326](https://github.com/serverless-nextjs/serverless-next.js/commit/b329326ec0f78eeb7dfbc2bbe105904931cfffb2))
+
 # [3.7.0-alpha.2](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.1...v3.7.0-alpha.2) (2021-11-29)
 
 ### Bug Fixes

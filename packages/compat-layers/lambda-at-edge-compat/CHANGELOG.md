@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.2...v3.7.0-alpha.3) (2021-12-22)
+
+**Note:** Version bump only for package @sls-next/next-aws-cloudfront
+
 ## [3.5.3](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.5.3-alpha.6...v3.5.3) (2021-11-09)
 
 **Note:** Version bump only for package @sls-next/next-aws-cloudfront
