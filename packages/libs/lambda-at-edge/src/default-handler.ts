@@ -1,6 +1,8 @@
 // @ts-ignore
 import PrerenderManifest from "./prerender-manifest.json";
 // @ts-ignore
+import ImagesManifest from "./images-manifest.json";
+// @ts-ignore
 import Manifest from "./manifest.json";
 // @ts-ignore
 import RoutesManifestJson from "./routes-manifest.json";
@@ -378,6 +380,15 @@ export const handler = async (
     eval('process.env.NODE_ENV="production"');
   }
   debug(`[handler] node_env: ${process.env.NODE_ENV}`);
+
+  if (!process.env.__NEXT_IMAGE_OPTS) {
+    // eslint-disable-next-line no-eval
+    eval(
+      `process.env.__NEXT_IMAGE_OPTS=${JSON.stringify({
+        path: ImagesManifest.path
+      })}`
+    );
+  }
 
   if (event.revalidate) {
     const { domainName, region } = event.Records[0].cf.request.origin!.s3!;

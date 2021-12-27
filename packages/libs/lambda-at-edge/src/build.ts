@@ -366,6 +366,10 @@ class Builder {
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
       ),
+      fse.copy(
+        join(this.dotNextDir, "images-manifest.json"),
+        join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "images-manifest.json")
+      ),
       this.processAndCopyRoutesManifest(
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "routes-manifest.json")
