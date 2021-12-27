@@ -11,21 +11,21 @@
  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
 
-import { UrlWithParsedQuery } from "url";
-import { IncomingMessage, ServerResponse } from "http";
-import { join } from "path";
 import { mediaType } from "@hapi/accept";
-import { createReadStream, promises } from "fs";
 import { createHash } from "crypto";
-import { getContentType, getExtension } from "./serveStatic";
+import * as fs from "fs";
+import { createReadStream, promises } from "fs";
+import { IncomingMessage, ServerResponse } from "http";
 // @ts-ignore no types for is-animated
 import isAnimated from "is-animated";
-import { sendEtagResponse } from "./sendEtagResponse";
-import { ImageConfig, ImagesManifest } from "../build/types";
-import { imageConfigDefault } from "./imageConfig";
-import * as fs from "fs";
 import fetch from "node-fetch";
+import { join } from "path";
+import { UrlWithParsedQuery } from "url";
+import { ImageConfig, ImagesManifest } from "../build/types";
 import { PlatformClient } from "../platform";
+import { imageConfigDefault } from "./imageConfig";
+import { sendEtagResponse } from "./sendEtagResponse";
+import { getContentType, getExtension } from "./serveStatic";
 
 let sharp: typeof import("sharp");
 const AVIF = "image/avif";
@@ -35,7 +35,6 @@ const JPEG = "image/jpeg";
 const GIF = "image/gif";
 const SVG = "image/svg+xml";
 const CACHE_VERSION = 2;
-const MODERN_TYPES = [AVIF, WEBP];
 const ANIMATABLE_TYPES = [WEBP, PNG, GIF];
 const VECTOR_TYPES = [SVG];
 
@@ -105,6 +104,7 @@ export async function imageOptimizer(
     deviceSizes = [],
     imageSizes = [],
     domains = [],
+    formats = ["image/webp"],
     loader
   } = imageConfig;
   const sizes = [...deviceSizes, ...imageSizes];
@@ -117,7 +117,7 @@ export async function imageOptimizer(
 
   const { headers } = req;
   const { url, w, q } = parsedUrl.query;
-  const mimeType = getSupportedMimeType(MODERN_TYPES, headers.accept);
+  const mimeType = getSupportedMimeType(formats, headers.accept);
   let href: string;
 
   if (!url) {
