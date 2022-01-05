@@ -52,7 +52,7 @@
     "@rollup/plugin-commonjs": "18.1.0",
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-node-resolve": "10.0.0",
-    "@types/aws-lambda": "8.10.88",
+    "@types/aws-lambda": "8.10.89",
     "@types/fs-extra": "9.0.13",
     "@types/jest": "^27.0.3",
     "@types/node": "16.11.15",
