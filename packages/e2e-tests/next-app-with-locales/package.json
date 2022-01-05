@@ -32,7 +32,7 @@
     "@types/mocha": "9.0.0",
     "@types/node": "16.11.15",
     "@types/node-fetch": "2.5.7",
-    "@types/react": "^17.0.37",
+    "@types/react": "^17.0.38",
     "@types/uuid": "8.3.3",
     "aws-sdk": "2.1050.0",
     "babel-plugin-istanbul": "6.1.1",
