@@ -5729,7 +5729,7 @@ __metadata:
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge"
     "@types/fs-extra": 9.0.13
     aws-cdk: ^2.3.0
-    aws-cdk-lib: ^2.2.0
+    aws-cdk-lib: ^2.3.0
     constructs: ^10.0.25
     fast-glob: 3.2.7
     fs-extra: 9.1.0
@@ -5737,7 +5737,7 @@ __metadata:
     rimraf: 3.0.2
     typescript: 4.5.4
   peerDependencies:
-    aws-cdk-lib: ^2.2.0
+    aws-cdk-lib: ^2.3.0
     constructs: ^10.0.25
   languageName: unknown
   linkType: soft
@@ -7512,9 +7512,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk-lib@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "aws-cdk-lib@npm:2.2.0"
+"aws-cdk-lib@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "aws-cdk-lib@npm:2.3.0"
   dependencies:
     "@balena/dockerignore": ^1.0.2
     case: 1.6.3
@@ -7527,7 +7527,7 @@ __metadata:
     yaml: 1.10.2
   peerDependencies:
     constructs: ^10.0.0
-  checksum: 4b6d09f3be7468f9adae27908bb47634cccf11c3b21ddadac9d2ba7a2bba99b59fe57c6d33169799721c4f8617085622aa4b38685b22455efb88f5542d9e4a42
+  checksum: acf2db25c68de36a21596b976ad2769fa56ebbbb7c0fbdb3c0903bf76ac05b6308c6843f12056e0b2c2c28736953f542fca1df591cc01c3941ad3eb8e5004df1
   languageName: node
   linkType: hard
 
