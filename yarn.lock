@@ -28,13 +28,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/cloud-assembly-schema@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@aws-cdk/cloud-assembly-schema@npm:2.2.0"
+"@aws-cdk/cfnspec@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@aws-cdk/cfnspec@npm:2.3.0"
+  dependencies:
+    fs-extra: ^9.1.0
+    md5: ^2.3.0
+  checksum: 01de8b5a50074b081c04bdfd55137db748e9658adf46357aecb5706217eb5a5006caa7f3395614432d7a86696d464939bbce6b656c3e3039c22ca7a0da86ffb5
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/cloud-assembly-schema@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@aws-cdk/cloud-assembly-schema@npm:2.3.0"
   dependencies:
     jsonschema: ^1.4.0
     semver: ^7.3.5
-  checksum: 2aaa04bfe539206aca45e3e8d1b1a2766e8d9c19e5dcd75bd59bf9c990fff2dcbbadcf6fc061758edff1b38411cfa7f49e7f63ba85cdd548e8f8e29fc257db39
+  checksum: 36728d7cd30aae93d87a505bb922a9f29892a558a0463ed7c8a9769601c4283c341f87108d8b65609c70b7c4a664a8c038eec86423af6d6b789ab72d31e64bd4
   languageName: node
   linkType: hard
 
@@ -53,22 +63,37 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@aws-cdk/cx-api@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@aws-cdk/cx-api@npm:2.2.0"
+"@aws-cdk/cloudformation-diff@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@aws-cdk/cloudformation-diff@npm:2.3.0"
   dependencies:
-    "@aws-cdk/cloud-assembly-schema": 2.2.0
-    semver: ^7.3.5
-  peerDependencies:
-    "@aws-cdk/cloud-assembly-schema": 2.2.0
-  checksum: ba6013b8ed56030d6cefd65c5a40e8c603f72e62d49ee3e2170f638187a0025277759658b9f77d77c62c088eb882e6576ade5202f06e768ad813b28ea0806b4e
+    "@aws-cdk/cfnspec": 2.3.0
+    "@types/node": ^10.17.60
+    colors: ^1.4.0
+    diff: ^5.0.0
+    fast-deep-equal: ^3.1.3
+    string-width: ^4.2.3
+    table: ^6.7.5
+  checksum: fe1ac406bcf0321fba6a8173285cc7b4edf2a09e0f63c45d5941d765b3c42a76fcaf81a950fd756c337c248ca57cdaa3163f4354c39053db607da18625bd520d
   languageName: node
   linkType: hard
 
-"@aws-cdk/region-info@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@aws-cdk/region-info@npm:2.2.0"
-  checksum: 6ed53ca5d54716befd67fcf9adb1eb7d601a8191814df73ed258d6de0e39f941fb820fc15f0b9c90a76778bc6b482ab7fa35a51685187b26109f1a547dce3e1a
+"@aws-cdk/cx-api@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@aws-cdk/cx-api@npm:2.3.0"
+  dependencies:
+    "@aws-cdk/cloud-assembly-schema": 2.3.0
+    semver: ^7.3.5
+  peerDependencies:
+    "@aws-cdk/cloud-assembly-schema": 2.3.0
+  checksum: fc91db300c208aa1c151e0fbf9bf3f085216b02ae26224b8f1efefbd736e981214b9162ba59c64976d5cf931da828564eee21c855117dbbc638a535e1589ee4e
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/region-info@npm:2.3.0":
+  version: 2.3.0
+  resolution: "@aws-cdk/region-info@npm:2.3.0"
+  checksum: 78686fbfe5e4ceb60c7747ee529765380bb5c4817b0fba2bdccadc792ce5ca2fadf6b3ac85e70525bad1084568530bf828c8edfc528f906e9d086a8b3c80bf78
   languageName: node
   linkType: hard
 
@@ -5728,7 +5753,7 @@ __metadata:
     "@sls-next/core": "link:../../libs/core"
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge"
     "@types/fs-extra": 9.0.13
-    aws-cdk: ^2.2.0
+    aws-cdk: ^2.3.0
     aws-cdk-lib: ^2.2.0
     constructs: ^10.0.25
     fast-glob: 3.2.7
@@ -7531,19 +7556,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "aws-cdk@npm:2.2.0"
+"aws-cdk@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "aws-cdk@npm:2.3.0"
   dependencies:
-    "@aws-cdk/cloud-assembly-schema": 2.2.0
-    "@aws-cdk/cloudformation-diff": 2.2.0
-    "@aws-cdk/cx-api": 2.2.0
-    "@aws-cdk/region-info": 2.2.0
+    "@aws-cdk/cloud-assembly-schema": 2.3.0
+    "@aws-cdk/cloudformation-diff": 2.3.0
+    "@aws-cdk/cx-api": 2.3.0
+    "@aws-cdk/region-info": 2.3.0
     "@jsii/check-node": 1.47.0
     archiver: ^5.3.0
     aws-sdk: ^2.979.0
     camelcase: ^6.2.1
-    cdk-assets: 2.2.0
+    cdk-assets: 2.3.0
     chokidar: ^3.5.2
     colors: ^1.4.0
     decamelize: ^5.0.1
@@ -7562,7 +7587,7 @@ __metadata:
     yargs: ^16.2.0
   bin:
     cdk: bin/cdk
-  checksum: 66b3426fd44adf04486df50c5d01584914fe9e4268a08f300ed949fb1a14fa7014a1927a84460f0eadf44258af8d3180c5eb81ee99e594f834eca88821b1c249
+  checksum: b3401b04d970cf168c48081339f119d7f09bcb412c8ae2e93aae2560201b0698084b8ecc585baf91b611f9cf11aecd96deb8afc2555e26d01140b119ef81c709
   languageName: node
   linkType: hard
 
@@ -8399,12 +8424,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cdk-assets@npm:2.2.0":
-  version: 2.2.0
-  resolution: "cdk-assets@npm:2.2.0"
+"cdk-assets@npm:2.3.0":
+  version: 2.3.0
+  resolution: "cdk-assets@npm:2.3.0"
   dependencies:
-    "@aws-cdk/cloud-assembly-schema": 2.2.0
-    "@aws-cdk/cx-api": 2.2.0
+    "@aws-cdk/cloud-assembly-schema": 2.3.0
+    "@aws-cdk/cx-api": 2.3.0
     archiver: ^5.3.0
     aws-sdk: ^2.848.0
     glob: ^7.2.0
@@ -8413,7 +8438,7 @@ __metadata:
   bin:
     cdk-assets: bin/cdk-assets
     docker-credential-cdk-assets: bin/docker-credential-cdk-assets
-  checksum: 9022e2f2b251d4e56660c078d28a46367225e0a9b3a3d55bd25f46eb1f5ff1a4ba57e48937e9fdb5344785a57737ae043c6e892502bfe58db3955d2b99190406
+  checksum: 6d651d9e8935271e76852c7f45547dc31942896bb7c83780ae8596a93d1e515191d4f9ebf48eb69b3dff46f76b8f16925637f600471ff382b849322f9b505af8
   languageName: node
   linkType: hard
 
