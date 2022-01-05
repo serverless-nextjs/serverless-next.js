@@ -21,12 +21,12 @@
     "ramda": "0.27.1"
   },
   "peerDependencies": {
-    "@babel/core": "7.16.5",
+    "@babel/core": "7.16.7",
     "@serverless/core": "1.1.2",
     "aws-sdk": "2.1046.0"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "7.16.5",
+    "@babel/preset-typescript": "7.16.7",
     "@types/fs-extra": "9.0.13",
     "@types/node": "16.11.15",
     "@types/ramda": "0.27.61",

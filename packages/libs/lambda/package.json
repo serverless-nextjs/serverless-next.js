@@ -48,7 +48,7 @@
     "yargs": "17.3.0"
   },
   "devDependencies": {
-    "@babel/preset-typescript": "^7.16.5",
+    "@babel/preset-typescript": "^7.16.7",
     "@rollup/plugin-commonjs": "18.1.0",
     "@rollup/plugin-json": "4.1.0",
     "@rollup/plugin-node-resolve": "10.0.0",
