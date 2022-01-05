@@ -29,6 +29,7 @@ export type ImageConfig = {
   imageSizes: number[];
   loader: "default" | "imgix" | "cloudinary" | "akamai";
   path: string;
+  formats: string[];
   domains?: string[];
 };
 

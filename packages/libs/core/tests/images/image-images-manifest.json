@@ -23,6 +23,7 @@
       128,
       256,
       384
-    ]
+    ],
+    "formats": ["image/avif","image/webp"]
   }
 }
