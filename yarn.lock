@@ -5911,7 +5911,7 @@ __metadata:
     "@types/react-dom": 17.0.11
     "@types/sharp": 0.29.4
     "@types/uuid": 8.3.3
-    "@vercel/nft": 0.17.0
+    "@vercel/nft": 0.17.1
     builtin-modules: 3.2.0
     eslint: 8.4.1
     execa: 5.1.1
@@ -6699,15 +6699,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vercel/nft@npm:0.17.0":
-  version: 0.17.0
-  resolution: "@vercel/nft@npm:0.17.0"
+"@vercel/nft@npm:0.17.1":
+  version: 0.17.1
+  resolution: "@vercel/nft@npm:0.17.1"
   dependencies:
     "@mapbox/node-pre-gyp": ^1.0.5
-    acorn: ^8.3.0
-    acorn-class-fields: ^1.0.0
-    acorn-private-class-elements: ^1.0.0
-    acorn-static-class-features: ^1.0.0
+    acorn: ^8.6.0
     bindings: ^1.4.0
     estree-walker: 2.0.2
     glob: ^7.1.3
@@ -6720,7 +6717,7 @@ __metadata:
     rollup-pluginutils: ^2.8.2
   bin:
     nft: out/cli.js
-  checksum: 2ec980ecb207ac1b8dd77b5507b7759e6b8cb57eeeddf4ac0332c952d639c9b72061f26f7fb2d65bdffa16cc9237bec6f59871d8f62d799795f51185334e5140
+  checksum: 77e4cea890d760845bd7060bb02ed02ebe05ca64e3809521dd04d6a535181e3ef6e2a81a293c5bac978095ed7a6885ed0453381d3a7f59a6bb90b63ae4c52383
   languageName: node
   linkType: hard
 
@@ -6934,17 +6931,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-class-fields@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "acorn-class-fields@npm:1.0.0"
-  dependencies:
-    acorn-private-class-elements: ^1.0.0
-  peerDependencies:
-    acorn: ^6 || ^7 || ^8
-  checksum: 14ff899a7dc174816bb65e036a2e03e170d8157d6db17a933a1f8acbf52ccf3108369a1e63269f01a5a7caa92042ebdc70998eb77b79a82558b617c9c36a95b5
-  languageName: node
-  linkType: hard
-
 "acorn-globals@npm:^6.0.0":
   version: 6.0.0
   resolution: "acorn-globals@npm:6.0.0"
@@ -6973,26 +6959,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn-private-class-elements@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "acorn-private-class-elements@npm:1.0.0"
-  peerDependencies:
-    acorn: ^6.1.0 || ^7 || ^8
-  checksum: e32dd10e3b33c5eb85148b651b22c610e7c10325cac4461093d724eca04e1281c57be2cc01d571f1b985576e3ea9e5ab1210b67e30cd985e53c8ca1eda3b05ec
-  languageName: node
-  linkType: hard
-
-"acorn-static-class-features@npm:^1.0.0":
-  version: 1.0.0
-  resolution: "acorn-static-class-features@npm:1.0.0"
-  dependencies:
-    acorn-private-class-elements: ^1.0.0
-  peerDependencies:
-    acorn: ^6.1.0 || ^7 || ^8
-  checksum: 3b412af8a6bbd0fb63fbbde51e03f122bb8ea7fcc3de449f092291134e11d286d9733b3e615e7d16dd986bbf5110fde41b8ab16e10a1f879961648370e7bee3b
-  languageName: node
-  linkType: hard
-
 "acorn-walk@npm:^7.1.1":
   version: 7.2.0
   resolution: "acorn-walk@npm:7.2.0"
@@ -7016,7 +6982,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"acorn@npm:^8.2.4, acorn@npm:^8.3.0, acorn@npm:^8.4.1":
+"acorn@npm:^8.2.4, acorn@npm:^8.4.1":
   version: 8.5.0
   resolution: "acorn@npm:8.5.0"
   bin:
