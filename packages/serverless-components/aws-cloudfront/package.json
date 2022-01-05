@@ -29,7 +29,7 @@
     "@babel/preset-typescript": "7.16.7",
     "@types/fs-extra": "9.0.13",
     "@types/node": "16.11.15",
-    "@types/ramda": "0.27.61",
+    "@types/ramda": "0.27.62",
     "babel-eslint": "10.1.0",
     "eslint": "8.6.0",
     "eslint-config-prettier": "8.3.0",
