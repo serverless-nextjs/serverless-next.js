@@ -5,26 +5,16 @@ __metadata:
   version: 5
   cacheKey: 8
 
-"@aws-cdk/assert@npm:^2.2.0":
-  version: 2.2.0
-  resolution: "@aws-cdk/assert@npm:2.2.0"
+"@aws-cdk/assert@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "@aws-cdk/assert@npm:2.3.0"
   dependencies:
-    "@aws-cdk/cloudformation-diff": 2.2.0
+    "@aws-cdk/cloudformation-diff": 2.3.0
   peerDependencies:
-    aws-cdk-lib: ^2.2.0
+    aws-cdk-lib: ^2.3.0
     constructs: ^10.0.0
     jest: ">=26.6.3"
-  checksum: 7091fbeb4d7cdbb25cf8e5c627d44196b80e15b33b4e38d302a0277e17816b237b4e0d44c5e1ded20d028c75fcfc6945b51458fc6292f5510174a85c0113c9b8
-  languageName: node
-  linkType: hard
-
-"@aws-cdk/cfnspec@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@aws-cdk/cfnspec@npm:2.2.0"
-  dependencies:
-    fs-extra: ^9.1.0
-    md5: ^2.3.0
-  checksum: c37f2179881be184d74949c1c620bca4614103b58d12943c63d1c5c2216c531971c5f4a6bddb9aaef9ccb33e4342db63e6b8e39c58dddeca7ee6cca2a66be156
+  checksum: 72ad6ca9a2ff8c5c5f13b32523a47210d7ecbdbdfeb24bd8d9d548a5b3bb174a6ee8a982123a323d4a5165bf34cd943745d4ec991701f118d252bad4f057d3f0
   languageName: node
   linkType: hard
 
@@ -45,21 +35,6 @@ __metadata:
     jsonschema: ^1.4.0
     semver: ^7.3.5
   checksum: 36728d7cd30aae93d87a505bb922a9f29892a558a0463ed7c8a9769601c4283c341f87108d8b65609c70b7c4a664a8c038eec86423af6d6b789ab72d31e64bd4
-  languageName: node
-  linkType: hard
-
-"@aws-cdk/cloudformation-diff@npm:2.2.0":
-  version: 2.2.0
-  resolution: "@aws-cdk/cloudformation-diff@npm:2.2.0"
-  dependencies:
-    "@aws-cdk/cfnspec": 2.2.0
-    "@types/node": ^10.17.60
-    colors: ^1.4.0
-    diff: ^5.0.0
-    fast-deep-equal: ^3.1.3
-    string-width: ^4.2.3
-    table: ^6.7.5
-  checksum: 04c68dbbb8297c7aa98e937a1c0737b4d79f012a2b6b92b5f41ddfab35f5a30b1387104cb863cb332bc3c92a0769c8016b7de583830828c194aa9431e55e84ca
   languageName: node
   linkType: hard
 
@@ -5749,7 +5724,7 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "@sls-next/cdk-construct@workspace:packages/serverless-components/nextjs-cdk-construct"
   dependencies:
-    "@aws-cdk/assert": ^2.2.0
+    "@aws-cdk/assert": ^2.3.0
     "@sls-next/core": "link:../../libs/core"
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge"
     "@types/fs-extra": 9.0.13

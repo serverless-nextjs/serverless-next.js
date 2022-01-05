@@ -39,7 +39,7 @@
     "constructs": "^10.0.25"
   },
   "devDependencies": {
-    "@aws-cdk/assert": "^2.2.0",
+    "@aws-cdk/assert": "^2.3.0",
     "@types/fs-extra": "9.0.13",
     "aws-cdk": "^2.3.0",
     "aws-cdk-lib": "^2.2.0",
