@@ -65,7 +65,7 @@ export class RevalidateHandler {
       return;
     }
 
-    console.log(`[handler] Revalidate resource: ${JSON.stringify(resource)}`);
+    debug(`[handler] Revalidate resource: ${JSON.stringify(resource)}`);
 
     if (!candidatePage) {
       throw new Error(`Page for ${resource.getPagePath()} not found`);
@@ -79,7 +79,7 @@ export class RevalidateHandler {
       `Current JSON ETAG: ${jsonHeader.getETag()}, Candidate Page JSON ETAG: ${candidatePage.getJsonEtag()}`
     );
 
-    console.log(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
+    debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
     if (isDevMode() || (await this.isContentChanged(candidatePage, resource))) {
       console.log(
