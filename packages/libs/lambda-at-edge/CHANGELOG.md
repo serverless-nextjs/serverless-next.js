@@ -3,12 +3,6 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-## [1.8.48](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.46...@getjerry/lambda-at-edge@1.8.48) (2022-01-07)
-
-### Bug Fixes
-
-- image optimizer options ([#32](https://github.com/getjerry/serverless-next.js/issues/32)) ([e65ddbc](https://github.com/getjerry/serverless-next.js/commit/e65ddbcdeeda17cffb00d44b5607208ee88b7c5d))
-
 ## [1.8.46](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.45...@getjerry/lambda-at-edge@1.8.46) (2021-11-19)
 
 **Note:** Version bump only for package @getjerry/lambda-at-edge
