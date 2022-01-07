@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/aws-cloudfront",
-  "version": "1.2.33",
+  "version": "1.2.34",
   "main": "./serverless.js",
   "publishConfig": {
     "access": "public"
