@@ -39,6 +39,10 @@ export class RevalidateHandler {
     if (`${resource.getBasePath()}${resource.getHtmlUri()}` === "/index.html") {
       console.log(`Can not isr homepage ${JSON.stringify(resource)}.`);
       return;
+    } else {
+      console.log(
+        `${resource.getBasePath()}${resource.getHtmlUri()} is not isr homepage.`
+      );
     }
 
     debug(JSON.stringify(resource));
