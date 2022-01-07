@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/next-aws-cloudfront",
-  "version": "1.7.5",
+  "version": "1.7.6",
   "publishConfig": {
     "access": "public"
   },

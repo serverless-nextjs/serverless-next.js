@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.21.7",
+  "version": "1.21.8",
   "description": "Serverless nextjs powered by Serverless Components",
   "main": "./serverless.js",
   "types": "dist/component.d.ts",
@@ -31,13 +31,13 @@
     "node": ">=10.11.0"
   },
   "dependencies": {
-    "@getjerry/aws-cloudfront": "^1.2.36",
-    "@getjerry/aws-lambda": "^1.1.9",
-    "@getjerry/cloudfront": "^1.1.6",
-    "@getjerry/domain": "^1.1.6",
-    "@getjerry/lambda-at-edge": "^1.9.7",
-    "@getjerry/next-aws-cloudfront": "^1.7.5",
-    "@getjerry/s3-static-assets": "^1.4.7",
+    "@getjerry/aws-cloudfront": "^1.2.37",
+    "@getjerry/aws-lambda": "^1.1.10",
+    "@getjerry/cloudfront": "^1.1.7",
+    "@getjerry/domain": "^1.1.7",
+    "@getjerry/lambda-at-edge": "^1.9.8",
+    "@getjerry/next-aws-cloudfront": "^1.7.6",
+    "@getjerry/s3-static-assets": "^1.4.8",
     "@serverless/aws-s3": "^4.2.0",
     "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.702.0",
