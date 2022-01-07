@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/aws-lambda",
-  "version": "1.1.7",
+  "version": "1.1.8",
   "main": "serverless.js",
   "publishConfig": {
     "access": "public"
@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@getjerry/aws-iam-role": "link:../aws-iam-role",
+    "@getjerry/aws-iam-role": "^1.1.6",
     "@serverless/aws-lambda-layer": "^1.0.0",
     "@serverless/aws-s3": "^4.2.0",
     "archiver": "^4.0.1",
@@ -29,5 +29,6 @@
   "peerDependencies": {
     "@serverless/core": "^1.1.2",
     "aws-sdk": "^2.702.0"
-  }
+  },
+  "gitHead": "061b788712a7416add761fb82daed30beec11548"
 }

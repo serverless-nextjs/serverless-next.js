@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/next-aws-cloudfront",
-  "version": "1.7.3",
+  "version": "1.7.4",
   "publishConfig": {
     "access": "public"
   },
@@ -26,5 +26,6 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "devDependencies": {
     "@types/aws-lambda": "^8.10.50"
-  }
+  },
+  "gitHead": "061b788712a7416add761fb82daed30beec11548"
 }

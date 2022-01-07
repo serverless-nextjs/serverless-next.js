@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/aws-iam-role",
-  "version": "1.1.5",
+  "version": "1.1.6",
   "description": "Custom IAM role component",
   "author": "Denis Grankin <denis@getjerry.com>",
   "homepage": "https://github.com/danielcondemarin/serverless-next.js/tree/master/packages/serverless-components/aws-iam-role#readme",
@@ -35,5 +35,6 @@
     "fs-extra": "^8.1.0",
     "jest": "^24.9.0",
     "prettier": "^1.15.3"
-  }
+  },
+  "gitHead": "061b788712a7416add761fb82daed30beec11548"
 }
