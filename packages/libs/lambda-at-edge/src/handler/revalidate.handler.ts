@@ -75,7 +75,7 @@ export class RevalidateHandler {
       `Current HTML ETAG: ${htmlHeader.getETag()}, Candidate Page HTML ETAG: ${candidatePage.getHtmlEtag()}`
     );
 
-    console.log(
+    debug(
       `Current JSON ETAG: ${jsonHeader.getETag()}, Candidate Page JSON ETAG: ${candidatePage.getJsonEtag()}`
     );
 
