@@ -36,16 +36,17 @@ export class RevalidateHandler {
   ): Promise<void> {
     const resource = this.resourceService.get(event);
 
-    if (`${resource.getBasePath()}${resource.getHtmlUri()}` === "/index.html") {
+    console.log(JSON.stringify(resource));
+
+    if (`${resource.getBasePath()}${resource.getUri()}` === "/index.html") {
       console.log(`Can not isr homepage ${JSON.stringify(resource)}.`);
       return;
     } else {
       console.log(
-        `${resource.getBasePath()}${resource.getHtmlUri()} is not isr homepage.`
+        `${resource.getBasePath()}${resource.getUri()} is not isr homepage.`
       );
     }
 
-    debug(JSON.stringify(resource));
     debug(JSON.stringify(event));
     debug(JSON.stringify(context));
 
