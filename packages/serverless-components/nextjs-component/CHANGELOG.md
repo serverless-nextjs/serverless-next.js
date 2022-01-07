@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.21.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.90...@getjerry/serverless-next@1.21.2) (2022-01-07)
+
+### Reverts
+
+- Revert "Feature: add 404 status check (#33)" ([a87437f](https://github.com/getjerry/serverless-next.js/commit/a87437f0e9c4c4d0f956ae975e6c837c93bc633c)), closes [#33](https://github.com/getjerry/serverless-next.js/issues/33)
+- Revert "chore(release): publish" ([5e8539a](https://github.com/getjerry/serverless-next.js/commit/5e8539a48cc3fd4b233cdd0b75fe35519c9c0e00))
+- Revert "chore(release): publish" ([dff5de9](https://github.com/getjerry/serverless-next.js/commit/dff5de98c33bf7fafeb742ebbdfcbcddaaf45ca3))
+- Revert "chore(release): publish" ([c6c8861](https://github.com/getjerry/serverless-next.js/commit/c6c88611336f8004685f038bcde1d8020fcc3108))
+- Revert "chore(release): publish" ([5aacb55](https://github.com/getjerry/serverless-next.js/commit/5aacb55ec751580e6f0ff345bc4ed01d03ffd70e))
+
 ## [1.20.85](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@1.20.84...@getjerry/serverless-next@1.20.85) (2021-11-22)
 
 **Note:** Version bump only for package @getjerry/serverless-next

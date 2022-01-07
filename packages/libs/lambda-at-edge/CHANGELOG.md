@@ -3,6 +3,23 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.9.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.51...@getjerry/lambda-at-edge@1.9.2) (2022-01-07)
+
+### Reverts
+
+- Revert "Feature: add 404 status check (#33)" ([a87437f](https://github.com/getjerry/serverless-next.js/commit/a87437f0e9c4c4d0f956ae975e6c837c93bc633c)), closes [#33](https://github.com/getjerry/serverless-next.js/issues/33)
+- Revert "Update default-handler.ts" ([8d89e9d](https://github.com/getjerry/serverless-next.js/commit/8d89e9d6fe4dafbe890fd7af1ba21357f0c8be96))
+- Revert "Update revalidate.handler.ts" ([6e7f6e7](https://github.com/getjerry/serverless-next.js/commit/6e7f6e72fcd6f4be6c57881c74d0c96080cc6e7d))
+- Revert "Update revalidate.handler.ts" ([cbfed41](https://github.com/getjerry/serverless-next.js/commit/cbfed411c8ebfc56036c5cedd9f2c9434cf518a2))
+- Revert "Update default-handler.ts" ([f43755d](https://github.com/getjerry/serverless-next.js/commit/f43755db5a11d391119350dcb66011188462aa64))
+- Revert "chore(release): publish" ([5e8539a](https://github.com/getjerry/serverless-next.js/commit/5e8539a48cc3fd4b233cdd0b75fe35519c9c0e00))
+- Revert "Update revalidate.handler.ts" ([44783fe](https://github.com/getjerry/serverless-next.js/commit/44783fe5d80704a1fba63e79167fdccc1154da09))
+- Revert "chore(release): publish" ([dff5de9](https://github.com/getjerry/serverless-next.js/commit/dff5de98c33bf7fafeb742ebbdfcbcddaaf45ca3))
+- Revert "Update revalidate.handler.ts" ([cdbe624](https://github.com/getjerry/serverless-next.js/commit/cdbe624ae416bd4667a4da54d37f0aa373aa5088))
+- Revert "chore(release): publish" ([c6c8861](https://github.com/getjerry/serverless-next.js/commit/c6c88611336f8004685f038bcde1d8020fcc3108))
+- Revert "Update revalidate.handler.ts" ([196ff16](https://github.com/getjerry/serverless-next.js/commit/196ff1654442450b0282c62c3ddead0e437fff16))
+- Revert "chore(release): publish" ([5aacb55](https://github.com/getjerry/serverless-next.js/commit/5aacb55ec751580e6f0ff345bc4ed01d03ffd70e))
+
 ## [1.8.46](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.8.45...@getjerry/lambda-at-edge@1.8.46) (2021-11-19)
 
 **Note:** Version bump only for package @getjerry/lambda-at-edge
