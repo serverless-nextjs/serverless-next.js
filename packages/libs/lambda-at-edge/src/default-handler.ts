@@ -169,6 +169,10 @@ const router = (
   return (uri: string): string => {
     let normalisedUri = uri;
 
+    if (uri.endsWith("/index.html")) {
+      return "pages/index.js";
+    }
+
     if (isDataRequest(uri)) {
       normalisedUri = normaliseDataRequestUri(normalisedUri, manifest);
     }
