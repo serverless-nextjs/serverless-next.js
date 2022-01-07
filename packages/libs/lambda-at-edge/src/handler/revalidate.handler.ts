@@ -82,7 +82,7 @@ export class RevalidateHandler {
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
     if (isDevMode() || (await this.isContentChanged(candidatePage, resource))) {
-      console.log(
+      debug(
         `[handler] isDevMode():${isDevMode()} or resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
 
