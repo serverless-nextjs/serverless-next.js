@@ -35,14 +35,6 @@ export class RevalidateHandler {
     manifest: OriginRequestDefaultHandlerManifest
   ): Promise<void> {
     const resource = this.resourceService.get(event);
-
-    if (
-      `${resource.getBasePath()}${resource.getHtmlUri()} ` === "/index.html"
-    ) {
-      console.log(`Can not isr homepage ${JSON.stringify(resource)}.`);
-      return;
-    }
-
     debug(JSON.stringify(resource));
     debug(JSON.stringify(event));
     debug(JSON.stringify(context));
