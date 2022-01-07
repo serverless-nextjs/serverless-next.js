@@ -37,7 +37,7 @@ import {
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import type { Readable } from "stream";
-import { createNotFoundResponse, isNotFoundPage } from "./routing/notfound";
+import { createNotFoundResponse } from "./routing/notfound";
 import {
   createRedirectResponse,
   getDomainRedirectPath,
@@ -912,7 +912,7 @@ const handleOriginResponse = async ({
     );
 
     // Check if it is a `notFound` response. Return 404 in that case.
-    if (isNotFoundPage(manifest, html)) {
+    if (renderOpts?.isNotFound) {
       debug(`[blocking-fallback] 'not found' response received. Sending 404.`);
       return createNotFoundResponse(
         response,

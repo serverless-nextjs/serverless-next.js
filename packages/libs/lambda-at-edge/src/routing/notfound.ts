@@ -4,8 +4,6 @@ import { CloudFrontResponse, CloudFrontResultResponse } from "aws-lambda";
 import type { Readable } from "stream";
 
 import { OriginRequestDefaultHandlerManifest } from "../../types";
-// @ts-ignore
-import * as _ from "../lib/lodash";
 
 /**
  * Return a 404 response.
@@ -60,19 +58,4 @@ export async function createNotFoundResponse(
     body: bodyString
   };
   return out;
-}
-
-/**
- * check 404 page.
- * @param manifest
- * @param html
- */
-export function isNotFoundPage(
-  manifest: OriginRequestDefaultHandlerManifest,
-  html: string
-): boolean {
-  if (_.isEmpty(manifest.notFoundPageMark)) {
-    return false;
-  }
-  return _.includes(html, manifest.notFoundPageMark);
 }

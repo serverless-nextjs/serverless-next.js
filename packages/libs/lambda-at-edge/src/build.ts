@@ -63,7 +63,6 @@ type BuildOptions = {
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
-  notFoundPageMark?: string;
 };
 
 const defaultBuildOptions = {
@@ -82,8 +81,7 @@ const defaultBuildOptions = {
   distributionId: "",
   urlRewrites: [],
   enableDebugMode: false,
-  invalidationUrlGroups: [],
-  notFoundPageMark: undefined
+  invalidationUrlGroups: []
 };
 
 class Builder {
@@ -539,8 +537,7 @@ class Builder {
               : group.maxAccessNumber
           };
         }
-      ),
-      notFoundPageMark: this.buildOptions.notFoundPageMark
+      )
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {

@@ -1,32 +1,32 @@
 import { Component } from "@serverless/core";
-import { pathExists, readJSON } from "fs-extra";
-import { join, resolve } from "path";
+import { readJSON, pathExists } from "fs-extra";
+import { resolve, join } from "path";
 import { Builder } from "@getjerry/lambda-at-edge";
 import {
-  OriginRequestApiHandlerManifest,
-  OriginRequestDefaultHandlerManifest,
   OriginRequestDefaultHandlerManifest as BuildManifest,
-  OriginRequestImageHandlerManifest,
-  RoutesManifest
+  OriginRequestDefaultHandlerManifest,
+  OriginRequestApiHandlerManifest,
+  RoutesManifest,
+  OriginRequestImageHandlerManifest
 } from "@getjerry/lambda-at-edge/types";
 import {
   deleteOldStaticAssets,
-  uploadStaticAssets,
-  uploadStaticAssetsFromBuild
+  uploadStaticAssetsFromBuild,
+  uploadStaticAssets
 } from "@getjerry/s3-static-assets";
 import createInvalidation from "@getjerry/cloudfront";
 import obtainDomains from "./lib/obtainDomains";
 import { populateNames } from "./lib/populate-names";
 import {
-  API_LAMBDA_CODE_DIR,
   DEFAULT_LAMBDA_CODE_DIR,
+  API_LAMBDA_CODE_DIR,
   IMAGE_LAMBDA_CODE_DIR
 } from "./constants";
 import type {
   BuildOptions,
-  LambdaInput,
+  ServerlessComponentInputs,
   LambdaType,
-  ServerlessComponentInputs
+  LambdaInput
 } from "../types";
 import { execSync } from "child_process";
 import isEmpty from "lodash/isEmpty";
@@ -246,8 +246,7 @@ class NextjsComponent extends Component {
           authentication: inputs.authentication ?? undefined,
           urlRewrites: inputs.urlRewrites ?? undefined,
           enableDebugMode: inputs.enableDebugMode ?? false,
-          invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined,
-          notFoundPageMark: inputs.notFoundPageMark ?? undefined
+          invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined
         },
         nextStaticPath
       );
