@@ -56,6 +56,8 @@ export type ServerlessComponentInputs = {
   urlRewrites?: UrlRewriteOptions;
   enableDebugMode?: boolean;
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
+  // If page contains this mark, will set 404 status code
+  notFoundPageMark?: string;
 };
 
 type CloudfrontOptions = Record<string, any>;
