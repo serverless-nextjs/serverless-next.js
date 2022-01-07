@@ -979,10 +979,10 @@ const handleOriginResponse = async ({
       console.log(
         `[blocking-fallback] html to s3: ${JSON.stringify(s3HtmlParams)}`
       );
-      await Promise.all([
-        s3.send(new PutObjectCommand(s3JsonParams)),
-        s3.send(new PutObjectCommand(s3HtmlParams))
-      ]);
+      // await Promise.all([
+      //   s3.send(new PutObjectCommand(s3JsonParams)),
+      //   s3.send(new PutObjectCommand(s3HtmlParams))
+      // ]);
     }
     const htmlOut = {
       status: "200",
