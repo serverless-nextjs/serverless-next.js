@@ -77,6 +77,7 @@ export type OriginRequestDefaultHandlerManifest = {
   urlRewrites?: UrlRewriteList;
   enableDebugMode?: boolean;
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
+  notFoundPageMark?: string;
 };
 
 export type OriginRequestImageHandlerManifest = {
