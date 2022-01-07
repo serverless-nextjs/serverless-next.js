@@ -36,7 +36,9 @@ export class RevalidateHandler {
   ): Promise<void> {
     const resource = this.resourceService.get(event);
 
-    if (`${resource.getBasePath()}${resource.getHtmlUri()}` === "/index.html") {
+    if (
+      `${resource.getBasePath()}${resource.getHtmlUri()} ` === "/index.html"
+    ) {
       console.log(`Can not isr homepage ${JSON.stringify(resource)}.`);
       return;
     }
