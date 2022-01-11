@@ -167,6 +167,8 @@ const router = (
   const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
 
   return (uri: string): string => {
+    debug(`[router] uri: ${uri}`);
+
     let normalisedUri = uri;
 
     if (isDataRequest(uri)) {
@@ -174,10 +176,18 @@ const router = (
     }
 
     if (ssr.nonDynamic[normalisedUri]) {
+      // log in prod
+      console.log(
+        `[router] ssr.nonDynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}`
+      );
       return ssr.nonDynamic[normalisedUri];
     }
 
     if (html.nonDynamic[normalisedUri]) {
+      // log in prod
+      console.log(
+        `[router] html.nonDynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}`
+      );
       return html.nonDynamic[normalisedUri];
     }
 
@@ -188,6 +198,10 @@ const router = (
       const pathMatchesRoute = re.test(normalisedUri);
 
       if (pathMatchesRoute) {
+        // log in prod
+        console.log(
+          `[router] dynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}\n- matched regex: ${re}`
+        );
         return file;
       }
     }
