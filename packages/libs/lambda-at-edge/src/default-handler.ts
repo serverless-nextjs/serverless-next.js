@@ -911,7 +911,7 @@ const handleOriginResponse = async ({
       )}, html: ${JSON.stringify(html)}`
     );
 
-    // Check if it is a `notFound` response. Return 404 in that case.
+    // Check if it is a `not Found` response. Return 404 in that case.
     if (isNotFoundPage(manifest, html)) {
       debug(`[blocking-fallback] 'not found' response received. Sending 404.`);
       return createNotFoundResponse(
