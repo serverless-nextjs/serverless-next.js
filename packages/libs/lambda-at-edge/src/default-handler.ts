@@ -167,10 +167,6 @@ const router = (
   const allDynamicRoutes = { ...ssr.dynamic, ...html.dynamic };
 
   return (uri: string): string => {
-    if (uri === "/index.html") {
-      return "pages/index.js";
-    }
-
     let normalisedUri = uri;
 
     if (isDataRequest(uri)) {
@@ -869,8 +865,6 @@ const handleOriginResponse = async ({
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
   const pagePath = router(manifest)(uri);
 
-  console.log(`End 403 check pagePath : ${pagePath}`);
-
   const s3 = new S3Client({
     region,
     maxAttempts: 3,
@@ -909,7 +903,7 @@ const handleOriginResponse = async ({
 
     const { renderOpts, html } = renderedRes;
 
-    console.log(
+    debug(
       `[blocking-fallback] rendered page, uri: ${uri}, ${
         request.uri
       } pagePath: ${pagePath}, opts: ${JSON.stringify(
@@ -973,16 +967,12 @@ const handleOriginResponse = async ({
         CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 
-      console.log(
-        `[blocking-fallback] json to s3: ${JSON.stringify(s3JsonParams)}`
-      );
-      console.log(
-        `[blocking-fallback] html to s3: ${JSON.stringify(s3HtmlParams)}`
-      );
-      // await Promise.all([
-      //   s3.send(new PutObjectCommand(s3JsonParams)),
-      //   s3.send(new PutObjectCommand(s3HtmlParams))
-      // ]);
+      debug(`[blocking-fallback] json to s3: ${JSON.stringify(s3JsonParams)}`);
+      debug(`[blocking-fallback] html to s3: ${JSON.stringify(s3HtmlParams)}`);
+      await Promise.all([
+        s3.send(new PutObjectCommand(s3JsonParams)),
+        s3.send(new PutObjectCommand(s3HtmlParams))
+      ]);
     }
     const htmlOut = {
       status: "200",

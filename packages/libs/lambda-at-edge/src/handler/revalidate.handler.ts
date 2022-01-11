@@ -38,15 +38,6 @@ export class RevalidateHandler {
 
     console.log(JSON.stringify(resource));
 
-    if (`${resource.getBasePath()}${resource.getUri()}` === "/index.html") {
-      console.log(`Can not isr homepage ${JSON.stringify(resource)}.`);
-      return;
-    } else {
-      console.log(
-        `${resource.getBasePath()}${resource.getUri()} is not isr homepage.`
-      );
-    }
-
     debug(JSON.stringify(event));
     debug(JSON.stringify(context));
 
@@ -87,7 +78,7 @@ export class RevalidateHandler {
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
 
     if (isDevMode() || (await this.isContentChanged(candidatePage, resource))) {
-      console.log(
+      debug(
         `[handler] isDevMode():${isDevMode()} or resource changed, update S3 cache and invalidate. html: ${resource.getHtmlKey()}, json:${resource.getJsonKey()}`
       );
 

@@ -18,7 +18,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@getjerry/aws-iam-role": "^1.1.12",
+    "@getjerry/aws-iam-role": "link:../aws-iam-role",
     "@serverless/aws-lambda-layer": "^1.0.0",
     "@serverless/aws-s3": "^4.2.0",
     "archiver": "^4.0.1",
