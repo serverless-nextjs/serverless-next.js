@@ -27,7 +27,7 @@
     "integration": "jest --runInBand --config jest.integration.config.json --setupTestFrameworkScriptFile=./jest.integration.setup.js",
     "postinstall": "yarn packages-install && opencollective-postinstall || true",
     "docs": "cd documentation && yarn && yarn build",
-    "graduate-main-package": "yarn check-gh-token && lerna publish --exact --force-publish=@getjerry/serverless-next"
+    "graduate-main-package": "yarn check-gh-token && lerna publish --exact --force-publish=@getjerry/serverless-next,@getjerry/aws-lambda"
   },
   "repository": {
     "type": "git",
