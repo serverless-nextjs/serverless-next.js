@@ -178,7 +178,7 @@ const router = (
     if (ssr.nonDynamic[normalisedUri]) {
       // log in prod
       console.log(
-        `[router] ssr.nonDynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}`
+        `[router] ssr.nonDynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}\n- result:${ssr.nonDynamic[normalisedUri]}`
       );
       return ssr.nonDynamic[normalisedUri];
     }
@@ -186,7 +186,7 @@ const router = (
     if (html.nonDynamic[normalisedUri]) {
       // log in prod
       console.log(
-        `[router] html.nonDynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}`
+        `[router] html.nonDynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}\n- result:${html.nonDynamic[normalisedUri]}`
       );
       return html.nonDynamic[normalisedUri];
     }
@@ -200,7 +200,7 @@ const router = (
       if (pathMatchesRoute) {
         // log in prod
         console.log(
-          `[router] dynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}\n- matched regex: ${re}`
+          `[router] dynamic matched, uri: ${uri}\n- normalisedUri: ${normalisedUri}\n- matched regex: ${re}\n- result:${file}`
         );
         return file;
       }
