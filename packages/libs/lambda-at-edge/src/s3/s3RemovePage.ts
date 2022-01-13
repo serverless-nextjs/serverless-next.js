@@ -19,7 +19,6 @@ export const s3RemovePage = async (
     region: options.region || "us-east-1",
     maxAttempts: 3
   });
-  console.log("remove that fucking page");
 
   const s3BasePath = options.basePath
     ? `${options.basePath.replace(/^\//, "")}/`
@@ -37,13 +36,11 @@ export const s3RemovePage = async (
   };
 
   try {
-    console.log("in try");
     await Promise.all([
       s3.send(new DeleteObjectCommand(s3JsonParams)),
       s3.send(new DeleteObjectCommand(s3HtmlParams))
     ]);
   } catch (e) {
-    console.log(e.message);
     return false;
   }
 
