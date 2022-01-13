@@ -524,7 +524,7 @@ class NextjsComponent extends Component {
         {
           Effect: "Allow",
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
-          Action: ["s3:GetObject", "s3:PutObject"]
+          Action: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
         },
         ...(queue
           ? [

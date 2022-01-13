@@ -54,6 +54,8 @@ import { createRedirectResponse } from "@sls-next/core/dist/module/route/redirec
 import { redirect } from "@sls-next/core/dist/module/handle/redirect";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import getStream from "get-stream";
+import { isJson } from "@sls-next/core";
+import { s3RemovePage } from "./s3/s3RemovePage";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -108,6 +110,7 @@ export const handler = async (
   const { now, log } = perfLogger(manifest.logLambdaExecutionTimes);
 
   const tHandlerBegin = now();
+  console.log("we are in v1 handler");
 
   if (isOriginResponse(event)) {
     response = await handleOriginResponse({
@@ -444,7 +447,7 @@ const handleOriginResponse = async ({
   const s3BasePath = basePath ? `${basePath.replace(/^\//, "")}/` : "";
 
   // Either a fallback: true page or a static error page
-  if (fallbackRoute.isStatic) {
+  if (!("html" in fallbackRoute)) {
     const file = fallbackRoute.file.slice("pages".length);
     const s3Key = `${s3BasePath}static-pages/${manifest.buildId}${file}`;
 
@@ -454,79 +457,91 @@ const handleOriginResponse = async ({
     };
 
     const s3Response = await s3.send(new GetObjectCommand(s3Params));
-    // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
-    const bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
+    const body = s3Response.Body?.toString();
 
-    const statusCode = fallbackRoute.statusCode || 200;
-    const is500 = statusCode === 500;
+    if (!isJson(body)) {
+      // S3 Body is stream per: https://github.com/aws/aws-sdk-js-v3/issues/1096
+      const bodyBuffer = await getStream.buffer(s3Response.Body as Readable);
 
-    const cacheControl = is500
-      ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
-      : s3Response.CacheControl ??
-        (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
-          ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
-          : "public, max-age=0, s-maxage=2678400, must-revalidate");
+      const statusCode = fallbackRoute.statusCode || 200;
+      const is500 = statusCode === 500;
 
-    res.writeHead(statusCode, {
-      "Cache-Control": cacheControl,
-      "Content-Type": "text/html"
-    });
-    res.end(bodyBuffer);
-    return await responsePromise;
-  }
+      const cacheControl = is500
+        ? "public, max-age=0, s-maxage=0, must-revalidate" // static 500 page should never be cached
+        : s3Response.CacheControl ??
+          (fallbackRoute.fallback // Use cache-control from S3 response if possible, otherwise use defaults
+            ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
+            : "public, max-age=0, s-maxage=2678400, must-revalidate");
 
-  // This is a fallback route that should be stored in S3 before returning it
-  const { renderOpts, html } = fallbackRoute;
-  // Check if response is a redirect
-  if (
-    typeof renderOpts.pageData !== "undefined" &&
-    typeof renderOpts.pageData.pageProps !== "undefined" &&
-    typeof renderOpts.pageData.pageProps.__N_REDIRECT !== "undefined"
-  ) {
-    const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
-    const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
-
-    const redirectResponse = createRedirectResponse(
-      redirectPath,
-      request.querystring,
-      statusCode
-    );
-
-    redirect({ req, res, responsePromise }, redirectResponse);
-
-    return await responsePromise;
-  }
-  const { expires } = await s3StorePage({
-    html,
-    uri: s3Uri,
-    basePath,
-    bucketName: bucketName || "",
-    buildId: manifest.buildId,
-    pageData: renderOpts.pageData,
-    region: request.origin?.s3?.region || "",
-    revalidate: renderOpts.revalidate
-  });
-
-  const isrResponse = expires
-    ? getStaticRegenerationResponse({
-        expiresHeader: expires.toJSON(),
-        lastModifiedHeader: undefined,
-        initialRevalidateSeconds: staticRoute?.revalidate
-      })
-    : null;
-
-  const cacheControl =
-    (isrResponse && isrResponse.cacheControl) ||
-    "public, max-age=0, s-maxage=2678400, must-revalidate";
-
-  res.setHeader("Cache-Control", cacheControl);
-
-  if (fallbackRoute.route.isData) {
-    res.setHeader("Content-Type", "application/json");
-    res.end(JSON.stringify(renderOpts.pageData));
+      res.writeHead(statusCode, {
+        "Cache-Control": cacheControl,
+        "Content-Type": "text/html"
+      });
+      res.end(bodyBuffer);
+      return await responsePromise;
+    } else {
+      await s3RemovePage({
+        basePath: s3BasePath,
+        bucketName: bucketName,
+        buildId: manifest.buildId,
+        region: request.origin?.s3?.region,
+        uri: s3Uri
+      });
+    }
   } else {
-    res.setHeader("Content-Type", "text/html");
-    res.end(html);
+    // This is a fallback route that should be stored in S3 before returning it
+    const { renderOpts, html } = fallbackRoute;
+    // Check if response is a redirect
+    if (
+      typeof renderOpts.pageData !== "undefined" &&
+      typeof renderOpts.pageData.pageProps !== "undefined" &&
+      typeof renderOpts.pageData.pageProps.__N_REDIRECT !== "undefined"
+    ) {
+      const statusCode = renderOpts.pageData.pageProps.__N_REDIRECT_STATUS;
+      const redirectPath = renderOpts.pageData.pageProps.__N_REDIRECT;
+
+      const redirectResponse = createRedirectResponse(
+        redirectPath,
+        request.querystring,
+        statusCode
+      );
+
+      redirect({ req, res, responsePromise }, redirectResponse);
+
+      return await responsePromise;
+    }
+    const { expires } = await s3StorePage({
+      html,
+      uri: s3Uri,
+      basePath,
+      bucketName: bucketName || "",
+      buildId: manifest.buildId,
+      pageData: renderOpts.pageData,
+      region: request.origin?.s3?.region || "",
+      revalidate: renderOpts.revalidate
+    });
+
+    const isrResponse = expires
+      ? getStaticRegenerationResponse({
+          expiresHeader: expires.toJSON(),
+          lastModifiedHeader: undefined,
+          initialRevalidateSeconds: staticRoute?.revalidate
+        })
+      : null;
+
+    const cacheControl =
+      (isrResponse && isrResponse.cacheControl) ||
+      "public, max-age=0, s-maxage=2678400, must-revalidate";
+
+    res.setHeader("Cache-Control", cacheControl);
+
+    if (fallbackRoute.route.isData) {
+      res.setHeader("Content-Type", "application/json");
+      res.end(JSON.stringify(renderOpts.pageData));
+    } else {
+      res.setHeader("Content-Type", "text/html");
+      res.end(html);
+    }
   }
   return await responsePromise;
 };

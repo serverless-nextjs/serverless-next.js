@@ -143,7 +143,7 @@ describe.each`
                 {
                   Effect: "Allow",
                   Resource: `arn:aws:s3:::bucket-xyz/*`,
-                  Action: ["s3:GetObject", "s3:PutObject"]
+                  Action: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
                 },
                 {
                   Effect: "Allow",
@@ -195,7 +195,7 @@ describe.each`
                 {
                   Effect: "Allow",
                   Resource: `arn:aws:s3:::bucket-xyz/*`,
-                  Action: ["s3:GetObject", "s3:PutObject"]
+                  Action: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
                 },
                 ...(expectsQueueDeployment
                   ? [
@@ -242,7 +242,7 @@ describe.each`
                 {
                   Effect: "Allow",
                   Resource: `arn:aws:s3:::bucket-xyz/*`,
-                  Action: ["s3:GetObject", "s3:PutObject"]
+                  Action: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
                 },
                 ...(expectsQueueDeployment
                   ? [
@@ -289,7 +289,7 @@ describe.each`
                 {
                   Effect: "Allow",
                   Resource: `arn:aws:s3:::bucket-xyz/*`,
-                  Action: ["s3:GetObject", "s3:PutObject"]
+                  Action: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
                 },
                 ...(expectsQueueDeployment
                   ? [

@@ -634,6 +634,11 @@ export class NextJsLambdaApp extends TerraformStack {
             Resource: `${this.s3Bucket.arn}/*`
           },
           {
+            Action: "s3:DeleteObject",
+            Effect: "Allow",
+            Resource: `${this.s3Bucket.arn}/*`
+          },
+          {
             Action: "s3:ListBucket",
             Effect: "Allow",
             Resource: this.s3Bucket.arn
