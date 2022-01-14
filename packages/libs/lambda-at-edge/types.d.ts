@@ -78,6 +78,7 @@ export type OriginRequestDefaultHandlerManifest = {
   enableDebugMode?: boolean;
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
   notFoundPageMark?: string;
+  permanentStaticPages?: string[];
 };
 
 export type OriginRequestImageHandlerManifest = {

@@ -48,7 +48,10 @@ import {
   getRewritePath,
   isExternalRewrite
 } from "./routing/rewriter";
-import { addHeadersToResponse } from "./headers/addHeaders";
+import {
+  addHeadersToResponse,
+  addS3HeadersToResponse
+} from "./headers/addHeaders";
 import {
   isValidPreviewRequest,
   setJerryAuth
@@ -62,6 +65,8 @@ import { S3Service } from "./services/s3.service";
 import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
 import { debug, isDevMode } from "./lib/console";
+import { PERMANENT_STATIC_PAGES_DIR } from "./lib/permanentStaticPages";
+import { CloudFrontHeaders } from "aws-lambda/common/cloudfront";
 
 process.env.PRERENDER = "true";
 process.env.DEBUGMODE = Manifest.enableDebugMode;
@@ -398,10 +403,30 @@ export const handler = async (
   if (!process.env.__NEXT_IMAGE_OPTS) {
     // eslint-disable-next-line no-eval
     eval(
-      `process.env.__NEXT_IMAGE_OPTS=${JSON.stringify({
+      `process.env.__NEXT_IMAGE_OPTS = ${JSON.stringify({
         path: ImagesManifest.path
       })}`
     );
+  }
+
+  // Permanent Static Pages
+  if (manifest.permanentStaticPages) {
+    const requestUri = event.Records[0].cf.request.uri;
+    const uri = requestUri === "/" ? "/index.html" : `${requestUri}.html`;
+    if (manifest.permanentStaticPages.includes(uri)) {
+      debug(
+        `[permanentStaticPages] permanentStaticPages: ${manifest.permanentStaticPages}`
+      );
+      debug(
+        `[permanentStaticPages] requestUri = ${requestUri}, uri = ${uri}, is match`
+      );
+      return await generatePermanentPageResponse(
+        uri,
+        manifest,
+        event,
+        routesManifest
+      );
+    }
   }
 
   if (event.revalidate) {
@@ -1236,4 +1261,74 @@ const setCacheControlToNoCache = (response: CloudFrontResultResponse): void => {
       }
     ]
   };
+};
+
+// generate Permanent Page Response and add headers
+export const generatePermanentPageResponse = async (
+  uri: string,
+  manifest: OriginRequestDefaultHandlerManifest,
+  event: OriginRequestEvent | OriginResponseEvent | RevalidationEvent,
+  routesManifest: RoutesManifest
+) => {
+  const { domainName, region } = event.Records[0].cf.request.origin!.s3!;
+  const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
+  const s3 = new S3Client({
+    region,
+    maxAttempts: 3,
+    retryStrategy: await buildS3RetryStrategy()
+  });
+  debug(
+    `[generatePermanentPageResponse] manifest: ${manifest.permanentStaticPages}`
+  );
+  debug(`[generatePermanentPageResponse] uri: ${uri}`);
+
+  //get page from S3
+  const s3Key = `${(basePath || "").replace(/^\//, "")}${
+    basePath === "" ? "" : "/"
+  }static-pages/${manifest.buildId}${PERMANENT_STATIC_PAGES_DIR}${uri}`;
+
+  const getStream = await import("get-stream");
+
+  const s3Params = {
+    Bucket: bucketName,
+    Key: s3Key
+  };
+  debug(
+    `[generatePermanentPageResponse] s3Params: ${JSON.stringify(s3Params)}`
+  );
+
+  const { Body, $metadata } = await s3.send(new GetObjectCommand(s3Params));
+  const bodyString = await getStream.default(Body as Readable);
+
+  debug(
+    `[generatePermanentPageResponse] $metadata: ${JSON.stringify($metadata)}`
+  );
+  const s3Headers = addS3HeadersToResponse($metadata.httpHeaders);
+
+  const out = {
+    status: "200",
+    statusDescription: "OK",
+    headers: {
+      ...s3Headers,
+      "content-type": [
+        {
+          key: "Content-Type",
+          value: "text/html"
+        }
+      ],
+      "cache-control": [
+        {
+          key: "Cache-Control",
+          value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        }
+      ]
+    },
+    body: bodyString
+  };
+
+  addHeadersToResponse(uri, out as CloudFrontResultResponse, routesManifest);
+
+  debug(`[generatePermanentPageResponse]: ${JSON.stringify(out.headers)}`);
+  debug(`[generatePermanentPageResponse]: ${JSON.stringify(out.body)}`);
+  return out;
 };

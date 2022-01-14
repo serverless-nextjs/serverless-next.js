@@ -58,6 +58,8 @@ export type ServerlessComponentInputs = {
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
   // If page contains this mark, will set 404 status code
   notFoundPageMark?: string;
+  // For some very important pages that need to be always available, such as the home page.
+  permanentStaticPages?: string[];
 };
 
 type CloudfrontOptions = Record<string, any>;

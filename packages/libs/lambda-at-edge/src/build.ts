@@ -32,7 +32,8 @@ import {
   INVALIDATION_DATA_DIR
 } from "./lib/invalidation/invalidationUrlGroup";
 import fs from "fs";
-import { isEmpty, map } from "lodash";
+import { isEmpty, map, forEach } from "lodash";
+import { PERMANENT_STATIC_PAGES_DIR } from "./lib/permanentStaticPages";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -64,6 +65,7 @@ type BuildOptions = {
   enableDebugMode?: boolean;
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
   notFoundPageMark?: string;
+  permanentStaticPages?: string[];
 };
 
 const defaultBuildOptions = {
@@ -83,7 +85,8 @@ const defaultBuildOptions = {
   urlRewrites: [],
   enableDebugMode: false,
   invalidationUrlGroups: [],
-  notFoundPageMark: undefined
+  notFoundPageMark: undefined,
+  permanentStaticPages: undefined
 };
 
 class Builder {
@@ -540,7 +543,8 @@ class Builder {
           };
         }
       ),
-      notFoundPageMark: this.buildOptions.notFoundPageMark
+      notFoundPageMark: this.buildOptions.notFoundPageMark,
+      permanentStaticPages: this.buildOptions.permanentStaticPages
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
@@ -954,6 +958,18 @@ class Builder {
     if (hasDynamicDataAssets) {
       await this.buildDynamicDataAssets(defaultBuildManifest, routesManifest);
     }
+
+    // check if we need to create Permanently Saved Pages in deploy phrase.
+    const hasPermanentStaticPages = !isEmpty(
+      defaultBuildManifest.permanentStaticPages
+    );
+
+    if (hasPermanentStaticPages) {
+      await this.buildPermanentStaticPages(
+        defaultBuildManifest,
+        routesManifest
+      );
+    }
   }
 
   /**
@@ -1032,6 +1048,53 @@ class Builder {
           currentNumber: initAccessNumber
         })
       );
+    });
+  }
+
+  /**
+   * Build Permanent Static Pages, now we only have homepage.
+   * Note that the upload to S3 is done in a separate deploy step.
+   */
+  async buildPermanentStaticPages(
+    defaultBuildManifest: OriginRequestDefaultHandlerManifest,
+    routesManifest: RoutesManifest
+  ) {
+    if (isEmpty(defaultBuildManifest.permanentStaticPages)) {
+      return;
+    }
+
+    const basePath = routesManifest.basePath;
+    const normalizedBasePath = basePath ? basePath.slice(1) : "";
+    const buildId = defaultBuildManifest.buildId;
+
+    const copyIfExists = async (
+      source: string,
+      destination: string
+    ): Promise<void> => {
+      if (await fse.pathExists(source)) {
+        await fse.copy(source, destination);
+      }
+    };
+
+    const sourcePath = path.join(
+      this.outputDir,
+      ASSETS_DIR,
+      normalizedBasePath,
+      "static-pages",
+      buildId
+    );
+
+    //create Permanent Static Pages dir.
+    const directoryPath = path.join(sourcePath, PERMANENT_STATIC_PAGES_DIR);
+
+    if (!fs.existsSync(directoryPath)) {
+      fs.mkdirSync(directoryPath, { recursive: true });
+    }
+
+    forEach(defaultBuildManifest.permanentStaticPages, (page) => {
+      const source = path.join(sourcePath, page);
+      const destination = path.join(directoryPath, page);
+      return copyIfExists(source, destination);
     });
   }
 }

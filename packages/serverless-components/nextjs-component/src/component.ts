@@ -247,7 +247,8 @@ class NextjsComponent extends Component {
           urlRewrites: inputs.urlRewrites ?? undefined,
           enableDebugMode: inputs.enableDebugMode ?? false,
           invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined,
-          notFoundPageMark: inputs.notFoundPageMark ?? undefined
+          notFoundPageMark: inputs.notFoundPageMark ?? undefined,
+          permanentStaticPages: inputs.permanentStaticPages ?? undefined
         },
         nextStaticPath
       );
