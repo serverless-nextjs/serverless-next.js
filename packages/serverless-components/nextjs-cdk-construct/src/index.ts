@@ -406,7 +406,9 @@ export class NextJSLambdaEdge extends Construct {
     );
 
     const assetsDirectory = path.join(props.serverlessBuildOutDir, "assets");
-    const assets = readAssetsDirectory({ assetsDirectory });
+    const { basePath } = this.routesManifest || {};
+    const normalizedBasePath = basePath && basePath.length > 0 ? basePath.slice(1) : "";
+    const assets = readAssetsDirectory({ assetsDirectory: path.join(assetsDirectory, normalizedBasePath) });
 
     // This `BucketDeployment` deploys just the BUILD_ID file. We don't actually
     // use the BUILD_ID file at runtime, however in this case we use it as a
