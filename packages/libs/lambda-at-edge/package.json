@@ -85,7 +85,7 @@
     "@aws-sdk/client-sqs": "3.47.0",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "@vercel/nft": "0.17.1",
+    "@vercel/nft": "0.17.3",
     "execa": "5.1.1",
     "fs-extra": "9.1.0",
     "get-stream": "6.0.1",
