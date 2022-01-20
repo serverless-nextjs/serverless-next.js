@@ -52,9 +52,9 @@
     "sharp": "0.29.1"
   },
   "devDependencies": {
-    "@babel/core": "7.16.7",
+    "@babel/core": "7.16.10",
     "@babel/plugin-proposal-class-properties": "7.16.7",
-    "@babel/preset-env": "7.16.7",
+    "@babel/preset-env": "7.16.10",
     "@babel/preset-typescript": "7.16.7",
     "@jest/globals": "27.4.6",
     "@types/cookie": "0.4.1",
