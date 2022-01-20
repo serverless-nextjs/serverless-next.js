@@ -6099,7 +6099,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/jest": ^27.4.0
     "@types/node": 16.11.15
-    "@types/yargs": 17.0.7
+    "@types/yargs": 17.0.8
     cdktf: 0.8.3
     cdktf-cli: 0.8.6
     constructs: 10.0.25
@@ -6112,7 +6112,7 @@ __metadata:
     rollup-plugin-terser: 7.0.2
     rollup-plugin-typescript2: 0.31.1
     typescript: 4.5.4
-    yargs: 17.3.0
+    yargs: 17.3.1
   languageName: unknown
   linkType: soft
 
@@ -6714,12 +6714,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/yargs@npm:17.0.7":
-  version: 17.0.7
-  resolution: "@types/yargs@npm:17.0.7"
+"@types/yargs@npm:17.0.8":
+  version: 17.0.8
+  resolution: "@types/yargs@npm:17.0.8"
   dependencies:
     "@types/yargs-parser": "*"
-  checksum: 520e803720b2a626338c0e2b61825dd1b956910fec4d855018c17e62cf9fb41eb67bcf122ba5c6fb569b1bfac73520d5d73e8be502b87f9a551619df441b1875
+  checksum: 63d06700ffbed745f00d7994eb92416649c8a3ead22f26446979d383f3af52fa9400bb185268f3a44a2348749098ffe33a8185ca676b77bc3206c63b8b73fd01
   languageName: node
   linkType: hard
 
@@ -20843,9 +20843,9 @@ typescript@~3.9.10:
   languageName: node
   linkType: hard
 
-"yargs@npm:17.3.0":
-  version: 17.3.0
-  resolution: "yargs@npm:17.3.0"
+"yargs@npm:17.3.1":
+  version: 17.3.1
+  resolution: "yargs@npm:17.3.1"
   dependencies:
     cliui: ^7.0.2
     escalade: ^3.1.1
@@ -20854,7 +20854,7 @@ typescript@~3.9.10:
     string-width: ^4.2.3
     y18n: ^5.0.5
     yargs-parser: ^21.0.0
-  checksum: 2b687338684bf9645e9389ffdbe813fc5a2ddfede299d46fbe5ac80eb9a391e558b97861ba44d2256936ebe9d7f8135f6a38af1c76a5685eac4061008b2df57a
+  checksum: 64fc2e32c56739f1d14d2d24acd17a6944c3c8e3e3558f09fc1953ac112e868cc16013d282886b9d5be22187f8b9ed4f60741a6b1011f595ce2718805a656852
   languageName: node
   linkType: hard
 
