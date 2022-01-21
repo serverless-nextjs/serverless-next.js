@@ -5996,7 +5996,7 @@ __metadata:
     fetch-mock-jest: 1.5.1
     fresh: 0.5.2
     fs-extra: 9.1.0
-    is-animated: 2.0.1
+    is-animated: 2.0.2
     jest: 27.4.7
     jsonwebtoken: 8.5.1
     next: 11.1.2
@@ -12485,10 +12485,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-animated@npm:2.0.1":
-  version: 2.0.1
-  resolution: "is-animated@npm:2.0.1"
-  checksum: 74cef985a135289f234b351baba6c065086a7ee6c59895642525c6e9824f72c55cd00d418a1c7ca4f2579f4a9af36adaabd692e944e747290765b7779245bfad
+"is-animated@npm:2.0.2":
+  version: 2.0.2
+  resolution: "is-animated@npm:2.0.2"
+  checksum: 4689beba4270fe5dc3f01e970ac98c800bce3895f262fd1fb3816bbe00111be979fd4ea47d52d853d8365861cebed89f68680ac4f735b27d57bd3c213a9afada
   languageName: node
   linkType: hard
 
