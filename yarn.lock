@@ -5826,7 +5826,7 @@ __metadata:
     "@serverless/aws-lambda-layer": 1.0.0
     "@serverless/aws-s3": 4.2.0
     "@serverless/core": 1.1.2
-    "@types/archiver": 5.1.1
+    "@types/archiver": 5.3.1
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.4.0
     "@types/lodash": 4.14.178
@@ -5858,7 +5858,7 @@ __metadata:
   resolution: "@sls-next/aws-s3@workspace:packages/serverless-components/aws-s3"
   dependencies:
     "@serverless/core": 1.1.2
-    "@types/archiver": 5.1.1
+    "@types/archiver": 5.3.1
     "@types/fs-extra": 9.0.13
     "@types/klaw-sync": 6.0.1
     "@types/lodash": 4.14.178
@@ -6280,12 +6280,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/archiver@npm:5.1.1":
-  version: 5.1.1
-  resolution: "@types/archiver@npm:5.1.1"
+"@types/archiver@npm:5.3.1":
+  version: 5.3.1
+  resolution: "@types/archiver@npm:5.3.1"
   dependencies:
     "@types/glob": "*"
-  checksum: e3f1cb17ebcc5ff6be0c711305d3ed5e5248d514cc85e8440c3ae4bde04f761dcb772f549e2299c8ae325d88045e62ae34c0b3dd850eec6b39864c055d7aa634
+  checksum: 1c6babc7f50acf5bf7fa3d5fa76bb68702e4463e6a412d259cdddff611dbbb9832ea4b2f41d675fd95ac1aa8b087daa882423073e41db9e296f14d41f2ea88e6
   languageName: node
   linkType: hard
 
