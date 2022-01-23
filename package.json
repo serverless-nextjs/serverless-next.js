@@ -82,7 +82,7 @@
     ]
   },
   "resolutions": {
-    "@serverless/cli": "^1.5.3",
+    "@serverless/cli": "^1.6.0",
     "which": "^2.0.2",
     "lodash": "^4.17.21"
   },
