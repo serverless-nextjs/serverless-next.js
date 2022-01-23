@@ -1637,10 +1637,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/mocha@npm:9.0.0":
-  version: 9.0.0
-  resolution: "@types/mocha@npm:9.0.0"
-  checksum: 73e6edaba045bc250b69085a770d5029edfed006ed8e75344435474a2cb8d38064acd7b34b6cc62756caa845a5cf335bde66db11e8c8c6565c62a790e933704a
+"@types/mocha@npm:9.1.0":
+  version: 9.1.0
+  resolution: "@types/mocha@npm:9.1.0"
+  checksum: 21e1000dafcfe387c6812be41c44a47b48c27a74d5a70c3d5ef1bb5c88eadadfc74dba06e93f160e7248c8a57b3977b590f82504c801c9927816ecd4668023c0
   languageName: node
   linkType: hard
 
@@ -6843,7 +6843,7 @@ fsevents@~2.3.1:
     "@bahmutov/print-env": 2.1.2
     "@cypress/code-coverage": 3.9.11
     "@cypress/skip-test": 2.6.1
-    "@types/mocha": 9.0.0
+    "@types/mocha": 9.1.0
     "@types/node": 16.11.21
     "@types/node-fetch": 2.5.7
     "@types/react": 17.0.38

@@ -28,7 +28,7 @@
     "@bahmutov/print-env": "2.1.2",
     "@cypress/code-coverage": "3.9.11",
     "@cypress/skip-test": "2.6.1",
-    "@types/mocha": "9.0.0",
+    "@types/mocha": "9.1.0",
     "@types/node": "16.11.21",
     "@types/node-fetch": "2.5.7",
     "@types/react": "17.0.38",
