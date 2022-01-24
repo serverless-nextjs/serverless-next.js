@@ -6077,7 +6077,7 @@ __metadata:
     "@types/react-dom": 17.0.11
     "@types/sharp": 0.29.5
     "@types/uuid": 8.3.3
-    "@vercel/nft": 0.17.3
+    "@vercel/nft": 0.17.4
     builtin-modules: 3.2.0
     eslint: 8.6.0
     execa: 5.1.1
@@ -6882,9 +6882,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vercel/nft@npm:0.17.3":
-  version: 0.17.3
-  resolution: "@vercel/nft@npm:0.17.3"
+"@vercel/nft@npm:0.17.4":
+  version: 0.17.4
+  resolution: "@vercel/nft@npm:0.17.4"
   dependencies:
     "@mapbox/node-pre-gyp": ^1.0.5
     acorn: ^8.6.0
@@ -6899,7 +6899,7 @@ __metadata:
     rollup-pluginutils: ^2.8.2
   bin:
     nft: out/cli.js
-  checksum: f1a0b4d1a4758f8ebe8ec02a59967ce0671546b38f8b6fd1d90541d51374cc8ead86342008e9fdad4b424e9b6f95fac57ea4af519cbe0260be99c540873f16a0
+  checksum: 149b1175324feccdd024c81c8f91ce591658cc48ccf49497ef8ec77e761125d0c087f4f44ee4b84c149e518dbacc851b33a6683bdd00845d98364ff104bff959
   languageName: node
   linkType: hard
 
