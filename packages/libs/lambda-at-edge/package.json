@@ -58,7 +58,7 @@
     "@types/react": "17.0.38",
     "@types/react-dom": "17.0.11",
     "@types/sharp": "0.29.5",
-    "@types/uuid": "8.3.3",
+    "@types/uuid": "8.3.4",
     "builtin-modules": "3.2.0",
     "eslint": "8.6.0",
     "fetch-mock-jest": "1.5.1",
