@@ -59,7 +59,7 @@
     "@types/yargs": "17.0.8",
     "jest": "^27.4.7",
     "rimraf": "3.0.2",
-    "rollup": "2.61.1",
+    "rollup": "2.66.0",
     "rollup-plugin-node-externals": "2.2.0",
     "rollup-plugin-terser": "7.0.2",
     "rollup-plugin-typescript2": "0.31.1",
