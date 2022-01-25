@@ -5766,7 +5766,7 @@ __metadata:
     "@babel/preset-typescript": 7.16.7
     "@serverless/core": 1.1.2
     "@types/fs-extra": 9.0.13
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/ramda": 0.27.62
     aws-sdk: 2.1062.0
     babel-eslint: 10.1.0
@@ -5806,7 +5806,7 @@ __metadata:
     "@aws-sdk/client-s3": 3.48.0
     "@aws-sdk/client-sqs": 3.48.0
     "@sls-next/core": "link:../core"
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     rimraf: 3.0.2
     typescript: 4.5.5
   languageName: unknown
@@ -5831,7 +5831,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.4.0
     "@types/lodash": 4.14.178
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/ramda": 0.27.62
     archiver: 5.3.0
     aws-sdk: 2.1062.0
@@ -5863,7 +5863,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/klaw-sync": 6.0.1
     "@types/lodash": 4.14.178
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/ramda": 0.27.62
     archiver: 5.3.0
     aws-sdk: 2.1062.0
@@ -5937,7 +5937,7 @@ __metadata:
   resolution: "@sls-next/cloudfront@workspace:packages/libs/cloudfront"
   dependencies:
     "@babel/preset-typescript": ^7.16.7
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     aws-sdk: 2.1062.0
     rimraf: 3.0.2
     typescript: 4.5.5
@@ -5983,7 +5983,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.4.0
     "@types/jsonwebtoken": 8.5.8
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/node-fetch": 2.5.12
     "@types/normalize-path": 3.0.0
     "@types/react": 17.0.38
@@ -6025,7 +6025,7 @@ __metadata:
   resolution: "@sls-next/domain@workspace:packages/serverless-components/domain"
   dependencies:
     "@serverless/core": 1.1.2
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     aws-sdk: 2.1062.0
     rimraf: 3.0.2
     typescript: 4.5.5
@@ -6070,7 +6070,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/jest": 27.4.0
     "@types/klaw": 3.0.3
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/node-fetch": 2.5.12
     "@types/normalize-path": 3.0.0
     "@types/react": 17.0.38
@@ -6124,7 +6124,7 @@ __metadata:
     "@types/aws-lambda": 8.10.91
     "@types/fs-extra": 9.0.13
     "@types/jest": ^27.4.0
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/yargs": 17.0.8
     cdktf: 0.8.6
     cdktf-cli: 0.8.6
@@ -6180,7 +6180,7 @@ __metadata:
   dependencies:
     "@types/fs-extra": 9.0.13
     "@types/mime-types": 2.1.1
-    "@types/node": 16.11.21
+    "@types/node": 17.0.11
     "@types/normalize-path": 3.0.0
     aws-sdk: 2.1062.0
     fast-glob: 3.2.11
@@ -6561,17 +6561,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:16.11.21, @types/node@npm:^16.11.21":
-  version: 16.11.21
-  resolution: "@types/node@npm:16.11.21"
-  checksum: 75b679dc6375cf09bc14a2d1b344be6f3fd8ea50f212b0d60970dc9e175cef45e44c284c716eb9e766ffa52d0c83b689adb3d1911b6dd8649c560b8f77442a22
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:16.11.4":
   version: 16.11.4
   resolution: "@types/node@npm:16.11.4"
   checksum: 96e08c0f8bb17601c18640a8eac61e2f236fe0c8a6b01a9221c10749157358fb29fdef4b5e264f72559e72f9830e6093f3ab5fef2df90afdad562ffa45ac534c
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:17.0.11, @types/node@npm:^17.0.11":
+  version: 17.0.11
+  resolution: "@types/node@npm:17.0.11"
+  checksum: 46bed84a9ff900ab004da3cb473b851cc33c6d50262f7cb58457ed557c0546153baa51e5220a6103b7f46af84b2e27115103d83adb08c7420f672e71c9996cca
   languageName: node
   linkType: hard
 
@@ -18418,7 +18418,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.7
     "@jest/test-sequencer": ^27.4.6
     "@types/jest": ^27.4.0
-    "@types/node": ^16.11.21
+    "@types/node": ^17.0.11
     "@types/webpack": ^5.28.0
     "@typescript-eslint/eslint-plugin": ^5.10.1
     "@typescript-eslint/parser": ^5.10.1
