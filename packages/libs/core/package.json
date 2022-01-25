@@ -62,7 +62,7 @@
     "@types/fs-extra": "9.0.13",
     "@types/jest": "27.4.0",
     "@types/jsonwebtoken": "8.5.8",
-    "@types/node": "17.0.11",
+    "@types/node": "17.0.12",
     "@types/node-fetch": "2.5.12",
     "@types/normalize-path": "3.0.0",
     "@types/react": "17.0.38",
