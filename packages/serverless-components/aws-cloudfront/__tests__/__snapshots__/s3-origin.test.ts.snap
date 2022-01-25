@@ -56,6 +56,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mybucket",
         "TrustedSigners": Object {
@@ -149,6 +150,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mybucket",
         "TrustedSigners": Object {
@@ -236,6 +238,7 @@ Object {
       },
       "MaxTTL": 31536000,
       "MinTTL": 0,
+      "ResponseHeadersPolicyId": "",
       "SmoothStreaming": false,
       "TargetOriginId": "anotherbucket",
       "TrustedSigners": Object {
@@ -326,6 +329,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mybucket",
         "TrustedSigners": Object {
@@ -413,6 +417,7 @@ Object {
       },
       "MaxTTL": 31536000,
       "MinTTL": 0,
+      "ResponseHeadersPolicyId": "",
       "SmoothStreaming": false,
       "TargetOriginId": "anotherbucket",
       "TrustedSigners": Object {
@@ -503,6 +508,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mybucket.with.dots",
         "TrustedSigners": Object {
@@ -590,6 +596,7 @@ Object {
       },
       "MaxTTL": 31536000,
       "MinTTL": 0,
+      "ResponseHeadersPolicyId": "",
       "SmoothStreaming": false,
       "TargetOriginId": "anotherbucket",
       "TrustedSigners": Object {
@@ -680,6 +687,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mybucket.s3.s3",
         "TrustedSigners": Object {
@@ -767,6 +775,7 @@ Object {
       },
       "MaxTTL": 31536000,
       "MinTTL": 0,
+      "ResponseHeadersPolicyId": "",
       "SmoothStreaming": false,
       "TargetOriginId": "anotherbucket",
       "TrustedSigners": Object {
@@ -857,6 +866,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mybucket",
         "TrustedSigners": Object {
@@ -944,6 +954,7 @@ Object {
       },
       "MaxTTL": 31536000,
       "MinTTL": 0,
+      "ResponseHeadersPolicyId": "",
       "SmoothStreaming": false,
       "TargetOriginId": "anotherbucket",
       "TrustedSigners": Object {

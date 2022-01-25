@@ -11,6 +11,7 @@ type DefaultCacheBehavior = {
   smoothStreaming?: boolean;
   viewerProtocolPolicy?: string;
   fieldLevelEncryptionId?: string;
+  responseHeadersPolicyId?: string;
   realtimeLogConfigArn?: string;
 };
 
@@ -25,6 +26,7 @@ export default (originId, defaults: DefaultCacheBehavior = {}) => {
     smoothStreaming = false,
     viewerProtocolPolicy = "redirect-to-https",
     fieldLevelEncryptionId = "",
+    responseHeadersPolicyId = "",
     realtimeLogConfigArn = undefined
   } = defaults;
 
@@ -55,6 +57,7 @@ export default (originId, defaults: DefaultCacheBehavior = {}) => {
       Items: []
     },
     FieldLevelEncryptionId: fieldLevelEncryptionId,
+    ResponseHeadersPolicyId: responseHeadersPolicyId,
     RealtimeLogConfigArn: realtimeLogConfigArn
   };
 

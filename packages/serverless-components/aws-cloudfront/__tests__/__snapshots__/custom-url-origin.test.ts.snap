@@ -67,6 +67,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mycustomorigin.com",
         "TrustedSigners": Object {
@@ -164,6 +165,7 @@ Object {
       },
       "MaxTTL": 31536000,
       "MinTTL": 0,
+      "ResponseHeadersPolicyId": "",
       "SmoothStreaming": false,
       "TargetOriginId": "mycustomoriginupdated.com",
       "TrustedSigners": Object {

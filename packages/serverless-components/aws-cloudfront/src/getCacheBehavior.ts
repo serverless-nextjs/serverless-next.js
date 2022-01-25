@@ -14,6 +14,7 @@ export default (
     smoothStreaming = false,
     viewerProtocolPolicy = "https-only",
     fieldLevelEncryptionId = "",
+    responseHeadersPolicyId = "",
     trustedSigners = {
       Enabled: false,
       Quantity: 0
@@ -43,6 +44,7 @@ export default (
     DefaultTTL: defaultTTL,
     MaxTTL: maxTTL,
     FieldLevelEncryptionId: fieldLevelEncryptionId,
+    ResponseHeadersPolicyId: responseHeadersPolicyId,
     LambdaFunctionAssociations: {
       Quantity: 0,
       Items: []
