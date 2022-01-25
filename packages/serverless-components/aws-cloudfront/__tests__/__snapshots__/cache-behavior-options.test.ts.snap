@@ -57,6 +57,7 @@ Object {
             "MaxTTL": 0,
             "MinTTL": 0,
             "PathPattern": "/sample/path",
+            "ResponseHeadersPolicyId": "",
             "SmoothStreaming": false,
             "TargetOriginId": "mycustomorigin.com",
             "TrustedSigners": Object {
@@ -112,6 +113,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "",
         "SmoothStreaming": false,
         "TargetOriginId": "mycustomorigin.com",
         "TrustedSigners": Object {
@@ -225,6 +227,7 @@ Object {
         },
         "MaxTTL": 31536000,
         "MinTTL": 0,
+        "ResponseHeadersPolicyId": "uuid",
         "SmoothStreaming": true,
         "TargetOriginId": "mycustomorigin.com",
         "TrustedSigners": Object {

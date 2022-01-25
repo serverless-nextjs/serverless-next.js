@@ -44,7 +44,8 @@ describe("Input origin as a custom url", () => {
         viewerProtocolPolicy: "https-only",
         smoothStreaming: true,
         compress: true,
-        fieldLevelEncryptionId: "123"
+        fieldLevelEncryptionId: "123",
+        responseHeadersPolicyId: "uuid"
       },
       origins: ["https://mycustomorigin.com"]
     });
