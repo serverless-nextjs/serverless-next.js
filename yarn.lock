@@ -5768,7 +5768,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     "@types/node": 17.0.12
     "@types/ramda": 0.27.62
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     babel-eslint: 10.1.0
     eslint: 8.7.0
     eslint-config-prettier: 8.3.0
@@ -5783,7 +5783,7 @@ __metadata:
   peerDependencies:
     "@babel/core": 7.16.12
     "@serverless/core": 1.1.2
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
   languageName: unknown
   linkType: soft
 
@@ -5834,7 +5834,7 @@ __metadata:
     "@types/node": 17.0.12
     "@types/ramda": 0.27.62
     archiver: 5.3.0
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     fs-extra: 9.1.0
     globby: 11.0.4
     jest: 27.4.7
@@ -5844,7 +5844,7 @@ __metadata:
     typescript: 4.5.5
   peerDependencies:
     "@serverless/core": 1.1.2
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
   languageName: unknown
   linkType: soft
 
@@ -5866,7 +5866,7 @@ __metadata:
     "@types/node": 17.0.12
     "@types/ramda": 0.27.62
     archiver: 5.3.0
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     babel-eslint: 10.1.0
     eslint: 8.7.0
     eslint-config-prettier: 8.3.0
@@ -5895,12 +5895,12 @@ __metadata:
   resolution: "@sls-next/aws-sqs@workspace:packages/serverless-components/aws-sqs"
   dependencies:
     "@serverless/core": 1.1.2
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     fs-extra: 9.1.0
     lodash: 4.17.21
   peerDependencies:
     "@serverless/core": 1.1.2
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
   languageName: unknown
   linkType: soft
 
@@ -5938,7 +5938,7 @@ __metadata:
   dependencies:
     "@babel/preset-typescript": ^7.16.7
     "@types/node": 17.0.12
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     rimraf: 3.0.2
     typescript: 4.5.5
   languageName: unknown
@@ -6026,12 +6026,12 @@ __metadata:
   dependencies:
     "@serverless/core": 1.1.2
     "@types/node": 17.0.12
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     rimraf: 3.0.2
     typescript: 4.5.5
   peerDependencies:
     "@serverless/core": 1.1.2
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
   languageName: unknown
   linkType: soft
 
@@ -6182,7 +6182,7 @@ __metadata:
     "@types/mime-types": 2.1.1
     "@types/node": 17.0.12
     "@types/normalize-path": 3.0.0
-    aws-sdk: 2.1062.0
+    aws-sdk: 2.1064.0
     fast-glob: 3.2.11
     fs-extra: 9.1.0
     mime-types: 2.1.34
@@ -7767,9 +7767,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:2.1062.0":
-  version: 2.1062.0
-  resolution: "aws-sdk@npm:2.1062.0"
+"aws-sdk@npm:2.1064.0":
+  version: 2.1064.0
+  resolution: "aws-sdk@npm:2.1064.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -7780,7 +7780,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 84efd4cfd24674214422addc2bb9cae31f64567411e71cad7cbe9dc28db11f2217d3b15474b7b939917745344366d4645aa76f3b6922f71f2e0ee1d9e9f80c7b
+  checksum: 7af6c5334324898d6cedb358f4c43c0716a9bd517f1743ce31770185aaa65042edae8569d1b2e52249fcabf292c0e7872c607f7049aabe922a91ee9f23d7113e
   languageName: node
   linkType: hard
 
