@@ -37,7 +37,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@cdktf/provider-aws": "2.0.13",
+    "@cdktf/provider-aws": "4.0.18",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
     "cdktf": "0.8.6",
