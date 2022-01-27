@@ -6249,7 +6249,7 @@ __metadata:
     rimraf: 3.0.2
     rollup: 2.66.1
     rollup-plugin-delete: 2.0.0
-    rollup-plugin-node-externals: 2.2.0
+    rollup-plugin-node-externals: 3.1.2
     rollup-plugin-terser: 7.0.2
     rollup-plugin-typescript2: 0.31.1
     sharp: 0.28.3
@@ -6289,7 +6289,7 @@ __metadata:
     jest: ^27.4.7
     rimraf: 3.0.2
     rollup: 2.66.1
-    rollup-plugin-node-externals: 2.2.0
+    rollup-plugin-node-externals: 3.1.2
     rollup-plugin-terser: 7.0.2
     rollup-plugin-typescript2: 0.31.1
     typescript: 4.5.5
@@ -11571,6 +11571,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"find-up@npm:^6.2.0":
+  version: 6.2.0
+  resolution: "find-up@npm:6.2.0"
+  dependencies:
+    locate-path: ^7.0.0
+    path-exists: ^5.0.0
+  checksum: 149085af5cec2af6fa0bd94db81785eb60464985b2428b4d34934a04d1809b1c27831a72b667ac25a8ee19bb6c36cf6fbae5776b115d45abbea1112f460f47c5
+  languageName: node
+  linkType: hard
+
 "flat-cache@npm:^3.0.4":
   version: 3.0.4
   resolution: "flat-cache@npm:3.0.4"
@@ -15133,6 +15143,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"locate-path@npm:^7.0.0":
+  version: 7.0.0
+  resolution: "locate-path@npm:7.0.0"
+  dependencies:
+    p-locate: ^6.0.0
+  checksum: a0de7f882f069c3afe261c77821b91f2fe430cfe9b76c9059e4814e8803dc155dd9dc998e3dfe1a4ff3ca596a423bf9aa5df0b26a9516ed80fdf5cfac82a36f3
+  languageName: node
+  linkType: hard
+
 "lodash._reinterpolate@npm:^3.0.0":
   version: 3.0.0
   resolution: "lodash._reinterpolate@npm:3.0.0"
@@ -16920,6 +16939,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-limit@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "p-limit@npm:4.0.0"
+  dependencies:
+    yocto-queue: ^1.0.0
+  checksum: 01d9d70695187788f984226e16c903475ec6a947ee7b21948d6f597bed788e3112cc7ec2e171c1d37125057a5f45f3da21d8653e04a3a793589e12e9e80e756b
+  languageName: node
+  linkType: hard
+
 "p-locate@npm:^2.0.0":
   version: 2.0.0
   resolution: "p-locate@npm:2.0.0"
@@ -16944,6 +16972,15 @@ __metadata:
   dependencies:
     p-limit: ^3.0.2
   checksum: 1623088f36cf1cbca58e9b61c4e62bf0c60a07af5ae1ca99a720837356b5b6c5ba3eb1b2127e47a06865fee59dd0453cad7cc844cda9d5a62ac1a5a51b7c86d3
+  languageName: node
+  linkType: hard
+
+"p-locate@npm:^6.0.0":
+  version: 6.0.0
+  resolution: "p-locate@npm:6.0.0"
+  dependencies:
+    p-limit: ^4.0.0
+  checksum: 2bfe5234efa5e7a4e74b30a5479a193fdd9236f8f6b4d2f3f69e3d286d9a7d7ab0c118a2a50142efcf4e41625def635bd9332d6cbf9cc65d85eb0718c579ab38
   languageName: node
   linkType: hard
 
@@ -17218,6 +17255,13 @@ __metadata:
   version: 4.0.0
   resolution: "path-exists@npm:4.0.0"
   checksum: 505807199dfb7c50737b057dd8d351b82c033029ab94cb10a657609e00c1bc53b951cfdbccab8de04c5584d5eff31128ce6afd3db79281874a5ef2adbba55ed1
+  languageName: node
+  linkType: hard
+
+"path-exists@npm:^5.0.0":
+  version: 5.0.0
+  resolution: "path-exists@npm:5.0.0"
+  checksum: 8ca842868cab09423994596eb2c5ec2a971c17d1a3cb36dbf060592c730c725cd524b9067d7d2a1e031fef9ba7bd2ac6dc5ec9fb92aa693265f7be3987045254
   languageName: node
   linkType: hard
 
@@ -18407,14 +18451,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup-plugin-node-externals@npm:2.2.0":
-  version: 2.2.0
-  resolution: "rollup-plugin-node-externals@npm:2.2.0"
+"rollup-plugin-node-externals@npm:3.1.2":
+  version: 3.1.2
+  resolution: "rollup-plugin-node-externals@npm:3.1.2"
   dependencies:
-    find-up: ^4.1.0
-  peerDependencies:
-    builtin-modules: ^3.1.0
-  checksum: 63cdc0eb51da6820bbae9156dc32ffb096254b85384beb7229053a4494f2a667d9421eda7bdf661c8a01f78916001bb21d7f81cdb3cce8a2ff654c8e11ff3a26
+    find-up: ^6.2.0
+  checksum: 7a2db2ef876c0e90b96b8dbb5180f41eb7a1819bcb8caa8c128b2724599b72bc9680ca4b78d303f1a978af8a30bee0925d5273b18b81f24934bf5c5474ab5793
   languageName: node
   linkType: hard
 
@@ -21395,6 +21437,13 @@ typescript@~3.9.10:
   version: 0.1.0
   resolution: "yocto-queue@npm:0.1.0"
   checksum: f77b3d8d00310def622123df93d4ee654fc6a0096182af8bd60679ddcdfb3474c56c6c7190817c84a2785648cdee9d721c0154eb45698c62176c322fb46fc700
+  languageName: node
+  linkType: hard
+
+"yocto-queue@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "yocto-queue@npm:1.0.0"
+  checksum: 2cac84540f65c64ccc1683c267edce396b26b1e931aa429660aefac8fbe0188167b7aee815a3c22fa59a28a58d898d1a2b1825048f834d8d629f4c2a5d443801
   languageName: node
   linkType: hard
 
