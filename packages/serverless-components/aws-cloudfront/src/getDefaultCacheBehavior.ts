@@ -12,6 +12,7 @@ type DefaultCacheBehavior = {
   viewerProtocolPolicy?: string;
   fieldLevelEncryptionId?: string;
   responseHeadersPolicyId?: string;
+  realtimeLogConfigArn?: string;
 };
 
 export default (originId, defaults: DefaultCacheBehavior = {}) => {
@@ -25,7 +26,8 @@ export default (originId, defaults: DefaultCacheBehavior = {}) => {
     smoothStreaming = false,
     viewerProtocolPolicy = "redirect-to-https",
     fieldLevelEncryptionId = "",
-    responseHeadersPolicyId = ""
+    responseHeadersPolicyId = "",
+    realtimeLogConfigArn = undefined
   } = defaults;
 
   const defaultCacheBehavior = {
@@ -55,7 +57,8 @@ export default (originId, defaults: DefaultCacheBehavior = {}) => {
       Items: []
     },
     FieldLevelEncryptionId: fieldLevelEncryptionId,
-    ResponseHeadersPolicyId: responseHeadersPolicyId
+    ResponseHeadersPolicyId: responseHeadersPolicyId,
+    RealtimeLogConfigArn: realtimeLogConfigArn
   };
 
   addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);

@@ -45,7 +45,8 @@ describe("Input origin as a custom url", () => {
         smoothStreaming: true,
         compress: true,
         fieldLevelEncryptionId: "123",
-        responseHeadersPolicyId: "uuid"
+        responseHeadersPolicyId: "uuid",
+        realtimeLogConfigArn: "realtime_log_config_ARN"
       },
       origins: ["https://mycustomorigin.com"]
     });
