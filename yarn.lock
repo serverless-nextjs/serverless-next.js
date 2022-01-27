@@ -6247,7 +6247,7 @@ __metadata:
     react: 17.0.2
     react-dom: 17.0.2
     rimraf: 3.0.2
-    rollup: 2.66.0
+    rollup: 2.66.1
     rollup-plugin-delete: 2.0.0
     rollup-plugin-node-externals: 2.2.0
     rollup-plugin-terser: 7.0.2
@@ -6288,7 +6288,7 @@ __metadata:
     fs-extra: 9.1.0
     jest: ^27.4.7
     rimraf: 3.0.2
-    rollup: 2.66.0
+    rollup: 2.66.1
     rollup-plugin-node-externals: 2.2.0
     rollup-plugin-terser: 7.0.2
     rollup-plugin-typescript2: 0.31.1
@@ -18458,9 +18458,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"rollup@npm:2.66.0":
-  version: 2.66.0
-  resolution: "rollup@npm:2.66.0"
+"rollup@npm:2.66.1":
+  version: 2.66.1
+  resolution: "rollup@npm:2.66.1"
   dependencies:
     fsevents: ~2.3.2
   dependenciesMeta:
@@ -18468,7 +18468,7 @@ __metadata:
       optional: true
   bin:
     rollup: dist/bin/rollup
-  checksum: 577fcc6e0227269bb42726756ca6d53d2445e1b54c4dd4d5e019fae271c7f0d7d557966f3b0cc3cd71d9d7c95b4642e2ffd14c3c7b0ef9a887a0a9fab9ba8755
+  checksum: ecd7917deeaa3005ac7cdd64186daf024594bd9ba940e32fc8966602a83349074d0ec999256009dc4475e7c3786ac52cdd824ee9df514b8c356b960fda6bfb34
   languageName: node
   linkType: hard
 
