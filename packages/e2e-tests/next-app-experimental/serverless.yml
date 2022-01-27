@@ -8,6 +8,7 @@ next-app-experimental:
         foo: bar
     build:
       useV2Handler: true
+      outputFileTracing: true
       #separateApiLambda: false
       #disableOriginResponseHandler: true
       postBuildCommands: ["node scripts/post-build-test.js"]

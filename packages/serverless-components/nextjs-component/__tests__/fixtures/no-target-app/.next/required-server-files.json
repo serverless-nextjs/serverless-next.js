@@ -1,0 +1,15 @@
+{
+  "version": 1,
+  "appDir": "packages/serverless-components/nextjs-component/__tests__/fixtures/no-target-app",
+  "files": [
+    ".next/routes-manifest.json",
+    ".next/server/pages-manifest.json",
+    ".next/build-manifest.json",
+    ".next/prerender-manifest.json",
+    ".next/server/middleware-manifest.json",
+    ".next/react-loadable-manifest.json",
+    ".next/server/font-manifest.json",
+    ".next/BUILD_ID"
+  ],
+  "ignore": []
+}
