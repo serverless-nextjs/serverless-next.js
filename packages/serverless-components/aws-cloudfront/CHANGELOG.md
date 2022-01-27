@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.6...v3.7.0-alpha.7) (2022-01-27)
+
+### Features
+
+- **cloudfront:** add ability to set RealtimeLogConfigARN ([#2301](https://github.com/serverless-nextjs/serverless-next.js/issues/2301)) ([04fec27](https://github.com/serverless-nextjs/serverless-next.js/commit/04fec27ca99994acf98ccfb4ac6ead933cfb4dde))
+
 # [3.7.0-alpha.6](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.5...v3.7.0-alpha.6) (2022-01-25)
 
 ### Features
