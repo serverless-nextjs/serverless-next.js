@@ -254,50 +254,45 @@ class Builder {
     buildManifest: OriginRequestDefaultHandlerManifest,
     destination: string
   ): Promise<void> {
-    if (this.buildOptions.outputFileTracing) {
-      const allSsrPages = [
-        ...Object.values(buildManifest.pages.ssr.nonDynamic),
-        ...Object.values(buildManifest.pages.ssr.dynamic)
-      ];
+    const { outputFileTracing, useServerlessTraceTarget } = this.buildOptions;
+    if (!outputFileTracing && !useServerlessTraceTarget) return;
 
-      const ssrPages = Object.values(allSsrPages).map((pageFile) =>
-        path.join(this.dotNextDir, "server", pageFile)
-      );
+    const base = this.buildOptions.baseDir || process.cwd();
 
+    const ignoreAppAndDocumentPages = (page: string): boolean => {
+      const basename = path.basename(page);
+      return basename !== "_app.js" && basename !== "_document.js";
+    };
+
+    const allSsrPages = [
+      ...Object.values(buildManifest.pages.ssr.nonDynamic),
+      ...Object.values(buildManifest.pages.ssr.dynamic)
+    ].filter(ignoreAppAndDocumentPages);
+
+    const ssrPages = Object.values(allSsrPages).map((pageFile) =>
+      path.join(this.nextTargetDir, pageFile)
+    );
+
+    const { fileList, reasons } = await nodeFileTrace(ssrPages, {
+      base,
+      resolve: this.buildOptions.resolve
+    });
+
+    await Promise.all(
+      this.copyLambdaHandlerDependencies(
+        Array.from(fileList),
+        reasons,
+        destination,
+        base
+      )
+    );
+
+    if (outputFileTracing) {
       await copyOutputFileTraces({
         serverlessDir: this.nextTargetDir,
         destination: path.join(this.outputDir, destination),
         pages: ssrPages
       });
-    } else if (this.buildOptions.useServerlessTraceTarget) {
-      const ignoreAppAndDocumentPages = (page: string): boolean => {
-        const basename = path.basename(page);
-        return basename !== "_app.js" && basename !== "_document.js";
-      };
-
-      const allSsrPages = [
-        ...Object.values(buildManifest.pages.ssr.nonDynamic),
-        ...Object.values(buildManifest.pages.ssr.dynamic)
-      ].filter(ignoreAppAndDocumentPages);
-
-      const ssrPages = Object.values(allSsrPages).map((pageFile) =>
-        path.join(this.nextTargetDir, pageFile)
-      );
-
-      const base = this.buildOptions.baseDir || process.cwd();
-      const { fileList, reasons } = await nodeFileTrace(ssrPages, {
-        base,
-        resolve: this.buildOptions.resolve
-      });
-
-      await Promise.all(
-        this.copyLambdaHandlerDependencies(
-          Array.from(fileList),
-          reasons,
-          destination,
-          base
-        )
-      );
     }
   }
 
@@ -400,15 +395,9 @@ class Builder {
       path.join(this.nextTargetDir, pageFile)
     );
 
-    if (this.buildOptions.outputFileTracing) {
-      promises.push(
-        copyOutputFileTraces({
-          serverlessDir: this.nextTargetDir,
-          destination: path.join(this.outputDir, API_LAMBDA_CODE_DIR),
-          pages: apiPages
-        })
-      );
-    } else if (this.buildOptions.useServerlessTraceTarget) {
+    const { outputFileTracing, useServerlessTraceTarget } = this.buildOptions;
+
+    if (outputFileTracing || useServerlessTraceTarget) {
       const base = this.buildOptions.baseDir || process.cwd();
 
       const { fileList, reasons } = await nodeFileTrace(apiPages, {
@@ -424,6 +413,16 @@ class Builder {
           base
         )
       );
+
+      if (outputFileTracing) {
+        promises.push(
+          copyOutputFileTraces({
+            serverlessDir: this.nextTargetDir,
+            destination: path.join(this.outputDir, API_LAMBDA_CODE_DIR),
+            pages: apiPages
+          })
+        );
+      }
     }
 
     return Promise.all([
