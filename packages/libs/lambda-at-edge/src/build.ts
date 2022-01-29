@@ -22,7 +22,6 @@ import { NextI18nextIntegration } from "@sls-next/core/dist/build/third-party/ne
 import normalizePath from "normalize-path";
 
 import { copyOutputFileTraces } from "./lib/copyOutputFileTraces";
-import { copyRequiredServerFiles } from "./lib/copyRequiredServerFiles";
 
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
@@ -265,17 +264,11 @@ class Builder {
         path.join(this.dotNextDir, "server", pageFile)
       );
 
-      await Promise.all([
-        copyOutputFileTraces({
-          serverlessDir: this.nextTargetDir,
-          destination: path.join(this.outputDir, destination),
-          pages: ssrPages
-        }),
-        copyRequiredServerFiles({
-          nextConfigDir: this.nextConfigDir,
-          destination: path.join(this.outputDir, destination)
-        })
-      ]);
+      await copyOutputFileTraces({
+        serverlessDir: this.nextTargetDir,
+        destination: path.join(this.outputDir, destination),
+        pages: ssrPages
+      });
     } else if (this.buildOptions.useServerlessTraceTarget) {
       const ignoreAppAndDocumentPages = (page: string): boolean => {
         const basename = path.basename(page);
@@ -413,10 +406,6 @@ class Builder {
           serverlessDir: this.nextTargetDir,
           destination: path.join(this.outputDir, API_LAMBDA_CODE_DIR),
           pages: apiPages
-        }),
-        copyRequiredServerFiles({
-          nextConfigDir: this.nextConfigDir,
-          destination: path.join(this.outputDir, API_LAMBDA_CODE_DIR)
         })
       );
     } else if (this.buildOptions.useServerlessTraceTarget) {
