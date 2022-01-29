@@ -21,8 +21,6 @@ module.exports = {
     "/e2e-tests/",
     "/tests/",
     "/scripts/",
-    ".test_sls_next_output",
-    "__tests__",
     "babel.config.js",
     "jest.config.js",
     "<rootDir>/packages/serverless-components/aws-s3",

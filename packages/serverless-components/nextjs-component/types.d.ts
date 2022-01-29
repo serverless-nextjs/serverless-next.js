@@ -93,7 +93,6 @@ export type BuildOptions = {
   separateApiLambda?: boolean;
   disableOriginResponseHandler?: boolean;
   useV2Handler?: boolean;
-  outputFileTracing?: boolean;
 };
 
 export type LambdaType =

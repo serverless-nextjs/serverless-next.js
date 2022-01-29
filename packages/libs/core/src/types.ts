@@ -292,5 +292,4 @@ export type CoreBuildOptions = {
   baseDir?: string;
   cleanupDotNext?: boolean;
   assetIgnorePatterns?: string[];
-  outputFileTracing?: boolean;
 };

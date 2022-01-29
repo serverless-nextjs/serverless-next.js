@@ -1148,33 +1148,6 @@ describe("Custom inputs", () => {
     });
   });
 
-  describe("Build using outputFileTracing", () => {
-    const fixturePath = path.join(__dirname, "./fixtures/no-target-app");
-    let tmpCwd: string;
-
-    beforeEach(() => {
-      tmpCwd = process.cwd();
-      process.chdir(fixturePath);
-
-      mockServerlessComponentDependencies({ expectedDomain: undefined });
-    });
-
-    afterEach(() => {
-      process.chdir(tmpCwd);
-      return cleanupFixtureDirectory(fixturePath);
-    });
-
-    it("builds correctly", async () => {
-      await createNextComponent().default({
-        build: {
-          cmd: "node_modules/.bin/next",
-          args: ["build"],
-          outputFileTracing: true
-        }
-      });
-    });
-  });
-
   describe.each([false, "false"])(
     "Skip deployment after build",
     (deployInput) => {
