@@ -60,7 +60,7 @@ export type NextJsLambdaAppProps = {
  * Note: this is a work-in-progress and may not function properly.
  * Refer to Terraform docs at {@link https://registry.terraform.io/providers/hashicorp/aws/latest/docs}
  */
-export class NextJsLambdaApp extends TerraformStack {
+export class NextJsLambdaApp extends Construct {
   protected readonly props: NextJsLambdaAppProps;
   protected s3Bucket: S3.S3Bucket;
   protected defaultLambda: LambdaFunction.LambdaFunction;
