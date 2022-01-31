@@ -67,6 +67,33 @@ describe("CDK Construct", () => {
     });
   });
 
+  it("lambda cache policy passes correct headers to origin when specified", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
+      whiteListedHeaders: ["my-header"],
+      cachePolicyName: {
+        lambdaCache: "NextLambdaCache"
+      }
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::CachePolicy",
+      {
+        CachePolicyConfig: {
+          Name: "NextLambdaCache",
+          ParametersInCacheKeyAndForwardedToOrigin: {
+            HeadersConfig: {
+              HeaderBehavior: "whitelist",
+              Headers: ["my-header"]
+            }
+          }
+        }
+      }
+    );
+  });
+
   it("lambda cache policy passes correct cookies to origin when specified", () => {
     const stack = new Stack();
     new NextJSLambdaEdge(stack, "Stack", {

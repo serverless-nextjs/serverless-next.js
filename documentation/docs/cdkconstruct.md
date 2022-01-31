@@ -92,6 +92,8 @@ new NextJSLambdaEdge(this, "NextJsApp", {
 - `s3Props?: Partial<BucketProps>` - pass custom s3 props
 - `whiteListedCookies?: string[]` - provide a list of cookies to forward to the
   CloudFront origin.
+- `whiteListedHeaders?: string[]` - provide a list of headers to forward to the
+  CloudFront origin.
 - `defaultBehavior?: Partial<cloudfront.Behaviour>` - provide overrides for the
   default behavior
 - `behaviours?: Array<cloudfront.Behaviour>` - an array of Cloudfront
