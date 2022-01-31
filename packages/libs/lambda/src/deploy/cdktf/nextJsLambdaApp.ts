@@ -1,19 +1,16 @@
 import {
-  APIGatewayV2,
+  apigatewayv2 as APIGatewayV2,
   AwsProvider,
-  CloudFront,
-  IAM,
-  LambdaFunction,
-  S3,
-  SQS
+  cloudfront as CloudFront,
+  iam as IAM,
+  lambdafunction as LambdaFunction,
+  s3 as S3,
+  sqs as SQS
 } from "@cdktf/provider-aws";
 import { App, Fn, TerraformStack } from "cdktf";
 import { Construct } from "constructs";
-import {
-  ArchiveProvider,
-  DataArchiveFile
-} from "src/deploy/cdktf/.gen/providers/archive";
-import { Resource } from "src/deploy/cdktf/.gen/providers/null";
+import { ArchiveProvider, DataArchiveFile } from "@cdktf/provider-archive";
+import { Resource } from "@cdktf/provider-null";
 import * as path from "path";
 import { CoreBuildOptions } from "@sls-next/core";
 import { LambdaBuildOptions } from "src/types";
