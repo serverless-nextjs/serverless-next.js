@@ -218,11 +218,6 @@ class NextjsComponent extends Component {
         ? nextConfigPath
         : resolve(inputs.build.baseDir);
 
-    const outputFileTracing =
-      typeof inputs.build !== "boolean" &&
-      typeof inputs.build !== "undefined" &&
-      !!inputs.build.outputFileTracing;
-
     const buildConfig: BuildOptions = {
       enabled: inputs.build
         ? // @ts-ignore
@@ -235,8 +230,7 @@ class NextjsComponent extends Component {
       ...(typeof inputs.build === "object" ? inputs.build : {}),
       cwd: buildCwd,
       baseDir: buildBaseDir, // @ts-ignore
-      cleanupDotNext: inputs.build?.cleanupDotNext ?? true,
-      outputFileTracing
+      cleanupDotNext: inputs.build?.cleanupDotNext ?? true
     };
 
     if (buildConfig.enabled) {
@@ -249,7 +243,6 @@ class NextjsComponent extends Component {
           env: buildConfig.env,
           args: buildConfig.args,
           useServerlessTraceTarget: inputs.useServerlessTraceTarget || false,
-          outputFileTracing: buildConfig.outputFileTracing,
           logLambdaExecutionTimes: inputs.logLambdaExecutionTimes || false,
           domainRedirects: inputs.domainRedirects || {},
           minifyHandlers: inputs.minifyHandlers || false,

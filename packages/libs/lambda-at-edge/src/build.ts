@@ -21,9 +21,6 @@ import { NextConfig } from "@sls-next/core";
 import { NextI18nextIntegration } from "@sls-next/core/dist/build/third-party/next-i18next";
 import normalizePath from "normalize-path";
 
-import { copyOutputFileTraces } from "./lib/copyOutputFileTraces";
-import { copyRequiredServerFiles } from "./lib/copyRequiredServerFiles";
-
 export const DEFAULT_LAMBDA_CODE_DIR = "default-lambda";
 export const API_LAMBDA_CODE_DIR = "api-lambda";
 export const IMAGE_LAMBDA_CODE_DIR = "image-lambda";
@@ -55,13 +52,12 @@ type BuildOptions = {
   separateApiLambda?: boolean;
   disableOriginResponseHandler?: boolean;
   useV2Handler?: boolean;
-  outputFileTracing?: boolean;
 };
 
 const defaultBuildOptions = {
   args: [],
   cwd: process.cwd(),
-  env: {} as NodeJS.ProcessEnv,
+  env: {},
   cmd: "./node_modules/.bin/next",
   useServerlessTraceTarget: false,
   logLambdaExecutionTimes: false,
@@ -82,7 +78,7 @@ class Builder {
   nextConfigDir: string;
   nextStaticDir: string;
   dotNextDir: string;
-  nextTargetDir: string;
+  serverlessDir: string;
   outputDir: string;
   buildOptions: BuildOptions = defaultBuildOptions;
 
@@ -95,10 +91,7 @@ class Builder {
     this.nextConfigDir = path.resolve(nextConfigDir);
     this.nextStaticDir = path.resolve(nextStaticDir ?? nextConfigDir);
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
-    this.nextTargetDir = path.join(
-      this.dotNextDir,
-      buildOptions && buildOptions.outputFileTracing ? "server" : "serverless"
-    );
+    this.serverlessDir = path.join(this.dotNextDir, "serverless");
     this.outputDir = outputDir;
     if (buildOptions) {
       this.buildOptions = buildOptions;
@@ -123,7 +116,7 @@ class Builder {
   }
 
   async readPagesManifest(): Promise<{ [key: string]: string }> {
-    const path = join(this.nextTargetDir, "pages-manifest.json");
+    const path = join(this.serverlessDir, "pages-manifest.json");
     const hasServerlessPageManifest = await fse.pathExists(path);
 
     if (!hasServerlessPageManifest) {
@@ -139,8 +132,7 @@ class Builder {
     fileList: string[],
     reasons: NodeFileTraceReasons,
     handlerDirectory: string,
-    base: string,
-    omitPackageJson = true
+    base: string
   ): Promise<void>[] {
     return fileList
       .filter((file) => {
@@ -156,14 +148,13 @@ class Builder {
         const reason = reasons.get(file);
 
         return (
-          (!reason || reason.type !== "initial") &&
-          (omitPackageJson ? file !== "package.json" : true)
+          (!reason || reason.type !== "initial") && file !== "package.json"
         );
       })
       .map((filePath: string) => {
         const resolvedFilePath = path.resolve(join(base, filePath));
         const dst = normalizeNodeModules(
-          path.relative(this.nextTargetDir, resolvedFilePath)
+          path.relative(this.serverlessDir, resolvedFilePath)
         );
 
         if (resolvedFilePath !== join(this.outputDir, handlerDirectory, dst)) {
@@ -255,28 +246,9 @@ class Builder {
     buildManifest: OriginRequestDefaultHandlerManifest,
     destination: string
   ): Promise<void> {
-    if (this.buildOptions.outputFileTracing) {
-      const allSsrPages = [
-        ...Object.values(buildManifest.pages.ssr.nonDynamic),
-        ...Object.values(buildManifest.pages.ssr.dynamic)
-      ];
+    let copyTraces: Promise<void>[] = [];
 
-      const ssrPages = Object.values(allSsrPages).map((pageFile) =>
-        path.join(this.dotNextDir, "server", pageFile)
-      );
-
-      await Promise.all([
-        copyOutputFileTraces({
-          serverlessDir: this.nextTargetDir,
-          destination: path.join(this.outputDir, destination),
-          pages: ssrPages
-        }),
-        copyRequiredServerFiles({
-          nextConfigDir: this.nextConfigDir,
-          destination: path.join(this.outputDir, destination)
-        })
-      ]);
-    } else if (this.buildOptions.useServerlessTraceTarget) {
+    if (this.buildOptions.useServerlessTraceTarget) {
       const ignoreAppAndDocumentPages = (page: string): boolean => {
         const basename = path.basename(page);
         return basename !== "_app.js" && basename !== "_document.js";
@@ -288,7 +260,7 @@ class Builder {
       ].filter(ignoreAppAndDocumentPages);
 
       const ssrPages = Object.values(allSsrPages).map((pageFile) =>
-        path.join(this.nextTargetDir, pageFile)
+        path.join(this.serverlessDir, pageFile)
       );
 
       const base = this.buildOptions.baseDir || process.cwd();
@@ -297,15 +269,15 @@ class Builder {
         resolve: this.buildOptions.resolve
       });
 
-      await Promise.all(
-        this.copyLambdaHandlerDependencies(
-          Array.from(fileList),
-          reasons,
-          destination,
-          base
-        )
+      copyTraces = this.copyLambdaHandlerDependencies(
+        Array.from(fileList),
+        reasons,
+        destination,
+        base
       );
     }
+
+    await Promise.all(copyTraces);
   }
 
   async buildDefaultLambda(
@@ -315,7 +287,7 @@ class Builder {
     useV2Handler: boolean
   ): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
-      join(this.nextTargetDir, "pages/api")
+      join(this.serverlessDir, "pages/api")
     );
 
     return Promise.all([
@@ -340,7 +312,7 @@ class Builder {
         buildManifest
       ),
       fse.copy(
-        join(this.nextTargetDir, "pages"),
+        join(this.serverlessDir, "pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
           filter: (file: string) => {
@@ -363,7 +335,7 @@ class Builder {
               this.isSSRJSFile(
                 buildManifest,
                 pathToPosix(
-                  path.relative(path.join(this.nextTargetDir, "pages"), file)
+                  path.relative(path.join(this.serverlessDir, "pages"), file)
                 ) // important: make sure to use posix path to generate forward-slash path across both posix/windows
               );
 
@@ -396,49 +368,36 @@ class Builder {
   async buildApiLambda(
     apiBuildManifest: OriginRequestApiHandlerManifest
   ): Promise<void[]> {
-    const promises: Promise<void>[] = [];
+    let copyTraces: Promise<void>[] = [];
 
-    const allApiPages = [
-      ...Object.values(apiBuildManifest.apis.nonDynamic),
-      ...Object.values(apiBuildManifest.apis.dynamic).map((entry) => entry.file)
-    ];
+    if (this.buildOptions.useServerlessTraceTarget) {
+      const allApiPages = [
+        ...Object.values(apiBuildManifest.apis.nonDynamic),
+        ...Object.values(apiBuildManifest.apis.dynamic).map(
+          (entry) => entry.file
+        )
+      ];
 
-    const apiPages = Object.values(allApiPages).map((pageFile) =>
-      path.join(this.nextTargetDir, pageFile)
-    );
-
-    if (this.buildOptions.outputFileTracing) {
-      promises.push(
-        copyOutputFileTraces({
-          serverlessDir: this.nextTargetDir,
-          destination: path.join(this.outputDir, API_LAMBDA_CODE_DIR),
-          pages: apiPages
-        }),
-        copyRequiredServerFiles({
-          nextConfigDir: this.nextConfigDir,
-          destination: path.join(this.outputDir, API_LAMBDA_CODE_DIR)
-        })
+      const apiPages = Object.values(allApiPages).map((pageFile) =>
+        path.join(this.serverlessDir, pageFile)
       );
-    } else if (this.buildOptions.useServerlessTraceTarget) {
-      const base = this.buildOptions.baseDir || process.cwd();
 
+      const base = this.buildOptions.baseDir || process.cwd();
       const { fileList, reasons } = await nodeFileTrace(apiPages, {
         base,
         resolve: this.buildOptions.resolve
       });
 
-      promises.push(
-        ...this.copyLambdaHandlerDependencies(
-          Array.from(fileList),
-          reasons,
-          API_LAMBDA_CODE_DIR,
-          base
-        )
+      copyTraces = this.copyLambdaHandlerDependencies(
+        Array.from(fileList),
+        reasons,
+        API_LAMBDA_CODE_DIR,
+        base
       );
     }
 
     return Promise.all([
-      ...promises,
+      ...copyTraces,
       this.processAndCopyHandler(
         "api-handler",
         join(this.outputDir, API_LAMBDA_CODE_DIR),
@@ -451,7 +410,7 @@ class Builder {
           )
         : Promise.resolve(),
       fse.copy(
-        join(this.nextTargetDir, "pages/api"),
+        join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
       this.copyJSFiles(API_LAMBDA_CODE_DIR),
@@ -485,7 +444,7 @@ class Builder {
       this.copyJSFiles(REGENERATION_LAMBDA_CODE_DIR),
       this.copyChunks(REGENERATION_LAMBDA_CODE_DIR),
       fse.copy(
-        join(this.nextTargetDir, "pages"),
+        join(this.serverlessDir, "pages"),
         join(this.outputDir, REGENERATION_LAMBDA_CODE_DIR, "pages"),
         {
           filter: (file: string) => {
@@ -506,38 +465,31 @@ class Builder {
 
   /**
    * copy chunks if present and not using serverless trace
-   * or Next.js 12 Output File Tracing
    */
-  async copyChunks(handlerDir: string): Promise<void> {
-    const { useServerlessTraceTarget, outputFileTracing } = this.buildOptions;
-    if (useServerlessTraceTarget || outputFileTracing) return;
-
-    const hasChunks = fse.existsSync(join(this.nextTargetDir, "chunks"));
-    if (hasChunks) {
-      await fse.copy(
-        join(this.nextTargetDir, "chunks"),
-        join(this.outputDir, handlerDir, "chunks")
-      );
-    }
+  copyChunks(handlerDir: string): Promise<void> {
+    return !this.buildOptions.useServerlessTraceTarget &&
+      fse.existsSync(join(this.serverlessDir, "chunks"))
+      ? fse.copy(
+          join(this.serverlessDir, "chunks"),
+          join(this.outputDir, handlerDir, "chunks")
+        )
+      : Promise.resolve();
   }
 
   /**
    * Copy additional JS files needed such as webpack-runtime.js (new in Next.js 12)
    */
   async copyJSFiles(handlerDir: string): Promise<void> {
-    // Included in Next.js 12 Output File Traces
-    if (this.buildOptions.outputFileTracing) return;
-
     await Promise.all([
-      (await fse.pathExists(join(this.nextTargetDir, "webpack-api-runtime.js")))
+      (await fse.pathExists(join(this.serverlessDir, "webpack-api-runtime.js")))
         ? fse.copy(
-            join(this.nextTargetDir, "webpack-api-runtime.js"),
+            join(this.serverlessDir, "webpack-api-runtime.js"),
             join(this.outputDir, handlerDir, "webpack-api-runtime.js")
           )
         : Promise.resolve(),
-      (await fse.pathExists(join(this.nextTargetDir, "webpack-runtime.js")))
+      (await fse.pathExists(join(this.serverlessDir, "webpack-runtime.js")))
         ? fse.copy(
-            join(this.nextTargetDir, "webpack-runtime.js"),
+            join(this.serverlessDir, "webpack-runtime.js"),
             join(this.outputDir, handlerDir, "webpack-runtime.js")
           )
         : Promise.resolve()
@@ -621,6 +573,8 @@ class Builder {
     const nextConfigDir = this.nextConfigDir;
     const nextStaticDir = this.nextStaticDir;
 
+    const dotNextDirectory = path.join(this.nextConfigDir, ".next");
+
     const assetOutputDirectory = path.join(this.outputDir, ASSETS_DIR);
 
     const normalizedBasePath = basePath ? basePath.slice(1) : "";
@@ -638,12 +592,12 @@ class Builder {
 
     // Copy BUILD_ID file
     const copyBuildId = copyIfExists(
-      path.join(this.dotNextDir, "BUILD_ID"),
+      path.join(dotNextDirectory, "BUILD_ID"),
       path.join(assetOutputDirectory, withBasePath("BUILD_ID"))
     );
 
     const buildStaticFiles = await readDirectoryFiles(
-      path.join(this.dotNextDir, "static"),
+      path.join(dotNextDirectory, "static"),
       ignorePatterns
     );
 
@@ -683,7 +637,7 @@ class Builder {
     });
 
     const htmlAssets = [...htmlFiles, ...fallbackFiles].map((file) => {
-      const source = path.join(this.nextTargetDir, `pages${file}`);
+      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`static-pages/${buildId}${file}`)
@@ -693,7 +647,7 @@ class Builder {
     });
 
     const jsonAssets = jsonFiles.map((file) => {
-      const source = path.join(this.nextTargetDir, `pages${file}`);
+      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`_next/data/${buildId}${file}`)
@@ -777,8 +731,7 @@ class Builder {
       cleanupDotNext,
       assetIgnorePatterns,
       separateApiLambda,
-      useV2Handler,
-      outputFileTracing
+      useV2Handler
     } = Object.assign(defaultBuildOptions, this.buildOptions);
 
     await Promise.all([
@@ -790,11 +743,13 @@ class Builder {
       fse.emptyDir(join(this.outputDir, ASSETS_DIR))
     ]);
 
-    /**
-     * No need to add `target: "serverless"` when using
-     * Next.js 12 Output File Tracing.
-     */
-    if (outputFileTracing) {
+    const { restoreUserConfig } = await createServerlessConfig(
+      cwd,
+      path.join(this.nextConfigDir),
+      useServerlessTraceTarget
+    );
+
+    try {
       const subprocess = execa(cmd, args, {
         cwd,
         env
@@ -806,28 +761,8 @@ class Builder {
       }
 
       await subprocess;
-    } else {
-      const { restoreUserConfig } = await createServerlessConfig(
-        cwd,
-        path.join(this.nextConfigDir),
-        useServerlessTraceTarget
-      );
-
-      try {
-        const subprocess = execa(cmd, args, {
-          cwd,
-          env
-        });
-
-        if (debugMode) {
-          // @ts-ignore
-          subprocess.stdout.pipe(process.stdout);
-        }
-
-        await subprocess;
-      } finally {
-        await restoreUserConfig();
-      }
+    } finally {
+      await restoreUserConfig();
     }
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
