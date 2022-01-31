@@ -271,7 +271,11 @@ export class NextJSLambdaEdge extends Construct {
       {
         cachePolicyName: props.cachePolicyName?.lambdaCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
-        headerBehavior: cloudfront.CacheHeaderBehavior.none(),
+        headerBehavior: props.whiteListedHeaders
+          ? cloudfront.CacheHeaderBehavior.allowList(
+              ...props.whiteListedHeaders
+            )
+          : cloudfront.CacheHeaderBehavior.none(),
         cookieBehavior: {
           behavior: props.whiteListedCookies?.length ? "whitelist" : "all",
           cookies: props.whiteListedCookies

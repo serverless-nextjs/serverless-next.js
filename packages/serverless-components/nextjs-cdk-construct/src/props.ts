@@ -76,6 +76,13 @@ export interface Props extends StackProps {
    * .e.g ['my-apps-auth-token-cookie-key']
    */
   whiteListedCookies?: string[];
+
+  /**
+   * Provide a list of headers to forward to the CloudFront origin.
+   * This is useful if your SSR page is depending on headers from the request.
+   */
+  whiteListedHeaders?: string[];
+
   /**
    * Provide a subset (or all) of the props to override the CloudFront
    * distributions default props.
