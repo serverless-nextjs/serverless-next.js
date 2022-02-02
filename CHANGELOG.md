@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.7...v3.7.0-alpha.8) (2022-02-02)
+
+### Bug Fixes
+
+- **core:** use existing upstream `Cache-Control` if present on upstream response ([#2322](https://github.com/serverless-nextjs/serverless-next.js/issues/2322)) ([4f93ea7](https://github.com/serverless-nextjs/serverless-next.js/commit/4f93ea7193018d70f171e3f8fca536da563c71da))
+
+### Features
+
+- **nextjs-cdk-construct:** Allow to whitelist headers ([#2325](https://github.com/serverless-nextjs/serverless-next.js/issues/2325)) ([b975aed](https://github.com/serverless-nextjs/serverless-next.js/commit/b975aed9a13f132750a707862242ca81f5e32cc7))
+
+### Reverts
+
+- revert "Experimental Next.js 12 Output File Tracing ([#2169](https://github.com/serverless-nextjs/serverless-next.js/issues/2169))" ([#2324](https://github.com/serverless-nextjs/serverless-next.js/issues/2324)) ([ca7f7f7](https://github.com/serverless-nextjs/serverless-next.js/commit/ca7f7f72e3b1e5fcb49ffc4a3f6d6f629e644b20))
+
 # [3.7.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.6...v3.7.0-alpha.7) (2022-01-27)
 
 ### Features

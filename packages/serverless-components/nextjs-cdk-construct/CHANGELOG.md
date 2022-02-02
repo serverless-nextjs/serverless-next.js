@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.7...v3.7.0-alpha.8) (2022-02-02)
+
+### Features
+
+- **nextjs-cdk-construct:** Allow to whitelist headers ([#2325](https://github.com/serverless-nextjs/serverless-next.js/issues/2325)) ([b975aed](https://github.com/serverless-nextjs/serverless-next.js/commit/b975aed9a13f132750a707862242ca81f5e32cc7))
+
 # [3.7.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.6...v3.7.0-alpha.7) (2022-01-27)
 
 **Note:** Version bump only for package @sls-next/cdk-construct

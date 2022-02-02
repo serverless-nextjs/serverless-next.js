@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.7...v3.7.0-alpha.8) (2022-02-02)
+
+### Reverts
+
+- revert "Experimental Next.js 12 Output File Tracing ([#2169](https://github.com/serverless-nextjs/serverless-next.js/issues/2169))" ([#2324](https://github.com/serverless-nextjs/serverless-next.js/issues/2324)) ([ca7f7f7](https://github.com/serverless-nextjs/serverless-next.js/commit/ca7f7f72e3b1e5fcb49ffc4a3f6d6f629e644b20))
+
 # [3.7.0-alpha.7](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.6...v3.7.0-alpha.7) (2022-01-27)
 
 **Note:** Version bump only for package @sls-next/serverless-component
