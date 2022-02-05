@@ -133,6 +133,9 @@ And simply deploy:
 $ serverless
 ```
 
+If you have issues deploying due to new serverless version, please try to pin to specific version e.g
+2.72.2. See https://github.com/serverless-nextjs/serverless-next.js/issues/2320#issue-1116744699
+
 [ALPHA - may be buggy] You may also deploy using `npx @sls-next/serverless-patched` (or `serverless-patched` if you installed it locally), which is a patched version of `serverless` that fixes a couple of issues by patching the underlying `@serverless/cli`: (1) Continuous "Deploying" messages being printed in non-interactive terminals (e.g CI output) that make it hard to debug, and (2) Handles silent Next.js build failures.
 
 It's also recommended to add `--debug` flag to get more useful logs of what's happening behind the scenes.
