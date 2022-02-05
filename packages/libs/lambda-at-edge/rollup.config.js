@@ -7,13 +7,19 @@ import { terser } from "rollup-plugin-terser";
 import del from "rollup-plugin-delete";
 
 const LOCAL_EXTERNALS = [
-  "./manifest.json",
   "./api-manifest.json",
-  "./routes-manifest.json",
+  "./images-manifest.json",
+  "./manifest.json",
   "./prerender-manifest.json",
-  "./images-manifest.json"
+  "./.next/required-server-files.json",
+  "./routes-manifest.json"
 ];
-const NPM_EXTERNALS = ["aws-lambda", "aws-sdk/clients/s3"];
+
+const NPM_EXTERNALS = [
+  "aws-lambda",
+  "aws-sdk/clients/s3",
+  "next/dist/server/next-server"
+];
 
 const generateConfig = (input) => ({
   input: `./src/${input.filename}.ts`,
@@ -67,5 +73,7 @@ export default [
   { filename: "regeneration-handler", minify: false },
   { filename: "regeneration-handler", minify: true },
   { filename: "regeneration-handler-v2", minify: false },
-  { filename: "regeneration-handler-v2", minify: true }
+  { filename: "regeneration-handler-v2", minify: true },
+  { filename: "next-handler", minify: false },
+  { filename: "next-handler", minify: true }
 ].map(generateConfig);

@@ -100,7 +100,7 @@ export class LambdaBuilder extends CoreBuilder {
     lambdaManifest: LambdaManifest
   ): Promise<void[]> {
     const hasAPIRoutes = await fse.pathExists(
-      join(this.serverlessDir, "pages/api")
+      join(this.nextTargetDir, "pages/api")
     );
 
     await fse.mkdir(join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR));
@@ -132,7 +132,7 @@ export class LambdaBuilder extends CoreBuilder {
         this.buildOptions.minifyHandlers ? undefined : { spaces: 2 }
       ),
       fse.copy(
-        join(this.serverlessDir, "pages"),
+        join(this.nextTargetDir, "pages"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "pages"),
         {
           filter: this.getDefaultHandlerFileFilter(hasAPIRoutes, pageManifest)
