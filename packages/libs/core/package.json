@@ -35,7 +35,7 @@
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
     "@hapi/accept": "5.0.2",
-    "cookie": "0.4.1",
+    "cookie": "0.4.2",
     "execa": "5.1.1",
     "fast-glob": "3.2.11",
     "fresh": "0.5.2",
@@ -70,7 +70,7 @@
     "@types/send": "0.17.1",
     "@types/sharp": "0.29.5",
     "@types/zen-observable": "0.8.3",
-    "cookie": "0.4.1",
+    "cookie": "0.4.2",
     "fetch-mock-jest": "1.5.1",
     "jest": "27.4.7",
     "rimraf": "3.0.2",
