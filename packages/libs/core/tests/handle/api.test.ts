@@ -139,8 +139,8 @@ describe("Api handler", () => {
       "Routes api request $uri to page $page with NodeNextRequest & NodeNextResponse",
       async ({ uri, page }) => {
         const event: any = mockEvent(uri);
-        event.req["originalRequest"] = {};
-        event.res["originalResponse"] = {};
+        event.req.originalRequest = {};
+        event.res.originalResponse = {};
         const route = await handleApi(event, manifest, routesManifest, getPage);
 
         expect(route).toBeFalsy();
