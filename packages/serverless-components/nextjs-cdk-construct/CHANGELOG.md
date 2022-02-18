@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.8...v3.7.0-alpha.9) (2022-02-18)
+
+### Features
+
+- **nextjs-cdk-construct:** allow cache policies to be provided as props ([#2350](https://github.com/serverless-nextjs/serverless-next.js/issues/2350)) ([68b7717](https://github.com/serverless-nextjs/serverless-next.js/commit/68b7717c78a133fcb54318785e39b9d1239cb32e))
+
 # [3.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.7...v3.7.0-alpha.8) (2022-02-02)
 
 ### Features

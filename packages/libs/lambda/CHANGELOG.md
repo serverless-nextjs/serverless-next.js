@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.8...v3.7.0-alpha.9) (2022-02-18)
+
+### Features
+
+- update cdktf and use prebuilt providers ([#2328](https://github.com/serverless-nextjs/serverless-next.js/issues/2328)) ([47642bf](https://github.com/serverless-nextjs/serverless-next.js/commit/47642bf194097df5315e768a18ea32797f6b8b6e))
+
 # [3.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.7...v3.7.0-alpha.8) (2022-02-02)
 
 ### Reverts

@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.8...v3.7.0-alpha.9) (2022-02-18)
+
+### Bug Fixes
+
+- **core:** getter function for http base class in api handler ([#2344](https://github.com/serverless-nextjs/serverless-next.js/issues/2344)) ([e819e1d](https://github.com/serverless-nextjs/serverless-next.js/commit/e819e1dcf9a1ec52715c77b1b4f376b44ec95976))
+
 # [3.7.0-alpha.8](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.7...v3.7.0-alpha.8) (2022-02-02)
 
 ### Bug Fixes
