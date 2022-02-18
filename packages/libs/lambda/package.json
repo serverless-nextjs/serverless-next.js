@@ -28,7 +28,8 @@
     "Lambda",
     "API Gateway",
     "Next.js",
-    "Serverless"
+    "Serverless",
+    "cdktf"
   ],
   "author": "Daniel Phang <serverlessnextjs@gmail.com>",
   "license": "MIT",
@@ -37,11 +38,13 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "@cdktf/provider-aws": "2.0.13",
+    "@cdktf/provider-archive": "0.3.5",
+    "@cdktf/provider-aws": "5.0.3",
+    "@cdktf/provider-null": "0.5.5",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
-    "cdktf": "0.8.6",
-    "cdktf-cli": "0.8.6",
+    "cdktf": "0.9.0",
+    "cdktf-cli": "0.9.0",
     "constructs": "10.0.46",
     "esbuild": "0.14.20",
     "fs-extra": "9.1.0",
