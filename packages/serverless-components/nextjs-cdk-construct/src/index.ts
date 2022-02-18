@@ -233,10 +233,9 @@ export class NextJSLambdaEdge extends Construct {
       this.nextImageLambda.currentVersion.addAlias("live");
     }
 
-    this.nextStaticsCachePolicy = new cloudfront.CachePolicy(
-      this,
-      "NextStaticsCache",
-      {
+    this.nextStaticsCachePolicy =
+      props.nextStaticsCachePolicy ||
+      new cloudfront.CachePolicy(this, "NextStaticsCache", {
         cachePolicyName: props.cachePolicyName?.staticsCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.none(),
         headerBehavior: cloudfront.CacheHeaderBehavior.none(),
@@ -249,10 +248,9 @@ export class NextJSLambdaEdge extends Construct {
       }
     );
 
-    this.nextImageCachePolicy = new cloudfront.CachePolicy(
-      this,
-      "NextImageCache",
-      {
+    this.nextImageCachePolicy =
+      props.nextImageCachePolicy ||
+      new cloudfront.CachePolicy(this, "NextImageCache", {
         cachePolicyName: props.cachePolicyName?.imageCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
         headerBehavior: cloudfront.CacheHeaderBehavior.allowList("Accept"),
@@ -265,10 +263,9 @@ export class NextJSLambdaEdge extends Construct {
       }
     );
 
-    this.nextLambdaCachePolicy = new cloudfront.CachePolicy(
-      this,
-      "NextLambdaCache",
-      {
+    this.nextLambdaCachePolicy =
+      props.nextLambdaCachePolicy ||
+      new cloudfront.CachePolicy(this, "NextLambdaCache", {
         cachePolicyName: props.cachePolicyName?.lambdaCache,
         queryStringBehavior: cloudfront.CacheQueryStringBehavior.all(),
         headerBehavior: props.whiteListedHeaders

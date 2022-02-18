@@ -1,5 +1,5 @@
 import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import { BehaviorOptions, DistributionProps } from "aws-cdk-lib/aws-cloudfront";
+import { BehaviorOptions, DistributionProps, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { BucketProps } from "aws-cdk-lib/aws-s3";
@@ -108,4 +108,20 @@ export interface Props extends StackProps {
    * Override props passed to the underlying s3 bucket
    */
   cloudfrontProps?: Partial<DistributionProps>;
+
+  /**
+   * Override cache policy used for statics
+   */
+  nextStaticsCachePolicy?: CachePolicy;
+
+  /**
+   * Override cache policy used for image caching
+   */
+
+  nextImageCachePolicy?: CachePolicy;
+
+  /**
+   * Override cache policy used for Lambda
+   */
+  nextLambdaCachePolicy?: CachePolicy;
 }

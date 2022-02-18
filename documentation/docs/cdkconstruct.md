@@ -101,3 +101,6 @@ new NextJSLambdaEdge(this, "NextJsApp", {
 - `invalidationPaths?: string[]` - an array of invalidation paths, by default we
   invalidate all pages found in manifest
 - `cachePolicyName?: Object`: configure the name given to the cache policies
+- `nextStaticsCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for static resources
+- `nextImageCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for image caching
+- `nextLambdaCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for Lambda functions

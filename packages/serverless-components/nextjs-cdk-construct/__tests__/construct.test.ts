@@ -6,7 +6,7 @@ import { NextJSLambdaEdge } from "../src";
 import { Runtime, Function, Code } from "aws-cdk-lib/aws-lambda";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { HostedZone } from "aws-cdk-lib/aws-route53";
-import { LambdaEdgeEventType } from "aws-cdk-lib/aws-cloudfront";
+import { LambdaEdgeEventType, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
 
 describe("CDK Construct", () => {
   it("passes correct lambda options to underlying lambdas when single value passed", () => {
@@ -141,6 +141,66 @@ describe("CDK Construct", () => {
               CookieBehavior: "all"
             }
           }
+        }
+      }
+    );
+  });
+
+  it("statics cache policy uses passed in policy if provided", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
+      nextStaticsCachePolicy: new CachePolicy(stack, "NextStaticsCache", {
+        cachePolicyName: "customNextStaticsCache"
+      })
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::CachePolicy",
+      {
+        CachePolicyConfig: {
+          Name: "customNextStaticsCache"
+        }
+      }
+    );
+  });
+
+  it("image cache policy uses passed in policy if provided", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
+      nextImageCachePolicy: new CachePolicy(stack, "NextImageCache", {
+        cachePolicyName: "customNextImageCache"
+      })
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::CachePolicy",
+      {
+        CachePolicyConfig: {
+          Name: "customNextImageCache"
+        }
+      }
+    );
+  });
+
+  it("lambda cache policy uses passed in policy if provided", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
+      nextLambdaCachePolicy: new CachePolicy(stack, "NextLambdaCache", {
+        cachePolicyName: "customNextLambdaCache"
+      })
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::CachePolicy",
+      {
+        CachePolicyConfig: {
+          Name: "customNextLambdaCache"
         }
       }
     );
