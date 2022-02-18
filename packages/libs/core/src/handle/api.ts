@@ -41,6 +41,16 @@ export const handleApi = async (
   if (route.isApi) {
     const { page } = route as ApiRoute;
     setCustomHeaders(event, routesManifest);
+    if (!event.req.hasOwnProperty("originalRequest")) {
+      Object.defineProperty(event.req, "originalRequest", {
+        get: () => event.req
+      });
+    }
+    if (!event.res.hasOwnProperty("originalResponse")) {
+      Object.defineProperty(event.res, "originalResponse", {
+        get: () => event.res
+      });
+    }
     getPage(page).default(event.req, event.res);
     return;
   }

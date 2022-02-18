@@ -118,16 +118,41 @@ describe("Api handler", () => {
       ${"/rewrite/2"}       | ${"pages/api/dynamic/[id].js"}
       ${"/rewrite-query/3"} | ${"pages/api/static.js"}
     `("Routes api request $uri to page $page", async ({ uri, page }) => {
-      const route = await handleApi(
-        mockEvent(uri),
-        manifest,
-        routesManifest,
-        getPage
-      );
+      const event = mockEvent(uri);
+      const route = await handleApi(event, manifest, routesManifest, getPage);
 
       expect(route).toBeFalsy();
       expect(getPage).toHaveBeenCalledWith(page);
+      expect((event.req as any).originalRequest).toBe(event.req);
+      expect((event.res as any).originalResponse).toBe(event.res);
     });
+
+    it.each`
+      uri                   | page
+      ${"/api"}             | ${"pages/api/index.js"}
+      ${"/api/static"}      | ${"pages/api/static.js"}
+      ${"/api/dynamic/1"}   | ${"pages/api/dynamic/[id].js"}
+      ${"/rewrite"}         | ${"pages/api/static.js"}
+      ${"/rewrite/2"}       | ${"pages/api/dynamic/[id].js"}
+      ${"/rewrite-query/3"} | ${"pages/api/static.js"}
+    `(
+      "Routes api request $uri to page $page with NodeNextRequest & NodeNextResponse",
+      async ({ uri, page }) => {
+        const event: any = mockEvent(uri);
+        event.req.originalRequest = {};
+        event.res.originalResponse = {};
+        const route = await handleApi(event, manifest, routesManifest, getPage);
+
+        expect(route).toBeFalsy();
+        expect(getPage).toHaveBeenCalledWith(page);
+        expect((event.req as any).originalRequest).toBe(
+          (event.req as any).originalRequest
+        );
+        expect((event.res as any).originalResponse).toBe(
+          (event.res as any).originalResponse
+        );
+      }
+    );
 
     it.each`
       uri
