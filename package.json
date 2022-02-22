@@ -48,7 +48,7 @@
     "@babel/preset-typescript": "^7.16.7",
     "@jest/test-sequencer": "^27.4.6",
     "@types/jest": "^27.4.0",
-    "@types/node": "^17.0.16",
+    "@types/node": "^17.0.19",
     "@types/webpack": "^5.28.0",
     "@typescript-eslint/eslint-plugin": "^5.10.1",
     "@typescript-eslint/parser": "^5.10.1",
