@@ -3828,13 +3828,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cdktf/provider-null@npm:0.5.5":
-  version: 0.5.5
-  resolution: "@cdktf/provider-null@npm:0.5.5"
+"@cdktf/provider-null@npm:0.5.29":
+  version: 0.5.29
+  resolution: "@cdktf/provider-null@npm:0.5.29"
   peerDependencies:
     cdktf: ^0.9
     constructs: ^10.0.0
-  checksum: 7d67d7a8ac9c3a9c800c585c2ca870d553201afa3fe863976aa0c1e46050df2a3b1f062aea7d1177901b31220b9dd96c278faeb034f1658f23f95e0c86bae83e
+  checksum: e26cadfb5e6139cb6c70b5f9307e1ca4a9288a6bde66479b4680bac51af7c75f14aa8d8228bdba1e3a077d82da6f3232e29bcc3cedb9bf77f3d57dadc6653ffb
   languageName: node
   linkType: hard
 
@@ -6063,7 +6063,7 @@ __metadata:
     "@babel/preset-typescript": ^7.16.7
     "@cdktf/provider-archive": 0.3.5
     "@cdktf/provider-aws": 5.0.3
-    "@cdktf/provider-null": 0.5.5
+    "@cdktf/provider-null": 0.5.29
     "@rollup/plugin-commonjs": 18.1.0
     "@rollup/plugin-json": 4.1.0
     "@rollup/plugin-node-resolve": 10.0.0

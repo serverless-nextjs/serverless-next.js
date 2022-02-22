@@ -40,7 +40,7 @@
   "dependencies": {
     "@cdktf/provider-archive": "0.3.5",
     "@cdktf/provider-aws": "5.0.3",
-    "@cdktf/provider-null": "0.5.5",
+    "@cdktf/provider-null": "0.5.29",
     "@sls-next/aws-common": "link:../aws-common",
     "@sls-next/core": "link:../core",
     "cdktf": "0.9.0",
