@@ -23,7 +23,7 @@ executors:
   windows: win/default
 
 orbs:
-  aws-cli-linux: circleci/aws-cli@2.0.6
+  aws-cli-linux: circleci/aws-cli@2.1.0
   queue: eddiewebb/queue@1.6.4
   win: circleci/windows@2.4.1
   aws-cli-windows: sensu/awscli-windows@1.0.0
