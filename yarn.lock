@@ -5860,7 +5860,7 @@ __metadata:
     "@types/fs-extra": 9.0.13
     aws-cdk: ^2.9.0
     aws-cdk-lib: ^2.3.0
-    constructs: ^10.0.46
+    constructs: ^10.0.69
     fast-glob: 3.2.11
     fs-extra: 9.1.0
     jest: 27.4.7
@@ -5868,7 +5868,7 @@ __metadata:
     typescript: 4.5.5
   peerDependencies:
     aws-cdk-lib: ^2.3.0
-    constructs: ^10.0.46
+    constructs: ^10.0.69
   languageName: unknown
   linkType: soft
 
@@ -6076,7 +6076,7 @@ __metadata:
     "@types/yargs": 17.0.8
     cdktf: 0.9.0
     cdktf-cli: 0.9.0
-    constructs: 10.0.46
+    constructs: 10.0.69
     esbuild: 0.14.20
     fs-extra: 9.1.0
     jest: ^27.4.7
@@ -9156,10 +9156,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"constructs@npm:10.0.46, constructs@npm:^10.0.46":
-  version: 10.0.46
-  resolution: "constructs@npm:10.0.46"
-  checksum: 092cfbabd9b8d722cfb8583b654aca345816f2cedf189f18cec83c587979dc8485d53e58f2097b999a58d9492bc847168704e366a97c9565fb1547656363ca4d
+"constructs@npm:10.0.69, constructs@npm:^10.0.69":
+  version: 10.0.69
+  resolution: "constructs@npm:10.0.69"
+  checksum: 23264bc5b1334fd0b42433ba35942fea988354095c25dff9e1ffd32444e3f353744df32934c370684b92525133bab0afc720e0836032ae9b900eb76ab9c36399
   languageName: node
   linkType: hard
 
