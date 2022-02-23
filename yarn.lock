@@ -3854,13 +3854,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cdktf/provider-archive@npm:0.3.30":
-  version: 0.3.30
-  resolution: "@cdktf/provider-archive@npm:0.3.30"
+"@cdktf/provider-archive@npm:0.3.31":
+  version: 0.3.31
+  resolution: "@cdktf/provider-archive@npm:0.3.31"
   peerDependencies:
     cdktf: ^0.9
     constructs: ^10.0.0
-  checksum: ee6ff1b3f3bc85be2de3b8a06325d5612a22d38ac65790b45fcb57215df4b2bb1e49f0b2d0f171c1f6e18ce101027b9fe987ab32943f402569fd4100928e0026
+  checksum: a43444c3b4dbc6f379c73ccbd40ff69dbdd258924e818ed3d380c26438d230eefebce30c4c228c40f0adb909967f019b3f63189c5d4510c2279de236ef19222a
   languageName: node
   linkType: hard
 
@@ -6154,7 +6154,7 @@ __metadata:
   resolution: "@sls-next/lambda@workspace:packages/libs/lambda"
   dependencies:
     "@babel/preset-typescript": ^7.16.7
-    "@cdktf/provider-archive": 0.3.30
+    "@cdktf/provider-archive": 0.3.31
     "@cdktf/provider-aws": 5.0.27
     "@cdktf/provider-null": 0.5.30
     "@rollup/plugin-commonjs": 18.1.0
