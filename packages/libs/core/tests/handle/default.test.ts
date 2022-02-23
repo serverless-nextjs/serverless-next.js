@@ -17,6 +17,7 @@ const previewModeCookies = {
 describe("Default handler", () => {
   let pagesManifest: { [key: string]: string };
   let manifest: PageManifest;
+  let v2HandlerManifest: PageManifest;
   let prerenderManifest: PrerenderManifest;
   let routesManifest: RoutesManifest;
   let getPage: any;
@@ -131,11 +132,25 @@ describe("Default handler", () => {
       publicFiles
     );
     manifest = manifests.pageManifest;
+    const v2HandlerManifests = await prepareBuildManifests(
+      {
+        buildId,
+        domainRedirects: { "www.example.com": "https://example.com" },
+        useV2Handler: true
+      },
+      {},
+      routesManifest,
+      pagesManifest,
+      prerenderManifest,
+      publicFiles
+    );
+    v2HandlerManifest = v2HandlerManifests.pageManifest;
   });
 
   beforeEach(() => {
     consoleError = jest.spyOn(console, "error").mockReturnValueOnce();
     getPage = jest.fn();
+    getPage.mockReturnValueOnce({ default: jest.fn() });
   });
 
   describe("Public file", () => {
@@ -425,6 +440,53 @@ describe("Default handler", () => {
         expect(route.isExternal).toBeTruthy();
         expect((route as any).path).toEqual(path);
       }
+    });
+  });
+
+  describe("API", () => {
+    it.each`
+      uri               | path
+      ${"/api/preview"} | ${"pages/api/preview.js"}
+    `(
+      "Routes api request $uri to page $page with NodeNextRequest & NodeNextResponse",
+      async ({ path, uri }) => {
+        const event = mockEvent(uri);
+        const route = await handleDefault(
+          event,
+          v2HandlerManifest,
+          prerenderManifest,
+          routesManifest,
+          getPage
+        );
+        expect(route).toBeFalsy();
+        expect(getPage).toHaveBeenCalledWith(path);
+        expect((event.req as any).originalRequest).toBe(event.req);
+        expect((event.res as any).originalResponse).toBe(event.res);
+      }
+    );
+
+    it.each`
+      uri               | path
+      ${"/api/preview"} | ${"pages/api/preview.js"}
+    `("Routes api request $uri to page $page", async ({ path, uri }) => {
+      const event: any = mockEvent(uri);
+      event.req.originalRequest = {};
+      event.res.originalResponse = {};
+      const route = await handleDefault(
+        event,
+        v2HandlerManifest,
+        prerenderManifest,
+        routesManifest,
+        getPage
+      );
+      expect(route).toBeFalsy();
+      expect(getPage).toHaveBeenCalledWith(path);
+      expect((event.req as any).originalRequest).toBe(
+        event.req.originalRequest
+      );
+      expect((event.res as any).originalResponse).toBe(
+        event.res.originalResponse
+      );
     });
   });
 });
