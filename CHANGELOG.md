@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.10](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.9...v3.7.0-alpha.10) (2022-02-23)
+
+### Bug Fixes
+
+- **core:** add getter to event req & res object in default handler. ([#2381](https://github.com/serverless-nextjs/serverless-next.js/issues/2381)) ([31eff47](https://github.com/serverless-nextjs/serverless-next.js/commit/31eff477b0ca792e87541125c9ebd18fe23c0065))
+
 # [3.7.0-alpha.9](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.8...v3.7.0-alpha.9) (2022-02-18)
 
 ### Bug Fixes
