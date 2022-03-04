@@ -51,7 +51,7 @@ import { s3BucketNameFromEventRequest } from "./s3/s3BucketNameFromEventRequest"
 import { triggerStaticRegeneration } from "./lib/triggerStaticRegeneration";
 import { s3StorePage } from "./s3/s3StorePage";
 import { createRedirectResponse } from "@sls-next/core/dist/module/route/redirect";
-import { redirectSsg } from "@sls-next/core/dist/module/handle/redirect";
+import { redirectByPageProps } from "@sls-next/core/dist/module/handle/redirect";
 import { S3Client, GetObjectCommand } from "@aws-sdk/client-s3";
 import getStream from "get-stream";
 
@@ -492,7 +492,7 @@ const handleOriginResponse = async ({
       statusCode
     );
 
-    redirectSsg({ req, res, responsePromise }, redirectResponse);
+    redirectByPageProps({ req, res, responsePromise }, redirectResponse);
 
     return await responsePromise;
   }
