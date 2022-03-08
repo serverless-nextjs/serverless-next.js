@@ -13,7 +13,8 @@ import {
   getStaticRegenerationResponse,
   getThrottledStaticRegenerationCachePolicy,
   handleFallback,
-  Route
+  Route,
+  isJson
 } from "./index";
 import { PageManifest } from "./types";
 import { IncomingMessage, OutgoingHttpHeaders, ServerResponse } from "http";
@@ -203,9 +204,19 @@ const staticRequest = async (
       ...convertedCustomHeaders
     };
 
-    res.writeHead(statusCode, headers);
-    res.end(fileResponse.body);
-    return await responsePromise;
+    const body = fileResponse.body?.toString();
+    // Skip JSON .html Files and push the request onwards
+    if (!isJson(body)) {
+      res.writeHead(statusCode, headers);
+      res.end(fileResponse.body);
+      return await responsePromise;
+    } else {
+      await platformClient.removePage({
+        basePath: basePath,
+        buildId: manifest.buildId,
+        uri: file
+      });
+    }
   }
 
   const getPage = (pagePath: string) => {

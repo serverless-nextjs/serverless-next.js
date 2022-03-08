@@ -20,6 +20,12 @@ export type StorePageOptions = {
   uri: string;
 };
 
+export type RemovePageOptions = {
+  basePath: string;
+  buildId: string;
+  uri: string;
+};
+
 export type TriggerStaticRegenerationOptions = {
   basePath: string;
   eTag: string | undefined;
@@ -56,4 +62,10 @@ export interface PlatformClient {
   storePage(
     options: StorePageOptions
   ): Promise<{ cacheControl: string | undefined; expires: Date | undefined }>;
+
+  /**
+   * Remove a page from the object store - both HTML and JSON.
+   * @param options
+   */
+  removePage(options: RemovePageOptions): Promise<boolean>;
 }

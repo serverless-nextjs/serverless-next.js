@@ -2,11 +2,13 @@ import {
   ObjectResponse,
   PlatformClient,
   StorePageOptions,
+  RemovePageOptions,
   TriggerStaticRegenerationOptions,
   RegenerationEvent
 } from "@sls-next/core";
 import type { Readable } from "stream";
 import {
+  DeleteObjectCommand,
   GetObjectCommand,
   PutObjectCommand,
   S3Client
@@ -98,6 +100,60 @@ export class AwsPlatformClient implements PlatformClient {
     };
   }
 
+  private static getPageKeys(uri: string, buildId: string) {
+    const baseKey = uri
+      .replace(/^\/$/, "index")
+      .replace(/^\//, "")
+      .replace(/\.(json|html)$/, "")
+      .replace(/^_next\/data\/[^\/]*\//, "");
+    return {
+      jsonKey: `_next/data/${buildId}/${baseKey}.json`,
+      htmlKey: `static-pages/${buildId}/${baseKey}.html`
+    };
+  }
+
+  public async removePage(options: RemovePageOptions): Promise<boolean> {
+    const s3 = new S3Client({
+      region: this.bucketRegion,
+      maxAttempts: 3
+    });
+
+    const s3BasePath = options.basePath
+      ? `${options.basePath.replace(/^\//, "")}/`
+      : "";
+    const { htmlKey, jsonKey } = AwsPlatformClient.getPageKeys(
+      options.uri,
+      options.buildId
+    );
+
+    const s3JsonParams = {
+      Bucket: this.bucketName,
+      Key: `${s3BasePath}${jsonKey}`
+    };
+
+    const s3HtmlParams = {
+      Bucket: this.bucketName,
+      Key: `${s3BasePath}${htmlKey}`
+    };
+
+    try {
+      await Promise.all([
+        s3.send(new DeleteObjectCommand(s3JsonParams)),
+        s3.send(new DeleteObjectCommand(s3HtmlParams))
+      ]);
+    } catch (e) {
+      if (e instanceof Error) {
+        console.log(
+          `error while deleting - ${s3BasePath}${htmlKey}`,
+          e.message
+        );
+      }
+      return false;
+    }
+
+    return true;
+  }
+
   public async storePage(
     options: StorePageOptions
   ): Promise<{ cacheControl: string | undefined; expires: Date | undefined }> {
@@ -109,13 +165,10 @@ export class AwsPlatformClient implements PlatformClient {
     const s3BasePath = options.basePath
       ? `${options.basePath.replace(/^\//, "")}/`
       : "";
-    const baseKey = options.uri
-      .replace(/^\/$/, "index")
-      .replace(/^\//, "")
-      .replace(/\.(json|html)$/, "")
-      .replace(/^_next\/data\/[^\/]*\//, "");
-    const jsonKey = `_next/data/${options.buildId}/${baseKey}.json`;
-    const htmlKey = `static-pages/${options.buildId}/${baseKey}.html`;
+    const { htmlKey, jsonKey } = AwsPlatformClient.getPageKeys(
+      options.uri,
+      options.buildId
+    );
     const cacheControl = options.revalidate
       ? undefined
       : "public, max-age=0, s-maxage=2678400, must-revalidate";
