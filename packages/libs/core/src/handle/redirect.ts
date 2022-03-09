@@ -7,3 +7,21 @@ export const redirect = (event: Event, route: RedirectRoute) => {
   event.res.statusMessage = route.statusDescription;
   event.res.end();
 };
+
+export const redirectByPageProps = (event: Event, route: RedirectRoute) => {
+  event.res.setHeader(
+    "cache-control",
+    route.headers?.cacheControl?.join(":") ?? ""
+  );
+  event.res.statusCode = 200;
+
+  const body = {
+    pageProps: {
+      __N_REDIRECT: route.headers?.location[0].value ?? "",
+      __N_REDIRECT_STATUS: route.status
+    },
+    __N_SSG: true
+  };
+  event.res.write(JSON.stringify(body));
+  event.res.end();
+};
