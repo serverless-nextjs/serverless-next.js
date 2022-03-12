@@ -13,6 +13,7 @@ export const redirectByPageProps = (event: Event, route: RedirectRoute) => {
     "cache-control",
     route.headers?.cacheControl?.join(":") ?? ""
   );
+  event.res.setHeader("Content-Type", "application/json");
   event.res.statusCode = 200;
 
   const body = {
