@@ -3839,13 +3839,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cdktf/provider-aws@npm:5.0.27":
-  version: 5.0.27
-  resolution: "@cdktf/provider-aws@npm:5.0.27"
+"@cdktf/provider-aws@npm:5.0.48":
+  version: 5.0.48
+  resolution: "@cdktf/provider-aws@npm:5.0.48"
   peerDependencies:
     cdktf: ^0.9
     constructs: ^10.0.0
-  checksum: 9418ca802cdba1997f677e0ec620f6b6d9d8ec3e83349a52291ce16869e30b767886b62d0df2145d10e9ff1b865c36fb05e081570a3bb40436d3f05c4ac56828
+  checksum: 822bbed97b08de5d0c18e59cb2b0dd1381e2a5f783c015de35028499863ff4bf1df5e849baacad770c3c9caa27384324fc167f10421805f6a43ec0ec7b9ee23f
   languageName: node
   linkType: hard
 
@@ -6120,7 +6120,7 @@ __metadata:
   dependencies:
     "@babel/preset-typescript": ^7.16.7
     "@cdktf/provider-archive": 0.3.31
-    "@cdktf/provider-aws": 5.0.27
+    "@cdktf/provider-aws": 5.0.48
     "@cdktf/provider-null": 0.5.30
     "@rollup/plugin-commonjs": 18.1.0
     "@rollup/plugin-json": 4.1.0
