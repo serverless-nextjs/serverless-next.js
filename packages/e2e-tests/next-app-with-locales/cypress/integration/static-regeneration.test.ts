@@ -5,12 +5,19 @@ describe("ISR Tests", () => {
   describe("SSG Redirect", () => {
     it("non existing user redirects to home", () => {
       const path = "/en/revalidated-ssg-pages/106";
-      cy.ensureRouteHasStatusCode(path, 307);
+      cy.request({ url: path }).then((response) => {
+        expect(response.status).to.equal(200);
 
-      const redirectedPath = "/";
-
-      // Verify redirect response
-      cy.verifyRedirect(path, redirectedPath, 307);
+        const redirectedPath = "/";
+        // Verify redirect response
+        expect(response.body).to.deep.equal({
+          pageProps: {
+            __N_REDIRECT: redirectedPath,
+            __N_REDIRECT_STATUS: 307
+          },
+          __N_SSG: true
+        });
+      });
     });
   });
   describe("SSG page", () => {
