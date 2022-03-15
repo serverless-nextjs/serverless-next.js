@@ -1,9 +1,14 @@
 import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import { BehaviorOptions, DistributionProps, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
-import { Runtime } from "aws-cdk-lib/aws-lambda";
+import {
+  BehaviorOptions,
+  DistributionProps,
+  CachePolicy
+} from "aws-cdk-lib/aws-cloudfront";
+import { Runtime, Tracing } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { BucketProps } from "aws-cdk-lib/aws-s3";
 import { Duration, StackProps } from "aws-cdk-lib";
+import { RetentionDays } from "aws-cdk-lib/aws-logs";
 
 export type LambdaOption<T> =
   | T
@@ -55,6 +60,24 @@ export interface Props extends StackProps {
    * Lambda runtimes(s)
    */
   runtime?: LambdaOption<Runtime>;
+
+  /**
+   * Enable AWS X-Ray Tracing for Lambda Function.
+   */
+  tracing?: LambdaOption<Tracing>;
+
+  /**
+   * The number of days log events are kept in CloudWatch Logs.
+   *
+   * When updating
+   * this property, unsetting it doesn't remove the log retention policy. To
+   * remove the retention policy, set the value to `INFINITE`.
+   *
+   * @default logs.RetentionDays.INFINITE
+   * @stability stable
+   */
+  readonly logRetention?: LambdaOption<RetentionDays>;
+
   /**
    * Cache Policy Name(s)
    */

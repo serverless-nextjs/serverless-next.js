@@ -134,12 +134,19 @@ export class NextJSLambdaEdge extends Construct {
           code: lambda.Code.fromAsset(
             path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
           ),
+          tracing: toLambdaOption("regenerationLambda", props.tracing),
+          logRetention: toLambdaOption(
+            "regenerationLambda",
+            props.logRetention
+          ),
           runtime:
             toLambdaOption("regenerationLambda", props.runtime) ??
             lambda.Runtime.NODEJS_14_X,
-          memorySize: toLambdaOption("regenerationLambda", props.memory) ?? undefined,
+          memorySize:
+            toLambdaOption("regenerationLambda", props.memory) ?? undefined,
           timeout:
-            toLambdaOption("regenerationLambda", props.timeout) ?? Duration.seconds(30)
+            toLambdaOption("regenerationLambda", props.timeout) ??
+            Duration.seconds(30)
         }
       );
 
@@ -155,10 +162,13 @@ export class NextJSLambdaEdge extends Construct {
       currentVersionOptions: {
         removalPolicy: RemovalPolicy.DESTROY // destroy old versions
       },
-      logRetention: logs.RetentionDays.THREE_DAYS,
+      logRetention:
+        toLambdaOption("defaultLambda", props.logRetention) ??
+        logs.RetentionDays.THREE_DAYS,
       code: lambda.Code.fromAsset(
         path.join(this.props.serverlessBuildOutDir, "default-lambda")
       ),
+      tracing: toLambdaOption("defaultLambda", props.tracing),
       role: this.edgeLambdaRole,
       runtime:
         toLambdaOption("defaultLambda", props.runtime) ??
@@ -193,10 +203,13 @@ export class NextJSLambdaEdge extends Construct {
           removalPolicy: RemovalPolicy.DESTROY, // destroy old versions
           retryAttempts: 1 // async retry attempts
         },
-        logRetention: logs.RetentionDays.THREE_DAYS,
+        logRetention:
+          toLambdaOption("apiLambda", props.logRetention) ??
+          logs.RetentionDays.THREE_DAYS,
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "api-lambda")
         ),
+        tracing: toLambdaOption("apiLambda", props.tracing),
         role: this.edgeLambdaRole,
         runtime:
           toLambdaOption("apiLambda", props.runtime) ??
@@ -218,10 +231,13 @@ export class NextJSLambdaEdge extends Construct {
           removalPolicy: RemovalPolicy.DESTROY, // destroy old versions
           retryAttempts: 1 // async retry attempts
         },
-        logRetention: logs.RetentionDays.THREE_DAYS,
+        logRetention:
+          toLambdaOption("imageLambda", props.logRetention) ??
+          logs.RetentionDays.THREE_DAYS,
         code: lambda.Code.fromAsset(
           path.join(this.props.serverlessBuildOutDir, "image-lambda")
         ),
+        tracing: toLambdaOption("imageLambda", props.tracing),
         role: this.edgeLambdaRole,
         runtime:
           toLambdaOption("imageLambda", props.runtime) ??
@@ -245,8 +261,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.days(30),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     this.nextImageCachePolicy =
       props.nextImageCachePolicy ||
@@ -260,8 +275,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.days(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     this.nextLambdaCachePolicy =
       props.nextLambdaCachePolicy ||
@@ -282,8 +296,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.seconds(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     const edgeLambdas: cloudfront.EdgeLambda[] = [
       {
@@ -408,8 +421,11 @@ export class NextJSLambdaEdge extends Construct {
 
     const assetsDirectory = path.join(props.serverlessBuildOutDir, "assets");
     const { basePath } = this.routesManifest || {};
-    const normalizedBasePath = basePath && basePath.length > 0 ? basePath.slice(1) : "";
-    const assets = readAssetsDirectory({ assetsDirectory: path.join(assetsDirectory, normalizedBasePath) });
+    const normalizedBasePath =
+      basePath && basePath.length > 0 ? basePath.slice(1) : "";
+    const assets = readAssetsDirectory({
+      assetsDirectory: path.join(assetsDirectory, normalizedBasePath)
+    });
 
     // This `BucketDeployment` deploys just the BUILD_ID file. We don't actually
     // use the BUILD_ID file at runtime, however in this case we use it as a
