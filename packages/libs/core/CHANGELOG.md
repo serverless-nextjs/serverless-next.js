@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.7.0-alpha.12](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.11...v3.7.0-alpha.12) (2022-03-15)
+
+### Bug Fixes
+
+- fix e2e static regeneration test code ([#2398](https://github.com/serverless-nextjs/serverless-next.js/issues/2398)) ([e13e821](https://github.com/serverless-nextjs/serverless-next.js/commit/e13e82184ab678b194a25cb7f80093c4e50c2736))
+
 # [3.7.0-alpha.11](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.10...v3.7.0-alpha.11) (2022-03-10)
 
 ### Bug Fixes
