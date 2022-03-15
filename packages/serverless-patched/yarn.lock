@@ -327,6 +327,29 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@serverless/platform-client@npm:^4.3.1":
+  version: 4.3.2
+  resolution: "@serverless/platform-client@npm:4.3.2"
+  dependencies:
+    adm-zip: ^0.5.5
+    archiver: ^5.3.0
+    axios: ^0.21.1
+    fast-glob: ^3.2.7
+    https-proxy-agent: ^5.0.0
+    ignore: ^5.1.8
+    isomorphic-ws: ^4.0.1
+    js-yaml: ^3.14.1
+    jwt-decode: ^2.2.0
+    minimatch: ^3.0.4
+    querystring: ^0.2.1
+    run-parallel-limit: ^1.1.0
+    throat: ^5.0.0
+    traverse: ^0.6.6
+    ws: ^7.5.3
+  checksum: a038012473ff86dc898603ff8cd1a9ba15c17c64b3ead4f923a9563b67903f01a4f6786b5f847ba47b6a8ec6c3e42e161fbcf8de4fcf92a72d6239050f703910
+  languageName: node
+  linkType: hard
+
 "@serverless/template@npm:^1.1.3":
   version: 1.1.4
   resolution: "@serverless/template@npm:1.1.4"
@@ -453,7 +476,7 @@ __metadata:
     patch-package: ^6.4.7
     postinstall-postinstall: "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097"
     rimraf: ^3.0.2
-    serverless: ^2.72.2
+    serverless: ^2.72.3
     typescript: ^4.5.5
   bin:
     serverless-patched: ./dist/serverless-patched.js
@@ -899,9 +922,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-sdk@npm:^2.1062.0":
-  version: 2.1062.0
-  resolution: "aws-sdk@npm:2.1062.0"
+"aws-sdk@npm:^2.1078.0":
+  version: 2.1093.0
+  resolution: "aws-sdk@npm:2.1093.0"
   dependencies:
     buffer: 4.9.2
     events: 1.1.1
@@ -912,7 +935,7 @@ __metadata:
     url: 0.10.3
     uuid: 3.3.2
     xml2js: 0.4.19
-  checksum: 84efd4cfd24674214422addc2bb9cae31f64567411e71cad7cbe9dc28db11f2217d3b15474b7b939917745344366d4645aa76f3b6922f71f2e0ee1d9e9f80c7b
+  checksum: 2b2fc480c715fdaadc4ccd6f852afb0dfcb9a947cf1a740cd747959459edb9ec17551f7dcc6c81f9213456343acb9358dd847396a79b3e4fec68235f314b79f9
   languageName: node
   linkType: hard
 
@@ -5149,19 +5172,19 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"serverless@npm:^2.72.2":
-  version: 2.72.2
-  resolution: "serverless@npm:2.72.2"
+"serverless@npm:^2.72.3":
+  version: 2.72.3
+  resolution: "serverless@npm:2.72.3"
   dependencies:
     "@serverless/cli": ^1.6.0
     "@serverless/components": ^3.18.2
     "@serverless/dashboard-plugin": ^5.5.4
-    "@serverless/platform-client": ^4.3.0
+    "@serverless/platform-client": ^4.3.1
     "@serverless/utils": ^5.20.3
     ajv: ^6.12.6
     ajv-keywords: ^3.5.2
     archiver: ^5.3.0
-    aws-sdk: ^2.1062.0
+    aws-sdk: ^2.1078.0
     bluebird: ^3.7.2
     boxen: ^5.1.2
     cachedir: ^2.3.0
@@ -5199,19 +5222,19 @@ fsevents@~2.3.2:
     promise-queue: ^2.2.5
     replaceall: ^0.1.6
     semver: ^7.3.5
-    signal-exit: ^3.0.6
+    signal-exit: ^3.0.7
     strip-ansi: ^6.0.1
     tabtab: ^3.0.2
     tar: ^6.1.11
     timers-ext: ^0.1.7
-    type: ^2.5.0
+    type: ^2.6.0
     untildify: ^4.0.0
     uuid: ^8.3.2
     yaml-ast-parser: 0.0.43
   bin:
     serverless: bin/serverless.js
     sls: bin/serverless.js
-  checksum: 5af4d328498f90cd0b452ca9e418d5f6faa60cc21dfe2c61cd5653f66300bc13bda546ed61577ece4ab1ebc44e8404a7f723721e5600d1b3d147e5ed7d53d7b2
+  checksum: 0baedd3c80fb565c897cbfa34f59f5527ff0f41c1605c41b1078bae562a8994d39e387de4fff146518e681c810643cb60a36b064df39674e3c64484aae253732
   languageName: node
   linkType: hard
 
@@ -5272,10 +5295,10 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"signal-exit@npm:^3.0.6":
-  version: 3.0.6
-  resolution: "signal-exit@npm:3.0.6"
-  checksum: b819ac81ba757af559dad0804233ae31bf6f054591cd8a671e9cbcf09f21c72ec3076fe87d1e04861f5b33b47d63f0694b568de99c99cd733ee2060515beb6d5
+"signal-exit@npm:^3.0.7":
+  version: 3.0.7
+  resolution: "signal-exit@npm:3.0.7"
+  checksum: a2f098f247adc367dffc27845853e9959b9e88b01cb301658cfe4194352d8d2bb32e18467c786a7fe15f1d44b233ea35633d076d5e737870b7139949d1ab6318
   languageName: node
   linkType: hard
 
@@ -5954,6 +5977,13 @@ fsevents@~2.3.2:
   version: 2.5.0
   resolution: "type@npm:2.5.0"
   checksum: 0fe1bb4e8ba298b2b245fdc6bca6178887e29e2134d231e468366615b3adffd651d464eb51d8b15f8cfd168577c282a17e19bf80f036a60d4df16308a83a93c4
+  languageName: node
+  linkType: hard
+
+"type@npm:^2.6.0":
+  version: 2.6.0
+  resolution: "type@npm:2.6.0"
+  checksum: 80da01fcc0f6ed5a253dc326530e134000a8f66ea44b6d9687cde2f894f0d0b2486595b0cd040a64f7f79dc3120784236f8c9ef667a8aef03984e049b447cfb4
   languageName: node
   linkType: hard
 
