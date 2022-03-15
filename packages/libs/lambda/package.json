@@ -45,7 +45,7 @@
     "@sls-next/core": "link:../core",
     "cdktf": "0.9.2",
     "cdktf-cli": "0.9.2",
-    "constructs": "10.0.69",
+    "constructs": "10.0.88",
     "esbuild": "0.14.23",
     "fs-extra": "9.1.0",
     "yargs": "17.3.1"
