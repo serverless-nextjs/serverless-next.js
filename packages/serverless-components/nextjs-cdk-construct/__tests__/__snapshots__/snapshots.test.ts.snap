@@ -1250,14 +1250,14 @@ Object {
       "Type": "AWS::CloudFront::CachePolicy",
     },
     "StackNextLambdaCurrentVersion21F01F879970bafa5c9141f6152d4057c3ab8184": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "FunctionName": Object {
           "Ref": "StackNextLambdaF64DCE99",
         },
       },
       "Type": "AWS::Lambda::Version",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "StackNextLambdaCurrentVersionAliasliveB07D2AA0": Object {
       "Properties": Object {
@@ -2999,14 +2999,14 @@ Object {
       "Type": "AWS::CloudFront::CachePolicy",
     },
     "StackNextLambdaCurrentVersion21F01F87b5875487743b0e6b4f7058e417862406": Object {
-      "DeletionPolicy": "Delete",
+      "DeletionPolicy": "Retain",
       "Properties": Object {
         "FunctionName": Object {
           "Ref": "StackNextLambdaF64DCE99",
         },
       },
       "Type": "AWS::Lambda::Version",
-      "UpdateReplacePolicy": "Delete",
+      "UpdateReplacePolicy": "Retain",
     },
     "StackNextLambdaCurrentVersionAliasliveB07D2AA0": Object {
       "Properties": Object {
