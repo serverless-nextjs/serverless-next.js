@@ -5,12 +5,21 @@ import { CloudFrontRequest } from "aws-lambda";
 
 // @ts-ignore
 import * as _ from "../lib/lodash";
-import queryString from "../lib/query-string";
 
 const SLUG_PARAM_KEY = "slug";
 
 // regex for [make], [model] in origin url.
 const INJECT_PARAM_REGEX = RegExp("\\[[A-Za-z0-9]*]", "g");
+
+const parse = (querystring: string): any => {
+  return _.chain(querystring)
+    .replace("?", "")
+    .split("&")
+    .map(_.partial(_.split, _, "=", 2))
+    .fromPairs()
+    .value();
+};
+
 export default (path: string): string =>
   pathToRegexp(path)
     .toString()
@@ -34,17 +43,14 @@ const isParamsMatch = (
   originUrlParams: string | string[],
   querystring: string
 ): boolean => {
-  const params = _.keys(queryString.parse(querystring));
+  const params = _.keys(parse(querystring));
   if (_.isEmpty(params)) return false;
 
   if (typeof originUrlParams === "string") {
     originUrlParams = [originUrlParams];
   }
 
-  const result = _.isEqual(
-    params,
-    originUrlParams.sort((a, b) => a.localeCompare(b))
-  );
+  const result = _.isEqual(params.sort(), originUrlParams.sort());
 
   debug(
     `[isParamsMatch]:${result} with originUrl: ${JSON.stringify(
@@ -62,10 +68,7 @@ const rewriteUrlWithParams = (
 ): string => {
   let result = rewriteUrl;
 
-  _.forOwn(queryString.parse(querystring), function (
-    value: string,
-    key: string
-  ) {
+  _.forOwn(parse(querystring), function (value: string, key: string) {
     result = result.replace(`[${key}]`, `${value}`);
   });
 
