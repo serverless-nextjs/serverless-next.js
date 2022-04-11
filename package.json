@@ -29,7 +29,8 @@
     "clean": "lerna run clean",
     "docs": "cd documentation && yarn && yarn build",
     "handlers:upload-handler-sizes": "ts-node scripts/upload-handler-sizes.ts",
-    "handlers:comment-handler-sizes": "ts-node scripts/comment-handler-sizes.ts"
+    "handlers:comment-handler-sizes": "ts-node scripts/comment-handler-sizes.ts",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
