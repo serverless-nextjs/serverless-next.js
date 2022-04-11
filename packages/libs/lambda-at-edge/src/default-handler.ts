@@ -66,7 +66,7 @@ import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
 import { debug, isDevMode } from "./lib/console";
 import { PERMANENT_STATIC_PAGES_DIR } from "./lib/permanentStaticPages";
-import { CloudFrontHeaders } from "aws-lambda/common/cloudfront";
+import { checkAndRewriteUrl } from "./lib/pathToRegexStr";
 
 process.env.PRERENDER = "true";
 process.env.DEBUGMODE = Manifest.enableDebugMode;
@@ -494,53 +494,6 @@ export const handler = async (
   debug(`[origin] final response: ${JSON.stringify(response)}`);
 
   return response;
-};
-
-/**
- * check if this url and query params need to rewrite. And rewrite it if get configuration form serverless.yml
- * Now, we can only support 1 url params, like rewrite /index.html?page=[number] to /page/[number].html
- * We can use querystring lib if we want to support more functions.
- *
- * For example,
- *     urlRewrites:
- *        - name: paginationRewrite
- *          originUrl: /index.html?page=[number]
- *          rewriteUrl: /page/[number].html
- *
- * @param manifest
- * @param request
- */
-const checkAndRewriteUrl = (
-  manifest: OriginRequestDefaultHandlerManifest,
-  request: CloudFrontRequest
-): void => {
-  debug(`[checkAndRewriteUrl] manifest: ${JSON.stringify(manifest)}`);
-  const rewrites = manifest.urlRewrites;
-  debug(`[checkAndRewriteUrl] rewriteList: ${JSON.stringify(rewrites)}`);
-
-  if (!rewrites || rewrites.length === 0) return;
-
-  debug(`[checkAndRewriteUrl] Before: ${request.uri}, ${request.querystring}`);
-
-  const requestParamName = request.querystring.split("=")[0];
-  const requestParamValue = request.querystring.split("=")[1];
-  const requestUri = request.uri.split(".")[0];
-  if (!requestParamName || !requestParamValue || !requestUri) return;
-
-  debug(
-    `[checkAndRewriteUrl] requestParamName: ${requestParamName}, requestParamValue: ${requestParamValue}，requestUri: ${requestUri}`
-  );
-  rewrites.forEach(({ originUrl, rewriteUrl }) => {
-    debug(
-      `[originUrl: ${originUrl}, rewriteUrl: ${rewriteUrl}, prefix: ${requestUri}?${requestParamName}= ]`
-    );
-    if (originUrl.startsWith(`${requestUri}?${requestParamName}=`)) {
-      request.uri = `${rewriteUrl.split("[")[0]}${requestParamValue}.html`;
-      request.querystring = "";
-    }
-  });
-
-  debug(`[checkAndRewriteUrl] After: ${request.uri}, ${request.querystring}`);
 };
 
 const handleOriginRequest = async ({
