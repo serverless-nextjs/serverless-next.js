@@ -115,7 +115,6 @@ export const checkAndRewriteUrl = (
 
   debug(`[checkAndRewriteUrl] manifest: ${JSON.stringify(manifest)}`);
   const rewrites = manifest.urlRewrites;
-  debug(`[checkAndRewriteUrl] rewriteList: ${JSON.stringify(rewrites)}`);
   if (!rewrites || rewrites.length === 0) return;
 
   const requestUri = request.uri.split(".")[0];
@@ -123,12 +122,6 @@ export const checkAndRewriteUrl = (
   for (const rewrite of rewrites) {
     const originUrl = rewrite.originUrl;
     const rewriteUrl = rewrite.rewriteUrl;
-
-    debug(
-      `[originUrl]: ${originUrl}, rewriteUrl: ${rewriteUrl}, originUrlParams:${JSON.stringify(
-        rewrite.originUrlParams
-      )}`
-    );
 
     if (
       isUriMatch(originUrl, requestUri) &&
