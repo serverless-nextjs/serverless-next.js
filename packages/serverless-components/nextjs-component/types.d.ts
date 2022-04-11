@@ -92,4 +92,8 @@ export type LambdaInput = {
   name?: string;
 };
 
-type UrlRewriteOptions = { originUrl: string; rewriteUrl: string }[];
+type UrlRewriteOptions = {
+  originUrl: string;
+  rewriteUrl: string;
+  originUrlParams: string | string[];
+}[];

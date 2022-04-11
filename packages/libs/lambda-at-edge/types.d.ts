@@ -175,4 +175,8 @@ export type PerfLogger = {
   log: (metricDescription: string, t1?: number, t2?: number) => void;
 };
 
-export type UrlRewriteList = { originUrl: string; rewriteUrl: string }[];
+export type UrlRewriteList = {
+  originUrl: string;
+  rewriteUrl: string;
+  originUrlParams: string | string[];
+}[];
