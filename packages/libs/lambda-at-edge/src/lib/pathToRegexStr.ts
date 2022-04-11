@@ -18,11 +18,16 @@ export default (path: string): string =>
 
 // convert the serverless url to a standard regex, we can use the regex to match the url
 const isUriMatch = (originUrl: string, requestUrl: string): boolean => {
-  return new RegExp(
+  const result = new RegExp(
     `^${originUrl
       .replace(INJECT_PARAM_REGEX, "[0-9a-zA-Z-]*")
       .replace(/\//gi, "\\/")}$`
   ).test(requestUrl);
+
+  debug(
+    `[isUriMatch]:${result} with originUrl: ${originUrl}, requestUrl: ${requestUrl}`
+  );
+  return result;
 };
 
 const isParamsMatch = (
@@ -36,10 +41,17 @@ const isParamsMatch = (
     originUrlParams = [originUrlParams];
   }
 
-  return _.isEqual(
+  const result = _.isEqual(
     params,
     originUrlParams.sort((a, b) => a.localeCompare(b))
   );
+
+  debug(
+    `[isParamsMatch]:${result} with originUrl: ${JSON.stringify(
+      originUrlParams
+    )}, requestUrl: ${querystring}`
+  );
+  return result;
 };
 
 // inject the params to rewrite url.
