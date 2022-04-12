@@ -49,19 +49,13 @@ const isParamsMatch = (
 ): boolean => {
   const params = _.keys(parse(querystring));
 
-  console.log(48, JSON.stringify(params));
-
   if (_.isEmpty(params)) return false;
 
   if (typeof originUrlParams === "string") {
     originUrlParams = [originUrlParams];
   }
-  console.log(55, JSON.stringify(originUrlParams));
 
   const result = _.isEqual(params.sort(), originUrlParams.sort());
-
-  console.log(60, JSON.stringify(params.sort()));
-  console.log(61, JSON.stringify(originUrlParams.sort()));
 
   debug(
     `[isParamsMatch]:${result} with originUrlParams: ${JSON.stringify(
