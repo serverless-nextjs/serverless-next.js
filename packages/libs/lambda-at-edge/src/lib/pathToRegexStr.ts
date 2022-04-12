@@ -12,12 +12,16 @@ const SLUG_PARAM_KEY = "slug";
 const INJECT_PARAM_REGEX = RegExp("\\[[A-Za-z0-9]*]", "g");
 
 const parse = (querystring: string): any => {
-  return _.chain(querystring)
-    .replace("?", "")
+  return querystring
+    .substring(querystring.indexOf("?") + 1)
     .split("&")
-    .map(_.partial(_.split, _, "=", 2))
-    .fromPairs()
-    .value();
+    .reduce(
+      (memo, param) => ({
+        ...memo,
+        [param.split("=")[0]]: param.split("=")[1]
+      }),
+      {}
+    );
 };
 
 export default (path: string): string =>
