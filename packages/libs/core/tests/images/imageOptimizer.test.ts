@@ -2,11 +2,11 @@ import sharp from "sharp";
 import { ImagesManifest, PlatformClient } from "../../src";
 import { imageOptimizer } from "../../src/images/imageOptimizer";
 import imagesManifest from "./image-images-manifest.json";
+import fs from "fs";
 import url from "url";
 import http from "http";
 import Stream from "stream";
 import { jest } from "@jest/globals";
-import fse from "fs-extra";
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
 
@@ -128,8 +128,8 @@ describe("Image optimizer", () => {
   };
 
   beforeEach(() => {
-    fse.remove("/tmp/cache/images");
-    fse.remove("/tmp/cache/imageMeta");
+    fs.rmdirSync("/tmp/cache/images", { recursive: true });
+    fs.rmdirSync("/tmp/cache/imageMeta", { recursive: true });
   });
 
   describe("Routes", () => {
