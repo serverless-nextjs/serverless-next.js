@@ -62,7 +62,7 @@ export class AwsPlatformClient implements PlatformClient {
 
       console.info(
         "Got error response from S3. Will default to returning empty response. Error: " +
-          JSON.stringify(e)
+          e
       );
       return {
         body: undefined,
