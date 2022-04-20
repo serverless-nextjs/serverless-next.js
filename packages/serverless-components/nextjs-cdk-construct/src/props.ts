@@ -64,6 +64,11 @@ export interface Props extends StackProps {
     lambdaCache?: string;
   };
   /**
+   * If you use a custom handler with `.build()`, you can set the handler here.
+   */
+  handler?: string;
+
+  /**
    * Enable logging on the cloudfront distribution
    */
   withLogging?: boolean;

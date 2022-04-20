@@ -151,7 +151,7 @@ export class NextJSLambdaEdge extends Construct {
     this.defaultNextLambda = new lambda.Function(this, "NextLambda", {
       functionName: toLambdaOption("defaultLambda", props.name),
       description: `Default Lambda@Edge for Next CloudFront distribution`,
-      handler: "index.handler",
+      handler: props.handler || "index.handler",
       currentVersionOptions: {
         removalPolicy: RemovalPolicy.DESTROY // destroy old versions
       },
