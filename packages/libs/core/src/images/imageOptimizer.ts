@@ -212,7 +212,9 @@ export async function imageOptimizer(
 
   const hash = getHash([CACHE_VERSION, href, width, quality, mimeType]);
   const imagesDir = join("/tmp", "cache", "images"); // Use Lambda tmp directory
+  const imagesMetaDir = join("/tmp", "cache", "imageMeta");
   const hashDir = join(imagesDir, hash);
+  const metaDir = join(imagesMetaDir, hash);
   const now = Date.now();
 
   if (fs.existsSync(hashDir)) {
@@ -223,8 +225,15 @@ export async function imageOptimizer(
       const contentType = getContentType(extension);
       const fsPath = join(hashDir, file);
       if (now < expireAt) {
+        const meta = JSON.parse(
+          (await promises.readFile(join(metaDir, `${file}.json`))).toString()
+        );
         if (!res.getHeader("Cache-Control")) {
-          res.setHeader("Cache-Control", "public, max-age=60");
+          if (meta.headers["Cache-Control"]) {
+            res.setHeader("Cache-Control", meta.headers["Cache-Control"]);
+          } else {
+            res.setHeader("Cache-Control", "public, max-age=60");
+          }
         }
         if (sendEtagResponse(req, res, etag)) {
           return { finished: true };
@@ -243,6 +252,7 @@ export async function imageOptimizer(
   let upstreamBuffer: Buffer | undefined;
   let upstreamType: string | undefined;
   let maxAge: number;
+  let cacheControl: string | undefined | null;
 
   if (isAbsolute) {
     const upstreamRes = await fetch(href);
@@ -256,12 +266,10 @@ export async function imageOptimizer(
     res.statusCode = upstreamRes.status;
     upstreamBuffer = Buffer.from(await upstreamRes.arrayBuffer());
     upstreamType = upstreamRes.headers.get("Content-Type") ?? undefined;
-    maxAge = getMaxAge(upstreamRes.headers.get("Cache-Control") ?? undefined);
-    if (upstreamRes.headers.get("Cache-Control")) {
-      res.setHeader(
-          "Cache-Control",
-          upstreamRes.headers.get("Cache-Control") as string
-      );
+    cacheControl = upstreamRes.headers.get("Cache-Control");
+    maxAge = getMaxAge(cacheControl ?? undefined);
+    if (cacheControl) {
+      res.setHeader("Cache-Control", cacheControl as string);
     }
   } else {
     let objectKey;
@@ -284,6 +292,7 @@ export async function imageOptimizer(
 
       upstreamBuffer = response.body ?? Buffer.of();
       upstreamType = response.contentType ?? undefined;
+      cacheControl = response.cacheControl;
       maxAge = getMaxAge(response.cacheControl);
 
       // If object response provides cache control header, use that
@@ -357,11 +366,22 @@ export async function imageOptimizer(
     }
 
     const optimizedBuffer = await transformer.toBuffer();
-    await promises.mkdir(hashDir, { recursive: true });
+    await Promise.all([
+      promises.mkdir(hashDir, { recursive: true }),
+      promises.mkdir(metaDir, { recursive: true })
+    ]);
     const extension = getExtension(contentType);
     const etag = getHash([optimizedBuffer]);
-    const filename = join(hashDir, `${expireAt}.${etag}.${extension}`);
-    await promises.writeFile(filename, optimizedBuffer);
+    const fileName = `${expireAt}.${etag}.${extension}`;
+    const filePath = join(hashDir, fileName);
+    const metaFilename = join(metaDir, `${fileName}.json`);
+    await Promise.all([
+      promises.writeFile(filePath, optimizedBuffer),
+      promises.writeFile(
+        metaFilename,
+        JSON.stringify({ headers: { "Cache-Control": cacheControl } })
+      )
+    ]);
     sendResponse(req, res, contentType, optimizedBuffer);
   } catch (error: any) {
     console.error(

@@ -1,11 +1,11 @@
 import sharp from "sharp";
-import { ImagesManifest } from "../../src";
+import { ImagesManifest, PlatformClient } from "../../src";
 import { imageOptimizer } from "../../src/images/imageOptimizer";
 import imagesManifest from "./image-images-manifest.json";
+import fs from "fs";
 import url from "url";
 import http from "http";
 import Stream from "stream";
-import { PlatformClient } from "../../src";
 import { jest } from "@jest/globals";
 
 jest.mock("node-fetch", () => require("fetch-mock-jest").sandbox());
@@ -103,7 +103,7 @@ describe("Image optimizer", () => {
     );
   };
 
-  beforeEach(async () => {
+  const setupPlatformClientResponse = async (cacheControlHeader?: string) => {
     const imageBuffer: Buffer = await sharp({
       create: {
         width: 100,
@@ -122,9 +122,14 @@ describe("Image optimizer", () => {
       expires: undefined,
       eTag: "etag",
       statusCode: 200,
-      cacheControl: undefined,
+      cacheControl: cacheControlHeader,
       contentType: "image/png"
     });
+  };
+
+  beforeEach(() => {
+    fs.rmSync("/tmp/cache/images", { recursive: true, force: true });
+    fs.rmSync("/tmp/cache/imageMeta", { recursive: true, force: true });
   });
 
   describe("Routes", () => {
@@ -137,6 +142,7 @@ describe("Image optimizer", () => {
     `(
       "serves image request",
       async ({ imagePath, accept, expectedObjectKey }) => {
+        await setupPlatformClientResponse();
         const { parsedUrl, req, res } = createEventByImagePath(imagePath, {
           accept: accept
         });
@@ -162,47 +168,61 @@ describe("Image optimizer", () => {
     );
 
     it.each`
-      imagePath
-      ${"/test-image-cached.png"}
-    `("serves cached image on second request", async ({ imagePath }) => {
-      const {
-        parsedUrl: parsedUrl1,
-        req: req1,
-        res: res1
-      } = createEventByImagePath(imagePath);
-      const {
-        parsedUrl: parsedUrl2,
-        req: req2,
-        res: res2
-      } = createEventByImagePath(imagePath);
+      imagePath                   | cacheControlHeader
+      ${"/test-image-cached.png"} | ${undefined}
+      ${"/test-image-cached.png"} | ${"public,max-age=31536000,immutable"}
+    `(
+      "serves cached image on second request with $cacheControlHeader cache header",
+      async ({ imagePath, cacheControlHeader }) => {
+        await setupPlatformClientResponse(cacheControlHeader);
+        const {
+          parsedUrl: parsedUrl1,
+          req: req1,
+          res: res1
+        } = createEventByImagePath(imagePath);
+        const {
+          parsedUrl: parsedUrl2,
+          req: req2,
+          res: res2
+        } = createEventByImagePath(imagePath);
 
-      await imageOptimizer(
-        "",
-        imagesManifest as ImagesManifest,
-        req1,
-        res1,
-        parsedUrl1,
-        mockPlatformClient as PlatformClient
-      );
-      await imageOptimizer(
-        "",
-        imagesManifest as ImagesManifest,
-        req2,
-        res2,
-        parsedUrl2,
-        mockPlatformClient as PlatformClient
-      );
+        await imageOptimizer(
+          "",
+          imagesManifest as ImagesManifest,
+          req1,
+          res1,
+          parsedUrl1,
+          mockPlatformClient as PlatformClient
+        );
+        await imageOptimizer(
+          "",
+          imagesManifest as ImagesManifest,
+          req2,
+          res2,
+          parsedUrl2,
+          mockPlatformClient as PlatformClient
+        );
 
-      expect(res1.statusCode).toEqual(200);
-      expect(res2.statusCode).toEqual(200);
+        expect(res1.statusCode).toEqual(200);
+        expect(res2.statusCode).toEqual(200);
 
-      expect(mockPlatformClient.getObject).toBeCalledTimes(1);
-    });
+        let defaultCacheHeader = "public, max-age=60";
+        expect(res1.headers["cache-control"]).toEqual(
+          cacheControlHeader ?? defaultCacheHeader
+        );
+        expect(res2.headers["cache-control"]).toEqual(
+          cacheControlHeader ?? defaultCacheHeader
+        );
+
+        expect(mockPlatformClient.getObject).toBeCalledTimes(1);
+      }
+    );
 
     it.each`
       imagePath
       ${"/test-image-etag.png"}
     `("serves 304 when etag matches", async ({ imagePath }) => {
+      await setupPlatformClientResponse();
       const {
         parsedUrl: parsedUrl1,
         req: req1,
