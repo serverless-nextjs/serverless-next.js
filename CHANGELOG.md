@@ -3,6 +3,17 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [3.8.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0...v3.8.0-alpha.0) (2022-04-20)
+
+### Bug Fixes
+
+- change defaultNextLambda removalPolicy from DESTROY to RETAIN ([#2420](https://github.com/serverless-nextjs/serverless-next.js/issues/2420)) ([1baa444](https://github.com/serverless-nextjs/serverless-next.js/commit/1baa4447dea1e8e2f24c7caaa26c0d150176cb7c))
+- logging error ([#2426](https://github.com/serverless-nextjs/serverless-next.js/issues/2426)) ([acfe76e](https://github.com/serverless-nextjs/serverless-next.js/commit/acfe76ed36ed5b1cd7b5c6f40323c355bdce4c04))
+
+### Features
+
+- allow to set custom handler ([#2409](https://github.com/serverless-nextjs/serverless-next.js/issues/2409)) ([f5c33ac](https://github.com/serverless-nextjs/serverless-next.js/commit/f5c33ac7a3089a7d998b6f17bc0f742c570109f8))
+
 # [3.7.0](https://github.com/serverless-nextjs/serverless-next.js/compare/v3.7.0-alpha.12...v3.7.0) (2022-03-31)
 
 **Note:** Version bump only for package serverless-nextjs-monorepo
