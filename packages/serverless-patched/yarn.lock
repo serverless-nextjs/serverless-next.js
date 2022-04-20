@@ -449,7 +449,7 @@ __metadata:
   dependencies:
     "@serverless/cli": ^1.6.0
     "@types/node": ^17.0.19
-    find-up: ^6.2.0
+    find-up: ^6.3.0
     patch-package: ^6.4.7
     postinstall-postinstall: "simply-vat/postinstall-postinstall#59b0064272e72ab62eab205d6c63e7e60495b097"
     rimraf: ^3.0.2
@@ -2496,13 +2496,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"find-up@npm:^6.2.0":
-  version: 6.2.0
-  resolution: "find-up@npm:6.2.0"
+"find-up@npm:^6.3.0":
+  version: 6.3.0
+  resolution: "find-up@npm:6.3.0"
   dependencies:
-    locate-path: ^7.0.0
+    locate-path: ^7.1.0
     path-exists: ^5.0.0
-  checksum: 149085af5cec2af6fa0bd94db81785eb60464985b2428b4d34934a04d1809b1c27831a72b667ac25a8ee19bb6c36cf6fbae5776b115d45abbea1112f460f47c5
+  checksum: 9a21b7f9244a420e54c6df95b4f6fc3941efd3c3e5476f8274eb452f6a85706e7a6a90de71353ee4f091fcb4593271a6f92810a324ec542650398f928783c280
   languageName: node
   linkType: hard
 
@@ -3565,12 +3565,12 @@ fsevents@~2.3.2:
   languageName: node
   linkType: hard
 
-"locate-path@npm:^7.0.0":
-  version: 7.0.0
-  resolution: "locate-path@npm:7.0.0"
+"locate-path@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "locate-path@npm:7.1.0"
   dependencies:
     p-locate: ^6.0.0
-  checksum: a0de7f882f069c3afe261c77821b91f2fe430cfe9b76c9059e4814e8803dc155dd9dc998e3dfe1a4ff3ca596a423bf9aa5df0b26a9516ed80fdf5cfac82a36f3
+  checksum: 17d5eb6c04ff31856f8a6ae4ee3e3091d41485657428d1a91bd5f66aa1fcd7a90db3de6e8ffb905c2ff1a0014b77509b98dd6410424505efc08b1726d50bcbfc
   languageName: node
   linkType: hard
 
