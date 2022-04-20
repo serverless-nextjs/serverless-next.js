@@ -153,7 +153,7 @@ export class NextJSLambdaEdge extends Construct {
       description: `Default Lambda@Edge for Next CloudFront distribution`,
       handler: props.handler || "index.handler",
       currentVersionOptions: {
-        removalPolicy: RemovalPolicy.DESTROY // destroy old versions
+        removalPolicy: RemovalPolicy.RETAIN // retain old versions to prevent premature removal, cleanup via trigger later on
       },
       logRetention: logs.RetentionDays.THREE_DAYS,
       code: lambda.Code.fromAsset(
