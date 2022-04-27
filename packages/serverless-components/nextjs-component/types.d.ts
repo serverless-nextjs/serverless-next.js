@@ -60,6 +60,7 @@ export type ServerlessComponentInputs = {
   notFoundPageMark?: string;
   // For some very important pages that need to be always available, such as the home page.
   permanentStaticPages?: string[];
+  sentry?: SentryOptions;
 };
 
 type CloudfrontOptions = Record<string, any>;
@@ -97,3 +98,8 @@ type UrlRewriteOptions = {
   rewriteUrl: string;
   originUrlParams: string | string[];
 }[];
+
+type SentryOptions = {
+  dsn?: string;
+  tracesSampleRate: number;
+};

@@ -248,7 +248,8 @@ class NextjsComponent extends Component {
           enableDebugMode: inputs.enableDebugMode ?? false,
           invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined,
           notFoundPageMark: inputs.notFoundPageMark ?? undefined,
-          permanentStaticPages: inputs.permanentStaticPages ?? undefined
+          permanentStaticPages: inputs.permanentStaticPages ?? undefined,
+          sentry: inputs.sentry ?? undefined
         },
         nextStaticPath
       );

@@ -66,6 +66,10 @@ type BuildOptions = {
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
   notFoundPageMark?: string;
   permanentStaticPages?: string[];
+  sentry?: {
+    dsn?: string;
+    tracesSampleRate: number;
+  };
 };
 
 const defaultBuildOptions = {
@@ -86,7 +90,8 @@ const defaultBuildOptions = {
   enableDebugMode: false,
   invalidationUrlGroups: [],
   notFoundPageMark: undefined,
-  permanentStaticPages: undefined
+  permanentStaticPages: undefined,
+  sentry: undefined
 };
 
 class Builder {
@@ -544,7 +549,8 @@ class Builder {
         }
       ),
       notFoundPageMark: this.buildOptions.notFoundPageMark,
-      permanentStaticPages: this.buildOptions.permanentStaticPages
+      permanentStaticPages: this.buildOptions.permanentStaticPages,
+      sentry: this.buildOptions.sentry
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
