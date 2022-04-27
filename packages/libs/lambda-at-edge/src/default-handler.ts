@@ -64,9 +64,17 @@ import { CloudFrontService } from "./services/cloudfront.service";
 import { S3Service } from "./services/s3.service";
 import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
-import { debug, isDevMode } from "./lib/console";
+import { debug, getEnvironment, isDevMode } from "./lib/console";
 import { PERMANENT_STATIC_PAGES_DIR } from "./lib/permanentStaticPages";
 import { checkAndRewriteUrl } from "./lib/pathToRegexStr";
+import * as Sentry from "@sentry/node";
+import "@sentry/tracing";
+
+import {
+  getSentryScopeWithExtraData,
+  jerry_sentry_dsn,
+  sentry_flush_timeout
+} from "./lib/sentry";
 
 process.env.PRERENDER = "true";
 process.env.DEBUGMODE = Manifest.enableDebugMode;
@@ -385,7 +393,7 @@ export const handler = async (
   context: Context
 ): Promise<CloudFrontResultResponse | CloudFrontRequest | void> => {
   const manifest: OriginRequestDefaultHandlerManifest = Manifest;
-  let response: CloudFrontResultResponse | CloudFrontRequest;
+  let response!: CloudFrontResultResponse | CloudFrontRequest;
   const prerenderManifest: PrerenderManifestType = PrerenderManifest;
   const routesManifest: RoutesManifest = RoutesManifestJson;
 
@@ -456,23 +464,54 @@ export const handler = async (
     return;
   }
 
-  if (isOriginResponse(event)) {
-    debug(`[handle-origin-response] event: ${JSON.stringify(event)}`);
-    response = await handleOriginResponse({
-      event,
-      manifest,
-      prerenderManifest,
-      context
+  // if enable sentry
+  if (manifest.enableSentryTrack) {
+    debug(`[Sentry] start track sentry.`);
+
+    Sentry.init({
+      dsn: jerry_sentry_dsn,
+      tracesSampleRate: 1.0,
+      environment: getEnvironment(manifest)
     });
+    const transaction = Sentry.startTransaction({
+      op: "serverless-next-handler-request",
+      name: "Serverless-next Transaction"
+    });
+    try {
+      response = await getResponseFromEvent(
+        context,
+        manifest,
+        event,
+        prerenderManifest,
+        routesManifest
+      );
+    } catch (e) {
+      debug(
+        `[Sentry] find exception ${JSON.stringify(
+          e
+        )}, need send to sentry website.`
+      );
+      Sentry.captureException(e, (scope) =>
+        getSentryScopeWithExtraData(
+          scope,
+          routesManifest,
+          event,
+          context,
+          manifest
+        )
+      );
+      await Sentry.flush(sentry_flush_timeout);
+    } finally {
+      transaction.finish();
+    }
   } else {
-    debug(`[handle-origin-request] event: ${JSON.stringify(event)}`);
-    response = await handleOriginRequest({
-      event,
+    response = await getResponseFromEvent(
+      context,
       manifest,
+      event,
       prerenderManifest,
-      routesManifest,
-      context
-    });
+      routesManifest
+    );
   }
 
   // Add custom headers to responses only.
@@ -1284,4 +1323,39 @@ export const generatePermanentPageResponse = async (
   debug(`[generatePermanentPageResponse]: ${JSON.stringify(out.headers)}`);
   debug(`[generatePermanentPageResponse]: ${JSON.stringify(out.body)}`);
   return out;
+};
+
+export const getResponseFromEvent = async (
+  context: Context,
+  manifest: OriginRequestDefaultHandlerManifest,
+  event: OriginRequestEvent | OriginResponseEvent | RevalidationEvent,
+  prerenderManifest: PrerenderManifestType,
+  routesManifest: RoutesManifest
+) => {
+  if (isOriginResponse(event)) {
+    debug(
+      `[handle-origin-response] [getResponseFromEvent] event: ${JSON.stringify(
+        event
+      )}`
+    );
+    return await handleOriginResponse({
+      event,
+      manifest,
+      prerenderManifest,
+      context
+    });
+  } else {
+    debug(
+      `[handle-origin-request] [getResponseFromEvent] event: ${JSON.stringify(
+        event
+      )}`
+    );
+    return await handleOriginRequest({
+      event,
+      manifest,
+      prerenderManifest,
+      routesManifest,
+      context
+    });
+  }
 };

@@ -60,6 +60,7 @@ export type ServerlessComponentInputs = {
   notFoundPageMark?: string;
   // For some very important pages that need to be always available, such as the home page.
   permanentStaticPages?: string[];
+  enableSentryTrack?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;
