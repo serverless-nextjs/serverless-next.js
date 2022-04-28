@@ -79,7 +79,10 @@ export type OriginRequestDefaultHandlerManifest = {
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
   notFoundPageMark?: string;
   permanentStaticPages?: string[];
-  enableSentryTrack?: boolean;
+  sentry?: {
+    dsn?: string;
+    tracesSampleRate: number;
+  };
 };
 
 export type OriginRequestImageHandlerManifest = {

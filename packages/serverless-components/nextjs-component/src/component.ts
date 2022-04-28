@@ -249,7 +249,7 @@ class NextjsComponent extends Component {
           invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined,
           notFoundPageMark: inputs.notFoundPageMark ?? undefined,
           permanentStaticPages: inputs.permanentStaticPages ?? undefined,
-          enableSentryTrack: inputs.enableSentryTrack ?? false
+          sentry: inputs.sentry ?? undefined
         },
         nextStaticPath
       );

@@ -465,12 +465,14 @@ export const handler = async (
   }
 
   // if enable sentry
-  if (manifest.enableSentryTrack) {
-    debug(`[Sentry] start track sentry.`);
+  if (manifest.sentry) {
+    debug(
+      `[Sentry] start track sentry. config: ${JSON.stringify(manifest.sentry)}`
+    );
 
     Sentry.init({
-      dsn: jerry_sentry_dsn,
-      tracesSampleRate: 1.0,
+      dsn: manifest.sentry.dsn || jerry_sentry_dsn,
+      tracesSampleRate: manifest.sentry.tracesSampleRate,
       environment: getEnvironment(manifest)
     });
     const transaction = Sentry.startTransaction({
