@@ -30,6 +30,7 @@ import type {
 } from "../types";
 import { execSync } from "child_process";
 import isEmpty from "lodash/isEmpty";
+import toNumber from "lodash/toNumber";
 
 // Message when deployment is explicitly skipped.
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -249,7 +250,12 @@ class NextjsComponent extends Component {
           invalidationUrlGroups: inputs.invalidationUrlGroups ?? undefined,
           notFoundPageMark: inputs.notFoundPageMark ?? undefined,
           permanentStaticPages: inputs.permanentStaticPages ?? undefined,
-          sentry: inputs.sentry ?? undefined
+          sentry: inputs.sentry
+            ? {
+                ...inputs.sentry,
+                tracesSampleRate: toNumber(inputs.sentry.tracesSampleRate)
+              }
+            : undefined
         },
         nextStaticPath
       );
