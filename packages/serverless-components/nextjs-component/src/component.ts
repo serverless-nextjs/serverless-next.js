@@ -252,7 +252,7 @@ class NextjsComponent extends Component {
           permanentStaticPages: inputs.permanentStaticPages ?? undefined,
           sentry: inputs.sentry
             ? {
-                ...inputs,
+                ...inputs.sentry,
                 tracesSampleRate: toNumber(inputs.sentry.tracesSampleRate)
               }
             : undefined
