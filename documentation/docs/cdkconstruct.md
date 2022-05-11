@@ -104,3 +104,4 @@ new NextJSLambdaEdge(this, "NextJsApp", {
 - `nextStaticsCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for static resources
 - `nextImageCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for image caching
 - `nextLambdaCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for Lambda functions
+- `nextApiLambdaRole?: iam.Role;`: provide an override IAM role to attach to the API edge lambda. The default role will be replaced so you need to ensure the lambda obtains the same level of minimum permissions [granted by the default role](https://github.com/serverless-nextjs/serverless-next.js#aws-permissions) to execute correctly.

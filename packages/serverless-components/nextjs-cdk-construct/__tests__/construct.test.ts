@@ -6,6 +6,13 @@ import { NextJSLambdaEdge } from "../src";
 import { Runtime, Function, Code } from "aws-cdk-lib/aws-lambda";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { HostedZone } from "aws-cdk-lib/aws-route53";
+import {
+  Role,
+  CompositePrincipal,
+  ServicePrincipal,
+  PolicyDocument,
+  PolicyStatement
+} from "aws-cdk-lib/aws-iam";
 import { LambdaEdgeEventType, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
 
 describe("CDK Construct", () => {
@@ -64,6 +71,41 @@ describe("CDK Construct", () => {
     expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
       FunctionName: "NextImageLambda",
       Runtime: Runtime.JAVA_8_CORRETTO.name
+    });
+  });
+
+  it("passes IAM role override to API lambda if one is provided", () => {
+    const stack = new Stack();
+    const role = new Role(stack, "apiRole", {
+      assumedBy: new CompositePrincipal(
+        new ServicePrincipal("lambda.amazonaws.com"),
+        new ServicePrincipal("edgelambda.amazonaws.com")
+      ),
+      inlinePolicies: {
+        DynamoDB: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ["dynamodb:Describe*"],
+              resources: ["arn:aws:dynamodbtable"]
+            })
+          ]
+        })
+      }
+    });
+    new NextJSLambdaEdge(stack, "stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
+      name: {
+        apiLambda: "NextApiLambda"
+      },
+      nextApiLambdaRole: role
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
+      FunctionName: "NextApiLambda",
+      Role: {
+        "Fn::GetAtt": ["apiRole0DDF0297", "Arn"]
+      }
     });
   });
 
