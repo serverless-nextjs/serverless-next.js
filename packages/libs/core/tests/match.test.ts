@@ -52,6 +52,14 @@ describe("Matcher Tests", () => {
       expect(match).toEqual("/about/123/456");
     });
 
+    it("compiles destination with special symbols", () => {
+      const match = compileDestination("/about/:a/:b", {
+        a: "@aaa@",
+        b: "=bbb="
+      });
+      expect(match).toEqual("/about/@aaa@/=bbb=");
+    });
+
     it("compiles http URL", () => {
       const match = compileDestination("http://example.com", {});
       expect(match).toEqual("http://example.com");
