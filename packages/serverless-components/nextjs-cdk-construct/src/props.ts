@@ -1,9 +1,14 @@
 import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import { BehaviorOptions, DistributionProps, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
+import {
+  BehaviorOptions,
+  DistributionProps,
+  CachePolicy
+} from "aws-cdk-lib/aws-cloudfront";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { BucketProps } from "aws-cdk-lib/aws-s3";
 import { Duration, StackProps } from "aws-cdk-lib";
+import { CacheKeyDeploymentLambda } from "./utils/toLambdaOption";
 
 export type LambdaOption<T> =
   | T
@@ -12,6 +17,7 @@ export type LambdaOption<T> =
       apiLambda?: T;
       imageLambda?: T;
       regenerationLambda?: T;
+      [cacheKey in CacheKeyDeploymentLambda]?: T;
     };
 
 export interface Props extends StackProps {

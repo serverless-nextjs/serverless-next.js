@@ -28,7 +28,10 @@ import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
 import { OriginRequestQueryStringBehavior } from "aws-cdk-lib/aws-cloudfront";
 import { Props } from "./props";
 import { toLambdaOption } from "./utils/toLambdaOption";
-import { readAssetsDirectory } from "./utils/readAssetsDirectory";
+import {
+  CacheConfigKeyNames,
+  readAssetsDirectory
+} from "./utils/readAssetsDirectory";
 import { readInvalidationPathsFromManifest } from "./utils/readInvalidationPathsFromManifest";
 import { reduceInvalidationPaths } from "./utils/reduceInvalidationPaths";
 import pathToPosix from "./utils/pathToPosix";
@@ -137,9 +140,11 @@ export class NextJSLambdaEdge extends Construct {
           runtime:
             toLambdaOption("regenerationLambda", props.runtime) ??
             lambda.Runtime.NODEJS_14_X,
-          memorySize: toLambdaOption("regenerationLambda", props.memory) ?? undefined,
+          memorySize:
+            toLambdaOption("regenerationLambda", props.memory) ?? undefined,
           timeout:
-            toLambdaOption("regenerationLambda", props.timeout) ?? Duration.seconds(30)
+            toLambdaOption("regenerationLambda", props.timeout) ??
+            Duration.seconds(30)
         }
       );
 
@@ -245,8 +250,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.days(30),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     this.nextImageCachePolicy =
       props.nextImageCachePolicy ||
@@ -260,8 +264,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.days(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     this.nextLambdaCachePolicy =
       props.nextLambdaCachePolicy ||
@@ -282,8 +285,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.seconds(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     const edgeLambdas: cloudfront.EdgeLambda[] = [
       {
@@ -408,8 +410,11 @@ export class NextJSLambdaEdge extends Construct {
 
     const assetsDirectory = path.join(props.serverlessBuildOutDir, "assets");
     const { basePath } = this.routesManifest || {};
-    const normalizedBasePath = basePath && basePath.length > 0 ? basePath.slice(1) : "";
-    const assets = readAssetsDirectory({ assetsDirectory: path.join(assetsDirectory, normalizedBasePath) });
+    const normalizedBasePath =
+      basePath && basePath.length > 0 ? basePath.slice(1) : "";
+    const assets = readAssetsDirectory({
+      assetsDirectory: path.join(assetsDirectory, normalizedBasePath)
+    });
 
     // This `BucketDeployment` deploys just the BUILD_ID file. We don't actually
     // use the BUILD_ID file at runtime, however in this case we use it as a
@@ -432,7 +437,9 @@ export class NextJSLambdaEdge extends Construct {
         )
     });
 
-    Object.keys(assets).forEach((key) => {
+    const cacheConfigKeys = Object.keys(assets) as CacheConfigKeyNames[];
+
+    cacheConfigKeys.forEach((key) => {
       const { path: assetPath, cacheControl } = assets[key];
       new s3Deploy.BucketDeployment(this, `AssetDeployment_${key}`, {
         destinationBucket: this.bucket,
@@ -445,6 +452,16 @@ export class NextJSLambdaEdge extends Construct {
         destinationKeyPrefix: pathToPosix(
           path.relative(assetsDirectory, assetPath)
         ),
+
+        functionName: toLambdaOption(`${key}DeploymentLambda`, props.name),
+        runtime:
+          toLambdaOption(`${key}DeploymentLambda`, props.runtime) ??
+          lambda.Runtime.NODEJS_14_X,
+        memorySize:
+          toLambdaOption(`${key}DeploymentLambda`, props.memory) ?? undefined,
+        timeout:
+          toLambdaOption(`${key}DeploymentLambda`, props.timeout) ??
+          Duration.seconds(30),
 
         // Source directories are uploaded with `--sync` this means that any
         // files that don't exist in the source directory, but do in the S3

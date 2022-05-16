@@ -10,8 +10,16 @@ const SERVER_CACHE_CONTROL_HEADER =
 const DEFAULT_PUBLIC_DIR_CACHE_CONTROL =
   "public, max-age=31536000, must-revalidate";
 
-type CacheConfig = Record<
-  string,
+export enum CacheConfigKeyNames {
+  publicFiles = "publicFiles",
+  staticFiles = "staticFiles",
+  staticPages = "staticPages",
+  nextData = "nextData",
+  nextStatic = "nextStatic"
+}
+
+export type CacheConfig = Record<
+  CacheConfigKeyNames,
   {
     cacheControl: string;
     path: string;
