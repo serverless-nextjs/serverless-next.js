@@ -6,6 +6,11 @@ import { NextJSLambdaEdge } from "../src";
 import { Runtime, Function, Code } from "aws-cdk-lib/aws-lambda";
 import { Certificate } from "aws-cdk-lib/aws-certificatemanager";
 import { HostedZone } from "aws-cdk-lib/aws-route53";
+import {
+  ManagedPolicy,
+  PolicyDocument,
+  PolicyStatement
+} from "aws-cdk-lib/aws-iam";
 import { LambdaEdgeEventType, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
 
 describe("CDK Construct", () => {
@@ -64,6 +69,76 @@ describe("CDK Construct", () => {
     expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
       FunctionName: "NextImageLambda",
       Runtime: Runtime.JAVA_8_CORRETTO.name
+    });
+  });
+
+  it("appends a list of IAM Managed Policies to all Next Lambdas if one is provided", () => {
+    const stack = new Stack();
+    const extraPolicies = [
+      new ManagedPolicy(stack, "DynamoPolicy", {
+        document: new PolicyDocument({
+          statements: [
+            new PolicyStatement({
+              actions: ["dynamodb:*"],
+              resources: ["*"]
+            })
+          ]
+        })
+      }),
+      ManagedPolicy.fromManagedPolicyArn(
+        stack,
+        "NextS3ReadOnlyPolicy",
+        "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess"
+      ) as ManagedPolicy
+    ];
+    const expectedPolicyArns = [
+      { Ref: "DynamoPolicy546AD73E" },
+      "arn:aws:iam::aws:policy/AmazonS3ReadOnlyAccess",
+      "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+    ];
+
+    new NextJSLambdaEdge(stack, "stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app-with-isr"),
+      nextLambdaExtraManagedPolicies: extraPolicies
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(
+      synthesizedStack.Resources["stackNextEdgeLambdaRole55970B75"]
+    ).toMatchObject({
+      Type: "AWS::IAM::Role",
+      Properties: {
+        ManagedPolicyArns: expectedPolicyArns
+      }
+    });
+
+    expect(
+      synthesizedStack.Resources["stackRegenerationLambdaRole4EAB9B74"]
+    ).toMatchObject({
+      Type: "AWS::IAM::Role",
+      Properties: {
+        ManagedPolicyArns: expectedPolicyArns
+      }
+    });
+
+    expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
+      Role: {
+        "Fn::GetAtt": ["stackRegenerationLambdaRole4EAB9B74", "Arn"]
+      }
+    });
+  });
+
+  it("does not attach the edge lambda role props to the ISR regeneration function role if no additional managed policies are provided", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app-with-isr")
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike("AWS::Lambda::Function", {
+      Role: {
+        "Fn::GetAtt": ["stackRegenerationFunctionServiceRoleE6B38CF1", "Arn"]
+      }
     });
   });
 

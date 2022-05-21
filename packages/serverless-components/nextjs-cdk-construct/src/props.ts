@@ -1,9 +1,14 @@
 import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import { BehaviorOptions, DistributionProps, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
+import {
+  BehaviorOptions,
+  DistributionProps,
+  CachePolicy
+} from "aws-cdk-lib/aws-cloudfront";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { BucketProps } from "aws-cdk-lib/aws-s3";
 import { Duration, StackProps } from "aws-cdk-lib";
+import { ManagedPolicy, Role } from "aws-cdk-lib/aws-iam";
 
 export type LambdaOption<T> =
   | T
@@ -129,4 +134,9 @@ export interface Props extends StackProps {
    * Override cache policy used for Lambda
    */
   nextLambdaCachePolicy?: CachePolicy;
+
+  /**
+   * List of additional IAM Managed Policies to append to the default Next Lambda roles
+   */
+  nextLambdaExtraManagedPolicies?: ManagedPolicy[];
 }

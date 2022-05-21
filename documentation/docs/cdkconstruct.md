@@ -104,3 +104,4 @@ new NextJSLambdaEdge(this, "NextJsApp", {
 - `nextStaticsCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for static resources
 - `nextImageCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for image caching
 - `nextLambdaCachePolicy?: CachePolicy;`: configure the CloudFront cache policy used for Lambda functions
+- `nextLambdaExtraManagedPolicies?: ManagedPolicy[];`: provide an additional list of IAM Managed Policies to attach to the IAM role used by the SSR, ISR and API Next Lambdas.
