@@ -21,7 +21,8 @@ import {
   Role,
   ManagedPolicy,
   ServicePrincipal,
-  CompositePrincipal
+  CompositePrincipal,
+  RoleProps
 } from "aws-cdk-lib/aws-iam";
 import { Duration, RemovalPolicy } from "aws-cdk-lib";
 import { CloudFrontTarget } from "aws-cdk-lib/aws-route53-targets";
@@ -90,19 +91,25 @@ export class NextJSLambdaEdge extends Construct {
       ...(props.s3Props || {})
     });
 
-    this.edgeLambdaRole = new Role(this, "NextEdgeLambdaRole", {
+    const edgeLambdaRoleProps: RoleProps = {
       assumedBy: new CompositePrincipal(
         new ServicePrincipal("lambda.amazonaws.com"),
         new ServicePrincipal("edgelambda.amazonaws.com")
       ),
       managedPolicies: [
+        ...(props.nextLambdaExtraManagedPolicies ?? []),
         ManagedPolicy.fromManagedPolicyArn(
           this,
           "NextApiLambdaPolicy",
           "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
         )
       ]
-    });
+    };
+    this.edgeLambdaRole = new Role(
+      this,
+      "NextEdgeLambdaRole",
+      edgeLambdaRoleProps
+    );
 
     const hasISRPages = Object.keys(this.prerenderManifest.routes).some(
       (key) =>
@@ -131,15 +138,22 @@ export class NextJSLambdaEdge extends Construct {
         "RegenerationFunction",
         {
           handler: "index.handler",
+          role:
+            props.nextLambdaExtraManagedPolicies &&
+            props.nextLambdaExtraManagedPolicies.length > 0
+              ? new Role(this, "RegenerationLambdaRole", edgeLambdaRoleProps)
+              : undefined,
           code: lambda.Code.fromAsset(
             path.join(this.props.serverlessBuildOutDir, "regeneration-lambda")
           ),
           runtime:
             toLambdaOption("regenerationLambda", props.runtime) ??
             lambda.Runtime.NODEJS_14_X,
-          memorySize: toLambdaOption("regenerationLambda", props.memory) ?? undefined,
+          memorySize:
+            toLambdaOption("regenerationLambda", props.memory) ?? undefined,
           timeout:
-            toLambdaOption("regenerationLambda", props.timeout) ?? Duration.seconds(30)
+            toLambdaOption("regenerationLambda", props.timeout) ??
+            Duration.seconds(30)
         }
       );
 
@@ -245,8 +259,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.days(30),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     this.nextImageCachePolicy =
       props.nextImageCachePolicy ||
@@ -260,8 +273,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.days(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     this.nextLambdaCachePolicy =
       props.nextLambdaCachePolicy ||
@@ -282,8 +294,7 @@ export class NextJSLambdaEdge extends Construct {
         minTtl: Duration.seconds(0),
         enableAcceptEncodingBrotli: true,
         enableAcceptEncodingGzip: true
-      }
-    );
+      });
 
     const edgeLambdas: cloudfront.EdgeLambda[] = [
       {
@@ -408,8 +419,11 @@ export class NextJSLambdaEdge extends Construct {
 
     const assetsDirectory = path.join(props.serverlessBuildOutDir, "assets");
     const { basePath } = this.routesManifest || {};
-    const normalizedBasePath = basePath && basePath.length > 0 ? basePath.slice(1) : "";
-    const assets = readAssetsDirectory({ assetsDirectory: path.join(assetsDirectory, normalizedBasePath) });
+    const normalizedBasePath =
+      basePath && basePath.length > 0 ? basePath.slice(1) : "";
+    const assets = readAssetsDirectory({
+      assetsDirectory: path.join(assetsDirectory, normalizedBasePath)
+    });
 
     // This `BucketDeployment` deploys just the BUILD_ID file. We don't actually
     // use the BUILD_ID file at runtime, however in this case we use it as a
