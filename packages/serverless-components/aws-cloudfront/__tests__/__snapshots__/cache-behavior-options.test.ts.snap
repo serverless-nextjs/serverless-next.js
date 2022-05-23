@@ -50,6 +50,10 @@ Object {
                 "Quantity": 0,
               },
             },
+            "FunctionAssociations": Object {
+              "Items": Array [],
+              "Quantity": 0,
+            },
             "LambdaFunctionAssociations": Object {
               "Items": Array [],
               "Quantity": 0,
@@ -106,6 +110,10 @@ Object {
             "Items": Array [],
             "Quantity": 0,
           },
+        },
+        "FunctionAssociations": Object {
+          "Items": Array [],
+          "Quantity": 0,
         },
         "LambdaFunctionAssociations": Object {
           "Items": Array [],
@@ -221,6 +229,19 @@ Object {
             ],
             "Quantity": 1,
           },
+        },
+        "FunctionAssociations": Object {
+          "Items": Array [
+            Object {
+              "EventType": "viewer-request",
+              "FunctionARN": "arn:aws:cloudfront::123456789012:function/ViewerRequestFunction",
+            },
+            Object {
+              "EventType": "viewer-response",
+              "FunctionARN": "arn:aws:cloudfront::123456789012:function/ViewerResponseFunction",
+            },
+          ],
+          "Quantity": 2,
         },
         "LambdaFunctionAssociations": Object {
           "Items": Array [],

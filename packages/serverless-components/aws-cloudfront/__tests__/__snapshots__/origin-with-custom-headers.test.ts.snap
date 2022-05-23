@@ -43,6 +43,10 @@ Object {
                 "Quantity": 0,
               },
             },
+            "FunctionAssociations": Object {
+              "Items": Array [],
+              "Quantity": 0,
+            },
             "LambdaFunctionAssociations": Object {
               "Items": Array [],
               "Quantity": 0,
@@ -99,6 +103,10 @@ Object {
             "Items": Array [],
             "Quantity": 0,
           },
+        },
+        "FunctionAssociations": Object {
+          "Items": Array [],
+          "Quantity": 0,
         },
         "LambdaFunctionAssociations": Object {
           "Items": Array [],
