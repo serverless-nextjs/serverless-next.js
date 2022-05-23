@@ -1,9 +1,6 @@
 module.exports = {
   root: true,
   extends: ["plugin:prettier/recommended"],
-  env: {
-    jest: true
-  },
   parserOptions: {
     ecmaVersion: 2018,
     sourceType: "module"
@@ -23,8 +20,7 @@ module.exports = {
         "@typescript-eslint/no-explicit-any": "off", // Disabled in tests
         "@typescript-eslint/no-var-requires": "off", // Used extensively for page requires
         "@typescript-eslint/ban-ts-ignore": "off",
-        "@typescript-eslint/ban-ts-comment": "off",
-        quotes: ["warn", "double", { avoidEscape: true }]
+        "@typescript-eslint/ban-ts-comment": "off"
       }
     },
     {
