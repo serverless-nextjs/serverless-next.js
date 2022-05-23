@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`Input origin as a custom url creates distribution with cloudfront functions associations for each event type 1`] = `
+exports[`Configures cloudfront functions settings creates distribution with cloudfront functions associations for each event type 1`] = `
 Object {
   "DistributionConfigWithTags": Object {
     "DistributionConfig": Object {

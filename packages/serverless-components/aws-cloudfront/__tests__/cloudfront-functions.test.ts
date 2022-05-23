@@ -10,7 +10,7 @@ import {
 
 jest.mock("aws-sdk", () => require("../__mocks__/aws-sdk.mock"));
 
-describe("Input origin as a custom url", () => {
+describe("Configures cloudfront functions settings", () => {
   let component;
 
   // sample origins
