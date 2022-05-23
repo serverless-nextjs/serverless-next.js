@@ -25,7 +25,10 @@ export default (
     cacheBehavior.FunctionAssociations.Quantity =
       cacheBehavior.FunctionAssociations.Quantity + 1;
     cacheBehavior.FunctionAssociations.Items.push({
-      FunctionARN: cloudfrontFunctionsConfig[eventType],
+      FunctionARN:
+        cloudfrontFunctionsConfig[
+          eventType === "viewer-request" ? "viewer-request" : "viewer-response"
+        ],
       EventType: eventType
     });
   });
