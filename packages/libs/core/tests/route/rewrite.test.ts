@@ -193,6 +193,39 @@ describe("Rewriter Tests", () => {
           "/not-existing/@slug-id=",
           `${externalApp}/not-existing/@slug-id=?path=not-existing&path=@slug-id=`,
           "html"
+        ],
+
+        // request for existing dynamic-route with non-ASCII chars
+        [
+          "/dynamic-route/пример",
+          "/dynamic-route/%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80?path=dynamic-route&path=пример",
+          "ssg"
+        ],
+        [
+          "/dynamic-route/пример",
+          "/dynamic-route/%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80?path=dynamic-route&path=пример",
+          "ssr"
+        ],
+        [
+          "/dynamic-route/пример",
+          "/dynamic-route/%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80?path=dynamic-route&path=пример",
+          "html"
+        ],
+        // request for not existing dynamic-route with non-ASCII chars
+        [
+          "/not-existing/пример",
+          `${externalApp}/not-existing/%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80?path=not-existing&path=пример`,
+          "ssg"
+        ],
+        [
+          "/not-existing/пример",
+          `${externalApp}/not-existing/%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80?path=not-existing&path=пример`,
+          "ssr"
+        ],
+        [
+          "/not-existing/пример",
+          `${externalApp}/not-existing/%D0%BF%D1%80%D0%B8%D0%BC%D0%B5%D1%80?path=not-existing&path=пример`,
+          "html"
         ]
       ];
 

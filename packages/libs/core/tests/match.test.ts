@@ -52,14 +52,6 @@ describe("Matcher Tests", () => {
       expect(match).toEqual("/about/123/456");
     });
 
-    it("compiles destination with special symbols", () => {
-      const match = compileDestination("/about/:a/:b", {
-        a: "@aaa@",
-        b: "=bbb="
-      });
-      expect(match).toEqual("/about/@aaa@/=bbb=");
-    });
-
     it("compiles http URL", () => {
       const match = compileDestination("http://example.com", {});
       expect(match).toEqual("http://example.com");
@@ -90,6 +82,41 @@ describe("Matcher Tests", () => {
     it("invalid destination returns null", () => {
       const match = compileDestination("abc://123", {});
       expect(match).toBeNull();
+    });
+
+    it("compiles not ASCII url for external rewrite", () => {
+      const externalMatch = compileDestination("https://пример.ру/:ru/:en", {
+        ru: "ру-ру",
+        en: "en-en"
+      });
+      expect(externalMatch).toEqual(
+        "https://xn--e1afmkfd.xn--p1ag/%D1%80%D1%83-%D1%80%D1%83/en-en"
+      );
+    });
+
+    it("compiles not ASCII url for internal rewrite", () => {
+      const internalMatch = compileDestination("/example/:ru/:en", {
+        ru: "ру-ру",
+        en: "en-en"
+      });
+      expect(internalMatch).toEqual("/example/%D1%80%D1%83-%D1%80%D1%83/en-en");
+    });
+
+    it("compiles url with allowed symbols for external rewrite", () => {
+      const externalMatch = compileDestination(
+        "https://example.com/users/:userid",
+        {
+          userid: "@testuser="
+        }
+      );
+      expect(externalMatch).toEqual("https://example.com/users/@testuser=");
+    });
+
+    it("compiles url with allowed symbols for internal rewrite", () => {
+      const externalMatch = compileDestination("/users/:userid", {
+        userid: "@testuser="
+      });
+      expect(externalMatch).toEqual("/users/@testuser=");
     });
   });
 });

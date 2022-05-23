@@ -32,7 +32,7 @@ export function compileDestination(
     ) {
       // Handle external URL redirects
       const { origin, pathname, search } = new URL(destination);
-      const toPath = compile(pathname);
+      const toPath = compile(pathname, { encode: encodeURI });
       const compiledDestination = `${origin}${toPath(params)}${search}`;
 
       // Remove trailing slash if original destination didn't have it
@@ -44,7 +44,9 @@ export function compileDestination(
     } else {
       // Handle all other paths. Escape all ? in case of query parameters
       const escapedDestination = destination.replace(/\?/g, "\\?");
-      const toPath = compile(escapedDestination);
+      const toPath = compile(escapedDestination, {
+        encode: encodeURI
+      });
       return toPath(params);
     }
   } catch (error) {

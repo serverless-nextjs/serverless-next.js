@@ -35,7 +35,7 @@ export function getRewritePath(
     }
 
     // No-op rewrite support for pages: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
-    if (pageManifest && path === destination) {
+    if (pageManifest && path === decodeURI(destination)) {
       const url = handlePageReq(
         req,
         destination,
