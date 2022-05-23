@@ -701,6 +701,27 @@ describe("Custom inputs", () => {
         }
       }
     ],
+    // allow cloudfront functions triggers
+    [
+      {
+        defaults: {
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
+          serverlessFunctions: {
+            "viewer-request": "used value"
+          }
+        }
+      },
+      {
+        defaults: {
+          minTTL: 0,
+          defaultTTL: 0,
+          maxTTL: 31536000,
+          serverlessFunctions: { "viewer-request": "used value" }
+        }
+      }
+    ],
     // ignore custom lambda@edge origin-request trigger set on the api cache behaviour
     [
       {
@@ -875,6 +896,7 @@ describe("Custom inputs", () => {
           queryString: true
         },
         compress: true,
+        cloudfrontFunctions: {},
         ...expectedDefaultCacheBehaviour
       },
       origins: [

@@ -335,6 +335,7 @@ describe.each`
             "origin-response":
               "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
           },
+          cloudfrontFunctions: {},
           compress: true
         },
         origins: [

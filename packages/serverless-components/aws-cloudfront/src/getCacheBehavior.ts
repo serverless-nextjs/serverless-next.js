@@ -48,6 +48,10 @@ export default (
     LambdaFunctionAssociations: {
       Quantity: 0,
       Items: []
+    },
+    FunctionAssociations: {
+      Quantity: 0,
+      Items: []
     }
   };
 };

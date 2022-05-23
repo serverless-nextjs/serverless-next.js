@@ -50,6 +50,21 @@ export const assertCDWTHasCacheBehavior = (spy, cacheBehavior): void => {
   );
 };
 
+export const assertCDWTHasFunctionAssociations = (
+  spy,
+  functionAssociations
+): void => {
+  expect(spy).toBeCalledWith(
+    expect.objectContaining({
+      DistributionConfigWithTags: expect.objectContaining({
+        DistributionConfig: expect.objectContaining({
+          DefaultCacheBehavior: expect.objectContaining(functionAssociations)
+        })
+      })
+    })
+  );
+};
+
 export const assertHasOriginCount = (spy, expectedCount): void => {
   expect(spy).toBeCalledWith(
     expect.objectContaining({
