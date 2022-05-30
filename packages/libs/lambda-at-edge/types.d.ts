@@ -83,6 +83,7 @@ export type OriginRequestDefaultHandlerManifest = {
     dsn?: string;
     tracesSampleRate: number;
   };
+  enableRemoteInvalidation?: boolean;
 };
 
 export type OriginRequestImageHandlerManifest = {

@@ -1,6 +1,7 @@
 import { CloudFrontClient } from "@aws-sdk/client-cloudfront/CloudFrontClient";
 import { CreateInvalidationCommand } from "@aws-sdk/client-cloudfront";
 import { debug } from "../lib/console";
+import { gql, GraphQLClient } from "graphql-request";
 
 interface CloudFrontServiceOptions {
   distributionId: string;
@@ -34,5 +35,26 @@ export class CloudFrontService {
         }
       })
     );
+  }
+
+  public async createRemoteInvalidation(
+    paths: string[],
+    env: string
+  ): Promise<void> {
+    const endpoint = `https://cdn-invalidation.${env}.getjerry.com/api/cdn-invalidation/graphql`;
+
+    const graphQLClient = new GraphQLClient(endpoint);
+
+    const mutation = gql`
+      mutation createRemoteInvalidation($urls: [String!]!) {
+        invalidationUrls(urls: $urls)
+      }
+    `;
+
+    debug(`[createRemoteInvalidation] send to ${endpoint}`);
+    const data = await graphQLClient.request(mutation, {
+      urls: paths
+    });
+    debug(`[createRemoteInvalidation] result is ${JSON.stringify(data)}`);
   }
 }

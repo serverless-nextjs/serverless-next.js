@@ -8,16 +8,8 @@ import { CloudFrontService } from "../services/cloudfront.service";
 import { Page, RenderService, S3JsonFile } from "../services/render.service";
 import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
-import { debug, isDevMode } from "../lib/console";
+import { debug, getEnvironment, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
-
-import {
-  BasicInvalidationUrlGroup,
-  findInvalidationGroup,
-  getGroupS3Key,
-  InvalidationUrlGroup,
-  replaceUrlByGroupRegex
-} from "../lib/invalidation/invalidationUrlGroup";
 // @ts-ignore
 import * as _ from "../lib/lodash";
 
@@ -178,49 +170,19 @@ export class RevalidateHandler {
     resource: Resource | ResourceForIndexPage,
     manifest: OriginRequestDefaultHandlerManifest
   ): Promise<void> {
-    const basicGroup: BasicInvalidationUrlGroup | null = findInvalidationGroup(
-      resource.getJsonKey(),
-      manifest.invalidationUrlGroups
+    debug(
+      `[createInvalidation]  createInvalidation for ${resource.getHtmlUri()}, ${resource.getJsonUri()}`
     );
 
-    // if this is a group url, use this
-    if (basicGroup !== null) {
-      debug(
-        `[createInvalidation] ${JSON.stringify(
-          resource
-        )} find url group: ${JSON.stringify(basicGroup)}`
-      );
+    const useRemoteInvalidation = manifest.enableRemoteInvalidation;
 
-      const groupKey = getGroupS3Key(basicGroup, resource);
-      const group: InvalidationUrlGroup = JSON.parse(
-        await this.s3Service.getObject(groupKey)
-      );
-
-      if (group.currentNumber < group.maxAccessNumber) {
-        group.currentNumber++;
-        debug(
-          `[createInvalidation] need add currentNumber to ${group.currentNumber}`
-        );
-      } else {
-        group.currentNumber = 0;
-        debug(`[createInvalidation] need reset currentNumber`);
-
-        await this.cloudfrontService.createInvalidation([
-          replaceUrlByGroupRegex(group, resource.getHtmlUri()),
-          replaceUrlByGroupRegex(group, resource.getJsonUri())
-        ]);
-      }
-      debug(
-        `[createInvalidation] need update to group ${JSON.stringify(group)}`
-      );
-
-      await this.s3Service.putObject(
-        groupKey,
-        JSON.stringify(group),
-        "application/json"
+    const env = getEnvironment(manifest);
+    if (useRemoteInvalidation) {
+      await this.cloudfrontService.createRemoteInvalidation(
+        [resource.getHtmlUri(), resource.getJsonUri()],
+        env
       );
     } else {
-      debug(`[createInvalidation] not group url, just createInvalidation}`);
       await this.cloudfrontService.createInvalidation([
         resource.getHtmlUri(),
         resource.getJsonUri()

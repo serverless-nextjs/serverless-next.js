@@ -61,6 +61,7 @@ export type ServerlessComponentInputs = {
   // For some very important pages that need to be always available, such as the home page.
   permanentStaticPages?: string[];
   sentry?: SentryOptions;
+  enableRemoteInvalidation?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;

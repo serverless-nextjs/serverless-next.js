@@ -70,6 +70,7 @@ type BuildOptions = {
     dsn?: string;
     tracesSampleRate: number;
   };
+  enableRemoteInvalidation?: boolean;
 };
 
 const defaultBuildOptions = {
@@ -91,7 +92,8 @@ const defaultBuildOptions = {
   invalidationUrlGroups: [],
   notFoundPageMark: undefined,
   permanentStaticPages: undefined,
-  sentry: undefined
+  sentry: undefined,
+  enableRemoteInvalidation: false
 };
 
 class Builder {
@@ -550,7 +552,8 @@ class Builder {
       ),
       notFoundPageMark: this.buildOptions.notFoundPageMark,
       permanentStaticPages: this.buildOptions.permanentStaticPages,
-      sentry: this.buildOptions.sentry
+      sentry: this.buildOptions.sentry,
+      enableRemoteInvalidation: this.buildOptions.enableRemoteInvalidation
     };
 
     const apiBuildManifest: OriginRequestApiHandlerManifest = {
