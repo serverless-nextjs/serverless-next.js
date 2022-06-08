@@ -41,7 +41,7 @@ export class CloudFrontService {
     paths: string[],
     env: string
   ): Promise<void> {
-    const endpoint = `https://cdn-invalidation.${env}.getjerry.com/api/cdn-invalidation/graphql`;
+    const endpoint = `https://seo-cronjob.${env}.getjerry.com/api/seo-cronjob/graphql`;
 
     const graphQLClient = new GraphQLClient(endpoint);
 
