@@ -47,7 +47,7 @@ export const renderPageToHtml = async (
     }
   }
 
-  if (!html) {
+  if (!html && !renderOpts.isNotFound) {
     console.log(
       "html is empty, falling back to using page's rendering function for html"
     );
