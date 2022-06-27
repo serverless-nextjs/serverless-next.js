@@ -1,16 +1,20 @@
-import { LambdaOption } from "../props";
 import { CacheConfigKeyNames } from "./readAssetsDirectory";
 
-export type CacheKeyDeploymentLambda = `${CacheConfigKeyNames}DeploymentLambda`;
+export type CacheKeyDeploymentLambdas =
+  `${CacheConfigKeyNames}DeploymentLambda`;
+type BaseLambdas =
+  | "defaultLambda"
+  | "apiLambda"
+  | "imageLambda"
+  | "regenerationLambda";
+type LambdaKeys = BaseLambdas | CacheKeyDeploymentLambdas;
+export type LambdaOptions<T, LambdaKeys extends string> = {
+  [Key in LambdaKeys]?: T;
+};
 
 export const toLambdaOption = <T>(
-  key:
-    | "defaultLambda"
-    | "apiLambda"
-    | "imageLambda"
-    | "regenerationLambda"
-    | CacheKeyDeploymentLambda,
-  option?: LambdaOption<T>
+  key: LambdaKeys,
+  option?: LambdaOptions<T, LambdaKeys>
 ): T | undefined => {
   if (
     typeof option !== "object" ||

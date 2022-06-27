@@ -18,24 +18,20 @@ export enum CacheConfigKeyNames {
   nextStatic = "nextStatic"
 }
 
-export type CacheConfig = Record<
-  CacheConfigKeyNames,
-  {
-    cacheControl: string;
-    path: string;
-  }
->;
+type CacheConfigValues = { cacheControl: string; path: string };
+
+export type CacheConfig = Record<CacheConfigKeyNames, CacheConfigValues>;
 
 const filterNonExistentPathKeys = (config: CacheConfig) => {
-  return Object.keys(config).reduce(
-    (newConfig, nextConfigKey) => ({
+  return Object.keys(config).reduce<CacheConfig>((newConfig, nextConfigKey) => {
+    const nextKey = nextConfigKey as CacheConfigKeyNames;
+    return {
       ...newConfig,
-      ...(fs.pathExistsSync(config[nextConfigKey].path)
-        ? { [nextConfigKey]: config[nextConfigKey] }
+      ...(fs.pathExistsSync(config[nextKey].path)
+        ? { [nextKey]: config[nextKey] }
         : {})
-    }),
-    {} as CacheConfig
-  );
+    };
+  }, <CacheConfig>{});
 };
 
 const readAssetsDirectory = (options: {

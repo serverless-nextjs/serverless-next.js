@@ -453,15 +453,8 @@ export class NextJSLambdaEdge extends Construct {
           path.relative(assetsDirectory, assetPath)
         ),
 
-        functionName: toLambdaOption(`${key}DeploymentLambda`, props.name),
-        runtime:
-          toLambdaOption(`${key}DeploymentLambda`, props.runtime) ??
-          lambda.Runtime.NODEJS_14_X,
-        memorySize:
+        memoryLimit:
           toLambdaOption(`${key}DeploymentLambda`, props.memory) ?? undefined,
-        timeout:
-          toLambdaOption(`${key}DeploymentLambda`, props.timeout) ??
-          Duration.seconds(30),
 
         // Source directories are uploaded with `--sync` this means that any
         // files that don't exist in the source directory, but do in the S3
