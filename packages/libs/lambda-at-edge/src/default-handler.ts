@@ -327,6 +327,11 @@ const handleOriginResponse = async ({
   // These statuses are returned when S3 does not have access to the page.
   // 404 will also be returned if CloudFront has permissions to list objects.
   if (response.status !== "403" && response.status !== "404") {
+    console.log(
+      JSON.stringify({
+        data: { msg: "renderStaticPage: s3res not 403 or 404" }
+      })
+    );
     response.headers = {
       ...response.headers,
       ...getCustomHeaders(request.uri, routesManifest)
@@ -357,6 +362,11 @@ const handleOriginResponse = async ({
       initialRevalidateSeconds: staticRoute?.revalidate
     });
 
+    console.log(
+      JSON.stringify({
+        data: { msg: "renderStaticPage: s3res is 404 or 500" }
+      })
+    );
     if (staticRegenerationResponse) {
       response.headers["cache-control"] = [
         {

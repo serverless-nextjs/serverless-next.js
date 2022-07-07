@@ -21,6 +21,9 @@ interface S3StorePageOptions {
 export const s3StorePage = async (
   options: S3StorePageOptions
 ): Promise<{ cacheControl: string | undefined; expires: Date | undefined }> => {
+  console.log(
+    JSON.stringify({ data: { msg: "Calling s3StorePage", options } })
+  );
   const s3 = new S3Client({
     region: options.region,
     maxAttempts: 3

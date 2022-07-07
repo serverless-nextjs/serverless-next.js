@@ -45,6 +45,24 @@ export const renderStaticPage = async ({
   s3Uri: string;
   basePath: string;
 }): Promise<CloudFrontResultResponse> => {
+  console.log(
+    JSON.stringify({
+      data: {
+        msg: "renderStaticPage: call",
+        route,
+        request,
+        req,
+        res,
+        responsePromise,
+        manifest,
+        routesManifest,
+        bucketName,
+        s3Key,
+        s3Uri,
+        basePath
+      }
+    })
+  );
   const staticRoute = route.isStatic ? (route as StaticRoute) : undefined;
   const statusCode = route?.statusCode ?? 200;
 
@@ -85,15 +103,30 @@ export const renderStaticPage = async ({
   // These statuses are returned when S3 does not have access to the page.
   // 404 will also be returned if CloudFront has permissions to list objects.
   if (s3Response && s3StatusCode !== 403 && s3StatusCode !== 404) {
+    console.log(
+      JSON.stringify({
+        data: { msg: "renderStaticPage: s3res not 403 or 404", url: req?.url }
+      })
+    );
     let cacheControl = s3Response.CacheControl;
 
     // If these are error pages, then just return them
     if (statusCode === 404 || statusCode === 500) {
+      console.log(
+        JSON.stringify({
+          data: { msg: "renderStaticPage: s3res is 404 or 500", url: req.url }
+        })
+      );
       cacheControl =
         statusCode === 500
           ? "public, max-age=0, s-maxage=0, must-revalidate"
           : cacheControl;
     } else {
+      console.log(
+        JSON.stringify({
+          data: { msg: "renderStaticPage: may need to ISR", url: req.url }
+        })
+      );
       // Otherwise we may need to do static regeneration
       const staticRegenerationResponse = getStaticRegenerationResponse({
         expiresHeader: s3Response.Expires?.toString() ?? "",
@@ -102,12 +135,28 @@ export const renderStaticPage = async ({
       });
 
       if (staticRegenerationResponse) {
+        console.log(
+          JSON.stringify({
+            data: {
+              msg: "renderStaticPage: ISR res",
+              staticRegenerationResponse
+            }
+          })
+        );
         cacheControl = staticRegenerationResponse.cacheControl;
 
         if (
           staticRoute?.page &&
           staticRegenerationResponse.secondsRemainingUntilRevalidation === 0
         ) {
+          console.log(
+            JSON.stringify({
+              data: {
+                msg: "renderStaticPage: sending ISR to queue",
+                url: req.url
+              }
+            })
+          );
           const regenerationQueueName =
             manifest.regenerationQueueName ?? `${bucketName}.fifo`; // if queue name not specified, we used [bucketName].fifo as used in deployment
 
@@ -129,6 +178,14 @@ export const renderStaticPage = async ({
           // send it too many messages) and so we we use the cache to reduce
           // requests to the queue for a short period.
           if (throttle) {
+            console.log(
+              JSON.stringify({
+                data: {
+                  msg: "renderStaticPage: ISR queue hit throttle",
+                  url: req.url
+                }
+              })
+            );
             cacheControl =
               getThrottledStaticRegenerationCachePolicy(1).cacheControl;
           }
@@ -157,15 +214,33 @@ export const renderStaticPage = async ({
       ...convertedCustomHeaders
     };
 
+    console.log(
+      JSON.stringify({
+        data: {
+          msg: "renderStaticPage: sending res",
+          statusCode,
+          headers,
+          bodyString
+        }
+      })
+    );
     res.writeHead(statusCode, headers);
     res.end(bodyString);
     return await responsePromise;
   }
 
   const getPage = (pagePath: string) => {
+    console.log(
+      JSON.stringify({
+        data: { msg: "renderStaticPage: calling getPage", pagePath }
+      })
+    );
     return require(`./${pagePath}`);
   };
 
+  console.log(
+    JSON.stringify({ data: { msg: "renderStaticPage: calling fallbackRoute" } })
+  );
   const fallbackRoute = await handleFallback(
     { req, res, responsePromise },
     route,
@@ -176,6 +251,11 @@ export const renderStaticPage = async ({
 
   // Already handled dynamic error path
   if (!fallbackRoute) {
+    console.log(
+      JSON.stringify({
+        data: { msg: "renderStaticPage: !fallbackRoute" }
+      })
+    );
     return await responsePromise;
   }
 
@@ -222,6 +302,9 @@ export const renderStaticPage = async ({
     region: request.origin?.s3?.region || "",
     revalidate: renderOpts.revalidate
   });
+  console.log(
+    JSON.stringify({ data: { msg: "renderStaticPage: expires", expires } })
+  );
 
   const isrResponse = expires
     ? getStaticRegenerationResponse({
@@ -231,6 +314,11 @@ export const renderStaticPage = async ({
       })
     : null;
 
+  console.log(
+    JSON.stringify({
+      data: { msg: "renderStaticPage: isrResponse", isrResponse }
+    })
+  );
   const cacheControl =
     (isrResponse && isrResponse.cacheControl) ||
     "public, max-age=0, s-maxage=2678400, must-revalidate";
