@@ -62,7 +62,7 @@ new NextJSLambdaEdge(this, "NextJsApp", {
   // retrieve existing resources, however you could create a new ones in your
   // stack via the relevant constructs
   domain: {
-    domainName: "example.com",
+    domainNames: ["example.com"],
     hostedZone: HostedZone.fromHostedZoneAttributes(this, "Zone", {
       hostedZoneId: "123ABC",
       zoneName: "example.com"
@@ -79,7 +79,7 @@ new NextJSLambdaEdge(this, "NextJsApp", {
   following three fields on the `domain` object.
   - `hostedZone: IHostedZone;`
   - `certificate: ICertificate;`
-  - `domainName: string;`
+  - `domainNames: string[];`
 - `memory?: number | Record<string, number>` - configure memory on all lambdas
   or individually.
 - `timeout?: number | Record<string, number>` - configure timeout on all lambdas
