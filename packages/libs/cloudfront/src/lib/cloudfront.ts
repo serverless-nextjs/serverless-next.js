@@ -26,7 +26,23 @@ export type Credentials = {
 export default ({
   credentials
 }: CloudFrontClientFactoryOptions): CloudFrontClient => {
-  const cloudFront = new AWS.CloudFront({ credentials });
+  const cloudFront = new AWS.CloudFront({
+    credentials,
+    maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES ?? "100"),
+    retryDelayOptions: {
+      base: 200,
+      customBackoff: (retryCount: number, err?: Error) => {
+        const delay = 1000 + Math.floor(1000 * Math.random());
+        console.warn(
+          `Cloudfront retry...
+          Retry attempt: ${retryCount}.
+          Reason: ${err?.message}.
+          Delay: ${delay}ms.`
+        );
+        return delay;
+      }
+    }
+  });
 
   return {
     createInvalidation: async (

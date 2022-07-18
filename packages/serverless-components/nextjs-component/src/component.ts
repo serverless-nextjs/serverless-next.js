@@ -32,7 +32,7 @@ import { execSync } from "child_process";
 import isEmpty from "lodash/isEmpty";
 import toNumber from "lodash/toNumber";
 
-// Message when deployment is explicitly skipped.
+// Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
 
 export type DeploymentResult = {

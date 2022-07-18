@@ -3,6 +3,13 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@getjerry/cloudfront@1.1.11...@getjerry/cloudfront@1.2.0-alpha.0) (2022-07-15)
+
+### Features
+
+- retry aws ([16b2df6](https://github.com/serverless-nextjs/serverless-next.js/commit/16b2df648ef4e0a407724ab45e3a1ddda20e3bc9))
+- retry cloudfront ([e453289](https://github.com/serverless-nextjs/serverless-next.js/commit/e453289e5f1f2cac5b7d338da48c3e64d23f0be5))
+
 ## [1.1.2](https://github.com/serverless-nextjs/serverless-next.js/compare/@getjerry/cloudfront@1.1.2-alpha.0...@getjerry/cloudfront@1.1.2) (2022-01-07)
 
 **Note:** Version bump only for package @getjerry/cloudfront
