@@ -32,42 +32,50 @@ import http from "http";
 export const handleRequest = async (
   event: APIGatewayProxyEventV2
 ): Promise<APIGatewayProxyStructuredResultV2> => {
-  const manifest: BuildManifest = Manifest;
-  const prerenderManifest: PrerenderManifestType = PrerenderManifest;
-  const routesManifest: RoutesManifest = RoutesManifestJson;
-  const lambdaManifest: LambdaManifest = LambdaManifestJson;
+  try {
+    const manifest: BuildManifest = Manifest;
+    const prerenderManifest: PrerenderManifestType = PrerenderManifest;
+    const routesManifest: RoutesManifest = RoutesManifestJson;
+    const lambdaManifest: LambdaManifest = LambdaManifestJson;
 
-  // Compatibility layer required to convert from Node.js req/res <-> API Gateway
-  const { req, res, responsePromise } = httpCompat(event);
+    // Compatibility layer required to convert from Node.js req/res <-> API Gateway
+    const { req, res, responsePromise } = httpCompat(event);
 
-  // Initialize AWS platform specific client
-  const bucketName = lambdaManifest.bucketName;
-  const bucketRegion = lambdaManifest.bucketRegion;
-  const regenerationQueueRegion = lambdaManifest.queueRegion;
-  const regenerationQueueName = lambdaManifest.queueName;
-  const awsPlatformClient = new AwsPlatformClient(
-    bucketName,
-    bucketRegion,
-    regenerationQueueName,
-    regenerationQueueRegion
-  );
+    // Initialize AWS platform specific client
+    const bucketName = lambdaManifest.bucketName;
+    const bucketRegion = lambdaManifest.bucketRegion;
+    const regenerationQueueRegion = lambdaManifest.queueRegion;
+    const regenerationQueueName = lambdaManifest.queueName;
+    const awsPlatformClient = new AwsPlatformClient(
+      bucketName,
+      bucketRegion,
+      regenerationQueueName,
+      regenerationQueueRegion
+    );
 
-  // Handle request with platform-agnostic handler
-  await defaultHandler({
-    req,
-    res,
-    responsePromise,
-    manifest,
-    prerenderManifest,
-    routesManifest,
-    options: {
-      logExecutionTimes: lambdaManifest.logExecutionTimes ?? false
-    },
-    platformClient: awsPlatformClient
-  });
+    // Handle request with platform-agnostic handler
+    await defaultHandler({
+      req,
+      res,
+      responsePromise,
+      manifest,
+      prerenderManifest,
+      routesManifest,
+      options: {
+        logExecutionTimes: lambdaManifest.logExecutionTimes ?? false
+      },
+      platformClient: awsPlatformClient
+    });
 
-  // Convert to API Gateway compatible response
-  return await responsePromise;
+    // Convert to API Gateway compatible response
+    return await responsePromise;
+  } catch (e) {
+    console.error(
+      "Error occurred while handling the request",
+      event.requestContext.http
+    );
+    throw e;
+  }
 };
 
 /**
