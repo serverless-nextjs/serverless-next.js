@@ -1,20 +1,18 @@
-import { CacheConfigKeyNames } from "./readAssetsDirectory";
+import { CacheKeyDeploymentLambdas, LambdaOption } from "../props";
 
-export type CacheKeyDeploymentLambdas =
-  `${CacheConfigKeyNames}DeploymentLambda`;
 type BaseLambdas =
   | "defaultLambda"
   | "apiLambda"
   | "imageLambda"
   | "regenerationLambda";
-type LambdaKeys = BaseLambdas | CacheKeyDeploymentLambdas;
-export type LambdaOptions<T, LambdaKeys extends string> = {
-  [Key in LambdaKeys]?: T;
-};
+
+type CacheKeyDeploymentLambdasType = `${CacheKeyDeploymentLambdas}`;
+
+type LambdaKeys = BaseLambdas | CacheKeyDeploymentLambdasType;
 
 export const toLambdaOption = <T>(
   key: LambdaKeys,
-  option?: LambdaOptions<T, LambdaKeys>
+  option?: LambdaOption<T>
 ): T | undefined => {
   if (
     typeof option !== "object" ||
@@ -23,11 +21,11 @@ export const toLambdaOption = <T>(
       "apiLambda" in option ||
       "imageLambda" in option ||
       "regenerationLambda" in option ||
-      CacheConfigKeyNames.publicFiles in option ||
-      CacheConfigKeyNames.staticFiles in option ||
-      CacheConfigKeyNames.staticPages in option ||
-      CacheConfigKeyNames.nextData in option ||
-      CacheConfigKeyNames.nextStatic in option
+      CacheKeyDeploymentLambdas.publicFiles in option ||
+      CacheKeyDeploymentLambdas.staticFiles in option ||
+      CacheKeyDeploymentLambdas.staticPages in option ||
+      CacheKeyDeploymentLambdas.nextData in option ||
+      CacheKeyDeploymentLambdas.nextStatic in option
     )
   ) {
     return option as T | undefined;
