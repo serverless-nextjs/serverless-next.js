@@ -10,24 +10,28 @@ const SERVER_CACHE_CONTROL_HEADER =
 const DEFAULT_PUBLIC_DIR_CACHE_CONTROL =
   "public, max-age=31536000, must-revalidate";
 
-type CacheConfig = Record<
-  string,
-  {
-    cacheControl: string;
-    path: string;
-  }
->;
+export enum CacheConfigKeyNames {
+  publicFiles = "publicFiles",
+  staticFiles = "staticFiles",
+  staticPages = "staticPages",
+  nextData = "nextData",
+  nextStatic = "nextStatic"
+}
+
+type CacheConfigValues = { cacheControl: string; path: string };
+
+export type CacheConfig = Record<CacheConfigKeyNames, CacheConfigValues>;
 
 const filterNonExistentPathKeys = (config: CacheConfig) => {
-  return Object.keys(config).reduce(
-    (newConfig, nextConfigKey) => ({
+  return Object.keys(config).reduce<CacheConfig>((newConfig, nextConfigKey) => {
+    const nextKey = nextConfigKey as CacheConfigKeyNames;
+    return {
       ...newConfig,
-      ...(fs.pathExistsSync(config[nextConfigKey].path)
-        ? { [nextConfigKey]: config[nextConfigKey] }
+      ...(fs.pathExistsSync(config[nextKey].path)
+        ? { [nextKey]: config[nextKey] }
         : {})
-    }),
-    {} as CacheConfig
-  );
+    };
+  }, <CacheConfig>{});
 };
 
 const readAssetsDirectory = (options: {

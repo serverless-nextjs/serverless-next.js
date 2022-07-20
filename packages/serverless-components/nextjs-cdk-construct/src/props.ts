@@ -1,18 +1,34 @@
 import { ICertificate } from "aws-cdk-lib/aws-certificatemanager";
-import { BehaviorOptions, DistributionProps, CachePolicy } from "aws-cdk-lib/aws-cloudfront";
+import {
+  BehaviorOptions,
+  DistributionProps,
+  CachePolicy
+} from "aws-cdk-lib/aws-cloudfront";
 import { Runtime } from "aws-cdk-lib/aws-lambda";
 import { IHostedZone } from "aws-cdk-lib/aws-route53";
 import { BucketProps } from "aws-cdk-lib/aws-s3";
 import { Duration, StackProps } from "aws-cdk-lib";
 
-export type LambdaOption<T> =
-  | T
-  | {
-      defaultLambda?: T;
-      apiLambda?: T;
-      imageLambda?: T;
-      regenerationLambda?: T;
-    };
+export enum CacheKeyDeploymentLambdas {
+  publicFiles = "publicFilesDeploymentLambda",
+  staticFiles = "staticFilesDeploymentLambda",
+  staticPages = "staticPagesDeploymentLambda",
+  nextData = "nextDataDeploymentLambda",
+  nextStatic = "nextStaticDeploymentLambda"
+}
+
+export type CacheKeyLambdaOptions<T> = {
+  [cacheKey in CacheKeyDeploymentLambdas]?: T;
+};
+
+export interface AllLambdaOptions<T> extends CacheKeyLambdaOptions<T> {
+  defaultLambda?: T;
+  apiLambda?: T;
+  imageLambda?: T;
+  regenerationLambda?: T;
+}
+
+export type LambdaOption<T> = T | AllLambdaOptions<T>;
 
 export interface Props extends StackProps {
   /**
