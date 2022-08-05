@@ -20,7 +20,8 @@ import { populateNames } from "./lib/populate-names";
 import {
   API_LAMBDA_CODE_DIR,
   DEFAULT_LAMBDA_CODE_DIR,
-  IMAGE_LAMBDA_CODE_DIR
+  IMAGE_LAMBDA_CODE_DIR,
+  RETRYABLE_UPDATE_CLOUDFRONT_DISTRIBUTION_ERRORS
 } from "./constants";
 import type {
   BuildOptions,
@@ -31,6 +32,8 @@ import type {
 import { execSync } from "child_process";
 import isEmpty from "lodash/isEmpty";
 import toNumber from "lodash/toNumber";
+import promiseRetry from "promise-retry";
+import { AWSError } from "aws-sdk";
 
 // Message when deployment is explicitly skipped
 const SKIPPED_DEPLOY = "SKIPPED_DEPLOY";
@@ -598,7 +601,8 @@ class NextjsComponent extends Component {
         imageEdgeLambdaInput
       );
 
-      const imageEdgeLambdaPublishOutputs = await imageEdgeLambda.publishVersion();
+      const imageEdgeLambdaPublishOutputs =
+        await imageEdgeLambda.publishVersion();
 
       cloudFrontOrigins[0].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
@@ -659,7 +663,8 @@ class NextjsComponent extends Component {
       defaultEdgeLambdaInput
     );
 
-    const defaultEdgeLambdaPublishOutputs = await defaultEdgeLambda.publishVersion();
+    const defaultEdgeLambdaPublishOutputs =
+      await defaultEdgeLambda.publishVersion();
 
     cloudFrontOrigins[0].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
@@ -764,25 +769,56 @@ class NextjsComponent extends Component {
       ] = defaultBehaviour;
     }
 
-    const cloudFrontOutputs = await cloudFront({
-      distributionId: cloudFrontDistributionId,
-      defaults,
-      origins: cloudFrontOrigins,
-      ...(cloudFrontAliasesInputs && {
-        aliases: cloudFrontAliasesInputs
-      }),
-      ...(cloudFrontPriceClassInputs && {
-        priceClass: cloudFrontPriceClassInputs
-      }),
-      ...(cloudFrontErrorPagesInputs && {
-        errorPages: cloudFrontErrorPagesInputs
-      }),
-      comment: cloudFrontComment,
-      webACLId: cloudFrontWebACLId,
-      restrictions: cloudFrontRestrictions,
-      certificate: cloudFrontCertificate,
-      originAccessIdentityId: cloudFrontOriginAccessIdentityId
-    });
+    const cloudFrontOutputs = await promiseRetry(
+      {
+        // max retry count
+        retries: 10,
+        // with jitter
+        randomize: true,
+        // first retry start with 5s delay
+        minTimeout: 5 * 1000,
+        // max delay between retries is 2min
+        maxTimeout: 120 * 1000
+      },
+      async (retry, attempt) =>
+        cloudFront({
+          distributionId: cloudFrontDistributionId,
+          defaults,
+          origins: cloudFrontOrigins,
+          ...(cloudFrontAliasesInputs && {
+            aliases: cloudFrontAliasesInputs
+          }),
+          ...(cloudFrontPriceClassInputs && {
+            priceClass: cloudFrontPriceClassInputs
+          }),
+          ...(cloudFrontErrorPagesInputs && {
+            errorPages: cloudFrontErrorPagesInputs
+          }),
+          comment: cloudFrontComment,
+          webACLId: cloudFrontWebACLId,
+          restrictions: cloudFrontRestrictions,
+          certificate: cloudFrontCertificate,
+          originAccessIdentityId: cloudFrontOriginAccessIdentityId
+        }).catch((error: unknown) => {
+          const code = (error as AWSError).code;
+
+          const shouldRetry =
+            // has code
+            code &&
+            // code indicates one of retryable errors
+            RETRYABLE_UPDATE_CLOUDFRONT_DISTRIBUTION_ERRORS.includes(code);
+
+          if (shouldRetry) {
+            this.context.debug(
+              `Update CloudFront retrying: attempt ${attempt}`
+            );
+            this.context.debug(`retrying because error: ${code}`);
+            retry(error);
+          }
+
+          throw error;
+        })
+    );
 
     let appUrl = cloudFrontOutputs.url;
 

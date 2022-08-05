@@ -65,10 +65,8 @@ const createCloudFrontDistribution = async (cf, s3, inputs) => {
   let s3CanonicalUserId;
 
   if (servePrivateContentEnabled(inputs)) {
-    ({
-      originAccessIdentityId,
-      s3CanonicalUserId
-    } = await createOriginAccessIdentity(cf));
+    ({ originAccessIdentityId, s3CanonicalUserId } =
+      await createOriginAccessIdentity(cf));
   }
 
   const { Origins, CacheBehaviors } = parseInputOrigins(inputs.origins, {
@@ -240,10 +238,8 @@ const updateCloudFrontDistribution = async (cf, s3, distributionId, inputs) => {
         .getCloudFrontOriginAccessIdentity({ Id: originAccessIdentityId })
         .promise());
     } else {
-      ({
-        originAccessIdentityId,
-        s3CanonicalUserId
-      } = await createOriginAccessIdentity(cf));
+      ({ originAccessIdentityId, s3CanonicalUserId } =
+        await createOriginAccessIdentity(cf));
     }
   }
 
