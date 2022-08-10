@@ -5,7 +5,7 @@ const validLambdaTriggers = [
   "viewer-response"
 ];
 
-// adds lambda@edge to cache behavior passed
+// add lambda@edge to cache behavior passed
 module.exports = (cacheBehavior, lambdaAtEdgeConfig = {}) => {
   Object.keys(lambdaAtEdgeConfig).forEach((eventType) => {
     if (!validLambdaTriggers.includes(eventType)) {
