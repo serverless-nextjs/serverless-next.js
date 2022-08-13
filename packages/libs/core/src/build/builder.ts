@@ -105,8 +105,7 @@ export default abstract class CoreBuilder {
 
     const { restoreUserConfig } = await createServerlessConfig(
       cwd,
-      path.join(this.nextConfigDir),
-      false
+      path.join(this.nextConfigDir)
     );
 
     try {
