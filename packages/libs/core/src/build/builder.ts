@@ -1,4 +1,4 @@
-import fse from "fs-extra";
+import fse, { existsSync } from "fs-extra";
 import { join } from "path";
 import path from "path";
 import {
@@ -12,7 +12,6 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import { NextConfig } from "./types";
 import normalizePath from "normalize-path";
-import createServerlessConfig from "./lib/createServerlessConfig";
 import execa from "execa";
 import { prepareBuildManifests } from "./";
 import pathToPosix from "./lib/pathToPosix";
@@ -35,6 +34,16 @@ const defaultBuildOptions = {
   cleanupDotNext: true,
   assetIgnorePatterns: []
 };
+
+export function getNextConfigPath(nextConfigDir: string): string {
+  let nextConfigPath = path.join(nextConfigDir, "next.config.js");
+
+  // fails to import ESM config
+  // if (existsSync(nextConfigPath.replace(".js", ".mjs")))
+  //   nextConfigPath = nextConfigPath.replace(".js", ".mjs");
+
+  return nextConfigPath;
+}
 
 /**
  * Core builder class that has common build functions for all platforms.
@@ -103,26 +112,17 @@ export default abstract class CoreBuilder {
       this.buildOptions
     );
 
-    const { restoreUserConfig } = await createServerlessConfig(
+    const subprocess = execa(cmd, args, {
       cwd,
-      path.join(this.nextConfigDir)
-    );
+      env
+    });
 
-    try {
-      const subprocess = execa(cmd, args, {
-        cwd,
-        env
-      });
-
-      if (debugMode) {
-        // @ts-ignore
-        subprocess.stdout.pipe(process.stdout);
-      }
-
-      await subprocess;
-    } finally {
-      await restoreUserConfig();
+    if (debugMode) {
+      // @ts-ignore
+      subprocess.stdout.pipe(process.stdout);
     }
+
+    await subprocess;
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(join(
@@ -310,7 +310,7 @@ export default abstract class CoreBuilder {
   }
 
   protected async readNextConfig(): Promise<NextConfig | undefined> {
-    const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
+    const nextConfigPath = getNextConfigPath(this.nextConfigDir);
 
     if (await fse.pathExists(nextConfigPath)) {
       const nextConfig = await require(nextConfigPath);

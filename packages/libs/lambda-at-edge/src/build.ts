@@ -11,12 +11,11 @@ import {
 } from "./types";
 import pathToPosix from "@sls-next/core/dist/build/lib/pathToPosix";
 import normalizeNodeModules from "@sls-next/core/dist/build/lib/normalizeNodeModules";
-import createServerlessConfig from "@sls-next/core/dist/build/lib/createServerlessConfig";
 import { isTrailingSlashRedirect } from "@sls-next/core/dist/build/lib/redirector";
 import readDirectoryFiles from "@sls-next/core/dist/build/lib/readDirectoryFiles";
 import filterOutDirectories from "@sls-next/core/dist/build/lib/filterOutDirectories";
 import { Job } from "@vercel/nft/out/node-file-trace";
-import { prepareBuildManifests } from "@sls-next/core";
+import { getNextConfigPath, prepareBuildManifests } from "@sls-next/core";
 import { NextConfig } from "@sls-next/core";
 import { NextI18nextIntegration } from "@sls-next/core/dist/build/third-party/next-i18next";
 import normalizePath from "normalize-path";
@@ -59,7 +58,7 @@ const defaultBuildOptions = {
   cwd: process.cwd(),
   env: {},
   cmd: "./node_modules/.bin/next",
-  useServerlessTraceTarget: false,
+  useServerlessTraceTarget: true,
   logLambdaExecutionTimes: false,
   domainRedirects: {},
   minifyHandlers: false,
@@ -120,9 +119,7 @@ class Builder {
     const hasServerlessPageManifest = await fse.pathExists(path);
 
     if (!hasServerlessPageManifest) {
-      return Promise.reject(
-        "pages-manifest not found. Check if `next.config.js` target is set to 'serverless'"
-      );
+      return Promise.reject("pages-manifest not found.");
     }
 
     return await fse.readJSON(path);
@@ -543,7 +540,7 @@ class Builder {
   }
 
   async readNextConfig(): Promise<NextConfig | undefined> {
-    const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
+    const nextConfigPath = getNextConfigPath(this.nextConfigDir);
 
     if (await fse.pathExists(nextConfigPath)) {
       const nextConfig = await require(nextConfigPath);
@@ -743,27 +740,17 @@ class Builder {
       fse.emptyDir(join(this.outputDir, ASSETS_DIR))
     ]);
 
-    const { restoreUserConfig } = await createServerlessConfig(
+    const subprocess = execa(cmd, args, {
       cwd,
-      path.join(this.nextConfigDir),
-      useServerlessTraceTarget
-    );
+      env
+    });
 
-    try {
-      const subprocess = execa(cmd, args, {
-        cwd,
-        env
-      });
-
-      if (debugMode) {
-        // @ts-ignore
-        subprocess.stdout.pipe(process.stdout);
-      }
-
-      await subprocess;
-    } finally {
-      await restoreUserConfig();
+    if (debugMode) {
+      // @ts-ignore
+      subprocess.stdout.pipe(process.stdout);
     }
+
+    await subprocess;
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(join(

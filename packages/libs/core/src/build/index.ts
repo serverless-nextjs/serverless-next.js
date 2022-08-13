@@ -12,6 +12,7 @@ import { pathToRegexStr } from "./pathToRegexStr";
 import { PrerenderManifest } from "next/dist/build";
 import { getSortedRoutes } from "./sortedRoutes";
 import { usedSSR } from "./ssr";
+export { getNextConfigPath } from "./builder";
 
 export const prepareBuildManifests = async (
   buildOptions: BuildOptions,
