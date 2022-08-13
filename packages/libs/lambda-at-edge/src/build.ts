@@ -90,7 +90,7 @@ class Builder {
     this.nextConfigDir = path.resolve(nextConfigDir);
     this.nextStaticDir = path.resolve(nextStaticDir ?? nextConfigDir);
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
-    this.serverlessDir = path.join(this.dotNextDir, "serverless");
+    this.serverlessDir = path.join(this.dotNextDir, "server");
     this.outputDir = outputDir;
     if (buildOptions) {
       this.buildOptions = buildOptions;
