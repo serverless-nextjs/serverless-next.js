@@ -1,4 +1,4 @@
-import fse from "fs-extra";
+import fse, { existsSync } from "fs-extra";
 import { join } from "path";
 import path from "path";
 import {
@@ -12,7 +12,6 @@ import readDirectoryFiles from "./lib/readDirectoryFiles";
 import filterOutDirectories from "./lib/filterOutDirectories";
 import { NextConfig } from "./types";
 import normalizePath from "normalize-path";
-import createServerlessConfig from "./lib/createServerlessConfig";
 import execa from "execa";
 import { prepareBuildManifests } from "./";
 import pathToPosix from "./lib/pathToPosix";
@@ -36,6 +35,16 @@ const defaultBuildOptions = {
   assetIgnorePatterns: []
 };
 
+export function getNextConfigPath(nextConfigDir: string): string {
+  let nextConfigPath = path.join(nextConfigDir, "next.config.js");
+
+  // fails to import ESM config
+  // if (existsSync(nextConfigPath.replace(".js", ".mjs")))
+  //   nextConfigPath = nextConfigPath.replace(".js", ".mjs");
+
+  return nextConfigPath;
+}
+
 /**
  * Core builder class that has common build functions for all platforms.
  */
@@ -57,7 +66,7 @@ export default abstract class CoreBuilder {
       this.buildOptions.nextStaticDir ?? this.buildOptions.nextConfigDir
     );
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
-    this.serverlessDir = path.join(this.dotNextDir, "serverless");
+    this.serverlessDir = path.join(this.dotNextDir, "server");
     this.outputDir = this.buildOptions.outputDir;
   }
 
@@ -103,27 +112,17 @@ export default abstract class CoreBuilder {
       this.buildOptions
     );
 
-    const { restoreUserConfig } = await createServerlessConfig(
+    const subprocess = execa(cmd, args, {
       cwd,
-      path.join(this.nextConfigDir),
-      false
-    );
+      env
+    });
 
-    try {
-      const subprocess = execa(cmd, args, {
-        cwd,
-        env
-      });
-
-      if (debugMode) {
-        // @ts-ignore
-        subprocess.stdout.pipe(process.stdout);
-      }
-
-      await subprocess;
-    } finally {
-      await restoreUserConfig();
+    if (debugMode) {
+      // @ts-ignore
+      subprocess.stdout.pipe(process.stdout);
     }
+
+    await subprocess;
 
     // eslint-disable-next-line @typescript-eslint/no-var-requires
     const routesManifest = require(join(
@@ -200,7 +199,7 @@ export default abstract class CoreBuilder {
   }
 
   /**
-   * Check whether this .next/serverless/pages file is a JS file used for runtime rendering.
+   * Check whether this .next/server/pages file is a JS file used for runtime rendering.
    * @param pageManifest
    * @param relativePageFile
    */
@@ -311,7 +310,7 @@ export default abstract class CoreBuilder {
   }
 
   protected async readNextConfig(): Promise<NextConfig | undefined> {
-    const nextConfigPath = path.join(this.nextConfigDir, "next.config.js");
+    const nextConfigPath = getNextConfigPath(this.nextConfigDir);
 
     if (await fse.pathExists(nextConfigPath)) {
       const nextConfig = await require(nextConfigPath);
@@ -405,7 +404,7 @@ export default abstract class CoreBuilder {
     });
 
     const htmlAssets = [...htmlFiles, ...fallbackFiles].map((file) => {
-      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const source = path.join(dotNextDirectory, `server/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`static-pages/${buildId}${file}`)
@@ -415,7 +414,7 @@ export default abstract class CoreBuilder {
     });
 
     const jsonAssets = jsonFiles.map((file) => {
-      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const source = path.join(dotNextDirectory, `server/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`_next/data/${buildId}${file}`)
