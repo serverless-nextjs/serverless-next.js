@@ -5,11 +5,12 @@ import { debug } from "../lib/console";
 export class Page {
   constructor(
     private readonly json: Record<string, unknown>,
-    private readonly html: string
+    // TODO: support older version.
+    private readonly html: string | { _result: string }
   ) {}
 
   public getHtmlEtag() {
-    return createETag().update(this.html).digest();
+    return createETag().update(this.getHtmlBody()).digest();
   }
 
   public getJsonEtag() {
@@ -17,7 +18,7 @@ export class Page {
   }
 
   public getHtmlBody() {
-    return this.html;
+    return typeof this.html === "string" ? this.html : this.html._result;
   }
 
   public getJsonBody() {
@@ -69,7 +70,7 @@ export class RenderService {
       "passthrough"
     );
 
-    debug(`[render] Rendered HTML: ${html}`);
+    debug(`[render] Rendered HTML: ${html._result}`);
     debug(`[render] Rendered options: ${JSON.stringify(renderOpts)}`);
 
     return new Page(renderOpts.pageData, html);

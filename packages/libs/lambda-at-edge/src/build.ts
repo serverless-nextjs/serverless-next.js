@@ -154,9 +154,8 @@ class Builder {
       {}
     );
 
-    const dynamicRoutedPages = Object.keys(pagesManifest).filter(
-      isDynamicRoute
-    );
+    const dynamicRoutedPages =
+      Object.keys(pagesManifest).filter(isDynamicRoute);
     const sortedDynamicRoutedPages = getSortedRoutes(dynamicRoutedPages);
     const sortedPagesManifest = pagesManifestWithoutDynamicRoutes;
 
@@ -963,11 +962,8 @@ class Builder {
       await restoreUserConfig();
     }
 
-    const {
-      defaultBuildManifest,
-      apiBuildManifest,
-      imageBuildManifest
-    } = await this.prepareBuildManifests();
+    const { defaultBuildManifest, apiBuildManifest, imageBuildManifest } =
+      await this.prepareBuildManifests();
 
     await this.buildDefaultLambda(defaultBuildManifest);
 

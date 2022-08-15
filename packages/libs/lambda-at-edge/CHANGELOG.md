@@ -3,71 +3,41 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
-# [1.12.0-alpha.6](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.6) (2022-08-15)
+# [1.12.0-alpha.8](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.7...@getjerry/lambda-at-edge@1.12.0-alpha.8) (2022-08-15)
 
 ### Bug Fixes
 
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
+- html body string ([83a3e75](https://github.com/getjerry/serverless-next.js/commit/83a3e759a19c182bc59810f6f23e0b5a925c9c8b))
 
-### Features
+# [1.12.0-alpha.7](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.12.0-alpha.7) (2022-08-15)
 
-- add missing js file for nextjs12 ([#43](https://github.com/getjerry/serverless-next.js/issues/43)) ([73573b1](https://github.com/getjerry/serverless-next.js/commit/73573b104591df924a7839b6adce61e59b272af0))
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
-# [1.12.0-alpha.5](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.5) (2022-08-15)
+# [1.12.0-alpha.6](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.12.0-alpha.6) (2022-08-15)
 
-### Bug Fixes
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
+# [1.12.0-alpha.5](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.4...@getjerry/lambda-at-edge@1.12.0-alpha.5) (2022-08-15)
 
-### Features
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
-- add missing js file for nextjs12 ([#43](https://github.com/getjerry/serverless-next.js/issues/43)) ([73573b1](https://github.com/getjerry/serverless-next.js/commit/73573b104591df924a7839b6adce61e59b272af0))
+# [1.12.0-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.3...@getjerry/lambda-at-edge@1.12.0-alpha.4) (2022-08-15)
 
-# [1.12.0-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.4) (2022-08-15)
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
-### Bug Fixes
+# [1.12.0-alpha.3](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.2...@getjerry/lambda-at-edge@1.12.0-alpha.3) (2022-08-15)
 
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
-### Features
+# [1.12.0-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.1...@getjerry/lambda-at-edge@1.12.0-alpha.2) (2022-08-15)
 
-- add missing js file for nextjs12 ([#43](https://github.com/getjerry/serverless-next.js/issues/43)) ([73573b1](https://github.com/getjerry/serverless-next.js/commit/73573b104591df924a7839b6adce61e59b272af0))
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
-# [1.12.0-alpha.3](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.3) (2022-08-15)
+# [1.12.0-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.0...@getjerry/lambda-at-edge@1.12.0-alpha.1) (2022-08-15)
 
-### Bug Fixes
-
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
-
-### Features
-
-- add missing js file for nextjs12 ([#43](https://github.com/getjerry/serverless-next.js/issues/43)) ([73573b1](https://github.com/getjerry/serverless-next.js/commit/73573b104591df924a7839b6adce61e59b272af0))
-
-# [1.12.0-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.2) (2022-08-15)
-
-### Bug Fixes
-
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
-
-### Features
-
-- add missing js file for nextjs12 ([#43](https://github.com/getjerry/serverless-next.js/issues/43)) ([73573b1](https://github.com/getjerry/serverless-next.js/commit/73573b104591df924a7839b6adce61e59b272af0))
-
-# [1.12.0-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.1) (2022-08-15)
-
-### Bug Fixes
-
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
-
-### Features
-
-- add missing js file for nextjs12 ([#43](https://github.com/getjerry/serverless-next.js/issues/43)) ([73573b1](https://github.com/getjerry/serverless-next.js/commit/73573b104591df924a7839b6adce61e59b272af0))
+**Note:** Version bump only for package @getjerry/lambda-at-edge
 
 # [1.12.0-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.11.6...@getjerry/lambda-at-edge@1.12.0-alpha.0) (2022-08-15)
-
-### Bug Fixes
-
-- support nextjs 12 add missing chunks folder ([#44](https://github.com/getjerry/serverless-next.js/issues/44)) ([ea414f9](https://github.com/getjerry/serverless-next.js/commit/ea414f94f37e3d45336ccdc22c48660ecb233474))
 
 ### Features
 
