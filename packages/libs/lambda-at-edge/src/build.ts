@@ -374,6 +374,7 @@ class Builder {
           }
         }
       ),
+      this.copyJSFiles(DEFAULT_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
         join(this.outputDir, DEFAULT_LAMBDA_CODE_DIR, "prerender-manifest.json")
@@ -437,6 +438,7 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
+      this.copyJSFiles(API_LAMBDA_CODE_DIR),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
         apiBuildManifest
@@ -445,6 +447,26 @@ class Builder {
         join(this.dotNextDir, "routes-manifest.json"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
+    ]);
+  }
+
+  /**
+   * Copy additional JS files needed such as webpack-runtime.js (new in Next.js 12)
+   */
+  async copyJSFiles(handlerDir: string): Promise<void> {
+    await Promise.all([
+      (await fse.pathExists(join(this.serverlessDir, "webpack-api-runtime.js")))
+        ? fse.copy(
+            join(this.serverlessDir, "webpack-api-runtime.js"),
+            join(this.outputDir, handlerDir, "webpack-api-runtime.js")
+          )
+        : Promise.resolve(),
+      (await fse.pathExists(join(this.serverlessDir, "webpack-runtime.js")))
+        ? fse.copy(
+            join(this.serverlessDir, "webpack-runtime.js"),
+            join(this.outputDir, handlerDir, "webpack-runtime.js")
+          )
+        : Promise.resolve()
     ]);
   }
 
