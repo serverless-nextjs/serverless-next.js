@@ -374,6 +374,7 @@ class Builder {
           }
         }
       ),
+      this.copyChunks(DEFAULT_LAMBDA_CODE_DIR),
       this.copyJSFiles(DEFAULT_LAMBDA_CODE_DIR),
       fse.copy(
         join(this.dotNextDir, "prerender-manifest.json"),
@@ -438,6 +439,7 @@ class Builder {
         join(this.serverlessDir, "pages/api"),
         join(this.outputDir, API_LAMBDA_CODE_DIR, "pages/api")
       ),
+      this.copyChunks(API_LAMBDA_CODE_DIR),
       this.copyJSFiles(API_LAMBDA_CODE_DIR),
       fse.writeJson(
         join(this.outputDir, API_LAMBDA_CODE_DIR, "manifest.json"),
@@ -448,6 +450,19 @@ class Builder {
         join(this.outputDir, API_LAMBDA_CODE_DIR, "routes-manifest.json")
       )
     ]);
+  }
+
+  /**
+   * copy chunks if present and not using serverless trace
+   */
+  copyChunks(handlerDir: string): Promise<void> {
+    return !this.buildOptions.useServerlessTraceTarget &&
+      fse.existsSync(join(this.serverlessDir, "chunks"))
+      ? fse.copy(
+          join(this.serverlessDir, "chunks"),
+          join(this.outputDir, handlerDir, "chunks")
+        )
+      : Promise.resolve();
   }
 
   /**
