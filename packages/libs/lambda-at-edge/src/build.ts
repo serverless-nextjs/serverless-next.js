@@ -167,7 +167,7 @@ class Builder {
   }
 
   /**
-   * Check whether this .next/serverless/pages file is a JS file used for runtime rendering.
+   * Check whether this .next/server/pages file is a JS file used for runtime rendering.
    * @param buildManifest
    * @param relativePageFile
    */
@@ -634,7 +634,7 @@ class Builder {
     });
 
     const htmlAssets = [...htmlFiles, ...fallbackFiles].map((file) => {
-      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const source = path.join(dotNextDirectory, `server/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`static-pages/${buildId}${file}`)
@@ -644,7 +644,7 @@ class Builder {
     });
 
     const jsonAssets = jsonFiles.map((file) => {
-      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const source = path.join(dotNextDirectory, `server/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`_next/data/${buildId}${file}`)

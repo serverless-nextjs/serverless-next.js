@@ -66,7 +66,7 @@ export default abstract class CoreBuilder {
       this.buildOptions.nextStaticDir ?? this.buildOptions.nextConfigDir
     );
     this.dotNextDir = path.join(this.nextConfigDir, ".next");
-    this.serverlessDir = path.join(this.dotNextDir, "serverless");
+    this.serverlessDir = path.join(this.dotNextDir, "server");
     this.outputDir = this.buildOptions.outputDir;
   }
 
@@ -199,7 +199,7 @@ export default abstract class CoreBuilder {
   }
 
   /**
-   * Check whether this .next/serverless/pages file is a JS file used for runtime rendering.
+   * Check whether this .next/server/pages file is a JS file used for runtime rendering.
    * @param pageManifest
    * @param relativePageFile
    */
@@ -404,7 +404,7 @@ export default abstract class CoreBuilder {
     });
 
     const htmlAssets = [...htmlFiles, ...fallbackFiles].map((file) => {
-      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const source = path.join(dotNextDirectory, `server/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`static-pages/${buildId}${file}`)
@@ -414,7 +414,7 @@ export default abstract class CoreBuilder {
     });
 
     const jsonAssets = jsonFiles.map((file) => {
-      const source = path.join(dotNextDirectory, `serverless/pages${file}`);
+      const source = path.join(dotNextDirectory, `server/pages${file}`);
       const destination = path.join(
         assetOutputDirectory,
         withBasePath(`_next/data/${buildId}${file}`)
