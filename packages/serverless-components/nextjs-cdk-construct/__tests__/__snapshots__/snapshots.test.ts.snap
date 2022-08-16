@@ -553,6 +553,21 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
+    "StackNextApiLambdaAlias8E2442BE": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextApiLambda8BE78FBE",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextApiLambdaCurrentVersion09578A6Acd8902824567fc1209c5eab71955b64a",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
+    },
     "StackNextApiLambdaCurrentVersion09578A6Acd8902824567fc1209c5eab71955b64a": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -600,6 +615,21 @@ Object {
         },
       },
       "Type": "Custom::LogRetention",
+    },
+    "StackNextDefaultLambdaAliasDE444B80": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextLambdaF64DCE99",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextLambdaCurrentVersion21F01F879970bafa5c9141f6152d4057c3ab8184",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
     },
     "StackNextEdgeLambdaRole02C429A6": Object {
       "Properties": Object {
@@ -766,6 +796,21 @@ Object {
         "Timeout": 10,
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "StackNextImageLambdaAlias9FBFE8FB": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextImageLambda2847952D",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextImageLambdaCurrentVersionDEC920BC82f9e65a6adec8b6525ed62ed6a25b03",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
     },
     "StackNextImageLambdaCurrentVersionDEC920BC82f9e65a6adec8b6525ed62ed6a25b03": Object {
       "DeletionPolicy": "Delete",
@@ -1724,51 +1769,6 @@ Object {
       "Type": "AWS::SQS::Queue",
       "UpdateReplacePolicy": "Delete",
     },
-    "StackapilambdaaliasD6490DE5": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "StackNextApiLambda8BE78FBE",
-        },
-        "FunctionVersion": Object {
-          "Fn::GetAtt": Array [
-            "StackNextApiLambdaCurrentVersion09578A6Acd8902824567fc1209c5eab71955b64a",
-            "Version",
-          ],
-        },
-        "Name": "live",
-      },
-      "Type": "AWS::Lambda::Alias",
-    },
-    "StackimagelambdaaliasBD101B78": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "StackNextImageLambda2847952D",
-        },
-        "FunctionVersion": Object {
-          "Fn::GetAtt": Array [
-            "StackNextImageLambdaCurrentVersionDEC920BC82f9e65a6adec8b6525ed62ed6a25b03",
-            "Version",
-          ],
-        },
-        "Name": "live",
-      },
-      "Type": "AWS::Lambda::Alias",
-    },
-    "StackliveD0BF0662": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "StackNextLambdaF64DCE99",
-        },
-        "FunctionVersion": Object {
-          "Fn::GetAtt": Array [
-            "StackNextLambdaCurrentVersion21F01F879970bafa5c9141f6152d4057c3ab8184",
-            "Version",
-          ],
-        },
-        "Name": "live",
-      },
-      "Type": "AWS::Lambda::Alias",
-    },
   },
 }
 `;
@@ -2326,6 +2326,21 @@ Object {
       },
       "Type": "AWS::Lambda::Function",
     },
+    "StackNextApiLambdaAlias8E2442BE": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextApiLambda8BE78FBE",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextApiLambdaCurrentVersion09578A6Acd8902824567fc1209c5eab71955b64a",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
+    },
     "StackNextApiLambdaCurrentVersion09578A6Acd8902824567fc1209c5eab71955b64a": Object {
       "DeletionPolicy": "Delete",
       "Properties": Object {
@@ -2373,6 +2388,21 @@ Object {
         },
       },
       "Type": "Custom::LogRetention",
+    },
+    "StackNextDefaultLambdaAliasDE444B80": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextLambdaF64DCE99",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextLambdaCurrentVersion21F01F87b5875487743b0e6b4f7058e417862406",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
     },
     "StackNextEdgeLambdaRole02C429A6": Object {
       "Properties": Object {
@@ -2515,6 +2545,21 @@ Object {
         "Timeout": 10,
       },
       "Type": "AWS::Lambda::Function",
+    },
+    "StackNextImageLambdaAlias9FBFE8FB": Object {
+      "Properties": Object {
+        "FunctionName": Object {
+          "Ref": "StackNextImageLambda2847952D",
+        },
+        "FunctionVersion": Object {
+          "Fn::GetAtt": Array [
+            "StackNextImageLambdaCurrentVersionDEC920BC82f9e65a6adec8b6525ed62ed6a25b03",
+            "Version",
+          ],
+        },
+        "Name": "live",
+      },
+      "Type": "AWS::Lambda::Alias",
     },
     "StackNextImageLambdaCurrentVersionDEC920BC82f9e65a6adec8b6525ed62ed6a25b03": Object {
       "DeletionPolicy": "Delete",
@@ -3319,51 +3364,6 @@ Object {
         },
       },
       "Type": "AWS::S3::BucketPolicy",
-    },
-    "StackapilambdaaliasD6490DE5": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "StackNextApiLambda8BE78FBE",
-        },
-        "FunctionVersion": Object {
-          "Fn::GetAtt": Array [
-            "StackNextApiLambdaCurrentVersion09578A6Acd8902824567fc1209c5eab71955b64a",
-            "Version",
-          ],
-        },
-        "Name": "live",
-      },
-      "Type": "AWS::Lambda::Alias",
-    },
-    "StackimagelambdaaliasBD101B78": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "StackNextImageLambda2847952D",
-        },
-        "FunctionVersion": Object {
-          "Fn::GetAtt": Array [
-            "StackNextImageLambdaCurrentVersionDEC920BC82f9e65a6adec8b6525ed62ed6a25b03",
-            "Version",
-          ],
-        },
-        "Name": "live",
-      },
-      "Type": "AWS::Lambda::Alias",
-    },
-    "StackliveD0BF0662": Object {
-      "Properties": Object {
-        "FunctionName": Object {
-          "Ref": "StackNextLambdaF64DCE99",
-        },
-        "FunctionVersion": Object {
-          "Fn::GetAtt": Array [
-            "StackNextLambdaCurrentVersion21F01F87b5875487743b0e6b4f7058e417862406",
-            "Version",
-          ],
-        },
-        "Name": "live",
-      },
-      "Type": "AWS::Lambda::Alias",
     },
   },
 }
