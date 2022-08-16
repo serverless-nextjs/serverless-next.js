@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/cloudfront",
-  "version": "2.0.0",
+  "version": "2.0.2",
   "description": "Handles CloudFront invalidation",
   "publishConfig": {
     "access": "public"
@@ -32,7 +32,7 @@
   },
   "homepage": "https://github.com/serverless-nextjs/serverless-next.js#readme",
   "dependencies": {
-    "aws-sdk": "2.776.0"
+    "aws-sdk": "2.1093.0"
   },
   "devDependencies": {
     "@types/node": "^14.0.27",

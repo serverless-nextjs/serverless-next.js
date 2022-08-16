@@ -57,7 +57,7 @@ type BuildOptions = {
     parent: string,
     job: Job,
     cjsResolve: boolean
-  ) => string | string[];
+  ) => Promise<string | string[]>;
   baseDir?: string;
   canonicalHostname?: string;
   distributionId: string;
@@ -183,9 +183,10 @@ class Builder {
           return false;
         }
 
+        const reason = reasons.get(file);
+
         return (
-          (!reasons[file] || reasons[file].type !== "initial") &&
-          file !== "package.json"
+          (!reason || reason.type !== "initial") && file !== "package.json"
         );
       })
       .map((filePath: string) => {
@@ -299,7 +300,7 @@ class Builder {
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
-        fileList,
+        Array.from(fileList),
         reasons,
         DEFAULT_LAMBDA_CODE_DIR,
         base
@@ -414,7 +415,7 @@ class Builder {
       });
 
       copyTraces = this.copyLambdaHandlerDependencies(
-        fileList,
+        Array.from(fileList),
         reasons,
         API_LAMBDA_CODE_DIR,
         base

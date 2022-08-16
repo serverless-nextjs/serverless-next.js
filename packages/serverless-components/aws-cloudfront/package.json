@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/aws-cloudfront",
-  "version": "1.2.43",
+  "version": "1.2.45",
   "main": "./serverless.js",
   "publishConfig": {
     "access": "public"
@@ -16,7 +16,7 @@
   },
   "peerDependencies": {
     "@serverless/core": "^1.0.0",
-    "aws-sdk": "^2.499.0"
+    "aws-sdk": "2.1093.0"
   },
   "devDependencies": {
     "babel-eslint": "9.0.0",

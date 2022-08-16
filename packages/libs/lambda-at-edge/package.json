@@ -3,8 +3,8 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.12.0-alpha.8",
-  "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge",
+  "version": "1.13.0",
+  "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "bin": {
@@ -35,9 +35,9 @@
   },
   "homepage": "https://github.com/getjerry/serverless-next.js#readme",
   "devDependencies": {
-    "@rollup/plugin-commonjs": "^15.0.0",
-    "@rollup/plugin-json": "^4.1.0",
-    "@rollup/plugin-node-resolve": "^9.0.0",
+    "@rollup/plugin-commonjs": "18.1.0",
+    "@rollup/plugin-json": "4.1.0",
+    "@rollup/plugin-node-resolve": "10.0.0",
     "@types/aws-lambda": "^8.10.67",
     "@types/cookie": "^0.4.0",
     "@types/execa": "^2.0.0",
@@ -67,7 +67,7 @@
     "@hapi/accept": "5.0.1",
     "@sentry/node": "6.11.0",
     "@sentry/tracing": "6.11.0",
-    "@vercel/nft": "^0.9.3",
+    "@vercel/nft": "0.17.5",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
     "fresh": "^0.5.2",
