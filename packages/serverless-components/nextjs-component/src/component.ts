@@ -554,7 +554,7 @@ class NextjsComponent extends Component {
         description: inputs.description
           ? `${inputs.description} (Regeneration)`
           : "Next.js Regeneration Lambda",
-        handler: inputs.handler || "index.handler",
+        handler: "index.handler",
         code: join(nextConfigPath, REGENERATION_LAMBDA_CODE_DIR),
         role: readLambdaInputValue("roleArn", "regenerationLambda", undefined)
           ? {
