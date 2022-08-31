@@ -386,7 +386,7 @@ const handleOriginResponse = async ({
           request,
           pageS3Path: s3Uri,
           eTag: response.headers["etag"]?.[0].value,
-          lastModified: response.headers["etag"]?.[0].value,
+          lastModified: response.headers["last-modified"]?.[0].value,
           pagePath: staticRoute.page,
           queueName: regenerationQueueName
         });
