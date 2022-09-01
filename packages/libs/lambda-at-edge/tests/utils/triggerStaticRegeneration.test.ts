@@ -90,9 +90,9 @@ describe("triggerStaticRegeneration()", () => {
   });
 
   it.each`
-    lastModified                  | etag         | expected
-    ${"2021-05-05T17:15:04.472Z"} | ${"tag"}     | ${"tag"}
-    ${"2021-05-05T17:15:04.472Z"} | ${undefined} | ${"1620234904472"}
+    lastModified                  | etag     | expected
+    ${"2021-05-05T17:15:04.472Z"} | ${"tag"} | ${"1620234904472"}
+    ${undefined}                  | ${"tag"} | ${"tag"}
   `(
     "should throttle send correct parameters to the queue",
     async ({ lastModified, etag, expected }) => {
