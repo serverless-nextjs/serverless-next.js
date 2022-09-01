@@ -57,11 +57,9 @@ export const triggerStaticRegeneration = async (
         // We only want to trigger the regeneration once for every previous
         // update. This will prevent the case where this page is being
         // requested again whilst its already started to regenerate.
-        MessageDeduplicationId:
-          options.eTag ??
-          (options.lastModified
-            ? new Date(options.lastModified).getTime().toString()
-            : new Date().getTime().toString()),
+        MessageDeduplicationId: options.lastModified
+          ? new Date(options.lastModified).getTime().toString()
+          : options.eTag ?? new Date().getTime().toString(),
         // Only deduplicate based on the object, i.e. we can generate
         // different pages in parallel, just not the same one
         MessageGroupId: hashedUri
