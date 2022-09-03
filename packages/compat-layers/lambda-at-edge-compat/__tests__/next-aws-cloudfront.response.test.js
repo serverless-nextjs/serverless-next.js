@@ -191,8 +191,7 @@ describe("Response Tests", () => {
       }
     });
 
-    res.setHeader("set-cookie", ["1", "2"]);
-    res.end();
+    res.setHeader("set-cookie", ["1", "2"]).end();
 
     return responsePromise.then((response) => {
       expect(response.headers).toEqual({
