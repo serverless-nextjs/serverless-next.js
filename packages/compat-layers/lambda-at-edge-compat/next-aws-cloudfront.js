@@ -277,6 +277,7 @@ const handler = (
   res.setHeader = (name, value) => {
     res.headers[name.toLowerCase()] = value;
     headerNames[name.toLowerCase()] = name;
+    return res;
   };
   res.removeHeader = (name) => {
     delete res.headers[name.toLowerCase()];
