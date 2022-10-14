@@ -24,7 +24,7 @@ export default function IndexPage(props: IndexPageProps): JSX.Element {
   );
 }
 
-export function getStaticProps(): { props: IndexPageProps } {
+export function getServerSideProps(): { props: IndexPageProps } {
   return {
     props: { name: "serverless-next.js" }
   };

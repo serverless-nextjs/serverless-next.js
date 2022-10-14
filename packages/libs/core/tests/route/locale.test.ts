@@ -26,13 +26,14 @@ describe("Locale Utils Tests", () => {
     });
 
     it.each`
-      path          | forceLocale | expectedPath
-      ${"/a"}       | ${null}     | ${"/en/a"}
-      ${"/en/a"}    | ${null}     | ${"/en/a"}
-      ${"/fr/a"}    | ${null}     | ${"/fr/a"}
-      ${"/en-GB/a"} | ${null}     | ${"/en-GB/a"}
-      ${"/en-gb/a"} | ${null}     | ${"/en-GB/a"}
-      ${"/nl/a"}    | ${"en"}     | ${"/en/a"}
+      path             | forceLocale | expectedPath
+      ${"/a"}          | ${null}     | ${"/en/a"}
+      ${"/en/a"}       | ${null}     | ${"/en/a"}
+      ${"/fr/a"}       | ${null}     | ${"/fr/a"}
+      ${"/fr?foo=bar"} | ${null}     | ${"/fr?foo=bar"}
+      ${"/en-GB/a"}    | ${null}     | ${"/en-GB/a"}
+      ${"/en-gb/a"}    | ${null}     | ${"/en-GB/a"}
+      ${"/nl/a"}       | ${"en"}     | ${"/en/a"}
     `(
       "changes path $path to $expectedPath",
       ({ path, forceLocale, expectedPath }) => {
