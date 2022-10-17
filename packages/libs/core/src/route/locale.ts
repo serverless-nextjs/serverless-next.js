@@ -49,6 +49,10 @@ export const findDomainLocale = (
   return null;
 };
 
+function getPathName(lowerCase: string): string {
+  return lowerCase.split("?", 2)[0];
+}
+
 export function addDefaultLocaleToPath(
   path: string,
   routesManifest: RoutesManifest,
@@ -63,11 +67,11 @@ export function addDefaultLocaleToPath(
       : "";
 
     // If prefixed with a locale, return that path with normalized locale
-    const pathLowerCase = path.toLowerCase();
+    const pathNameLowerCased = getPathName(path.toLowerCase());
     for (const locale of locales) {
       if (
-        pathLowerCase === `${basePath}/${locale}`.toLowerCase() ||
-        pathLowerCase.startsWith(`${basePath}/${locale}/`.toLowerCase())
+        pathNameLowerCased === `${basePath}/${locale}`.toLowerCase() ||
+        pathNameLowerCased.startsWith(`${basePath}/${locale}/`.toLowerCase())
       ) {
         return path.replace(
           new RegExp(`${basePath}/${locale}`, "i"),

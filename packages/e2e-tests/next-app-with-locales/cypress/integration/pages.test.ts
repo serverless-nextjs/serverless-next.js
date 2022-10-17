@@ -75,6 +75,12 @@ describe("Pages Tests", () => {
         }
       );
     });
+
+    it("serves SSR homepage with query params with right locale", () => {
+      cy.visit("/fr?foo=bar");
+
+      cy.get("[data-cy=locale]").contains("fr");
+    });
   });
 
   describe("SSG pages", () => {
