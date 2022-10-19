@@ -272,7 +272,8 @@ describe("Pages Tests", () => {
       { path: "/en/unmatched", locale: "en" },
       { path: "/en/unmatched/nested", locale: "en" },
       { path: "/fr/unmatched", locale: "fr" },
-      { path: "/fr/unmatched/nested", locale: "fr" }
+      { path: "/fr/unmatched/nested", locale: "fr" },
+      { path: "/fr/fallback-blocking/unmatched", locale: "fr" }
     ].forEach(({ path, locale }) => {
       it(`serves 404 page ${path}`, () => {
         cy.ensureRouteHasStatusCode(path, 404);

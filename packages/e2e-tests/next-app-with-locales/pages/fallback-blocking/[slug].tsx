@@ -1,5 +1,5 @@
 import React from "react";
-import { GetStaticProps } from "next";
+import { GetStaticPaths, GetStaticProps } from "next";
 import { useRouter } from "next/router";
 
 type DynamicIndexPageProps = {
@@ -20,17 +20,23 @@ export default function DynamicIndexPage(
   );
 }
 
-export const getStaticProps: GetStaticProps = async (ctx) => {
-  return {
-    props: {
-      slug: ctx.params?.slug as string
-    }
-  };
+const PRE_EXISTING_SLUGS = ["a", "b"];
+const SLUGS = [...PRE_EXISTING_SLUGS, "c"];
+
+export const getStaticProps: GetStaticProps = (ctx) => {
+  const slug = ctx.params?.slug;
+  if (typeof slug === "string" && SLUGS.includes(slug)) {
+    return {
+      props: {
+        slug: slug as string
+      }
+    };
+  } else {
+    return { notFound: true };
+  }
 };
 
-export async function getStaticPaths() {
-  return {
-    paths: [{ params: { slug: "a" } }, { params: { slug: "b" } }],
-    fallback: "blocking"
-  };
-}
+export const getStaticPaths: GetStaticPaths = () => ({
+  paths: PRE_EXISTING_SLUGS.map((slug) => ({ params: { slug } })),
+  fallback: "blocking"
+});
