@@ -12,7 +12,7 @@ export default function Custom404() {
   );
 }
 
-export async function getStaticProps() {
+export function getStaticProps() {
   return {
     props: {}
   };
