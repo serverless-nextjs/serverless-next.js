@@ -267,20 +267,18 @@ describe("Pages Tests", () => {
 
   describe("404 pages", () => {
     [
-      { path: "/unmatched" },
-      { path: "/unmatched/nested" },
-      { path: "/en/unmatched" },
-      { path: "/en/unmatched/nested" },
-      { path: "/fr/unmatched" },
-      { path: "/fr/unmatched/nested" }
-    ].forEach(({ path }) => {
+      { path: "/unmatched", locale: "en" },
+      { path: "/unmatched/nested", locale: "en" },
+      { path: "/en/unmatched", locale: "en" },
+      { path: "/en/unmatched/nested", locale: "en" },
+      { path: "/fr/unmatched", locale: "fr" },
+      { path: "/fr/unmatched/nested", locale: "fr" },
+      { path: "/fr/fallback-blocking/unmatched", locale: "fr" }
+    ].forEach(({ path, locale }) => {
       it(`serves 404 page ${path}`, () => {
         cy.ensureRouteHasStatusCode(path, 404);
         cy.visit(path, { failOnStatusCode: false });
-
-        // Custom static error page with getStaticProps
-        // TODO: test localization
-        cy.contains("Custom 404");
+        cy.get("[data-cy=locale]").contains(locale);
       });
     });
   });
