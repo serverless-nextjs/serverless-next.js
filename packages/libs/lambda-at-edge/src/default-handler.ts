@@ -75,6 +75,7 @@ import {
   jerry_sentry_dsn,
   sentry_flush_timeout
 } from "./lib/sentry";
+import { renderPageToHtml } from "./services/utils/render.util";
 
 process.env.PRERENDER = "true";
 process.env.DEBUGMODE = Manifest.enableDebugMode;
@@ -656,9 +657,8 @@ const handleOriginRequest = async ({
       }
 
       rewrittenUri = request.uri;
-      const [customRewriteUriPath, customRewriteUriQuery] = customRewrite.split(
-        "?"
-      );
+      const [customRewriteUriPath, customRewriteUriQuery] =
+        customRewrite.split("?");
       request.uri = customRewriteUriPath;
       if (request.querystring) {
         request.querystring = `${request.querystring}${
@@ -792,7 +792,8 @@ const handleOriginRequest = async ({
 
     // Render page
     if (isDataReq) {
-      const { renderOpts } = await page.renderReqToHTML(
+      const { renderOpts } = await renderPageToHtml(
+        page,
         req,
         res,
         "passthrough"
@@ -930,7 +931,8 @@ const handleOriginResponse = async ({
     });
 
     const isSSG = !!page.getStaticProps;
-    const renderedRes = await page.renderReqToHTML(req, res, "passthrough");
+
+    const renderedRes = await renderPageToHtml(page, req, res, "passthrough");
 
     debug(`[blocking-fallback] rendered res: ${JSON.stringify(renderedRes)}`);
 
@@ -941,7 +943,7 @@ const handleOriginResponse = async ({
         request.uri
       } pagePath: ${pagePath}, opts: ${JSON.stringify(
         renderOpts
-      )}, html: ${JSON.stringify(html)}`
+      )}, html: ${html}`
     );
 
     // Check if it is a `not Found` response. Return 404 in that case.
@@ -1045,7 +1047,8 @@ const handleOriginResponse = async ({
     );
 
     const isSSG = !!page.getStaticProps;
-    const { renderOpts, html } = await page.renderReqToHTML(
+    const { renderOpts, html } = await renderPageToHtml(
+      page,
       req,
       res,
       "passthrough"
@@ -1057,7 +1060,13 @@ const handleOriginResponse = async ({
       )}, html: ${JSON.stringify(html)}`
     );
 
-    if (isSSG) {
+    const shouldPersist =
+      isSSG &&
+      // should redirect, json data no need to persist,
+      // and more IMPORTANT, 'html' will be a json string instead of html string in this case
+      !renderOpts?.pageData?.pageProps.__N_REDIRECT;
+
+    if (shouldPersist) {
       const s3JsonParams = {
         Bucket: bucketName,
         Key: `${(basePath || "").replace(/^\//, "")}${

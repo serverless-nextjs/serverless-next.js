@@ -3,7 +3,7 @@
   "publishConfig": {
     "access": "public"
   },
-  "version": "1.13.1",
+  "version": "1.13.2-alpha.4",
   "description": "Provides handlers that can be used in CloudFront Lambda@Edge to deploy next.js applications to the edge.",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -50,6 +50,7 @@
     "@types/path-to-regexp": "^1.7.0",
     "@types/send": "^0.14.5",
     "@types/sharp": "^0.26.1",
+    "@types/zen-observable": "0.8.3",
     "fetch-mock-jest": "^1.5.1",
     "rollup": "^2.26.6",
     "rollup-plugin-node-externals": "^2.2.0",
@@ -65,8 +66,8 @@
     "@aws-sdk/client-lambda": "1.0.0-rc.3",
     "@aws-sdk/client-s3": "1.0.0-rc.3",
     "@hapi/accept": "5.0.1",
-    "@sentry/node": "6.11.0",
-    "@sentry/tracing": "6.11.0",
+    "@sentry/node": "7.4.1",
+    "@sentry/tracing": "7.4.1",
     "@vercel/nft": "0.17.5",
     "cookie": "^0.4.1",
     "execa": "^4.0.2",
@@ -78,9 +79,11 @@
     "is-animated": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "klaw": "^3.0.0",
+    "next": "12",
     "node-fetch": "^2.6.1",
     "path-to-regexp": "^6.1.0",
-    "send": "^0.17.1"
+    "send": "^0.17.1",
+    "zen-observable": "0.8.15"
   },
   "gitHead": "ff6891ab42e8df4add318d6c67af062c15b067cd"
 }

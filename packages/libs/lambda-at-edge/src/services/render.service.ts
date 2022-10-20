@@ -2,30 +2,31 @@ import lambdaAtEdgeCompat from "@getjerry/next-aws-cloudfront";
 import { createETag } from "../lib/etag";
 import { debug } from "../lib/console";
 
+import { renderPageToHtml } from "./utils/render.util";
+
 export class Page {
   constructor(
     private readonly json: Record<string, unknown>,
-    // TODO: support older version.
-    private readonly html: string | { _result: string }
+    private readonly html: string
   ) {}
 
-  public getHtmlEtag() {
+  public getHtmlEtag(): string {
     return createETag().update(this.getHtmlBody()).digest();
   }
 
-  public getJsonEtag() {
+  public getJsonEtag(): string {
     return createETag().update(JSON.stringify(this.json)).digest();
   }
 
-  public getHtmlBody() {
-    return typeof this.html === "string" ? this.html : this.html._result;
+  public getHtmlBody(): string {
+    return this.html;
   }
 
-  public getJsonBody() {
+  public getJsonBody(): string {
     return JSON.stringify(this.json);
   }
 
-  public getJson() {
+  public getJson(): Record<string, unknown> {
     return this.json;
   }
 }
@@ -64,13 +65,14 @@ export class RenderService {
       rewrittenUri
     });
 
-    const { renderOpts, html } = await page.renderReqToHTML(
+    const { renderOpts, html } = await renderPageToHtml(
+      page,
       req,
       res,
       "passthrough"
     );
 
-    debug(`[render] Rendered HTML: ${html._result}`);
+    debug(`[render] Rendered HTML: ${html}`);
     debug(`[render] Rendered options: ${JSON.stringify(renderOpts)}`);
 
     return new Page(renderOpts.pageData, html);

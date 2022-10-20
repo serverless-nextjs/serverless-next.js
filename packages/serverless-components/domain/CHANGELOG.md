@@ -3,6 +3,10 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.15-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/domain@1.1.11...@getjerry/domain@1.1.15-alpha.0) (2022-08-16)
+
+**Note:** Version bump only for package @getjerry/domain
+
 ## [1.1.14](https://github.com/getjerry/serverless-next.js/compare/@getjerry/domain@1.1.11...@getjerry/domain@1.1.14) (2022-08-16)
 
 **Note:** Version bump only for package @getjerry/domain

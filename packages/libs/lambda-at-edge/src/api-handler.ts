@@ -140,6 +140,19 @@ export const handler = async (
     enableHTTPCompression: buildManifest.enableHTTPCompression
   });
 
+  // Change introduced in Next 12.0.9, causing null pointer error
+  // reference: https://github.com/serverless-nextjs/serverless-next.js/pull/2344/files
+  if (!req.hasOwnProperty("originalRequest")) {
+    Object.defineProperty(req, "originalRequest", {
+      get: () => req
+    });
+  }
+  if (!res.hasOwnProperty("originalResponse")) {
+    Object.defineProperty(res, "originalResponse", {
+      get: () => res
+    });
+  }
+
   page.default(req, res);
 
   const response = await responsePromise;
