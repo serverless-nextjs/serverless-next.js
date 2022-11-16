@@ -75,6 +75,7 @@ export type OriginRequestDefaultHandlerManifest = {
   };
   canonicalHostname?: string;
   urlRewrites?: UrlRewriteList;
+  abTests?: ABTests;
   enableDebugMode?: boolean;
   invalidationUrlGroups?: BasicInvalidationUrlGroup[];
   notFoundPageMark?: string;
@@ -184,4 +185,13 @@ export type UrlRewriteList = {
   originUrl: string;
   rewriteUrl: string;
   originUrlParams: string | string[];
+}[];
+
+export type ExperimentGroups = {
+  url: string;
+  ratio: number;
+};
+export type ABTests = {
+  originUrl: string;
+  experimentGroups: ExperimentGroups[];
 }[];

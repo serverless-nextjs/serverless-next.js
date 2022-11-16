@@ -1,6 +1,9 @@
 import { pathToRegexp } from "path-to-regexp";
 import { debug } from "./console";
-import { OriginRequestDefaultHandlerManifest } from "../../types";
+import {
+  OriginRequestDefaultHandlerManifest,
+  ExperimentGroups
+} from "../../types";
 import { CloudFrontRequest } from "aws-lambda";
 
 // @ts-ignore
@@ -146,4 +149,60 @@ export const checkAndRewriteUrl = (
   }
 
   debug(`[checkAndRewriteUrl] After: ${request.uri}, ${request.querystring}`);
+};
+
+const rewriteUrlWithExperimentGroups = (
+  experimentGroups: ExperimentGroups[],
+  requestUri: string
+) => {
+  // TODO Split algorithm
+
+  // just for test
+  return Math.random() > 0.5 ? experimentGroups[0].url : requestUri;
+};
+/**
+ *
+ * @param manifest
+ * @param request
+ */
+export const checkABTestUrl = (
+  manifest: OriginRequestDefaultHandlerManifest,
+  request: CloudFrontRequest
+): void => {
+  debug(
+    `[checkABTestUrl] manifest: ${JSON.stringify(manifest)}, ${JSON.stringify(
+      request
+    )}`
+  );
+  const abTests = manifest.abTests;
+  if (!abTests || abTests.length === 0) return;
+
+  const requestUri = request.uri.split(".")[0];
+
+  for (const abTest of abTests) {
+    const originUrl = abTest.originUrl;
+    const experimentGroups = abTest.experimentGroups;
+
+    if (isUriMatch(originUrl, requestUri)) {
+      request.uri = rewriteUrlWithExperimentGroups(
+        experimentGroups,
+        requestUri
+      );
+
+      // adjust cache-related headers, let cloudfront not do caching
+      if (request.headers && request.headers["cache-control"]) {
+        request.headers["cache-control"] = [
+          {
+            key: "Cache-Control",
+            value: "public, max-age=0, s-maxage=0, must-revalidate"
+          }
+        ];
+      }
+      break;
+    }
+  }
+
+  debug(
+    `[checkABTestUrl] After: ${request.uri}, ${JSON.stringify(request.headers)}`
+  );
 };

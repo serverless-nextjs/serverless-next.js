@@ -66,7 +66,7 @@ import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
 import { debug, getEnvironment, isDevMode } from "./lib/console";
 import { PERMANENT_STATIC_PAGES_DIR } from "./lib/permanentStaticPages";
-import { checkAndRewriteUrl } from "./lib/pathToRegexStr";
+import { checkABTestUrl, checkAndRewriteUrl } from "./lib/pathToRegexStr";
 import * as Sentry from "@sentry/node";
 import "@sentry/tracing";
 
@@ -705,6 +705,7 @@ const handleOriginRequest = async ({
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
       checkAndRewriteUrl(manifest, request);
+      checkABTestUrl(manifest, request);
       debug(`[origin-request] is html of fallback, uri: ${request.uri}`);
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
