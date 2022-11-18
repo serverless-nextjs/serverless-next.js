@@ -253,6 +253,7 @@ const handleOriginRequest = async ({
 
   if (route.isPublicFile) {
     const { file } = route as PublicFileRoute;
+    request.headers["cookies"] = [];
     return await staticRequest(
       event,
       file,

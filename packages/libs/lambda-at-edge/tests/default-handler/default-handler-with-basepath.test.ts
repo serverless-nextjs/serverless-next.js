@@ -146,6 +146,26 @@ describe("Lambda@Edge", () => {
 
       expect(response.status).toEqual("200");
     });
+
+    it("public file should not forward cookies to S3", async () => {
+      const event = createCloudFrontEvent({
+        uri: "/basepath/manifest.json",
+        host: "mydistribution.cloudfront.net",
+        requestHeaders: {
+          cookies: [
+            {
+              key: "Cookie",
+              value: "cookie1=value"
+            }
+          ]
+        }
+      });
+
+      const result = await handler(event);
+      const request = result as CloudFrontRequest;
+
+      expect(request.headers["cookies"]).toHaveLength(0);
+    });
   });
 
   describe("SSR pages routing", () => {
