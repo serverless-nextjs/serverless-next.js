@@ -1,8 +1,8 @@
 import { pathToRegexp } from "path-to-regexp";
 import { debug } from "./console";
 import {
-  OriginRequestDefaultHandlerManifest,
-  ExperimentGroups
+  ExperimentGroups,
+  OriginRequestDefaultHandlerManifest
 } from "../../types";
 import { CloudFrontRequest } from "aws-lambda";
 

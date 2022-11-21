@@ -259,6 +259,7 @@ class NextjsComponent extends Component {
                 tracesSampleRate: toNumber(inputs.sentry.tracesSampleRate)
               }
             : undefined,
+          abTests: inputs.abTests ?? undefined,
           enableRemoteInvalidation: inputs.enableRemoteInvalidation ?? false
         },
         nextStaticPath
