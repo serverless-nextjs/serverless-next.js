@@ -168,7 +168,7 @@ const rewriteUrlWithExperimentGroups = (
 
   const res = experimentGroups[hashMap[hashIndex]].url;
 
-  debug(`[rewriteUrlWithExperimentGroups] ${clientIp}, ${hashIndex}, ${res}}`);
+  debug(`[rewriteUrlWithExperimentGroups]: ${clientIp}, ${hashIndex}, ${res}}`);
 
   return res;
 };
