@@ -66,7 +66,7 @@ import { RevalidateHandler } from "./handler/revalidate.handler";
 import { RenderService } from "./services/render.service";
 import { debug, getEnvironment, isDevMode } from "./lib/console";
 import { PERMANENT_STATIC_PAGES_DIR } from "./lib/permanentStaticPages";
-import { checkAndRewriteUrl } from "./lib/pathToRegexStr";
+import { checkABTestUrl, checkAndRewriteUrl } from "./lib/pathToRegexStr";
 import * as Sentry from "@sentry/node";
 import "@sentry/tracing";
 
@@ -230,6 +230,23 @@ const router = (
 };
 
 /**
+ * Whether the uri belongs to the url in the abTests field in the manifest
+ */
+const isAbTestPath = (
+  manifest: OriginRequestDefaultHandlerManifest,
+  uri: string
+) => {
+  const abTestPaths = manifest.abTests?.reduce((acc, cur) => {
+    acc.push(cur.originUrl, ...cur.experimentGroups.map((_) => _.url));
+    return acc;
+  }, [] as string[]);
+
+  return (
+    abTestPaths && abTestPaths.some((_) => uri.split(".html")[0].endsWith(_))
+  );
+};
+
+/**
  * Stale revalidate
  */
 interface RevalidationInterface {
@@ -240,7 +257,7 @@ interface RouteConfig {
   initialRevalidateSeconds: number | false;
 }
 
-// find first revalidation interval and use it globally
+// find first revalidation interval and use it globally.
 // if not exists, then will be undefined and may be used to detect if revalidation should be turned on
 const REVALIDATION_CONFIG = Object.values<RouteConfig>(
   PrerenderManifest.routes
@@ -594,6 +611,8 @@ const handleOriginRequest = async ({
     );
   }
 
+  debug(`[origin-request] 1`);
+
   // Handle any trailing slash redirects
   let newUri = request.uri;
   if (isDataReq || isPublicFile) {
@@ -618,12 +637,14 @@ const handleOriginRequest = async ({
   }
 
   if (newUri !== request.uri) {
+    debug(`[origin-request] 2, ${newUri};; ${request.uri}`);
     return createRedirectResponse(newUri, request.querystring, 308);
   }
 
   // Handle other custom redirects on the original URI
   const customRedirect = getRedirectPath(request.uri, routesManifest);
   if (customRedirect) {
+    debug(`[origin-request] 3 ${customRedirect}`);
     return createRedirectResponse(
       customRedirect.redirectPath,
       request.querystring,
@@ -653,6 +674,7 @@ const handleOriginRequest = async ({
           }
         );
         await createExternalRewriteResponse(customRewrite, req, res);
+        debug(`[origin-request] 4;; ${responsePromise}`);
         return await responsePromise;
       }
 
@@ -705,6 +727,7 @@ const handleOriginRequest = async ({
       const pageName = uri === "/" ? "/index" : uri;
       request.uri = `${pageName}.html`;
       checkAndRewriteUrl(manifest, request);
+      checkABTestUrl(manifest, request);
       debug(`[origin-request] is html of fallback, uri: ${request.uri}`);
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
@@ -736,7 +759,7 @@ const handleOriginRequest = async ({
     }
 
     addS3HostHeader(request, normalisedS3DomainName);
-
+    debug(`[origin-request] 5, ${request.uri}, ${JSON.stringify(request)}`);
     return request;
   }
 
@@ -751,7 +774,11 @@ const handleOriginRequest = async ({
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
 
-    debug(`[origin-request] [ssr] html response: ${JSON.stringify(request)}`);
+    debug(
+      `[origin-request] [ssr] html response: ${request.uri} ${JSON.stringify(
+        request
+      )}`
+    );
 
     return request;
   }
@@ -999,7 +1026,9 @@ const handleOriginResponse = async ({
         }static-pages/${manifest.buildId}${decodeURI(uri)}`,
         Body: html,
         ContentType: "text/html",
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        CacheControl: isAbTestPath(manifest, uri)
+          ? "public, max-age=0, s-maxage=0, must-revalidate"
+          : "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 
       debug(`[blocking-fallback] json to s3: ${JSON.stringify(s3JsonParams)}`);
@@ -1009,6 +1038,7 @@ const handleOriginResponse = async ({
         s3.send(new PutObjectCommand(s3HtmlParams))
       ]);
     }
+
     const htmlOut = {
       status: "200",
       statusDescription: "OK",
@@ -1023,7 +1053,9 @@ const handleOriginResponse = async ({
         "cache-control": [
           {
             key: "Cache-Control",
-            value: "public, max-age=0, s-maxage=2678400, must-revalidate"
+            value: isAbTestPath(manifest, uri)
+              ? "public, max-age=0, s-maxage=0, must-revalidate"
+              : "public, max-age=0, s-maxage=2678400, must-revalidate"
           }
         ]
       },

@@ -3,6 +3,20 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.5.0-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/s3-static-assets@1.4.17-alpha.1...@getjerry/s3-static-assets@1.5.0-alpha.0) (2022-11-24)
+
+### Bug Fixes
+
+- add more log ([17b3cfa](https://github.com/getjerry/serverless-next.js/commit/17b3cfa7789eb2891dbfe23828e7e42eb9b3f679))
+
+### Features
+
+- Set the cache field ([0b65210](https://github.com/getjerry/serverless-next.js/commit/0b65210a77506f339e9cbe6ebeef7017acb82747))
+
+## [1.4.17-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/s3-static-assets@1.4.13...@getjerry/s3-static-assets@1.4.17-alpha.1) (2022-11-23)
+
+**Note:** Version bump only for package @getjerry/s3-static-assets
+
 ## [1.4.17-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/s3-static-assets@1.4.13...@getjerry/s3-static-assets@1.4.17-alpha.0) (2022-08-16)
 
 **Note:** Version bump only for package @getjerry/s3-static-assets

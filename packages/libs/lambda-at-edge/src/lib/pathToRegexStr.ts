@@ -1,6 +1,10 @@
 import { pathToRegexp } from "path-to-regexp";
+import murmurhash from "murmurhash";
 import { debug } from "./console";
-import { OriginRequestDefaultHandlerManifest } from "../../types";
+import {
+  ExperimentGroup,
+  OriginRequestDefaultHandlerManifest
+} from "../../types";
 import { CloudFrontRequest } from "aws-lambda";
 
 // @ts-ignore
@@ -146,4 +150,71 @@ export const checkAndRewriteUrl = (
   }
 
   debug(`[checkAndRewriteUrl] After: ${request.uri}, ${request.querystring}`);
+};
+
+/**
+ * Calculate the appropriate A/B Test experiment url according to the experimentGroups field in the configuration
+ * @param experimentGroups
+ * @param request
+ * @param originUrl
+ */
+const rewriteUrlWithExperimentGroups = (
+  experimentGroups: ExperimentGroup[],
+  request: CloudFrontRequest,
+  originUrl: string
+) => {
+  const clientIp = request.clientIp;
+
+  // gen hash map: [{url: '/car-insurance/information', ratio: 25}] => [25 zeros]
+  const hashMap = experimentGroups.reduce((acc, cur, index) => {
+    acc = acc.concat(Array.from({ length: cur.ratio }, () => index));
+    return acc;
+  }, [] as number[]);
+
+  const hashIndex = murmurhash.v2(clientIp) % 100;
+
+  const result = experimentGroups[hashMap[hashIndex]]
+    ? experimentGroups[hashMap[hashIndex]].url
+    : originUrl;
+
+  debug(`[rewriteUrlWithExperimentGroups]: ${originUrl} -> ${result}}`);
+
+  return `${result}.html`;
+};
+
+/**
+ * Check and parse the abTests field
+ * @param manifest
+ * @param request
+ */
+export const checkABTestUrl = (
+  manifest: OriginRequestDefaultHandlerManifest,
+  request: CloudFrontRequest
+): void => {
+  debug(
+    `[checkABTestUrl] before: ${JSON.stringify(manifest)}, ${JSON.stringify(
+      request
+    )}`
+  );
+  const abTests = manifest.abTests;
+  if (!abTests || abTests.length === 0) return;
+
+  const requestUri = request.uri.split(".")[0];
+
+  for (const abTest of abTests) {
+    const originUrl = abTest.originUrl;
+    const experimentGroups = abTest.experimentGroups;
+
+    if (isUriMatch(originUrl, requestUri)) {
+      request.uri = rewriteUrlWithExperimentGroups(
+        experimentGroups,
+        request,
+        originUrl
+      );
+
+      break;
+    }
+  }
+
+  debug(`[checkABTestUrl] After: ${request.uri}`);
 };

@@ -22,6 +22,7 @@ type UploadStaticAssetsOptions = {
   nextStaticDir?: string;
   credentials: Credentials;
   publicDirectoryCache?: PublicDirectoryCache;
+  abTestPaths?: string[];
 };
 
 /**
@@ -125,10 +126,18 @@ const uploadStaticAssetsFromBuild = async (
           cacheControl: SERVER_NO_CACHE_CACHE_CONTROL_HEADER
         });
       } else {
+        const isAbTestPath =
+          options.abTestPaths &&
+          options.abTestPaths.some((_) =>
+            fileItem.path.split(".html")[0].endsWith(_)
+          );
+
         return s3.uploadFile({
           s3Key,
           filePath: fileItem.path,
-          cacheControl: SERVER_CACHE_CONTROL_HEADER
+          cacheControl: isAbTestPath
+            ? SERVER_NO_CACHE_CACHE_CONTROL_HEADER
+            : SERVER_CACHE_CONTROL_HEADER
         });
       }
     });

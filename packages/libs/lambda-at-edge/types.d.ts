@@ -83,6 +83,7 @@ export type OriginRequestDefaultHandlerManifest = {
     dsn?: string;
     tracesSampleRate: number;
   };
+  abTests?: ABTest[];
   enableRemoteInvalidation?: boolean;
 };
 
@@ -185,3 +186,12 @@ export type UrlRewriteList = {
   rewriteUrl: string;
   originUrlParams: string | string[];
 }[];
+
+export type ExperimentGroup = {
+  url: string;
+  ratio: number;
+};
+export type ABTest = {
+  originUrl: string;
+  experimentGroups: ExperimentGroup[];
+};

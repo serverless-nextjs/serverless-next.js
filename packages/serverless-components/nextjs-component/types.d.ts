@@ -1,5 +1,6 @@
 import { PublicDirectoryCache } from "@getjerry/s3-static-assets/src/lib/getPublicAssetCacheControl";
 import { BasicInvalidationUrlGroup } from "@getjerry/lambda-at-edge/dist/lib/invalidation/invalidationUrlGroup";
+import { ABTest } from "@getjerry/lambda-at-edge/types";
 
 export interface LambdaNames<T> {
   defaultLambda?: T;
@@ -61,6 +62,7 @@ export type ServerlessComponentInputs = {
   // For some very important pages that need to be always available, such as the home page.
   permanentStaticPages?: string[];
   sentry?: SentryOptions;
+  abTests?: ABTest[];
   enableRemoteInvalidation?: boolean;
 };
 

@@ -5,6 +5,7 @@ import path, { join } from "path";
 import getAllFiles from "./lib/getAllFilesInDirectory";
 import { getSortedRoutes } from "./lib/sortedRoutes";
 import {
+  ABTest,
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
   OriginRequestImageHandlerManifest,
@@ -70,6 +71,7 @@ type BuildOptions = {
     dsn?: string;
     tracesSampleRate: number;
   };
+  abTests?: ABTest[];
   enableRemoteInvalidation?: boolean;
 };
 
@@ -93,6 +95,7 @@ const defaultBuildOptions = {
   notFoundPageMark: undefined,
   permanentStaticPages: undefined,
   sentry: undefined,
+  abTests: undefined,
   enableRemoteInvalidation: false
 };
 
@@ -590,6 +593,7 @@ class Builder {
       notFoundPageMark: this.buildOptions.notFoundPageMark,
       permanentStaticPages: this.buildOptions.permanentStaticPages,
       sentry: this.buildOptions.sentry,
+      abTests: this.buildOptions.abTests,
       enableRemoteInvalidation: this.buildOptions.enableRemoteInvalidation
     };
 

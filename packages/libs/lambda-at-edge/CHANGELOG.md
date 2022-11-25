@@ -3,6 +3,43 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.14.0-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.14.0-alpha.1...@getjerry/lambda-at-edge@1.14.0-alpha.2) (2022-11-24)
+
+**Note:** Version bump only for package @getjerry/lambda-at-edge
+
+# [1.14.0-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.14.0-alpha.0...@getjerry/lambda-at-edge@1.14.0-alpha.1) (2022-11-24)
+
+### Bug Fixes
+
+- add more log ([17b3cfa](https://github.com/getjerry/serverless-next.js/commit/17b3cfa7789eb2891dbfe23828e7e42eb9b3f679))
+
+### Features
+
+- Set the cache field ([0b65210](https://github.com/getjerry/serverless-next.js/commit/0b65210a77506f339e9cbe6ebeef7017acb82747))
+
+# [1.14.0-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.14.0-alpha.0) (2022-11-23)
+
+### Bug Fixes
+
+- add comment ([2cfb743](https://github.com/getjerry/serverless-next.js/commit/2cfb743d60030849efafcda743efcf63aded93fb))
+- add log ([73cbb2e](https://github.com/getjerry/serverless-next.js/commit/73cbb2e5be2b47407bf6173b9e3bcdbf051d8744))
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+- rename ([7473b4f](https://github.com/getjerry/serverless-next.js/commit/7473b4f2a5f0ab6aff815adec063d768d2ec422b))
+- restore cache clear ([be95009](https://github.com/getjerry/serverless-next.js/commit/be9500906b1c893c0be91cede929bfe8ceb01bf6))
+- rewriteUrlWithExperimentGroups ([d7e9a93](https://github.com/getjerry/serverless-next.js/commit/d7e9a933c76cf354a78b07c6e496fc00095f5552))
+- test cache clean ([3cbd526](https://github.com/getjerry/serverless-next.js/commit/3cbd526397c7181b88f5f9e91b0bdc25af70181b))
+
+### Features
+
+- implement checkABTestUrl ([5016372](https://github.com/getjerry/serverless-next.js/commit/5016372af6310704c55516d85ead73cd5f7293f5))
+- init ab test functionality ([890ad3c](https://github.com/getjerry/serverless-next.js/commit/890ad3cb3fab946606dcf68c21bea2b198125e8b))
+
+### Reverts
+
+- Revert "refactor: add murmurhash" ([6db95b4](https://github.com/getjerry/serverless-next.js/commit/6db95b48ffefa6670d706140774c8a1c87b84bf3))
+- Revert "feat: implement checkABTestUrl in defaultHandler of lambda-at-edge" ([8c0bb98](https://github.com/getjerry/serverless-next.js/commit/8c0bb98b81bfd53481fa37ae84293730c17291bb))
+- Revert "refactor: update yarn.lock" ([af5a448](https://github.com/getjerry/serverless-next.js/commit/af5a448fb3378975404024a5ad692844568d6963))
+
 ## [1.13.2-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.13.2-alpha.3...@getjerry/lambda-at-edge@1.13.2-alpha.4) (2022-10-19)
 
 ### Bug Fixes

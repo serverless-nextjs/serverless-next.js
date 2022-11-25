@@ -259,6 +259,7 @@ class NextjsComponent extends Component {
                 tracesSampleRate: toNumber(inputs.sentry.tracesSampleRate)
               }
             : undefined,
+          abTests: inputs.abTests ?? undefined,
           enableRemoteInvalidation: inputs.enableRemoteInvalidation ?? false
         },
         nextStaticPath
@@ -372,13 +373,20 @@ class NextjsComponent extends Component {
     // This input is intentionally undocumented but it acts a short-term killswitch in case of any issues with uploading from the built assets.
     // TODO: remove once proven stable.
     if (inputs.uploadStaticAssetsFromBuild ?? true) {
+      // Summarize the page path involved in the A/B Test
+      const abTestPaths = inputs.abTests?.reduce((acc, cur) => {
+        acc.push(cur.originUrl, ...cur.experimentGroups.map((_) => _.url));
+        return acc;
+      }, [] as string[]);
+
       await uploadStaticAssetsFromBuild({
         bucketName: bucketOutputs.name,
         basePath: routesManifest.basePath,
         nextConfigDir: nextConfigPath,
         nextStaticDir: nextStaticPath,
         credentials: this.context.credentials.aws,
-        publicDirectoryCache: inputs.publicDirectoryCache
+        publicDirectoryCache: inputs.publicDirectoryCache,
+        abTestPaths
       });
     } else {
       await uploadStaticAssets({

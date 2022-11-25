@@ -3,6 +3,30 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.2.0-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.2.0-alpha.0...@getjerry/serverless-next@2.2.0-alpha.1) (2022-11-24)
+
+**Note:** Version bump only for package @getjerry/serverless-next
+
+# [2.2.0-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.1.2-alpha.5...@getjerry/serverless-next@2.2.0-alpha.0) (2022-11-24)
+
+### Bug Fixes
+
+- add more log ([17b3cfa](https://github.com/getjerry/serverless-next.js/commit/17b3cfa7789eb2891dbfe23828e7e42eb9b3f679))
+
+### Features
+
+- Set the cache field ([0b65210](https://github.com/getjerry/serverless-next.js/commit/0b65210a77506f339e9cbe6ebeef7017acb82747))
+
+## [2.1.2-alpha.5](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.0.5-alpha.6...@getjerry/serverless-next@2.1.2-alpha.5) (2022-11-23)
+
+### Bug Fixes
+
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+
+### Reverts
+
+- Revert "refactor: add murmurhash" ([6db95b4](https://github.com/getjerry/serverless-next.js/commit/6db95b48ffefa6670d706140774c8a1c87b84bf3))
+
 ## [2.1.2-alpha.4](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.1.2-alpha.3...@getjerry/serverless-next@2.1.2-alpha.4) (2022-10-19)
 
 **Note:** Version bump only for package @getjerry/serverless-next
