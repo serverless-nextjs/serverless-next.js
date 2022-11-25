@@ -611,8 +611,6 @@ const handleOriginRequest = async ({
     );
   }
 
-  debug(`[origin-request] 1`);
-
   // Handle any trailing slash redirects
   let newUri = request.uri;
   if (isDataReq || isPublicFile) {
@@ -637,14 +635,12 @@ const handleOriginRequest = async ({
   }
 
   if (newUri !== request.uri) {
-    debug(`[origin-request] 2, ${newUri};; ${request.uri}`);
     return createRedirectResponse(newUri, request.querystring, 308);
   }
 
   // Handle other custom redirects on the original URI
   const customRedirect = getRedirectPath(request.uri, routesManifest);
   if (customRedirect) {
-    debug(`[origin-request] 3 ${customRedirect}`);
     return createRedirectResponse(
       customRedirect.redirectPath,
       request.querystring,
@@ -674,7 +670,6 @@ const handleOriginRequest = async ({
           }
         );
         await createExternalRewriteResponse(customRewrite, req, res);
-        debug(`[origin-request] 4;; ${responsePromise}`);
         return await responsePromise;
       }
 
@@ -728,7 +723,6 @@ const handleOriginRequest = async ({
       request.uri = `${pageName}.html`;
       checkAndRewriteUrl(manifest, request);
       checkABTestUrl(manifest, request);
-      debug(`[origin-request] is html of fallback, uri: ${request.uri}`);
     } else if (isDataReq) {
       // We need to check whether data request is unmatched i.e routed to 404.html or _error.js
       const normalisedDataRequestUri = normaliseDataRequestUri(uri, manifest);
@@ -759,7 +753,6 @@ const handleOriginRequest = async ({
     }
 
     addS3HostHeader(request, normalisedS3DomainName);
-    debug(`[origin-request] 5, ${request.uri}, ${JSON.stringify(request)}`);
     return request;
   }
 
@@ -774,11 +767,7 @@ const handleOriginRequest = async ({
     request.uri = pagePath.replace("pages", "");
     addS3HostHeader(request, normalisedS3DomainName);
 
-    debug(
-      `[origin-request] [ssr] html response: ${request.uri} ${JSON.stringify(
-        request
-      )}`
-    );
+    debug(`[origin-request] [ssr] html response: ${JSON.stringify(request)}`);
 
     return request;
   }
