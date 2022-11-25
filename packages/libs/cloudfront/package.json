@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/cloudfront",
-  "version": "2.1.4",
+  "version": "2.3.0",
   "description": "Handles CloudFront invalidation",
   "publishConfig": {
     "access": "public"
