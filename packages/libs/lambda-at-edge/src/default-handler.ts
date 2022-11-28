@@ -241,9 +241,12 @@ const isAbTestPath = (
     return acc;
   }, [] as string[]);
 
-  return (
-    abTestPaths && abTestPaths.some((_) => uri.split(".html")[0].endsWith(_))
-  );
+  const ret =
+    abTestPaths && abTestPaths.some((_) => uri.split(".html")[0].endsWith(_));
+
+  debug(`[isAbTestPath]: ${uri}; ${ret}; ${JSON.stringify(manifest)}`);
+
+  return ret;
 };
 
 /**
@@ -435,9 +438,9 @@ export const handler = async (
     );
   }
 
+  const requestUri = event.Records[0].cf.request.uri;
   // Permanent Static Pages
   if (manifest.permanentStaticPages) {
-    const requestUri = event.Records[0].cf.request.uri;
     const uri = requestUri === "/" ? "/index.html" : `${requestUri}.html`;
     if (manifest.permanentStaticPages.includes(uri)) {
       debug(
@@ -478,7 +481,13 @@ export const handler = async (
       s3Service,
       cloudfrontService
     );
-    await handler.run(event, context, manifest);
+    const isAbTest = isAbTestPath(manifest, requestUri);
+    await handler.run(
+      event,
+      context,
+      manifest,
+      isAbTest ? "public, max-age=0, s-maxage=0, must-revalidate" : undefined
+    );
     return;
   }
 
