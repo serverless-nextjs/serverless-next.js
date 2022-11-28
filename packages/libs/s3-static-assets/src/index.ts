@@ -6,7 +6,12 @@ import filterOutDirectories from "./lib/filterOutDirectories";
 import {
   IMMUTABLE_CACHE_CONTROL_HEADER,
   SERVER_NO_CACHE_CACHE_CONTROL_HEADER,
-  SERVER_CACHE_CONTROL_HEADER
+  SERVER_CACHE_CONTROL_HEADER,
+  SERVER_CACHE_CONTROL_HEADER1,
+  SERVER_CACHE_CONTROL_HEADER2,
+  SERVER_CACHE_CONTROL_HEADER3,
+  SERVER_CACHE_CONTROL_HEADER4,
+  SERVER_CACHE_CONTROL_HEADER5
 } from "./lib/constants";
 import S3ClientFactory, { Credentials } from "./lib/s3";
 import pathToPosix from "./lib/pathToPosix";
@@ -137,7 +142,7 @@ const uploadStaticAssetsFromBuild = async (
           filePath: fileItem.path,
           cacheControl: isAbTestPath
             ? SERVER_NO_CACHE_CACHE_CONTROL_HEADER
-            : SERVER_CACHE_CONTROL_HEADER
+            : SERVER_CACHE_CONTROL_HEADER1
         });
       }
     });
@@ -248,7 +253,7 @@ const uploadStaticAssets = async (
           )
         ),
         filePath: pageFilePath,
-        cacheControl: SERVER_CACHE_CONTROL_HEADER
+        cacheControl: SERVER_CACHE_CONTROL_HEADER2
       });
     });
 
@@ -273,7 +278,7 @@ const uploadStaticAssets = async (
         withBasePath(prerenderManifest.routes[key].dataRoute.slice(1))
       ),
       filePath: pageFilePath,
-      cacheControl: SERVER_CACHE_CONTROL_HEADER
+      cacheControl: SERVER_CACHE_CONTROL_HEADER3
     });
   });
 
@@ -293,7 +298,7 @@ const uploadStaticAssets = async (
         withBasePath(path.posix.join("static-pages", relativePageFilePath))
       ),
       filePath: pageFilePath,
-      cacheControl: SERVER_CACHE_CONTROL_HEADER
+      cacheControl: SERVER_CACHE_CONTROL_HEADER4
     });
   });
 
@@ -313,7 +318,7 @@ const uploadStaticAssets = async (
           withBasePath(path.posix.join("static-pages", fallback))
         ),
         filePath: pageFilePath,
-        cacheControl: SERVER_CACHE_CONTROL_HEADER
+        cacheControl: SERVER_CACHE_CONTROL_HEADER5
       });
     });
 
