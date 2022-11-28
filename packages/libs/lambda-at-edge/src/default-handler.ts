@@ -1107,7 +1107,7 @@ const handleOriginResponse = async ({
           .replace(".json", ".html")}`,
         Body: html,
         ContentType: "text/html",
-        CacheControl: "public, max-age=0, s-maxage=2678401, must-revalidate"
+        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
 
       debug(region);
@@ -1178,7 +1178,7 @@ const handleOriginResponse = async ({
               CacheControl ??
               (hasFallback.fallback // Use cache-control from S3 response if possible, otherwise use defaults
                 ? "public, max-age=0, s-maxage=0, must-revalidate" // fallback should never be cached
-                : "public, max-age=0, s-maxage=2678411, must-revalidate")
+                : "public, max-age=0, s-maxage=2678400, must-revalidate")
           }
         ]
       },
@@ -1343,7 +1343,7 @@ export const generatePermanentPageResponse = async (
       "cache-control": [
         {
           key: "Cache-Control",
-          value: "public, max-age=0, s-maxage=2678402, must-revalidate"
+          value: "public, max-age=0, s-maxage=2678400, must-revalidate"
         }
       ]
     },
