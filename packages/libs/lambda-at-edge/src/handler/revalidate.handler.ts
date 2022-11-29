@@ -24,7 +24,8 @@ export class RevalidateHandler {
   public async run(
     event: RevalidationEvent,
     context: Context,
-    manifest: OriginRequestDefaultHandlerManifest
+    manifest: OriginRequestDefaultHandlerManifest,
+    cacheControl?: string
   ): Promise<void> {
     const resource = this.resourceService.get(event);
 
@@ -78,7 +79,8 @@ export class RevalidateHandler {
         this.s3Service.putObject(
           resource.getHtmlKey(),
           candidatePage.getHtmlBody(),
-          "text/html"
+          "text/html",
+          cacheControl
         ),
         this.s3Service.putObject(
           resource.getJsonKey(),

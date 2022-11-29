@@ -54,7 +54,8 @@ export class S3Service {
   public async putObject(
     key: string,
     body: string,
-    contentType: string
+    contentType: string,
+    cacheControl?: string
   ): Promise<void> {
     if (!this.options.bucketName) {
       throw new Error("Bucket name not configured");
@@ -68,7 +69,8 @@ export class S3Service {
         Body: body,
         Bucket: this.options.bucketName,
         ContentType: contentType,
-        CacheControl: "public, max-age=0, s-maxage=2678400, must-revalidate"
+        CacheControl:
+          cacheControl ?? "public, max-age=0, s-maxage=2678400, must-revalidate"
       })
     );
   }
