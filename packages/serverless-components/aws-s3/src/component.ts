@@ -65,12 +65,6 @@ class AwsS3 extends Component {
       await configureBucketTags(clients.regular, config.name, config.tags);
     }
 
-    // todo we probably don't need this logic now that we auto generate names
-    const nameChanged = this.state.name && this.state.name !== config.name;
-    if (nameChanged) {
-      await this.remove();
-    }
-
     this.state.name = config.name;
     this.state.region = config.region;
     this.state.accelerated = config.accelerated;
