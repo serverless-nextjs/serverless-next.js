@@ -129,4 +129,9 @@ export interface Props extends StackProps {
    * Override cache policy used for Lambda
    */
   nextLambdaCachePolicy?: CachePolicy;
+
+  /**
+   * Set a specific name for the image origin request policy
+   */
+  imageOriginRequestPolicyName?: string;
 }
