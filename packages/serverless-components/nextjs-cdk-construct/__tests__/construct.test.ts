@@ -375,4 +375,22 @@ describe("CDK Construct", () => {
       }
     );
   });
+
+  it("generates an origin request policy name if specified", () => {
+    const stack = new Stack();
+    new NextJSLambdaEdge(stack, "Stack", {
+      serverlessBuildOutDir: path.join(__dirname, "fixtures/app"),
+      imageOriginRequestPolicyName: "testRequestPolicy"
+    });
+
+    const synthesizedStack = SynthUtils.toCloudFormation(stack);
+    expect(synthesizedStack).toHaveResourceLike(
+      "AWS::CloudFront::OriginRequestPolicy",
+      {
+        OriginRequestPolicyConfig: {
+          Name: "testRequestPolicy"
+        }
+      }
+    );
+  });
 });
