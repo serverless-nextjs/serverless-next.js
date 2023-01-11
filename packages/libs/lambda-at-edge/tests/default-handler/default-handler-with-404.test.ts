@@ -19,6 +19,14 @@ jest.mock(
 );
 
 jest.mock(
+  "../../src/images-manifest.json",
+  () => require("./images-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
+jest.mock(
   "../../src/routes-manifest.json",
   () => require("./default-routes-manifest.json"),
   {

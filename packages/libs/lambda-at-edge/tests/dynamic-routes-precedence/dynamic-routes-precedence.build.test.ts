@@ -20,8 +20,8 @@ describe("Dynamic Routes Precedence", () => {
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
   beforeEach(async () => {
-    const mockExeca = execa as jest.Mock;
-    mockExeca.mockResolvedValueOnce();
+    const mockExeca = execa as unknown as jest.Mock;
+    mockExeca.mockResolvedValueOnce({});
     fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
     });

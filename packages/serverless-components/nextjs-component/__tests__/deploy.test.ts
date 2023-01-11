@@ -12,23 +12,27 @@ import {
 } from "../src/constants";
 import { cleanupFixtureDirectory } from "../src/lib/test-utils";
 import { mockUpload } from "aws-sdk";
+import { DeploymentResult } from "../dist/component";
 
 describe("deploy tests", () => {
-  let tmpCwd;
-  let componentOutputs;
-  let consoleWarnSpy;
+  let tmpCwd: string;
+  let componentOutputs: DeploymentResult;
+  let consoleWarnSpy: jest.Mock;
+  let fseRemoveSpy: jest.SpyInstance;
 
   const fixturePath = path.join(__dirname, "./fixtures/simple-app");
 
   beforeEach(async () => {
     const realFseRemove = fse.remove.bind({});
-    jest.spyOn(fse, "remove").mockImplementation((filePath) => {
+    fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation((filePath) => {
       // don't delete mocked .next/ files as they're needed for the tests and committed to source control
       if (!filePath.includes(".next" + path.sep)) {
         return realFseRemove(filePath);
       }
     });
-    consoleWarnSpy = jest.spyOn(console, "warn").mockReturnValue();
+    consoleWarnSpy = jest
+      .spyOn(console, "warn")
+      .mockReturnValue() as unknown as jest.Mock;
 
     tmpCwd = process.cwd();
     process.chdir(fixturePath);
@@ -37,16 +41,13 @@ describe("deploy tests", () => {
       name: "bucket-xyz"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn:
-        "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
+      arn: "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
     });
     mockLambdaPublish.mockResolvedValue({
       version: "v1"
@@ -71,7 +72,7 @@ describe("deploy tests", () => {
 
   afterEach(() => {
     consoleWarnSpy.mockRestore();
-    fse.remove.mockRestore();
+    fseRemoveSpy.mockRestore();
     process.chdir(tmpCwd);
   });
 

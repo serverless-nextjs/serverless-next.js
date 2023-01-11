@@ -17,8 +17,8 @@ describe("Builder Tests (no API routes)", () => {
   const outputDir = join(fixturePath, ".test_sls_next_output");
 
   beforeEach(async () => {
-    const mockExeca = execa as jest.Mock;
-    mockExeca.mockResolvedValueOnce();
+    const mockExeca = execa as unknown as jest.Mock;
+    mockExeca.mockResolvedValueOnce({});
 
     fseRemoveSpy = jest.spyOn(fse, "remove").mockImplementation(() => {
       return;
@@ -160,6 +160,7 @@ describe("Builder Tests (no API routes)", () => {
       );
 
       expect(files).toEqual([
+        "images-manifest.json",
         "index.js",
         "manifest.json",
         "pages",

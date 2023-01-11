@@ -36,6 +36,14 @@ jest.mock(
 );
 
 jest.mock(
+  "../../src/images-manifest.json",
+  () => require("./images-manifest.json"),
+  {
+    virtual: true
+  }
+);
+
+jest.mock(
   "../../src/routes-manifest.json",
   () => require("./default-routes-manifest.json"),
   {
@@ -83,8 +91,7 @@ describe("Lambda@Edge origin response", () => {
       expect(s3Client.send).toHaveBeenCalledWith({
         Command: "GetObjectCommand",
         Bucket: "my-bucket.s3.amazonaws.com",
-        Key:
-          "static-pages/build-id/tests/prerender-manifest-fallback/[fallback].html"
+        Key: "static-pages/build-id/tests/prerender-manifest-fallback/[fallback].html"
       });
 
       expect(response).toEqual({

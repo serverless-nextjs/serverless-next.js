@@ -1094,7 +1094,7 @@ const handleOriginResponse = async ({
       isSSG &&
       // should redirect, json data no need to persist,
       // and more IMPORTANT, 'html' will be a json string instead of html string in this case
-      !renderOpts?.pageData?.pageProps.__N_REDIRECT;
+      !renderOpts?.pageData?.pageProps?.__N_REDIRECT;
 
     if (shouldPersist) {
       const s3JsonParams = {

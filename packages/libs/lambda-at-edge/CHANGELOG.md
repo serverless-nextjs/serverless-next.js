@@ -3,6 +3,24 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.0...@getjerry/lambda-at-edge@1.20.0-alpha.1) (2023-01-10)
+
+### Bug Fixes
+
+- compare all props ([3e99789](https://github.com/getjerry/serverless-next.js/commit/3e99789d4da92a133bf684b8b47410712ffbe8ef))
+- compare all props ([6c86d0b](https://github.com/getjerry/serverless-next.js/commit/6c86d0b184ef7d816b1875c48a4ea09795c959a2))
+
+# [1.20.0-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.20.0-alpha.0) (2023-01-10)
+
+### Bug Fixes
+
+- compare all props ([9f6c9eb](https://github.com/getjerry/serverless-next.js/commit/9f6c9eb8ffe690fe7f1c5fcc8cf2b65831dae065))
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+
+### Features
+
+- Modify SN to support A/B Test ([#51](https://github.com/getjerry/serverless-next.js/issues/51)) ([a801469](https://github.com/getjerry/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+
 # [1.14.0-alpha.2](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.14.0-alpha.1...@getjerry/lambda-at-edge@1.14.0-alpha.2) (2022-11-24)
 
 **Note:** Version bump only for package @getjerry/lambda-at-edge

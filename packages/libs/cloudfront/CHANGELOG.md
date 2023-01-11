@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.7.0-alpha.0](https://github.com/serverless-nextjs/serverless-next.js/compare/@getjerry/cloudfront@2.0.0...@getjerry/cloudfront@2.7.0-alpha.0) (2023-01-10)
+
+### Features
+
+- Modify SN to support A/B Test ([#51](https://github.com/serverless-nextjs/serverless-next.js/issues/51)) ([a801469](https://github.com/serverless-nextjs/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+
 ## [2.0.4-alpha.1](https://github.com/serverless-nextjs/serverless-next.js/compare/@getjerry/cloudfront@2.0.0...@getjerry/cloudfront@2.0.4-alpha.1) (2022-11-23)
 
 **Note:** Version bump only for package @getjerry/cloudfront

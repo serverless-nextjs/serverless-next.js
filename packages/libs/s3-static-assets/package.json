@@ -1,6 +1,6 @@
 {
   "name": "@getjerry/s3-static-assets",
-  "version": "1.7.1",
+  "version": "1.8.0-alpha.0",
   "description": "Handles upload to S3 of next.js static assets",
   "publishConfig": {
     "access": "public"

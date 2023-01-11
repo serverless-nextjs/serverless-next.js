@@ -215,6 +215,7 @@ describe("Builder Tests", () => {
         );
 
         expect(files).toEqual([
+          "images-manifest.json",
           "index.js",
           "manifest.json",
           "pages",
@@ -482,6 +483,7 @@ describe("Builder Tests", () => {
       );
 
       expect(defaultFiles).toEqual([
+        "images-manifest.json",
         "index.js",
         "manifest.json",
         "pages",

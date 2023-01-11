@@ -13,6 +13,14 @@ jest.mock(
     virtual: true
   }
 );
+
+jest.mock(
+  "../../src/images-manifest.json",
+  () => require("./images-manifest.json"),
+  {
+    virtual: true
+  }
+);
 jest.mock("@aws-sdk/client-cloudfront/CloudFrontClient", () =>
   require("../mocks/cloudfront/aws-sdk-cloudfront-client.mock")
 );

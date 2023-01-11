@@ -22,13 +22,15 @@ describe("Cache invalidation tests", () => {
   it("passes credentials to CloudFront client", async () => {
     await invalidate();
 
-    expect(AWS.CloudFront).toBeCalledWith({
-      credentials: {
-        accessKeyId: "fake-access-key",
-        secretAccessKey: "fake-secret-key",
-        sessionToken: "fake-session-token"
-      }
-    });
+    expect(AWS.CloudFront).toBeCalledWith(
+      expect.objectContaining({
+        credentials: {
+          accessKeyId: "fake-access-key",
+          secretAccessKey: "fake-secret-key",
+          sessionToken: "fake-session-token"
+        }
+      })
+    );
   });
 
   it("invalidates CloudFront distribution", async () => {
