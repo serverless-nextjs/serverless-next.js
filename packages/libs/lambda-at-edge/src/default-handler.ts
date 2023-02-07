@@ -76,6 +76,7 @@ import {
   sentry_flush_timeout
 } from "./lib/sentry";
 import { renderPageToHtml } from "./services/utils/render.util";
+import { isEmpty } from "lodash";
 
 process.env.PRERENDER = "true";
 process.env.DEBUGMODE = Manifest.enableDebugMode;
@@ -972,7 +973,7 @@ const handleOriginResponse = async ({
     );
 
     // Check if it is a `not Found` response. Return 404 in that case.
-    if (isNotFoundPage(manifest, html)) {
+    if (isNotFoundPage(manifest, html, renderOpts)) {
       debug(`[blocking-fallback] 'not found' response received. Sending 404.`);
       return createNotFoundResponse(
         response,
@@ -995,7 +996,7 @@ const handleOriginResponse = async ({
 
       const location = redirectResp?.headers?.location[0].value || "";
 
-      // Hack around 'read only' header changed error from aws
+      // Hack around 'read only' header changed error from aws.
       response.headers["location"] = [
         {
           key: "Location",
@@ -1094,7 +1095,9 @@ const handleOriginResponse = async ({
       isSSG &&
       // should redirect, json data no need to persist,
       // and more IMPORTANT, 'html' will be a json string instead of html string in this case
-      !renderOpts?.pageData?.pageProps?.__N_REDIRECT;
+      !renderOpts?.pageData?.pageProps?.__N_REDIRECT &&
+      // empty html should not be persist
+      !isEmpty(html);
 
     if (shouldPersist) {
       const s3JsonParams = {

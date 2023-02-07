@@ -40,7 +40,7 @@ export const renderPageToHtml = async (
         try {
           html = await resultsToString([htmlResult]); // Next >= 11.1.1
         } catch (e) {
-          console.log("html could not be rendered using resultsToString().");
+          console.log("html could not be rendered using resultsToString()");
         }
       }
     }
@@ -50,7 +50,9 @@ export const renderPageToHtml = async (
     console.log(
       "html is empty, falling back to using page's rendering function for html"
     );
-    html = (await page.renderReqToHTML(req, res)) as unknown as string;
+    html = renderOpts.isNotFound
+      ? ""
+      : ((await page.renderReqToHTML(req, res)) as unknown as string);
   }
 
   return { html, renderOpts };

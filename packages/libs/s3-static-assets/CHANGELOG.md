@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.8.0-alpha.1](https://github.com/getjerry/serverless-next.js/compare/@getjerry/s3-static-assets@1.4.13...@getjerry/s3-static-assets@1.8.0-alpha.1) (2023-02-06)
+
+### Bug Fixes
+
+- modify content equals ([#54](https://github.com/getjerry/serverless-next.js/issues/54)) ([73c1a4a](https://github.com/getjerry/serverless-next.js/commit/73c1a4a92b1f3ed8b221739294bcf5827b48ac1c))
+
+### Features
+
+- Modify SN to support A/B Test ([#51](https://github.com/getjerry/serverless-next.js/issues/51)) ([a801469](https://github.com/getjerry/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+
 # [1.8.0-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/s3-static-assets@1.4.13...@getjerry/s3-static-assets@1.8.0-alpha.0) (2023-01-10)
 
 ### Features
