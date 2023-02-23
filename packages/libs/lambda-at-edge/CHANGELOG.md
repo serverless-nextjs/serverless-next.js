@@ -3,6 +3,19 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.11](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.20.0-alpha.11) (2023-02-23)
+
+### Bug Fixes
+
+- replace slash in request param rewrites ([a958cc5](https://github.com/getjerry/serverless-next.js/commit/a958cc57b3ac8d2eb586456b34aa95b0970d7324))
+- **default-handler:** add logic to handle not found from getStaticProps ([#55](https://github.com/getjerry/serverless-next.js/issues/55)) ([ba08d6e](https://github.com/getjerry/serverless-next.js/commit/ba08d6ef85b4b1f20674f815a6e6694e8bdf1bde))
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+- modify content equals ([#54](https://github.com/getjerry/serverless-next.js/issues/54)) ([73c1a4a](https://github.com/getjerry/serverless-next.js/commit/73c1a4a92b1f3ed8b221739294bcf5827b48ac1c))
+
+### Features
+
+- Modify SN to support A/B Test ([#51](https://github.com/getjerry/serverless-next.js/issues/51)) ([a801469](https://github.com/getjerry/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+
 # [1.20.0-alpha.10](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.9...@getjerry/lambda-at-edge@1.20.0-alpha.10) (2023-02-06)
 
 ### Bug Fixes
