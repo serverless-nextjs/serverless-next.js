@@ -78,7 +78,10 @@ const rewriteUrlWithParams = (
   let result = rewriteUrl;
 
   _.forOwn(parse(querystring), function (value: string, key: string) {
-    result = result.replace(`[${key}]`, `${value}`);
+    // '/' in param will be inject to url then generate invalid path,
+    // like /some-path/should-be/-one-path
+    const valueReplaceSlash = _.replace(value, /\//g, "%2F");
+    result = _.replace(result, `[${key}]`, `${valueReplaceSlash}`);
   });
 
   result = result.replace(
