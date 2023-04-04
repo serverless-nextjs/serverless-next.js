@@ -3,6 +3,62 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.18](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.17...@getjerry/lambda-at-edge@1.20.0-alpha.18) (2023-03-22)
+
+### Bug Fixes
+
+- blocking fallback for static route ([870ed58](https://github.com/getjerry/serverless-next.js/commit/870ed58fd269d440a47406f146fb576d2d14fef4))
+
+# [1.20.0-alpha.17](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.16...@getjerry/lambda-at-edge@1.20.0-alpha.17) (2023-03-22)
+
+### Bug Fixes
+
+- blocking fallback for static route ([8f711da](https://github.com/getjerry/serverless-next.js/commit/8f711da81cced8ad73baea8c45fcaa2b2841d1b6))
+
+# [1.20.0-alpha.16](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.15...@getjerry/lambda-at-edge@1.20.0-alpha.16) (2023-03-21)
+
+### Bug Fixes
+
+- diff for publish ([db8f934](https://github.com/getjerry/serverless-next.js/commit/db8f93491dbf5396dc415a96f3e73f6cdb80819a))
+
+# [1.20.0-alpha.15](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.14...@getjerry/lambda-at-edge@1.20.0-alpha.15) (2023-03-21)
+
+### Bug Fixes
+
+- redirect keeps query string ([ff05c2c](https://github.com/getjerry/serverless-next.js/commit/ff05c2cd48cbe01b56e3a0cb8ce5ae70298c1931))
+- test ([9e19cc4](https://github.com/getjerry/serverless-next.js/commit/9e19cc4519cf220d6426cc869ff6d23fae18b1bd))
+
+# [1.20.0-alpha.14](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.13...@getjerry/lambda-at-edge@1.20.0-alpha.14) (2023-03-10)
+
+### Bug Fixes
+
+- support has field ([2f47367](https://github.com/getjerry/serverless-next.js/commit/2f47367386769767b74d23b8f76c6e3647ca33b2))
+
+# [1.20.0-alpha.13](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.12...@getjerry/lambda-at-edge@1.20.0-alpha.13) (2023-03-10)
+
+### Bug Fixes
+
+- support has field ([68c6afc](https://github.com/getjerry/serverless-next.js/commit/68c6afcab53344cd82b58c11596355233197122a))
+
+# [1.20.0-alpha.12](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.11...@getjerry/lambda-at-edge@1.20.0-alpha.12) (2023-03-10)
+
+### Bug Fixes
+
+- support empty param. ([b9f036e](https://github.com/getjerry/serverless-next.js/commit/b9f036e6e738c8605eea9f7b098a06804baaea9b))
+
+# [1.20.0-alpha.11](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.20.0-alpha.11) (2023-02-23)
+
+### Bug Fixes
+
+- replace slash in request param rewrites ([a958cc5](https://github.com/getjerry/serverless-next.js/commit/a958cc57b3ac8d2eb586456b34aa95b0970d7324))
+- **default-handler:** add logic to handle not found from getStaticProps ([#55](https://github.com/getjerry/serverless-next.js/issues/55)) ([ba08d6e](https://github.com/getjerry/serverless-next.js/commit/ba08d6ef85b4b1f20674f815a6e6694e8bdf1bde))
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+- modify content equals ([#54](https://github.com/getjerry/serverless-next.js/issues/54)) ([73c1a4a](https://github.com/getjerry/serverless-next.js/commit/73c1a4a92b1f3ed8b221739294bcf5827b48ac1c))
+
+### Features
+
+- Modify SN to support A/B Test ([#51](https://github.com/getjerry/serverless-next.js/issues/51)) ([a801469](https://github.com/getjerry/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+
 # [1.20.0-alpha.10](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.9...@getjerry/lambda-at-edge@1.20.0-alpha.10) (2023-02-06)
 
 ### Bug Fixes

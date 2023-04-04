@@ -53,11 +53,11 @@ const isParamsMatch = (
 ): boolean => {
   const params = _.keys(parse(querystring));
 
-  if (_.isEmpty(params)) return false;
-
   if (typeof originUrlParams === "string") {
     originUrlParams = [originUrlParams];
   }
+
+  if (!_.isEmpty(originUrlParams) && _.isEmpty(params)) return false;
 
   const result = _.isEqual(params.sort(), originUrlParams.sort());
 
@@ -78,7 +78,10 @@ const rewriteUrlWithParams = (
   let result = rewriteUrl;
 
   _.forOwn(parse(querystring), function (value: string, key: string) {
-    result = result.replace(`[${key}]`, `${value}`);
+    // '/' in param will be inject to url then generate invalid path,
+    // like /some-path/should-be/-one-path
+    const valueReplaceSlash = _.replace(value, /\//g, "%2F");
+    result = _.replace(result, `[${key}]`, `${valueReplaceSlash}`);
   });
 
   result = result.replace(

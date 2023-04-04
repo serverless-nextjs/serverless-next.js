@@ -152,10 +152,22 @@ export type RedirectData = {
   regex: string;
 };
 
+export type RouteHas =
+  | {
+      type: "header" | "query" | "cookie";
+      key: string;
+      value?: string;
+    }
+  | {
+      type: "host";
+      key?: undefined;
+      value: string;
+    };
+
 export type RewriteData = {
   source: string;
   destination: string;
-  regex: string;
+  has?: RouteHas[];
 };
 
 export type Header = {

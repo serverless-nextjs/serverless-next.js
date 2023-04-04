@@ -12,25 +12,21 @@ describe("Rewriter Tests", () => {
         rewrites: [
           {
             source: "/old-blog/:slug",
-            destination: "/news/:slug",
-            regex: "^/old-blog(?:/([^/]+?))$"
+            destination: "/news/:slug"
           },
-          { source: "/a", destination: "/b", regex: "^/a$" },
-          { source: "/c", destination: "/d", regex: "^/c$" },
+          { source: "/a", destination: "/b" },
+          { source: "/c", destination: "/d" },
           {
             source: "/old-users/:id(\\d{1,})",
-            destination: "/users/:id",
-            regex: "^/old-users(?:/(\\d{1,}))$"
+            destination: "/users/:id"
           },
           {
             source: "/external",
-            destination: "https://example.com",
-            regex: "^/external$"
+            destination: "https://example.com"
           },
           {
             source: "/invalid-destination",
-            destination: "ftp://example.com",
-            regex: "^/invalid-destination$"
+            destination: "ftp://example.com"
           }
         ],
         redirects: [],
@@ -54,7 +50,7 @@ describe("Rewriter Tests", () => {
     `(
       "rewrites path $path to $expectedRewrite",
       ({ path, expectedRewrite }) => {
-        const rewrite = getRewritePath(path, routesManifest, router, path);
+        const rewrite = getRewritePath(path, {}, routesManifest, router, path);
 
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);
@@ -76,13 +72,11 @@ describe("Rewriter Tests", () => {
           rewrites: [
             {
               source: "/:path*",
-              destination: "/:path*",
-              regex: "^(?:/((?:[^/]+?)(?:/(?:[^/]+?))*))?$"
+              destination: "/:path*"
             },
             {
               source: "/:path*",
-              destination: "/another/:path*",
-              regex: "^/path(?:/([^/]+?))$"
+              destination: "/another/:path*"
             }
           ],
           redirects: [],
@@ -99,7 +93,7 @@ describe("Rewriter Tests", () => {
           }
         };
 
-        const rewrite = getRewritePath(path, routesManifest, router, path);
+        const rewrite = getRewritePath(path, {}, routesManifest, router, path);
 
         if (expectedRewrite) {
           expect(rewrite).toEqual(expectedRewrite);

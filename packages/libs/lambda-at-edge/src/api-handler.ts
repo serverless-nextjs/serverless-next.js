@@ -22,6 +22,7 @@ import {
 import { addHeadersToResponse } from "./headers/addHeaders";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
 import lambdaAtEdgeCompat from "@getjerry/next-aws-cloudfront";
+import queryString from "query-string";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -105,6 +106,7 @@ export const handler = async (
   if (!isNonDynamicRoute) {
     const customRewrite = getRewritePath(
       request.uri,
+      queryString.parse(request.querystring),
       routesManifest,
       router(manifest),
       uri

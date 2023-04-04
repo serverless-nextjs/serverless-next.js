@@ -8,6 +8,8 @@ import Manifest from "./manifest.json";
 import RoutesManifestJson from "./routes-manifest.json";
 import lambdaAtEdgeCompat from "@getjerry/next-aws-cloudfront";
 
+import queryString from "query-string";
+
 import {
   CloudFrontOrigin,
   CloudFrontRequest,
@@ -125,21 +127,28 @@ const addS3HostHeader = (
 const isDataRequest = (uri: string): boolean => uri.startsWith("/_next/data");
 
 const normaliseUri = (uri: string, isS3Response = false): string => {
+  let normalizedUri = uri;
   // Remove first characters when
   // 1. not s3 response
   // 2. has basepath property
   // 3. uri starts with basepath
   if (!isS3Response && basePath && uri.startsWith(basePath)) {
-    uri = uri.slice(basePath.length);
+    normalizedUri = uri.slice(basePath.length);
   }
 
+  // html file fetched from S3 will have a .html suffix,
+  //  this will match nothing in manifest
+  normalizedUri = normalizedUri.replace(/.html$/, "");
+  // Normalise to "/" for index data request
+  normalizedUri = ["/index", ""].includes(normalizedUri) ? "/" : normalizedUri;
+
   // Remove trailing slash for all paths
-  if (uri.endsWith("/")) {
-    uri = uri.slice(0, -1);
+  if (normalizedUri.endsWith("/")) {
+    normalizedUri = normalizedUri.slice(0, -1);
   }
 
   // Empty path should be normalised to "/" as there is no Next.js route for ""
-  return uri === "" ? "/" : uri;
+  return normalizedUri === "" ? "/" : normalizedUri;
 };
 
 const normaliseS3OriginDomain = (s3Origin: CloudFrontS3Origin): string => {
@@ -667,6 +676,7 @@ const handleOriginRequest = async ({
   if (!isNonDynamicRoute && !isDataReq) {
     const customRewrite = getRewritePath(
       request.uri,
+      queryString.parse(request.querystring),
       routesManifest,
       router(manifest),
       uri
@@ -874,18 +884,21 @@ const handleOriginResponse = async ({
   debug(`[origin-request]: ${JSON.stringify(request)}`);
 
   const { status } = response;
+  const isRequestForHtml = request.uri.endsWith(".html");
   const uri = normaliseUri(request.uri, true);
+  const isNonDynamic = isNonDynamicResource(uri, manifest);
   const hasFallback = hasFallbackForUri(uri, prerenderManifest, manifest);
   const isHTMLPage = prerenderManifest.routes[decodeURI(uri)];
   const isPublicFile = manifest.publicFiles[decodeURI(uri)];
   const isEnforceRevalidationRequest = request.querystring === "enforceISR";
   // if isEnforceRevalidationRequest is true, revalidation will start anyway.
 
-  // For PUT or DELETE just return the response as these should be unsupported S3 methods
+  // 0. For PUT or DELETE just return the response as these should be unsupported S3 methods
   if (request.method === "PUT" || request.method === "DELETE") {
     return response;
   }
 
+  // 1. Got html response from S3, response and invoke revalidation
   if (status !== "403") {
     debug(`[origin-response] bypass: ${request.uri}`);
 
@@ -921,6 +934,7 @@ const handleOriginResponse = async ({
     return response;
   }
 
+  // 2.0 No html response from S3, check fallback configuration
   const { domainName, region } = request.origin!.s3!;
   const bucketName = domainName.replace(`.s3.${region}.amazonaws.com`, "");
   const pagePath = router(manifest)(uri);
@@ -931,25 +945,36 @@ const handleOriginResponse = async ({
     retryStrategy: await buildS3RetryStrategy()
   });
 
-  /**
-   *  Blocking fallback flow
-   */
   debug(`[origin-response] has fallback: ${JSON.stringify(hasFallback)}`);
   debug(`[origin-response] pagePath: ${pagePath}`);
   debug(`[origin-response] uri: ${uri}`);
   debug(`[origin-response] isDataRequest: ${isDataRequest(uri)}`);
 
-  if (
+  // 2.1 blocking flow pages has 'blocking' fallback settings
+  const isBlockingFallBack =
     hasFallback &&
     hasFallback.fallback === null &&
-    uri.endsWith(".html") &&
-    !isDataRequest(uri)
+    isRequestForHtml &&
+    !isDataRequest(uri);
+
+  if (
+    isBlockingFallBack ||
+    // consider a non-dynamic page without pre-generated resource as need blocking fallback.
+    //  they don't have blocking configurations,
+    //  so if it is not pre-generated or be deleted,
+    //  they will never get regenerate again.
+    isNonDynamic
   ) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
+
+    const htmlUri = uri === "/" ? "/index.html" : `${uri}.html`;
     const jsonPath = `${(basePath || "").replace(/^\//, "")}${
       basePath === "" ? "" : "/"
-    }_next/data/${manifest.buildId}${decodeURI(uri).replace(".html", ".json")}`;
+    }_next/data/${manifest.buildId}${decodeURI(htmlUri).replace(
+      ".html",
+      ".json"
+    )}`;
 
     const { req, res } = lambdaAtEdgeCompat(event.Records[0].cf, {
       enableHTTPCompression: manifest.enableHTTPCompression,
@@ -965,7 +990,7 @@ const handleOriginResponse = async ({
     const { renderOpts, html } = renderedRes;
 
     debug(
-      `[blocking-fallback] rendered page, uri: ${uri}, ${
+      `[blocking-fallback] rendered page, uri: ${htmlUri}, ${
         request.uri
       } pagePath: ${pagePath}, opts: ${JSON.stringify(
         renderOpts
@@ -986,11 +1011,13 @@ const handleOriginResponse = async ({
 
     const pageProps = renderOpts?.pageData?.pageProps;
 
-    // Redirect.
     if (pageProps.__N_REDIRECT) {
       const redirectResp = createRedirectResponse(
         pageProps.__N_REDIRECT,
-        request.querystring,
+        // in Next source code,
+        //  page returned redirect will redirect to __N_REDIRECT with out query string
+        // explicit set query string to empty to align with this behavior.
+        "",
         pageProps.__N_REDIRECT_STATUS
       );
 
@@ -1022,10 +1049,10 @@ const handleOriginResponse = async ({
         Bucket: bucketName,
         Key: `${(basePath || "").replace(/^\//, "")}${
           basePath === "" ? "" : "/"
-        }static-pages/${manifest.buildId}${decodeURI(uri)}`,
+        }static-pages/${manifest.buildId}${decodeURI(htmlUri)}`,
         Body: html,
         ContentType: "text/html",
-        CacheControl: isAbTestPath(manifest, uri)
+        CacheControl: isAbTestPath(manifest, htmlUri)
           ? "public, max-age=0, s-maxage=0, must-revalidate"
           : "public, max-age=0, s-maxage=2678400, must-revalidate"
       };
@@ -1066,6 +1093,7 @@ const handleOriginResponse = async ({
     return htmlOut;
   }
 
+  // 2.2 handle data request
   if (isDataRequest(uri) && !pagePath.endsWith(".html")) {
     // eslint-disable-next-line
     const page = require(`./${pagePath}`);
@@ -1143,7 +1171,9 @@ const handleOriginResponse = async ({
     const jsonOut = await responsePromise;
     debug(`[origin-response] responded with json: ${JSON.stringify(jsonOut)}`);
     return jsonOut;
-  } else {
+  }
+  // 2.3 handle non-blocking fallback
+  else {
     if (!hasFallback) {
       debug(`[origin-response] fallback bypass: ${JSON.stringify(response)}`);
       return response;
@@ -1205,6 +1235,16 @@ const isOriginResponse = (
   event: OriginRequestEvent | OriginResponseEvent
 ): event is OriginResponseEvent => {
   return event.Records[0].cf.config.eventType === "origin-response";
+};
+
+const isNonDynamicResource = (
+  uri: string,
+  manifest: OriginRequestDefaultHandlerManifest
+) => {
+  const {
+    pages: { ssr, html }
+  } = manifest;
+  return ssr.nonDynamic[uri] || html.nonDynamic[uri];
 };
 
 const hasFallbackForUri = (

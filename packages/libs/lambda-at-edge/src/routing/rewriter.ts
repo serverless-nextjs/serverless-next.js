@@ -1,16 +1,21 @@
-import { compileDestination, matchPath } from "./matcher";
+import { compileDestination } from "./matcher";
 import { RewriteData, RoutesManifest } from "../../types";
 import { IncomingMessage, ServerResponse } from "http";
+import { getPathMatch } from "next/dist/shared/lib/router/utils/path-match";
+import { matchHas } from "next/dist/shared/lib/router/utils/prepare-destination";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
 
 /**
  * Get the rewrite of the given path, if it exists. Otherwise return null.
  * @param path
+ * @param queryParams
  * @param routesManifest
  * @param router
  * @param normalisedPath
  */
 export function getRewritePath(
   path: string,
+  queryParams: Params,
   routesManifest: RoutesManifest,
   router: (uri: string) => string | null,
   normalisedPath: string
@@ -18,10 +23,29 @@ export function getRewritePath(
   const rewrites: RewriteData[] = routesManifest.rewrites;
 
   for (const rewrite of rewrites) {
-    const match = matchPath(path, rewrite.source);
+    const matcher = getPathMatch(rewrite.source);
 
-    if (match) {
-      const destination = compileDestination(rewrite.destination, match.params);
+    let params = matcher(path);
+
+    if (rewrite.has && params) {
+      const hasParams = matchHas(
+        {
+          headers: {},
+          cookies: {}
+        } as any,
+        rewrite.has,
+        queryParams
+      );
+
+      if (hasParams) {
+        Object.assign(params, hasParams);
+      } else {
+        params = false;
+      }
+    }
+
+    if (params) {
+      const destination = compileDestination(rewrite.destination, params);
 
       // No-op rewrite support: skip to next rewrite if path does not map to existing non-dynamic and dynamic routes
       if (path === destination) {
