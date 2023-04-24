@@ -3,6 +3,57 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.20.0-alpha.25](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.24...@getjerry/lambda-at-edge@1.20.0-alpha.25) (2023-04-21)
+
+### Features
+
+- force test group ([5b176d7](https://github.com/getjerry/serverless-next.js/commit/5b176d774ac4e7ba5982cfa17bddfa83d4ed7c1a))
+
+# [1.20.0-alpha.24](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.23...@getjerry/lambda-at-edge@1.20.0-alpha.24) (2023-04-21)
+
+### Features
+
+- force test group ([cff9adb](https://github.com/getjerry/serverless-next.js/commit/cff9adbfc8a5a1829d298749d0188cc2e910cdf0))
+- force test group ([55019ae](https://github.com/getjerry/serverless-next.js/commit/55019ae3bfb15e4e83826ac58f2df44a2b16c7a9))
+- force test group ([d6c8c01](https://github.com/getjerry/serverless-next.js/commit/d6c8c0197e94d06996997de53217e802e0f9ee27))
+
+# [1.20.0-alpha.23](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.22...@getjerry/lambda-at-edge@1.20.0-alpha.23) (2023-04-20)
+
+**Note:** Version bump only for package @getjerry/lambda-at-edge
+
+# [1.20.0-alpha.22](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.21...@getjerry/lambda-at-edge@1.20.0-alpha.22) (2023-04-20)
+
+### Features
+
+- force test group ([ea28d6d](https://github.com/getjerry/serverless-next.js/commit/ea28d6d4ad3c95bac07d2b2356524d57953e7b14))
+
+# [1.20.0-alpha.21](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.20...@getjerry/lambda-at-edge@1.20.0-alpha.21) (2023-04-20)
+
+### Features
+
+- force test group ([210ad87](https://github.com/getjerry/serverless-next.js/commit/210ad875c74684769f9606a1b3f238d2e5d241b6))
+- force test group ([d6ab9f3](https://github.com/getjerry/serverless-next.js/commit/d6ab9f36ca9a6e43f0237e4bd7003d9c77f483e9))
+
+# [1.20.0-alpha.20](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.19...@getjerry/lambda-at-edge@1.20.0-alpha.20) (2023-04-20)
+
+### Features
+
+- force test group ([0d772bf](https://github.com/getjerry/serverless-next.js/commit/0d772bf464b860e04d14f69e955913dd7cec995b))
+
+# [1.20.0-alpha.19](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.12.0-alpha.6...@getjerry/lambda-at-edge@1.20.0-alpha.19) (2023-04-20)
+
+### Bug Fixes
+
+- **default-handler:** add logic to handle not found from getStaticProps ([#55](https://github.com/getjerry/serverless-next.js/issues/55)) ([ba08d6e](https://github.com/getjerry/serverless-next.js/commit/ba08d6ef85b4b1f20674f815a6e6694e8bdf1bde))
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+- modify content equals ([#54](https://github.com/getjerry/serverless-next.js/issues/54)) ([73c1a4a](https://github.com/getjerry/serverless-next.js/commit/73c1a4a92b1f3ed8b221739294bcf5827b48ac1c))
+
+### Features
+
+- force test group ([16a57f1](https://github.com/getjerry/serverless-next.js/commit/16a57f1c3d0ddc4e2f29f27489bd254b214f5d16))
+- Modify SN to support A/B Test ([#51](https://github.com/getjerry/serverless-next.js/issues/51)) ([a801469](https://github.com/getjerry/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+- support rewrite has field ([#57](https://github.com/getjerry/serverless-next.js/issues/57)) ([b751580](https://github.com/getjerry/serverless-next.js/commit/b751580ecf92be7825a9e74dce7c92a4c4fa71fd))
+
 # [1.20.0-alpha.18](https://github.com/getjerry/serverless-next.js/compare/@getjerry/lambda-at-edge@1.20.0-alpha.17...@getjerry/lambda-at-edge@1.20.0-alpha.18) (2023-03-22)
 
 ### Bug Fixes

@@ -9,6 +9,8 @@ import { CloudFrontRequest } from "aws-lambda";
 
 // @ts-ignore
 import * as _ from "../lib/lodash";
+import * as querystring from "querystring";
+import { isNil, toNumber } from "lodash";
 
 const SLUG_PARAM_KEY = "slug";
 
@@ -166,6 +168,30 @@ const rewriteUrlWithExperimentGroups = (
   request: CloudFrontRequest,
   originUrl: string
 ) => {
+  // force to one group if query string match
+  const queryParams = querystring.parse(request.querystring);
+  debug(
+    `[rewriteUrlWithExperimentGroups]: query params: ${JSON.stringify(
+      queryParams
+    )}`
+  );
+  const forceGroupIndex = queryParams.forceTestGroup;
+  // force to origin
+  if (forceGroupIndex === "original") {
+    debug(`[rewriteUrlWithExperimentGroups]: force use original url.`);
+    return `${originUrl}.html`;
+  }
+
+  if (!isNil(forceGroupIndex) && experimentGroups[toNumber(forceGroupIndex)]) {
+    debug(
+      `[rewriteUrlWithExperimentGroups]: force serve url: ${
+        experimentGroups[toNumber(forceGroupIndex)].url
+      }`
+    );
+
+    return `${experimentGroups[toNumber(forceGroupIndex)].url}.html`;
+  }
+
   const clientIp = request.clientIp;
 
   // gen hash map: [{url: '/car-insurance/information', ratio: 25}] => [25 zeros]
@@ -205,6 +231,11 @@ export const checkABTestUrl = (
   const requestUri = request.uri.split(".")[0];
 
   for (const abTest of abTests) {
+    debug(
+      `[checkABTestUrl]: requestUri: ${requestUri}, check if in test: ${JSON.stringify(
+        abTest
+      )}`
+    );
     const originUrl = abTest.originUrl;
     const experimentGroups = abTest.experimentGroups;
 
