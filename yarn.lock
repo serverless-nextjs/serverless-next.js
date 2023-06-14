@@ -27,6 +27,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@aws-cdk/asset-awscli-v1@npm:^2.2.177":
+  version: 2.2.190
+  resolution: "@aws-cdk/asset-awscli-v1@npm:2.2.190"
+  checksum: c7449e739c06b6d379c09dc5ea36bc4deccb1b774087b8a414259b994c3b4e949acab96a49c0b16ffe8173796c6cf7b2ff366455c6b2dc7b83a668f9d64408a8
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/asset-kubectl-v20@npm:^2.1.1":
+  version: 2.1.1
+  resolution: "@aws-cdk/asset-kubectl-v20@npm:2.1.1"
+  checksum: f5883fae7b6d3d17e5125560a6efa5065d8b319c11ea6639caa68e315427c4fa266433db04b1a776cf12ccc8c8f8e9a3dfc0ac8cc3c0e73545f80b07808281e2
+  languageName: node
+  linkType: hard
+
+"@aws-cdk/asset-node-proxy-agent-v5@npm:^2.0.148":
+  version: 2.0.164
+  resolution: "@aws-cdk/asset-node-proxy-agent-v5@npm:2.0.164"
+  checksum: 37ef8a174abab234d054436b8768c99d6851d9b598911613b189fe420a28d55963e98f8112f12c0c1134626e4515a9fde132023701f77b3489096dc88ee7bb20
+  languageName: node
+  linkType: hard
+
 "@aws-cdk/cfnspec@npm:2.13.0":
   version: 2.13.0
   resolution: "@aws-cdk/cfnspec@npm:2.13.0"
@@ -5967,7 +5988,7 @@ __metadata:
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge"
     "@types/fs-extra": 9.0.13
     aws-cdk: ^2.13.0
-    aws-cdk-lib: ^2.3.0
+    aws-cdk-lib: ^2.84.0
     constructs: ^10.0.88
     fast-glob: 3.2.11
     fs-extra: 9.1.0
@@ -5975,7 +5996,7 @@ __metadata:
     rimraf: 3.0.2
     typescript: 4.5.5
   peerDependencies:
-    aws-cdk-lib: ^2.3.0
+    aws-cdk-lib: ^2.84.0
     constructs: ^10.0.88
   languageName: unknown
   linkType: soft
@@ -7760,22 +7781,26 @@ __metadata:
   languageName: node
   linkType: hard
 
-"aws-cdk-lib@npm:^2.3.0":
-  version: 2.3.0
-  resolution: "aws-cdk-lib@npm:2.3.0"
+"aws-cdk-lib@npm:^2.84.0":
+  version: 2.84.0
+  resolution: "aws-cdk-lib@npm:2.84.0"
   dependencies:
+    "@aws-cdk/asset-awscli-v1": ^2.2.177
+    "@aws-cdk/asset-kubectl-v20": ^2.1.1
+    "@aws-cdk/asset-node-proxy-agent-v5": ^2.0.148
     "@balena/dockerignore": ^1.0.2
     case: 1.6.3
-    fs-extra: ^9.1.0
-    ignore: ^5.1.9
-    jsonschema: ^1.4.0
-    minimatch: ^3.0.4
-    punycode: ^2.1.1
-    semver: ^7.3.5
+    fs-extra: ^11.1.1
+    ignore: ^5.2.4
+    jsonschema: ^1.4.1
+    minimatch: ^3.1.2
+    punycode: ^2.3.0
+    semver: ^7.5.1
+    table: ^6.8.1
     yaml: 1.10.2
   peerDependencies:
     constructs: ^10.0.0
-  checksum: acf2db25c68de36a21596b976ad2769fa56ebbbb7c0fbdb3c0903bf76ac05b6308c6843f12056e0b2c2c28736953f542fca1df591cc01c3941ad3eb8e5004df1
+  checksum: fa7ecfaf4b220fd3ea1dbd982245b47164400a925a25dc8fc9542ed003ba6a13ca9527fbc4eb190dafeaddcbeae8530b411e7db102adee07b9adb0312748f9c3
   languageName: node
   linkType: hard
 
@@ -11582,6 +11607,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fs-extra@npm:^11.1.1":
+  version: 11.1.1
+  resolution: "fs-extra@npm:11.1.1"
+  dependencies:
+    graceful-fs: ^4.2.0
+    jsonfile: ^6.0.1
+    universalify: ^2.0.0
+  checksum: fb883c68245b2d777fbc1f2082c9efb084eaa2bbf9fddaa366130d196c03608eebef7fb490541276429ee1ca99f317e2d73e96f5ca0999eefedf5a624ae1edfd
+  languageName: node
+  linkType: hard
+
 "fs-extra@npm:^7.0.0, fs-extra@npm:^7.0.1":
   version: 7.0.1
   resolution: "fs-extra@npm:7.0.1"
@@ -12440,17 +12476,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ignore@npm:^5.1.9":
-  version: 5.1.9
-  resolution: "ignore@npm:5.1.9"
-  checksum: 6f6b2235f4e63648116c5814f76b2d3d63fae9c21b8a466862e865732f59e787c9938a9042f9457091db6f0d811508ea3c8c6a60f35bafc4ceea08bbe8f96fd5
-  languageName: node
-  linkType: hard
-
 "ignore@npm:^5.2.0":
   version: 5.2.0
   resolution: "ignore@npm:5.2.0"
   checksum: 6b1f926792d614f64c6c83da3a1f9c83f6196c2839aa41e1e32dd7b8d174cef2e329d75caabb62cb61ce9dc432f75e67d07d122a037312db7caa73166a1bdb77
+  languageName: node
+  linkType: hard
+
+"ignore@npm:^5.2.4":
+  version: 5.2.4
+  resolution: "ignore@npm:5.2.4"
+  checksum: 3d4c309c6006e2621659311783eaea7ebcd41fe4ca1d78c91c473157ad6666a57a2df790fe0d07a12300d9aac2888204d7be8d59f9aaf665b1c7fcdb432517ef
   languageName: node
   linkType: hard
 
@@ -14614,6 +14650,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"jsonschema@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "jsonschema@npm:1.4.1"
+  checksum: 1ef02a6cd9bc32241ec86bbf1300bdbc3b5f2d8df6eb795517cf7d1cd9909e7beba1e54fdf73990fd66be98a182bda9add9607296b0cb00b1348212988e424b2
+  languageName: node
+  linkType: hard
+
 "jsonwebtoken@npm:8.5.1":
   version: 8.5.1
   resolution: "jsonwebtoken@npm:8.5.1"
@@ -15524,6 +15567,15 @@ __metadata:
   dependencies:
     brace-expansion: ^1.1.7
   checksum: 66ac295f8a7b59788000ea3749938b0970344c841750abd96694f80269b926ebcafad3deeb3f1da2522978b119e6ae3a5869b63b13a7859a456b3408bd18a078
+  languageName: node
+  linkType: hard
+
+"minimatch@npm:^3.1.2":
+  version: 3.1.2
+  resolution: "minimatch@npm:3.1.2"
+  dependencies:
+    brace-expansion: ^1.1.7
+  checksum: c154e566406683e7bcb746e000b84d74465b3a832c45d59912b9b55cd50dee66e5c4b1e5566dba26154040e51672f9aa450a9aef0c97cfc7336b78b7afb9540a
   languageName: node
   linkType: hard
 
@@ -17385,6 +17437,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"punycode@npm:^2.3.0":
+  version: 2.3.0
+  resolution: "punycode@npm:2.3.0"
+  checksum: 39f760e09a2a3bbfe8f5287cf733ecdad69d6af2fe6f97ca95f24b8921858b91e9ea3c9eeec6e08cede96181b3bb33f95c6ffd8c77e63986508aa2e8159fa200
+  languageName: node
+  linkType: hard
+
 "q@npm:^1.5.1":
   version: 1.5.1
   resolution: "q@npm:1.5.1"
@@ -18341,6 +18400,17 @@ __metadata:
   bin:
     semver: bin/semver.js
   checksum: 5eafe6102bea2a7439897c1856362e31cc348ccf96efd455c8b5bc2c61e6f7e7b8250dc26b8828c1d76a56f818a7ee907a36ae9fb37a599d3d24609207001d60
+  languageName: node
+  linkType: hard
+
+"semver@npm:^7.5.1":
+  version: 7.5.1
+  resolution: "semver@npm:7.5.1"
+  dependencies:
+    lru-cache: ^6.0.0
+  bin:
+    semver: bin/semver.js
+  checksum: d16dbedad53c65b086f79524b9ef766bf38670b2395bdad5c957f824dcc566b624988013564f4812bcace3f9d405355c3635e2007396a39d1bffc71cfec4a2fc
   languageName: node
   linkType: hard
 
@@ -19358,6 +19428,19 @@ __metadata:
     string-width: ^4.2.3
     strip-ansi: ^6.0.1
   checksum: 5b07fe462ee03d2e1fac02cbb578efd2e0b55ac07e3d3db2e950aa9570ade5a4a2b8d3c15e9f25c89e4e50b646bc4269934601ee1eef4ca7968ad31960977690
+  languageName: node
+  linkType: hard
+
+"table@npm:^6.8.1":
+  version: 6.8.1
+  resolution: "table@npm:6.8.1"
+  dependencies:
+    ajv: ^8.0.1
+    lodash.truncate: ^4.4.2
+    slice-ansi: ^4.0.0
+    string-width: ^4.2.3
+    strip-ansi: ^6.0.1
+  checksum: 08249c7046125d9d0a944a6e96cfe9ec66908d6b8a9db125531be6eb05fa0de047fd5542e9d43b4f987057f00a093b276b8d3e19af162a9c40db2681058fd306
   languageName: node
   linkType: hard
 

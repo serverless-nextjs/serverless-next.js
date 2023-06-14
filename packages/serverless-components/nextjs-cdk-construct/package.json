@@ -35,14 +35,14 @@
     "fs-extra": "9.1.0"
   },
   "peerDependencies": {
-    "aws-cdk-lib": "^2.3.0",
+    "aws-cdk-lib": "^2.84.0",
     "constructs": "^10.0.88"
   },
   "devDependencies": {
     "@aws-cdk/assert": "^2.13.0",
     "@types/fs-extra": "9.0.13",
     "aws-cdk": "^2.13.0",
-    "aws-cdk-lib": "^2.3.0",
+    "aws-cdk-lib": "^2.84.0",
     "constructs": "^10.0.88",
     "jest": "27.4.7",
     "rimraf": "3.0.2",
