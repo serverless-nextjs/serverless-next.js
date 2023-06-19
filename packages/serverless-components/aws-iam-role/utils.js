@@ -129,8 +129,8 @@ const updateAssumeRolePolicy = async ({ iam, name, service }) => {
 
 const inputsChanged = (prevRole, role) => {
   // todo add name and policy
-  const inputs = pick(["service"], role);
-  const prevInputs = pick(["service"], prevRole);
+  const inputs = pick(["service", "policy"], role);
+  const prevInputs = pick(["service", "policy"], prevRole);
 
   if (type(inputs.service) === "Array") {
     inputs.service.sort();

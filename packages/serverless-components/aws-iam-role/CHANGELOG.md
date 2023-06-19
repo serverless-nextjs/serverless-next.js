@@ -3,6 +3,12 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+## [1.1.13-alpha.0](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-iam-role@1.1.12...@getjerry/aws-iam-role@1.1.13-alpha.0) (2023-05-05)
+
+### Bug Fixes
+
+- add s3 delete policy. ([35f1303](https://github.com/getjerry/serverless-next.js/commit/35f13037445d955654966acde8c8982cbb38ba65))
+
 ## [1.1.3](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-iam-role@1.1.3-alpha.0...@getjerry/aws-iam-role@1.1.3) (2022-01-07)
 
 **Note:** Version bump only for package @getjerry/aws-iam-role

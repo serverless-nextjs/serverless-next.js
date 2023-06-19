@@ -3,6 +3,40 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [2.9.0-alpha.34](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.9.0-alpha.33...@getjerry/serverless-next@2.9.0-alpha.34) (2023-05-05)
+
+**Note:** Version bump only for package @getjerry/serverless-next
+
+# [2.9.0-alpha.33](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.9.0-alpha.32...@getjerry/serverless-next@2.9.0-alpha.33) (2023-05-05)
+
+**Note:** Version bump only for package @getjerry/serverless-next
+
+# [2.9.0-alpha.32](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.9.0-alpha.31...@getjerry/serverless-next@2.9.0-alpha.32) (2023-05-05)
+
+### Bug Fixes
+
+- add s3 delete policy. ([42a7900](https://github.com/getjerry/serverless-next.js/commit/42a79008d3623aa364058178668eb7e48f605e11))
+
+# [2.9.0-alpha.31](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.9.0-alpha.30...@getjerry/serverless-next@2.9.0-alpha.31) (2023-05-05)
+
+### Bug Fixes
+
+- add s3 delete policy. ([80c0b6c](https://github.com/getjerry/serverless-next.js/commit/80c0b6c2f92c2835b625b9236be7266f6b61be4e))
+
+# [2.9.0-alpha.30](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.0.5-alpha.6...@getjerry/serverless-next@2.9.0-alpha.30) (2023-05-05)
+
+### Bug Fixes
+
+- **default-handler:** add logic to handle not found from getStaticProps ([#55](https://github.com/getjerry/serverless-next.js/issues/55)) ([ba08d6e](https://github.com/getjerry/serverless-next.js/commit/ba08d6ef85b4b1f20674f815a6e6694e8bdf1bde))
+- html string ([#45](https://github.com/getjerry/serverless-next.js/issues/45)) ([6920106](https://github.com/getjerry/serverless-next.js/commit/6920106340aeb42d00b97107313b18e42f5da385))
+- modify content equals ([#54](https://github.com/getjerry/serverless-next.js/issues/54)) ([73c1a4a](https://github.com/getjerry/serverless-next.js/commit/73c1a4a92b1f3ed8b221739294bcf5827b48ac1c))
+
+### Features
+
+- ab test enhancement ([#58](https://github.com/getjerry/serverless-next.js/issues/58)) ([f09b346](https://github.com/getjerry/serverless-next.js/commit/f09b34614ede134fec890ee0a3ab480dd8bd96fd))
+- Modify SN to support A/B Test ([#51](https://github.com/getjerry/serverless-next.js/issues/51)) ([a801469](https://github.com/getjerry/serverless-next.js/commit/a8014698303611844d8dc5de0e4bd9b030472a4b))
+- support rewrite has field ([#57](https://github.com/getjerry/serverless-next.js/issues/57)) ([b751580](https://github.com/getjerry/serverless-next.js/commit/b751580ecf92be7825a9e74dce7c92a4c4fa71fd))
+
 # [2.9.0-alpha.29](https://github.com/getjerry/serverless-next.js/compare/@getjerry/serverless-next@2.9.0-alpha.28...@getjerry/serverless-next@2.9.0-alpha.29) (2023-04-21)
 
 **Note:** Version bump only for package @getjerry/serverless-next

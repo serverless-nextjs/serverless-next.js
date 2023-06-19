@@ -10,9 +10,7 @@ import { ResourceService } from "../services/resource.service";
 import { S3Service } from "../services/s3.service";
 import { debug, getEnvironment, isDevMode } from "../lib/console";
 import { Resource, ResourceForIndexPage } from "../services/resource";
-// @ts-ignore
-import * as _ from "../lib/lodash";
-import { isEqual, omit } from "lodash";
+import { isEmpty, isEqual, isNil, omit } from "lodash";
 
 export class RevalidateHandler {
   constructor(
@@ -44,7 +42,7 @@ export class RevalidateHandler {
     // ISR needs to maintain a time gap of at least tens of seconds.
     const revalidateTriggerGapSecond = isDevMode() ? 1 : 300;
     if (
-      this.shouldSkipRevalidate(
+      RevalidateHandler.shouldSkipRevalidate(
         htmlHeader.header.LastModified,
         revalidateTriggerGapSecond
       )
@@ -70,6 +68,23 @@ export class RevalidateHandler {
     );
 
     debug(`CANDIDATE PAGE: ${JSON.stringify(candidatePage)}`);
+
+    if (RevalidateHandler.shouldRemoveResource(candidatePage)) {
+      debug(
+        `remove old resource for ${{
+          candidatePage: JSON.stringify(candidatePage)
+        }}`
+      );
+
+      // delete old objects since the resource should redirect to a new resource.
+      await Promise.all([
+        this.s3Service.deleteObject(resource.getHtmlKey()),
+        this.s3Service.deleteObject(resource.getJsonKey())
+      ]);
+
+      await this.createInvalidation(resource, manifest);
+      return;
+    }
 
     if ((await this.isContentChanged(candidatePage, resource)) || isDevMode()) {
       debug(
@@ -97,14 +112,36 @@ export class RevalidateHandler {
     return;
   }
 
+  /**
+   * Check if we should remove resource.
+   * @param page
+   * @private
+   */
+  private static shouldRemoveResource(page: Page): boolean {
+    const pageData = (page.getJson() ?? {}) as {
+      pageProps?: { __N_REDIRECT: unknown };
+    };
+
+    const isRedirect =
+      !isNil(pageData.pageProps?.__N_REDIRECT) &&
+      !isEmpty(pageData.pageProps?.__N_REDIRECT);
+
+    const isEmptyHtml = isEmpty(page.getHtmlBody());
+
+    return isRedirect || isEmptyHtml;
+  }
+
   //check lastModified to control revalidate
-  private shouldSkipRevalidate(lastModified: Date | undefined, gap: number) {
-    if (lastModified === undefined) return false;
+  private static shouldSkipRevalidate(
+    lastModified: Date | undefined,
+    gap: number
+  ) {
+    if (isNil(lastModified)) return false;
     debug(
       `[checkRevalidateTimeGap] lastModified at ${lastModified}, current: ${new Date()}`
     );
 
-    return new Date() < new Date(lastModified!.getTime() + gap * 1000);
+    return new Date() < new Date(lastModified.getTime() + gap * 1000);
   }
 
   /**

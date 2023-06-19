@@ -5,6 +5,7 @@ import {
   HeadObjectCommandOutput
 } from "@aws-sdk/client-s3";
 import { GetObjectCommand } from "@aws-sdk/client-s3/commands/GetObjectCommand";
+import { DeleteObjectCommand } from "@aws-sdk/client-s3/commands/DeleteObjectCommand";
 
 interface S3ServiceOptions {
   bucketName?: string;
@@ -51,6 +52,21 @@ export class S3Service {
     }
   }
 
+  public async deleteObject(key: string): Promise<void> {
+    if (!this.options.bucketName) {
+      throw new Error("Bucket name not configured");
+    }
+    if (!key) {
+      throw new Error("Key is not provided");
+    }
+    await this.client.send(
+      new DeleteObjectCommand({
+        Key: key,
+        Bucket: this.options.bucketName
+      })
+    );
+  }
+
   public async putObject(
     key: string,
     body: string,
@@ -91,7 +107,7 @@ export class S3Service {
 
         // Store all of data chunks returned from the response data stream
         // into an array then use Array#join() to use the returned contents as a String
-        let responseDataChunks: any[] = [];
+        const responseDataChunks: any[] = [];
 
         // Attach a 'data' listener to add the chunks of data to our array
         // Each chunk is a Buffer instance

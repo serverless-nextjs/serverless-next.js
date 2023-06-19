@@ -514,12 +514,13 @@ class NextjsComponent extends Component {
         {
           Effect: "Allow",
           Resource: `arn:aws:s3:::${bucketOutputs.name}/*`,
-          Action: ["s3:GetObject", "s3:PutObject"]
+          Action: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"]
         }
       ]
     };
 
     if (inputs.policy) {
+      this.context.debug(`Input policy: ${JSON.stringify(inputs.policy)}`);
       if (typeof inputs.policy === "string") {
         policy = { arn: inputs.policy };
       } else {
@@ -666,6 +667,10 @@ class NextjsComponent extends Component {
         | string
         | undefined
     };
+
+    this.context.debug(
+      `Default lambda input: ${JSON.stringify(defaultEdgeLambdaInput)}`
+    );
 
     const defaultEdgeLambdaOutputs = await defaultEdgeLambda(
       defaultEdgeLambdaInput
