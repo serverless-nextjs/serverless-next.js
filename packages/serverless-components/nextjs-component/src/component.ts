@@ -837,7 +837,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
@@ -857,7 +857,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
@@ -877,7 +877,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
@@ -897,7 +897,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
@@ -916,7 +916,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
@@ -936,7 +936,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
@@ -956,7 +956,7 @@ class NextjsComponent extends Component {
       defaultTTL: 0,
       maxTTL: 86400,
       forward: {
-        cookies: "all",
+        cookies: "none",
         headers: routesManifest.i18n
         ? ["Accept-Language", "Authorization", "Host"]
         : ["Authorization", "Host"],
