@@ -851,6 +851,26 @@ class NextjsComponent extends Component {
     };
 
     cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/resources*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "none",
+        headers: routesManifest.i18n
+        ? ["Accept-Language", "Authorization", "Host"]
+        : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
       this.pathPattern("/promos*", routesManifest)
     ] = {
       minTTL: 0,
