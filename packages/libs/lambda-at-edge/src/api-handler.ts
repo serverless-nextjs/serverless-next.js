@@ -84,15 +84,23 @@ export const handler = async (
   // Handle domain redirects e.g www to non-www domain
   const domainRedirect = getDomainRedirectPath(request, buildManifest);
   if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+    return createRedirectResponse(
+      domainRedirect,
+      queryString.parse(request.querystring),
+      308
+    );
   }
 
   // Handle custom redirects
-  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  const customRedirect = getRedirectPath(
+    request.uri,
+    queryString.parse(request.querystring),
+    routesManifest
+  );
   if (customRedirect) {
     return createRedirectResponse(
       customRedirect.redirectPath,
-      request.querystring,
+      queryString.parse(request.querystring),
       customRedirect.statusCode
     );
   }

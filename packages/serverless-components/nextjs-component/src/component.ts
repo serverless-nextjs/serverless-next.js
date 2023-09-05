@@ -243,7 +243,7 @@ class NextjsComponent extends Component {
           //TODO make it work without distributionId specified
           distributionId: inputs.cloudfront?.distributionId,
           minifyHandlers: inputs.minifyHandlers || false,
-          enableHTTPCompression: false,
+          enableHTTPCompression: inputs.enableHTTPCompression,
           handler: inputs.handler
             ? `${inputs.handler.split(".")[0]}.js`
             : undefined,

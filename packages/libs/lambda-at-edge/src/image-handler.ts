@@ -19,6 +19,7 @@ import {
   getDomainRedirectPath
 } from "./routing/redirector";
 import { getUnauthenticatedResponse } from "./auth/authenticator";
+import queryString from "query-string";
 
 const basePath = RoutesManifestJson.basePath;
 
@@ -53,7 +54,11 @@ export const handler = async (
   // Handle domain redirects e.g www to non-www domain
   const domainRedirect = getDomainRedirectPath(request, buildManifest);
   if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+    return createRedirectResponse(
+      domainRedirect,
+      queryString.parse(request.querystring),
+      308
+    );
   }
 
   // No other redirects or rewrites supported for now as it's assumed one is accessing this directly.

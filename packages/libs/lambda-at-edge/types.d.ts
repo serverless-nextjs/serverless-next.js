@@ -150,6 +150,7 @@ export type RedirectData = {
   source: string;
   destination: string;
   regex: string;
+  has?: RouteHas[];
 };
 
 export type RouteHas =

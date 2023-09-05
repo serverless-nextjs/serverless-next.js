@@ -1,4 +1,4 @@
-import { compileDestination, matchPath } from "./matcher";
+import { compileDestination } from "./matcher";
 import {
   OriginRequestApiHandlerManifest,
   OriginRequestDefaultHandlerManifest,
@@ -9,6 +9,11 @@ import {
 import * as http from "http";
 import { CloudFrontRequest } from "aws-lambda";
 import { CloudFrontResultResponse } from "aws-lambda";
+import { getPathMatch } from "next/dist/shared/lib/router/utils/path-match";
+import { matchHas } from "next/dist/shared/lib/router/utils/prepare-destination";
+import { Params } from "next/dist/shared/lib/router/utils/route-matcher";
+import * as queryString from "querystring";
+import { isEmpty } from "lodash";
 
 /**
  * Whether this is the default trailing slash redirect.
@@ -51,31 +56,45 @@ export function isTrailingSlashRedirect(
 /**
  * Get the redirect of the given path, if it exists. Otherwise return null.
  * @param path
+ * @param queryParams
  * @param routesManifest
  */
 export function getRedirectPath(
   path: string,
+  queryParams: Params,
   routesManifest: RoutesManifest
 ): { redirectPath: string; statusCode: number } | null {
   const redirects: RedirectData[] = routesManifest.redirects;
 
   for (const redirect of redirects) {
-    const match = matchPath(path, redirect.source);
+    const matcher = getPathMatch(redirect.source);
 
-    if (match) {
-      const compiledDestination = compileDestination(
-        redirect.destination,
-        match.params
+    let params = matcher(path);
+
+    if (redirect.has && params) {
+      const hasParams = matchHas(
+        {
+          headers: {},
+          cookies: {}
+        } as any,
+        redirect.has,
+        queryParams
       );
 
-      if (!compiledDestination) {
-        return null;
+      if (hasParams) {
+        Object.assign(params, hasParams);
+      } else {
+        params = false;
       }
-
-      return {
-        redirectPath: compiledDestination,
-        statusCode: redirect.statusCode
-      };
+    }
+    if (params) {
+      const destination = compileDestination(redirect.destination, params);
+      if (destination) {
+        return {
+          redirectPath: destination,
+          statusCode: redirect.statusCode
+        };
+      }
     }
   }
 
@@ -85,20 +104,26 @@ export function getRedirectPath(
 /**
  * Create a redirect response with the given status code for CloudFront.
  * @param uri
- * @param querystring
+ * @param originalQueryParams
  * @param statusCode
  */
 export function createRedirectResponse(
   uri: string,
-  querystring: string,
+  originalQueryParams: Params,
   statusCode: number
 ): CloudFrontResultResponse {
   let location;
 
   // Properly join query strings
-  if (querystring) {
+  if (originalQueryParams) {
     const [uriPath, uriQuery] = uri.split("?");
-    location = `${uriPath}?${querystring}${uriQuery ? `&${uriQuery}` : ""}`;
+    const uriQueryParams = queryString.parse(uriQuery);
+
+    // overwrite params in original query string if necessary
+    const mergedParams = { ...originalQueryParams, ...uriQueryParams };
+    location = `${uriPath}${
+      isEmpty(mergedParams) ? "" : `?${queryString.stringify(mergedParams)}`
+    }`;
   } else {
     location = uri;
   }

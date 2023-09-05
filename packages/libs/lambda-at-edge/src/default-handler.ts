@@ -39,6 +39,10 @@ import {
 import { performance } from "perf_hooks";
 import { ServerResponse } from "http";
 import type { Readable } from "stream";
+import { isEmpty, isNil } from "lodash";
+import { CloudFrontHeaders } from "aws-lambda/common/cloudfront";
+import zlib from "zlib";
+
 import { createNotFoundResponse, isNotFoundPage } from "./routing/notfound";
 import {
   createRedirectResponse,
@@ -78,7 +82,6 @@ import {
   sentry_flush_timeout
 } from "./lib/sentry";
 import { renderPageToHtml } from "./services/utils/render.util";
-import { isEmpty } from "lodash";
 
 process.env.PRERENDER = "true";
 process.env.DEBUGMODE = Manifest.enableDebugMode;
@@ -600,7 +603,11 @@ const handleOriginRequest = async ({
   // Handle domain redirects e.g www to non-www domain
   const domainRedirect = getDomainRedirectPath(request, manifest);
   if (domainRedirect) {
-    return createRedirectResponse(domainRedirect, request.querystring, 308);
+    return createRedirectResponse(
+      domainRedirect,
+      queryString.parse(request.querystring),
+      308
+    );
   }
 
   const basePath = routesManifest.basePath;
@@ -625,7 +632,7 @@ const handleOriginRequest = async ({
   ) {
     return createRedirectResponse(
       `https://${canonicalHostname}${request.uri}`,
-      request.querystring,
+      queryString.parse(request.querystring),
       301
     );
   }
@@ -654,15 +661,23 @@ const handleOriginRequest = async ({
   }
 
   if (newUri !== request.uri) {
-    return createRedirectResponse(newUri, request.querystring, 308);
+    return createRedirectResponse(
+      newUri,
+      queryString.parse(request.querystring),
+      308
+    );
   }
 
   // Handle other custom redirects on the original URI
-  const customRedirect = getRedirectPath(request.uri, routesManifest);
+  const customRedirect = getRedirectPath(
+    request.uri,
+    queryString.parse(request.querystring),
+    routesManifest
+  );
   if (customRedirect) {
     return createRedirectResponse(
       customRedirect.redirectPath,
-      request.querystring,
+      queryString.parse(request.querystring),
       customRedirect.statusCode
     );
   }
@@ -1017,7 +1032,7 @@ const handleOriginResponse = async ({
         // in Next source code,
         //  page returned redirect will redirect to __N_REDIRECT with out query string
         // explicit set query string to empty to align with this behavior.
-        "",
+        {},
         pageProps.__N_REDIRECT_STATUS
       );
 
@@ -1090,7 +1105,7 @@ const handleOriginResponse = async ({
     debug(
       `[blocking-fallback] responded with html: ${JSON.stringify(htmlOut)}`
     );
-    return htmlOut;
+    return compressOutput({ manifest, request, output: htmlOut });
   }
 
   // 2.2 handle data request
@@ -1310,6 +1325,93 @@ const hasFallbackForUri = (
     const re = new RegExp(routeConfig.routeRegex);
     return re.test(uri);
   });
+};
+
+const getSupportedCompression = (headers: CloudFrontHeaders) => {
+  let gz: "gzip" | "br" | false = false;
+  const ae = headers["accept-encoding"];
+  debug(`[checking accept encoding] accept encodings: ${JSON.stringify(ae)}`);
+  if (ae) {
+    for (let i = 0; i < ae.length; i++) {
+      const { value } = ae[i];
+      const bits = value.split(",").map((x) => x.split(";")[0].trim());
+
+      if (bits.indexOf("gzip") !== -1) {
+        gz = "gzip";
+      }
+
+      if (bits.indexOf("br") !== -1) {
+        gz = "br";
+      }
+    }
+  }
+  return gz;
+};
+
+const compressOutput = ({
+  manifest,
+  request,
+  output
+}: {
+  manifest: OriginRequestDefaultHandlerManifest;
+  request: CloudFrontRequest;
+  output: CloudFrontResultResponse;
+}): CloudFrontResultResponse => {
+  if (isNil(output.body)) return output;
+
+  const useCompression =
+    manifest.enableHTTPCompression && getSupportedCompression(request.headers);
+
+  debug(
+    `[compressOutput] enableHTTPCompression: ${manifest.enableHTTPCompression}`
+  );
+  debug(`[compressOutput] use compression: ${useCompression}`);
+
+  debug(
+    `[compressOutput] text length before compression and encoding: ${output.body.length}`
+  );
+
+  let body;
+  let encoding;
+  switch (useCompression) {
+    case "br":
+      body = zlib
+        .brotliCompressSync(output.body, {
+          params: { [zlib.constants.BROTLI_PARAM_QUALITY]: 5 }
+        })
+        .toString("base64");
+      encoding = "br";
+      break;
+    case "gzip":
+      body = zlib.gzipSync(output.body).toString("base64");
+      encoding = "gzip";
+      break;
+    default:
+      body = Buffer.from(output.body).toString("base64");
+  }
+
+  const result = {
+    ...output,
+    bodyEncoding: "base64" as const,
+    body
+  };
+  if (useCompression) {
+    if (isNil(result.headers)) {
+      result.headers = {
+        ["content-encoding"]: [
+          { key: "Content-Encoding", value: encoding as string }
+        ]
+      };
+    }
+    result.headers["content-encoding"] = [
+      { key: "Content-Encoding", value: encoding as string }
+    ];
+  }
+
+  debug(
+    `[compressOutput] text length after compression and encoding: ${result.body.length}`
+  );
+  return result;
 };
 
 // This sets CloudFront response for 404 or 500 statuses

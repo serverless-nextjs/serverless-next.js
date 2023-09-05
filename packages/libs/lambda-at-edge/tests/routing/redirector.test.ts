@@ -56,7 +56,7 @@ describe("Redirector Tests", () => {
     `(
       "redirects path $path to $expectedRedirect",
       ({ path, expectedRedirect, expectedStatusCode }) => {
-        const redirect = getRedirectPath(path, routesManifest);
+        const redirect = getRedirectPath(path, {}, routesManifest);
 
         if (expectedRedirect) {
           expect(redirect).toEqual({
@@ -72,7 +72,7 @@ describe("Redirector Tests", () => {
 
   describe("createRedirectResponse()", () => {
     it("does a permanent redirect", () => {
-      const response = createRedirectResponse("/terms", "", 308);
+      const response = createRedirectResponse("/terms", {}, 308);
       expect(response).toEqual({
         status: "308",
         statusDescription: "Permanent Redirect",
@@ -95,7 +95,7 @@ describe("Redirector Tests", () => {
     });
 
     it("does a temporary redirect with query parameters", () => {
-      const response = createRedirectResponse("/terms", "a=123", 307);
+      const response = createRedirectResponse("/terms", { a: 123 }, 307);
       expect(response).toEqual({
         status: "307",
         statusDescription: "Temporary Redirect",
