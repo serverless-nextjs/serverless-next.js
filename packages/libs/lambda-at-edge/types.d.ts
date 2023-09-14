@@ -203,6 +203,7 @@ export type UrlRewriteList = {
 export type ExperimentGroup = {
   url: string;
   ratio: number;
+  states?: string[];
 };
 export type ABTest = {
   originUrl: string;

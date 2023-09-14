@@ -202,13 +202,30 @@ const rewriteUrlWithExperimentGroups = (
 
   const hashIndex = murmurhash.v2(clientIp) % 100;
 
-  const result = experimentGroups[hashMap[hashIndex]]
-    ? experimentGroups[hashMap[hashIndex]].url
-    : originUrl;
+  const hitExperimentGroup = experimentGroups[hashMap[hashIndex]];
 
-  debug(`[rewriteUrlWithExperimentGroups]: ${originUrl} -> ${result}}`);
+  // if no hit, use origin url.
+  let resultUrl = originUrl;
+  // if the experiment group has states, we will check if the user region is in the states.
+  if (hitExperimentGroup?.states) {
+    const region =
+      request.headers?.["cloudfront-viewer-country-region"]?.[0]?.value;
+    if (!region) {
+      resultUrl = originUrl;
+    } else {
+      debug(`[rewriteUrlWithExperimentGroups]: user region is ${region}`);
+      resultUrl =
+        hitExperimentGroup.states.findIndex((state) => state === region) >= 0
+          ? hitExperimentGroup.url
+          : originUrl;
+    }
+  } else if (hitExperimentGroup) {
+    resultUrl = hitExperimentGroup.url;
+  }
 
-  return `${result}.html`;
+  debug(`[rewriteUrlWithExperimentGroups]: ${originUrl} -> ${resultUrl}}`);
+
+  return `${resultUrl}.html`;
 };
 
 /**
