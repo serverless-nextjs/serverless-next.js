@@ -73,6 +73,12 @@ const uploadStaticAssetsFromBuild = async (
   const nextStaticFilesUploads = nextStaticFiles
     .filter(filterOutDirectories)
     .map(async (fileItem) => {
+      console.info("static file path: ", fileItem.path);
+      if (fileItem.path.endsWith("_buildManifest.js")) {
+        console.info("clear _buildManifest.js");
+        fse.writeFileSync(fileItem.path, "");
+      }
+
       const s3Key = pathToPosix(
         path.relative(assetsOutputDirectory, fileItem.path)
       );
