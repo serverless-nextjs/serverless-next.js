@@ -3,6 +3,16 @@
 All notable changes to this project will be documented in this file.
 See [Conventional Commits](https://conventionalcommits.org) for commit guidelines.
 
+# [1.2.0-alpha.12](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-iam-role@1.1.12...@getjerry/aws-iam-role@1.2.0-alpha.12) (2023-09-15)
+
+### Bug Fixes
+
+- redirect props got stored ([#59](https://github.com/getjerry/serverless-next.js/issues/59)) ([12b5c0f](https://github.com/getjerry/serverless-next.js/commit/12b5c0fa214ee2193de2a665c9236e272f75489b))
+
+### Features
+
+- support ab test base on region ([#62](https://github.com/getjerry/serverless-next.js/issues/62)) ([6acb468](https://github.com/getjerry/serverless-next.js/commit/6acb4685b51f804c3498c940d2b139121cdd0785))
+
 # [1.2.0-alpha.11](https://github.com/getjerry/serverless-next.js/compare/@getjerry/aws-iam-role@1.1.12...@getjerry/aws-iam-role@1.2.0-alpha.11) (2023-09-12)
 
 ### Bug Fixes
