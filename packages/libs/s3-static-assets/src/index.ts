@@ -23,6 +23,7 @@ type UploadStaticAssetsOptions = {
   credentials: Credentials;
   publicDirectoryCache?: PublicDirectoryCache;
   abTestPaths?: string[];
+  serveFakeManifest?: boolean;
 };
 
 /**
@@ -38,7 +39,8 @@ const uploadStaticAssetsFromBuild = async (
     credentials,
     basePath,
     publicDirectoryCache,
-    nextConfigDir
+    nextConfigDir,
+    serveFakeManifest
   } = options;
   const s3 = await S3ClientFactory({
     bucketName,
@@ -74,7 +76,7 @@ const uploadStaticAssetsFromBuild = async (
     .filter(filterOutDirectories)
     .map(async (fileItem) => {
       console.info("static file path: ", fileItem.path);
-      if (fileItem.path.endsWith("_buildManifest.js")) {
+      if (serveFakeManifest && fileItem.path.endsWith("_buildManifest.js")) {
         console.info("clear _buildManifest.js");
         fse.writeFileSync(fileItem.path, "");
       }

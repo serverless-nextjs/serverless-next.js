@@ -386,7 +386,8 @@ class NextjsComponent extends Component {
         nextStaticDir: nextStaticPath,
         credentials: this.context.credentials.aws,
         publicDirectoryCache: inputs.publicDirectoryCache,
-        abTestPaths
+        abTestPaths,
+        serveFakeManifest: inputs.serveFakeManifest ?? false
       });
     } else {
       await uploadStaticAssets({

@@ -64,6 +64,7 @@ export type ServerlessComponentInputs = {
   sentry?: SentryOptions;
   abTests?: ABTest[];
   enableRemoteInvalidation?: boolean;
+  serveFakeManifest?: boolean;
 };
 
 type CloudfrontOptions = Record<string, any>;
