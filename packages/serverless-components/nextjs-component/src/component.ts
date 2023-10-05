@@ -989,6 +989,26 @@ class NextjsComponent extends Component {
       }
     };
 
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/lp*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+        ? ["Accept-Language", "Authorization", "Host"]
+        : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
     // If we are using consolidated API pages (within default lambda), we need to ensure api/* behavior is set correctly.
     // Note that if there are no consolidated API pages then existing api/* is not deleted.
     // We do so for a couple reasons:
