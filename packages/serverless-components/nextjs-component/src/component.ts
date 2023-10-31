@@ -424,7 +424,6 @@ class NextjsComponent extends Component {
     ];
 
     console.log(cloudFrontOrigins[0]);
-    
 
     cloudFrontOrigins[1].pathPatterns[
       this.pathPattern("_next/static/*", routesManifest)
@@ -839,8 +838,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -859,8 +858,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -879,8 +878,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -899,8 +898,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -919,8 +918,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -938,8 +937,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -958,8 +957,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -968,7 +967,7 @@ class NextjsComponent extends Component {
         "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
       }
     };
-    
+
     cloudFrontOrigins[1].pathPatterns[
       this.pathPattern("/support*", routesManifest)
     ] = {
@@ -978,8 +977,8 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -998,8 +997,28 @@ class NextjsComponent extends Component {
       forward: {
         cookies: "all",
         headers: routesManifest.i18n
-        ? ["Accept-Language", "Authorization", "Host"]
-        : ["Authorization", "Host"],
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/search*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
         queryString: true
       },
       // lambda@edge key is last and therefore cannot be overridden
@@ -1101,7 +1120,7 @@ class NextjsComponent extends Component {
     const cloudFrontOutputs = await cloudFront({
       bucketRegion: bucketRegion,
       distributionId: cloudFrontDistributionId,
-      defaults: { 
+      defaults: {
         minTTL: 0,
         defaultTTL: 0,
         maxTTL: 31536000,
