@@ -47,22 +47,22 @@ Object {
                 Object {
                   "EventType": "viewer-request",
                   "IncludeBody": true,
-                  "LambdaFunctionARN": "arn:aws:lambda:us-east-1:123:function:viewerRequestFunction",
+                  "LambdaFunctionARN": "arn:aws:lambda:us-west-2:123:function:viewerRequestFunction",
                 },
                 Object {
                   "EventType": "origin-request",
                   "IncludeBody": true,
-                  "LambdaFunctionARN": "arn:aws:lambda:us-east-1:123:function:originRequestFunction",
+                  "LambdaFunctionARN": "arn:aws:lambda:us-west-2:123:function:originRequestFunction",
                 },
                 Object {
                   "EventType": "origin-response",
                   "IncludeBody": undefined,
-                  "LambdaFunctionARN": "arn:aws:lambda:us-east-1:123:function:originResponseFunction",
+                  "LambdaFunctionARN": "arn:aws:lambda:us-west-2:123:function:originResponseFunction",
                 },
                 Object {
                   "EventType": "viewer-response",
                   "IncludeBody": undefined,
-                  "LambdaFunctionARN": "arn:aws:lambda:us-east-1:123:function:viewerResponseFunction",
+                  "LambdaFunctionARN": "arn:aws:lambda:us-west-2:123:function:viewerResponseFunction",
                 },
               ],
               "Quantity": 4,

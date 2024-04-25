@@ -11,7 +11,7 @@ class ServerlessPluginBuilder {
       getProvider: () => {
         return {
           request: () => {},
-          getRegion: () => "us-east-1",
+          getRegion: () => "us-west-2",
           getStage: () => "test"
         };
       },

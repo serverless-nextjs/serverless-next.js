@@ -261,7 +261,7 @@ describe("addCustomStackResources", () => {
 
       expect(apiGatewayOrigin.OriginPath).toEqual("/test");
       expect(apiGatewayOrigin.DomainName["Fn::Join"][1][1]).toEqual(
-        ".execute-api.us-east-1.amazonaws.com"
+        ".execute-api.us-west-2.amazonaws.com"
       );
     });
 

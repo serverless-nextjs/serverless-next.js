@@ -78,7 +78,7 @@ export const getOriginConfig = (
         Quantity: 1,
         Items: ["TLSv1.2"]
       },
-      OriginReadTimeout: 180,
+      OriginReadTimeout: 60,
       OriginKeepaliveTimeout: 60
     };
   }

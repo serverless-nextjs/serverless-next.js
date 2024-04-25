@@ -30,7 +30,7 @@ describe("waitLambdaReady", () => {
         }
       },
       "test-function",
-      "us-east-1",
+      "us-west-2",
       1
     );
 

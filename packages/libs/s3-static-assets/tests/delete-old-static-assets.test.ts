@@ -14,7 +14,7 @@ jest.mock("aws-sdk", () => require("./aws-sdk.mock"));
 const deleteOldAssets = (basePath?: string): Promise<void> => {
   return deleteOldStaticAssets({
     bucketName: "test-bucket-name",
-    bucketRegion: "us-east-1",
+    bucketRegion: "us-west-2",
     basePath: basePath || "",
     credentials: {
       accessKeyId: "fake-access-key",
@@ -114,11 +114,11 @@ describe.each`
 
       expect(AWS.S3).toBeCalledWith({
         accessKeyId: "fake-access-key",
-        endpoint: "https://s3.us-east-1.amazonaws.com",
+        endpoint: "https://s3.us-west-2.amazonaws.com",
         s3BucketEndpoint: false,
         secretAccessKey: "fake-secret-key",
         sessionToken: "fake-session-token",
-        region: "us-east-1"
+        region: "us-west-2"
       });
 
       expect(mockDeleteObjects).toBeCalledTimes(2);

@@ -324,7 +324,7 @@ class NextjsComponent extends Component {
       ...cloudFrontOtherInputs
     } = inputs.cloudfront || {};
 
-    const bucketRegion = inputs.bucketRegion || "us-east-1";
+    const bucketRegion = inputs.bucketRegion || "us-west-2";
 
     const [
       defaultBuildManifest,

@@ -31,16 +31,16 @@ describe("basepath tests", () => {
       name: "bucket-xyz"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:regeneration-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:api-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:default-cachebehavior-func"
     });
     mockLambdaPublish.mockResolvedValue({
       version: "v1"
@@ -50,7 +50,7 @@ describe("basepath tests", () => {
       url: "https://cloudfrontdistrib.amazonaws.com"
     });
     mockSQS.mockResolvedValue({
-      arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
+      arn: "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo"
     });
 
     const component = new NextjsComponent();
