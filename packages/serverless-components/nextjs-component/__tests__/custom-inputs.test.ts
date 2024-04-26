@@ -43,7 +43,7 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
   });
 
   mockLambda.mockResolvedValue({
-    arn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+    arn: "arn:aws:lambda:us-west-2:123456789012:function:my-func"
   });
 
   mockLambdaPublish.mockResolvedValue({
@@ -59,7 +59,7 @@ const mockServerlessComponentDependencies = ({ expectedDomain }) => {
   });
 
   mockSQS.mockResolvedValue({
-    arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
+    arn: "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo"
   });
 };
 
@@ -86,7 +86,7 @@ describe("Custom inputs", () => {
 
   describe.each`
     inputRegion    | expectedRegion
-    ${undefined}   | ${"us-east-1"}
+    ${undefined}   | ${"us-west-2"}
     ${"eu-west-2"} | ${"eu-west-2"}
   `(`When input region is $inputRegion`, ({ inputRegion, expectedRegion }) => {
     const fixturePath = path.join(__dirname, "./fixtures/generic-fixture");
@@ -745,9 +745,9 @@ describe("Custom inputs", () => {
       {
         origins: [
           "http://some-origin",
-          "http://bucket-xyz.s3.us-east-1.amazonaws.com/relative",
+          "http://bucket-xyz.s3.us-west-2.amazonaws.com/relative",
           { url: "http://diff-origin" },
-          { url: "http://bucket-xyz.s3.us-east-1.amazonaws.com/diff-relative" }
+          { url: "http://bucket-xyz.s3.us-west-2.amazonaws.com/diff-relative" }
         ]
       }
     ],
@@ -812,9 +812,9 @@ describe("Custom inputs", () => {
       ...defaults,
       "lambda@edge": {
         "origin-request":
-          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+          "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1",
         "origin-response":
-          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+          "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1",
         ...defaults["lambda@edge"]
       }
     };
@@ -839,7 +839,7 @@ describe("Custom inputs", () => {
         ...(expectedInConfig["api/*"] &&
           expectedInConfig["api/*"]["lambda@edge"]),
         "origin-request":
-          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+          "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
       }
     };
 
@@ -849,7 +849,7 @@ describe("Custom inputs", () => {
         ...cacheBehaviour,
         "lambda@edge": {
           "origin-request":
-            "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+            "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1",
           ...(cacheBehaviour && cacheBehaviour["lambda@edge"])
         }
       };
@@ -904,9 +904,9 @@ describe("Custom inputs", () => {
               },
               "lambda@edge": {
                 "origin-request":
-                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                  "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1",
                 "origin-response":
-                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                  "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
               }
             },
             "api/*": {
@@ -926,7 +926,7 @@ describe("Custom inputs", () => {
               maxTTL: 31536000,
               "lambda@edge": {
                 "origin-request":
-                  "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                  "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
               },
               forward: {
                 headers: ["Accept"]
@@ -954,7 +954,7 @@ describe("Custom inputs", () => {
             }
           },
           private: true,
-          url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
+          url: "http://bucket-xyz.s3.us-west-2.amazonaws.com"
         },
         ...origins
       ],
@@ -1018,7 +1018,7 @@ describe("Custom inputs", () => {
     )}`, () => {
       cloudFrontInput[pathName]["lambda@edge"] = {
         "origin-request":
-          "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+          "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
       };
 
       // we want to make sure that default behaviors are combined correctly
@@ -1034,9 +1034,9 @@ describe("Custom inputs", () => {
                 defaultTTL: 0,
                 "lambda@edge": {
                   "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1",
+                    "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1",
                   "origin-response":
-                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                    "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
                 },
                 maxTTL: 31536000,
                 minTTL: 0,
@@ -1074,7 +1074,7 @@ describe("Custom inputs", () => {
                 defaultTTL: 0,
                 "lambda@edge": {
                   "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                    "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
                 },
                 maxTTL: 31536000,
                 minTTL: 0,
@@ -1086,7 +1086,7 @@ describe("Custom inputs", () => {
                 maxTTL: 31536000,
                 "lambda@edge": {
                   "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:my-func:v1"
+                    "arn:aws:lambda:us-west-2:123456789012:function:my-func:v1"
                 },
                 forward: {
                   headers: ["Accept"]
@@ -1114,7 +1114,7 @@ describe("Custom inputs", () => {
               ...cloudFrontInput
             },
             private: true,
-            url: "http://bucket-xyz.s3.us-east-1.amazonaws.com"
+            url: "http://bucket-xyz.s3.us-west-2.amazonaws.com"
           }
         ]
       };
@@ -1248,7 +1248,7 @@ describe("Custom inputs", () => {
       await createNextComponent().default({
         cloudfront: {
           webACLId:
-            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+            "arn:aws:wafv2:us-west-2:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
         }
       });
     });
@@ -1272,7 +1272,7 @@ describe("Custom inputs", () => {
           certificate: {
             cloudFrontDefaultCertificate: false,
             acmCertificateArn:
-              "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+              "arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012"
           }
         }
       });
@@ -1351,7 +1351,7 @@ describe("Custom inputs", () => {
         fifoQueue: true,
         fifoThroughputLimit: "perMessageGroupId",
         name: "customSQS",
-        region: "us-east-1",
+        region: "us-west-2",
         tags: {
           a: "b"
         },

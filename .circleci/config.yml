@@ -146,7 +146,7 @@ jobs:
           name: Install and run e2e tests
           working_directory: ~/project/packages/e2e-tests/<< parameters.app >>
           environment:
-            AWS_DEFAULT_REGION: us-east-1
+            AWS_DEFAULT_REGION: us-west-2
             WAIT_TIMEOUT: 900
             SERVERLESS_CI: true
           command: |

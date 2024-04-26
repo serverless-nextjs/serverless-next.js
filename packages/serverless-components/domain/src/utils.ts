@@ -7,7 +7,7 @@ const HOSTED_ZONE_ID = "Z2FDTNDATAQYW2"; // this is a constant that you can get 
  * Get Clients
  * - Gets AWS SDK clients to use within this Component
  */
-const getClients = (credentials, region = "us-east-1") => {
+const getClients = (credentials, region = "us-west-2") => {
   if (AWS && AWS.config) {
     AWS.config.update({
       maxRetries: parseInt(process.env.SLS_NEXT_MAX_RETRIES || "10"),
@@ -22,7 +22,7 @@ const getClients = (credentials, region = "us-east-1") => {
 
   const acm = new AWS.ACM({
     credentials,
-    region: "us-east-1" // ACM must be in us-east-1
+    region: "us-west-2" // ACM must be in us-west-2
   });
 
   const cf = new AWS.CloudFront({

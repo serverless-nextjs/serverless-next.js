@@ -44,7 +44,7 @@ export const handler = async (
   const request = event.Records[0].cf.request;
   const bucketName = s3BucketNameFromEventRequest(request) ?? "";
   const { region: bucketRegion } = request.origin?.s3 || {
-    region: "us-east-1" // default to us-east-1 though it should always be present
+    region: "us-west-2" // default to us-west-2 though it should always be present
   };
   const regenerationQueueRegion = bucketRegion;
   const regenerationQueueName =

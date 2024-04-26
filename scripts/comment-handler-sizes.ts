@@ -39,7 +39,7 @@ const postCommentToPullRequest = async (
 
   // Using locked down API proxy to post comment for both fork and non-fork PRs
   await fetch(
-    "https://l7ycsrlajd.execute-api.us-east-1.amazonaws.com/prod/post-comment",
+    "https://l7ycsrlajd.execute-api.us-west-2.amazonaws.com/prod/post-comment",
     {
       method: "POST",
       body: JSON.stringify({

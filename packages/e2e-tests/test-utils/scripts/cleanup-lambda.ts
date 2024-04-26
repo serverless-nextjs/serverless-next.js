@@ -121,7 +121,7 @@ async function cleanupVersions(
 }
 
 console.info("Cleaning up old Lambda versions");
-cleanupVersions("us-east-1", true) // All Lambda@Edge is created in us-east-1 only
+cleanupVersions("us-west-2", true) // All Lambda@Edge is created in us-west-2 only
   .then((success) => {
     console.info(
       `Cleaning up old Lambda versions successful. Count: ${success}`

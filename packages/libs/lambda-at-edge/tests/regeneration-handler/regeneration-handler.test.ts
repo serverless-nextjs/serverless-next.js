@@ -91,7 +91,7 @@ describe("Regeneration Handler", () => {
           basePath,
           bucketName: "my-bucket",
           cloudFrontEventRequest: event.Records[0].cf.request,
-          region: "us-east-1",
+          region: "us-west-2",
           pageS3Path: `static-pages/build-id/preview.js`,
           pagePath: "pages/preview.js"
         })

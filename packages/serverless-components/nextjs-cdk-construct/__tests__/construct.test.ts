@@ -211,7 +211,7 @@ describe("CDK Construct", () => {
     const certificate = Certificate.fromCertificateArn(
       stack,
       "Cert",
-      "arn:partition:service:us-east-1:1234578:abc"
+      "arn:partition:service:us-west-2:1234578:abc"
     );
     const domainName = "domain.com";
     const hostedZone = HostedZone.fromHostedZoneAttributes(stack, "Zone", {
@@ -234,7 +234,7 @@ describe("CDK Construct", () => {
         DistributionConfig: {
           Aliases: ["domain.com"],
           ViewerCertificate: {
-            AcmCertificateArn: "arn:partition:service:us-east-1:1234578:abc"
+            AcmCertificateArn: "arn:partition:service:us-west-2:1234578:abc"
           }
         }
       }
@@ -296,7 +296,7 @@ describe("CDK Construct", () => {
     const certificate = Certificate.fromCertificateArn(
       stack,
       "Cert",
-      "arn:partition:service:us-east-1:1234578:abc"
+      "arn:partition:service:us-west-2:1234578:abc"
     );
     const domainName = "domain.com";
     new NextJSLambdaEdge(stack, "Stack", {
@@ -315,7 +315,7 @@ describe("CDK Construct", () => {
         DistributionConfig: {
           Aliases: ["domain.com"],
           ViewerCertificate: {
-            AcmCertificateArn: "arn:partition:service:us-east-1:1234578:abc"
+            AcmCertificateArn: "arn:partition:service:us-west-2:1234578:abc"
           }
         }
       }

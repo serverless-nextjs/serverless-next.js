@@ -43,7 +43,7 @@ describe("publishVersion", () => {
       arn: "arn:aws:iam::123456789012:role/xyz"
     });
     mockCreateFunctionPromise.mockResolvedValueOnce({
-      FunctionArn: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
+      FunctionArn: "arn:aws:lambda:us-west-2:123456789012:function:my-func",
       CodeSha256: "LQT0VA="
     });
     mockGetFunctionPromise.mockResolvedValue({
@@ -106,7 +106,7 @@ describe("publishVersion", () => {
     });
     mockUpdateFunctionConfigurationPromise.mockResolvedValueOnce({
       CodeSha256: "XYZ0VA=",
-      FunctionArn: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+      FunctionArn: "arn:aws:lambda:us-west-2:123456789012:function:my-func"
     });
     mockListTagsPromise.mockResolvedValueOnce({
       Tags: { foo: "bar" }
@@ -131,16 +131,16 @@ describe("publishVersion", () => {
     });
 
     expect(mockListTags).toBeCalledWith({
-      Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func"
+      Resource: "arn:aws:lambda:us-west-2:123456789012:function:my-func"
     });
 
     expect(mockUntagResource).toBeCalledWith({
-      Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
+      Resource: "arn:aws:lambda:us-west-2:123456789012:function:my-func",
       TagKeys: ["foo"]
     });
 
     expect(mockTagResource).toBeCalledWith({
-      Resource: "arn:aws:lambda:us-east-1:123456789012:function:my-func",
+      Resource: "arn:aws:lambda:us-west-2:123456789012:function:my-func",
       Tags: { new: "tag" }
     });
 

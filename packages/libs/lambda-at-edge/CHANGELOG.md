@@ -1160,7 +1160,7 @@ See [Conventional Commits](https://conventionalcommits.org) for commit guideline
 
 ### Features
 
-- **lambda-at-edge:** use S3 regional endpoint when not in us-east-1 ([#474](https://github.com/serverless-nextjs/serverless-next.js/issues/474)) ([5ecff1a](https://github.com/serverless-nextjs/serverless-next.js/commit/5ecff1a50e26c22f7de9ec9da3cf2cba4390d77d))
+- **lambda-at-edge:** use S3 regional endpoint when not in us-west-2 ([#474](https://github.com/serverless-nextjs/serverless-next.js/issues/474)) ([5ecff1a](https://github.com/serverless-nextjs/serverless-next.js/commit/5ecff1a50e26c22f7de9ec9da3cf2cba4390d77d))
 
 ## [1.4.1-alpha.5](https://github.com/serverless-nextjs/serverless-next.js/compare/@sls-next/lambda-at-edge@1.4.1-alpha.4...@sls-next/lambda-at-edge@1.4.1-alpha.5) (2020-06-30)
 

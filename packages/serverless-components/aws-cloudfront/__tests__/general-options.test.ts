@@ -195,7 +195,7 @@ describe("General options propagation", () => {
     // Create
     await component.default({
       webACLId:
-        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+        "arn:aws:wafv2:us-west-2:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
       origins
     });
 
@@ -204,7 +204,7 @@ describe("General options propagation", () => {
         DistributionConfigWithTags: expect.objectContaining({
           DistributionConfig: expect.objectContaining({
             WebACLId:
-              "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+              "arn:aws:wafv2:us-west-2:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
           })
         })
       })
@@ -213,7 +213,7 @@ describe("General options propagation", () => {
     // Update
     await component.default({
       webACLId:
-        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+        "arn:aws:wafv2:us-west-2:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
       origins
     });
 
@@ -221,7 +221,7 @@ describe("General options propagation", () => {
       expect.objectContaining({
         DistributionConfig: expect.objectContaining({
           WebACLId:
-            "arn:aws:wafv2:us-east-1:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+            "arn:aws:wafv2:us-west-2:123456789012:global/webacl/UpdatedWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
         })
       })
     );
@@ -231,7 +231,7 @@ describe("General options propagation", () => {
     // Create
     await component.default({
       webACLId:
-        "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
+        "arn:aws:wafv2:us-west-2:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a",
       origins
     });
 
@@ -240,7 +240,7 @@ describe("General options propagation", () => {
         DistributionConfigWithTags: expect.objectContaining({
           DistributionConfig: expect.objectContaining({
             WebACLId:
-              "arn:aws:wafv2:us-east-1:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
+              "arn:aws:wafv2:us-west-2:123456789012:global/webacl/ExampleWebACL/473e64fd-f30b-4765-81a0-62ad96dd167a"
           })
         })
       })
@@ -385,7 +385,7 @@ describe("General options propagation", () => {
       certificate: {
         cloudFrontDefaultCertificate: false,
         acmCertificateArn:
-          "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012"
+          "arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012"
       },
       origins
     });
@@ -397,7 +397,7 @@ describe("General options propagation", () => {
             ViewerCertificate: {
               CloudFrontDefaultCertificate: false,
               ACMCertificateArn:
-                "arn:aws:acm:us-east-1:123456789012:certificate/12345678-1234-1234-1234-123456789012",
+                "arn:aws:acm:us-west-2:123456789012:certificate/12345678-1234-1234-1234-123456789012",
               SSLSupportMethod: "sni-only",
               MinimumProtocolVersion: "TLSv1.2_2019"
             }
@@ -411,7 +411,7 @@ describe("General options propagation", () => {
       certificate: {
         cloudFrontDefaultCertificate: false,
         acmCertificateArn:
-          "arn:aws:acm:us-east-1:123456789012:certificate/updated"
+          "arn:aws:acm:us-west-2:123456789012:certificate/updated"
       },
       origins
     });
@@ -422,7 +422,7 @@ describe("General options propagation", () => {
           ViewerCertificate: {
             CloudFrontDefaultCertificate: false,
             ACMCertificateArn:
-              "arn:aws:acm:us-east-1:123456789012:certificate/updated",
+              "arn:aws:acm:us-west-2:123456789012:certificate/updated",
             SSLSupportMethod: "sni-only",
             MinimumProtocolVersion: "TLSv1.2_2019"
           }

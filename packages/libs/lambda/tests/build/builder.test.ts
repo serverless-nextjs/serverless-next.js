@@ -11,7 +11,7 @@ describe("Builder Tests", () => {
 
   const lambdaBuildOptions: LambdaBuildOptions = {
     bucketName: "test-bucket",
-    bucketRegion: "us-east-1"
+    bucketRegion: "us-west-2"
   };
 
   beforeEach(() => {

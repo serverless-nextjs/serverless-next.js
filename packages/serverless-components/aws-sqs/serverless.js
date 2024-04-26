@@ -17,7 +17,7 @@ const outputsList = ["arn", "url"];
 
 const defaults = {
   name: "serverless",
-  region: "us-east-1",
+  region: "us-west-2",
   tags: undefined
 };
 

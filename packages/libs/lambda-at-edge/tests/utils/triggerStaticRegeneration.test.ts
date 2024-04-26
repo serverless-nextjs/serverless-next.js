@@ -20,8 +20,8 @@ describe("triggerStaticRegeneration()", () => {
       uri: "index.html",
       origin: {
         s3: {
-          region: "us-east-1",
-          domainName: `my-bucket.s3.us-east-1.amazonaws.com`
+          region: "us-west-2",
+          domainName: `my-bucket.s3.us-west-2.amazonaws.com`
         }
       }
     } as AWSLambda.CloudFrontRequest,
@@ -104,9 +104,9 @@ describe("triggerStaticRegeneration()", () => {
       });
       expect(staticRegeneratedResponse.throttle).toBe(false);
       expect(mockSendMessageCommand).toHaveBeenCalledWith({
-        QueueUrl: `https://sqs.us-east-1.amazonaws.com/my-bucket.fifo`,
+        QueueUrl: `https://sqs.us-west-2.amazonaws.com/my-bucket.fifo`,
         MessageBody: JSON.stringify({
-          region: "us-east-1",
+          region: "us-west-2",
           bucketName: "my-bucket",
           pageS3Path: "/static-pages/build-id/index.html",
           cloudFrontEventRequest: options.request,

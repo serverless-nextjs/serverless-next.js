@@ -69,7 +69,7 @@ export const createCloudFrontEvent = ({
           origin: {
             s3: {
               path: "",
-              region: s3Region || "us-east-1",
+              region: s3Region || "us-west-2",
               authMethod: "origin-access-identity",
               domainName: s3DomainName || "my-bucket.s3.amazonaws.com"
             }

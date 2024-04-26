@@ -4,7 +4,7 @@ provider:
   name: aws
   runtime: nodejs14.x
   stage: prod
-  region: us-east-1
+  region: us-west-2
 
 package:
   individually: true

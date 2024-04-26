@@ -246,7 +246,7 @@ describe("S3 origins", () => {
     });
   });
 
-  describe("when origin is outside of us-east-1", () => {
+  describe("when origin is outside of us-west-2", () => {
     it("should use the origin's host at the DomainName", async () => {
       await component.default({
         origins: ["https://mybucket.s3.eu-west-1.amazonaws.com"]
@@ -301,7 +301,7 @@ describe("S3 origins", () => {
     });
   });
 
-  describe("when origin is outside of us-east-1 and contains dots", () => {
+  describe("when origin is outside of us-west-2 and contains dots", () => {
     it("should use the origin's host at the DomainName", async () => {
       await component.default({
         origins: ["https://mybucket.with.dots.s3.eu-west-1.amazonaws.com"]
@@ -356,7 +356,7 @@ describe("S3 origins", () => {
     });
   });
 
-  describe("when origin is outside of us-east-1 and contains s3 and dots", () => {
+  describe("when origin is outside of us-west-2 and contains s3 and dots", () => {
     it("should use the origin's host at the DomainName", async () => {
       await component.default({
         origins: ["https://mybucket.s3.s3.s3.eu-west-1.amazonaws.com"]
