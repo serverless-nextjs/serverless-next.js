@@ -29,6 +29,8 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@aws-cdk/aws-ec2": "^1.156.0",
+    "@aws-cdk/aws-elasticloadbalancingv2": "^1.156.0",
     "@sls-next/core": "link:../../libs/core",
     "@sls-next/lambda-at-edge": "link:../../libs/lambda-at-edge",
     "fast-glob": "3.2.11",
