@@ -5821,7 +5821,7 @@ __metadata:
     "@serverless/core": 1.1.2
     "@types/fs-extra": 9.0.13
     "@types/node": 17.0.19
-    "@types/ramda": 0.27.62
+    "@types/ramda": 0.30.2
     aws-sdk: 2.1093.0
     babel-eslint: 10.1.0
     eslint: 8.7.0
@@ -5831,7 +5831,7 @@ __metadata:
     fs-extra: 9.1.0
     jest: 27.4.7
     prettier: 2.5.1
-    ramda: 0.27.1
+    ramda: 0.30.1
     rimraf: 3.0.2
     typescript: 4.5.5
   peerDependencies:
@@ -5886,14 +5886,14 @@ __metadata:
     "@types/jest": 27.4.0
     "@types/lodash": 4.14.178
     "@types/node": 17.0.19
-    "@types/ramda": 0.27.62
+    "@types/ramda": 0.30.2
     archiver: 5.3.0
     aws-sdk: 2.1093.0
     fs-extra: 9.1.0
     globby: 11.0.4
     jest: 27.4.7
     lodash: 4.17.21
-    ramda: 0.27.1
+    ramda: 0.30.1
     rimraf: 3.0.2
     typescript: 4.5.5
   peerDependencies:
@@ -5918,7 +5918,7 @@ __metadata:
     "@types/klaw-sync": 6.0.1
     "@types/lodash": 4.14.178
     "@types/node": 17.0.19
-    "@types/ramda": 0.27.62
+    "@types/ramda": 0.30.2
     archiver: 5.3.0
     aws-sdk: 2.1093.0
     babel-eslint: 10.1.0
@@ -5931,7 +5931,7 @@ __metadata:
     lodash: 4.17.21
     mime-types: 2.1.34
     prettier: 2.5.1
-    ramda: 0.27.1
+    ramda: 0.30.1
     rimraf: 3.0.2
     s3-stream-upload: 2.0.2
     typescript: 4.5.5
@@ -6687,12 +6687,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/ramda@npm:0.27.62":
-  version: 0.27.62
-  resolution: "@types/ramda@npm:0.27.62"
+"@types/ramda@npm:0.30.2":
+  version: 0.30.2
+  resolution: "@types/ramda@npm:0.30.2"
   dependencies:
-    ts-toolbelt: ^6.15.1
-  checksum: fb42398becc45ce94fae3b27c358960172b16a92f7395eba5d66eaf63d0ad962762a9fa956b1a5e3ff3f2403f5538e12efe205377b956497a7a397d71355d51d
+    types-ramda: ^0.30.1
+  checksum: 528e62da967adb38b7b6be3314ee11009f4e7312e4fbb9670f4556bb2f640754f08ae68ede87822ae255aba747e67296f40b37d53bfb427c58ab82f5b7a4989e
   languageName: node
   linkType: hard
 
@@ -17464,10 +17464,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ramda@npm:0.27.1":
-  version: 0.27.1
-  resolution: "ramda@npm:0.27.1"
-  checksum: 31a0c0ef739b2525d7615f84cbb5d3cb89ee0c795469b711f729ea1d8df0dccc3cd75d3717a1e9742d42315ce86435680b7c87743eb7618111c60c144a5b8059
+"ramda@npm:0.30.1":
+  version: 0.30.1
+  resolution: "ramda@npm:0.30.1"
+  checksum: ce6f4b6b967a84a4e65c01ab1b1cdd73d46b8efe71aeccf5d1443c56c4e31a0ea82ece7df6510453dd3d83b92cabf8a6b4d50d189a1b35c08a6f44b281bebf79
   languageName: node
   linkType: hard
 
@@ -19770,10 +19770,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-toolbelt@npm:^6.15.1":
-  version: 6.15.5
-  resolution: "ts-toolbelt@npm:6.15.5"
-  checksum: 24ad00cfd9ce735c76c873a9b1347eac475b94e39ebbdf100c9019dce88dd5f4babed52884cf82bb456a38c28edd0099ab6f704b84b2e5e034852b618472c1f3
+"ts-toolbelt@npm:^9.6.0":
+  version: 9.6.0
+  resolution: "ts-toolbelt@npm:9.6.0"
+  checksum: 9f35fd95d895a5d32ea9fd2e532a695b0bae6cbff6832b77292efa188a0ed1ed6e54f63f74a8920390f3d909a7a3adb20a144686372a8e78b420246a9bd3d58a
   languageName: node
   linkType: hard
 
@@ -19966,6 +19966,15 @@ __metadata:
   version: 0.0.6
   resolution: "typedarray@npm:0.0.6"
   checksum: 33b39f3d0e8463985eeaeeacc3cb2e28bc3dfaf2a5ed219628c0b629d5d7b810b0eb2165f9f607c34871d5daa92ba1dc69f49051cf7d578b4cbd26c340b9d1b1
+  languageName: node
+  linkType: hard
+
+"types-ramda@npm:^0.30.1":
+  version: 0.30.1
+  resolution: "types-ramda@npm:0.30.1"
+  dependencies:
+    ts-toolbelt: ^9.6.0
+  checksum: 7af1b5b6dbb5878e5104013f7eca7feff999b538d98d59c91ce82e69908b31223b44a163271b0c13c9828c27f6cff39f78cff0f83d82b73ac47f74ffb3fe7ded
   languageName: node
   linkType: hard
 
