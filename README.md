@@ -1,5 +1,7 @@
 # Serverless Next.js Component
 
+> **:warning: Unfortunately, this is no longer maintained for a long time due to lack of time and the complexity of maintaining parity with Next.js. We would like to thank all past users and contributors, and suggest that you use modern alternatives such as [OpenNext](https://opennext.js.org/) and [SST](https://v2.sst.dev/start/nextjs).**
+
 ![logo](./img/logo.gif)
 
 [![serverless](http://public.serverless.com/badges/v3.svg)](https://www.serverless.com)
