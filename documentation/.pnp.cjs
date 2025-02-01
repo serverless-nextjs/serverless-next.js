@@ -9949,10 +9949,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["json5", [
-        ["npm:1.0.1", {
-          "packageLocation": "../.yarn/cache/json5-npm-1.0.1-647fc8794b-e76ea23dbb.zip/node_modules/json5/",
+        ["npm:1.0.2", {
+          "packageLocation": "../.yarn/cache/json5-npm-1.0.2-9607f93e30-866458a8c5.zip/node_modules/json5/",
           "packageDependencies": [
-            ["json5", "npm:1.0.1"],
+            ["json5", "npm:1.0.2"],
             ["minimist", "npm:1.2.5"]
           ],
           "linkType": "HARD",
@@ -10067,7 +10067,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["loader-utils", "npm:1.4.0"],
             ["big.js", "npm:5.2.2"],
             ["emojis-list", "npm:3.0.0"],
-            ["json5", "npm:1.0.1"]
+            ["json5", "npm:1.0.2"]
           ],
           "linkType": "HARD",
         }],
