@@ -286,6 +286,8 @@ class NextjsComponent extends Component {
   async deploy(
     inputs: ServerlessComponentInputs = {}
   ): Promise<DeploymentResult> {
+    // @ts-ignore
+    console.log(inputs.loadBalancer);
     // Skip deployment if user explicitly set deploy input to false.
     // Useful when they just want the build outputs to deploy themselves.
     if (inputs.deploy === "false" || inputs.deploy === false) {
@@ -410,6 +412,10 @@ class NextjsComponent extends Component {
 
     const cloudFrontOrigins = [
       {
+        // @ts-ignore
+        url: inputs.loadBalancer
+      },
+      {
         url: bucketUrl,
         private: true,
         pathPatterns: {}
@@ -417,7 +423,9 @@ class NextjsComponent extends Component {
       ...inputOrigins
     ];
 
-    cloudFrontOrigins[0].pathPatterns[
+    console.log(cloudFrontOrigins[0]);
+
+    cloudFrontOrigins[1].pathPatterns[
       this.pathPattern("_next/static/*", routesManifest)
     ] = {
       minTTL: 0,
@@ -430,7 +438,7 @@ class NextjsComponent extends Component {
       }
     };
 
-    cloudFrontOrigins[0].pathPatterns[
+    cloudFrontOrigins[1].pathPatterns[
       this.pathPattern("static/*", routesManifest)
     ] = {
       minTTL: 0,
@@ -663,7 +671,7 @@ class NextjsComponent extends Component {
 
       const apiEdgeLambdaPublishOutputs = await apiEdgeLambda.publishVersion();
 
-      cloudFrontOrigins[0].pathPatterns[
+      cloudFrontOrigins[1].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
         minTTL: 0,
@@ -734,7 +742,7 @@ class NextjsComponent extends Component {
       const imageEdgeLambdaPublishOutputs =
         await imageEdgeLambda.publishVersion();
 
-      cloudFrontOrigins[0].pathPatterns[
+      cloudFrontOrigins[1].pathPatterns[
         this.pathPattern("_next/image*", routesManifest)
       ] = {
         minTTL: 0,
@@ -799,7 +807,7 @@ class NextjsComponent extends Component {
     const defaultEdgeLambdaPublishOutputs =
       await defaultEdgeLambda.publishVersion();
 
-    cloudFrontOrigins[0].pathPatterns[
+    cloudFrontOrigins[1].pathPatterns[
       this.pathPattern("_next/data/*", routesManifest)
     ] = {
       minTTL: 0,
@@ -821,13 +829,269 @@ class NextjsComponent extends Component {
           }
     };
 
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/business*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/resources*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/promos*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/about-us*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/certifications*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/sitemaps*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/training-and-events*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/support*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/lp*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/search*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/shop/*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+   cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/shop", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+    cloudFrontOrigins[1].pathPatterns[
+      this.pathPattern("/software-and-services*", routesManifest)
+    ] = {
+      minTTL: 0,
+      defaultTTL: 0,
+      maxTTL: 86400,
+      forward: {
+        cookies: "all",
+        headers: routesManifest.i18n
+          ? ["Accept-Language", "Authorization", "Host"]
+          : ["Authorization", "Host"],
+        queryString: true
+      },
+      // lambda@edge key is last and therefore cannot be overridden
+      "lambda@edge": {
+        "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
+        "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
+      }
+    };
+
     // If we are using consolidated API pages (within default lambda), we need to ensure api/* behavior is set correctly.
     // Note that if there are no consolidated API pages then existing api/* is not deleted.
     // We do so for a couple reasons:
     // 1. API pages don't need origin response handler as it's not retrieving from S3 origin
     // 2. Override existing api/* behavior to ensure old separate API lambda isn't there
     if (hasConsolidatedApiPages) {
-      cloudFrontOrigins[0].pathPatterns[
+      cloudFrontOrigins[1].pathPatterns[
         this.pathPattern("api/*", routesManifest)
       ] = {
         minTTL: 0,
@@ -886,15 +1150,15 @@ class NextjsComponent extends Component {
         ] = `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`;
       }
 
-      cloudFrontOrigins[0].pathPatterns[path] = {
+      cloudFrontOrigins[1].pathPatterns[path] = {
         // spread the existing value if there is one
-        ...cloudFrontOrigins[0].pathPatterns[path],
+        ...cloudFrontOrigins[1].pathPatterns[path],
         // spread custom config
         ...config,
         "lambda@edge": {
           // spread the provided value
-          ...(cloudFrontOrigins[0].pathPatterns[path] &&
-            cloudFrontOrigins[0].pathPatterns[path]["lambda@edge"]),
+          ...(cloudFrontOrigins[1].pathPatterns[path] &&
+            cloudFrontOrigins[1].pathPatterns[path]["lambda@edge"]),
           // then overrides
           ...edgeConfig
         }
@@ -919,9 +1183,7 @@ class NextjsComponent extends Component {
         maxTTL: 31536000,
         ...cloudFrontDefaults,
         forward: {
-          headers: routesManifest.i18n
-            ? ["Accept-Language", "Authorization", "Host"]
-            : ["Authorization", "Host"],
+          headers: "all",
           cookies: "all",
           queryString: true,
           ...cloudFrontDefaults.forward
@@ -936,16 +1198,6 @@ class NextjsComponent extends Component {
           "PUT",
           "PATCH"
         ],
-        "lambda@edge": buildOptions.disableOriginResponseHandler
-          ? {
-              ...defaultLambdaAtEdgeConfig,
-              "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-            }
-          : {
-              ...defaultLambdaAtEdgeConfig,
-              "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
-              "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
-            },
         compress: true
       },
       origins: cloudFrontOrigins,
