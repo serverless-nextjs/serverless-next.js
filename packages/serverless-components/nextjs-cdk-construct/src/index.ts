@@ -337,6 +337,8 @@ export class NextJSLambdaEdge extends Construct {
                     this,
                     "ImageOriginRequest",
                     {
+                      originRequestPolicyName:
+                        props.imageOriginRequestPolicyName,
                       queryStringBehavior:
                         OriginRequestQueryStringBehavior.all()
                     }
