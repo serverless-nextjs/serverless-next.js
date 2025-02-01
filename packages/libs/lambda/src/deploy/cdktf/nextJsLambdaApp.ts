@@ -16,7 +16,7 @@ import { CoreBuildOptions } from "@sls-next/core";
 import { LambdaBuildOptions } from "src/types";
 
 const DEFAULT_OUTPUT_DIR = ".serverless_nextjs";
-const DEFAULT_AWS_REGION = "us-east-1";
+const DEFAULT_AWS_REGION = "us-west-2";
 
 export type NextJsLambdaAppProps = {
   /**
@@ -26,7 +26,7 @@ export type NextJsLambdaAppProps = {
   appName: string;
   /**
    * The AWS region to provision the Next.js app infrastructure.
-   * If omitted, it will default to us-east-1.
+   * If omitted, it will default to us-west-2.
    */
   region?: string;
   coreBuildOptions?: CoreBuildOptions;
@@ -141,7 +141,7 @@ export class NextJsLambdaApp extends Construct {
       type: "zip"
     });
 
-    // Create infrastructure all within the same region, or us-east-1 if not specified
+    // Create infrastructure all within the same region, or us-west-2 if not specified
     new AwsProvider(this, "AWS", {
       region: this.props.region ?? DEFAULT_AWS_REGION
     });

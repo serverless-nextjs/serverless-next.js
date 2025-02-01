@@ -35,7 +35,7 @@ const upload = (
 
   return uploadStaticAssetsFromBuild({
     bucketName: "test-bucket-name",
-    bucketRegion: "us-east-1",
+    bucketRegion: "us-west-2",
     basePath: basePath || "",
     nextConfigDir: path.join(__dirname, nextConfigDir),
     nextStaticDir: staticDir,
@@ -63,8 +63,8 @@ describe("Upload tests from build", () => {
     await upload("./fixtures/app-basic-upload-from-build");
 
     expect(AWS.S3).toBeCalledWith({
-      region: "us-east-1",
-      endpoint: "https://s3.us-east-1.amazonaws.com",
+      region: "us-west-2",
+      endpoint: "https://s3.us-west-2.amazonaws.com",
       s3BucketEndpoint: false,
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",
@@ -81,8 +81,8 @@ describe("Upload tests from build", () => {
 
     expect(AWS.S3).toBeCalledTimes(2);
     expect(AWS.S3).toBeCalledWith({
-      region: "us-east-1",
-      endpoint: "https://s3.us-east-1.amazonaws.com",
+      region: "us-west-2",
+      endpoint: "https://s3.us-west-2.amazonaws.com",
       s3BucketEndpoint: false,
       accessKeyId: "fake-access-key",
       secretAccessKey: "fake-secret-key",

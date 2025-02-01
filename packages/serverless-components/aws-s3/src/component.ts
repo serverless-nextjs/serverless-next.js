@@ -17,7 +17,7 @@ import {
 const defaults = {
   name: undefined,
   accelerated: true,
-  region: "us-east-1",
+  region: "us-west-2",
   tags: undefined
 };
 

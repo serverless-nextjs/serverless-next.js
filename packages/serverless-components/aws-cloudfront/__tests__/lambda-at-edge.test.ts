@@ -32,13 +32,13 @@ describe("Input origin as a custom url", () => {
               maxTTL: 10,
               "lambda@edge": {
                 "viewer-request":
-                  "arn:aws:lambda:us-east-1:123:function:viewerRequestFunction",
+                  "arn:aws:lambda:us-west-2:123:function:viewerRequestFunction",
                 "origin-request":
-                  "arn:aws:lambda:us-east-1:123:function:originRequestFunction",
+                  "arn:aws:lambda:us-west-2:123:function:originRequestFunction",
                 "origin-response":
-                  "arn:aws:lambda:us-east-1:123:function:originResponseFunction",
+                  "arn:aws:lambda:us-west-2:123:function:originResponseFunction",
                 "viewer-response":
-                  "arn:aws:lambda:us-east-1:123:function:viewerResponseFunction"
+                  "arn:aws:lambda:us-west-2:123:function:viewerResponseFunction"
               }
             }
           }
@@ -54,24 +54,24 @@ describe("Input origin as a custom url", () => {
           {
             EventType: "viewer-request",
             LambdaFunctionARN:
-              "arn:aws:lambda:us-east-1:123:function:viewerRequestFunction",
+              "arn:aws:lambda:us-west-2:123:function:viewerRequestFunction",
             IncludeBody: true
           },
           {
             EventType: "origin-request",
             LambdaFunctionARN:
-              "arn:aws:lambda:us-east-1:123:function:originRequestFunction",
+              "arn:aws:lambda:us-west-2:123:function:originRequestFunction",
             IncludeBody: true
           },
           {
             EventType: "origin-response",
             LambdaFunctionARN:
-              "arn:aws:lambda:us-east-1:123:function:originResponseFunction"
+              "arn:aws:lambda:us-west-2:123:function:originResponseFunction"
           },
           {
             EventType: "viewer-response",
             LambdaFunctionARN:
-              "arn:aws:lambda:us-east-1:123:function:viewerResponseFunction"
+              "arn:aws:lambda:us-west-2:123:function:viewerResponseFunction"
           }
         ]
       }
@@ -95,7 +95,7 @@ describe("Input origin as a custom url", () => {
                 maxTTL: 10,
                 "lambda@edge": {
                   "invalid-eventtype":
-                    "arn:aws:lambda:us-east-1:123:function:viewerRequestFunction"
+                    "arn:aws:lambda:us-west-2:123:function:viewerRequestFunction"
                 }
               }
             }

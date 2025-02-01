@@ -171,7 +171,7 @@ const addCustomStackResources = async function () {
 
   // see https://docs.aws.amazon.com/AmazonS3/latest/dev/UsingBucket.html
   const bucketBaseUrl =
-    region === "us-east-1"
+    region === "us-west-2"
       ? "https://s3.amazonaws.com"
       : `https://s3-${region}.amazonaws.com`;
 

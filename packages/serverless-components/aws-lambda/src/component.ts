@@ -39,7 +39,7 @@ const defaults = {
   bucket: undefined,
   shims: [],
   handler: "handler.hello",
-  runtime: "nodejs10.x",
+  runtime: "nodejs18.x",
   env: {},
   region: "us-east-1",
   tags: undefined

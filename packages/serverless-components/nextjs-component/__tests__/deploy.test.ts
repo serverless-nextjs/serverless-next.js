@@ -53,17 +53,17 @@ describe.each`
     });
     if (expectsQueueDeployment) {
       mockLambda.mockResolvedValueOnce({
-        arn: "arn:aws:lambda:us-east-1:123456789012:function:regeneration-cachebehavior-func"
+        arn: "arn:aws:lambda:us-west-2:123456789012:function:regeneration-cachebehavior-func"
       });
     }
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:api-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:image-cachebehavior-func"
     });
     mockLambda.mockResolvedValueOnce({
-      arn: "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func"
+      arn: "arn:aws:lambda:us-west-2:123456789012:function:default-cachebehavior-func"
     });
     mockLambdaPublish.mockResolvedValue({
       version: "v1"
@@ -75,7 +75,7 @@ describe.each`
 
     if (expectsQueueDeployment) {
       mockSQS.mockResolvedValue({
-        arn: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo"
+        arn: "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo"
       });
     }
 
@@ -124,7 +124,7 @@ describe.each`
           timeout: 10,
           runtime: "nodejs14.x",
           name: "bucket-xyz",
-          region: "us-east-1",
+          region: "us-west-2",
           tags: undefined,
           role: {
             service: ["lambda.amazonaws.com"],
@@ -147,12 +147,12 @@ describe.each`
                 },
                 {
                   Effect: "Allow",
-                  Resource: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                  Resource: "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo",
                   Action: ["sqs:SendMessage"]
                 },
                 {
                   Effect: "Allow",
-                  Resource: "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                  Resource: "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo",
                   Action: [
                     "sqs:ReceiveMessage",
                     "sqs:DeleteMessage",
@@ -202,7 +202,7 @@ describe.each`
                       {
                         Effect: "Allow",
                         Resource:
-                          "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                          "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo",
                         Action: ["sqs:SendMessage"]
                       }
                     ]
@@ -249,7 +249,7 @@ describe.each`
                       {
                         Effect: "Allow",
                         Resource:
-                          "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                          "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo",
                         Action: ["sqs:SendMessage"]
                       }
                     ]
@@ -296,7 +296,7 @@ describe.each`
                       {
                         Effect: "Allow",
                         Resource:
-                          "arn:aws:sqs:us-east-1:123456789012:MyQueue.fifo",
+                          "arn:aws:sqs:us-west-2:123456789012:MyQueue.fifo",
                         Action: ["sqs:SendMessage"]
                       }
                     ]
@@ -310,7 +310,7 @@ describe.each`
 
     it("creates distribution", () => {
       expect(mockCloudFront).toBeCalledWith({
-        bucketRegion: "us-east-1",
+        bucketRegion: "us-west-2",
         defaults: {
           allowedHttpMethods: [
             "HEAD",
@@ -331,15 +331,15 @@ describe.each`
           maxTTL: 31536000,
           "lambda@edge": {
             "origin-request":
-              "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
+              "arn:aws:lambda:us-west-2:123456789012:function:default-cachebehavior-func:v1",
             "origin-response":
-              "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
+              "arn:aws:lambda:us-west-2:123456789012:function:default-cachebehavior-func:v1"
           },
           compress: true
         },
         origins: [
           {
-            url: "http://bucket-xyz.s3.us-east-1.amazonaws.com",
+            url: "http://bucket-xyz.s3.us-west-2.amazonaws.com",
             private: true,
             pathPatterns: {
               "_next/static/*": {
@@ -364,9 +364,9 @@ describe.each`
                 },
                 "lambda@edge": {
                   "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1",
+                    "arn:aws:lambda:us-west-2:123456789012:function:default-cachebehavior-func:v1",
                   "origin-response":
-                    "arn:aws:lambda:us-east-1:123456789012:function:default-cachebehavior-func:v1"
+                    "arn:aws:lambda:us-west-2:123456789012:function:default-cachebehavior-func:v1"
                 }
               },
               "static/*": {
@@ -385,7 +385,7 @@ describe.each`
                 maxTTL: 31536000,
                 "lambda@edge": {
                   "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:api-cachebehavior-func:v1"
+                    "arn:aws:lambda:us-west-2:123456789012:function:api-cachebehavior-func:v1"
                 },
                 allowedHttpMethods: [
                   "HEAD",
@@ -408,7 +408,7 @@ describe.each`
                 maxTTL: 31536000,
                 "lambda@edge": {
                   "origin-request":
-                    "arn:aws:lambda:us-east-1:123456789012:function:image-cachebehavior-func:v1"
+                    "arn:aws:lambda:us-west-2:123456789012:function:image-cachebehavior-func:v1"
                 },
                 forward: {
                   headers: ["Accept"]

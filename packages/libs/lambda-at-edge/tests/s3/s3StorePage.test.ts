@@ -26,7 +26,7 @@ describe("S3StorePage Tests", () => {
         bucketName: "test",
         html: "test",
         buildId: "test-build-id",
-        region: "us-east-1",
+        region: "us-west-2",
         pageData: {}
       });
 

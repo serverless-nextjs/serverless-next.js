@@ -42,7 +42,7 @@ myBucket:
   component: "@serverless/aws-s3"
   inputs:
     accelerated: false # default is true. Enables upload acceleartion for the bucket
-    region: us-east-1
+    region: us-west-2
     cors:
       CORSRules:
         - AllowedHeaders:

@@ -52,7 +52,7 @@ distribution:
   component: '@serverless/aws-cloudfront'
   inputs:
     distributionId: XYZEXAMPLE #optional
-    region: us-east-1
+    region: us-west-2
     enabled: true # optional
     comment: 'My distribution' # optional
     aliases: ['foo.example.com', 'bar.example.com']
@@ -77,7 +77,7 @@ distribution:
       compress: true # optional
       fieldLevelEncryptionId: '123' # optional
       lambda@edge: # added to cloudfront default cache behavior
-        viewer-request: arn:aws:lambda:us-east-1:123:function:myFunc:version
+        viewer-request: arn:aws:lambda:us-west-2:123:function:myFunc:version
     origins:
       - https://my-bucket.s3.amazonaws.com
 ```
@@ -139,7 +139,7 @@ distribution:
           /sample/path:
             ttl: 10
             lambda@edge:
-              viewer-request: arn:aws:lambda:us-east-1:123:function:myFunc:version # lambda ARN including version
+              viewer-request: arn:aws:lambda:us-west-2:123:function:myFunc:version # lambda ARN including version
 ```
 
 #### Private S3 Content
