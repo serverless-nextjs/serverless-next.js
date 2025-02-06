@@ -910,6 +910,11 @@ class NextjsComponent extends Component {
     };
     delete defaultLambdaAtEdgeConfig["origin-response"];
 
+    // Add cloudfront functions settings
+    const defaultCloudfrontFunctionsConfig = {
+      ...(cloudFrontDefaults["cloudfrontFunctions"] || {})
+    };
+
     const cloudFrontOutputs = await cloudFront({
       bucketRegion: bucketRegion,
       distributionId: cloudFrontDistributionId,
@@ -946,6 +951,7 @@ class NextjsComponent extends Component {
               "origin-request": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`,
               "origin-response": `${defaultEdgeLambdaOutputs.arn}:${defaultEdgeLambdaPublishOutputs.version}`
             },
+        cloudfrontFunctions: defaultCloudfrontFunctionsConfig,
         compress: true
       },
       origins: cloudFrontOrigins,

@@ -46,7 +46,13 @@ describe("Input origin as a custom url", () => {
         compress: true,
         fieldLevelEncryptionId: "123",
         responseHeadersPolicyId: "uuid",
-        realtimeLogConfigArn: "realtime_log_config_ARN"
+        realtimeLogConfigArn: "realtime_log_config_ARN",
+        cloudfrontFunctions: {
+          "viewer-request":
+            "arn:aws:cloudfront::123456789012:function/ViewerRequestFunction",
+          "viewer-response":
+            "arn:aws:cloudfront::123456789012:function/ViewerResponseFunction"
+        }
       },
       origins: ["https://mycustomorigin.com"]
     });

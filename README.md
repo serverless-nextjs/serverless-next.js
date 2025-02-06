@@ -200,6 +200,10 @@ myNextApplication:
               CloudFront-Is-Mobile-Viewer,
               CloudFront-Is-Tablet-Viewer
             ]
+        # you can associate existing cloudfront functions with the cloudfront distribution
+        cloudfrontFunctions:
+          "viewer-request": "arn:aws:cloudfront::123456789012:function/ViewerRequestFunction"
+          "viewer-response": "arn:aws:cloudfront::123456789012:function/ViewerResponseFunction"
       # this is the cache behaviour for next.js api pages
       api:
         minTTL: 10

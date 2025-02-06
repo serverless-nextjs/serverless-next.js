@@ -1,4 +1,9 @@
-import addLambdaAtEdgeToCacheBehavior from "./addLambdaAtEdgeToCacheBehavior";
+import addLambdaAtEdgeToCacheBehavior, {
+  CacheBehavior as LambdaAtEdgeCacheBehavior
+} from "./addLambdaAtEdgeToCacheBehavior";
+import addCloudfrontFunctionToCacheBehavior, {
+  CacheBehavior as CloudfrontFunctionCacheBehavior
+} from "./addCloudfrontFunctionToCacheBehavior";
 import { getForwardedValues } from "./cacheBehaviorUtils";
 
 type DefaultCacheBehavior = {
@@ -13,6 +18,8 @@ type DefaultCacheBehavior = {
   fieldLevelEncryptionId?: string;
   responseHeadersPolicyId?: string;
   realtimeLogConfigArn?: string;
+  "lambda@edge"?: LambdaAtEdgeCacheBehavior;
+  cloudfrontFunctions?: CloudfrontFunctionCacheBehavior;
 };
 
 export default (originId, defaults: DefaultCacheBehavior = {}) => {
@@ -56,12 +63,20 @@ export default (originId, defaults: DefaultCacheBehavior = {}) => {
       Quantity: 0,
       Items: []
     },
+    FunctionAssociations: {
+      Quantity: 0,
+      Items: []
+    },
     FieldLevelEncryptionId: fieldLevelEncryptionId,
     ResponseHeadersPolicyId: responseHeadersPolicyId,
     RealtimeLogConfigArn: realtimeLogConfigArn
   };
 
   addLambdaAtEdgeToCacheBehavior(defaultCacheBehavior, defaults["lambda@edge"]);
+  addCloudfrontFunctionToCacheBehavior(
+    defaultCacheBehavior,
+    defaults["cloudfrontFunctions"]
+  );
 
   return defaultCacheBehavior;
 };
